@@ -362,6 +362,79 @@ func _is_position_walkable(pixel_pos: Vector2) -> bool:
 	
 	return true
 
+# Advanced corner assistance - predicts player intent and helps navigate corners
+# Example: Player at position halfway past block A, pressing RIGHT
+# System detects: "Player wants to go RIGHT but is blocked, they're >50% past the obstacle"
+# Action: Temporarily move UP to clear the corner, then resume RIGHT movement
+func _try_corner_assistance(desired_velocity: Vector2, delta: float) -> Vector2:
+	if not game_state.has("grid"):
+		return Vector2.ZERO
+	
+	var grid = game_state.grid
+	
+	# Get the grid cell we're trying to move into
+	var target_pos = player_pixel_position + desired_velocity * delta
+	var target_grid_x = int(floor(target_pos.x / TILE_SIZE))
+	var target_grid_y = int(floor(target_pos.y / TILE_SIZE))
+	
+	# Get current grid position
+	var current_grid_x = int(floor(player_pixel_position.x / TILE_SIZE))
+	var current_grid_y = int(floor(player_pixel_position.y / TILE_SIZE))
+	
+	# Only assist if we're trying to move into an adjacent cell
+	var dx_grid = target_grid_x - current_grid_x
+	var dy_grid = target_grid_y - current_grid_y
+	
+	# Calculate player's position within their current tile (0.0 to 1.0)
+	var tile_local_x = (player_pixel_position.x - current_grid_x * TILE_SIZE) / TILE_SIZE
+	var tile_local_y = (player_pixel_position.y - current_grid_y * TILE_SIZE) / TILE_SIZE
+	
+	# CASE 1: Trying to move RIGHT, blocked, but we're >50% up in the tile
+	if dx_grid > 0 and dy_grid == 0:
+		# Check if blocked to the right
+		if target_grid_x < grid[0].size() and target_grid_y >= 0 and target_grid_y < grid.size():
+			if grid[target_grid_y][target_grid_x] != 0:
+				# Blocked! Check if we're in the top half of our current tile
+				if tile_local_y < 0.5:
+					# Try moving UP to clear the corner
+					var up_velocity = Vector2(0, -BASE_SPEED * (1.0 if desired_velocity.length() > BASE_SPEED * 0.7 else 0.5))
+					var up_target = player_pixel_position + up_velocity * delta
+					if _is_position_walkable(up_target):
+						return up_velocity
+	
+	# CASE 2: Trying to move LEFT, blocked, but we're >50% up in the tile
+	if dx_grid < 0 and dy_grid == 0:
+		if target_grid_x >= 0 and target_grid_y >= 0 and target_grid_y < grid.size():
+			if grid[target_grid_y][target_grid_x] != 0:
+				if tile_local_y < 0.5:
+					var up_velocity = Vector2(0, -BASE_SPEED * (1.0 if desired_velocity.length() > BASE_SPEED * 0.7 else 0.5))
+					var up_target = player_pixel_position + up_velocity * delta
+					if _is_position_walkable(up_target):
+						return up_velocity
+	
+	# CASE 3: Trying to move DOWN, blocked, but we're >50% to the right in the tile
+	if dy_grid > 0 and dx_grid == 0:
+		if target_grid_y < grid.size() and target_grid_x >= 0 and target_grid_x < grid[0].size():
+			if grid[target_grid_y][target_grid_x] != 0:
+				if tile_local_x > 0.5:
+					var right_velocity = Vector2(BASE_SPEED * (1.0 if desired_velocity.length() > BASE_SPEED * 0.7 else 0.5), 0)
+					var right_target = player_pixel_position + right_velocity * delta
+					if _is_position_walkable(right_target):
+						return right_velocity
+	
+	# CASE 4: Trying to move UP, blocked, but we're >50% to the right in the tile
+	if dy_grid < 0 and dx_grid == 0:
+		if target_grid_y >= 0 and target_grid_x >= 0 and target_grid_x < grid[0].size():
+			if grid[target_grid_y][target_grid_x] != 0:
+				if tile_local_x > 0.5:
+					var right_velocity = Vector2(BASE_SPEED * (1.0 if desired_velocity.length() > BASE_SPEED * 0.7 else 0.5), 0)
+					var right_target = player_pixel_position + right_velocity * delta
+					if _is_position_walkable(right_target):
+						return right_velocity
+	
+	# No corner assistance needed
+	return Vector2.ZERO
+
 func _update_explosions(server_explosions):
 	# Clear old explosions
 	for explosion_id in explosion_scenes.keys():
