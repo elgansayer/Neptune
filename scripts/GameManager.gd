@@ -12,12 +12,26 @@ var powerup_scenes = {}
 var character_data = {}
 var my_user_id = ""
 
-# --- Prediction & Reconciliation ---
+# --- Saturn Bomberman Movement System ---
+const TILE_SIZE = 64.0
+const BASE_SPEED = 180.0  # Units per second (pixels/sec)
+const WALK_MULTIPLIER = 0.5
+const RUN_MULTIPLIER = 1.0
+const WALK_RUN_THRESHOLD = 0.7
+const INPUT_DEADZONE = 0.1
+const PLAYER_HITBOX_RADIUS = 18.0  # Slightly smaller for better cornering (~28% of tile)
+
+var player_pixel_position = Vector2.ZERO  # Continuous floating-point position
+var player_velocity = Vector2.ZERO
+var player_facing_direction = "DOWN"
+
+# Network sync
 var input_sequence = 0
-var pending_inputs = []
-var last_input_time = 0.0
-var input_cooldown = 0.1  # 100ms between inputs (10 inputs per second max)
-var predicted_position = Vector2i(-1, -1)  # Grid coordinates
+var last_network_sync_time = 0.0
+const NETWORK_SYNC_RATE = 0.05  # Send updates every 50ms (20 Hz)
+
+# Debug
+var debug_slide_active = false
 
 # --- Godot Lifecycle ---
 
@@ -59,29 +73,149 @@ func _load_character_data():
 
 
 func _physics_process(delta):
-	# Throttle input to prevent super fast movement
-	last_input_time += delta
-	if last_input_time < input_cooldown:
+	if not player_scenes.has(my_user_id):
 		return
+	
+	# === PILLAR A: Dual-Speed Vector-Based Locomotion ===
+	
+	# Get raw input (for keyboard, this will be discrete; for gamepad, analog)
+	var input_x = Input.get_axis("ui_left", "ui_right")
+	var input_y = Input.get_axis("ui_up", "ui_down")
+	var input_vector = Vector2(input_x, input_y)
+	
+	# Normalize diagonal movement to prevent faster diagonal speed
+	if input_vector.length() > 1.0:
+		input_vector = input_vector.normalized()
+	
+	# Determine walk vs run based on input magnitude
+	var speed_multiplier = RUN_MULTIPLIER
+	if input_vector.length() < WALK_RUN_THRESHOLD:
+		speed_multiplier = WALK_MULTIPLIER
+	
+	# Calculate desired velocity
+	var desired_velocity = input_vector * BASE_SPEED * speed_multiplier
+	
+	# Update facing direction (vertical priority)
+	if input_vector.y < -INPUT_DEADZONE:
+		player_facing_direction = "UP"
+	elif input_vector.y > INPUT_DEADZONE:
+		player_facing_direction = "DOWN"
+	elif input_vector.x < -INPUT_DEADZONE:
+		player_facing_direction = "LEFT"
+	elif input_vector.x > INPUT_DEADZONE:
+		player_facing_direction = "RIGHT"
+	# If no input, retain last facing direction
+	
+	# === PILLAR B: Assisted Cornering (Wall Hugging) ===
+	
+	# Calculate target position if we apply full velocity
+	var target_position = player_pixel_position + desired_velocity * delta
+	var final_velocity = desired_velocity
+	
+	# First check: Can we move to target position without collision?
+	if _is_position_walkable(target_position):
+		# No collision - use full velocity
+		final_velocity = desired_velocity
+		if debug_slide_active:
+			print("Slide ended - clear path")
+			debug_slide_active = false
+	else:
+		# Collision detected - try advanced corner assistance first
+		var corner_velocity = _try_corner_assistance(desired_velocity, delta)
 		
-	var dx = int(Input.is_action_pressed("ui_right")) - int(Input.is_action_pressed("ui_left"))
-	var dy = int(Input.is_action_pressed("ui_down")) - int(Input.is_action_pressed("ui_up"))
+		if corner_velocity != Vector2.ZERO:
+			# Corner assistance found a better path
+			final_velocity = corner_velocity
+			if not debug_slide_active:
+				print("CORNER ASSIST - auto-navigating around obstacle")
+				debug_slide_active = true
+		else:
+			# Fall back to standard wall slide
+			# Decompose velocity into X and Y components
+			var velocity_x_only = Vector2(desired_velocity.x, 0)
+			var velocity_y_only = Vector2(0, desired_velocity.y)
+			
+			# Calculate slide positions
+			var slide_x_target = player_pixel_position + velocity_x_only * delta
+			var slide_y_target = player_pixel_position + velocity_y_only * delta
+			
+			# Test each axis independently
+			var can_slide_x = _is_position_walkable(slide_x_target)
+			var can_slide_y = _is_position_walkable(slide_y_target)
+			
+			# Apply the slide resolution logic
+			if can_slide_x and not can_slide_y:
+				# Horizontal movement is clear, vertical is blocked
+				# Slide horizontally (hugging a horizontal wall)
+				final_velocity = velocity_x_only
+				if not debug_slide_active:
+					print("SLIDING HORIZONTALLY - hugging wall")
+					debug_slide_active = true
+			elif can_slide_y and not can_slide_x:
+				# Vertical movement is clear, horizontal is blocked
+				# Slide vertically (hugging a vertical wall)
+				final_velocity = velocity_y_only
+				if not debug_slide_active:
+					print("SLIDING VERTICALLY - hugging wall")
+					debug_slide_active = true
+			elif can_slide_x and can_slide_y:
+				# Both individual movements are valid but diagonal is not
+				# This happens at convex corners - prefer the dominant axis
+				if abs(desired_velocity.x) > abs(desired_velocity.y):
+					final_velocity = velocity_x_only
+				else:
+					final_velocity = velocity_y_only
+				if not debug_slide_active:
+					print("CORNER SLIDE - both axes valid")
+					debug_slide_active = true
+			else:
+				# Neither movement is valid (concave corner) - stop
+				final_velocity = Vector2.ZERO
+				if not debug_slide_active:
+					print("STOPPED - concave corner")
+					debug_slide_active = true
+	
+	# === PILLAR C: Instantaneous Input Response ===
+	# Update position immediately (no acceleration/deceleration)
+	player_velocity = final_velocity
+	player_pixel_position += player_velocity * delta
+	
+	# Update visual position
+	var my_player = player_scenes[my_user_id]
+	my_player.position = player_pixel_position
+	
+	# Handle bomb placement
 	var place_bomb = Input.is_action_just_pressed("ui_accept")
-
-	if dx != 0 or dy != 0 or place_bomb:
-		last_input_time = 0.0  # Reset cooldown
+	
+	# === Network Sync ===
+	last_network_sync_time += delta
+	if last_network_sync_time >= NETWORK_SYNC_RATE:
+		last_network_sync_time = 0.0
+		
+		# Send current state to server
 		input_sequence += 1
 		var input_data = {
-			"dx": dx,
-			"dy": dy,
+			"input_x": input_x,
+			"input_y": input_y,
+			"position_x": player_pixel_position.x,
+			"position_y": player_pixel_position.y,
 			"place_bomb": place_bomb,
 			"seq": input_sequence
 		}
 		nakama_client.send_player_input(input_data)
-		pending_inputs.append(input_data)
-		
-		# Client-side prediction with collision detection
-		_apply_input_prediction(input_data)
+	
+	if place_bomb:
+		# Send bomb placement immediately
+		input_sequence += 1
+		var bomb_input = {
+			"input_x": 0,
+			"input_y": 0,
+			"position_x": player_pixel_position.x,
+			"position_y": player_pixel_position.y,
+			"place_bomb": true,
+			"seq": input_sequence
+		}
+		nakama_client.send_player_input(bomb_input)
 
 # --- Signal Handlers ---
 
@@ -182,41 +316,51 @@ func _update_bombs(server_bombs):
 		bomb_scenes[bomb_id].queue_free()
 		bomb_scenes.erase(bomb_id)
 
-# Client-side collision detection helper
-func _is_walkable(x: int, y: int) -> bool:
+# Pixel-based collision detection (Saturn Bomberman style)
+func _is_position_walkable(pixel_pos: Vector2) -> bool:
 	if not game_state.has("grid"):
-		return true  # No grid loaded yet, allow movement
+		return true  # No grid loaded yet
 	
 	var grid = game_state.grid
-	if y < 0 or y >= grid.size() or x < 0 or x >= grid[0].size():
-		return false  # Out of bounds
 	
-	if grid[y][x] != 0:
-		return false  # Wall or block
+	# Check collision in a circular hitbox around the player
+	# Sample 8 points around circle + center for better coverage
+	var check_points = [
+		pixel_pos,  # Center
+		pixel_pos + Vector2(PLAYER_HITBOX_RADIUS, 0),  # Right
+		pixel_pos + Vector2(-PLAYER_HITBOX_RADIUS, 0),  # Left
+		pixel_pos + Vector2(0, PLAYER_HITBOX_RADIUS),  # Down
+		pixel_pos + Vector2(0, -PLAYER_HITBOX_RADIUS),  # Up
+		# Add diagonal checks for better corner detection
+		pixel_pos + Vector2(PLAYER_HITBOX_RADIUS * 0.707, PLAYER_HITBOX_RADIUS * 0.707),  # Down-Right
+		pixel_pos + Vector2(-PLAYER_HITBOX_RADIUS * 0.707, PLAYER_HITBOX_RADIUS * 0.707),  # Down-Left
+		pixel_pos + Vector2(PLAYER_HITBOX_RADIUS * 0.707, -PLAYER_HITBOX_RADIUS * 0.707),  # Up-Right
+		pixel_pos + Vector2(-PLAYER_HITBOX_RADIUS * 0.707, -PLAYER_HITBOX_RADIUS * 0.707)  # Up-Left
+	]
 	
-	# Check for bombs at position
-	if game_state.has("bombs"):
-		for bomb in game_state.bombs:
-			if bomb.position.x == x and bomb.position.y == y:
-				return false
+	for point in check_points:
+		var grid_x = int(floor(point.x / TILE_SIZE))
+		var grid_y = int(floor(point.y / TILE_SIZE))
+		
+		# Out of bounds check
+		if grid_y < 0 or grid_y >= grid.size() or grid_x < 0 or grid_x >= grid[0].size():
+			return false
+		
+		# Wall/block check
+		if grid[grid_y][grid_x] != 0:
+			return false
+		
+		# Bomb collision check
+		if game_state.has("bombs"):
+			for bomb in game_state.bombs:
+				var bomb_center = Vector2(
+					bomb.position.x * TILE_SIZE + TILE_SIZE / 2,
+					bomb.position.y * TILE_SIZE + TILE_SIZE / 2
+				)
+				if point.distance_to(bomb_center) < (PLAYER_HITBOX_RADIUS + 25.0):
+					return false
 	
 	return true
-
-# Apply client-side prediction for an input
-func _apply_input_prediction(input: Dictionary):
-	if not player_scenes.has(my_user_id):
-		return
-	
-	if predicted_position.x < 0:  # Not initialized yet
-		return
-	
-	if input.dx != 0 or input.dy != 0:
-		var new_x = predicted_position.x + input.dx
-		var new_y = predicted_position.y + input.dy
-		if _is_walkable(new_x, new_y):
-			predicted_position = Vector2i(new_x, new_y)
-			var my_player = player_scenes[my_user_id]
-			my_player.position = Vector2(predicted_position.x * 64 + 32, predicted_position.y * 64 + 32)
 
 func _update_explosions(server_explosions):
 	# Clear old explosions
@@ -248,27 +392,26 @@ func _reconcile_local_player(server_players):
 		return
 
 	var my_server_state = server_players[my_user_id]
-	var my_client_player = player_scenes.get(my_user_id)
-
-	if my_client_player:
-		# Remove inputs that the server has already processed
-		var last_processed_seq = my_server_state.get("lastProcessedSequence", 0)
-		pending_inputs = pending_inputs.filter(func(input): return input.seq > last_processed_seq)
-
-		# Start with authoritative server position (grid coordinates)
-		var server_grid_pos = Vector2i(my_server_state.position.x, my_server_state.position.y)
-		predicted_position = server_grid_pos
+	
+	# Server sends pixel positions, accept them with some smoothing
+	if my_server_state.has("pixel_position"):
+		var server_pixel_pos = Vector2(
+			my_server_state.pixel_position.x,
+			my_server_state.pixel_position.y
+		)
 		
-		# Re-apply pending inputs with client-side collision detection
-		for input in pending_inputs:
-			if input.dx != 0 or input.dy != 0:
-				var new_x = predicted_position.x + input.dx
-				var new_y = predicted_position.y + input.dy
-				if _is_walkable(new_x, new_y):
-					predicted_position = Vector2i(new_x, new_y)
-		
-		# Update visual position to predicted position
-		my_client_player.position = Vector2(predicted_position.x * 64 + 32, predicted_position.y * 64 + 32)
+		# If server position differs significantly, snap to it (anti-cheat)
+		var position_error = player_pixel_position.distance_to(server_pixel_pos)
+		if position_error > 100.0:  # More than ~1.5 tiles off
+			player_pixel_position = server_pixel_pos
+			print("Position corrected by server: error was ", position_error)
+	else:
+		# Fallback: server sends grid position, convert to pixels
+		var server_pixel_pos = Vector2(
+			my_server_state.position.x * TILE_SIZE + TILE_SIZE / 2,
+			my_server_state.position.y * TILE_SIZE + TILE_SIZE / 2
+		)
+		player_pixel_position = server_pixel_pos
 
 func _update_players(server_players):
 	var current_client_players = player_scenes.keys()
@@ -310,10 +453,33 @@ func _update_players(server_players):
 
 		player_node.visible = player_data.isAlive
 
-		# For other players (not us), directly set their position from server
-		# For local player, position is set in _reconcile_local_player
-		if player_id != my_user_id:
-			player_node.position = Vector2(player_data.position.x * 64 + 32, player_data.position.y * 64 + 32)
+		# Update positions
+		if player_id == my_user_id:
+			# Initialize our pixel position if not set
+			if player_pixel_position == Vector2.ZERO:
+				if player_data.has("pixel_position"):
+					player_pixel_position = Vector2(
+						player_data.pixel_position.x,
+						player_data.pixel_position.y
+					)
+				else:
+					player_pixel_position = Vector2(
+						player_data.position.x * TILE_SIZE + TILE_SIZE / 2,
+						player_data.position.y * TILE_SIZE + TILE_SIZE / 2
+					)
+			# Position is updated in _physics_process
+		else:
+			# Other players: use server position directly
+			if player_data.has("pixel_position"):
+				player_node.position = Vector2(
+					player_data.pixel_position.x,
+					player_data.pixel_position.y
+				)
+			else:
+				player_node.position = Vector2(
+					player_data.position.x * TILE_SIZE + TILE_SIZE / 2,
+					player_data.position.y * TILE_SIZE + TILE_SIZE / 2
+				)
 
 	for player_id in current_client_players:
 		print("Removing player: ", player_id)
