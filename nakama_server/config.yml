@@ -1,0 +1,19 @@
+name: nakama-node
+data_dir: "./data/"
+
+logger:
+  level: "INFO"
+  stdout: true
+  
+database:
+  address:
+    - "postgres:5432"
+  name: "nakama"
+  user: "nakama"
+  password: "nakama"
+
+socket:
+  server_key: "defaultkey"
+
+runtime:
+  js_entrypoint: "build/index.js"

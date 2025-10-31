@@ -1,0 +1,3 @@
+[submodule "nakama_source"]
+	path = nakama_source
+	url = ./nakama_source

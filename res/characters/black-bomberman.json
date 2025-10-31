@@ -1,0 +1,169 @@
+{
+    "name": "Black Bomberman",
+    "animations": {
+        "celebrate": {
+            "frames": [
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-01.png",
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-02.png",
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-03.png",
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-04.png",
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-05.png",
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-06.png",
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-07.png",
+                "res/characters/black-bomberman/celebrate/bbm-celebrate-08.png"
+            ],
+            "speed": 8
+        },
+        "cry": {
+            "frames": [
+                "res/characters/black-bomberman/cry/bbm-stood-cry-01.png",
+                "res/characters/black-bomberman/cry/bbm-stood-cry-02.png",
+                "res/characters/black-bomberman/cry/bbm-stood-cry-03.png"
+            ],
+            "speed": 8
+        },
+        "dance": {
+            "frames": [
+                "res/characters/black-bomberman/dance/bbm-dance-01.png",
+                "res/characters/black-bomberman/dance/bbm-dance-02.png",
+                "res/characters/black-bomberman/dance/bbm-dance-03.png",
+                "res/characters/black-bomberman/dance/bbm-dance-04.png",
+                "res/characters/black-bomberman/dance/bbm-dance-05.png",
+                "res/characters/black-bomberman/dance/bbm-dance-06.png",
+                "res/characters/black-bomberman/dance/bbm-dance-07.png"
+            ],
+            "speed": 8
+        },
+        "dizzy": {
+            "frames": [
+                "res/characters/black-bomberman/dizzy/bbm-stood-dizzy-01.png",
+                "res/characters/black-bomberman/dizzy/bbm-stood-dizzy-02.png",
+                "res/characters/black-bomberman/dizzy/bbm-stood-dizzy-03.png",
+                "res/characters/black-bomberman/dizzy/bbm-stood-dizzy-04.png"
+            ],
+            "speed": 8
+        },
+        "explode": {
+            "frames": [
+                "res/characters/black-bomberman/expplode/explode-01.png",
+                "res/characters/black-bomberman/expplode/explode-02.png",
+                "res/characters/black-bomberman/expplode/explode-03.png",
+                "res/characters/black-bomberman/expplode/explode-04.png",
+                "res/characters/black-bomberman/expplode/explode-05.png",
+                "res/characters/black-bomberman/expplode/explode-06.png",
+                "res/characters/black-bomberman/expplode/explode-07.png",
+                "res/characters/black-bomberman/expplode/explode-08.png",
+                "res/characters/black-bomberman/expplode/explode-09.png"
+            ],
+            "speed": 8
+        },
+        "fly": {
+            "frames": [
+                "res/characters/black-bomberman/fly/bbm-fly-down-01.png",
+                "res/characters/black-bomberman/fly/bbm-fly-left-01.png",
+                "res/characters/black-bomberman/fly/bbm-fly-right-01.png",
+                "res/characters/black-bomberman/fly/bbm-fly-up-01.png"
+            ],
+            "speed": 8
+        },
+        "head": {
+            "frames": [
+                "res/characters/black-bomberman/head/frame26.png",
+                "res/characters/black-bomberman/head/frame28.png",
+                "res/characters/black-bomberman/head/frame29.png",
+                "res/characters/black-bomberman/head/frame30.png",
+                "res/characters/black-bomberman/head/frame31.png",
+                "res/characters/black-bomberman/head/frame32.png"
+            ],
+            "speed": 8
+        },
+        "power_glove": {
+            "frames": [
+                "res/characters/black-bomberman/power_glove/bbm-stood-pglove-down-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pglove-left-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pglove-right-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pglove-up-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-down-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-down-02.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-left-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-left-02.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-right-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-right-02.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-up-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-stood-pkup-pglove-up-02.png",
+                "res/characters/black-bomberman/power_glove/bbm-walk-pglove-down-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-walk-pglove-down-02.png",
+                "res/characters/black-bomberman/power_glove/bbm-walk-pglove-left-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-walk-pglove-left-02.png",
+                "res/characters/black-bomberman/power_glove/bbm-walk-pglove-right-01.png",
+                "res.
+/characters/black-bomberman/power_glove/bbm-walk-pglove-right-02.png",
+                "res/characters/black-bomberman/power_glove/bbm-walk-pglove-up-01.png",
+                "res/characters/black-bomberman/power_glove/bbm-walk-pglove-up-02.png",
+                "res/characters/black-bomberman/power_glove/stood-pglove-down-01.png",
+                "res/characters/black-bomberman/power_glove/stood-pglove-left-01.png",
+                "res/characters/black-bomberman/power_glove/stood-pglove-right-01.png",
+                "res/characters/black-bomberman/power_glove/stood-pglove-up-01.png",
+                "res/characters/black-bomberman/power_glove/stood-pkup-pglove-down-02.png",
+                "res/characters/black-bomberman/power_glove/stood-pkup-pglove-left-01.png",
+                "res/characters/black-bomberman/power_glove/stood-pkup-pglove-left-02.png",
+                "res/characters/black-bomberman/power_glove/stood-pkup-pglove-right-01.png",
+                "res/characters/black-bomberman/power_glove/stood-pkup-pglove-right-02.png",
+                "res/characters/black-bomberman/power_glove/stood-pkup-pglove-up-01.png",
+                "res/characters/black-bomberman/power_glove/stood-pkup-pglove-up-02.png"
+            ],
+            "speed": 8
+        },
+        "ride": {
+            "frames": [
+                "res://characters/black-bomberman/ride/bbm-ride-cry-01.png",
+                "res://characters/black-bomberman/ride/bbm-ride-down-01.png",
+                "res://characters/black-bomberman/ride/bbm-ride-left-01.png",
+                "res://characters/black-bomberman/ride/bbm-ride-right-01.png",
+                "res://characters/black-bomberman/ride/bbm-ride-up-01.png",
+                "res://characters/black-bomberman/ride/bbm-ride-win-01.png"
+            ],
+            "speed": 8
+        },
+        "scared": {
+            "frames": [
+                "res://characters/black-bomberman/scared/bbm-stood-scared-01.png",
+                "res://characters/black-bomberman/scared/bbm-stood-scared-02.png",
+                "res://characters/black-bomberman/scared/bbm-stood-scared-03.png"
+            ],
+            "speed": 8
+        },
+        "walk_down": {
+            "frames": [
+                "res://characters/black-bomberman/walk_down/walk-down-01.png",
+                "res://characters/black-bomberman/walk_down/walk-down-02.png",
+                "res://characters/black-bomberman/walk_down/walk-down-03.png"
+            ],
+            "speed": 8
+        },
+        "walk_left": {
+            "frames": [
+                "res://characters/black-bomberman/walk_left/walk-left-01.png",
+                "res://characters/black-bomberman/walk_left/walk-left-02.png",
+                "res://characters/black-bombermangit/walk_left/walk-left-03.png"
+            ],
+            "speed": 8
+        },
+        "walk_right": {
+            "frames": [
+                "res://characters/black-bomberman/walk_right/walk-right-01.png",
+                "res://characters/black-bomberman/walk_right/walk-right-02.png",
+                "res://characters/black-bomberman/walk_right/walk-right-03.png"
+            ],
+            "speed": 8
+        },
+        "walk_up": {
+            "frames": [
+                "res://characters/black-bomberman/walk_up/walk-up-01.png",
+                "res://characters/black-bomberman/walk_up/walk-up-02.png",
+                "res://characters/black-bomberman/walk_up/walk-up-03.png"
+            ],
+            "speed": 8
+        }
+    }
+}

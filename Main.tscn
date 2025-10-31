@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6d14bc197beb8c20c991e8a6eb40549fae7d13d4f2f6575f036ecc9a1c536dd/Main.tscn"]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_j2x3d"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_j2x3d")
+
+[node name="ConnectButton" type="Button" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 120.0
+offset_bottom = 50.0
+text = "Connect Nakama"
+
+[node name="MatchmakeButton" type="Button" parent="."]
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 120.0
+offset_bottom = 90.0
+text = "Start Matchmaking"
+
+[node name="StatusLabel" type="Label" parent="."]
+offset_left = 20.0
+offset_top = 100.0
+offset_right = 500.0
+offset_bottom = 130.0
+text = "Status: Disconnected"
+
+[connection signal="pressed" from="ConnectButton" to="." method="_on_ConnectButton_pressed"]
+[connection signal="pressed" from="MatchmakeButton" to="." method="_on_MatchmakeButton_pressed"]

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# A simple script to control the Nakama Docker environment for the Bomberman project.
+
+# Exit immediately if a command exits with a non-zero status.
+set -e
+
+# Ensure we are running relative to the project root
+cd "$(dirname "$0")"
+
+COMMAND=$1
+
+# Check if the nakama_server directory exists
+if [ ! -d "nakama_server" ]; then
+  echo "Error: nakama_server directory not found." >&2
+  echo "Please run this script from the project root directory." >&2
+  exit 1
+fi
+
+case $COMMAND in
+  start)
+    echo "Starting Nakama server..."
+    (cd nakama_server && docker compose up -d)
+    echo "Server started."
+    ;;
+  stop)
+    echo "Stopping Nakama server..."
+    (cd nakama_server && docker compose down)
+    echo "Server stopped."
+    ;;
+  restart)
+    echo "Restarting Nakama server..."
+    (cd nakama_server && docker compose down && docker compose up -d)
+    echo "Server restarted."
+    ;;
+  logs)
+    echo "Tailing Nakama server logs... (Press Ctrl+C to exit)"
+    (cd nakama_server && docker compose logs -f nakama)
+    ;;
+  build)
+    echo "Building server modules..."
+    (cd nakama_server/modules && npm run build)
+    echo "Build complete."
+    ;;
+  build-restart)
+    echo "Building modules and restarting server..."
+    (cd nakama_server/modules && npm run build)
+    echo "Build complete. Restarting server..."
+    (cd nakama_server && docker compose down && docker compose up -d)
+    echo "Server restarted."
+    ;;
+  *)
+    echo "Bomberman Nakama Control"
+    echo "Usage: $0 {start|stop|restart|logs|build|build-restart}"
+    exit 1
+    ;;
+esac
+
+exit 0

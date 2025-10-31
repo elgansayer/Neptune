@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3w0w7xqy4x0y"]
+
+[ext_resource type="Script" path="res://items/PowerUp.gd" id="1_powerup_script"]
+[ext_resource type="Texture2D" uid="uid://c8k1x0w0j1x1y" path="res://icon.svg" id="2_powerup_texture"]
+
+[node name="PowerUp" type="Area2D"]
+script = ExtResource("1_powerup_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_powerup_texture")
