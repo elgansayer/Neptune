@@ -1,0 +1,135 @@
+[gd_scene load_steps=2 format=3 uid="uid://d4k3g8oyg1j1g"]
+
+[ext_resource type="Script" path="res://scenes/ui/CreateMatchMenu.gd" id="1_fghij"]
+
+[node name="CreateMatchMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fghij")
+
+[node name="SettingsContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ModeContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="ModeLabel" type="Label" parent="SettingsContainer/ModeContainer"]
+layout_mode = 2
+text = "Mode"
+
+[node name="ModeOptionButton" type="OptionButton" parent="SettingsContainer/ModeContainer"]
+layout_mode = 2
+item_count = 4
+text = "Standard Battle"
+selected = 0
+popup/item_0/text = "Standard Battle"
+popup/item_0/id = 0
+popup/item_1/text = "Team Battle"
+popup/item_1/id = 1
+popup/item_2/text = "Score Attack/Tally"
+popup/item_2/id = 2
+popup/item_3/text = "Special Mode"
+popup/item_3/id = 3
+
+[node name="MapContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="MapLabel" type="Label" parent="SettingsContainer/MapContainer"]
+layout_mode = 2
+text = "Map/Stage Select"
+
+[node name="MapOptionButton" type="OptionButton" parent="SettingsContainer/MapContainer"]
+layout_mode = 2
+
+[node name="MaxPlayersContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="MaxPlayersLabel" type="Label" parent="SettingsContainer/MaxPlayersContainer"]
+layout_mode = 2
+text = "Max Players"
+
+[node name="MaxPlayersSpinBox" type="SpinBox" parent="SettingsContainer/MaxPlayersContainer"]
+layout_mode = 2
+min_value = 2.0
+max_value = 8.0
+value = 4.0
+
+[node name="TimeLimitContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="TimeLimitLabel" type="Label" parent="SettingsContainer/TimeLimitContainer"]
+layout_mode = 2
+text = "Time Limit"
+
+[node name="TimeLimitSpinBox" type="SpinBox" parent="SettingsContainer/TimeLimitContainer"]
+layout_mode = 2
+max_value = 300.0
+value = 180.0
+
+[node name="WinConditionContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="WinConditionLabel" type="Label" parent="SettingsContainer/WinConditionContainer"]
+layout_mode = 2
+text = "Win Condition"
+
+[node name="WinConditionOptionButton" type="OptionButton" parent="SettingsContainer/WinConditionContainer"]
+layout_mode = 2
+item_count = 2
+text = "Lives"
+selected = 0
+popup/item_0/text = "Lives"
+popup/item_0/id = 0
+popup/item_1/text = "Rounds"
+popup/item_1/id = 1
+
+[node name="PowerUpSettingsContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="PowerUpSettingsLabel" type="Label" parent="SettingsContainer/PowerUpSettingsContainer"]
+layout_mode = 2
+text = "Power-up Settings"
+
+[node name="PowerUpSettingsButton" type="Button" parent="SettingsContainer/PowerUpSettingsContainer"]
+layout_mode = 2
+text = "Edit"
+
+[node name="HandicapContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="HandicapLabel" type="Label" parent="SettingsContainer/HandicapContainer"]
+layout_mode = 2
+text = "Handicap"
+
+[node name="HandicapButton" type="Button" parent="SettingsContainer/HandicapContainer"]
+layout_mode = 2
+text = "Edit"
+
+[node name="AIDifficultyContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="AIDifficultyLabel" type="Label" parent="SettingsContainer/AIDifficultyContainer"]
+layout_mode = 2
+text = "AI Difficulty"
+
+[node name="AIDifficultyOptionButton" type="OptionButton" parent="SettingsContainer/AIDifficultyContainer"]
+layout_mode = 2
+item_count = 3
+text = "Easy"
+selected = 0
+popup/item_0/text = "Easy"
+popup/item_0/id = 0
+popup/item_1/text = "Medium"
+popup/item_1/id = 1
+popup/item_2/text = "Hard"
+popup/item_2/id = 2
+
+[node name="BackButton" type="Button" parent="SettingsContainer"]
+layout_mode = 2
+text = "Back"

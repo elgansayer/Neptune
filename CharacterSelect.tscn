@@ -1,0 +1,199 @@
+[gd_scene load_steps=10 format=3 uid="uid://dqi7p1c1f2c3b"]
+
+[ext_resource type="Script" path="res://scripts/CharacterSelect.gd" id="1_abcde"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/character_select_bg.png" id="2_bg"]
+[ext_resource type="StyleBox" path="res://themes/panel_border_style.tres" id="3_panel_style"]
+[ext_resource type="FontFile" path="res://fonts/bomberman_font.ttf" id="4_font"]
+[ext_resource type="Texture2D" path="res://characters/portraits/bomber_blue_idle.png" id="5_portrait_idle"]
+[ext_resource type="Texture2D" path="res://characters/portraits/bomber_blue_hover.png" id="6_portrait_hover"]
+[ext_resource type="Texture2D" path="res://characters/portraits/bomber_blue_pressed.png" id="7_portrait_pressed"]
+[ext_resource type="Texture2D" path="res://characters/portraits/bomber_blue_selected.png" id="8_portrait_selected"]
+[ext_resource type="SpriteFrames" path="res://characters/blue_bomber.tres" id="9_sprite_frames"]
+
+[node name="CharacterSelect" type="CanvasLayer"]
+script = ExtResource("1_abcde")
+
+[node name="RootControl" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundTexture" type="TextureRect" parent="RootControl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="MainPanelContainer" type="PanelContainer" parent="RootControl"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -800.0
+offset_top = -450.0
+offset_right = 800.0
+offset_bottom = 450.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = ExtResource("3_panel_style")
+
+[node name="MainHBox" type="HBoxContainer" parent="RootControl/MainPanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 40
+
+[node name="RosterPanel" type="PanelContainer" parent="RootControl/MainPanelContainer/MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
+theme_override_styles/panel = ExtResource("3_panel_style")
+
+[node name="RosterVBox" type="VBoxContainer" parent="RootControl/MainPanelContainer/MainHBox/RosterPanel"]
+layout_mode = 2
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 20
+
+[node name="RosterTitle" type="Label" parent="RootControl/MainPanelContainer/MainHBox/RosterPanel/RosterVBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 48
+text = "SELECT BOMBER"
+horizontal_alignment = 1
+
+[node name="RosterScrollContainer" type="ScrollContainer" parent="RootControl/MainPanelContainer/MainHBox/RosterPanel/RosterVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="CharacterGrid" type="GridContainer" parent="RootControl/MainPanelContainer/MainHBox/RosterPanel/RosterVBox/RosterScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 15
+theme_override_constants/v_separation = 15
+columns = 4
+
+[node name="DetailPanel" type="PanelContainer" parent="RootControl/MainPanelContainer/MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.6
+theme_override_styles/panel = ExtResource("3_panel_style")
+
+[node name="DetailVBox" type="VBoxContainer" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel"]
+layout_mode = 2
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 25
+
+[node name="DetailTitle" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 48
+text = "YOUR BOMBER"
+horizontal_alignment = 1
+
+[node name="PreviewAndNameHBox" type="HBoxContainer" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="CharacterPreviewContainer" type="PanelContainer" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/PreviewAndNameHBox"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="CharacterPreviewSprite" type="AnimatedSprite2D" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/PreviewAndNameHBox/CharacterPreviewContainer"]
+unique_name_in_owner = true
+position = Vector2(128, 128)
+sprite_frames = ExtResource("9_sprite_frames")
+animation = &"Idle"
+
+[node name="NicknameVBox" type="VBoxContainer" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/PreviewAndNameHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="NicknameLabel" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/PreviewAndNameHBox/NicknameVBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+text = "IN-GAME NICKNAME"
+
+[node name="NicknameLineEdit" type="LineEdit" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/PreviewAndNameHBox/NicknameVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Enter your name"
+max_length = 16
+
+[node name="ColorOptionsVBox" type="VBoxContainer" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="ColorLabel" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/ColorOptionsVBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+text = "PRIMARY COLOR"
+
+[node name="PrimaryColorPicker" type="ColorPickerButton" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/ColorOptionsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Choose Color"
+
+[node name="LorePanelContainer" type="PanelContainer" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = ExtResource("3_panel_style")
+
+[node name="LoreVBox" type="VBoxContainer" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/LorePanelContainer"]
+layout_mode = 2
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 10
+
+[node name="CharacterNameLabel" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/LorePanelContainer/LoreVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+theme_override_font_sizes/font_size = 36
+text = "Bomber Name"
+horizontal_alignment = 1
+
+[node name="BioTitle" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/LorePanelContainer/LoreVBox"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_font")
+text = "BOMBER BIO"
+
+[node name="CharacterBioText" type="RichTextLabel" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/LorePanelContainer/LoreVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "A powerful warrior known for their strategic bomb placement..."
+fit_content = true
+
+[node name="BackButton" type="Button" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "BACK"

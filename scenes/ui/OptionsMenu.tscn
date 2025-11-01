@@ -1,0 +1,158 @@
+[gd_scene load_steps=2 format=3 uid="uid://b5k4iaoyg1j1g"]
+
+[ext_resource type="Script" path="res://scenes/ui/OptionsMenu.gd" id="1_ijklm"]
+
+[node name="OptionsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ijklm")
+
+[node name="SettingsContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ControllerContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="ControllerLabel" type="Label" parent="SettingsContainer/ControllerContainer"]
+layout_mode = 2
+text = "Controller Settings"
+
+[node name="ControllerButton" type="Button" parent="SettingsContainer/ControllerContainer"]
+layout_mode = 2
+text = "Edit"
+
+[node name="SoundContainer" type="VBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="MusicContainer" type="HBoxContainer" parent="SettingsContainer/SoundContainer"]
+layout_mode = 2
+
+[node name="MusicLabel" type="Label" parent="SettingsContainer/SoundContainer/MusicContainer"]
+layout_mode = 2
+text = "Music"
+
+[node name="MusicSlider" type="HSlider" parent="SettingsContainer/SoundContainer/MusicContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SFXContainer" type="HBoxContainer" parent="SettingsContainer/SoundContainer"]
+layout_mode = 2
+
+[node name="SFXLabel" type="Label" parent="SettingsContainer/SoundContainer/SFXContainer"]
+layout_mode = 2
+text = "Sound Effects"
+
+[node name="SFXSlider" type="HSlider" parent="SettingsContainer/SoundContainer/SFXContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VoiceContainer" type="HBoxContainer" parent="SettingsContainer/SoundContainer"]
+layout_mode = 2
+
+[node name="VoiceLabel" type="Label" parent="SettingsContainer/SoundContainer/VoiceContainer"]
+layout_mode = 2
+text = "Voice"
+
+[node name="VoiceSlider" type="HSlider" parent="SettingsContainer/SoundContainer/VoiceContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DisplayContainer" type="VBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="ResolutionContainer" type="HBoxContainer" parent="SettingsContainer/DisplayContainer"]
+layout_mode = 2
+
+[node name="ResolutionLabel" type="Label" parent="SettingsContainer/DisplayContainer/ResolutionContainer"]
+layout_mode = 2
+text = "Resolution"
+
+[node name="ResolutionOptionButton" type="OptionButton" parent="SettingsContainer/DisplayContainer/ResolutionContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FullScreenContainer" type="HBoxContainer" parent="SettingsContainer/DisplayContainer"]
+layout_mode = 2
+
+[node name="FullScreenLabel" type="Label" parent="SettingsContainer/DisplayContainer/FullScreenContainer"]
+layout_mode = 2
+text = "Full Screen"
+
+[node name="FullScreenCheckBox" type="CheckBox" parent="SettingsContainer/DisplayContainer/FullScreenContainer"]
+layout_mode = 2
+
+[node name="VSyncContainer" type="HBoxContainer" parent="SettingsContainer/DisplayContainer"]
+layout_mode = 2
+
+[node name="VSyncLabel" type="Label" parent="SettingsContainer/DisplayContainer/VSyncContainer"]
+layout_mode = 2
+text = "V-Sync"
+
+[node name="VSyncCheckBox" type="CheckBox" parent="SettingsContainer/DisplayContainer/VSyncContainer"]
+layout_mode = 2
+
+[node name="BrightnessContainer" type="HBoxContainer" parent="SettingsContainer/DisplayContainer"]
+layout_mode = 2
+
+[node name="BrightnessLabel" type="Label" parent="SettingsContainer/DisplayContainer/BrightnessContainer"]
+layout_mode = 2
+text = "Brightness"
+
+[node name="BrightnessSlider" type="HSlider" parent="SettingsContainer/DisplayContainer/BrightnessContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LanguageContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="LanguageLabel" type="Label" parent="SettingsContainer/LanguageContainer"]
+layout_mode = 2
+text = "Language"
+
+[node name="LanguageOptionButton" type="OptionButton" parent="SettingsContainer/LanguageContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="NetworkContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="NetworkLabel" type="Label" parent="SettingsContainer/NetworkContainer"]
+layout_mode = 2
+text = "Network Settings"
+
+[node name="NetworkButton" type="Button" parent="SettingsContainer/NetworkContainer"]
+layout_mode = 2
+text = "View"
+
+[node name="SaveLoadContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+
+[node name="SaveLoadLabel" type="Label" parent="SettingsContainer/SaveLoadContainer"]
+layout_mode = 2
+text = "Save/Load"
+
+[node name="SaveLoadButton" type="Button" parent="SettingsContainer/SaveLoadContainer"]
+layout_mode = 2
+text = "Open"
+
+[node name="ResetContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ResetButton" type="Button" parent="SettingsContainer/ResetContainer"]
+layout_mode = 2
+text = "Reset to Defaults"
+
+[node name="BackContainer" type="HBoxContainer" parent="SettingsContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="BackButton" type="Button" parent="SettingsContainer/BackContainer"]
+layout_mode = 2
+text = "Back"
