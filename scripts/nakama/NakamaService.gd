@@ -35,16 +35,25 @@ func authenticate_device(device_id: String, create: bool = true):
 	# Use device authentication for simplicity, but easily swapped for email/other.
 	print("Attempting to authenticate...")
 	# authenticate_device_async signature: (device_id: String, username: String = "", create: bool = true, vars: Dictionary = {})
-	var auth_result = await client.authenticate_device_async(device_id, "", create)
+	var attempts := 0
+	var last_exception: Variant = null
+	while attempts < 3:
+		attempts += 1
+		var auth_result = await client.authenticate_device_async(device_id, "", create)
+		if not auth_result.is_exception():
+			session = auth_result
+			print("Authentication successful! User ID: " + session.user_id)
+			authenticated.emit(session, session.created)
+			await connect_socket()
+			return
+		else:
+			last_exception = auth_result.exception
+			push_warning("Authentication attempt %d failed: %s" % [attempts, str(last_exception)])
+			# Small exponential backoff before retrying
+			await get_tree().create_timer(0.5 * pow(2.0, attempts - 1)).timeout
 	
-	if auth_result.is_exception():
-		push_error("Authentication failed: " + str(auth_result.exception))
-		return
-		
-	session = auth_result
-	print("Authentication successful! User ID: " + session.user_id)
-	authenticated.emit(session, session.created)
-	await connect_socket()
+	push_error("Authentication failed after retries: " + str(last_exception))
+	return
 
 # --- Real-Time Socket Connection ---
 
@@ -133,10 +142,8 @@ func send_player_input(input_data: Dictionary):
 
 # This is where all network updates are received. OpCode 2 will be for State Sync.
 func _on_match_data_received(match_state: NakamaRTAPI.MatchData):
-	print("!!! RAW MATCH DATA RECEIVED !!! OpCode: ", match_state.op_code, " Data length: ", len(match_state.data))
 	var data_string = match_state.data
 	var parsed_data = JSON.parse_string(data_string)
-	print("Parsed data keys: ", parsed_data.keys() if parsed_data else "PARSE FAILED")
 
 	if match_state.op_code == 2: # State Sync OpCode
 		# This will be processed by the GameManager to update ALL entities.
@@ -145,7 +152,7 @@ func _on_match_data_received(match_state: NakamaRTAPI.MatchData):
 		# This will be handled by the GameManager for rollback/prediction
 		pass # Not needed for initial setup, but noted for future development.
 	else:
-		print("Received unknown OpCode: ", match_state.op_code)
+		push_warning("Received unknown OpCode: " + str(match_state.op_code))
 
 # --- Presence Handling ---
 func _on_match_presence(match_presence_event: NakamaRTAPI.MatchPresenceEvent):
