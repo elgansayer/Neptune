@@ -144,8 +144,8 @@ func update_explosions(explosions_data: Array):
 		explosions_container.add_child(explosion_node)
 		explosion_nodes[cell_key] = explosion_node
 
-func _input(_event):
-	# Send input to server
+func _physics_process(_delta):
+	# Continuously send input state to server
 	var input_x = 0.0
 	var input_y = 0.0
 	var place_bomb = false
@@ -163,13 +163,12 @@ func _input(_event):
 	if Input.is_action_just_pressed("ui_accept"):
 		place_bomb = true
 	
-	# Send to server via ServerMain RPC
-	if input_x != 0 or input_y != 0 or place_bomb:
-		get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
-			"input_x": input_x,
-			"input_y": input_y,
-			"place_bomb": place_bomb
-		})
+	# Always send input state to server (including zero input when keys released)
+	get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
+		"input_x": input_x,
+		"input_y": input_y,
+		"place_bomb": place_bomb
+	})
 
 func render_map(map_data):
 	# Draw background for the play area

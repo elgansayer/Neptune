@@ -13,6 +13,7 @@ var players := {}  # peer_id -> ServerPlayer
 var bombs := {}  # bomb_id -> ServerBomb
 var explosions := []  # Array of {cells: Array, time: float} for visual effects
 var game_map := []  # 2D array representing the map
+var map_tiles := {}  # Dictionary of tile_key -> StaticBody2D for collision
 var next_bomb_id := 0
 
 # State sync
@@ -42,6 +43,39 @@ func _ready():
 					game_map[y][x] = 2  # Destructible block
 				else:
 					game_map[y][x] = 0  # Empty
+	
+	# Create physics collision bodies for walls and blocks
+	create_map_collision()
+
+func create_map_collision():
+	"""Create StaticBody2D collision shapes for all walls and destructible blocks"""
+	for y in range(game_map.size()):
+		for x in range(game_map[y].size()):
+			var tile_type = game_map[y][x]
+			
+			if tile_type == 1 or tile_type == 2:  # Wall or destructible block
+				var tile_body = StaticBody2D.new()
+				tile_body.name = "Tile_%d_%d" % [x, y]
+				
+				# Create collision shape
+				var collision_shape = CollisionShape2D.new()
+				var shape = RectangleShape2D.new()
+				shape.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+				collision_shape.shape = shape
+				tile_body.add_child(collision_shape)
+				
+				# Position at tile center
+				tile_body.position = Vector2(
+					x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+					y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+				)
+				
+				add_child(tile_body)
+				
+				# Store reference for destructible blocks (so we can remove them)
+				if tile_type == 2:
+					var tile_key = "%d,%d" % [x, y]
+					map_tiles[tile_key] = tile_body
 
 func _physics_process(delta):
 	last_sync_time += delta
@@ -158,7 +192,15 @@ func get_explosion_cells(center: Vector2i, explosion_range: int) -> Array:
 			
 			# Destructible block stops explosion but gets destroyed
 			if game_map[cell.y][cell.x] == 2:
-				game_map[cell.y][cell.x] = 0  # Clear the block
+				game_map[cell.y][cell.x] = 0  # Clear the block from map data
+				
+				# Remove the physical collision body
+				var tile_key = "%d,%d" % [cell.x, cell.y]
+				if map_tiles.has(tile_key):
+					var tile_body = map_tiles[tile_key]
+					tile_body.queue_free()
+					map_tiles.erase(tile_key)
+				
 				# TODO: Maybe spawn power-up
 				break
 	

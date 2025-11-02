@@ -24,23 +24,23 @@ ERROR: Failed to start server: 20
    at: push_error (core/variant/variant_utility.cpp:1024)
    GDScript backtrace (most recent call first):
        [0] _ready (res://server/main_server.gd:39)
-[Server] Peer connected: 974601590
+[Server] Peer connected: 1827909926
 [Server] *** REGISTER_USER RPC RECEIVED ***
-[Server] Registration attempt from peer 974601590: Player_6100
-[LocalBackend] Registered user: Player_6100
-[Server] Registration successful: Player_6100
+[Server] Registration attempt from peer 1827909926: Player_4090
+[LocalBackend] Registered user: Player_4090
+[Server] Registration successful: Player_4090
 [Server] *** AUTHENTICATE RPC RECEIVED ***
-[Server] Authentication attempt from peer 974601590: Player_6100
+[Server] Authentication attempt from peer 1827909926: Player_4090
 [Server] Is server: true
-[Server] Authentication successful: Player_6100
-[Lobby] Player added: Player_6100 (974601590)
-[Game] Player joined: Player_6100 at (96.0, 96.0)
-[Server] Started game game_2623 for player Player_6100
+[Server] Authentication successful: Player_4090
+[Lobby] Player added: Player_4090 (1827909926)
+[Game] Player joined: Player_4090 at (96.0, 96.0)
+[Server] Started game game_2581 for player Player_4090
 WARNING: Sending 2140 bytes unreliably which is above the MTU (1392), this will result in higher packet loss
      at: put_packet (modules/enet/enet_multiplayer_peer.cpp:363)
      GDScript backtrace (most recent call first):
-         [0] sync_state_to_clients (res://server/game_instance.gd:193)
-         [1] _physics_process (res://server/game_instance.gd:52)
-[Server] Peer disconnected: 974601590
-[Game] Player left: 974601590
-[Lobby] Player removed: Player_6100
+         [0] sync_state_to_clients (res://server/game_instance.gd:235)
+         [1] _physics_process (res://server/game_instance.gd:86)
+[Server] Peer disconnected: 1827909926
+[Game] Player left: 1827909926
+[Lobby] Player removed: Player_4090

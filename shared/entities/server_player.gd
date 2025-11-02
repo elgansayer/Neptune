@@ -36,13 +36,11 @@ func _physics_process(_delta):
 	# Get strict 4-way input
 	var move_dir = get_4way_input()
 	
-	# Get current tile center for alignment
-	var tile_center = get_current_tile_center()
-	
-	# Calculate movement velocity
+	# Calculate movement velocity - pure cardinal movement, no nudging
 	if move_dir.length() > Constants.INPUT_DEADZONE:
-		# Moving - apply Bomberman-style movement with cornering assist
-		velocity = apply_cornering_assist(move_dir, tile_center)
+		# Moving - apply speed in the input direction
+		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
+		velocity = move_dir * speed
 		
 		# Update facing direction
 		if abs(move_dir.y) > abs(move_dir.x):
@@ -50,10 +48,10 @@ func _physics_process(_delta):
 		else:
 			facing_direction = "LEFT" if move_dir.x < 0 else "RIGHT"
 	else:
-		# Stopped - gradually snap to tile center
-		velocity = snap_to_center(tile_center)
+		# Stopped - player stays exactly where they are
+		velocity = Vector2.ZERO
 	
-	# Move with Godot's physics
+	# Move with Godot's physics - natural wall sliding when off-center
 	move_and_slide()
 	
 	# Clear collision exceptions when player is no longer overlapping bomb
