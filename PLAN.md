@@ -1,121 +1,244 @@
 # Project Plan: Competitive Bomberman
 
-**Core Architecture:**
-*   **Server:** Nakama (TypeScript) will run the entire game simulation. It will be the single source of truth for all game logic, including player movement, bomb physics, and win/loss conditions. This is the **authoritative** part.
-*   **Client:** Godot will be responsible for rendering the game state received from the server, capturing player input, and using client-side prediction to make the game feel responsive.
+**Updated: November 2025**
+
+## 🏗️ Current Architecture (v2.0)
+
+### Core Design Philosophy
+- **Server:** Pure Godot headless server running authoritative game logic
+- **Client:** Godot client for rendering and input
+- **Backend:** Abstract interface ready for PlayFab/Nakama integration
+- **Physics:** Native Godot physics engine (CharacterBody2D, StaticBody2D)
+
+### Why This Architecture?
+
+**Previous Attempt (v1.0):**
+- Used Nakama TypeScript server with manual collision detection
+- Required implementing physics from scratch in TypeScript
+- Complex physics (throwing bombs, bouncing) would be very difficult
+
+**Current Approach (v2.0):**
+- Pure Godot server with built-in physics engine
+- Can use `move_and_slide()`, collision exceptions, `apply_impulse()` natively
+- Easy to add throwing, kicking, bouncing mechanics later
+- PlayFab/Nakama used only for meta-game (accounts, matchmaking, leaderboards)
+
+### Project Structure
+```
+bomberman/
+├── client/              # Client-only code
+│   ├── ui/              # Menus, HUD
+│   ├── prediction/      # Client prediction (future)
+│   └── main_client.gd   # Client entry point
+├── server/              # Server-only code  
+│   ├── auth/            # Authentication (local for now)
+│   ├── lobby/           # Lobby/matchmaking
+│   ├── game_instance.gd # Game logic manager
+│   └── main_server.gd   # Server entry point
+└── shared/              # Code used by both
+    ├── entities/        # Player, Bomb, Powerup scenes
+    ├── game_logic/      # Core game rules
+    ├── maps/            # Map data
+    ├── constants.gd     # Game constants
+    └── backend_service.gd  # Abstract backend interface
+```
 
 ---
 
-### Phase 1: Authoritative Server Logic (Nakama)
+## ✅ Completed Phases
 
-The goal of this phase is to create a complete, headless version of the game that runs on the server.
+### Phase 1: Foundation ✅
+- [x] Server-authoritative Godot architecture
+- [x] ENet networking (client-server)
+- [x] RPC-based input handling
+- [x] Abstract backend interface for PlayFab migration
+- [x] Temporary local authentication (will be replaced)
 
-1.  **[x] Setup Nakama TypeScript Project:**
-    *   Initialize a TypeScript project within the `nakama_server/modules` directory. This is where all our custom game logic will live.
-
-2.  **[x] Define the Game State & Loop:**
-    *   Create the main match handler script in TypeScript.
-    *   Define the core `GameState` object (player positions, bomb states, grid data).
-    *   Implement a fixed-tick-rate game loop (`match_loop`). This loop will advance the game simulation, process inputs, and broadcast the state to clients, ensuring consistent gameplay.
-
-3.  **[x] Implement Core Mechanics (Server-Side):**
-    *   **Player Movement:** Process movement inputs from clients to update player positions on the grid.
-    *   **Bomb Placement:** Allow players to place bombs. The server will manage bomb timers.
-    *   **Explosion Logic:** When a bomb's timer expires, the server calculates the explosion path, which players are hit, and which blocks are destroyed.
-
----
-
-### Phase 2: Godot Client & Network Prediction
-
-This phase focuses on making the Godot client a responsive window into the server's simulation.
-
-1.  **[x] GameManager & State Sync:**
-    *   Create a `GameManager.gd` script.
-    *   It will listen for game state updates from the Nakama server (OpCode 2).
-    *   When a new state is received, the `GameManager` will update all visual elements in the scene (players, bombs, walls) to match the server's authoritative state.
-
-2.  **[x] Client-Side Prediction:**
-    *   To make the game feel instant, when you press a movement key, the client will *immediately* move your player sprite. This is a "prediction".
-    *   Simultaneously, the input is sent to the server.
-
-3.  **[x] Server Reconciliation:**
-    *   When the next game state update arrives from the server, it contains the *true* position of your player.
-    *   The client will compare its predicted position with the server's true position. If they don't match (e.g., you tried to walk through a wall that you didn't know was there), the client will smoothly correct your player's position to what the server says. This prevents cheating and keeps all players in sync.
+### Phase 2: Core Game Mechanics ✅
+- [x] Player movement with `CharacterBody2D` and `move_and_slide()`
+- [x] Bomb placement with `StaticBody2D`
+- [x] Collision exception system (walk out of bombs)
+- [x] Bomb explosions with multi-directional propagation
+- [x] Player death on explosion hit
+- [x] Server state synchronization (20Hz)
 
 ---
 
-### Phase 3: Gameplay Features & Moddability
+## 🚧 Current Phase: Polish & Multiplayer
 
-With the core network architecture in place, we can now easily add features.
+### Phase 3: Visual Polish & Multiple Players
 
-1.  [x] Power-ups: Add logic to the server to spawn power-ups and apply their effects. The client will simply render them based on the server's state.
-2.  [x] Map System: Design the `maps` folder to hold different tilemaps. The server will load a map at the start of a match and include it in the game state.
-3.  [x] Character System: The `characters` folder will hold different player scenes. The server will assign a character to a player, and the client will display the correct visual representation.
+### Phase 3: Visual Polish & Multiple Players
+
+1.  **[ ] Proper Sprites and Animations:**
+    *   Replace icon.svg placeholders with actual character sprites
+    *   Add walking animations (4 directions)
+    *   Add bomb sprite and animation
+    *   Add explosion effects and animations
+
+2.  **[ ] Map Rendering:**
+    *   Render the tile-based map (walls, destructible blocks)
+    *   Add background/floor tiles
+    *   Support multiple map themes
+
+3.  **[ ] Multiple Players in One Game:**
+    *   Support 2-10 players in a single game instance
+    *   Spawn players at different starting positions
+    *   Color-code players for easy identification
+    *   Show player names above sprites
+
+4.  **[ ] Lobby System:**
+    *   Create/join game rooms
+    *   Ready-up system
+    *   Room configuration (map selection, max players, game mode)
+    *   Kick/ban functionality for hosts
 
 ---
 
-### Phase 4: Sega Saturn Bomberman Features
+### Phase 4: Gameplay Features & Polish
 
-This phase focuses on implementing the rich gameplay elements from the Sega Saturn version of Bomberman.
+1.  **[ ] Client-Side Prediction:**
+    *   Predict local player movement for instant feedback
+    *   Server reconciliation when predictions are wrong
+    *   Smooth interpolation for other players
+
+2.  **[ ] Destructible Blocks:**
+    *   Spawn destructible blocks on map
+    *   Destroy blocks with explosions
+    *   Drop power-ups from destroyed blocks
+
+3.  **[ ] Power-ups:**
+    *   Bomb Up: Increase max bombs
+    *   Fire Up: Increase explosion range
+    *   Speed Up: Increase movement speed
+    *   Implement power-up collection and effects
+
+4.  **[ ] Game Modes:**
+    *   Free-for-all (last player standing)
+    *   Team battle
+    *   Timed matches
+    *   Score-based matches
+
+5.  **[ ] Win Conditions & Respawn:**
+    *   Detect when match ends
+    *   Display winner
+    *   Optional respawn system
+    *   Post-match statistics
+
+---
+
+### Phase 5: Advanced Features
+
+1.  **[ ] Special Bombs and Abilities:**
+    *   Bomb Kick: Kick bombs across the map
+    *   Power Gloves: Pick up and throw bombs
+    *   Remote Control: Detonate bombs manually
+    *   Bomb Pass: Walk through bombs
+    *   Wall Pass: Walk through soft blocks
+
+2.  **[ ] Advanced Bomb Types:**
+    *   Remote bombs
+    *   Power bombs (larger explosion)
+    *   Penetration bombs (go through walls)
+
+3.  **[ ] Map Hazards:**
+    *   Moving obstacles
+    *   Shrinking playfield
+    *   Environmental hazards
+
+---
+
+### Phase 6: Backend Integration
+
+1.  **[ ] PlayFab Integration:**
+    *   Replace LocalBackend with PlayFabBackend
+    *   Player authentication via PlayFab
+    *   Leaderboards
+    *   Player statistics tracking
+    *   Inventory system for cosmetics
+
+2.  **[ ] Matchmaking:**
+    *   Skill-based matchmaking
+    *   Quick play
+    *   Ranked mode
+    *   Custom games
+
+---
+
+### Phase 7: Sega Saturn Bomberman Features
+
+This phase focuses on implementing the rich gameplay elements from the Sega Saturn version.
 
 1.  **[ ] Expanded Multiplayer:**
-    *   Increase the maximum player count to 10.
-    *   Ensure the server and client can handle the increased number of players.
+    *   Support up to 10 players
+    *   Spectator mode
 
-2.  **[ ] Game Modes:**
-    *   **[ ] Story Mode:** Implement a single-player or cooperative campaign with multiple levels, objectives, and boss battles (e.g., Mad Bombers).
-    *   **[ ] Battle Mode:** The classic Bomberman multiplayer experience. This will be the primary focus.
-    *   **[ ] Master Mode:** A challenging single-player mode focused on completing levels as quickly as possible.
+2.  **[ ] Dinosaur Helpers (Tirras):**
+    *   Eggs spawn from destroyed blocks
+    *   Players can ride Tirras for extra abilities
+    *   Growth levels (baby, adolescent, adult)
 
-3.  **[ ] Items and Abilities:**
-    *   **[ ] Basic Power-ups:**
-        *   Bomb Up: Increase bomb capacity.
-        *   Fire Up: Increase explosion radius.
-        *   Speed Up: Increase movement speed.
-        *   Geta: Decrease movement speed.
-    *   **[ ] Special Abilities:**
-        *   Bomb Kick: Kick bombs across the map.
-        *   Power Gloves: Pick up and throw bombs.
-        *   Bomb Pass: Walk through bombs.
-        *   Wall Pass: Walk through soft blocks.
-    *   **[ ] Special Bombs:**
-        *   Remote Control: Detonate bombs manually.
-        *   Gum Bomb
-        *   Marble Bomb
-        *   Power Bomb
-        *   Penetration Bomb
-    *   **[ ] Defensive Items:**
-        *   Fire Suit: Temporary invulnerability to explosions.
-        *   Heart: Extra life/hit point.
-        *   1UP: Extra life.
-    *   **[ ] Global Items:**
-        *   Clock: Temporarily freezes enemies.
+3.  **[ ] Story Mode:**
+    *   Single-player campaign
+    *   Boss battles
+    *   Cooperative mode
 
-4.  **[ ] Dinosaur Helpers (Tirras):**
-    *   **[ ] Egg Spawning:** Implement logic for eggs to spawn from destroyed blocks.
-    *   **[ ] Tirra Mechanics:**
-        *   Hatch from eggs and allow players to ride them.
-        *   Provide an extra hit point.
-        *   Implement growth levels (baby, adolescent, adult).
-        *   Allow players to jump off.
-
-5.  **[ ] Bonus System:**
-    *   **[ ] Bonus Items:** Implement bonus items that grant points (e.g., Meat, Apples, Ice Cream).
-    *   **[ ] Special Bonuses:** Implement special bonuses, like invincibility from collecting Meat while on a Tirra.
-
-6.  **[ ] Interactive Stages:**
-    *   Implement stage elements that can be interacted with, such as the slot machine cacti.
-
-7.  **[ ] Online Play:**
-    *   Implement modern online multiplayer using Nakama's features, ensuring a robust and feature-complete experience for up to 10 players.
+4.  **[ ] Interactive Stages:**
+    *   Stage-specific mechanics (e.g., slot machines, moving platforms)
 
 ---
 
-### Phase 5: Power Bomberman Mod Support
+### Phase 8: Power Bomberman Mod Support
+
+### Phase 8: Power Bomberman Mod Support
 
 *   [ ] Support every mod from Power Bomberman (https://gamebanana.com/tuts/15194)
 *   [ ] Support their tools
 *   [ ] Be able to load their characters and maps
+
+---
+
+## 📚 Reference Material
+
+### SBomberman
+A previous client-authoritative peer-to-peer Bomberman implementation. Located at `/SBomberman/`.
+
+**Use for:**
+- Movement feel and game mechanics reference
+- Bomb placement patterns
+- Explosion logic ideas
+- Corner assistance/wall sliding
+
+**Don't copy:**
+- Networking architecture (peer-to-peer vs our client-server)
+- State management patterns
+- Trust model assumptions
+
+See `docs/SBOMBERMAN_REFERENCE.md` for detailed comparison.
+
+---
+
+## 🎯 Current Status
+
+### What Works ✅
+- Server-authoritative Godot physics
+- Player movement with collision
+- Bomb placement with collision exceptions
+- Bomb explosions with player death
+- Multiple game instances
+- Basic networking and state sync
+
+### What's Next 🚀
+1. Add proper sprites and animations
+2. Render the map visually
+3. Support multiple players in one game
+4. Add destructible blocks and power-ups
+5. Build lobby system
+
+### Future Integration 🔮
+- PlayFab for accounts, matchmaking, leaderboards
+- SQLite for local data persistence
+- Advanced physics (throwing/kicking bombs)
 
 ---
 

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://client_main"]
+
+[ext_resource type="Script" path="res://client/main_client.gd" id="1"]
+
+[node name="ClientMain" type="Node"]
+script = ExtResource("1")

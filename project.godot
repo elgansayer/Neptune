@@ -10,17 +10,16 @@ config_version=5
 
 [application]
 
-config/name="bomberman"
-run/main_scene="res://Main.tscn"
+config/name="Bomberman Client"
+run/main_scene="res://client/ui/login_screen.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
-config/run/main_scene="res://Main.tscn"
 
 [autoload]
 
-NakamaService="*res://scripts/nakama/NakamaService.gd"
-Nakama="*res://addons/com.heroiclabs.nakama/Nakama.gd"
-TestSingleton="*res://scripts/TestSingleton.gd"
+ClientMain="*res://client/main_client.gd"
+ServerMain="*res://server/main_server.gd"
+Constants="*res://shared/constants.gd"
 
 [dotnet]
 
