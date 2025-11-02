@@ -3,7 +3,7 @@ extends Node
 # === Game Constants ===
 const TILE_SIZE = 64
 const BASE_SPEED = 180.0
-const PLAYER_HALF_WIDTH = 28.0
+const PLAYER_HALF_WIDTH = 28.0  # 56x56 collision box
 
 # Movement
 const WALK_MULTIPLIER = 0.6

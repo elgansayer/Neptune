@@ -9,6 +9,7 @@ const Constants = preload("res://shared/constants.gd")
 var player_id: String = ""
 var username: String = ""
 var input_direction := Vector2.ZERO
+var current_movement_direction := Vector2.ZERO  # Actual movement direction
 var facing_direction := "DOWN"
 var place_bomb_requested := false
 var bombs_placed := 0
@@ -19,39 +20,56 @@ var is_dead := false
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
+# Constants for automatic cornering
+const TURN_ALIGNMENT_THRESHOLD = 20.0  # Distance from tile center to execute turn
+
 func _ready():
-	# Set up collision shape
+	# Set up collision shape - USE CIRCLE for natural wall sliding!
 	var collision_shape = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(Constants.PLAYER_HALF_WIDTH * 2, Constants.PLAYER_HALF_WIDTH * 2)
+	var shape = CircleShape2D.new()
+	shape.radius = Constants.PLAYER_HALF_WIDTH  # 28 pixels radius (56px diameter, 87.5% of 64px tile)
 	collision_shape.shape = shape
 	add_child(collision_shape)
 
 func _physics_process(_delta):
 	if is_dead:
 		velocity = Vector2.ZERO
+		current_movement_direction = Vector2.ZERO
 		move_and_slide()
 		return
 	
 	# Get strict 4-way input
-	var move_dir = get_4way_input()
+	var input_dir = get_4way_input()
 	
-	# Calculate movement velocity - pure cardinal movement, no nudging
-	if move_dir.length() > Constants.INPUT_DEADZONE:
-		# Moving - apply speed in the input direction
-		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
-		velocity = move_dir * speed
-		
-		# Update facing direction
-		if abs(move_dir.y) > abs(move_dir.x):
-			facing_direction = "UP" if move_dir.y < 0 else "DOWN"
-		else:
-			facing_direction = "LEFT" if move_dir.x < 0 else "RIGHT"
+	# Debug current state
+	if input_dir.length() > 0 or current_movement_direction.length() > 0:
+		print("[%s] Input: %s, CurrentMove: %s" % [player_id, input_dir, current_movement_direction])
+	
+	# Simple input buffering: last input wins
+	if input_dir.length() > Constants.INPUT_DEADZONE:
+		# There's input - move in that direction
+		if input_dir != current_movement_direction:
+			print("[%s] Moving in new direction: %s" % [player_id, input_dir])
+		current_movement_direction = input_dir
 	else:
-		# Stopped - player stays exactly where they are
+		# No input - stop
+		if current_movement_direction.length() > 0:
+			print("[%s] STOP" % player_id)
+		current_movement_direction = Vector2.ZERO
+	
+	# Apply movement
+	if current_movement_direction.length() > 0:
+		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
+		velocity = current_movement_direction * speed
+		
+		# Update facing
+		if abs(current_movement_direction.y) > abs(current_movement_direction.x):
+			facing_direction = "UP" if current_movement_direction.y < 0 else "DOWN"
+		else:
+			facing_direction = "LEFT" if current_movement_direction.x < 0 else "RIGHT"
+	else:
 		velocity = Vector2.ZERO
 	
-	# Move with Godot's physics - natural wall sliding when off-center
 	move_and_slide()
 	
 	# Clear collision exceptions when player is no longer overlapping bomb
@@ -61,12 +79,10 @@ func _physics_process(_delta):
 			collision_exceptions.remove_at(i)
 			continue
 		
-		# Check if we're on a different tile AND not overlapping
 		var player_tile = get_tile_position()
 		var bomb_tile = bomb.get_tile_position()
 		
 		if player_tile != bomb_tile:
-			# Clear the exception - bomb becomes solid
 			bomb.remove_collision_exception_with(self)
 			collision_exceptions.remove_at(i)
 
@@ -92,40 +108,39 @@ func get_current_tile_center() -> Vector2:
 		tile_y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
 	)
 
-func apply_cornering_assist(move_dir: Vector2, tile_center: Vector2) -> Vector2:
-	"""Apply automatic cornering assistance (wall hugging) for smooth navigation"""
-	var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
-	var movement = move_dir * speed
-	
-	# Apply cornering assist - nudge toward corridor center when slightly off-axis
-	if abs(move_dir.x) > 0.5:  # Moving horizontally
-		var vertical_offset = position.y - tile_center.y
-		if abs(vertical_offset) < Constants.CORNER_ASSIST_THRESHOLD:
-			# Nudge toward horizontal center
-			var nudge_speed = speed * Constants.CORNER_ASSIST_SPEED_MULTIPLIER
-			movement.y = -sign(vertical_offset) * min(abs(vertical_offset), nudge_speed)
-	
-	elif abs(move_dir.y) > 0.5:  # Moving vertically
-		var horizontal_offset = position.x - tile_center.x
-		if abs(horizontal_offset) < Constants.CORNER_ASSIST_THRESHOLD:
-			# Nudge toward vertical center
-			var nudge_speed = speed * Constants.CORNER_ASSIST_SPEED_MULTIPLIER
-			movement.x = -sign(horizontal_offset) * min(abs(horizontal_offset), nudge_speed)
-	
-	return movement
+func is_perpendicular(dir1: Vector2, dir2: Vector2) -> bool:
+	"""Check if two direction vectors are perpendicular (90 degrees apart)"""
+	if dir1.length() < 0.1 or dir2.length() < 0.1:
+		return false
+	# Dot product is 0 for perpendicular vectors
+	return abs(dir1.dot(dir2)) < 0.1
 
-func snap_to_center(tile_center: Vector2) -> Vector2:
-	"""Gradually move to tile center when player is idle"""
-	var offset = tile_center - position
-	var distance = offset.length()
+func is_opposite(dir1: Vector2, dir2: Vector2) -> bool:
+	"""Check if two direction vectors are opposite (180 degrees apart)"""
+	if dir1.length() < 0.1 or dir2.length() < 0.1:
+		return false
+	# Dot product is -1 for opposite vectors
+	return dir1.dot(dir2) < -0.9
+
+func is_tile_walkable(tile_pos: Vector2i) -> bool:
+	"""Check if a tile position is walkable (not a wall or block)"""
+	var game_instance = get_parent()
+	if not game_instance or not game_instance.has_method("get"):
+		return true  # Assume walkable if we can't check
 	
-	# If very close, snap exactly and stop
-	if distance < Constants.SNAP_THRESHOLD:
-		position = tile_center
-		return Vector2.ZERO
+	var game_map = game_instance.game_map
+	if not game_map:
+		return true
 	
-	# Move toward center at snap speed
-	return offset.normalized() * Constants.SNAP_TO_CENTER_SPEED
+	# Check bounds
+	if tile_pos.y < 0 or tile_pos.y >= game_map.size():
+		return false
+	if tile_pos.x < 0 or tile_pos.x >= game_map[0].size():
+		return false
+	
+	# Check tile type: 0 = empty (walkable), 1 = wall, 2 = destructible block
+	var tile_type = game_map[tile_pos.y][tile_pos.x]
+	return tile_type == 0
 
 func get_tile_position() -> Vector2i:
 	return Vector2i(

@@ -16,6 +16,9 @@ var explosion_nodes = {}  # cell_key -> Node2D
 var my_player_id = ""
 var map_rendered = false
 
+# Input buffering: track order of pressed keys
+var input_buffer = []  # Array of currently pressed direction keys in order (most recent last)
+
 func _ready():
 	# Set up camera
 	camera.enabled = true
@@ -145,23 +148,40 @@ func update_explosions(explosions_data: Array):
 		explosion_nodes[cell_key] = explosion_node
 
 func _physics_process(_delta):
-	# Continuously send input state to server
+	# Update input buffer based on which keys are pressed
+	var directions = ["ui_up", "ui_down", "ui_left", "ui_right"]
+	
+	# Check for newly pressed keys
+	for dir in directions:
+		if Input.is_action_just_pressed(dir):
+			# Remove if already in buffer (shouldn't happen but just in case)
+			if dir in input_buffer:
+				input_buffer.erase(dir)
+			# Add to end of buffer (most recent)
+			input_buffer.append(dir)
+	
+	# Check for released keys
+	for dir in directions:
+		if Input.is_action_just_released(dir):
+			input_buffer.erase(dir)
+	
+	# Get the most recent direction that's still pressed
 	var input_x = 0.0
 	var input_y = 0.0
-	var place_bomb = false
 	
-	if Input.is_action_pressed("ui_right"):
-		input_x = 1.0
-	elif Input.is_action_pressed("ui_left"):
-		input_x = -1.0
+	if input_buffer.size() > 0:
+		var current_dir = input_buffer[input_buffer.size() - 1]  # Last element = most recent
+		match current_dir:
+			"ui_right":
+				input_x = 1.0
+			"ui_left":
+				input_x = -1.0
+			"ui_down":
+				input_y = 1.0
+			"ui_up":
+				input_y = -1.0
 	
-	if Input.is_action_pressed("ui_down"):
-		input_y = 1.0
-	elif Input.is_action_pressed("ui_up"):
-		input_y = -1.0
-	
-	if Input.is_action_just_pressed("ui_accept"):
-		place_bomb = true
+	var place_bomb = Input.is_action_just_pressed("ui_accept")
 	
 	# Always send input state to server (including zero input when keys released)
 	get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
