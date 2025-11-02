@@ -116,3 +116,234 @@ This phase focuses on implementing the rich gameplay elements from the Sega Satu
 *   [ ] Support every mod from Power Bomberman (https://gamebanana.com/tuts/15194)
 *   [ ] Support their tools
 *   [ ] Be able to load their characters and maps
+
+---
+
+### Player Stats
+
+#### 🎮 Core Gameplay Stats
+
+**General Performance**
+
+*   Matches Played
+*   Matches Won
+*   Matches Lost
+*   Win Rate (%)
+*   Average Match Length
+*   Fastest Win (time)
+*   Longest Survival Time
+*   Average Placement (in free-for-all matches)
+
+**Round Stats**
+
+*   Rounds Played
+*   Rounds Won
+*   Round Win Rate (%)
+*   Average Rounds per Match
+
+**Bomb Usage**
+
+*   Total Bombs Placed
+*   Bombs Placed per Match
+*   Bombs Detonated by Player
+*   Bombs Triggered by Chain Reaction
+*   Bombs Exploded by Other Players’ Flames
+*   Bombs That Killed Player (self-KOs)
+*   Average Bombs Active at Once
+
+**Kills**
+
+*   Total Kills
+*   Kills per Match
+*   Kills per Minute
+*   Multi-Kills (2+, 3+, 4+ in one explosion)
+*   Chain Reaction Kills
+*   Environmental Kills (e.g., by triggering something)
+*   Suicide Kills (self-bombing)
+*   Assists (setting up a kill that another player finished)
+
+**Deaths**
+
+*   Total Deaths
+*   Deaths by Own Bombs
+*   Deaths by Opponent Bombs
+*   Deaths by Environmental Hazards
+*   Times Crushed by Walls (if stage shrinking mechanic)
+*   Average Death Time (time survived before death)
+
+#### ⚡ Power-Up Stats
+
+**Power-Up Collection**
+
+*   Total Power-Ups Collected
+*   Power-Ups Missed (visible but uncollected)
+*   Most Collected Power-Up Type
+*   Power-Up Collection Rate (collected ÷ spawned)
+*   Time to First Power-Up (per match)
+
+**By Type**
+
+*   Fire Power-Ups Collected
+*   Bomb Power-Ups Collected
+*   Speed Power-Ups Collected
+*   Remote Bombs Collected
+*   Kick Power-Ups Collected
+*   Punch Power-Ups Collected
+*   Glove Power-Ups Collected
+*   Dangerous Bombs Collected
+*   Special/Unique Power-Ups Collected
+
+**Usage**
+
+*   Kicks Performed
+*   Punches Thrown
+*   Bombs Thrown (via glove)
+*   Remote Bombs Detonated
+*   Bombs Kicked into Enemies
+*   Bombs Caught and Re-Thrown
+
+#### 🧠 Skill and Efficiency Stats
+
+**Strategy**
+
+*   Bomb Placement Accuracy (kills ÷ bombs placed)
+*   Time Between Bomb Placement and Kill (average)
+*   Number of Kills Without Power-Ups
+*   Average Time Alive per Round
+*   Average Distance Moved Before Death
+*   Average Opponents Eliminated Before Death
+
+**Efficiency**
+
+*   Bombs per Kill Ratio
+*   Power-Ups per Kill Ratio
+*   Movement per Kill (tiles moved ÷ kills)
+*   Damage Dealt (if partial damage is tracked)
+*   Efficiency Rating (custom composite stat)
+
+#### 💣 Combat Behavior
+
+**Aggression**
+
+*   Offensive Bombs Placed (near opponents)
+*   Defensive Bombs Placed (to block)
+*   Time Spent in Combat (near other players)
+*   Times Forced Opponent into Trap
+*   Area Controlled by Player (tiles dominated over time)
+
+**Evasion**
+
+*   Bomb Explosions Dodged
+*   Frames Between Explosion Start and Evade
+*   Successful Escapes from Enclosed Situations
+*   Average Distance from Nearest Explosion
+
+**Tactics**
+
+*   Times Player Used Bomb Chains Intentionally
+*   Opponents Eliminated by Chain Reaction
+*   Players Eliminated Using Thrown Bombs
+*   Traps Successfully Executed (placed bomb that trapped opponent)
+
+#### 🏆 Ranking and Achievements
+
+**Competitive Metrics**
+
+*   Current Rank / Tier
+*   Matchmaking Rating (MMR)
+*   Highest Rank Achieved
+*   Longest Win Streak
+*   Longest Lose Streak
+*   Win Rate vs. Higher Ranked Players
+*   Win Rate vs. Lower Ranked Players
+
+**Achievements**
+
+*   “Flawless” Wins (no deaths)
+*   “Comeback” Wins (won after being last alive)
+*   “Pacifist” Wins (won without kills)
+*   “Explosive Expert” (highest bomb kill ratio)
+*   “Speed Demon” (most power-ups collected early)
+*   “Survivor” (last player alive most times)
+
+#### 🗺️ Map & Mode Stats
+
+**Map Performance**
+
+*   Matches Played per Map
+*   Win Rate per Map
+*   Favorite Map
+*   Least Successful Map
+*   Average Survival Time per Map
+
+**Game Mode Performance**
+
+*   Matches Played per Mode (e.g., FFA, Team, Ranked, Classic)
+*   Win Rate per Mode
+*   Kills per Mode
+*   Average Placement per Mode
+
+#### 👥 Team Play Stats (if team modes exist)
+
+*   Team Matches Played
+*   Team Wins
+*   Team Win Rate
+*   Assists per Match
+*   Friendly Fire Incidents
+*   Revives (if allowed)
+*   Times Saved a Teammate
+*   Most Common Teammate
+*   Team Synergy Rating (average performance with teammates)
+
+#### 📈 Progression Stats
+
+*   Experience Earned
+*   XP per Match
+*   XP per Minute
+*   Lifetime XP
+*   Level / Prestige
+*   Total Play Time
+*   Time in Menu vs Time in Battle
+*   Matches Played per Day (average)
+
+#### 🎨 Style and Customization Stats
+
+*   Favourite Character / Skin
+*   Favourite Bomb Type
+*   Favourite Explosion Effect
+*   Most Used Emote
+*   Most Used Victory Pose
+*   Outfit Changes Made
+*   Custom Loadouts Created
+
+#### 🧩 Meta / Behavioural Stats
+
+*   Disconnects / Quits
+*   Reconnects
+*   AFK Time
+*   Reports Filed Against Player
+*   Reports Received
+*   Matches with Perfect Connection
+*   Ping Average / Stability
+
+#### 🔥 Advanced Analytics (for competitive dashboards)
+
+*   Heatmap of player movement per map
+*   Average “threat zone” radius (how far others avoid player)
+*   Reaction time to explosions
+*   Kill-to-Death differential (K/D ratio)
+*   Kill participation rate (in team modes)
+*   Most common opponent killed
+*   Most common opponent killed by
+*   Session Consistency (variance in performance)
+
+#### 📊 Fun / Cosmetic Stats
+
+*   Total Blocks Destroyed
+*   Blocks Destroyed per Match
+*   Crates Blown Up
+*   Times Picked Up by Explosion but Survived
+*   Bombs Kicked Off Map
+*   Matches Won Wearing a Costume
+*   Total Explosions Witnessed
+*   “Lucky Escapes” (survived with <0.5s left before explosion)

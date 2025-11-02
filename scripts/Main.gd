@@ -24,8 +24,8 @@ var fullscreen_checkbox: CheckBox
 
 func _ready():
 	# Load sub-menu scenes
-	var create_match_scene = load("res://CreateMatch.tscn")
-	var options_scene = load("res://Options.tscn")
+	var create_match_scene = load("res://scenes/ui/CreateMatch.tscn")
+	var options_scene = load("res://scenes/ui/Options.tscn")
 	
 	# Instance them as children
 	create_match_panel = create_match_scene.instantiate()

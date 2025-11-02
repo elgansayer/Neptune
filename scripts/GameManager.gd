@@ -30,8 +30,9 @@ var player_facing_direction = "DOWN"
 # Last input priority system
 var last_input_direction = ""  # "up", "down", "left", "right", or ""
 
-# Bomb passthrough system (allows player to walk off their just-planted bomb)
-var planted_bomb_passthrough = Vector2(-1, -1)  # Grid position of bomb we can pass through
+# Bomb passthrough tracking (Atomic Bomberman pattern)
+var inside_bomb_tile = Vector2(-1, -1)  # Track which bomb tile we're inside (-1,-1 = none)
+var inside_bomb_grace_frames = 0  # Grace period to wait for server confirmation
 
 # Network sync
 var input_sequence = 0
@@ -145,25 +146,20 @@ func _physics_process(delta):
 	if is_perpendicular_turn:
 		var corner_velocity = _try_corner_assistance(desired_velocity, delta)
 		
-		print("Perpendicular turn detected. Corner velocity: ", corner_velocity)
-		
 		if corner_velocity != Vector2.ZERO:
-			# Diagonal is clear - buffer the turn and continue current movement
+			# Diagonal is clear - buffer turn and continue current movement
 			var corner_target = player_pixel_position + corner_velocity * delta
-			if _is_position_walkable(corner_target):
+			if _is_position_walkable(corner_target, player_pixel_position):
 				final_velocity = corner_velocity
 				debug_slide_active = true
-				print("  -> Diagonal CLEAR, continuing in facing direction")
 			else:
 				# Facing direction blocked, just stop
 				final_velocity = Vector2.ZERO
 				debug_slide_active = false
-				print("  -> Diagonal clear but facing direction blocked, stopping")
 		else:
 			# Diagonal is blocked - stop moving and face the new direction
 			final_velocity = Vector2.ZERO
 			debug_slide_active = false
-			print("  -> Diagonal BLOCKED, stopping and facing new direction")
 			
 			# Update facing direction to the attempted turn direction
 			if abs(desired_velocity.y) > abs(desired_velocity.x):
@@ -178,7 +174,7 @@ func _physics_process(delta):
 					player_facing_direction = "RIGHT"
 	else:
 		# Normal movement (continuing in same direction)
-		if _is_position_walkable(target_position):
+		if _is_position_walkable(target_position, player_pixel_position):
 			# No collision - use full velocity
 			final_velocity = desired_velocity
 			debug_slide_active = false
@@ -188,8 +184,14 @@ func _physics_process(delta):
 			
 			if corner_velocity != Vector2.ZERO:
 				# Corner assistance found a better path
-				final_velocity = corner_velocity
-				debug_slide_active = true
+				var corner_target = player_pixel_position + corner_velocity * delta
+				if _is_position_walkable(corner_target, player_pixel_position):
+					final_velocity = corner_velocity
+					debug_slide_active = true
+				else:
+					# Corner path also blocked
+					final_velocity = Vector2.ZERO
+					debug_slide_active = false
 			else:
 				# No valid movement found - stop
 				final_velocity = Vector2.ZERO
@@ -241,33 +243,71 @@ func _physics_process(delta):
 	var my_player = player_scenes[my_user_id]
 	my_player.position = player_pixel_position
 	
+	# Update inside_bomb_tile - clear it if we're no longer colliding with that specific bomb
+	if inside_bomb_tile != Vector2(-1, -1):
+		print("[FLAG CHECK] Checking flag, grace_frames=", inside_bomb_grace_frames)
+		# Decrement grace period counter
+		if inside_bomb_grace_frames > 0:
+			inside_bomb_grace_frames -= 1
+			print("[FLAG CHECK] In grace period, frames remaining: ", inside_bomb_grace_frames)
+			# Don't check for bomb existence during grace period
+		elif game_state.has("bombs"):
+			print("[FLAG CHECK] Grace period over, checking if we've exited bomb")
+			print("[FLAG CHECK] inside_bomb_tile=", inside_bomb_tile)
+			print("[FLAG CHECK] Number of bombs in game_state:", game_state.bombs.size())
+			# Find the bomb we're supposedly inside
+			var found_bomb = false
+			for bomb in game_state.bombs:
+				print("[FLAG CHECK] Checking bomb at tile (", bomb.position.x, ", ", bomb.position.y, ")")
+				if bomb.position.x == inside_bomb_tile.x and bomb.position.y == inside_bomb_tile.y:
+					found_bomb = true
+					print("[FLAG CHECK] Found our bomb! Checking collision...")
+					print("[FLAG CHECK] Player position: ", player_pixel_position)
+					var bomb_center = Vector2(
+						bomb.position.x * TILE_SIZE + TILE_SIZE / 2,
+						bomb.position.y * TILE_SIZE + TILE_SIZE / 2
+					)
+					print("[FLAG CHECK] Bomb center: ", bomb_center)
+					# Check if ANY part of player hitbox is still colliding with bomb
+					var still_colliding = false
+					var check_points = [
+						player_pixel_position,  # Center
+						player_pixel_position + Vector2(PLAYER_HALF_WIDTH, 0),  # Right
+						player_pixel_position + Vector2(-PLAYER_HALF_WIDTH, 0),  # Left
+						player_pixel_position + Vector2(0, PLAYER_HALF_WIDTH),  # Bottom
+						player_pixel_position + Vector2(0, -PLAYER_HALF_WIDTH),  # Top
+						player_pixel_position + Vector2(PLAYER_HALF_WIDTH, PLAYER_HALF_WIDTH),  # Bottom-Right
+						player_pixel_position + Vector2(-PLAYER_HALF_WIDTH, PLAYER_HALF_WIDTH),  # Bottom-Left
+						player_pixel_position + Vector2(PLAYER_HALF_WIDTH, -PLAYER_HALF_WIDTH),  # Top-Right
+						player_pixel_position + Vector2(-PLAYER_HALF_WIDTH, -PLAYER_HALF_WIDTH)  # Top-Left
+					]
+					
+					for point in check_points:
+						var dx = abs(point.x - bomb_center.x)
+						var dy = abs(point.y - bomb_center.y)
+						if dx <= (PLAYER_HALF_WIDTH + 18.0) and dy <= (PLAYER_HALF_WIDTH + 18.0):
+							still_colliding = true
+							print("[FLAG CHECK] Point ", point, " STILL COLLIDING: dx=", dx, " dy=", dy, " threshold=", (PLAYER_HALF_WIDTH + 18.0))
+							break
+					
+					if not still_colliding:
+						print("[FLAG CHECK] NO collision detected - all points clear")
+					print("[FLAG CHECK] still_colliding=", still_colliding)
+					# Only clear flag if NO part of hitbox is colliding
+					if not still_colliding:
+						inside_bomb_tile = Vector2(-1, -1)
+						inside_bomb_grace_frames = 0
+						print("[INSIDE_BOMB] Flag cleared - fully exited bomb at ", bomb.position)
+					break
+			
+			# If bomb no longer exists (exploded), clear flag
+			if not found_bomb:
+				inside_bomb_tile = Vector2(-1, -1)
+				inside_bomb_grace_frames = 0
+				print("[INSIDE_BOMB] Flag cleared - bomb no longer exists")
+	
 	# Handle bomb placement
 	var place_bomb = Input.is_action_just_pressed("ui_accept")
-	
-	# Handle bomb placement - allow player to walk off their own bomb
-	if place_bomb:
-		# Set passthrough for the tile we're planting on
-		var player_grid_x = int(floor(player_pixel_position.x / TILE_SIZE))
-		var player_grid_y = int(floor(player_pixel_position.y / TILE_SIZE))
-		planted_bomb_passthrough = Vector2(player_grid_x, player_grid_y)
-	
-	# Check if player has moved off the planted bomb tile
-	if planted_bomb_passthrough != Vector2(-1, -1):
-		# Check if player's bounding box no longer overlaps the bomb tile
-		var bomb_tile_left = planted_bomb_passthrough.x * TILE_SIZE
-		var bomb_tile_right = (planted_bomb_passthrough.x + 1) * TILE_SIZE
-		var bomb_tile_top = planted_bomb_passthrough.y * TILE_SIZE
-		var bomb_tile_bottom = (planted_bomb_passthrough.y + 1) * TILE_SIZE
-		
-		var player_left = player_pixel_position.x - PLAYER_HALF_WIDTH
-		var player_right = player_pixel_position.x + PLAYER_HALF_WIDTH
-		var player_top = player_pixel_position.y - PLAYER_HALF_WIDTH
-		var player_bottom = player_pixel_position.y + PLAYER_HALF_WIDTH
-		
-		# If no overlap, clear passthrough (bomb becomes solid)
-		if player_right <= bomb_tile_left or player_left >= bomb_tile_right or \
-		   player_bottom <= bomb_tile_top or player_top >= bomb_tile_bottom:
-			planted_bomb_passthrough = Vector2(-1, -1)
 	
 	# === Network Sync ===
 	last_network_sync_time += delta
@@ -287,6 +327,15 @@ func _physics_process(delta):
 		nakama_client.send_player_input(input_data)
 	
 	if place_bomb:
+		# Set inside_bomb_tile to current tile when placing bomb (Atomic Bomberman pattern)
+		var player_tile = Vector2(
+			floor(player_pixel_position.x / TILE_SIZE),
+			floor(player_pixel_position.y / TILE_SIZE)
+		)
+		inside_bomb_tile = player_tile
+		inside_bomb_grace_frames = 5  # Wait ~5 frames for server to confirm bomb placement
+		print("[INSIDE_BOMB] Flag set to tile ", player_tile, " - bomb placed")
+		
 		# Send bomb placement immediately
 		input_sequence += 1
 		var bomb_input = {
@@ -326,24 +375,40 @@ func _update_powerups(server_powerups):
 			powerup_node.name = powerup_id
 			
 			var sprite = Sprite2D.new()
-			sprite.texture = load("res://icon.svg") # Placeholder texture
+			sprite.texture = load("res://icon.svg")
+			sprite.scale = Vector2(0.4, 0.4)
+			
+			# Color based on power-up type
+			match powerup_data.type:
+				0:  # ExtraBomb
+					sprite.modulate = Color.YELLOW
+				1:  # BombRadius
+					sprite.modulate = Color.ORANGE_RED
+				2:  # BombKick
+					sprite.modulate = Color.BLUE
+				3:  # SpeedUp
+					sprite.modulate = Color.LIME_GREEN
+				4:  # SpeedDown
+					sprite.modulate = Color.PURPLE
+				_:
+					sprite.modulate = Color.WHITE
+			
 			powerup_node.add_child(sprite)
 			
 			# Add a CollisionShape2D for the Area2D
 			var collision_shape = CollisionShape2D.new()
 			var circle_shape = CircleShape2D.new()
-			circle_shape.radius = 32.0 # Adjust as needed
+			circle_shape.radius = 20.0
 			collision_shape.shape = circle_shape
 			powerup_node.add_child(collision_shape)
 			
-			# TODO: Change texture based on power-up type
 			add_child(powerup_node)
 			powerup_scenes[powerup_id] = powerup_node
 		else:
 			powerup_node = powerup_scenes[powerup_id]
 			current_client_powerups.erase(powerup_id)
 
-		powerup_node.position = Vector2(powerup_data.position.x * TILE_SIZE, powerup_data.position.y * TILE_SIZE)
+		powerup_node.position = Vector2(powerup_data.position.x * TILE_SIZE + TILE_SIZE / 2, powerup_data.position.y * TILE_SIZE + TILE_SIZE / 2)
 
 	for powerup_id in current_client_powerups:
 		powerup_scenes[powerup_id].queue_free()
@@ -412,14 +477,19 @@ func _is_tile_walkable(grid_x: int, grid_y: int) -> bool:
 	if game_state.has("bombs"):
 		for bomb in game_state.bombs:
 			if bomb.position.x == grid_x and bomb.position.y == grid_y:
-				# Allow passthrough for the bomb we just planted
-				if planted_bomb_passthrough == Vector2(grid_x, grid_y):
+				# Allow movement if we're currently standing on this bomb
+				var current_grid_x = int(floor(player_pixel_position.x / TILE_SIZE))
+				var current_grid_y = int(floor(player_pixel_position.y / TILE_SIZE))
+				print("[DEBUG] Bomb at (", grid_x, ",", grid_y, "), current pos (", current_grid_x, ",", current_grid_y, ")")
+				if current_grid_x == grid_x and current_grid_y == grid_y:
+					print("[DEBUG] Standing on bomb - allowing movement")
 					continue
+				print("[DEBUG] NOT on bomb - blocking movement")
 				return false
 
 	return true
 
-func _is_position_walkable(pixel_pos: Vector2) -> bool:
+func _is_position_walkable(pixel_pos: Vector2, _from_pos: Vector2 = Vector2.ZERO) -> bool:
 	if not game_state.has("grid"):
 		return true  # No grid loaded yet
 	
@@ -452,18 +522,19 @@ func _is_position_walkable(pixel_pos: Vector2) -> bool:
 		if grid[grid_y][grid_x] != 0:
 			return false
 		
-		# Bomb collision check - use square distance check
+		# Bomb collision check using Atomic Bomberman's inside_bomb flag system
 		if game_state.has("bombs"):
 			for bomb in game_state.bombs:
-				# Allow passthrough for the bomb we just planted
-				if planted_bomb_passthrough == Vector2(bomb.position.x, bomb.position.y):
-					continue
-					
 				var bomb_center = Vector2(
 					bomb.position.x * TILE_SIZE + TILE_SIZE / 2,
 					bomb.position.y * TILE_SIZE + TILE_SIZE / 2
 				)
-				# Check if any corner of our square box overlaps with bomb
+				
+				# If inside_bomb_tile matches this bomb's tile, we can pass through it
+				if inside_bomb_tile == Vector2(bomb.position.x, bomb.position.y):
+					continue
+				
+				# Check if target position collides with bomb
 				var dx = abs(point.x - bomb_center.x)
 				var dy = abs(point.y - bomb_center.y)
 				if dx < (PLAYER_HALF_WIDTH + 18.0) and dy < (PLAYER_HALF_WIDTH + 18.0):
@@ -763,16 +834,23 @@ func _update_grid(grid_data):
 	if grid_rendered:
 		return
 	
+	if grid_data.size() == 0:
+		push_warning("Grid data is empty!")
+		return
+	
 	grid_rendered = true
 	
+	var tiles_created = 0
 	for y in range(grid_data.size()):
 		for x in range(grid_data[y].size()):
 			var tile_type = grid_data[y][x]
 			if tile_type > 0:
+				tiles_created += 1
 				var tile_sprite = Sprite2D.new()
 				tile_sprite.texture = load("res://icon.svg")
 				tile_sprite.position = Vector2(x * TILE_SIZE + TILE_SIZE/2, y * TILE_SIZE + TILE_SIZE/2)
 				tile_sprite.scale = Vector2(0.5, 0.5)
+				tile_sprite.z_index = -10  # Render behind everything else
 				
 				# Color based on tile type
 				if tile_type == 1:  # Soft block
@@ -781,3 +859,6 @@ func _update_grid(grid_data):
 					tile_sprite.modulate = Color(0.3, 0.3, 0.3)  # Dark gray
 				
 				add_child(tile_sprite)
+	
+	if tiles_created > 0:
+		print("Grid loaded: ", tiles_created, " tiles")
