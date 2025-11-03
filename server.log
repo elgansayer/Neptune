@@ -24,23 +24,26 @@ ERROR: Failed to start server: 20
    at: push_error (core/variant/variant_utility.cpp:1024)
    GDScript backtrace (most recent call first):
        [0] _ready (res://server/main_server.gd:39)
-[Server] Peer connected: 1753162561
+[Server] Peer connected: 1017737305
 [Server] *** REGISTER_USER RPC RECEIVED ***
-[Server] Registration attempt from peer 1753162561: Player_6240
-[LocalBackend] Registered user: Player_6240
-[Server] Registration successful: Player_6240
+[Server] Registration attempt from peer 1017737305: Player_8031
+[LocalBackend] Registered user: Player_8031
+[Server] Registration successful: Player_8031
 [Server] *** AUTHENTICATE RPC RECEIVED ***
-[Server] Authentication attempt from peer 1753162561: Player_6240
+[Server] Authentication attempt from peer 1017737305: Player_8031
 [Server] Is server: true
-[Server] Authentication successful: Player_6240
-[Lobby] Player added: Player_6240 (1753162561)
-[Game] Player joined: Player_6240 at (96.0, 96.0)
-[Server] Started game game_2586 for player Player_6240
-WARNING: Sending 2476 bytes unreliably which is above the MTU (1392), this will result in higher packet loss
+[Server] Authentication successful: Player_8031
+[Lobby] Player added: Player_8031 (1017737305)
+[Server] Creating new shared game instance
+[MapManager] Loaded map: Unnamed (17x11)
+[GameInstance] Loaded map 'Unknown' with 4 spawn points
+[Game] Player joined: Player_8031 at (96.0, 96.0)
+[Server] Player Player_8031 joined shared game. Total players: 1
+WARNING: Sending 2396 bytes unreliably which is above the MTU (1392), this will result in higher packet loss
      at: put_packet (modules/enet/enet_multiplayer_peer.cpp:363)
      GDScript backtrace (most recent call first):
-         [0] sync_state_to_clients (res://server/game_instance.gd:236)
-         [1] _physics_process (res://server/game_instance.gd:87)
+         [0] sync_state_to_clients (res://server/game_instance.gd:270)
+         [1] _physics_process (res://server/game_instance.gd:110)
 Input dir: (1.0, 0.0) Clear: true Colliding: false
 Input dir: (1.0, 0.0) Clear: true Colliding: false
 Input dir: (1.0, 0.0) Clear: true Colliding: false
@@ -74,44 +77,48 @@ Input dir: (1.0, 0.0) Clear: true Colliding: false
 Input dir: (1.0, 0.0) Clear: true Colliding: false
 Input dir: (1.0, 0.0) Clear: true Colliding: false
 Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+[Game] Bomb placed by Player_8031 at tile (4, 1)
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-[Game] Bomb placed by Player_6240 at tile (3, 1)
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#35718694276> Type: StaticBody2D Name: Bomb_0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
 Input dir: (-1.0, 0.0) Clear: false Colliding: true
 Blocked dir: (-1.0, 0.0)
-Blocking tile: (3, 1) center: (224.0, 96.0)
-Our position: (189.0, 96.0)
-Offset from blocking tile: (-35.0, 0.0)
-Offset from current tile: (29.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (255.0, 96.0)
+Offset from blocking tile: (-33.0, 0.0)
+Offset from current tile: (31.0, 0.0)
 Edge threshold: 16.0
-COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#35718694276> Type: StaticBody2D Name: Bomb_0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
 Input dir: (-1.0, 0.0) Clear: false Colliding: true
 Blocked dir: (-1.0, 0.0)
-Blocking tile: (3, 1) center: (224.0, 96.0)
-Our position: (173.7839, 96.0)
-Offset from blocking tile: (-50.21606, 0.0)
-Offset from current tile: (13.78394, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (237.8176, 96.0)
+Offset from blocking tile: (-50.18243, 0.0)
+Offset from current tile: (13.81757, 0.0)
 Edge threshold: 16.0
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
@@ -131,181 +138,902 @@ Input dir: (-1.0, 0.0) Clear: true Colliding: false
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-COLLISION DETECTED! Collider: Tile_1_3:<StaticBody2D#30182213105> Type: StaticBody2D Name: Tile_1_3
-Input dir: (0.0, 1.0) Clear: false Colliding: true
-Blocked dir: (0.0, 1.0)
-Blocking tile: (1, 3) center: (96.0, 224.0)
-Our position: (96.52408, 159.0)
-Offset from blocking tile: (0.524078, -65.0)
-Offset from current tile: (0.524078, -1.0)
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
 Edge threshold: 16.0
-COLLISION DETECTED! Collider: Tile_1_3:<StaticBody2D#30182213105> Type: StaticBody2D Name: Tile_1_3
-Input dir: (0.0, 1.0) Clear: false Colliding: true
-Blocked dir: (0.0, 1.0)
-Blocking tile: (1, 3) center: (96.0, 224.0)
-Our position: (96.52408, 159.0)
-Offset from blocking tile: (0.524078, -65.0)
-Offset from current tile: (0.524078, -1.0)
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
 Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_0:<StaticBody2D#36121347462> Type: StaticBody2D Name: Bomb_0
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 1) center: (288.0, 96.0)
+Our position: (231.5241, 96.0)
+Offset from blocking tile: (-56.47589, 0.0)
+Offset from current tile: (7.524109, 0.0)
+Edge threshold: 16.0
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#31289509339> Type: StaticBody2D Name: Tile_2_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (2, 2) center: (160.0, 160.0)
+Our position: (225.5241, 171.0)
+Offset from blocking tile: (65.52411, 11.0)
+Offset from current tile: (1.524109, 11.0)
+Edge threshold: 16.0
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
 [Game] Bomb exploded: 0
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-Input dir: (0.0, -1.0) Clear: true Colliding: false
-COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#29628564944> Type: StaticBody2D Name: Tile_2_2
-Input dir: (1.0, 0.0) Clear: false Colliding: true
-Blocked dir: (1.0, 0.0)
-Blocking tile: (2, 2) center: (160.0, 160.0)
-Our position: (96.52408, 120.0)
-Offset from blocking tile: (-63.47592, -40.0)
-Offset from current tile: (0.524078, 24.0)
-Edge threshold: 16.0
-Near TOP edge, trying UP
-  -> Both UP path and tile above blocking are clear!
-COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#29628564944> Type: StaticBody2D Name: Tile_2_2
-Input dir: (1.0, 0.0) Clear: false Colliding: true
-Blocked dir: (1.0, 0.0)
-Blocking tile: (2, 2) center: (160.0, 160.0)
-Our position: (96.52408, 117.0)
-Offset from blocking tile: (-63.47592, -43.0)
-Offset from current tile: (0.524078, 21.0)
-Edge threshold: 16.0
-Near TOP edge, trying UP
-  -> Both UP path and tile above blocking are clear!
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#29628564944> Type: StaticBody2D Name: Tile_2_2
-Input dir: (1.0, 0.0) Clear: false Colliding: true
-Blocked dir: (1.0, 0.0)
-Blocking tile: (2, 2) center: (160.0, 160.0)
-Our position: (99.52408, 112.0)
-Offset from blocking tile: (-60.47592, -48.0)
-Offset from current tile: (3.524078, 16.0)
-Edge threshold: 16.0
-Near TOP edge, trying UP
-  -> Both UP path and tile above blocking are clear!
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-Input dir: (1.0, 0.0) Clear: true Colliding: false
-[Game] Bomb placed by Player_6240 at tile (3, 1)
+[Game] Bomb placed by Player_8031 at tile (2, 3)
 Input dir: (-1.0, 0.0) Clear: true Colliding: false
-COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#35785803140> Type: StaticBody2D Name: Bomb_1
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
 Input dir: (-1.0, 0.0) Clear: false Colliding: true
 Blocked dir: (-1.0, 0.0)
-Blocking tile: (3, 1) center: (224.0, 96.0)
-Our position: (190.5241, 97.0)
-Offset from blocking tile: (-33.47592, 1.0)
-Offset from current tile: (30.52408, 1.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (126.5241, 223.0)
+Offset from blocking tile: (-33.47589, -1.0)
+Offset from current tile: (30.52411, -1.0)
 Edge threshold: 16.0
-COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#35785803140> Type: StaticBody2D Name: Bomb_1
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_1:<StaticBody2D#36188456326> Type: StaticBody2D Name: Bomb_1
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 3) center: (160.0, 224.0)
+Our position: (109.5288, 223.0)
+Offset from blocking tile: (-50.4712, -1.0)
+Offset from current tile: (13.5288, -1.0)
+Edge threshold: 16.0
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_0_3:<StaticBody2D#31742494198> Type: StaticBody2D Name: Tile_0_3
 Input dir: (-1.0, 0.0) Clear: false Colliding: true
 Blocked dir: (-1.0, 0.0)
-Blocking tile: (3, 1) center: (224.0, 96.0)
-Our position: (173.8095, 97.0)
-Offset from blocking tile: (-50.19046, 1.0)
-Offset from current tile: (13.80954, 1.0)
+Blocking tile: (0, 3) center: (32.0, 224.0)
+Our position: (97.52409, 223.0)
+Offset from blocking tile: (65.52409, -1.0)
+Offset from current tile: (1.524086, -1.0)
 Edge threshold: 16.0
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-Input dir: (-1.0, 0.0) Clear: true Colliding: false
-COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#29628564944> Type: StaticBody2D Name: Tile_2_2
+COLLISION DETECTED! Collider: Tile_0_3:<StaticBody2D#31742494198> Type: StaticBody2D Name: Tile_0_3
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (0, 3) center: (32.0, 224.0)
+Our position: (97.52409, 223.0)
+Offset from blocking tile: (65.52409, -1.0)
+Offset from current tile: (1.524086, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_0_3:<StaticBody2D#31742494198> Type: StaticBody2D Name: Tile_0_3
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (0, 3) center: (32.0, 224.0)
+Our position: (97.52409, 223.0)
+Offset from blocking tile: (65.52409, -1.0)
+Offset from current tile: (1.524086, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Tile_0_3:<StaticBody2D#31742494198> Type: StaticBody2D Name: Tile_0_3
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (0, 3) center: (32.0, 224.0)
+Our position: (97.52409, 223.0)
+Offset from blocking tile: (65.52409, -1.0)
+Offset from current tile: (1.524086, -1.0)
+Edge threshold: 16.0
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_2_4:<StaticBody2D#32245810708> Type: StaticBody2D Name: Tile_2_4
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 4) center: (160.0, 288.0)
+Our position: (97.52409, 322.0)
+Offset from blocking tile: (-62.47591, 34.0)
+Offset from current tile: (1.524086, -30.0)
+Edge threshold: 16.0
+Near BOTTOM edge, trying DOWN
+  -> Both DOWN path and tile below blocking are clear!
+COLLISION DETECTED! Collider: Tile_2_4:<StaticBody2D#32245810708> Type: StaticBody2D Name: Tile_2_4
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 4) center: (160.0, 288.0)
+Our position: (97.52409, 325.0)
+Offset from blocking tile: (-62.47591, 37.0)
+Offset from current tile: (1.524086, -27.0)
+Edge threshold: 16.0
+Near BOTTOM edge, trying DOWN
+  -> Both DOWN path and tile below blocking are clear!
+COLLISION DETECTED! Collider: Tile_2_4:<StaticBody2D#32245810708> Type: StaticBody2D Name: Tile_2_4
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 4) center: (160.0, 288.0)
+Our position: (97.52409, 328.0)
+Offset from blocking tile: (-62.47591, 40.0)
+Offset from current tile: (1.524086, -24.0)
+Edge threshold: 16.0
+Near BOTTOM edge, trying DOWN
+  -> Both DOWN path and tile below blocking are clear!
+COLLISION DETECTED! Collider: Tile_2_4:<StaticBody2D#32245810708> Type: StaticBody2D Name: Tile_2_4
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 4) center: (160.0, 288.0)
+Our position: (97.52409, 331.0)
+Offset from blocking tile: (-62.47591, 43.0)
+Offset from current tile: (1.524086, -21.0)
+Edge threshold: 16.0
+Near BOTTOM edge, trying DOWN
+  -> Both DOWN path and tile below blocking are clear!
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_2_4:<StaticBody2D#32245810708> Type: StaticBody2D Name: Tile_2_4
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (2, 4) center: (160.0, 288.0)
+Our position: (100.5241, 336.0)
+Offset from blocking tile: (-59.47591, 48.0)
+Offset from current tile: (4.524086, -16.0)
+Edge threshold: 16.0
+Near BOTTOM edge, trying DOWN
+  -> Both DOWN path and tile below blocking are clear!
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+[Game] Bomb exploded: 1
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_2_6:<StaticBody2D#33453770332> Type: StaticBody2D Name: Tile_2_6
 Input dir: (0.0, 1.0) Clear: false Colliding: true
 Blocked dir: (0.0, 1.0)
-Blocking tile: (2, 2) center: (160.0, 160.0)
-Our position: (116.5241, 97.0)
-Offset from blocking tile: (-43.47591, -63.0)
-Offset from current tile: (20.52409, 1.0)
+Blocking tile: (2, 6) center: (160.0, 416.0)
+Our position: (194.5241, 351.0)
+Offset from blocking tile: (34.52409, -65.0)
+Offset from current tile: (-29.47591, -1.0)
 Edge threshold: 16.0
-Near LEFT edge, trying LEFT
-  -> Both LEFT path and tile left of blocking are clear!
-Input dir: (0.0, 1.0) Clear: true Colliding: false
-COLLISION DETECTED! Collider: Tile_2_2:<StaticBody2D#29628564944> Type: StaticBody2D Name: Tile_2_2
+Near RIGHT edge, trying RIGHT
+  -> Both RIGHT path and tile right of blocking are clear!
+COLLISION DETECTED! Collider: Tile_2_6:<StaticBody2D#33453770332> Type: StaticBody2D Name: Tile_2_6
 Input dir: (0.0, 1.0) Clear: false Colliding: true
 Blocked dir: (0.0, 1.0)
-Blocking tile: (2, 2) center: (160.0, 160.0)
-Our position: (111.5241, 100.0)
-Offset from blocking tile: (-48.47591, -60.0)
-Offset from current tile: (15.52409, 4.0)
+Blocking tile: (2, 6) center: (160.0, 416.0)
+Our position: (197.5241, 351.0)
+Offset from blocking tile: (37.52409, -65.0)
+Offset from current tile: (-26.47591, -1.0)
 Edge threshold: 16.0
-Near LEFT edge, trying LEFT
-  -> Both LEFT path and tile left of blocking are clear!
+Near RIGHT edge, trying RIGHT
+  -> Both RIGHT path and tile right of blocking are clear!
+COLLISION DETECTED! Collider: Tile_2_6:<StaticBody2D#33453770332> Type: StaticBody2D Name: Tile_2_6
+Input dir: (0.0, 1.0) Clear: false Colliding: true
+Blocked dir: (0.0, 1.0)
+Blocking tile: (2, 6) center: (160.0, 416.0)
+Our position: (200.5241, 351.0)
+Offset from blocking tile: (40.52409, -65.0)
+Offset from current tile: (-23.47591, -1.0)
+Edge threshold: 16.0
+Near RIGHT edge, trying RIGHT
+  -> Both RIGHT path and tile right of blocking are clear!
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_2_6:<StaticBody2D#33453770332> Type: StaticBody2D Name: Tile_2_6
+Input dir: (0.0, 1.0) Clear: false Colliding: true
+Blocked dir: (0.0, 1.0)
+Blocking tile: (2, 6) center: (160.0, 416.0)
+Our position: (205.5241, 354.0)
+Offset from blocking tile: (45.52409, -62.0)
+Offset from current tile: (-18.47591, 2.0)
+Edge threshold: 16.0
+Near RIGHT edge, trying RIGHT
+  -> Both RIGHT path and tile right of blocking are clear!
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_2_6:<StaticBody2D#33453770332> Type: StaticBody2D Name: Tile_2_6
+Input dir: (0.0, 1.0) Clear: false Colliding: true
+Blocked dir: (0.0, 1.0)
+Blocking tile: (2, 6) center: (160.0, 416.0)
+Our position: (212.5241, 360.0)
+Offset from blocking tile: (52.52409, -56.0)
+Offset from current tile: (-11.47591, 8.0)
+Edge threshold: 16.0
+Near RIGHT edge, trying RIGHT
+  -> Both RIGHT path and tile right of blocking are clear!
 Input dir: (0.0, 1.0) Clear: true Colliding: false
 Input dir: (0.0, 1.0) Clear: true Colliding: false
 Input dir: (0.0, 1.0) Clear: true Colliding: false
@@ -323,6 +1051,111 @@ Input dir: (0.0, 1.0) Clear: true Colliding: false
 Input dir: (0.0, 1.0) Clear: true Colliding: false
 Input dir: (0.0, 1.0) Clear: true Colliding: false
 Input dir: (0.0, 1.0) Clear: true Colliding: false
-[Server] Peer disconnected: 1753162561
-[Game] Player left: 1753162561
-[Lobby] Player removed: Player_6240
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (0.0, 1.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Tile_4_6:<StaticBody2D#33504101983> Type: StaticBody2D Name: Tile_4_6
+Input dir: (1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (1.0, 0.0)
+Blocking tile: (4, 6) center: (288.0, 416.0)
+Our position: (226.5241, 462.0)
+Offset from blocking tile: (-61.47591, 46.0)
+Offset from current tile: (2.524094, -18.0)
+Edge threshold: 16.0
+Near BOTTOM edge, trying DOWN
+  -> Both DOWN path and tile below blocking are clear!
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+Input dir: (1.0, 0.0) Clear: true Colliding: false
+[Game] Bomb placed by Player_8031 at tile (4, 7)
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+COLLISION DETECTED! Collider: Bomb_2:<StaticBody2D#36255565190> Type: StaticBody2D Name: Bomb_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (4, 7) center: (288.0, 480.0)
+Our position: (254.5241, 479.0)
+Offset from blocking tile: (-33.47589, -1.0)
+Offset from current tile: (30.52411, -1.0)
+Edge threshold: 16.0
+COLLISION DETECTED! Collider: Bomb_2:<StaticBody2D#36255565190> Type: StaticBody2D Name: Bomb_2
+Input dir: (-1.0, 0.0) Clear: false Colliding: true
+Blocked dir: (-1.0, 0.0)
+Blocking tile: (4, 7) center: (288.0, 480.0)
+Our position: (237.8095, 479.0)
+Offset from blocking tile: (-50.19046, -1.0)
+Offset from current tile: (13.80954, -1.0)
+Edge threshold: 16.0
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (-1.0, 0.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+Input dir: (0.0, -1.0) Clear: true Colliding: false
+[Server] Peer disconnected: 1017737305
+[Game] Player left: 1017737305
+[Lobby] Player removed: Player_8031

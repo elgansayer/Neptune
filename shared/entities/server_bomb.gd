@@ -15,6 +15,10 @@ var has_exploded := false
 signal exploded(bomb)
 
 func _ready():
+	# Set collision layers: bombs on layer 3, collide with walls (1) only
+	collision_layer = Constants.COLLISION_LAYER_BOMBS
+	collision_mask = Constants.COLLISION_LAYER_WALLS
+	
 	# Set up collision shape
 	var collision_shape = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()

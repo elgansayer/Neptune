@@ -15,6 +15,9 @@ var explosions := []  # Array of {cells: Array, time: float} for visual effects
 var game_map := []  # 2D array representing the map
 var map_tiles := {}  # Dictionary of tile_key -> StaticBody2D for collision
 var next_bomb_id := 0
+var map_manager: Node  # MapManager instance
+var spawn_points := []  # Available spawn points from map
+var next_spawn_index := 0  # Track which spawn point to use next
 
 # State sync
 var last_sync_time := 0.0
@@ -24,25 +27,41 @@ const EXPLOSION_DISPLAY_TIME = 0.5  # How long to show explosions
 signal game_ended(winner_id: String)
 
 func _ready():
-	# TODO: Load map from file
-	# For now, create simple map (15x13 grid)
-	game_map.resize(13)
-	for y in range(13):
-		game_map[y] = []
-		game_map[y].resize(15)
-		for x in range(15):
-			# 0 = empty, 1 = wall, 2 = destructible block
-			if x == 0 or x == 14 or y == 0 or y == 12:
-				game_map[y][x] = 1  # Border walls
-			elif x % 2 == 0 and y % 2 == 0:
-				game_map[y][x] = 1  # Grid pattern walls
-			else:
-				# Add destructible blocks randomly (but not in spawn zones)
-				var is_spawn_zone = (x <= 2 and y <= 2) or (x >= 12 and y <= 2) or (x <= 2 and y >= 10) or (x >= 12 and y >= 10)
-				if not is_spawn_zone and randf() < 0.6:
-					game_map[y][x] = 2  # Destructible block
-				else:
-					game_map[y][x] = 0  # Empty
+	# Initialize map manager
+	map_manager = load("res://shared/maps/map_manager.gd").new()
+	add_child(map_manager)
+	
+	# Seed randomness with current time for unique maps each game
+	randomize()
+	
+	# Load map - CLASSIC Bomberman style only (17x11 visible grid)
+	var map_data: Dictionary
+	
+	# Always use CLASSIC style for traditional Bomberman gameplay
+	# 17 columns x 11 rows (like original Bomberman)
+	map_data = map_manager.generate_procedural_map(MapGenerator.MapStyle.CLASSIC, 17, 11)
+	
+	# Alternative options (uncomment to use):
+	# Option A: Always use classic style
+	# map_data = map_manager.generate_procedural_map(MapGenerator.MapStyle.CLASSIC)
+	
+	# Option B: Load random map file (static, same content each time)
+	# map_data = map_manager.load_random_map_file()
+	
+	# Option C: Load specific map
+	# map_data = map_manager.load_map(map_manager.MapSource.FILE, "res://res/maps/classic_arena.json")
+	
+	if map_data.is_empty():
+		push_error("[GameInstance] Failed to load map, using fallback")
+		# Fallback: generate a basic map
+		map_data = map_manager.generate_procedural_map(MapGenerator.MapStyle.CLASSIC)
+	
+	# Apply map data
+	game_map = map_data.grid
+	spawn_points = map_data.spawn_points
+	
+	print("[GameInstance] Loaded map '", map_data.get("name", "Unknown"), 
+		  "' with ", spawn_points.size(), " spawn points")
 	
 	# Create physics collision bodies for walls and blocks
 	create_map_collision()
@@ -56,6 +75,10 @@ func create_map_collision():
 			if tile_type == 1 or tile_type == 2:  # Wall or destructible block
 				var tile_body = StaticBody2D.new()
 				tile_body.name = "Tile_%d_%d" % [x, y]
+				
+				# Set collision layers: walls are on layer 1, don't detect anything
+				tile_body.collision_layer = Constants.COLLISION_LAYER_WALLS
+				tile_body.collision_mask = 0  # Walls don't need to detect collisions
 				
 				# Create collision shape - USE CIRCLE to match player's circular hitbox!
 				# This prevents getting stuck on corners
@@ -86,10 +109,21 @@ func _physics_process(delta):
 		last_sync_time = 0.0
 		sync_state_to_clients()
 
-func add_player(peer_id: int, username: String, spawn_position: Vector2):
+func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO):
 	var player = ServerPlayer.new()
 	player.player_id = str(peer_id)
 	player.username = username
+	
+	# Use provided spawn position, or get next available spawn from map
+	if spawn_position == Vector2.ZERO:
+		if spawn_points.is_empty():
+			# Fallback spawn
+			spawn_position = Vector2(64, 64)
+			push_warning("[GameInstance] No spawn points available, using fallback")
+		else:
+			spawn_position = spawn_points[next_spawn_index % spawn_points.size()]
+			next_spawn_index += 1
+	
 	player.position = spawn_position
 	player.name = "Player_" + str(peer_id)
 	

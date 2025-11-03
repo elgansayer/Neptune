@@ -76,14 +76,19 @@ bomberman/
     *   Add bomb sprite and animation
     *   Add explosion effects and animations
 
-2.  **[ ] Map Rendering:**
-    *   Render the tile-based map (walls, destructible blocks)
-    *   Add background/floor tiles
-    *   Support multiple map themes
+2.  **[x] Dynamic Map System:** ✅ **COMPLETED**
+    *   [x] Procedural map generation (6 algorithms: Classic, Arena, Maze, Chaos, Wide, Symmetric)
+    *   [x] JSON-based map loading system
+    *   [x] 5+ pre-built map templates
+    *   [x] Automatic spawn point generation and management
+    *   [x] Map validation system
+    *   [x] MapManager unified API
+    *   [x] Test scene for map visualization
+    *   See `docs/MAP_SYSTEM.md` for full documentation
 
 3.  **[ ] Multiple Players in One Game:**
     *   Support 2-10 players in a single game instance
-    *   Spawn players at different starting positions
+    *   Spawn players at different starting positions (spawn system ready!)
     *   Color-code players for easy identification
     *   Show player names above sprites
 

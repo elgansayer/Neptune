@@ -15,6 +15,8 @@ const EntityInterpolator = preload("res://client/prediction/entity_interpolator.
 var player_nodes = {}  # peer_id -> Node2D
 var bomb_nodes = {}  # bomb_id -> Node2D
 var explosion_nodes = {}  # cell_key -> Node2D
+var block_nodes = {}  # tile_key -> Node2D (for destructible blocks)
+var wall_nodes = {}  # tile_key -> Node2D (for solid walls)
 var debug_tiles = {}  # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
@@ -27,18 +29,25 @@ var remote_player_interpolators = {}  # peer_id -> EntityInterpolator for remote
 var input_buffer = []  # Array of currently pressed direction keys in order (most recent last)
 
 func _ready():
-	# Set up camera
+	# Set up FIXED camera to show entire arena (like classic Bomberman)
 	camera.enabled = true
+	camera.anchor_mode = Camera2D.ANCHOR_MODE_DRAG_CENTER
+	camera.position = Vector2.ZERO  # Will be set when map loads
+	camera.zoom = Vector2(1.0, 1.0)  # Will be adjusted when map loads
 	
 	# Initialize prediction system for local player
 	local_player_controller = ClientPlayerController.new()
 	add_child(local_player_controller)
 
 func update_game_state(state: Dictionary):
-	# Render map once
+	# Render map once (walls only)
 	if not map_rendered and state.has("map"):
 		render_map(state.map)
 		map_rendered = true
+	
+	# Update destructible blocks based on current map state
+	if state.has("map"):
+		update_blocks(state.map)
 	
 	# Update players
 	for peer_id_str in state.players:
@@ -65,6 +74,55 @@ func update_game_state(state: Dictionary):
 	# Update explosions
 	if state.has("explosions"):
 		update_explosions(state.explosions)
+
+func update_blocks(map_data: Array):
+	"""Update destructible blocks based on current server map state"""
+	var current_blocks = {}
+	
+	# Check which blocks should exist
+	for row in range(map_data.size()):
+		for col in range(map_data[row].size()):
+			var tile_type = map_data[row][col]
+			var tile_key = "%d,%d" % [col, row]
+			
+			if tile_type == 2:  # Destructible block
+				current_blocks[tile_key] = true
+				
+				# Create block if it doesn't exist
+				if not block_nodes.has(tile_key):
+					var block = ColorRect.new()
+					block.color = Color(0.6, 0.5, 0.4)
+					block.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+					block.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
+					block.z_index = 0
+					add_child(block)
+					
+					# Add hitbox visualization
+					var hitbox = Line2D.new()
+					hitbox.width = 2.0
+					hitbox.default_color = Color(0, 1, 0, 0.6)
+					hitbox.z_index = 101
+					var radius = Constants.TILE_SIZE / 2.0
+					var num_points = 32
+					for i in range(num_points + 1):
+						var angle = (i / float(num_points)) * TAU
+						var point = Vector2(cos(angle), sin(angle)) * radius
+						hitbox.add_point(point)
+					hitbox.position = Vector2(
+						col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+						row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+					)
+					add_child(hitbox)
+					
+					block_nodes[tile_key] = {"block": block, "hitbox": hitbox}
+	
+	# Remove blocks that no longer exist (destroyed)
+	for tile_key in block_nodes.keys():
+		if not current_blocks.has(tile_key):
+			var nodes = block_nodes[tile_key]
+			nodes.block.queue_free()
+			nodes.hitbox.queue_free()
+			block_nodes.erase(tile_key)
 
 func update_player(peer_id: String, data: Dictionary):
 	var player_node
@@ -220,9 +278,10 @@ func update_player(peer_id: String, data: Dictionary):
 		else:
 			shapecast_visual.clear_points()
 	
-	# Update camera to follow our player (use predicted position for smooth camera)
-	if peer_id == my_player_id:
-		camera.position = player_node.position
+	# Camera is FIXED - don't follow player (classic Bomberman style)
+	# Commented out: camera should show entire arena at all times
+	# if peer_id == my_player_id:
+	# 	camera.position = player_node.position
 
 func update_bomb(bomb_id: String, data: Dictionary):
 	var bomb_node
@@ -349,11 +408,15 @@ func _physics_process(delta):
 	})
 
 func render_map(map_data):
-	# Draw background for the play area
+	# Get map dimensions
+	var map_height = map_data.size()
+	var map_width = map_data[0].size() if map_height > 0 else 0
+	
+	# Draw background for the play area - sized to actual map
 	var bg = ColorRect.new()
 	bg.color = Color(0.15, 0.25, 0.15)  # Dark green background
-	bg.size = Vector2(Constants.TILE_SIZE * 13, Constants.TILE_SIZE * 11)
-	bg.position = Vector2.ZERO
+	bg.size = Vector2(Constants.TILE_SIZE * map_width, Constants.TILE_SIZE * map_height)
+	bg.position = Vector2.ZERO  # Start from top-left
 	bg.z_index = -1
 	add_child(bg)
 	
@@ -416,6 +479,27 @@ func render_map(map_data):
 					row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
 				)
 				add_child(hitbox)
+	
+	# Position camera to show ENTIRE map (fixed, no following)
+	# Center camera on the map
+	var map_center_x = map_width * Constants.TILE_SIZE / 2.0
+	var map_center_y = map_height * Constants.TILE_SIZE / 2.0
+	camera.position = Vector2(map_center_x, map_center_y)
+	
+	# Calculate zoom to fit entire map in viewport
+	# Assuming 1152x648 viewport (standard HD)
+	var viewport_size = get_viewport().get_visible_rect().size
+	var map_pixel_width = map_width * Constants.TILE_SIZE
+	var map_pixel_height = map_height * Constants.TILE_SIZE
+	
+	# Calculate zoom to fit map with some padding
+	var zoom_x = viewport_size.x / (map_pixel_width * 1.1)  # 1.1 for 10% padding
+	var zoom_y = viewport_size.y / (map_pixel_height * 1.1)
+	var zoom_level = min(zoom_x, zoom_y)  # Use smaller zoom to fit both dimensions
+	
+	camera.zoom = Vector2(zoom_level, zoom_level)
+	
+	print("[GameView] Camera positioned at ", camera.position, " with zoom ", camera.zoom)
 
 func show_debug_tile(tile_pos: Vector2i, color: Color):
 	"""Show a colored overlay on a tile for debugging"""

@@ -37,6 +37,10 @@ const ENABLE_GRID_SNAPPING = true  # Re-enabled with matching client prediction
 const ENABLE_CORNER_SLIDING = true  # Toggle manual corner sliding logic
 
 func _ready():
+	# Set collision layers: players on layer 2, collide with walls (1) and bombs (4)
+	collision_layer = Constants.COLLISION_LAYER_PLAYERS
+	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
+	
 	# Set up collision shape - USE RECTANGLE for precise collision
 	var collision_shape = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
@@ -82,10 +86,10 @@ func _setup_shape_casts():
 	var cast_shape = RectangleShape2D.new()
 	cast_shape.size = Vector2(Constants.PLAYER_HALF_WIDTH * 2, Constants.PLAYER_HALF_WIDTH * 2)  # 56x56 square
 	
-	# ShapeCast for desired direction
+	# ShapeCast for desired direction (check walls and bombs, not other players)
 	shape_cast_desired = ShapeCast2D.new()
 	shape_cast_desired.shape = cast_shape
-	shape_cast_desired.collision_mask = collision_mask
+	shape_cast_desired.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
 	shape_cast_desired.enabled = true  # Keep enabled for debugging
 	shape_cast_desired.exclude_parent = true  # Don't collide with self!
 	add_child(shape_cast_desired)
@@ -95,14 +99,14 @@ func _setup_shape_casts():
 	# ShapeCast for perpendicular direction 1
 	shape_cast_perp1 = ShapeCast2D.new()
 	shape_cast_perp1.shape = cast_shape
-	shape_cast_perp1.collision_mask = collision_mask
+	shape_cast_perp1.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
 	shape_cast_perp1.enabled = false
 	add_child(shape_cast_perp1)
 	
 	# ShapeCast for perpendicular direction 2
 	shape_cast_perp2 = ShapeCast2D.new()
 	shape_cast_perp2.shape = cast_shape
-	shape_cast_perp2.collision_mask = collision_mask
+	shape_cast_perp2.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
 	shape_cast_perp2.enabled = false
 	add_child(shape_cast_perp2)
 

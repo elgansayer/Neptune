@@ -127,19 +127,23 @@ func send_player_input(input_data: Dictionary):
 
 # Quick-start game system (no lobby for now)
 func quick_start_game(peer_id: int, username: String):
-	# For now, just create a new game for each player
-	var game_id = "game_" + str(Time.get_ticks_msec())
-	var game = GameInstance.new()
-	game.game_id = game_id
-	game.name = game_id
-	add_child(game)
+	# For now, all players join the SAME shared game
+	var shared_game_id = "shared_game"
 	
-	active_games[game_id] = game
-	player_to_game[peer_id] = game_id
+	# Create shared game if it doesn't exist
+	if not active_games.has(shared_game_id):
+		print("[Server] Creating new shared game instance")
+		var game = GameInstance.new()
+		game.game_id = shared_game_id
+		game.name = shared_game_id
+		add_child(game)
+		active_games[shared_game_id] = game
 	
-	# Spawn player at a starting position
-	var spawn_pos = Vector2(64 * 1.5, 64 * 1.5)  # Top-left spawn
-	game.add_player(peer_id, username, spawn_pos)
+	var game = active_games[shared_game_id]
+	player_to_game[peer_id] = shared_game_id
 	
-	print("[Server] Started game ", game_id, " for player ", username)
+	# Add player to the shared game (auto-assigns spawn point)
+	game.add_player(peer_id, username)
+	
+	print("[Server] Player ", username, " joined shared game. Total players: ", game.players.size())
 

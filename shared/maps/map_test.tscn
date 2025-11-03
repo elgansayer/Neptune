@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://shared/maps/map_test.gd" id="1"]
+
+[node name="MapTest" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(400, 300)
+zoom = Vector2(0.75, 0.75)
+
+[node name="MapContainer" type="Node2D" parent="."]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="Label" type="Label" parent="UI"]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 800.0
+offset_bottom = 120.0
+theme_override_font_sizes/font_size = 14
+text = "Loading..."
