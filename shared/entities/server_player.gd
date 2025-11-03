@@ -33,14 +33,14 @@ var debug_raycast_line: Line2D  # Visualize the raycast
 
 # Constants for corner sliding
 const COLLISION_CHECK_DISTANCE = 8.0  # How far ahead to check for obstacles
-const ENABLE_GRID_SNAPPING = false  # Toggle grid alignment on/off
+const ENABLE_GRID_SNAPPING = true  # Toggle grid alignment on/off
 const ENABLE_CORNER_SLIDING = true  # Toggle manual corner sliding logic
 
 func _ready():
-	# Set up collision shape - USE CIRCLE for natural wall sliding!
+	# Set up collision shape - USE RECTANGLE for precise collision
 	var collision_shape = CollisionShape2D.new()
-	var shape = CircleShape2D.new()
-	shape.radius = Constants.PLAYER_HALF_WIDTH  # 28 pixels radius (56px diameter, 87.5% of 64px tile)
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(Constants.PLAYER_HALF_WIDTH * 2, Constants.PLAYER_HALF_WIDTH * 2)  # 56x56 square
 	collision_shape.shape = shape
 	add_child(collision_shape)
 	
@@ -79,8 +79,8 @@ func _setup_debug_raycast():
 func _setup_shape_casts():
 	"""Create ShapeCast2D nodes for checking collisions in different directions"""
 	# Create shape for casting
-	var cast_shape = CircleShape2D.new()
-	cast_shape.radius = Constants.PLAYER_HALF_WIDTH
+	var cast_shape = RectangleShape2D.new()
+	cast_shape.size = Vector2(Constants.PLAYER_HALF_WIDTH * 2, Constants.PLAYER_HALF_WIDTH * 2)  # 56x56 square
 	
 	# ShapeCast for desired direction
 	shape_cast_desired = ShapeCast2D.new()
@@ -188,7 +188,7 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 	
 	# Edge threshold: within 0.5 of tile edge means we can slide
 	# For a 64px tile, half is 32px, so edge_threshold should be around 24-28px
-	var edge_threshold = Constants.TILE_SIZE / 2.0 - 8.0  # Within 8px of edge
+	var edge_threshold = Constants.TILE_SIZE / 4.0  # Within 8px of edge
 	
 	print("Blocked dir: ", blocked_direction)
 	print("Blocking tile: ", debug_blocking_tile, " center: ", blocking_tile_center)
@@ -203,13 +203,21 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 		if offset_from_blocking.y < -edge_threshold:
 			print("Near TOP edge, trying UP")
 			# Near top, try sliding UP
-			if _check_direction_clear(Vector2.UP):
+			# BUT we need to check TWO things:
+			# 1. Can we move UP from our current position?
+			# 2. Is the tile ABOVE the blocking tile also walkable?
+			var tile_above_blocking = Vector2i(debug_blocking_tile.x, debug_blocking_tile.y - 1)
+			if _check_direction_clear(Vector2.UP) and is_tile_walkable(tile_above_blocking):
+				print("  -> Both UP path and tile above blocking are clear!")
 				return Vector2.UP
 		# Check if near BOTTOM edge relative to blocking tile
 		elif offset_from_blocking.y > edge_threshold:
 			print("Near BOTTOM edge, trying DOWN")
 			# Near bottom, try sliding DOWN
-			if _check_direction_clear(Vector2.DOWN):
+			# Same logic: check both DOWN path and tile below blocking tile
+			var tile_below_blocking = Vector2i(debug_blocking_tile.x, debug_blocking_tile.y + 1)
+			if _check_direction_clear(Vector2.DOWN) and is_tile_walkable(tile_below_blocking):
+				print("  -> Both DOWN path and tile below blocking are clear!")
 				return Vector2.DOWN
 	
 	# Blocked moving vertically (UP or DOWN)?
@@ -218,13 +226,19 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 		if offset_from_blocking.x < -edge_threshold:
 			print("Near LEFT edge, trying LEFT")
 			# Near left, try sliding LEFT
-			if _check_direction_clear(Vector2.LEFT):
+			# Check both LEFT path and tile to the left of blocking tile
+			var tile_left_of_blocking = Vector2i(debug_blocking_tile.x - 1, debug_blocking_tile.y)
+			if _check_direction_clear(Vector2.LEFT) and is_tile_walkable(tile_left_of_blocking):
+				print("  -> Both LEFT path and tile left of blocking are clear!")
 				return Vector2.LEFT
 		# Check if near RIGHT edge relative to blocking tile
 		elif offset_from_blocking.x > edge_threshold:
 			print("Near RIGHT edge, trying RIGHT")
 			# Near right, try sliding RIGHT
-			if _check_direction_clear(Vector2.RIGHT):
+			# Check both RIGHT path and tile to the right of blocking tile
+			var tile_right_of_blocking = Vector2i(debug_blocking_tile.x + 1, debug_blocking_tile.y)
+			if _check_direction_clear(Vector2.RIGHT) and is_tile_walkable(tile_right_of_blocking):
+				print("  -> Both RIGHT path and tile right of blocking are clear!")
 				return Vector2.RIGHT
 	
 	# No slide possible

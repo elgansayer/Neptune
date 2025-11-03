@@ -89,20 +89,20 @@ func update_player(peer_id: String, data: Dictionary):
 		label.position = Vector2(-30, -40)
 		player_node.add_child(label)
 		
-		# Add hitbox visualization (green circle)
+		# Add hitbox visualization (green square/rectangle)
 		var hitbox_visual = Line2D.new()
 		hitbox_visual.width = 2.0
 		hitbox_visual.default_color = Color(0, 1, 0, 0.8)  # Bright green
 		hitbox_visual.z_index = 101
 		hitbox_visual.name = "HitboxVisual"
 		
-		# Create circle points
-		var radius = Constants.PLAYER_HALF_WIDTH
-		var num_points = 32
-		for i in range(num_points + 1):
-			var angle = (i / float(num_points)) * TAU
-			var point = Vector2(cos(angle), sin(angle)) * radius
-			hitbox_visual.add_point(point)
+		# Create square points (rectangle)
+		var half_size = Constants.PLAYER_HALF_WIDTH
+		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Top-left
+		hitbox_visual.add_point(Vector2(half_size, -half_size))   # Top-right
+		hitbox_visual.add_point(Vector2(half_size, half_size))    # Bottom-right
+		hitbox_visual.add_point(Vector2(-half_size, half_size))   # Bottom-left
+		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Close the square
 		
 		player_node.add_child(hitbox_visual)
 		
@@ -206,19 +206,19 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		sprite.modulate = Color(0.1, 0.1, 0.1)  # Dark/black for bomb
 		bomb_node.add_child(sprite)
 		
-		# Add bomb hitbox visualization (green circle)
+		# Add bomb hitbox visualization (green square)
 		var hitbox_visual = Line2D.new()
 		hitbox_visual.width = 2.0
 		hitbox_visual.default_color = Color(0, 1, 0, 0.8)  # Bright green
 		hitbox_visual.z_index = 101
 		
-		# Create circle points
-		var radius = Constants.PLAYER_HALF_WIDTH  # Bombs use same size as player
-		var num_points = 32
-		for i in range(num_points + 1):
-			var angle = (i / float(num_points)) * TAU
-			var point = Vector2(cos(angle), sin(angle)) * radius
-			hitbox_visual.add_point(point)
+		# Create square points (rectangle)
+		var half_size = Constants.PLAYER_HALF_WIDTH  # Bombs use same size as player
+		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Top-left
+		hitbox_visual.add_point(Vector2(half_size, -half_size))   # Top-right
+		hitbox_visual.add_point(Vector2(half_size, half_size))    # Bottom-right
+		hitbox_visual.add_point(Vector2(-half_size, half_size))   # Bottom-left
+		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Close the square
 		
 		bomb_node.add_child(hitbox_visual)
 		
