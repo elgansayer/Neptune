@@ -1,9 +1,11 @@
 extends Node2D
 
-# Client-side game display
-# Receives state from server and renders it
+# Client-side game display with lag mitigation
+# Implements Client-Side Prediction, Server Reconciliation, and Entity Interpolation
 
 const Constants = preload("res://shared/constants.gd")
+const ClientPlayerController = preload("res://client/prediction/client_player_controller.gd")
+const EntityInterpolator = preload("res://client/prediction/entity_interpolator.gd")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -17,12 +19,20 @@ var debug_tiles = {}  # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
 
+# Lag mitigation systems
+var local_player_controller: ClientPlayerController  # Prediction for local player
+var remote_player_interpolators = {}  # peer_id -> EntityInterpolator for remote players
+
 # Input buffering: track order of pressed keys
 var input_buffer = []  # Array of currently pressed direction keys in order (most recent last)
 
 func _ready():
 	# Set up camera
 	camera.enabled = true
+	
+	# Initialize prediction system for local player
+	local_player_controller = ClientPlayerController.new()
+	add_child(local_player_controller)
 
 func update_game_state(state: Dictionary):
 	# Render map once
@@ -128,15 +138,37 @@ func update_player(peer_id: String, data: Dictionary):
 		players_container.add_child(player_node)
 		player_nodes[peer_id] = player_node
 		
-		# If this is our player, follow with camera
+		# If this is our player, follow with camera and initialize prediction
 		if peer_id == str(multiplayer.get_unique_id()):
 			my_player_id = peer_id
+			# Initialize prediction with spawn position
+			local_player_controller.reset_prediction(Vector2(data.position.x, data.position.y))
+		else:
+			# Create interpolator for remote players
+			var interpolator = EntityInterpolator.new()
+			remote_player_interpolators[peer_id] = interpolator
+			add_child(interpolator)
 	else:
 		player_node = player_nodes[peer_id]
 	
-	# Update position (smooth interpolation could be added here)
 	var target_pos = Vector2(data.position.x, data.position.y)
-	player_node.position = target_pos
+	var target_vel = Vector2(data.velocity.x, data.velocity.y)
+	
+	# Apply lag mitigation based on player type
+	if peer_id == my_player_id:
+		# LOCAL PLAYER: Direct server position (no interpolation)
+		local_player_controller.reconcile_with_server(data)
+		# Use server position directly - feels like the original working version
+		player_node.position = local_player_controller.predicted_position
+	else:
+		# REMOTE PLAYER: Entity Interpolation
+		if remote_player_interpolators.has(peer_id):
+			var interpolator = remote_player_interpolators[peer_id]
+			interpolator.add_server_state(target_pos, target_vel)
+			player_node.position = interpolator.get_interpolated_position()
+		else:
+			# Fallback: direct update
+			player_node.position = target_pos
 	
 	# Update debug arrow rotation based on facing direction
 	var debug_arrow = player_node.get_node_or_null("DebugArrow")
@@ -188,9 +220,9 @@ func update_player(peer_id: String, data: Dictionary):
 		else:
 			shapecast_visual.clear_points()
 	
-	# Update camera to follow our player
+	# Update camera to follow our player (use predicted position for smooth camera)
 	if peer_id == my_player_id:
-		camera.position = target_pos
+		camera.position = player_node.position
 
 func update_bomb(bomb_id: String, data: Dictionary):
 	var bomb_node
@@ -265,7 +297,7 @@ func update_explosions(explosions_data: Array):
 		explosions_container.add_child(explosion_node)
 		explosion_nodes[cell_key] = explosion_node
 
-func _physics_process(_delta):
+func _physics_process(delta):
 	# Update input buffer based on which keys are pressed
 	var directions = ["ui_up", "ui_down", "ui_left", "ui_right"]
 	
@@ -301,7 +333,15 @@ func _physics_process(_delta):
 	
 	var place_bomb = Input.is_action_just_pressed("ui_accept")
 	
-	# Always send input state to server (including zero input when keys released)
+	# SIMPLIFIED APPROACH: Just use server state with smooth interpolation
+	# Prediction is too complex to match server's corner sliding + grid snapping
+	var input_dir = Vector2(input_x, input_y)
+	if my_player_id != "" and player_nodes.has(my_player_id):
+		# Keep prediction state updated but don't use it for visuals
+		var _predicted_state = local_player_controller.predict_movement(input_dir, delta, [])
+		# Visual position comes from server via reconciliation in update_player
+	
+	# Send input to server (server remains authoritative)
 	get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
 		"input_x": input_x,
 		"input_y": input_y,

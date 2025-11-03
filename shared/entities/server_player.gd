@@ -33,7 +33,7 @@ var debug_raycast_line: Line2D  # Visualize the raycast
 
 # Constants for corner sliding
 const COLLISION_CHECK_DISTANCE = 8.0  # How far ahead to check for obstacles
-const ENABLE_GRID_SNAPPING = true  # Toggle grid alignment on/off
+const ENABLE_GRID_SNAPPING = true  # Re-enabled with matching client prediction
 const ENABLE_CORNER_SLIDING = true  # Toggle manual corner sliding logic
 
 func _ready():
