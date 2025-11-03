@@ -13,6 +13,7 @@ const Constants = preload("res://shared/constants.gd")
 var player_nodes = {}  # peer_id -> Node2D
 var bomb_nodes = {}  # bomb_id -> Node2D
 var explosion_nodes = {}  # cell_key -> Node2D
+var debug_tiles = {}  # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
 
@@ -68,10 +69,61 @@ func update_player(peer_id: String, data: Dictionary):
 		sprite.scale = Vector2(0.4, 0.4)
 		player_node.add_child(sprite)
 		
+		# Add debug arrow to show facing direction
+		var arrow = Polygon2D.new()
+		var arrow_points = PackedVector2Array([
+			Vector2(0, -15),      # Top left
+			Vector2(40, 0),       # Tip (pointing right)
+			Vector2(0, 15),       # Bottom left
+			Vector2(10, 0)        # Inner notch
+		])
+		arrow.polygon = arrow_points
+		arrow.color = Color(1, 0, 0, 1.0)  # Bright RED
+		arrow.z_index = 100
+		arrow.position = Vector2(0, -50)  # Above the sprite
+		arrow.name = "DebugArrow"
+		player_node.add_child(arrow)
+		
 		var label = Label.new()
 		label.text = data.username
 		label.position = Vector2(-30, -40)
 		player_node.add_child(label)
+		
+		# Add hitbox visualization (green circle)
+		var hitbox_visual = Line2D.new()
+		hitbox_visual.width = 2.0
+		hitbox_visual.default_color = Color(0, 1, 0, 0.8)  # Bright green
+		hitbox_visual.z_index = 101
+		hitbox_visual.name = "HitboxVisual"
+		
+		# Create circle points
+		var radius = Constants.PLAYER_HALF_WIDTH
+		var num_points = 32
+		for i in range(num_points + 1):
+			var angle = (i / float(num_points)) * TAU
+			var point = Vector2(cos(angle), sin(angle)) * radius
+			hitbox_visual.add_point(point)
+		
+		player_node.add_child(hitbox_visual)
+		
+		# Add raycast visualization line
+		var raycast_debug_line = Line2D.new()
+		# Width = collision shape diameter to show actual raycast width
+		raycast_debug_line.width = Constants.PLAYER_HALF_WIDTH * 2.0  # 56px diameter
+		raycast_debug_line.default_color = Color(0, 1, 1, 1.0)  # Cyan
+		raycast_debug_line.z_index = 100  # Fixed: within valid range
+		raycast_debug_line.antialiased = true
+		raycast_debug_line.name = "RaycastLine"
+		player_node.add_child(raycast_debug_line)
+		
+		# Add ShapeCast2D visualization (showing the collision check shape)
+		var shapecast_visual = Line2D.new()
+		shapecast_visual.width = Constants.PLAYER_HALF_WIDTH * 2.0  # Same size as player
+		shapecast_visual.default_color = Color(1, 0, 0, 0.6)  # Red by default
+		shapecast_visual.z_index = 101
+		shapecast_visual.antialiased = true
+		shapecast_visual.name = "ShapeCastVisual"
+		player_node.add_child(shapecast_visual)
 		
 		players_container.add_child(player_node)
 		player_nodes[peer_id] = player_node
@@ -85,6 +137,56 @@ func update_player(peer_id: String, data: Dictionary):
 	# Update position (smooth interpolation could be added here)
 	var target_pos = Vector2(data.position.x, data.position.y)
 	player_node.position = target_pos
+	
+	# Update debug arrow rotation based on facing direction
+	var debug_arrow = player_node.get_node_or_null("DebugArrow")
+	if debug_arrow and data.has("facing"):
+		var rotation_map = {
+			"RIGHT": 0.0,
+			"DOWN": PI / 2.0,
+			"LEFT": PI,
+			"UP": -PI / 2.0
+		}
+		if data.facing in rotation_map:
+			debug_arrow.rotation = rotation_map[data.facing]
+	
+	# Show debug tiles if present in state
+	if data.has("debug_blocking_tile"):
+		var blocking_data = data.debug_blocking_tile
+		show_debug_tile(Vector2i(blocking_data.x, blocking_data.y), Color(1, 0, 0, 0.7))  # RED for blocking tile
+	
+	if data.has("debug_check_tile"):
+		var desired_data = data.debug_check_tile
+		show_debug_tile(Vector2i(desired_data.x, desired_data.y), Color(1, 1, 0, 0.7))  # YELLOW for desired tile
+	
+	# Update raycast line based on last_move_direction
+	var raycast_line = player_node.get_node_or_null("RaycastLine")
+	if raycast_line and data.has("last_move_direction"):
+		var last_move = Vector2(data.last_move_direction.x, data.last_move_direction.y)
+		if last_move.length() > 0.1:
+			var motion = last_move.normalized() * 32.0  # Make it longer so it's visible
+			raycast_line.clear_points()
+			raycast_line.add_point(Vector2.ZERO)
+			raycast_line.add_point(motion)
+		else:
+			raycast_line.clear_points()
+	
+	# Update ShapeCast2D visual if we have shape_cast data
+	var shapecast_visual = player_node.get_node_or_null("ShapeCastVisual")
+	if shapecast_visual and data.has("shape_cast_target"):
+		var target = Vector2(data.shape_cast_target.x, data.shape_cast_target.y)
+		var is_colliding = data.get("shape_cast_colliding", false)
+		
+		# Update color based on collision state
+		shapecast_visual.default_color = Color(1, 0, 0, 0.6) if is_colliding else Color(0, 1, 0, 0.4)
+		
+		# Draw the shape cast line
+		if target.length() > 0.1:
+			shapecast_visual.clear_points()
+			shapecast_visual.add_point(Vector2.ZERO)
+			shapecast_visual.add_point(target)
+		else:
+			shapecast_visual.clear_points()
 	
 	# Update camera to follow our player
 	if peer_id == my_player_id:
@@ -103,6 +205,22 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		sprite.scale = Vector2(0.35, 0.35)
 		sprite.modulate = Color(0.1, 0.1, 0.1)  # Dark/black for bomb
 		bomb_node.add_child(sprite)
+		
+		# Add bomb hitbox visualization (green circle)
+		var hitbox_visual = Line2D.new()
+		hitbox_visual.width = 2.0
+		hitbox_visual.default_color = Color(0, 1, 0, 0.8)  # Bright green
+		hitbox_visual.z_index = 101
+		
+		# Create circle points
+		var radius = Constants.PLAYER_HALF_WIDTH  # Bombs use same size as player
+		var num_points = 32
+		for i in range(num_points + 1):
+			var angle = (i / float(num_points)) * TAU
+			var point = Vector2(cos(angle), sin(angle)) * radius
+			hitbox_visual.add_point(point)
+		
+		bomb_node.add_child(hitbox_visual)
 		
 		var label = Label.new()
 		label.position = Vector2(-15, -35)
@@ -213,11 +331,79 @@ func render_map(map_data):
 				wall.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
 				wall.z_index = 0
 				add_child(wall)
+				
+				# Add hitbox visualization (green circle to match actual collision)
+				var hitbox = Line2D.new()
+				hitbox.width = 2.0
+				hitbox.default_color = Color(0, 1, 0, 0.6)  # Semi-transparent green
+				hitbox.z_index = 101
+				# Draw circle
+				var radius = Constants.TILE_SIZE / 2.0
+				var num_points = 32
+				for i in range(num_points + 1):
+					var angle = (i / float(num_points)) * TAU
+					var point = Vector2(cos(angle), sin(angle)) * radius
+					hitbox.add_point(point)
+				hitbox.position = Vector2(
+					col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+					row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+				)
+				add_child(hitbox)
+				
 			elif tile_type == 2:
-				# Destructible block - brown/tan
+				# Destructible block - lighter brown/tan
 				var block = ColorRect.new()
-				block.color = Color(0.6, 0.4, 0.2)
-				block.size = Vector2(Constants.TILE_SIZE - 4, Constants.TILE_SIZE - 4)
-				block.position = Vector2(col * Constants.TILE_SIZE + 2, row * Constants.TILE_SIZE + 2)
+				block.color = Color(0.6, 0.5, 0.4)
+				block.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+				block.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
 				block.z_index = 0
 				add_child(block)
+				
+				# Add hitbox visualization (green circle to match actual collision)
+				var hitbox = Line2D.new()
+				hitbox.width = 2.0
+				hitbox.default_color = Color(0, 1, 0, 0.6)  # Semi-transparent green
+				hitbox.z_index = 101
+				# Draw circle
+				var radius = Constants.TILE_SIZE / 2.0
+				var num_points = 32
+				for i in range(num_points + 1):
+					var angle = (i / float(num_points)) * TAU
+					var point = Vector2(cos(angle), sin(angle)) * radius
+					hitbox.add_point(point)
+				hitbox.position = Vector2(
+					col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+					row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+				)
+				add_child(hitbox)
+
+func show_debug_tile(tile_pos: Vector2i, color: Color):
+	"""Show a colored overlay on a tile for debugging"""
+	var tile_key = "%d,%d" % [tile_pos.x, tile_pos.y]
+	
+	# Remove old debug tile if exists
+	if debug_tiles.has(tile_key):
+		debug_tiles[tile_key].queue_free()
+		debug_tiles.erase(tile_key)
+	
+	# Create new debug overlay
+	var debug_rect = ColorRect.new()
+	debug_rect.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+	debug_rect.color = color
+	debug_rect.position = Vector2(
+		tile_pos.x * Constants.TILE_SIZE,
+		tile_pos.y * Constants.TILE_SIZE
+	)
+	debug_rect.z_index = 100  # On top of everything
+	
+	# Add to scene
+	add_child(debug_rect)
+	debug_tiles[tile_key] = debug_rect
+	
+	# Auto-remove after a short time
+	await get_tree().create_timer(0.15).timeout
+	if is_instance_valid(debug_rect):
+		debug_rect.queue_free()
+	if debug_tiles.has(tile_key):
+		debug_tiles.erase(tile_key)
+

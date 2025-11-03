@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name ServerPlayer
 
-# Server-authoritative player controller
+# Server-authoritative player controller with Bomberman-style corner sliding
 # Uses Godot's built-in physics and collision system
 
 const Constants = preload("res://shared/constants.gd")
@@ -9,19 +9,32 @@ const Constants = preload("res://shared/constants.gd")
 var player_id: String = ""
 var username: String = ""
 var input_direction := Vector2.ZERO
-var current_movement_direction := Vector2.ZERO  # Actual movement direction
-var facing_direction := "DOWN"
+var last_move_direction := Vector2.ZERO  # The last direction we successfully moved (persists when stationary)
 var place_bomb_requested := false
 var bombs_placed := 0
 var max_bombs := 1
 var bomb_range := 2
 var is_dead := false
+var debug_check_tile := Vector2i.ZERO  # Tile being checked for diagonal (for client debug)
+var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visualization)
 
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
-# Constants for automatic cornering
-const TURN_ALIGNMENT_THRESHOLD = 20.0  # Distance from tile center to execute turn
+# ShapeCast2D nodes for checking directions
+var shape_cast_desired: ShapeCast2D
+var shape_cast_perp1: ShapeCast2D
+var shape_cast_perp2: ShapeCast2D
+
+# Debug visualization
+var debug_arrow: Polygon2D
+var debug_tiles: Dictionary = {}  # Store debug tile overlays
+var debug_raycast_line: Line2D  # Visualize the raycast
+
+# Constants for corner sliding
+const COLLISION_CHECK_DISTANCE = 8.0  # How far ahead to check for obstacles
+const ENABLE_GRID_SNAPPING = false  # Toggle grid alignment on/off
+const ENABLE_CORNER_SLIDING = true  # Toggle manual corner sliding logic
 
 func _ready():
 	# Set up collision shape - USE CIRCLE for natural wall sliding!
@@ -30,47 +43,321 @@ func _ready():
 	shape.radius = Constants.PLAYER_HALF_WIDTH  # 28 pixels radius (56px diameter, 87.5% of 64px tile)
 	collision_shape.shape = shape
 	add_child(collision_shape)
+	
+	# Set up ShapeCast2D nodes for collision checking
+	_setup_shape_casts()
+	
+	# Set up debug arrow
+	_setup_debug_arrow()
+	
+	# Set up debug raycast line
+	_setup_debug_raycast()
+
+func _setup_debug_arrow():
+	"""Create a visual arrow to show facing direction"""
+	debug_arrow = Polygon2D.new()
+	
+	# Smaller arrow shape pointing right
+	var arrow_points = PackedVector2Array([
+		Vector2(0, -8),       # Top left
+		Vector2(25, 0),       # Tip (pointing right)
+		Vector2(0, 8),        # Bottom left
+		Vector2(6, 0)         # Inner notch
+	])
+	
+	debug_arrow.polygon = arrow_points
+	debug_arrow.color = Color(1, 0.5, 0, 0.8)  # Orange, semi-transparent
+	debug_arrow.z_index = 100
+	debug_arrow.z_as_relative = false
+	debug_arrow.position = Vector2(0, -35)
+	add_child(debug_arrow)
+
+func _setup_debug_raycast():
+	"""ShapeCast2D will handle visualization - this is kept for compatibility"""
+	pass  # Visualization now done by ShapeCast2D
+
+func _setup_shape_casts():
+	"""Create ShapeCast2D nodes for checking collisions in different directions"""
+	# Create shape for casting
+	var cast_shape = CircleShape2D.new()
+	cast_shape.radius = Constants.PLAYER_HALF_WIDTH
+	
+	# ShapeCast for desired direction
+	shape_cast_desired = ShapeCast2D.new()
+	shape_cast_desired.shape = cast_shape
+	shape_cast_desired.collision_mask = collision_mask
+	shape_cast_desired.enabled = true  # Keep enabled for debugging
+	shape_cast_desired.exclude_parent = true  # Don't collide with self!
+	add_child(shape_cast_desired)
+	# Explicitly exclude this player's physics body
+	shape_cast_desired.add_exception(self)
+	
+	# ShapeCast for perpendicular direction 1
+	shape_cast_perp1 = ShapeCast2D.new()
+	shape_cast_perp1.shape = cast_shape
+	shape_cast_perp1.collision_mask = collision_mask
+	shape_cast_perp1.enabled = false
+	add_child(shape_cast_perp1)
+	
+	# ShapeCast for perpendicular direction 2
+	shape_cast_perp2 = ShapeCast2D.new()
+	shape_cast_perp2.shape = cast_shape
+	shape_cast_perp2.collision_mask = collision_mask
+	shape_cast_perp2.enabled = false
+	add_child(shape_cast_perp2)
+
+func _check_direction_clear(direction: Vector2) -> bool:
+	"""Check if movement in a given direction is clear using ShapeCast2D"""
+	if direction.length() < 0.1:
+		return false
+	
+	# Use ShapeCast2D for collision detection
+	var motion = direction.normalized() * COLLISION_CHECK_DISTANCE
+	
+	# Add collision exceptions (bombs)
+	for bomb in collision_exceptions:
+		if is_instance_valid(bomb):
+			shape_cast_desired.add_exception(bomb)
+	
+	# Configure and perform shape cast
+	shape_cast_desired.target_position = motion
+	shape_cast_desired.force_shapecast_update()
+	
+	var collision_detected = shape_cast_desired.is_colliding()
+	
+	# Store collision data BEFORE clearing exceptions (otherwise collision info is lost!)
+	if collision_detected:
+		# Get the collision point and calculate which tile was hit
+		var collision_point = shape_cast_desired.get_collision_point(0)
+		var collision_normal = shape_cast_desired.get_collision_normal(0)
+		var collider = shape_cast_desired.get_collider(0)
+		
+		print("COLLISION DETECTED! Collider: ", collider, " Type: ", collider.get_class() if collider else "null", " Name: ", collider.name if collider else "null")
+		
+		# Sample slightly inside the collider to get the blocking tile
+		var sample_point = collision_point - collision_normal * 0.5
+		
+		debug_blocking_tile = Vector2i(
+			int(floor(sample_point.x / Constants.TILE_SIZE)),
+			int(floor(sample_point.y / Constants.TILE_SIZE))
+		)
+	
+	# Clear bomb exceptions AFTER getting collision data
+	shape_cast_desired.clear_exceptions()
+	# Re-add the permanent self-exception (clear_exceptions removes ALL exceptions)
+	shape_cast_desired.add_exception(self)
+	
+	# Return true if NO collision was detected (path is clear)
+	return not collision_detected
+
+func _get_perpendicular_directions(direction: Vector2) -> Array:
+	"""Get the two perpendicular directions for a given direction"""
+	if direction.length() < 0.1:
+		return [Vector2.ZERO, Vector2.ZERO]
+	
+	# For cardinal directions, return the other two cardinal directions
+	if abs(direction.x) > abs(direction.y):
+		# Moving horizontally, perpendiculars are up and down
+		return [Vector2.UP, Vector2.DOWN]
+	else:
+		# Moving vertically, perpendiculars are left and right
+		return [Vector2.LEFT, Vector2.RIGHT]
+
+func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
+	"""Check if we can slide around a corner when blocked.
+	Returns the direction we can slide in, or Vector2.ZERO if no slide possible.
+	
+	Logic:
+	- If blocked moving horizontally (LEFT/RIGHT), check if near top/bottom edge of tile
+	- If blocked moving vertically (UP/DOWN), check if near left/right edge of tile
+	- If near an edge, try moving in that perpendicular direction
+	"""
+	
+	# Get the center of the BLOCKING tile (not our current tile)
+	var blocking_tile_center = Vector2(
+		debug_blocking_tile.x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+		debug_blocking_tile.y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+	)
+	
+	# Calculate our offset from the blocking tile's center
+	var offset_from_blocking = position - blocking_tile_center
+	
+	# Also get our current tile center for reference
+	var current_tile_center = get_current_tile_center()
+	var offset_from_current = position - current_tile_center
+	
+	# Edge threshold: within 0.5 of tile edge means we can slide
+	# For a 64px tile, half is 32px, so edge_threshold should be around 24-28px
+	var edge_threshold = Constants.TILE_SIZE / 2.0 - 8.0  # Within 8px of edge
+	
+	print("Blocked dir: ", blocked_direction)
+	print("Blocking tile: ", debug_blocking_tile, " center: ", blocking_tile_center)
+	print("Our position: ", position)
+	print("Offset from blocking tile: ", offset_from_blocking)
+	print("Offset from current tile: ", offset_from_current)
+	print("Edge threshold: ", edge_threshold)
+	
+	# Blocked moving horizontally (LEFT or RIGHT)?
+	if abs(blocked_direction.x) > 0.5:
+		# Check if near TOP edge relative to blocking tile
+		if offset_from_blocking.y < -edge_threshold:
+			print("Near TOP edge, trying UP")
+			# Near top, try sliding UP
+			if _check_direction_clear(Vector2.UP):
+				return Vector2.UP
+		# Check if near BOTTOM edge relative to blocking tile
+		elif offset_from_blocking.y > edge_threshold:
+			print("Near BOTTOM edge, trying DOWN")
+			# Near bottom, try sliding DOWN
+			if _check_direction_clear(Vector2.DOWN):
+				return Vector2.DOWN
+	
+	# Blocked moving vertically (UP or DOWN)?
+	elif abs(blocked_direction.y) > 0.5:
+		# Check if near LEFT edge relative to blocking tile
+		if offset_from_blocking.x < -edge_threshold:
+			print("Near LEFT edge, trying LEFT")
+			# Near left, try sliding LEFT
+			if _check_direction_clear(Vector2.LEFT):
+				return Vector2.LEFT
+		# Check if near RIGHT edge relative to blocking tile
+		elif offset_from_blocking.x > edge_threshold:
+			print("Near RIGHT edge, trying RIGHT")
+			# Near right, try sliding RIGHT
+			if _check_direction_clear(Vector2.RIGHT):
+				return Vector2.RIGHT
+	
+	# No slide possible
+	return Vector2.ZERO
+
+func _is_diagonal_blocked(_move_vec: Vector2, _input_vec: Vector2) -> bool:
+	"""Check if we can slide using corner sliding logic
+	
+	The logic is simple:
+	1. The blocking tile was already detected by _check_direction_clear() via raycast
+	2. Calculate the desired_tile = blocking_tile + move_direction (facing)
+	3. Check if the desired tile is physically reachable by sliding
+	"""
+	# The blocking tile was already set by _check_direction_clear() via actual physics raycast
+	# Use that real collision data (stored in debug_blocking_tile)
+	var blocking_tile = debug_blocking_tile
+	
+	# The desired tile is where we want to slide to
+	# Formula: blocking_tile + move_direction (our facing direction)
+	var desired_tile = Vector2i(
+		blocking_tile.x + int(_move_vec.x),
+		blocking_tile.y + int(_move_vec.y)
+	)
+	
+	# Store for debug visualization
+	debug_check_tile = desired_tile
+	
+	# Simple check: is the tile itself walkable?
+	# If the desired tile is a wall, we definitely can't slide there
+	if not is_tile_walkable(desired_tile):
+		return true  # Blocked - tile is a wall
+	
+	# If the tile is walkable (empty), we can slide
+	# The slide direction (_move_vec) is already checked as clear in the main logic
+	return false
+
+func _vector_to_facing(direction: Vector2) -> String:
+	"""Convert direction Vector2 to facing string"""
+	if direction.length() < 0.1:
+		return "DOWN"  # Default facing
+	
+	if abs(direction.y) > abs(direction.x):
+		return "UP" if direction.y < 0 else "DOWN"
+	else:
+		return "LEFT" if direction.x < 0 else "RIGHT"
 
 func _physics_process(_delta):
 	if is_dead:
 		velocity = Vector2.ZERO
-		current_movement_direction = Vector2.ZERO
+		# last_move_direction = Vector2.ZERO
 		move_and_slide()
 		return
 	
-	# Get strict 4-way input
+	# Get the input direction (strict 4-way)
 	var input_dir = get_4way_input()
 	
-	# Debug current state
-	if input_dir.length() > 0 or current_movement_direction.length() > 0:
-		print("[%s] Input: %s, CurrentMove: %s" % [player_id, input_dir, current_movement_direction])
+	if input_dir.length() < Constants.INPUT_DEADZONE:
+		# No input - stop moving but keep last_move_direction
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 	
-	# Simple input buffering: last input wins
-	if input_dir.length() > Constants.INPUT_DEADZONE:
-		# There's input - move in that direction
-		if input_dir != current_movement_direction:
-			print("[%s] Moving in new direction: %s" % [player_id, input_dir])
-		current_movement_direction = input_dir
-	else:
-		# No input - stop
-		if current_movement_direction.length() > 0:
-			print("[%s] STOP" % player_id)
-		current_movement_direction = Vector2.ZERO
+	var final_direction := Vector2.ZERO
 	
-	# Apply movement
-	if current_movement_direction.length() > 0:
-		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
-		velocity = current_movement_direction * speed
+	# CHECK 1: Is the input_direction clear?
+	var input_clear = _check_direction_clear(input_dir)
+	var input_blocking_tile = debug_blocking_tile  # Save the blocking tile from input check
+	_is_diagonal_blocked(last_move_direction, input_dir)
+	
+	print("Input dir: ", input_dir, " Clear: ", input_clear, " Colliding: ", shape_cast_desired.is_colliding())
+	
+	if input_clear:
+		# Clear debug tiles when moving freely
+		for tile_key in debug_tiles.keys():
+			if is_instance_valid(debug_tiles[tile_key]):
+				debug_tiles[tile_key].queue_free()
+		debug_tiles.clear()
 		
-		# Update facing
-		if abs(current_movement_direction.y) > abs(current_movement_direction.x):
-			facing_direction = "UP" if current_movement_direction.y < 0 else "DOWN"
+		# YES - Move in input direction and UPDATE last_move_direction
+		final_direction = input_dir
+	else:
+		# Input direction blocked - try corner sliding
+		var slide_direction = _can_corner_slide(input_dir)
+		
+		if slide_direction != Vector2.ZERO:
+			# We can slide around the corner!
+			final_direction = slide_direction
+		#else:
+		#	# Can't slide, try continuing in last_move_direction
+		#	if _check_direction_clear(last_move_direction):
+		#		final_direction = last_move_direction
 		else:
-			facing_direction = "LEFT" if current_movement_direction.x < 0 else "RIGHT"
+			# Completely blocked, reset
+			last_move_direction = input_dir
+	
+	# Update last_move_direction if we're actively moving
+	if final_direction.length() > 0:
+		last_move_direction = final_direction
+
+	# Update debug arrow rotation
+	_update_debug_arrow()
+	
+	if final_direction.length() > 0:
+		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
+		velocity = final_direction * speed
+		
+		# Auto-align to grid: Add correction to movement vector
+		# When moving horizontally, gradually align vertically
+		# When moving vertically, gradually align horizontally
+		if ENABLE_GRID_SNAPPING:
+			var tile_center = get_current_tile_center()
+			var offset_from_center = tile_center - position
+			
+			if abs(final_direction.x) > 0.5:
+				# Moving horizontally - align vertically to grid
+				if abs(offset_from_center.y) > Constants.SNAP_THRESHOLD:
+					var correction_y = sign(offset_from_center.y) * Constants.SNAP_TO_CENTER_SPEED
+					velocity.y += correction_y
+			
+			if abs(final_direction.y) > 0.5:
+				# Moving vertically - align horizontally to grid
+				if abs(offset_from_center.x) > Constants.SNAP_THRESHOLD:
+					var correction_x = sign(offset_from_center.x) * Constants.SNAP_TO_CENTER_SPEED
+					velocity.x += correction_x
 	else:
 		velocity = Vector2.ZERO
 	
+	var pos_before = position
 	move_and_slide()
+	var pos_after = position
+	
+	if final_direction.length() > 0 and pos_before.distance_to(pos_after) < 0.1:
+		print("WARNING: Wanted to move in direction ", final_direction, " but barely moved! Distance: ", pos_before.distance_to(pos_after))
 	
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):
@@ -85,6 +372,52 @@ func _physics_process(_delta):
 		if player_tile != bomb_tile:
 			bomb.remove_collision_exception_with(self)
 			collision_exceptions.remove_at(i)
+
+func _update_debug_arrow():
+	"""Update the debug arrow rotation based on last move direction"""
+	if not debug_arrow:
+		return
+	
+	var facing = _vector_to_facing(last_move_direction)
+	var rotation_map = {
+		"RIGHT": 0.0,
+		"DOWN": PI / 2.0,
+		"LEFT": PI,
+		"UP": -PI / 2.0
+	}
+	
+	if facing in rotation_map:
+		debug_arrow.rotation = rotation_map[facing]
+
+func _show_debug_tile(tile_pos: Vector2i, color: Color):
+	"""Show a colored overlay on a tile for debugging"""
+	var tile_key = "%d,%d" % [tile_pos.x, tile_pos.y]
+	
+	# Remove old debug tile if exists
+	if debug_tiles.has(tile_key):
+		debug_tiles[tile_key].queue_free()
+		debug_tiles.erase(tile_key)
+	
+	# Create new debug overlay with border
+	var debug_rect = ColorRect.new()
+	debug_rect.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+	debug_rect.color = color
+	debug_rect.position = Vector2(
+		tile_pos.x * Constants.TILE_SIZE,
+		tile_pos.y * Constants.TILE_SIZE
+	)
+	debug_rect.z_index = 99
+	
+	# Add to scene
+	get_parent().add_child(debug_rect)
+	debug_tiles[tile_key] = debug_rect
+	
+	# Auto-remove after a short time
+	await get_tree().create_timer(0.1).timeout
+	if is_instance_valid(debug_rect):
+		debug_rect.queue_free()
+	if debug_tiles.has(tile_key):
+		debug_tiles.erase(tile_key)
 
 func get_4way_input() -> Vector2:
 	"""Convert input to strict 4-way cardinal directions (no diagonal movement)"""
@@ -173,9 +506,15 @@ func get_state() -> Dictionary:
 		"username": username,
 		"position": {"x": position.x, "y": position.y},
 		"velocity": {"x": velocity.x, "y": velocity.y},
-		"facing": facing_direction,
+		"facing": _vector_to_facing(last_move_direction),
 		"is_dead": is_dead,
 		"bombs_placed": bombs_placed,
 		"max_bombs": max_bombs,
-		"bomb_range": bomb_range
+		"bomb_range": bomb_range,
+		"last_move_direction": {"x": last_move_direction.x, "y": last_move_direction.y},
+		"debug_check_tile": {"x": debug_check_tile.x, "y": debug_check_tile.y},
+		"debug_blocking_tile": {"x": debug_blocking_tile.x, "y": debug_blocking_tile.y},
+		"shape_cast_target": {"x": shape_cast_desired.target_position.x, "y": shape_cast_desired.target_position.y},
+		"shape_cast_colliding": shape_cast_desired.is_colliding()
 	}
+

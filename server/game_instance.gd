@@ -57,10 +57,11 @@ func create_map_collision():
 				var tile_body = StaticBody2D.new()
 				tile_body.name = "Tile_%d_%d" % [x, y]
 				
-				# Create collision shape
+				# Create collision shape - USE CIRCLE to match player's circular hitbox!
+				# This prevents getting stuck on corners
 				var collision_shape = CollisionShape2D.new()
-				var shape = RectangleShape2D.new()
-				shape.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+				var shape = CircleShape2D.new()
+				shape.radius = Constants.TILE_SIZE / 2.0  # Circle fits inside tile
 				collision_shape.shape = shape
 				tile_body.add_child(collision_shape)
 				
