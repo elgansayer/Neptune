@@ -12,29 +12,29 @@ const EntityInterpolator = preload("res://client/prediction/entity_interpolator.
 @onready var explosions_container = $Explosions
 @onready var camera = $Camera2D
 
-var player_nodes = {}  # peer_id -> Node2D
-var bomb_nodes = {}  # bomb_id -> Node2D
-var powerup_nodes = {}  # powerup_id -> Node2D
-var explosion_nodes = {}  # cell_key -> Node2D
-var block_nodes = {}  # tile_key -> Node2D (for destructible blocks)
-var wall_nodes = {}  # tile_key -> Node2D (for solid walls)
-var debug_tiles = {}  # tile_key -> ColorRect for debugging
+var player_nodes = {} # peer_id -> Node2D
+var bomb_nodes = {} # bomb_id -> Node2D
+var powerup_nodes = {} # powerup_id -> Node2D
+var explosion_nodes = {} # cell_key -> Node2D
+var block_nodes = {} # tile_key -> Node2D (for destructible blocks)
+var wall_nodes = {} # tile_key -> Node2D (for solid walls)
+var debug_tiles = {} # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
 
 # Lag mitigation systems
-var local_player_controller: ClientPlayerController  # Prediction for local player
-var remote_player_interpolators = {}  # peer_id -> EntityInterpolator for remote players
+var local_player_controller: ClientPlayerController # Prediction for local player
+var remote_player_interpolators = {} # peer_id -> EntityInterpolator for remote players
 
 # Input buffering: track order of pressed keys
-var input_buffer = []  # Array of currently pressed direction keys in order (most recent last)
+var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
 
 func _ready():
 	# Set up FIXED camera to show entire arena (like classic Bomberman)
 	camera.enabled = true
 	camera.anchor_mode = Camera2D.ANCHOR_MODE_DRAG_CENTER
-	camera.position = Vector2.ZERO  # Will be set when map loads
-	camera.zoom = Vector2(1.0, 1.0)  # Will be adjusted when map loads
+	camera.position = Vector2.ZERO # Will be set when map loads
+	camera.zoom = Vector2(1.0, 1.0) # Will be adjusted when map loads
 	
 	# Initialize prediction system for local player
 	local_player_controller = ClientPlayerController.new()
@@ -99,7 +99,7 @@ func update_blocks(map_data: Array):
 			var tile_type = map_data[row][col]
 			var tile_key = "%d,%d" % [col, row]
 			
-			if tile_type == 2:  # Destructible block
+			if tile_type == 2: # Destructible block
 				current_blocks[tile_key] = true
 				
 				# Create block if it doesn't exist
@@ -151,6 +151,8 @@ func update_player(peer_id: String, data: Dictionary):
 		var player_pck_scene = load("res://player.tscn")
 		if player_pck_scene:
 			var sprite_root = player_pck_scene.instantiate()
+			sprite_root.scale = Vector2(2.0, 2.0)
+			sprite_root.position = Vector2.ZERO
 			player_node.add_child(sprite_root)
 			# Store reference to AnimatedSprite2D for animation control
 			var animated_sprite = sprite_root.get_node_or_null("AnimatedSprite2D")
@@ -169,15 +171,15 @@ func update_player(peer_id: String, data: Dictionary):
 		# Add debug arrow to show facing direction
 		var arrow = Polygon2D.new()
 		var arrow_points = PackedVector2Array([
-			Vector2(0, -15),      # Top left
-			Vector2(40, 0),       # Tip (pointing right)
-			Vector2(0, 15),       # Bottom left
-			Vector2(10, 0)        # Inner notch
+			Vector2(0, -15), # Top left
+			Vector2(40, 0), # Tip (pointing right)
+			Vector2(0, 15), # Bottom left
+			Vector2(10, 0) # Inner notch
 		])
 		arrow.polygon = arrow_points
-		arrow.color = Color(1, 0, 0, 1.0)  # Bright RED
+		arrow.color = Color(1, 0, 0, 1.0) # Bright RED
 		arrow.z_index = 100
-		arrow.position = Vector2(0, -50)  # Above the sprite
+		arrow.position = Vector2(0, -50) # Above the sprite
 		arrow.name = "DebugArrow"
 		player_node.add_child(arrow)
 		
@@ -189,34 +191,34 @@ func update_player(peer_id: String, data: Dictionary):
 		# Add hitbox visualization (green square/rectangle)
 		var hitbox_visual = Line2D.new()
 		hitbox_visual.width = 2.0
-		hitbox_visual.default_color = Color(0, 1, 0, 0.8)  # Bright green
+		hitbox_visual.default_color = Color(0, 1, 0, 0.8) # Bright green
 		hitbox_visual.z_index = 101
 		hitbox_visual.name = "HitboxVisual"
 		
 		# Create square points (rectangle)
 		var half_size = Constants.PLAYER_HALF_WIDTH
-		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Top-left
-		hitbox_visual.add_point(Vector2(half_size, -half_size))   # Top-right
-		hitbox_visual.add_point(Vector2(half_size, half_size))    # Bottom-right
-		hitbox_visual.add_point(Vector2(-half_size, half_size))   # Bottom-left
-		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Close the square
+		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Top-left
+		hitbox_visual.add_point(Vector2(half_size, -half_size)) # Top-right
+		hitbox_visual.add_point(Vector2(half_size, half_size)) # Bottom-right
+		hitbox_visual.add_point(Vector2(-half_size, half_size)) # Bottom-left
+		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Close the square
 		
 		player_node.add_child(hitbox_visual)
 		
 		# Add raycast visualization line
 		var raycast_debug_line = Line2D.new()
 		# Width = collision shape diameter to show actual raycast width
-		raycast_debug_line.width = Constants.PLAYER_HALF_WIDTH * 2.0  # 56px diameter
-		raycast_debug_line.default_color = Color(0, 1, 1, 1.0)  # Cyan
-		raycast_debug_line.z_index = 100  # Fixed: within valid range
+		raycast_debug_line.width = Constants.PLAYER_HALF_WIDTH * 2.0 # 56px diameter
+		raycast_debug_line.default_color = Color(0, 1, 1, 1.0) # Cyan
+		raycast_debug_line.z_index = 100 # Fixed: within valid range
 		raycast_debug_line.antialiased = true
 		raycast_debug_line.name = "RaycastLine"
 		player_node.add_child(raycast_debug_line)
 		
 		# Add ShapeCast2D visualization (showing the collision check shape)
 		var shapecast_visual = Line2D.new()
-		shapecast_visual.width = Constants.PLAYER_HALF_WIDTH * 2.0  # Same size as player
-		shapecast_visual.default_color = Color(1, 0, 0, 0.6)  # Red by default
+		shapecast_visual.width = Constants.PLAYER_HALF_WIDTH * 2.0 # Same size as player
+		shapecast_visual.default_color = Color(1, 0, 0, 0.6) # Red by default
 		shapecast_visual.z_index = 101
 		shapecast_visual.antialiased = true
 		shapecast_visual.name = "ShapeCastVisual"
@@ -238,24 +240,29 @@ func update_player(peer_id: String, data: Dictionary):
 	else:
 		player_node = player_nodes[peer_id]
 	
-	var target_pos = Vector2(data.position.x, data.position.y)
-	var target_vel = Vector2(data.velocity.x, data.velocity.y)
-	
-	# Apply lag mitigation based on player type
-	if peer_id == my_player_id:
-		# LOCAL PLAYER: Direct server position (no interpolation)
-		local_player_controller.reconcile_with_server(data)
-		# Use server position directly - feels like the original working version
-		player_node.position = local_player_controller.predicted_position
+	# Don't update position if player is dead (handled in animation section below)
+	if data.has("is_dead") and data.is_dead:
+		# Still need to process animations for death, so continue
+		pass
 	else:
-		# REMOTE PLAYER: Entity Interpolation
-		if remote_player_interpolators.has(peer_id):
-			var interpolator = remote_player_interpolators[peer_id]
-			interpolator.add_server_state(target_pos, target_vel)
-			player_node.position = interpolator.get_interpolated_position()
+		var target_pos = Vector2(data.position.x, data.position.y)
+		var target_vel = Vector2(data.velocity.x, data.velocity.y)
+		
+		# Apply lag mitigation based on player type
+		if peer_id == my_player_id:
+			# LOCAL PLAYER: Direct server position (no interpolation)
+			local_player_controller.reconcile_with_server(data)
+			# Use server position directly - feels like the original working version
+			player_node.position = local_player_controller.predicted_position
 		else:
-			# Fallback: direct update
-			player_node.position = target_pos
+			# REMOTE PLAYER: Entity Interpolation
+			if remote_player_interpolators.has(peer_id):
+				var interpolator = remote_player_interpolators[peer_id]
+				interpolator.add_server_state(target_pos, target_vel)
+				player_node.position = interpolator.get_interpolated_position()
+			else:
+				# Fallback: direct update
+				player_node.position = target_pos
 	
 	# Update debug arrow rotation based on facing direction
 	var debug_arrow = player_node.get_node_or_null("DebugArrow")
@@ -264,31 +271,98 @@ func update_player(peer_id: String, data: Dictionary):
 			"RIGHT": 0.0,
 			"DOWN": PI / 2.0,
 			"LEFT": PI,
-			"UP": -PI / 2.0
+			"UP": - PI / 2.0
 		}
 		if data.facing in rotation_map:
 			debug_arrow.rotation = rotation_map[data.facing]
 	
-	# Update Robin Hood animations based on movement
+	# Update Robin Hood animations based on state and movement
 	var animated_sprite = player_node.get_meta("animated_sprite", null)
 	if animated_sprite:
-		var velocity = Vector2(data.velocity.x, data.velocity.y)
-		if velocity.length() < 10.0:
-			# Standing still
-			if animated_sprite.animation != "state_idle":
-				animated_sprite.play("state_idle")
-		else:
-			# Moving - determine direction
-			var anim_name = ""
-			if abs(velocity.y) > abs(velocity.x):
-				# Vertical movement dominant
-				anim_name = "north_walk" if velocity.y < 0 else "south_walk"
-			else:
-				# Horizontal movement dominant
-				anim_name = "east_walk" if velocity.x > 0 else "west_walk"
+		# Check if player is dead
+		var is_player_dead = data.has("is_dead") and data.is_dead
+		
+		# Handle death animation and removal
+		if is_player_dead:
+			# Check if we've already started the death animation
+			var death_anim_started = player_node.get_meta("death_anim_started", false)
 			
-			if animated_sprite.animation != anim_name:
+			if not death_anim_started:
+				# Start death animation
+				if animated_sprite.sprite_frames.has_animation("state_defeat"):
+					animated_sprite.play("state_defeat")
+					player_node.set_meta("death_anim_started", true)
+					player_node.set_meta("death_timer", 0.0)
+					print("[GameView] Player ", peer_id, " killed - playing death animation")
+			else:
+				# Update death timer
+				var death_timer = player_node.get_meta("death_timer", 0.0)
+				death_timer += get_process_delta_time()
+				player_node.set_meta("death_timer", death_timer)
+				
+				# state_defeat has 9 frames at 5 FPS = 1.8 seconds
+				# Wait 2.0 seconds to ensure animation completes
+				if death_timer >= 2.0:
+					print("[GameView] Removing dead player ", peer_id, " from view")
+					player_node.queue_free()
+					player_nodes.erase(peer_id)
+					if remote_player_interpolators.has(peer_id):
+						remote_player_interpolators[peer_id].queue_free()
+						remote_player_interpolators.erase(peer_id)
+					return  # Exit early - player is being removed
+			
+			# Don't update position/animations during death
+			return
+		
+		# Get direction prefix from facing data
+		var direction_prefix = "south" # Default
+		if data.has("facing"):
+			match data.facing:
+				"RIGHT":
+					direction_prefix = "east"
+				"DOWN":
+					direction_prefix = "south"
+				"LEFT":
+					direction_prefix = "west"
+				"UP":
+					direction_prefix = "north"
+		
+		# Store last direction for when player stops
+		player_node.set_meta("last_direction", direction_prefix)
+		
+		# Determine animation based on state priority
+		var anim_name = ""
+		var velocity = Vector2(data.velocity.x, data.velocity.y)
+		var is_moving = velocity.length() >= 10.0
+		
+		# Priority 1: Stunned state
+		if data.has("is_stunned") and data.is_stunned:
+			anim_name = "state_stunned"
+		# Priority 2: Panic state (near explosion)
+		elif data.has("is_panicking") and data.is_panicking:
+			anim_name = "state_panic"
+		# Priority 3: Carrying bomb
+		elif data.has("is_carrying_bomb") and data.is_carrying_bomb:
+			if is_moving:
+				anim_name = direction_prefix + "_carry"
+			else:
+				anim_name = direction_prefix + "_hold"
+		# Priority 4: Walking
+		elif is_moving:
+			anim_name = direction_prefix + "_walk"
+		# Priority 5: Stopped (directional idle)
+		else:
+			anim_name = direction_prefix + "_stopped"
+		
+		# Play animation if it changed (with safety check)
+		if animated_sprite.animation != anim_name:
+			if animated_sprite.sprite_frames.has_animation(anim_name):
 				animated_sprite.play(anim_name)
+			else:
+				# Fallback to state_idle if animation doesn't exist
+				print("[GameView] Animation not found: ", anim_name, " - using state_idle")
+				if animated_sprite.sprite_frames.has_animation("state_idle"):
+					animated_sprite.play("state_idle")
 	
 	# Debug visualization removed - only direction arrow remains
 	# (debug_blocking_tile, debug_check_tile, raycast lines removed for clean gameplay)
@@ -338,22 +412,22 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		var sprite = ColorRect.new()
 		sprite.size = Vector2(24, 24)
 		sprite.position = Vector2(-12, -12)
-		sprite.color = Color(0.1, 0.1, 0.1)  # Dark/black for bomb
+		sprite.color = Color(0.1, 0.1, 0.1) # Dark/black for bomb
 		bomb_node.add_child(sprite)
 		
 		# Add bomb hitbox visualization (green square)
 		var hitbox_visual = Line2D.new()
 		hitbox_visual.width = 2.0
-		hitbox_visual.default_color = Color(0, 1, 0, 0.8)  # Bright green
+		hitbox_visual.default_color = Color(0, 1, 0, 0.8) # Bright green
 		hitbox_visual.z_index = 101
 		
 		# Create square points (rectangle)
-		var half_size = Constants.PLAYER_HALF_WIDTH  # Bombs use same size as player
-		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Top-left
-		hitbox_visual.add_point(Vector2(half_size, -half_size))   # Top-right
-		hitbox_visual.add_point(Vector2(half_size, half_size))    # Bottom-right
-		hitbox_visual.add_point(Vector2(-half_size, half_size))   # Bottom-left
-		hitbox_visual.add_point(Vector2(-half_size, -half_size))  # Close the square
+		var half_size = Constants.PLAYER_HALF_WIDTH # Bombs use same size as player
+		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Top-left
+		hitbox_visual.add_point(Vector2(half_size, -half_size)) # Top-right
+		hitbox_visual.add_point(Vector2(half_size, half_size)) # Bottom-right
+		hitbox_visual.add_point(Vector2(-half_size, half_size)) # Bottom-left
+		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Close the square
 		
 		bomb_node.add_child(hitbox_visual)
 		
@@ -389,7 +463,7 @@ func update_explosions(explosions_data: Array):
 		var sprite = ColorRect.new()
 		sprite.size = Vector2(32, 32)
 		sprite.position = Vector2(-16, -16)
-		sprite.color = Color(1.0, 0.5, 0.0, 0.8)  # Bright orange with transparency
+		sprite.color = Color(1.0, 0.5, 0.0, 0.8) # Bright orange with transparency
 		explosion_node.add_child(sprite)
 		
 		explosion_node.position = Vector2(
@@ -423,7 +497,7 @@ func _physics_process(delta):
 	var input_y = 0.0
 	
 	if input_buffer.size() > 0:
-		var current_dir = input_buffer[input_buffer.size() - 1]  # Last element = most recent
+		var current_dir = input_buffer[input_buffer.size() - 1] # Last element = most recent
 		match current_dir:
 			"ui_right":
 				input_x = 1.0
@@ -458,9 +532,9 @@ func render_map(map_data):
 	
 	# Draw background for the play area - sized to actual map
 	var bg = ColorRect.new()
-	bg.color = Color(0.15, 0.25, 0.15)  # Dark green background
+	bg.color = Color(0.15, 0.25, 0.15) # Dark green background
 	bg.size = Vector2(Constants.TILE_SIZE * map_width, Constants.TILE_SIZE * map_height)
-	bg.position = Vector2.ZERO  # Start from top-left
+	bg.position = Vector2.ZERO # Start from top-left
 	bg.z_index = -1
 	add_child(bg)
 	
@@ -482,7 +556,7 @@ func render_map(map_data):
 				# Add hitbox visualization (green circle to match actual collision)
 				var hitbox = Line2D.new()
 				hitbox.width = 2.0
-				hitbox.default_color = Color(0, 1, 0, 0.6)  # Semi-transparent green
+				hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
 				hitbox.z_index = 101
 				# Draw circle
 				var radius = Constants.TILE_SIZE / 2.0
@@ -509,7 +583,7 @@ func render_map(map_data):
 				# Add hitbox visualization (green circle to match actual collision)
 				var hitbox = Line2D.new()
 				hitbox.width = 2.0
-				hitbox.default_color = Color(0, 1, 0, 0.6)  # Semi-transparent green
+				hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
 				hitbox.z_index = 101
 				# Draw circle
 				var radius = Constants.TILE_SIZE / 2.0
@@ -537,9 +611,9 @@ func render_map(map_data):
 	var map_pixel_height = map_height * Constants.TILE_SIZE
 	
 	# Calculate zoom to fit map with some padding
-	var zoom_x = viewport_size.x / (map_pixel_width * 1.1)  # 1.1 for 10% padding
+	var zoom_x = viewport_size.x / (map_pixel_width * 1.1) # 1.1 for 10% padding
 	var zoom_y = viewport_size.y / (map_pixel_height * 1.1)
-	var zoom_level = min(zoom_x, zoom_y)  # Use smaller zoom to fit both dimensions
+	var zoom_level = min(zoom_x, zoom_y) # Use smaller zoom to fit both dimensions
 	
 	camera.zoom = Vector2(zoom_level, zoom_level)
 	
@@ -562,7 +636,7 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 		tile_pos.x * Constants.TILE_SIZE,
 		tile_pos.y * Constants.TILE_SIZE
 	)
-	debug_rect.z_index = 100  # On top of everything
+	debug_rect.z_index = 100 # On top of everything
 	
 	# Add to scene
 	add_child(debug_rect)
@@ -590,12 +664,12 @@ func update_powerup(powerup_id: String, data: Dictionary):
 		
 		# Color based on type
 		match data.type:
-			0:  # BOMB_INCREASE
-				sprite.color = Color(1, 0.8, 0)  # Gold
-			1:  # RANGE_INCREASE
-				sprite.color = Color(1, 0.3, 0)  # Orange
-			2:  # SPEED_INCREASE
-				sprite.color = Color(0.3, 0.8, 1)  # Light blue
+			0: # BOMB_INCREASE
+				sprite.color = Color(1, 0.8, 0) # Gold
+			1: # RANGE_INCREASE
+				sprite.color = Color(1, 0.3, 0) # Orange
+			2: # SPEED_INCREASE
+				sprite.color = Color(0.3, 0.8, 1) # Light blue
 		
 		powerup_node.add_child(sprite)
 		add_child(powerup_node)
