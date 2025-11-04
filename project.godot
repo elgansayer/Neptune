@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 
 [autoload]
 
+PCKLoader="*res://scripts/pck_loader.gd"
 ClientMain="*res://client/main_client.gd"
 ServerMain="*res://shared/server_stub.gd"
 Constants="*res://shared/constants.gd"

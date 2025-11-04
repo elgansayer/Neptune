@@ -147,14 +147,24 @@ func update_player(peer_id: String, data: Dictionary):
 		player_node = Node2D.new()
 		player_node.name = "Player_" + peer_id
 		
-		# Create colored rectangle as player sprite (placeholder)
-		var sprite = ColorRect.new()
-		sprite.size = Vector2(32, 32)
-		sprite.position = Vector2(-16, -16)  # Center it
-		# Blue for local player, red for others
-		var is_local = str(peer_id) == str(multiplayer.get_unique_id())
-		sprite.color = Color(0.2, 0.6, 1.0) if is_local else Color(1.0, 0.3, 0.3)
-		player_node.add_child(sprite)
+		# Load Robin Hood sprite from PCK
+		var player_pck_scene = load("res://player.tscn")
+		if player_pck_scene:
+			var sprite_root = player_pck_scene.instantiate()
+			player_node.add_child(sprite_root)
+			# Store reference to AnimatedSprite2D for animation control
+			var animated_sprite = sprite_root.get_node_or_null("AnimatedSprite2D")
+			if animated_sprite:
+				animated_sprite.play("state_idle")
+				player_node.set_meta("animated_sprite", animated_sprite)
+		else:
+			# Fallback to colored rectangle if PCK not loaded
+			var sprite = ColorRect.new()
+			sprite.size = Vector2(32, 32)
+			sprite.position = Vector2(-16, -16)
+			var is_local = str(peer_id) == str(multiplayer.get_unique_id())
+			sprite.color = Color(0.2, 0.6, 1.0) if is_local else Color(1.0, 0.3, 0.3)
+			player_node.add_child(sprite)
 		
 		# Add debug arrow to show facing direction
 		var arrow = Polygon2D.new()
@@ -258,6 +268,27 @@ func update_player(peer_id: String, data: Dictionary):
 		}
 		if data.facing in rotation_map:
 			debug_arrow.rotation = rotation_map[data.facing]
+	
+	# Update Robin Hood animations based on movement
+	var animated_sprite = player_node.get_meta("animated_sprite", null)
+	if animated_sprite:
+		var velocity = Vector2(data.velocity.x, data.velocity.y)
+		if velocity.length() < 10.0:
+			# Standing still
+			if animated_sprite.animation != "state_idle":
+				animated_sprite.play("state_idle")
+		else:
+			# Moving - determine direction
+			var anim_name = ""
+			if abs(velocity.y) > abs(velocity.x):
+				# Vertical movement dominant
+				anim_name = "north_walk" if velocity.y < 0 else "south_walk"
+			else:
+				# Horizontal movement dominant
+				anim_name = "east_walk" if velocity.x > 0 else "west_walk"
+			
+			if animated_sprite.animation != anim_name:
+				animated_sprite.play(anim_name)
 	
 	# Debug visualization removed - only direction arrow remains
 	# (debug_blocking_tile, debug_check_tile, raycast lines removed for clean gameplay)
