@@ -7,10 +7,17 @@ class_name GameInstance
 const Constants = preload("res://shared/constants.gd")
 const ServerPlayer = preload("res://shared/entities/server_player.gd")
 const ServerBomb = preload("res://shared/entities/server_bomb.gd")
+const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
+#const AIPlayer = preload("res://shared/entities/ai_player.gd")  # TEMP: Disabled - compile errors
+const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
+const MapGenerator = preload("res://shared/maps/map_generator.gd")
 
 var game_id: String = ""
-var players := {}  # peer_id -> ServerPlayer
+var players := {}  # peer_id -> ServerPlayer (includes AI bots)
+var ai_bot_counter := 1000  # Start AI bot IDs from 1000
 var bombs := {}  # bomb_id -> ServerBomb
+var powerups := {}  # powerup_id -> ServerPowerUp
+var next_powerup_id := 0
 var explosions := []  # Array of {cells: Array, time: float} for visual effects
 var game_map := []  # 2D array representing the map
 var map_tiles := {}  # Dictionary of tile_key -> StaticBody2D for collision
@@ -104,6 +111,14 @@ func create_map_collision():
 func _physics_process(delta):
 	last_sync_time += delta
 	
+	# TEMP: AI bot bomb processing disabled
+	# Process AI bot bomb requests
+	#for peer_id in players:
+	#	var player = players[peer_id]
+	#	if player is AIPlayer and player.place_bomb_requested and player.can_place_bomb():
+	#		place_bomb(player)
+	#		player.place_bomb_requested = false
+	
 	# Send state updates to all clients
 	if last_sync_time >= SYNC_INTERVAL:
 		last_sync_time = 0.0
@@ -131,6 +146,14 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	add_child(player)
 	
 	print("[Game] Player joined: ", username, " at ", spawn_position)
+
+func add_ai_bot(personality: int = -1) -> int:
+	"""Spawn an AI bot with specified personality (-1 = random)
+	Returns the bot's peer_id
+	"""
+	# TEMPORARILY DISABLED due to AIPlayer compile errors
+	print("[Game] AI Bot spawning temporarily disabled")
+	return -1
 
 func remove_player(peer_id: int):
 	if players.has(peer_id):
@@ -227,16 +250,26 @@ func get_explosion_cells(center: Vector2i, explosion_range: int) -> Array:
 			
 			# Destructible block stops explosion but gets destroyed
 			if game_map[cell.y][cell.x] == 2:
-				game_map[cell.y][cell.x] = 0  # Clear the block from map data
-				
-				# Remove the physical collision body
 				var tile_key = "%d,%d" % [cell.x, cell.y]
+				print("[Game] Destroying block at ", cell, " (tile_key: ", tile_key, ")")
+				
+				# Remove the physical collision body FIRST
 				if map_tiles.has(tile_key):
 					var tile_body = map_tiles[tile_key]
-					tile_body.queue_free()
+					if is_instance_valid(tile_body):
+						tile_body.call_deferred("queue_free")  # Safe deferred deletion
 					map_tiles.erase(tile_key)
+					print("[Game] Block collision removed: ", tile_key)
+				else:
+					print("[Game] WARNING: Block not in map_tiles dictionary: ", tile_key)
 				
-				# TODO: Maybe spawn power-up
+				# Clear from map data
+				game_map[cell.y][cell.x] = 0
+				
+				# Spawn power-up (30% chance)
+				if randf() < 0.3:
+					spawn_powerup(cell)
+				
 				break
 	
 	return cells
@@ -250,6 +283,7 @@ func sync_state_to_clients():
 	var state = {
 		"players": {},
 		"bombs": {},
+		"powerups": {},
 		"explosions": [],
 		"map": game_map
 	}
@@ -260,11 +294,50 @@ func sync_state_to_clients():
 	for bomb_id in bombs:
 		state.bombs[bomb_id] = bombs[bomb_id].get_state()
 	
+	for powerup_id in powerups:
+		state.powerups[powerup_id] = powerups[powerup_id].get_state()
+	
 	# Add explosion cells for rendering
 	for explosion in explosions:
 		for cell in explosion.cells:
 			state.explosions.append({"x": cell.x, "y": cell.y})
 	
-	# Send to all players in this game via ClientMain node
+	# Send to all players in this game via ClientMain autoload
 	for peer_id in players:
-		get_node("/root/ClientMain").rpc_id(peer_id, "receive_game_state", state)
+		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
+func spawn_powerup(tile_pos: Vector2i):
+	"""Spawn a power-up at the given tile position"""
+	var powerup = ServerPowerUp.new()
+	powerup.powerup_id = str(next_powerup_id)
+	next_powerup_id += 1
+	
+	# Random power-up type
+	var rand_val = randf()
+	if rand_val < 0.5:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE  # 50%
+	elif rand_val < 0.8:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.RANGE_INCREASE  # 30%
+	else:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE  # 20%
+	
+	powerup.position = Vector2(
+tile_pos.x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+tile_pos.y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+)
+	powerup.name = "PowerUp_" + powerup.powerup_id
+	
+	# Connect collection signal
+	powerup.powerup_collected.connect(_on_powerup_collected)
+	
+	powerups[powerup.powerup_id] = powerup
+	add_child(powerup)
+	
+	print("[Game] Spawned power-up ", powerup.powerup_type, " at ", tile_pos)
+
+func _on_powerup_collected(powerup: ServerPowerUp):
+	"""Called when a power-up is collected"""
+	print("[Game] Power-up collected: ", powerup.powerup_id)
+	
+	if powerups.has(powerup.powerup_id):
+		powerups.erase(powerup.powerup_id)
+		powerup.queue_free()

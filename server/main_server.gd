@@ -4,32 +4,32 @@ extends Node
 # Runs headless, manages all game instances, authentication, and lobbies
 
 const Constants = preload("res://shared/constants.gd")
-const GameInstance = preload("res://server/game_instance.gd")
+const GameInstance = preload("res://game_instance.gd")
 
 var peer: ENetMultiplayerPeer
 var auth_service  # Will be LocalBackend or PlayFabBackend
 var lobby_manager
 var active_games = {}  # game_id -> GameInstance
 var player_to_game = {}  # peer_id -> game_id
+var _initialized = false  # Prevent duplicate initialization
 
 func _ready():
-	# Only initialize server if we're running the server scene
-	# (not when loaded as autoload in client)
-	await get_tree().process_frame
-	if get_tree().current_scene and "server" not in get_tree().current_scene.scene_file_path:
-		print("[ServerMain] Not running server scene, skipping initialization")
+	# Only initialize once
+	if _initialized:
 		return
+	
+	_initialized = true
 	
 	print("=== Bomberman Server Starting ===")
 	print("[Server] Node name: ", name)
 	print("[Server] Node path: ", get_path())
 	
 	# Load backend service (local SQLite for now)
-	auth_service = load("res://server/auth/local_backend.gd").new()
+	auth_service = load("res://auth/local_backend.gd").new()
 	add_child(auth_service)
 	
 	# Load lobby manager
-	lobby_manager = load("res://server/lobby/lobby_manager.gd").new()
+	lobby_manager = load("res://lobby/lobby_manager.gd").new()
 	add_child(lobby_manager)
 	
 	# Start server
@@ -66,7 +66,7 @@ func _on_player_disconnected(peer_id: int):
 # === RPC Handlers ===
 
 @rpc("any_peer", "call_remote", "reliable")
-func authenticate(username: String, password: String):
+func authenticate_request(username: String, password: String):
 	var peer_id = multiplayer.get_remote_sender_id()
 	print("[Server] *** AUTHENTICATE RPC RECEIVED ***")
 	print("[Server] Authentication attempt from peer ", peer_id, ": ", username)
@@ -74,20 +74,28 @@ func authenticate(username: String, password: String):
 	
 	var result = auth_service.authenticate(username, password)
 	
+	# Auto-register if user doesn't exist
+	if not result.success and result.get("error") == "User not found":
+		print("[Server] Auto-registering new user: ", username)
+		result = auth_service.register_user(username, password)
+		if result.success:
+			result = auth_service.authenticate(username, password)
+	
 	if result.success:
 		print("[Server] Authentication successful: ", username)
 		lobby_manager.add_player(peer_id, username)
-		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": true, "username": username})
+		# Send response back to client via ClientMain autoload
+		ClientMain.rpc_id(peer_id, "auth_response", {"success": true, "username": username})
 		
 		# Quick-start: Create or join a game immediately
 		await get_tree().create_timer(0.1).timeout
 		quick_start_game(peer_id, username)
 	else:
 		print("[Server] Authentication failed: ", result.get("error", "Unknown error"))
-		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": result.get("error", "Invalid credentials")})
+		ClientMain.rpc_id(peer_id, "auth_response", {"success": false, "error": result.get("error", "Invalid credentials")})
 
 @rpc("any_peer", "call_remote", "reliable")
-func register_user(username: String, password: String):
+func register_request(username: String, password: String):
 	var peer_id = multiplayer.get_remote_sender_id()
 	print("[Server] *** REGISTER_USER RPC RECEIVED ***")
 	print("[Server] Registration attempt from peer ", peer_id, ": ", username)
@@ -96,19 +104,10 @@ func register_user(username: String, password: String):
 	
 	if result.success:
 		print("[Server] Registration successful: ", username)
-		get_node("/root/ClientMain").rpc_id(peer_id, "register_response", {"success": true})
+		ClientMain.rpc_id(peer_id, "register_response", {"success": true})
 	else:
 		print("[Server] Registration failed: ", result.get("error", "Unknown error"))
-		get_node("/root/ClientMain").rpc_id(peer_id, "register_response", {"success": false, "error": result.get("error", "Registration failed")})
-
-# Client-side stubs (will never be called on server)
-@rpc("authority", "call_local", "reliable")
-func auth_response(_data: Dictionary):
-	pass
-
-@rpc("authority", "call_local", "reliable")
-func register_response(_data: Dictionary):
-	pass
+		ClientMain.rpc_id(peer_id, "register_response", {"success": false, "error": result.get("error", "Registration failed")})
 
 @rpc("any_peer", "call_remote", "unreliable")
 func send_player_input(input_data: Dictionary):
@@ -125,6 +124,19 @@ func send_player_input(input_data: Dictionary):
 	# Forward input to the game instance
 	active_games[game_id].handle_player_input(peer_id, input_data)
 
+# Server receives these from clients (stubs for client-side RPCs)
+@rpc("any_peer", "call_remote", "reliable")
+func auth_response(_data: Dictionary):
+	pass # Stub - actual implementation on client
+
+@rpc("any_peer", "call_remote", "reliable")
+func register_response(_data: Dictionary):
+	pass # Stub - actual implementation on client
+
+@rpc("any_peer", "call_remote", "unreliable")
+func receive_state(_state: Dictionary):
+	pass # Stub - actual implementation on client
+
 # Quick-start game system (no lobby for now)
 func quick_start_game(peer_id: int, username: String):
 	# For now, all players join the SAME shared game
@@ -133,11 +145,21 @@ func quick_start_game(peer_id: int, username: String):
 	# Create shared game if it doesn't exist
 	if not active_games.has(shared_game_id):
 		print("[Server] Creating new shared game instance")
-		var game = GameInstance.new()
+		# Use load() instead of preload const to avoid compile-time issues
+		var GameInstanceScript = load("res://game_instance.gd")
+		var game = GameInstanceScript.new()
 		game.game_id = shared_game_id
 		game.name = shared_game_id
 		add_child(game)
 		active_games[shared_game_id] = game
+		
+		# TEMP: AI bots disabled until AIPlayer compile issue resolved
+		print("[Server] AI bot spawning temporarily disabled")
+		# Auto-spawn AI bots for testing (3 bots with different personalities)
+		#print("[Server] Auto-spawning 3 AI bots for testing...")
+		#game.call_deferred("add_ai_bot", 0)  # Balanced
+		#game.call_deferred("add_ai_bot", 1)  # Aggressive
+		#game.call_deferred("add_ai_bot", 2)  # Timid
 	
 	var game = active_games[shared_game_id]
 	player_to_game[peer_id] = shared_game_id
@@ -146,4 +168,18 @@ func quick_start_game(peer_id: int, username: String):
 	game.add_player(peer_id, username)
 	
 	print("[Server] Player ", username, " joined shared game. Total players: ", game.players.size())
+
+# AI bot spawning disabled - see spawn_ai_bot_local() for local testing
+# @rpc("any_peer", "call_remote", "reliable")
+# func spawn_ai_bot(personality: int = -1):
+
+func spawn_ai_bot_local(game_id: String, personality: int = -1):
+	"""Spawn AI bot directly (for testing/single-player)"""
+	if not active_games.has(game_id):
+		print("[Server] Game not found: ", game_id)
+		return
+	
+	var game = active_games[game_id]
+	game.add_ai_bot(personality)
+	print("[Server] AI bot spawned in ", game_id, ". Total players: ", game.players.size())
 

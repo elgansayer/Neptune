@@ -14,6 +14,7 @@ const EntityInterpolator = preload("res://client/prediction/entity_interpolator.
 
 var player_nodes = {}  # peer_id -> Node2D
 var bomb_nodes = {}  # bomb_id -> Node2D
+var powerup_nodes = {}  # powerup_id -> Node2D
 var explosion_nodes = {}  # cell_key -> Node2D
 var block_nodes = {}  # tile_key -> Node2D (for destructible blocks)
 var wall_nodes = {}  # tile_key -> Node2D (for solid walls)
@@ -71,6 +72,19 @@ func update_game_state(state: Dictionary):
 			bomb_nodes[bomb_id].queue_free()
 			bomb_nodes.erase(bomb_id)
 	
+	# Update power-ups
+	if state.has("powerups"):
+		for powerup_id in state.powerups:
+			var powerup_data = state.powerups[powerup_id]
+			update_powerup(powerup_id, powerup_data)
+		
+		# Remove power-ups no longer in state
+		for powerup_id in powerup_nodes.keys():
+			if not state.powerups.has(powerup_id):
+				powerup_nodes[powerup_id].queue_free()
+				powerup_nodes.erase(powerup_id)
+
+
 	# Update explosions
 	if state.has("explosions"):
 		update_explosions(state.explosions)
@@ -119,6 +133,7 @@ func update_blocks(map_data: Array):
 	# Remove blocks that no longer exist (destroyed)
 	for tile_key in block_nodes.keys():
 		if not current_blocks.has(tile_key):
+			print("[Client] Removing destroyed block: ", tile_key)
 			var nodes = block_nodes[tile_key]
 			nodes.block.queue_free()
 			nodes.hitbox.queue_free()
@@ -132,9 +147,13 @@ func update_player(peer_id: String, data: Dictionary):
 		player_node = Node2D.new()
 		player_node.name = "Player_" + peer_id
 		
-		var sprite = Sprite2D.new()
-		sprite.texture = load("res://icon.svg")
-		sprite.scale = Vector2(0.4, 0.4)
+		# Create colored rectangle as player sprite (placeholder)
+		var sprite = ColorRect.new()
+		sprite.size = Vector2(32, 32)
+		sprite.position = Vector2(-16, -16)  # Center it
+		# Blue for local player, red for others
+		var is_local = str(peer_id) == str(multiplayer.get_unique_id())
+		sprite.color = Color(0.2, 0.6, 1.0) if is_local else Color(1.0, 0.3, 0.3)
 		player_node.add_child(sprite)
 		
 		# Add debug arrow to show facing direction
@@ -240,43 +259,37 @@ func update_player(peer_id: String, data: Dictionary):
 		if data.facing in rotation_map:
 			debug_arrow.rotation = rotation_map[data.facing]
 	
-	# Show debug tiles if present in state
-	if data.has("debug_blocking_tile"):
-		var blocking_data = data.debug_blocking_tile
-		show_debug_tile(Vector2i(blocking_data.x, blocking_data.y), Color(1, 0, 0, 0.7))  # RED for blocking tile
+	# Debug visualization removed - only direction arrow remains
+	# (debug_blocking_tile, debug_check_tile, raycast lines removed for clean gameplay)
 	
-	if data.has("debug_check_tile"):
-		var desired_data = data.debug_check_tile
-		show_debug_tile(Vector2i(desired_data.x, desired_data.y), Color(1, 1, 0, 0.7))  # YELLOW for desired tile
-	
-	# Update raycast line based on last_move_direction
-	var raycast_line = player_node.get_node_or_null("RaycastLine")
-	if raycast_line and data.has("last_move_direction"):
-		var last_move = Vector2(data.last_move_direction.x, data.last_move_direction.y)
-		if last_move.length() > 0.1:
-			var motion = last_move.normalized() * 32.0  # Make it longer so it's visible
-			raycast_line.clear_points()
-			raycast_line.add_point(Vector2.ZERO)
-			raycast_line.add_point(motion)
-		else:
-			raycast_line.clear_points()
-	
-	# Update ShapeCast2D visual if we have shape_cast data
-	var shapecast_visual = player_node.get_node_or_null("ShapeCastVisual")
-	if shapecast_visual and data.has("shape_cast_target"):
-		var target = Vector2(data.shape_cast_target.x, data.shape_cast_target.y)
-		var is_colliding = data.get("shape_cast_colliding", false)
-		
-		# Update color based on collision state
-		shapecast_visual.default_color = Color(1, 0, 0, 0.6) if is_colliding else Color(0, 1, 0, 0.4)
-		
-		# Draw the shape cast line
-		if target.length() > 0.1:
-			shapecast_visual.clear_points()
-			shapecast_visual.add_point(Vector2.ZERO)
-			shapecast_visual.add_point(target)
-		else:
-			shapecast_visual.clear_points()
+# DEBUG_DISABLED: 	# Update raycast line based on last_move_direction
+# DEBUG_DISABLED: 	var raycast_line = player_node.get_node_or_null("RaycastLine")
+# DEBUG_DISABLED: 	if raycast_line and data.has("last_move_direction"):
+# DEBUG_DISABLED: 		var last_move = Vector2(data.last_move_direction.x, data.last_move_direction.y)
+# DEBUG_DISABLED: 		if last_move.length() > 0.1:
+# DEBUG_DISABLED: 			var motion = last_move.normalized() * 32.0  # Make it longer so it's visible
+# DEBUG_DISABLED: 			raycast_line.clear_points()
+# DEBUG_DISABLED: 			raycast_line.add_point(Vector2.ZERO)
+# DEBUG_DISABLED: 			raycast_line.add_point(motion)
+# DEBUG_DISABLED: 		else:
+# DEBUG_DISABLED: 			raycast_line.clear_points()
+# DEBUG_DISABLED: 	
+# DEBUG_DISABLED: 	# Update ShapeCast2D visual if we have shape_cast data
+# DEBUG_DISABLED: 	var shapecast_visual = player_node.get_node_or_null("ShapeCastVisual")
+# DEBUG_DISABLED: 	if shapecast_visual and data.has("shape_cast_target"):
+# DEBUG_DISABLED: 		var target = Vector2(data.shape_cast_target.x, data.shape_cast_target.y)
+# DEBUG_DISABLED: 		var is_colliding = data.get("shape_cast_colliding", false)
+# DEBUG_DISABLED: 		
+# DEBUG_DISABLED: 		# Update color based on collision state
+# DEBUG_DISABLED: 		shapecast_visual.default_color = Color(1, 0, 0, 0.6) if is_colliding else Color(0, 1, 0, 0.4)
+# DEBUG_DISABLED: 		
+# DEBUG_DISABLED: 		# Draw the shape cast line
+# DEBUG_DISABLED: 		if target.length() > 0.1:
+# DEBUG_DISABLED: 			shapecast_visual.clear_points()
+# DEBUG_DISABLED: 			shapecast_visual.add_point(Vector2.ZERO)
+# DEBUG_DISABLED: 			shapecast_visual.add_point(target)
+# DEBUG_DISABLED: 		else:
+# DEBUG_DISABLED: 			shapecast_visual.clear_points()
 	
 	# Camera is FIXED - don't follow player (classic Bomberman style)
 	# Commented out: camera should show entire arena at all times
@@ -291,10 +304,10 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		bomb_node = Node2D.new()
 		bomb_node.name = "Bomb_" + bomb_id
 		
-		var sprite = Sprite2D.new()
-		sprite.texture = load("res://icon.svg")
-		sprite.scale = Vector2(0.35, 0.35)
-		sprite.modulate = Color(0.1, 0.1, 0.1)  # Dark/black for bomb
+		var sprite = ColorRect.new()
+		sprite.size = Vector2(24, 24)
+		sprite.position = Vector2(-12, -12)
+		sprite.color = Color(0.1, 0.1, 0.1)  # Dark/black for bomb
 		bomb_node.add_child(sprite)
 		
 		# Add bomb hitbox visualization (green square)
@@ -341,11 +354,11 @@ func update_explosions(explosions_data: Array):
 		
 		var explosion_node = Node2D.new()
 		
-		# Create explosion visual (bright orange/red circle)
-		var sprite = Sprite2D.new()
-		sprite.texture = preload("res://icon.svg")
-		sprite.modulate = Color(1.0, 0.4, 0.0, 0.8)  # Orange with transparency
-		sprite.scale = Vector2(0.5, 0.5)
+		# Create explosion visual (bright orange/red rectangle)
+		var sprite = ColorRect.new()
+		sprite.size = Vector2(32, 32)
+		sprite.position = Vector2(-16, -16)
+		sprite.color = Color(1.0, 0.5, 0.0, 0.8)  # Bright orange with transparency
 		explosion_node.add_child(sprite)
 		
 		explosion_node.position = Vector2(
@@ -531,3 +544,33 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 	if debug_tiles.has(tile_key):
 		debug_tiles.erase(tile_key)
 
+
+func update_powerup(powerup_id: String, data: Dictionary):
+	var powerup_node
+	
+	if not powerup_nodes.has(powerup_id):
+		# Create new power-up visual
+		powerup_node = Node2D.new()
+		powerup_node.name = "PowerUp_" + powerup_id
+		
+		var sprite = ColorRect.new()
+		sprite.size = Vector2(20, 20)
+		sprite.position = Vector2(-10, -10)
+		
+		# Color based on type
+		match data.type:
+			0:  # BOMB_INCREASE
+				sprite.color = Color(1, 0.8, 0)  # Gold
+			1:  # RANGE_INCREASE
+				sprite.color = Color(1, 0.3, 0)  # Orange
+			2:  # SPEED_INCREASE
+				sprite.color = Color(0.3, 0.8, 1)  # Light blue
+		
+		powerup_node.add_child(sprite)
+		add_child(powerup_node)
+		powerup_nodes[powerup_id] = powerup_node
+	else:
+		powerup_node = powerup_nodes[powerup_id]
+	
+	# Update position
+	powerup_node.position = Vector2(data.position.x, data.position.y)

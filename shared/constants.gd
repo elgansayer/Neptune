@@ -10,6 +10,7 @@ const COLLISION_LAYER_WALLS = 1      # Layer 1 (bit 0): Solid/destructible walls
 const COLLISION_LAYER_PLAYERS = 2    # Layer 2 (bit 1): Player characters
 const COLLISION_LAYER_BOMBS = 4      # Layer 3 (bit 2): Bombs
 const COLLISION_LAYER_EXPLOSIONS = 8 # Layer 4 (bit 3): Explosion damage areas
+const COLLISION_LAYER_POWERUPS = 16  # Layer 5 (bit 4): Power-up items
 
 # Movement
 const WALK_MULTIPLIER = 0.6

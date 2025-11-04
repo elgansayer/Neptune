@@ -5,6 +5,8 @@ class_name MapManager
 # Handles loading, generating, and managing game maps
 
 const Constants = preload("res://shared/constants.gd")
+const MapGenerator = preload("res://shared/maps/map_generator.gd")
+const MapLoader = preload("res://shared/maps/map_loader.gd")
 
 enum MapSource {
 	FILE,       # Load from JSON file

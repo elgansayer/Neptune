@@ -66,8 +66,8 @@ func login(user: String, password: String):
 	
 	print("[Client] Attempting login as: ", user)
 	username = user
-	# Call RPC on ServerMain node
-	get_node("/root/ServerMain").rpc_id(1, "authenticate", user, password)
+	# Call RPC through ServerMain autoload
+	ServerMain.rpc_id(1, "authenticate_request", user, password)
 
 func register(user: String, password: String):
 	if not connected:
@@ -75,12 +75,26 @@ func register(user: String, password: String):
 		return
 	
 	print("[Client] Attempting registration: ", user)
-	# Call RPC on ServerMain node
-	get_node("/root/ServerMain").rpc_id(1, "register_user", user, password)
+	# Call RPC through ServerMain autoload
+	ServerMain.rpc_id(1, "register_request", user, password)
 
 # === RPC Handlers ===
 
-@rpc("authority", "call_remote", "reliable")
+# Client sends these to server (stubs)
+@rpc("any_peer", "call_remote", "reliable")
+func authenticate_request(_username: String, _password: String):
+	pass # Stub - actual implementation on server
+
+@rpc("any_peer", "call_remote", "reliable")
+func register_request(_username: String, _password: String):
+	pass # Stub - actual implementation on server
+
+@rpc("any_peer", "call_remote", "unreliable")
+func send_player_input(_input_data: Dictionary):
+	pass # Stub - actual implementation on server
+
+# Client receives these from server authority
+@rpc("any_peer", "call_remote", "reliable")
 func auth_response(data: Dictionary):
 	if data.success:
 		print("[Client] Authentication successful!")
@@ -92,25 +106,27 @@ func auth_response(data: Dictionary):
 		authenticated = false
 		authentication_failed.emit(data.get("error", "Unknown error"))
 
-@rpc("authority", "call_remote", "reliable")
+@rpc("any_peer", "call_remote", "reliable")
 func register_response(data: Dictionary):
 	if data.success:
 		print("[Client] Registration successful!")
 	else:
 		print("[Client] Registration failed: ", data.get("error", "Unknown error"))
 
-@rpc("authority", "call_remote", "unreliable")
-func receive_game_state(state: Dictionary):
+@rpc("any_peer", "call_remote", "unreliable")
+func receive_state(state: Dictionary):
 	# Forward to active game view scene
 	var game_view = get_tree().current_scene
 	if game_view and game_view.has_method("update_game_state"):
 		game_view.update_game_state(state)
 
-# Server-side stubs (will never be called on client)
-@rpc("any_peer", "call_remote", "reliable")
-func authenticate(_username: String, _password: String):
-	pass
+# === AI Bot Commands ===
 
-@rpc("any_peer", "call_remote", "reliable")
-func register_user(_username: String, _password: String):
-	pass
+func request_spawn_bot(personality: int = -1):
+	"""Request server to spawn an AI bot"""
+	if not authenticated:
+		push_error("Must be authenticated to spawn bots")
+		return
+	
+	print("[Client] Requesting AI bot spawn (personality: ", personality, ")")
+	get_node("/root/ServerMain").rpc_id(1, "spawn_ai_bot", personality)

@@ -11,8 +11,13 @@ config_version=5
 [application]
 
 config/name="Bomberman Server"
-run/main_scene="res://server/main_server.tscn"
+run/main_scene="res://empty.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
+
+[autoload]
+
+ServerMain="*res://main_server.gd"
+ClientMain="*res://shared/client_stub.gd"
 
 [display]
 

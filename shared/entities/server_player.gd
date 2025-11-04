@@ -5,6 +5,7 @@ class_name ServerPlayer
 # Uses Godot's built-in physics and collision system
 
 const Constants = preload("res://shared/constants.gd")
+const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
 
 var player_id: String = ""
 var username: String = ""
@@ -14,6 +15,7 @@ var place_bomb_requested := false
 var bombs_placed := 0
 var max_bombs := 1
 var bomb_range := 2
+var speed_multiplier := 1.0  # Power-up speed multiplier
 var is_dead := false
 var debug_check_tile := Vector2i.ZERO  # Tile being checked for diagonal (for client debug)
 var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visualization)
@@ -37,9 +39,9 @@ const ENABLE_GRID_SNAPPING = true  # Re-enabled with matching client prediction
 const ENABLE_CORNER_SLIDING = true  # Toggle manual corner sliding logic
 
 func _ready():
-	# Set collision layers: players on layer 2, collide with walls (1) and bombs (4)
+	# Set collision layers: players on layer 2, collide with walls (1), bombs (4), and powerups (16)
 	collision_layer = Constants.COLLISION_LAYER_PLAYERS
-	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
+	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS | Constants.COLLISION_LAYER_POWERUPS
 	
 	# Set up collision shape - USE RECTANGLE for precise collision
 	var collision_shape = CollisionShape2D.new()
@@ -346,7 +348,7 @@ func _physics_process(_delta):
 	_update_debug_arrow()
 	
 	if final_direction.length() > 0:
-		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
+		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
 		velocity = final_direction * speed
 		
 		# Auto-align to grid: Add correction to movement vector
@@ -517,6 +519,19 @@ func die():
 	is_dead = true
 	# TODO: Play death animation
 	# TODO: Respawn logic
+
+func collect_powerup(powerup):
+	"""Called when player collects a power-up"""
+	match powerup.powerup_type:
+		ServerPowerUp.PowerUpType.BOMB_INCREASE:
+			max_bombs += 1
+			print("[Player] ", username, " collected BOMB power-up! Max bombs: ", max_bombs)
+		ServerPowerUp.PowerUpType.RANGE_INCREASE:
+			bomb_range += 1
+			print("[Player] ", username, " collected RANGE power-up! Range: ", bomb_range)
+		ServerPowerUp.PowerUpType.SPEED_INCREASE:
+			speed_multiplier += 0.2
+			print("[Player] ", username, " collected SPEED power-up! Speed: ", speed_multiplier)
 
 func get_state() -> Dictionary:
 	return {

@@ -75,7 +75,7 @@ def start_server(args):
     if not check_godot():
         return 1
     
-    print_info(f"Project path: {PROJECT_ROOT}")
+    print_info(f"Server path: {SERVER_PATH}")
     print_info("Starting headless server on port 7777...")
     print_info("Press Ctrl+C to stop\n")
     
@@ -83,8 +83,8 @@ def start_server(args):
         cmd = [
             'godot',
             '--headless',
-            '--path', str(PROJECT_ROOT),
-            'res://server/main_server.tscn'
+            '--path', str(SERVER_PATH),  # Run from server directory
+            '--', '--server'  # Pass server argument
         ]
         
         if args.verbose:
@@ -147,8 +147,9 @@ def start_both(args):
         server_cmd = [
             'godot',
             '--headless',
-            '--path', str(PROJECT_ROOT),
-            'res://server/main_server.tscn'
+            '--path', str(SERVER_PATH),
+            '--',
+            '--server'
         ]
         
         # Create log file for server output
