@@ -153,13 +153,11 @@ func quick_start_game(peer_id: int, username: String):
 		add_child(game)
 		active_games[shared_game_id] = game
 		
-		# TEMP: AI bots disabled until AIPlayer compile issue resolved
-		print("[Server] AI bot spawning temporarily disabled")
 		# Auto-spawn AI bots for testing (3 bots with different personalities)
-		#print("[Server] Auto-spawning 3 AI bots for testing...")
-		#game.call_deferred("add_ai_bot", 0)  # Balanced
-		#game.call_deferred("add_ai_bot", 1)  # Aggressive
-		#game.call_deferred("add_ai_bot", 2)  # Timid
+		print("[Server] Auto-spawning 3 AI bots for testing...")
+		game.call_deferred("add_ai_bot", 0)  # Balanced
+		game.call_deferred("add_ai_bot", 1)  # Aggressive
+		game.call_deferred("add_ai_bot", 2)  # Timid
 	
 	var game = active_games[shared_game_id]
 	player_to_game[peer_id] = shared_game_id

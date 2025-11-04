@@ -10,6 +10,9 @@ class_name AIBotController
 
 const Constants = preload("res://shared/constants.gd")
 const BehaviorTree = preload("res://shared/ai/behavior_tree.gd")
+const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
+const AIQLearningClass = preload("res://shared/ai/ai_q_learning.gd")
+const AIMCTSClass = preload("res://shared/ai/ai_mcts.gd")
 
 # ============================================================================
 # AI STATE MACHINE
@@ -57,17 +60,16 @@ var ambush_position: Vector2i = Vector2i(-1, -1)
 var last_opponent_seen_time: float = 0.0
 
 # Advanced AI systems
-var q_learning: AIQLearning.QLearning = null
-var mcts: AIMCTS.MCTS = null
+var q_learning: AIQLearningClass = null
+var mcts: AIMCTSClass = null
 var last_state_hash: String = ""
 var last_action: int = -1
 
 func _init(game_instance: Node2D, personality: int = 0):
 	var AIObserver_class = load("res://shared/ai/ai_observer.gd")
-	var AIPersonality_class = load("res://shared/ai/ai_personalities.gd")
 	observer = AIObserver_class.new(game_instance)
 	personality_type = personality
-	personality_weights = AIPersonality_class.get_weights(personality)
+	personality_weights = AIPersonality.get_weights(personality)
 	astar = AStar2D.new()
 	
 	# Build behavior trees for each state
@@ -75,11 +77,11 @@ func _init(game_instance: Node2D, personality: int = 0):
 	
 	# Initialize advanced AI systems if using those personalities
 	if personality_weights.get("use_q_learning", false):
-		q_learning = AIQLearning.QLearning.new()
+		q_learning = AIQLearningClass.new()
 		q_learning.load_q_table()  # Load previous learning
 	
 	if personality_weights.get("use_mcts", false):
-		mcts = AIMCTS.MCTS.new()
+		mcts = AIMCTSClass.new(self, observer)
 
 # ============================================================================
 # MAIN DECISION SYSTEM: State Machine → Behavior Tree → Utility
@@ -592,7 +594,7 @@ func get_current_state_name() -> String:
 
 func decide_action_q_learning(ai_player: Node2D, current_tile: Vector2i, game_state: Dictionary, current_time: float) -> Dictionary:
 	# Build state representation for Q-Learning
-	var state_hash = q_learning.get_state_hash(current_tile, game_state, observer)
+	var state_hash = q_learning.get_state_hash(ai_player, game_state, observer)
 	
 	# Choose action using epsilon-greedy
 	var action_index = q_learning.choose_action(state_hash)
@@ -683,7 +685,7 @@ func decide_action_mcts(ai_player: Node2D, current_tile: Vector2i, game_state: D
 		"opponents": game_state.opponents.duplicate(),
 		"breakables": game_state.breakables.duplicate(),
 		"map": game_state.map,
-		"has_bomb": ai_player.get("bombs_remaining", 1) > 0
+		"has_bomb": (ai_player.max_bombs - ai_player.bombs_placed) > 0
 	}
 	
 	# Run MCTS search to find best action
@@ -724,7 +726,7 @@ func convert_mcts_action_to_game_action(action_index: int, current_tile: Vector2
 
 func can_place_bomb_safely(tile: Vector2i, ai_player: Node2D) -> bool:
 	# Check if we have bombs available
-	if ai_player.get("bombs_remaining", 1) <= 0:
+	if (ai_player.max_bombs - ai_player.bombs_placed) <= 0:
 		return false
 	
 	# Simulate bomb placement and check for escape routes

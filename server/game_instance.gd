@@ -8,7 +8,7 @@ const Constants = preload("res://shared/constants.gd")
 const ServerPlayer = preload("res://shared/entities/server_player.gd")
 const ServerBomb = preload("res://shared/entities/server_bomb.gd")
 const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
-#const AIPlayer = preload("res://shared/entities/ai_player.gd")  # TEMP: Disabled - compile errors
+const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
 const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 const MapGenerator = preload("res://shared/maps/map_generator.gd")
 
@@ -111,18 +111,27 @@ func create_map_collision():
 func _physics_process(delta):
 	last_sync_time += delta
 	
-	# TEMP: AI bot bomb processing disabled
 	# Process AI bot bomb requests
-	#for peer_id in players:
-	#	var player = players[peer_id]
-	#	if player is AIPlayer and player.place_bomb_requested and player.can_place_bomb():
-	#		place_bomb(player)
-	#		player.place_bomb_requested = false
+	for peer_id in players:
+		var player = players[peer_id]
+		if player.has_method("is_ai_bot") and player.is_ai_bot() and player.place_bomb_requested and player.can_place_bomb():
+			place_bomb(player)
+			player.place_bomb_requested = false
 	
 	# Send state updates to all clients
 	if last_sync_time >= SYNC_INTERVAL:
 		last_sync_time = 0.0
 		sync_state_to_clients()
+
+func get_next_spawn_point() -> Vector2:
+	"""Get the next available spawn point from the map"""
+	if spawn_points.is_empty():
+		push_warning("[GameInstance] No spawn points available, using fallback")
+		return Vector2(64, 64)
+	
+	var spawn_pos = spawn_points[next_spawn_index % spawn_points.size()]
+	next_spawn_index += 1
+	return spawn_pos
 
 func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO):
 	var player = ServerPlayer.new()
@@ -131,13 +140,7 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	
 	# Use provided spawn position, or get next available spawn from map
 	if spawn_position == Vector2.ZERO:
-		if spawn_points.is_empty():
-			# Fallback spawn
-			spawn_position = Vector2(64, 64)
-			push_warning("[GameInstance] No spawn points available, using fallback")
-		else:
-			spawn_position = spawn_points[next_spawn_index % spawn_points.size()]
-			next_spawn_index += 1
+		spawn_position = get_next_spawn_point()
 	
 	player.position = spawn_position
 	player.name = "Player_" + str(peer_id)
@@ -151,9 +154,26 @@ func add_ai_bot(personality: int = -1) -> int:
 	"""Spawn an AI bot with specified personality (-1 = random)
 	Returns the bot's peer_id
 	"""
-	# TEMPORARILY DISABLED due to AIPlayer compile errors
-	print("[Game] AI Bot spawning temporarily disabled")
-	return -1
+	if personality == -1:
+		personality = randi() % 3  # Random: 0=Balanced, 1=Aggressive, 2=Timid
+	
+	var bot_id = ai_bot_counter
+	ai_bot_counter += 1
+	
+	# Get spawn position
+	var spawn_pos = get_next_spawn_point()
+	
+	# Create AI player
+	var bot = AIPlayerScript.new()
+	bot.player_id = str(bot_id)
+	bot.position = spawn_pos
+	bot.setup_ai(self, personality)
+	
+	players[bot_id] = bot
+	add_child(bot)
+	
+	print("[Game] AI Bot spawned: ", bot.bot_name, " at ", spawn_pos)
+	return bot_id
 
 func remove_player(peer_id: int):
 	if players.has(peer_id):
@@ -302,8 +322,12 @@ func sync_state_to_clients():
 		for cell in explosion.cells:
 			state.explosions.append({"x": cell.x, "y": cell.y})
 	
-	# Send to all players in this game via ClientMain autoload
+	# Send to all REAL players in this game via ClientMain autoload
+	# Skip AI bots (they don't have network connections)
 	for peer_id in players:
+		var player = players[peer_id]
+		if player.has_method("is_ai_bot") and player.is_ai_bot():
+			continue  # Skip AI bots
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position"""

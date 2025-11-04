@@ -1,7 +1,6 @@
-extends ServerPlayer
-class_name AIPlayer
-
-# AI-Controlled Player
+extends "res://shared/entities/server_player.gd"
+# AIPlayer - AI-Controlled Player
+# Note: Using full resource path instead of class_name to fix parse issues
 # Extends ServerPlayer but generates input locally instead of from network
 
 const AIBotController = preload("res://shared/ai/ai_bot_controller.gd")
@@ -10,6 +9,10 @@ const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 var controller: AIBotController
 var personality_type: int  # AIPersonality.Type enum value
 var bot_name: String = "Bot"
+
+func is_ai_bot() -> bool:
+	"""Helper to identify AI players"""
+	return true
 
 func setup_ai(game_instance: Node2D, personality: int = 0):  # 0 = BALANCED
 	"""Initialize AI controller with personality"""
