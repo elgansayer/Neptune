@@ -322,8 +322,8 @@ static func _generate_spawn_points(grid: Array, _config: MapConfig) -> Array:
 			if grid[tile_y][tile_x] == TileType.EMPTY or grid[tile_y][tile_x] == TileType.SPAWN_SAFE:
 				# Convert to world position (center of tile)
 				var world_pos = Vector2(
-					tile_x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-					tile_y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+					tile_x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+					tile_y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 				)
 				spawns.append(world_pos)
 	
@@ -336,8 +336,8 @@ static func _clear_spawn_zones(grid: Array, spawn_points: Array):
 	
 	for spawn_pos in spawn_points:
 		# Convert world position to tile
-		var tile_x = int(spawn_pos.x / Constants.TILE_SIZE)
-		var tile_y = int(spawn_pos.y / Constants.TILE_SIZE)
+		var tile_x = int(spawn_pos.x / GameConfig.TILE_SIZE)
+		var tile_y = int(spawn_pos.y / GameConfig.TILE_SIZE)
 		
 		# Clear 5x5 area around spawn (much clearer spawn zones)
 		for dy in range(-2, 3):  # -2 to +2 = 5 tiles

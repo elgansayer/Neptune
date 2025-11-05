@@ -18,6 +18,7 @@ config/features=PackedStringArray("4.5", "GL Compatibility")
 
 ServerMain="*res://main_server.gd"
 ClientMain="*res://shared/client_stub.gd"
+GameConfig="*res://shared/game_config.gd"
 
 [display]
 

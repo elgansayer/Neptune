@@ -24,7 +24,7 @@ func _ready():
 	# Create circular collision shape
 	var collision_shape = CollisionShape2D.new()
 	var shape = CircleShape2D.new()
-	shape.radius = Constants.TILE_SIZE / 3.0  # Smaller than tile
+	shape.radius = GameConfig.TILE_SIZE / 3.0  # Smaller than tile
 	collision_shape.shape = shape
 	add_child(collision_shape)
 	
@@ -44,8 +44,8 @@ func _on_body_entered(body):
 
 func get_tile_position() -> Vector2i:
 	return Vector2i(
-		int(floor(position.x / Constants.TILE_SIZE)),
-		int(floor(position.y / Constants.TILE_SIZE))
+		int(floor(position.x / GameConfig.TILE_SIZE)),
+		int(floor(position.y / GameConfig.TILE_SIZE))
 	)
 
 func get_state() -> Dictionary:

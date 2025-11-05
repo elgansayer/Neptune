@@ -42,6 +42,10 @@ func _ready():
 	add_child(local_player_controller)
 
 func update_game_state(state: Dictionary):
+	# Load map configuration if present (first time only)
+	if state.has("map_config") and not map_rendered:
+		GameConfig.load_map_config(state.map_config)
+	
 	# Render map once (walls only)
 	if not map_rendered and state.has("map"):
 		render_map(state.map)
@@ -128,8 +132,8 @@ func update_blocks(map_data: Array):
 				if not block_nodes.has(tile_key):
 					var block = ColorRect.new()
 					block.color = Color(0.6, 0.5, 0.4)
-					block.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
-					block.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
+					block.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
+					block.position = Vector2(col * GameConfig.TILE_SIZE, row * GameConfig.TILE_SIZE)
 					block.z_index = 0
 					add_child(block)
 					
@@ -138,15 +142,15 @@ func update_blocks(map_data: Array):
 					hitbox.width = 2.0
 					hitbox.default_color = Color(0, 1, 0, 0.6)
 					hitbox.z_index = 101
-					var radius = Constants.TILE_SIZE / 2.0
+					var radius = GameConfig.TILE_SIZE / 2.0
 					var num_points = 32
 					for i in range(num_points + 1):
 						var angle = (i / float(num_points)) * TAU
 						var point = Vector2(cos(angle), sin(angle)) * radius
 						hitbox.add_point(point)
 					hitbox.position = Vector2(
-						col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-						row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+						col * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+						row * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 					)
 					add_child(hitbox)
 					
@@ -489,8 +493,8 @@ func update_explosions(explosions_data: Array):
 		explosion_node.add_child(sprite)
 		
 		explosion_node.position = Vector2(
-			explosion_cell.x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-			explosion_cell.y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+			explosion_cell.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+			explosion_cell.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 		)
 		
 		explosions_container.add_child(explosion_node)
@@ -573,19 +577,31 @@ func render_map(map_data):
 				if map_scene_res != null:
 					map_scene_instance = map_scene_res.instantiate()
 					
-					# Make TileMaps visible
+					# Get TileMap layers
 					var wall_floor_map = map_scene_instance.get_node_or_null("WallAndFloorBlockMap")
 					var spawn_soft_map = map_scene_instance.get_node_or_null("SpawnAndSoftBlockMap")
 					
+					# WallAndFloorBlockMap stays HIDDEN - we use physics collision, not visual tiles
+					# Floor and hard walls are handled by server physics
 					if wall_floor_map:
-						wall_floor_map.visible = true
-						# Scale from 16x16 to 64x64
+						wall_floor_map.visible = false  # Keep hidden
 						wall_floor_map.scale = Vector2(4.0, 4.0)
 					
+					# SpawnAndSoftBlockMap: Show ONLY soft blocks (source 0), hide spawn markers (source 1)
 					if spawn_soft_map:
-						spawn_soft_map.visible = true
-						# Scale from 16x16 to 64x64
+						spawn_soft_map.visible = true  # Make visible for soft blocks
 						spawn_soft_map.scale = Vector2(4.0, 4.0)
+						
+						# Remove spawn marker tiles (source 1) - keep only soft blocks (source 0)
+						var cells_to_remove = []
+						for cell in spawn_soft_map.get_used_cells():
+							var source_id = spawn_soft_map.get_cell_source_id(cell)
+							if source_id == 1:  # Spawn markers
+								cells_to_remove.append(cell)
+						
+						# Erase spawn markers
+						for cell in cells_to_remove:
+							spawn_soft_map.erase_cell(cell)
 					
 					# Add map scene to game view
 					add_child(map_scene_instance)
@@ -601,7 +617,7 @@ func render_map(map_data):
 		# Draw background for the play area - sized to actual map
 		var bg = ColorRect.new()
 		bg.color = Color(0.15, 0.25, 0.15) # Dark green background
-		bg.size = Vector2(Constants.TILE_SIZE * map_width, Constants.TILE_SIZE * map_height)
+		bg.size = Vector2(GameConfig.TILE_SIZE * map_width, GameConfig.TILE_SIZE * map_height)
 		bg.position = Vector2.ZERO # Start from top-left
 		bg.z_index = -1
 		add_child(bg)
@@ -616,8 +632,8 @@ func render_map(map_data):
 					# Indestructible wall - dark gray
 					var wall = ColorRect.new()
 					wall.color = Color(0.3, 0.3, 0.35)
-					wall.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
-					wall.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
+					wall.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
+					wall.position = Vector2(col * GameConfig.TILE_SIZE, row * GameConfig.TILE_SIZE)
 					wall.z_index = 0
 					add_child(wall)
 					
@@ -627,15 +643,15 @@ func render_map(map_data):
 					hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
 					hitbox.z_index = 101
 					# Draw circle
-					var radius = Constants.TILE_SIZE / 2.0
+					var radius = GameConfig.TILE_SIZE / 2.0
 					var num_points = 32
 					for i in range(num_points + 1):
 						var angle = (i / float(num_points)) * TAU
 						var point = Vector2(cos(angle), sin(angle)) * radius
 						hitbox.add_point(point)
 					hitbox.position = Vector2(
-						col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-						row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+						col * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+						row * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 					)
 					add_child(hitbox)
 					
@@ -643,8 +659,8 @@ func render_map(map_data):
 					# Destructible block - lighter brown/tan
 					var block = ColorRect.new()
 					block.color = Color(0.6, 0.5, 0.4)
-					block.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
-					block.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
+					block.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
+					block.position = Vector2(col * GameConfig.TILE_SIZE, row * GameConfig.TILE_SIZE)
 					block.z_index = 0
 					add_child(block)
 					
@@ -654,29 +670,29 @@ func render_map(map_data):
 					hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
 					hitbox.z_index = 101
 					# Draw circle
-					var radius = Constants.TILE_SIZE / 2.0
+					var radius = GameConfig.TILE_SIZE / 2.0
 					var num_points = 32
 					for i in range(num_points + 1):
 						var angle = (i / float(num_points)) * TAU
 						var point = Vector2(cos(angle), sin(angle)) * radius
 						hitbox.add_point(point)
 					hitbox.position = Vector2(
-						col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-						row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+						col * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+						row * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 					)
 					add_child(hitbox)
 	
 	# Position camera to show ENTIRE map (fixed, no following)
 	# Center camera on the map
-	var map_center_x = map_width * Constants.TILE_SIZE / 2.0
-	var map_center_y = map_height * Constants.TILE_SIZE / 2.0
+	var map_center_x = map_width * GameConfig.TILE_SIZE / 2.0
+	var map_center_y = map_height * GameConfig.TILE_SIZE / 2.0
 	camera.position = Vector2(map_center_x, map_center_y)
 	
 	# Calculate zoom to fit entire map in viewport
 	# Assuming 1152x648 viewport (standard HD)
 	var viewport_size = get_viewport().get_visible_rect().size
-	var map_pixel_width = map_width * Constants.TILE_SIZE
-	var map_pixel_height = map_height * Constants.TILE_SIZE
+	var map_pixel_width = map_width * GameConfig.TILE_SIZE
+	var map_pixel_height = map_height * GameConfig.TILE_SIZE
 	
 	# Calculate zoom to fit map with some padding
 	var zoom_x = viewport_size.x / (map_pixel_width * 1.1) # 1.1 for 10% padding
@@ -698,11 +714,11 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 	
 	# Create new debug overlay
 	var debug_rect = ColorRect.new()
-	debug_rect.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+	debug_rect.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
 	debug_rect.color = color
 	debug_rect.position = Vector2(
-		tile_pos.x * Constants.TILE_SIZE,
-		tile_pos.y * Constants.TILE_SIZE
+		tile_pos.x * GameConfig.TILE_SIZE,
+		tile_pos.y * GameConfig.TILE_SIZE
 	)
 	debug_rect.z_index = 100 # On top of everything
 	

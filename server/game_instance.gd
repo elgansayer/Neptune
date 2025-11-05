@@ -85,6 +85,9 @@ func _ready():
 	game_map = map_data.grid
 	spawn_points = map_data.spawn_points
 	
+	# Load map configuration into GameConfig singleton
+	GameConfig.load_map_config(map_data)
+	
 	print("[GameInstance] Loaded map '", map_data.get("name", "Unknown"), 
 		  "' with ", spawn_points.size(), " spawn points")
 	
@@ -109,14 +112,14 @@ func create_map_collision():
 				# This prevents getting stuck on corners
 				var collision_shape = CollisionShape2D.new()
 				var shape = CircleShape2D.new()
-				shape.radius = Constants.TILE_SIZE / 2.0  # Circle fits inside tile
+				shape.radius = GameConfig.TILE_SIZE / 2.0  # Circle fits inside tile
 				collision_shape.shape = shape
 				tile_body.add_child(collision_shape)
 				
 				# Position at tile center
 				tile_body.position = Vector2(
-					x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-					y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+					x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+					y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 				)
 				
 				add_child(tile_body)
@@ -323,7 +326,13 @@ func sync_state_to_clients():
 		"bombs": {},
 		"powerups": {},
 		"explosions": [],
-		"map": game_map
+		"map": game_map,
+		"map_config": {
+			"tile_size": GameConfig.TILE_SIZE,
+			"width": GameConfig.map_width,
+			"height": GameConfig.map_height,
+			"name": GameConfig.map_name
+		}
 	}
 	
 	for peer_id in players:
@@ -363,8 +372,8 @@ func spawn_powerup(tile_pos: Vector2i):
 		powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE  # 20%
 	
 	powerup.position = Vector2(
-tile_pos.x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-tile_pos.y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 )
 	powerup.name = "PowerUp_" + powerup.powerup_id
 	

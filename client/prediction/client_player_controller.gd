@@ -97,11 +97,11 @@ func predict_movement(input_dir: Vector2, delta: float, _game_map: Array) -> Dic
 
 func get_current_tile_center() -> Vector2:
 	"""Get the center position of the tile the player is currently on"""
-	var tile_x = floor(predicted_position.x / Constants.TILE_SIZE)
-	var tile_y = floor(predicted_position.y / Constants.TILE_SIZE)
+	var tile_x = floor(predicted_position.x / GameConfig.TILE_SIZE)
+	var tile_y = floor(predicted_position.y / GameConfig.TILE_SIZE)
 	return Vector2(
-		tile_x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-		tile_y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+		tile_x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
 
 func reconcile_with_server(server_state: Dictionary):

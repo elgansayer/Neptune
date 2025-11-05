@@ -144,8 +144,8 @@ func _check_direction_clear(direction: Vector2) -> bool:
 		var sample_point = collision_point - collision_normal * 0.5
 		
 		debug_blocking_tile = Vector2i(
-			int(floor(sample_point.x / Constants.TILE_SIZE)),
-			int(floor(sample_point.y / Constants.TILE_SIZE))
+			int(floor(sample_point.x / GameConfig.TILE_SIZE)),
+			int(floor(sample_point.y / GameConfig.TILE_SIZE))
 		)
 	
 	# Clear bomb exceptions AFTER getting collision data
@@ -181,8 +181,8 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 	
 	# Get the center of the BLOCKING tile (not our current tile)
 	var blocking_tile_center = Vector2(
-		debug_blocking_tile.x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-		debug_blocking_tile.y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+		debug_blocking_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		debug_blocking_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
 	
 	# Calculate our offset from the blocking tile's center
@@ -194,7 +194,7 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 	
 	# Edge threshold: within 0.5 of tile edge means we can slide
 	# For a 64px tile, half is 32px, so edge_threshold should be around 24-28px
-	var edge_threshold = Constants.TILE_SIZE / 4.0  # Within 8px of edge
+	var edge_threshold = GameConfig.TILE_SIZE / 4.0  # Within 8px of edge
 	
 	print("Blocked dir: ", blocked_direction)
 	print("Blocking tile: ", debug_blocking_tile, " center: ", blocking_tile_center)
@@ -420,11 +420,11 @@ func _show_debug_tile(tile_pos: Vector2i, color: Color):
 	
 	# Create new debug overlay with border
 	var debug_rect = ColorRect.new()
-	debug_rect.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+	debug_rect.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
 	debug_rect.color = color
 	debug_rect.position = Vector2(
-		tile_pos.x * Constants.TILE_SIZE,
-		tile_pos.y * Constants.TILE_SIZE
+		tile_pos.x * GameConfig.TILE_SIZE,
+		tile_pos.y * GameConfig.TILE_SIZE
 	)
 	debug_rect.z_index = 99
 	
@@ -454,11 +454,11 @@ func get_4way_input() -> Vector2:
 
 func get_current_tile_center() -> Vector2:
 	"""Get the center position of the tile the player is currently on"""
-	var tile_x = floor(position.x / Constants.TILE_SIZE)
-	var tile_y = floor(position.y / Constants.TILE_SIZE)
+	var tile_x = floor(position.x / GameConfig.TILE_SIZE)
+	var tile_y = floor(position.y / GameConfig.TILE_SIZE)
 	return Vector2(
-		tile_x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-		tile_y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+		tile_x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
 
 func is_perpendicular(dir1: Vector2, dir2: Vector2) -> bool:
@@ -497,8 +497,8 @@ func is_tile_walkable(tile_pos: Vector2i) -> bool:
 
 func get_tile_position() -> Vector2i:
 	return Vector2i(
-		int(floor(position.x / Constants.TILE_SIZE)),
-		int(floor(position.y / Constants.TILE_SIZE))
+		int(floor(position.x / GameConfig.TILE_SIZE)),
+		int(floor(position.y / GameConfig.TILE_SIZE))
 	)
 
 func set_input(input_x: float, input_y: float):
