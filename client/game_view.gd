@@ -21,6 +21,7 @@ var wall_nodes = {} # tile_key -> Node2D (for solid walls)
 var debug_tiles = {} # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
+var map_scene_instance = null # Hold reference to loaded PCK map scene
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -91,6 +92,27 @@ func update_game_state(state: Dictionary):
 
 func update_blocks(map_data: Array):
 	"""Update destructible blocks based on current server map state"""
+	
+	# If we have the PCK map loaded, update the SpawnAndSoftBlockMap directly
+	if map_scene_instance != null:
+		var spawn_soft_map = map_scene_instance.get_node_or_null("SpawnAndSoftBlockMap")
+		if spawn_soft_map:
+			# Clear all soft block tiles first
+			for cell in spawn_soft_map.get_used_cells():
+				var source_id = spawn_soft_map.get_cell_source_id(cell)
+				if source_id == 0: # Soft blocks (source 0)
+					spawn_soft_map.erase_cell(cell)
+			
+			# Add soft blocks based on server map state
+			for row in range(map_data.size()):
+				for col in range(map_data[row].size()):
+					if map_data[row][col] == 2: # Soft block exists
+						# Set tile at this position (source 0, atlas coords (0,0))
+						spawn_soft_map.set_cell(Vector2i(col, row), 0, Vector2i(0, 0))
+			
+			return # Done - TileMap handles rendering
+	
+	# Fallback: use ColorRect rendering
 	var current_blocks = {}
 	
 	# Check which blocks should exist
@@ -530,73 +552,119 @@ func render_map(map_data):
 	var map_height = map_data.size()
 	var map_width = map_data[0].size() if map_height > 0 else 0
 	
-	# Draw background for the play area - sized to actual map
-	var bg = ColorRect.new()
-	bg.color = Color(0.15, 0.25, 0.15) # Dark green background
-	bg.size = Vector2(Constants.TILE_SIZE * map_width, Constants.TILE_SIZE * map_height)
-	bg.position = Vector2.ZERO # Start from top-left
-	bg.z_index = -1
-	add_child(bg)
+	# Try to load the map from PCK first
+	var pck_path = "res://res/maps/stage1.pck"
+	var pck_loaded = false
 	
-	# Render tiles based on map data
-	# 0 = empty, 1 = wall (indestructible), 2 = destructible block
-	for row in range(map_data.size()):
-		for col in range(map_data[row].size()):
-			var tile_type = map_data[row][col]
+	if FileAccess.file_exists(pck_path):
+		var success = ProjectSettings.load_resource_pack(pck_path)
+		if success:
+			print("[GameView] Mounted PCK: ", pck_path)
 			
-			if tile_type == 1:
-				# Indestructible wall - dark gray
-				var wall = ColorRect.new()
-				wall.color = Color(0.3, 0.3, 0.35)
-				wall.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
-				wall.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
-				wall.z_index = 0
-				add_child(wall)
+			# Try to load Stage.tscn from PCK
+			var scene_path = ""
+			for potential_path in ["res://Stage.tscn", "res://Map.tscn", "res://stage.tscn"]:
+				if ResourceLoader.exists(potential_path):
+					scene_path = potential_path
+					break
+			
+			if scene_path != "":
+				var map_scene_res = load(scene_path)
+				if map_scene_res != null:
+					map_scene_instance = map_scene_res.instantiate()
+					
+					# Make TileMaps visible
+					var wall_floor_map = map_scene_instance.get_node_or_null("WallAndFloorBlockMap")
+					var spawn_soft_map = map_scene_instance.get_node_or_null("SpawnAndSoftBlockMap")
+					
+					if wall_floor_map:
+						wall_floor_map.visible = true
+						# Scale from 16x16 to 64x64
+						wall_floor_map.scale = Vector2(4.0, 4.0)
+					
+					if spawn_soft_map:
+						spawn_soft_map.visible = true
+						# Scale from 16x16 to 64x64
+						spawn_soft_map.scale = Vector2(4.0, 4.0)
+					
+					# Add map scene to game view
+					add_child(map_scene_instance)
+					map_scene_instance.z_index = -1
+					
+					print("[GameView] Loaded map from PCK: ", scene_path)
+					pck_loaded = true
+	
+	# Fallback to ColorRect rendering if PCK not loaded
+	if not pck_loaded:
+		print("[GameView] PCK not found, using placeholder rendering")
+		
+		# Draw background for the play area - sized to actual map
+		var bg = ColorRect.new()
+		bg.color = Color(0.15, 0.25, 0.15) # Dark green background
+		bg.size = Vector2(Constants.TILE_SIZE * map_width, Constants.TILE_SIZE * map_height)
+		bg.position = Vector2.ZERO # Start from top-left
+		bg.z_index = -1
+		add_child(bg)
+		
+		# Render tiles based on map data
+		# 0 = empty, 1 = wall (indestructible), 2 = destructible block
+		for row in range(map_data.size()):
+			for col in range(map_data[row].size()):
+				var tile_type = map_data[row][col]
 				
-				# Add hitbox visualization (green circle to match actual collision)
-				var hitbox = Line2D.new()
-				hitbox.width = 2.0
-				hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
-				hitbox.z_index = 101
-				# Draw circle
-				var radius = Constants.TILE_SIZE / 2.0
-				var num_points = 32
-				for i in range(num_points + 1):
-					var angle = (i / float(num_points)) * TAU
-					var point = Vector2(cos(angle), sin(angle)) * radius
-					hitbox.add_point(point)
-				hitbox.position = Vector2(
-					col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-					row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
-				)
-				add_child(hitbox)
-				
-			elif tile_type == 2:
-				# Destructible block - lighter brown/tan
-				var block = ColorRect.new()
-				block.color = Color(0.6, 0.5, 0.4)
-				block.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
-				block.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
-				block.z_index = 0
-				add_child(block)
-				
-				# Add hitbox visualization (green circle to match actual collision)
-				var hitbox = Line2D.new()
-				hitbox.width = 2.0
-				hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
-				hitbox.z_index = 101
-				# Draw circle
-				var radius = Constants.TILE_SIZE / 2.0
-				var num_points = 32
-				for i in range(num_points + 1):
-					var angle = (i / float(num_points)) * TAU
-					var point = Vector2(cos(angle), sin(angle)) * radius
-					hitbox.add_point(point)
-				hitbox.position = Vector2(
-					col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
-					row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
-				)
-				add_child(hitbox)
+				if tile_type == 1:
+					# Indestructible wall - dark gray
+					var wall = ColorRect.new()
+					wall.color = Color(0.3, 0.3, 0.35)
+					wall.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+					wall.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
+					wall.z_index = 0
+					add_child(wall)
+					
+					# Add hitbox visualization (green circle to match actual collision)
+					var hitbox = Line2D.new()
+					hitbox.width = 2.0
+					hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
+					hitbox.z_index = 101
+					# Draw circle
+					var radius = Constants.TILE_SIZE / 2.0
+					var num_points = 32
+					for i in range(num_points + 1):
+						var angle = (i / float(num_points)) * TAU
+						var point = Vector2(cos(angle), sin(angle)) * radius
+						hitbox.add_point(point)
+					hitbox.position = Vector2(
+						col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+						row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+					)
+					add_child(hitbox)
+					
+				elif tile_type == 2:
+					# Destructible block - lighter brown/tan
+					var block = ColorRect.new()
+					block.color = Color(0.6, 0.5, 0.4)
+					block.size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
+					block.position = Vector2(col * Constants.TILE_SIZE, row * Constants.TILE_SIZE)
+					block.z_index = 0
+					add_child(block)
+					
+					# Add hitbox visualization (green circle to match actual collision)
+					var hitbox = Line2D.new()
+					hitbox.width = 2.0
+					hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
+					hitbox.z_index = 101
+					# Draw circle
+					var radius = Constants.TILE_SIZE / 2.0
+					var num_points = 32
+					for i in range(num_points + 1):
+						var angle = (i / float(num_points)) * TAU
+						var point = Vector2(cos(angle), sin(angle)) * radius
+						hitbox.add_point(point)
+					hitbox.position = Vector2(
+						col * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0,
+						row * Constants.TILE_SIZE + Constants.TILE_SIZE / 2.0
+					)
+					add_child(hitbox)
 	
 	# Position camera to show ENTIRE map (fixed, no following)
 	# Center camera on the map

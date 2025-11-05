@@ -11,6 +11,7 @@ const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
 const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
 const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 const MapGenerator = preload("res://shared/maps/map_generator.gd")
+const MapPackLoader = preload("res://shared/maps/map_pack_loader.gd")
 
 var game_id: String = ""
 var players := {}  # peer_id -> ServerPlayer (includes AI bots)
@@ -41,27 +42,44 @@ func _ready():
 	# Seed randomness with current time for unique maps each game
 	randomize()
 	
-	# Load map - CLASSIC Bomberman style only (17x11 visible grid)
+	# Load map from PCK file
 	var map_data: Dictionary
 	
-	# Always use CLASSIC style for traditional Bomberman gameplay
-	# 17 columns x 11 rows (like original Bomberman)
-	map_data = map_manager.generate_procedural_map(MapGenerator.MapStyle.CLASSIC, 17, 11)
+	# Try to load PCK map first
+	if FileAccess.file_exists("res://res/maps/stage1.pck"):
+		print("[GameInstance] Loading map from PCK...")
+		map_data = MapPackLoader.load_map_from_pck("res://res/maps/stage1.pck")
+		
+		if not map_data.is_empty():
+			# Choose soft block pattern
+			var pattern = map_data.metadata.get("soft_block_pattern", "RANDOM_70")
+			var density = map_data.metadata.get("soft_block_density", 0.7)
+			var active_soft_blocks = MapPackLoader.choose_soft_block_pattern(
+				map_data.soft_slots, 
+				pattern, 
+				density
+			)
+			
+			# Apply soft blocks to grid
+			# First clear all soft slots
+			for slot in map_data.soft_slots:
+				map_data.grid[slot.y][slot.x] = 0
+			
+			# Then activate chosen slots
+			for slot in active_soft_blocks:
+				map_data.grid[slot.y][slot.x] = 2
+			
+			print("[GameInstance] Using PCK map with ", active_soft_blocks.size(), "/", 
+				  map_data.soft_slots.size(), " soft blocks")
 	
-	# Alternative options (uncomment to use):
-	# Option A: Always use classic style
-	# map_data = map_manager.generate_procedural_map(MapGenerator.MapStyle.CLASSIC)
-	
-	# Option B: Load random map file (static, same content each time)
-	# map_data = map_manager.load_random_map_file()
-	
-	# Option C: Load specific map
-	# map_data = map_manager.load_map(map_manager.MapSource.FILE, "res://res/maps/classic_arena.json")
+	# Fallback to procedural generation if PCK not found
+	if map_data.is_empty():
+		print("[GameInstance] PCK not found, generating procedural map...")
+		map_data = map_manager.generate_procedural_map(MapGenerator.MapStyle.CLASSIC, 17, 11)
 	
 	if map_data.is_empty():
-		push_error("[GameInstance] Failed to load map, using fallback")
-		# Fallback: generate a basic map
-		map_data = map_manager.generate_procedural_map(MapGenerator.MapStyle.CLASSIC)
+		push_error("[GameInstance] Failed to load any map!")
+		return
 	
 	# Apply map data
 	game_map = map_data.grid
