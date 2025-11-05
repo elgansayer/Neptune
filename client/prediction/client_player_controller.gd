@@ -64,7 +64,7 @@ func predict_movement(input_dir: Vector2, delta: float, _game_map: Array) -> Dic
 		predicted_velocity = Vector2.ZERO
 	else:
 		# Match server speed calculation exactly
-		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER
+		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER
 		var normalized_input = input_dir.normalized()
 		predicted_velocity = normalized_input * speed
 		
@@ -74,14 +74,14 @@ func predict_movement(input_dir: Vector2, delta: float, _game_map: Array) -> Dic
 		
 		# When moving horizontally, snap vertically
 		if abs(normalized_input.x) > 0.5:
-			if abs(offset_from_center.y) > Constants.SNAP_THRESHOLD:
-				var correction_y = sign(offset_from_center.y) * Constants.SNAP_TO_CENTER_SPEED
+			if abs(offset_from_center.y) > GameConfig.SNAP_THRESHOLD:
+				var correction_y = sign(offset_from_center.y) * GameConfig.SNAP_TO_CENTER_SPEED
 				predicted_velocity.y += correction_y
 		
 		# When moving vertically, snap horizontally
 		if abs(normalized_input.y) > 0.5:
-			if abs(offset_from_center.x) > Constants.SNAP_THRESHOLD:
-				var correction_x = sign(offset_from_center.x) * Constants.SNAP_TO_CENTER_SPEED
+			if abs(offset_from_center.x) > GameConfig.SNAP_THRESHOLD:
+				var correction_x = sign(offset_from_center.x) * GameConfig.SNAP_TO_CENTER_SPEED
 				predicted_velocity.x += correction_x
 		
 		predicted_last_move_direction = normalized_input

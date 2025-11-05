@@ -177,7 +177,7 @@ func update_player(peer_id: String, data: Dictionary):
 		var player_pck_scene = load("res://player.tscn")
 		if player_pck_scene:
 			var sprite_root = player_pck_scene.instantiate()
-			sprite_root.scale = Vector2(2.0, 2.0)
+			# sprite_root.scale = Vector2(2.0, 2.0)
 			sprite_root.position = Vector2.ZERO
 			player_node.add_child(sprite_root)
 			# Store reference to AnimatedSprite2D for animation control
@@ -222,7 +222,7 @@ func update_player(peer_id: String, data: Dictionary):
 		hitbox_visual.name = "HitboxVisual"
 		
 		# Create square points (rectangle)
-		var half_size = Constants.PLAYER_HALF_WIDTH
+		var half_size = GameConfig.PLAYER_HALF_WIDTH
 		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Top-left
 		hitbox_visual.add_point(Vector2(half_size, -half_size)) # Top-right
 		hitbox_visual.add_point(Vector2(half_size, half_size)) # Bottom-right
@@ -234,7 +234,7 @@ func update_player(peer_id: String, data: Dictionary):
 		# Add raycast visualization line
 		var raycast_debug_line = Line2D.new()
 		# Width = collision shape diameter to show actual raycast width
-		raycast_debug_line.width = Constants.PLAYER_HALF_WIDTH * 2.0 # 56px diameter
+		raycast_debug_line.width = GameConfig.PLAYER_HALF_WIDTH * 2.0 # Dynamic diameter
 		raycast_debug_line.default_color = Color(0, 1, 1, 1.0) # Cyan
 		raycast_debug_line.z_index = 100 # Fixed: within valid range
 		raycast_debug_line.antialiased = true
@@ -243,7 +243,7 @@ func update_player(peer_id: String, data: Dictionary):
 		
 		# Add ShapeCast2D visualization (showing the collision check shape)
 		var shapecast_visual = Line2D.new()
-		shapecast_visual.width = Constants.PLAYER_HALF_WIDTH * 2.0 # Same size as player
+		shapecast_visual.width = GameConfig.PLAYER_HALF_WIDTH * 2.0 # Same size as player
 		shapecast_visual.default_color = Color(1, 0, 0, 0.6) # Red by default
 		shapecast_visual.z_index = 101
 		shapecast_visual.antialiased = true
@@ -448,7 +448,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		hitbox_visual.z_index = 101
 		
 		# Create square points (rectangle)
-		var half_size = Constants.PLAYER_HALF_WIDTH # Bombs use same size as player
+		var half_size = GameConfig.PLAYER_HALF_WIDTH # Bombs use same size as player
 		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Top-left
 		hitbox_visual.add_point(Vector2(half_size, -half_size)) # Top-right
 		hitbox_visual.add_point(Vector2(half_size, half_size)) # Bottom-right
@@ -585,12 +585,12 @@ func render_map(map_data):
 					# Floor and hard walls are handled by server physics
 					if wall_floor_map:
 						wall_floor_map.visible = false  # Keep hidden
-						wall_floor_map.scale = Vector2(4.0, 4.0)
+						# wall_floor_map.scale = Vector2(4.0, 4.0)
 					
 					# SpawnAndSoftBlockMap: Show ONLY soft blocks (source 0), hide spawn markers (source 1)
 					if spawn_soft_map:
 						spawn_soft_map.visible = true  # Make visible for soft blocks
-						spawn_soft_map.scale = Vector2(4.0, 4.0)
+						# spawn_soft_map.scale = Vector2(4.0, 4.0)
 						
 						# Remove spawn marker tiles (source 1) - keep only soft blocks (source 0)
 						var cells_to_remove = []

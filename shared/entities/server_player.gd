@@ -46,7 +46,7 @@ func _ready():
 	# Set up collision shape - USE RECTANGLE for precise collision
 	var collision_shape = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
-	shape.size = Vector2(Constants.PLAYER_HALF_WIDTH * 2, Constants.PLAYER_HALF_WIDTH * 2)  # 56x56 square
+	shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2)  # Dynamic size based on tile
 	collision_shape.shape = shape
 	add_child(collision_shape)
 	
@@ -86,7 +86,7 @@ func _setup_shape_casts():
 	"""Create ShapeCast2D nodes for checking collisions in different directions"""
 	# Create shape for casting
 	var cast_shape = RectangleShape2D.new()
-	cast_shape.size = Vector2(Constants.PLAYER_HALF_WIDTH * 2, Constants.PLAYER_HALF_WIDTH * 2)  # 56x56 square
+	cast_shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2)  # Dynamic size
 	
 	# ShapeCast for desired direction (check walls and bombs, not other players)
 	shape_cast_desired = ShapeCast2D.new()
@@ -348,7 +348,7 @@ func _physics_process(_delta):
 	_update_debug_arrow()
 	
 	if final_direction.length() > 0:
-		var speed = Constants.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
+		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
 		velocity = final_direction * speed
 		
 		# Auto-align to grid: Add correction to movement vector
@@ -360,14 +360,14 @@ func _physics_process(_delta):
 			
 			if abs(final_direction.x) > 0.5:
 				# Moving horizontally - align vertically to grid
-				if abs(offset_from_center.y) > Constants.SNAP_THRESHOLD:
-					var correction_y = sign(offset_from_center.y) * Constants.SNAP_TO_CENTER_SPEED
+				if abs(offset_from_center.y) > GameConfig.SNAP_THRESHOLD:
+					var correction_y = sign(offset_from_center.y) * GameConfig.SNAP_TO_CENTER_SPEED
 					velocity.y += correction_y
 			
 			if abs(final_direction.y) > 0.5:
 				# Moving vertically - align horizontally to grid
-				if abs(offset_from_center.x) > Constants.SNAP_THRESHOLD:
-					var correction_x = sign(offset_from_center.x) * Constants.SNAP_TO_CENTER_SPEED
+				if abs(offset_from_center.x) > GameConfig.SNAP_THRESHOLD:
+					var correction_x = sign(offset_from_center.x) * GameConfig.SNAP_TO_CENTER_SPEED
 					velocity.x += correction_x
 	else:
 		velocity = Vector2.ZERO

@@ -108,9 +108,7 @@ static func _parse_tilemaps(wall_floor: TileMapLayer, spawn_soft: TileMapLayer, 
 		if meta_tile_size != null:
 			tile_size = meta_tile_size
 	
-	# Scale factor to convert to 64x64 game tiles
-	var scale_factor = 64.0 / tile_size
-	
+	# No scale factor - use native tile size throughout
 	# Initialize result
 	var grid = []
 	var hard_blocks = []
@@ -147,9 +145,9 @@ static func _parse_tilemaps(wall_floor: TileMapLayer, spawn_soft: TileMapLayer, 
 					grid[y][x] = 2
 					soft_slots.append(Vector2i(x, y))
 			elif source_id == 1:  # Spawn point (source 1 in soft map)
-				# Convert tile position to world coordinates (scaled to 64x64 tiles)
-				var world_x = (x * tile_size * scale_factor) + (64.0 / 2.0)
-				var world_y = (y * tile_size * scale_factor) + (64.0 / 2.0)
+				# Convert tile position to world coordinates (native tile size)
+				var world_x = (x * tile_size) + (tile_size / 2.0)
+				var world_y = (y * tile_size) + (tile_size / 2.0)
 				spawn_points.append(Vector2(world_x, world_y))
 	
 	# Build result
@@ -160,8 +158,7 @@ static func _parse_tilemaps(wall_floor: TileMapLayer, spawn_soft: TileMapLayer, 
 		"hard_blocks": hard_blocks,
 		"width": width,
 		"height": height,
-		"tile_size": 64,  # Game uses 64x64 tiles internally
-		"original_tile_size": tile_size,
+		"tile_size": tile_size,  # Use native tile size from map
 		"name": "Unknown Map",
 		"metadata": {}
 	}
