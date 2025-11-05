@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://d1bc8ha5dcrij"]
+
+[ext_resource type="Texture2D" uid="uid://dxvh4358r6r16" path="res://block.png" id="1_6s7dv"]
+[ext_resource type="Texture2D" uid="uid://dv81vylv1jjhm" path="res://block-explode-01.png" id="2_vfpbi"]
+[ext_resource type="Texture2D" uid="uid://bfvfwjwcvytbt" path="res://block-explode-02.png" id="3_nkoxu"]
+[ext_resource type="Texture2D" uid="uid://opwug2yi2vu2" path="res://block-explode-03.png" id="4_4uhko"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tiwda"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_6s7dv")
+}],
+"loop": false,
+"name": &"default",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_vfpbi")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_nkoxu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_4uhko")
+}],
+"loop": false,
+"name": &"explode",
+"speed": 8.0
+}]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="block" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_tiwda")

@@ -1,0 +1,8 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://b36dl0l8xiw20"]
+
+[ext_resource type="Texture2D" uid="uid://bhucq8rrfvkgt" path="res://robin_hood.png" id="1_axapj"]
+
+[resource]
+atlas = ExtResource("1_axapj")
+region = Rect2(21, 519, 18, 29)
+margin = Rect2(8, 4, 15, 4)
