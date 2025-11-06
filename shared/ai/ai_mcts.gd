@@ -7,8 +7,9 @@ class_name AIMCTS
 
 const EXPLORATION_CONSTANT = 1.41  # sqrt(2) for UCB1
 const MAX_SIMULATION_DEPTH = 10    # How many moves to simulate
-const MAX_SIMULATIONS = 100        # How many simulations per decision
-const SIMULATION_TIME_BUDGET = 0.05  # 50ms time budget
+const MAX_SIMULATIONS = 50         # Reduced from 100 for performance
+const SIMULATION_TIME_BUDGET = 0.04  # 40ms time budget (reduced from 50ms)
+const EARLY_TERMINATION_THRESHOLD = 0.6  # Stop if best action has 60% of visits
 
 enum Action {
 	MOVE_UP,
@@ -37,6 +38,14 @@ class MCTSNode:
 	
 	func is_fully_expanded() -> bool:
 		return untried_actions.is_empty()
+	
+	func get_max_children() -> int:
+		"""Progressive widening: limit children based on visits"""
+		return max(1, int(ceil(sqrt(visits))))
+	
+	func can_expand() -> bool:
+		"""Check if we can expand (progressive widening)"""
+		return children.size() < get_max_children() and not untried_actions.is_empty()
 	
 	func is_terminal() -> bool:
 		# Terminal if no children and fully expanded (dead end)
@@ -68,6 +77,7 @@ class MCTSNode:
 var root: MCTSNode = null
 var controller = null  # Reference to AIBotController
 var observer = null    # Reference to AIObserver
+var state_cache: Dictionary = {}  # Cache for state evaluations: hash -> {value, visits}
 
 func _init(ai_controller, ai_observer):
 	controller = ai_controller
@@ -79,33 +89,45 @@ func _init(ai_controller, ai_observer):
 
 func search(ai_player: Node2D, game_state: Dictionary, time_budget: float = SIMULATION_TIME_BUDGET) -> Action:
 	"""
-	Main MCTS search algorithm
+	Main MCTS search algorithm with optimizations
 	Returns: Best action to take
 	"""
 	var start_time = Time.get_ticks_msec() / 1000.0
 	var current_state_hash = get_state_hash(ai_player, game_state)
+	
+	# Clear state cache for new decision (prevent stale data)
+	state_cache.clear()
 	
 	# Create or reuse root node
 	if root == null or root.state_hash != current_state_hash:
 		root = MCTSNode.new(current_state_hash)
 	
 	var simulations = 0
+	var time_check_interval = 10  # Check time every 10 simulations
 	
-	# Run simulations until time budget exhausted
+	# Run simulations until time budget exhausted or max simulations reached
 	while simulations < MAX_SIMULATIONS:
-		var current_time = Time.get_ticks_msec() / 1000.0
-		if current_time - start_time > time_budget:
+		# Periodic time budget check (every 10 simulations for performance)
+		if simulations % time_check_interval == 0:
+			var current_time = Time.get_ticks_msec() / 1000.0
+			if current_time - start_time > time_budget:
+				break
+		
+		# Early termination: Check if best action has >60% of visits
+		if simulations > 10 and _check_early_termination():
+			if OS.is_debug_build():
+				print("[MCTS] Early termination at %d simulations" % simulations)
 			break
 		
 		# 1. SELECTION: Traverse tree using UCB1
 		var node = select(root)
 		
-		# 2. EXPANSION: Add new child node
-		if not node.is_fully_expanded() and node.visits > 0:
+		# 2. EXPANSION: Add new child node (with progressive widening)
+		if node.can_expand() and node.visits > 0:
 			node = expand(node, ai_player, game_state)
 		
-		# 3. SIMULATION: Run random playout from this node
-		var reward = simulate(node, ai_player, game_state)
+		# 3. SIMULATION: Run random playout from this node (check cache first)
+		var reward = simulate_with_cache(node, ai_player, game_state)
 		
 		# 4. BACKPROPAGATION: Update node statistics
 		backpropagate(node, reward)
@@ -126,6 +148,21 @@ func search(ai_player: Node2D, game_state: Dictionary, time_budget: float = SIMU
 	
 	# Fallback to random if no children
 	return Action.values()[randi() % Action.size()]
+
+func _check_early_termination() -> bool:
+	"""Check if best action has sufficient confidence to terminate early"""
+	if root.children.is_empty():
+		return false
+	
+	# Find child with most visits
+	var max_visits = 0
+	for child in root.children:
+		if child.visits > max_visits:
+			max_visits = child.visits
+	
+	# Check if best action has >60% of total visits
+	var visit_ratio = float(max_visits) / float(root.visits) if root.visits > 0 else 0.0
+	return visit_ratio > EARLY_TERMINATION_THRESHOLD
 
 # ============================================================================
 # MCTS PHASES
@@ -188,6 +225,22 @@ func simulate(node: MCTSNode, ai_player: Node2D, game_state: Dictionary) -> floa
 		depth += 1
 	
 	return total_reward
+
+func simulate_with_cache(node: MCTSNode, ai_player: Node2D, game_state: Dictionary) -> float:
+	"""Simulation with state caching for repeated evaluations"""
+	# Check cache first
+	if state_cache.has(node.state_hash):
+		var cached = state_cache[node.state_hash]
+		cached.visits += 1
+		return cached.value
+	
+	# Run simulation
+	var reward = simulate(node, ai_player, game_state)
+	
+	# Cache result
+	state_cache[node.state_hash] = {"value": reward, "visits": 1}
+	
+	return reward
 
 func backpropagate(node: MCTSNode, reward: float):
 	"""Backpropagation phase: Update node statistics up the tree"""

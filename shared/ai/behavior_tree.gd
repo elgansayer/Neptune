@@ -1,6 +1,9 @@
 extends RefCounted
 class_name BehaviorTree
 
+# Needed for tile-size calculations in prediction checks
+const Constants = preload("res://shared/constants.gd")
+
 # Lightweight Behavior Tree implementation for strategic AI planning
 # Used by AIBotController for multi-step tactical sequences
 
@@ -212,6 +215,47 @@ class IsOpponentNear extends BTNode:
 		
 		return Status.FAILURE
 
+# Check if an opponent is predicted to be nearby (velocity-based)
+class IsOpponentPredictedNear extends BTNode:
+	var max_distance: int = 5
+	var prediction_time: float = 2.0
+	
+	func _init(distance: int = 5, time_ahead: float = 2.0):
+		name = "IsOpponentPredictedNear"
+		max_distance = distance
+		prediction_time = time_ahead
+	
+	func execute(context: Dictionary) -> int:
+		var controller = context.controller
+		var observer = context.observer
+		var game_state = context.game_state
+		var my_tile = context.my_tile
+		
+		for peer_id in game_state.players:
+			var player = game_state.players[peer_id]
+			if player == context.ai_player:
+				continue
+			
+			# Get predicted position
+			var predicted_pos = observer.predict_opponent_position(str(peer_id), prediction_time)
+			var predicted_tile = Vector2i(
+				int(floor(predicted_pos.x / Constants.TILE_SIZE)),
+				int(floor(predicted_pos.y / Constants.TILE_SIZE))
+			)
+			
+			# Validate predicted tile
+			if not observer._is_tile_valid(predicted_tile):
+				predicted_tile = player.get_tile_position()
+			
+			var dist = abs(predicted_tile.x - my_tile.x) + abs(predicted_tile.y - my_tile.y)
+			
+			if dist <= max_distance:
+				context.target_opponent = player
+				context.target_tile = predicted_tile
+				return Status.SUCCESS
+		
+		return Status.FAILURE
+
 # Check if AI has escape routes from current position
 class HasEscapeRoute extends BTNode:
 	var min_routes: int = 1
@@ -273,6 +317,28 @@ class CanPlaceBomb extends BTNode:
 	func execute(context: Dictionary) -> int:
 		return Status.SUCCESS if context.ai_player.can_place_bomb() else Status.FAILURE
 
+# Check if valuable powerup is visible
+class IsValuablePowerUpVisible extends BTNode:
+	var min_value: float = 300.0
+	
+	func _init(threshold: float = 300.0):
+		name = "IsValuablePowerUpVisible"
+		min_value = threshold
+	
+	func execute(context: Dictionary) -> int:
+		var observer = context.observer
+		var controller = context.controller
+		var powerup_weights = controller.personality_weights.get("powerup_utility_weights", {})
+		
+		var valuable_powerup = observer.find_valuable_powerup(context.my_tile, powerup_weights)
+		
+		if valuable_powerup.value >= min_value:
+			context.target_tile = valuable_powerup.tile
+			context.target_powerup = valuable_powerup
+			return Status.SUCCESS
+		
+		return Status.FAILURE
+
 # ============================================================================
 # ACTION NODES - Perform actions
 # ============================================================================
@@ -287,7 +353,13 @@ class MoveToTarget extends BTNode:
 			return Status.FAILURE
 		
 		var controller = context.controller
-		var direction = controller.get_direction_to_tile(context.my_tile, context.target_tile)
+		var ai_player = context.ai_player
+		var direction = controller.get_direction_to_tile(
+			context.my_tile,
+			context.target_tile,
+			ai_player.position,
+			context.current_time
+		)
 		
 		context.action_result.direction = direction
 		return Status.SUCCESS
@@ -307,8 +379,14 @@ class MoveToSafety extends BTNode:
 			return Status.SUCCESS
 		
 		var controller = context.controller
+		var ai_player = context.ai_player
 		var nearest_safe = safe_tiles[0].tile
-		context.action_result.direction = controller.get_direction_to_tile(context.my_tile, nearest_safe)
+		context.action_result.direction = controller.get_direction_to_tile(
+			context.my_tile,
+			nearest_safe,
+			ai_player.position,
+			context.current_time
+		)
 		return Status.SUCCESS
 
 # Place a bomb at current position

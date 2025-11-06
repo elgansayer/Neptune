@@ -33,13 +33,14 @@ func _physics_process(delta):
 		return
 	
 	# Generate AI decision
-	var input_data = controller.decide_action(self)
+	var input_data: Dictionary = controller.decide_action(self)
 	
-	# Apply AI-generated input
-	set_input(input_data.direction.x, input_data.direction.y)
+	# Apply AI-generated input (use bracket access for Dictionary)
+	var dir: Vector2 = input_data.get("direction", Vector2.ZERO)
+	set_input(dir.x, dir.y)
 	
 	# Store bomb request for game_instance to process
-	if input_data.place_bomb and can_place_bomb():
+	if input_data.get("place_bomb", false) and can_place_bomb():
 		request_bomb_placement()
 	
 	# Call parent physics process to handle movement

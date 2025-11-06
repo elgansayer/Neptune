@@ -36,7 +36,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 500.0,  # Increased
 				"bomb_frequency": 0.4,  # Increased
 				"reaction_delay": 0.05,  # 50ms - faster
-				"pathfinding_frequency": 0.3  # Faster updates
+				"pathfinding_frequency": 0.3,  # Faster updates
+				"powerup_utility_weights": {
+					"max_bombs": 600.0,
+					"explosion_range": 600.0,
+					"speed": 600.0,
+					"bomb_kicker": 400.0,
+					"power_glove": 400.0
+				}
 			}
 		
 		Type.AGGRESSIVE:
@@ -52,7 +59,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 1200.0,  # Much higher
 				"bomb_frequency": 0.7,  # More bombs
 				"reaction_delay": 0.02,  # 20ms - very fast
-				"pathfinding_frequency": 0.2  # Faster
+				"pathfinding_frequency": 0.2,  # Faster
+				"powerup_utility_weights": {
+					"max_bombs": 500.0,
+					"explosion_range": 700.0,  # Prefers range
+					"speed": 400.0,
+					"bomb_kicker": 300.0,
+					"power_glove": 300.0
+				}
 			}
 		
 		Type.TIMID:
@@ -68,7 +82,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 150.0,  # Increased
 				"bomb_frequency": 0.2,  # Increased
 				"reaction_delay": 0.08,  # Faster
-				"pathfinding_frequency": 0.4  # Faster
+				"pathfinding_frequency": 0.4,  # Faster
+				"powerup_utility_weights": {
+					"max_bombs": 300.0,
+					"explosion_range": 100.0,
+					"speed": 900.0,  # Prefers speed for escape
+					"bomb_kicker": 200.0,
+					"power_glove": 150.0
+				}
 			}
 		
 		Type.GREEDY:
@@ -84,7 +105,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 350.0,  # Increased
 				"bomb_frequency": 0.45,  # Increased
 				"reaction_delay": 0.03,  # Much faster
-				"pathfinding_frequency": 0.25  # Faster
+				"pathfinding_frequency": 0.25,  # Faster
+				"powerup_utility_weights": {
+					"max_bombs": 800.0,  # Wants everything
+					"explosion_range": 800.0,
+					"speed": 800.0,
+					"bomb_kicker": 700.0,
+					"power_glove": 700.0
+				}
 			}
 		
 		Type.CHAOS:
@@ -100,7 +128,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 700.0,  # Higher
 				"bomb_frequency": 0.8,  # Even more bombs
 				"reaction_delay": 0.01,  # 10ms - instant
-				"pathfinding_frequency": 0.15  # Very fast
+				"pathfinding_frequency": 0.15,  # Very fast
+				"powerup_utility_weights": {
+					"max_bombs": 800.0,  # Loves bombs
+					"explosion_range": 600.0,
+					"speed": 500.0,
+					"bomb_kicker": 400.0,
+					"power_glove": 400.0
+				}
 			}
 		
 		Type.DEFENSIVE:
@@ -116,7 +151,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 100.0,  # Only traps if cornered
 				"bomb_frequency": 0.15,  # Rarely bombs
 				"reaction_delay": 0.09,  # 90ms - cautious
-				"pathfinding_frequency": 0.5  # Slow, deliberate
+				"pathfinding_frequency": 0.5,  # Slow, deliberate
+				"powerup_utility_weights": {
+					"max_bombs": 200.0,
+					"explosion_range": 150.0,
+					"speed": 900.0,  # Prefers speed for escape
+					"bomb_kicker": 100.0,
+					"power_glove": 100.0
+				}
 			}
 		
 		Type.KAMIKAZE:
@@ -132,7 +174,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 2000.0,  # Massive trap value, even if suicidal
 				"bomb_frequency": 0.95,  # Almost always bombing
 				"reaction_delay": 0.005,  # 5ms - nearly instant
-				"pathfinding_frequency": 0.1  # Very aggressive pathing
+				"pathfinding_frequency": 0.1,  # Very aggressive pathing
+				"powerup_utility_weights": {
+					"max_bombs": 800.0,  # Only cares about bombs
+					"explosion_range": 400.0,
+					"speed": 200.0,
+					"bomb_kicker": 100.0,
+					"power_glove": 100.0
+				}
 			}
 		
 		Type.STRATEGIC:
@@ -148,7 +197,15 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 900.0,  # High trap value, calculated
 				"bomb_frequency": 0.5,  # Balanced bombing
 				"reaction_delay": 0.04,  # 40ms - thinking time
-				"pathfinding_frequency": 0.8  # Plans further ahead
+				"pathfinding_frequency": 0.8,  # Plans further ahead
+				"powerup_utility_weights": {
+					"max_bombs": 700.0,  # Values all strategically
+					"explosion_range": 700.0,
+					"speed": 700.0,
+					"bomb_kicker": 600.0,
+					"power_glove": 600.0
+				},
+				"chain_setup_bonus": 1200.0  # Strategic chain planning
 			}
 		
 		Type.TRAPPER:
@@ -164,7 +221,15 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"trap_bonus": 1800.0,  # Extreme trap focus
 				"bomb_frequency": 0.3,  # Selective bombing
 				"reaction_delay": 0.06,  # 60ms - observant
-				"pathfinding_frequency": 0.4  # Methodical
+				"pathfinding_frequency": 0.4,  # Methodical
+				"powerup_utility_weights": {
+					"max_bombs": 600.0,
+					"explosion_range": 700.0,  # Prefers range for traps
+					"speed": 400.0,
+					"bomb_kicker": 500.0,
+					"power_glove": 500.0
+				},
+				"chain_setup_bonus": 1500.0  # Loves chain traps
 			}
 		
 		Type.LEARNED:
@@ -181,7 +246,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"bomb_frequency": 0.5,  # Learned frequency
 				"reaction_delay": 0.03,  # 30ms - Fast learning
 				"pathfinding_frequency": 0.3,  # Adaptive
-				"use_q_learning": true  # Special flag
+				"use_q_learning": true,  # Special flag
+				"powerup_utility_weights": {
+					"max_bombs": 650.0,
+					"explosion_range": 650.0,
+					"speed": 650.0,
+					"bomb_kicker": 500.0,
+					"power_glove": 500.0
+				}
 			}
 		
 		Type.PERFECT:
@@ -198,7 +270,14 @@ static func get_weights(personality_type: Type) -> Dictionary:
 				"bomb_frequency": 0.6,  # Optimal frequency
 				"reaction_delay": 0.05,  # 50ms - Simulation time
 				"pathfinding_frequency": 0.2,  # Plans ahead
-				"use_mcts": true  # Special flag
+				"use_mcts": true,  # Special flag
+				"powerup_utility_weights": {
+					"max_bombs": 750.0,
+					"explosion_range": 750.0,
+					"speed": 750.0,
+					"bomb_kicker": 650.0,
+					"power_glove": 650.0
+				}
 			}
 		
 		_:

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://4xtxvfk7cvub"
-path="res://.godot/imported/horizontal-02.png-99ae2f1a3e1ff24bbed8055abf6e5769.ctex"
+path="res://.godot/imported/horizontal-02.png-3249d1d66ad124c3bb32bac46923514d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://explosion/images/medium/horizontal-02.png"
-dest_files=["res://.godot/imported/horizontal-02.png-99ae2f1a3e1ff24bbed8055abf6e5769.ctex"]
+source_file="res://res/explosion/sbomberman/medium/horizontal-02.png"
+dest_files=["res://.godot/imported/horizontal-02.png-3249d1d66ad124c3bb32bac46923514d.ctex"]
 
 [params]
 

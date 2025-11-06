@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://buxwiuxxhqvsm"
-path="res://.godot/imported/verticle-02.png-fd80a26cb22203d045317675aa5b8c83.ctex"
+path="res://.godot/imported/verticle-02.png-e28919bf6aa655c5996aa560c542497f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://explosion/images/medium/verticle-02.png"
-dest_files=["res://.godot/imported/verticle-02.png-fd80a26cb22203d045317675aa5b8c83.ctex"]
+source_file="res://res/explosion/sbomberman/medium/verticle-02.png"
+dest_files=["res://.godot/imported/verticle-02.png-e28919bf6aa655c5996aa560c542497f.ctex"]
 
 [params]
 

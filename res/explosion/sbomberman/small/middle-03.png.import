@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bd8ou0yv1bdfm"
-path="res://.godot/imported/middle-03.png-e86a13035cd53980df3cc3165aef6a40.ctex"
+path="res://.godot/imported/middle-03.png-5221c6bd4b8da6b9c824fc47db3b3029.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://explosion/images/small/middle-03.png"
-dest_files=["res://.godot/imported/middle-03.png-e86a13035cd53980df3cc3165aef6a40.ctex"]
+source_file="res://res/explosion/sbomberman/small/middle-03.png"
+dest_files=["res://.godot/imported/middle-03.png-5221c6bd4b8da6b9c824fc47db3b3029.ctex"]
 
 [params]
 
