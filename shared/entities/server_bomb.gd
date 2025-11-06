@@ -1,18 +1,36 @@
 extends StaticBody2D
 class_name ServerBomb
 
-# Server-authoritative bomb
+# Server-authoritative bomb with progressive explosion system
 # Uses Godot's built-in collision system with exceptions
 
 const Constants = preload("res://shared/constants.gd")
+const GridHelpers = preload("res://shared/game_logic/grid_helpers.gd")
 
 var bomb_id: String = ""
 var owner_id: String = ""
 var explosion_range: int = 2
 var explosion_timer: float = Constants.BOMB_TIMER
 var has_exploded := false
+var game_instance: Node = null  # Reference to GameInstance for collision checking
 
-signal exploded(bomb)
+# Progressive explosion state
+const EXPLOSION_GROWTH_INTERVAL = 0.02  # 50 tiles/second
+var explosion_started := false
+var explosion_growth_timer := 0.0
+var current_explosion_length := 1
+var explosion_pattern: Array[Dictionary] = []  # Full explosion pattern calculated at start
+
+# Direction data for explosion expansion (up, down, left, right)
+var explosion_directions := [
+	{"name": "up", "offset": Vector2i(0, -1), "max_length": 0},
+	{"name": "down", "offset": Vector2i(0, 1), "max_length": 0},
+	{"name": "left", "offset": Vector2i(-1, 0), "max_length": 0},
+	{"name": "right", "offset": Vector2i(1, 0), "max_length": 0}
+]
+
+signal exploded(bomb, explosion_pattern)
+signal explosion_expanded(tiles)
 
 func _ready():
 	# Set collision layers: bombs on layer 3, collide with walls (1) only
@@ -35,6 +53,12 @@ func _ready():
 
 func _physics_process(delta):
 	if has_exploded:
+		# Handle progressive explosion expansion
+		if explosion_started and current_explosion_length <= explosion_range:
+			explosion_growth_timer += delta
+			if explosion_growth_timer >= EXPLOSION_GROWTH_INTERVAL:
+				explosion_growth_timer -= EXPLOSION_GROWTH_INTERVAL
+				expand_explosion()
 		return
 	
 	explosion_timer -= delta
@@ -52,10 +76,97 @@ func explode():
 		return
 	
 	has_exploded = true
-	exploded.emit(self)
+	explosion_started = true
 	
-	# Bomb will be removed by game manager after explosion processing
-	queue_free()
+	# Calculate full explosion pattern at start (for network efficiency)
+	calculate_explosion_pattern()
+	
+	# Emit explosion with pattern for network sync
+	exploded.emit(self, explosion_pattern)
+	
+	# Start progressive expansion
+	current_explosion_length = 0
+	explosion_growth_timer = 0.0
+
+func calculate_explosion_pattern():
+	"""Calculate the full explosion pattern before starting expansion"""
+	var tile_pos = get_tile_position()
+	explosion_pattern.clear()
+	
+	# Add center tile
+	explosion_pattern.append({
+		"grid_pos": {"x": tile_pos.x, "y": tile_pos.y},
+		"direction": "middle",
+		"length": 0,
+		"is_end": false
+	})
+	
+	# Calculate max length for each direction by raycasting
+	for dir_data in explosion_directions:
+		var offset = dir_data["offset"]
+		var max_length = explosion_range
+		
+		# Raycast to find obstacles
+		for i in range(1, explosion_range + 1):
+			var check_pos = tile_pos + offset * i
+			var collision_result = check_tile_collision(check_pos)
+			
+			if collision_result["blocked"]:
+				max_length = i if collision_result["destructible"] else i - 1
+				break
+		
+		dir_data["max_length"] = max_length
+		
+		# Add all tiles in this direction to pattern
+		for i in range(1, max_length + 1):
+			var grid_pos = tile_pos + offset * i
+			explosion_pattern.append({
+				"grid_pos": {"x": grid_pos.x, "y": grid_pos.y},
+				"direction": dir_data["name"],
+				"length": i,
+				"is_end": i == max_length
+			})
+
+func check_tile_collision(grid_pos: Vector2i) -> Dictionary:
+	"""Check if a tile position has a collision (wall or destructible block)"""
+	# Bounds check
+	if not GridHelpers.is_valid_grid_position(grid_pos):
+		return {"blocked": true, "destructible": false}
+	
+	# Check game map if game_instance is available
+	if game_instance and game_instance.has_method("get_tile_type"):
+		var tile_type = game_instance.get_tile_type(grid_pos)
+		if tile_type == 1:  # Solid wall
+			return {"blocked": true, "destructible": false}
+		elif tile_type == 2:  # Destructible block
+			return {"blocked": true, "destructible": true}
+	
+	return {"blocked": false, "destructible": false}
+
+func expand_explosion():
+	"""Expand explosion by one tile in all directions"""
+	current_explosion_length += 1
+	
+	if current_explosion_length > explosion_range:
+		# Explosion complete, remove bomb after short delay
+		await get_tree().create_timer(0.5).timeout
+		queue_free()
+		return
+	
+	# Get tiles at current expansion length for collision detection
+	var tile_pos = get_tile_position()
+	var tiles_this_frame: Array[Vector2i] = []
+	
+	for dir_data in explosion_directions:
+		if current_explosion_length <= dir_data["max_length"]:
+			var offset = dir_data["offset"]
+			var fire_pos = tile_pos + offset * current_explosion_length
+			tiles_this_frame.append(fire_pos)
+	
+	# Emit signal for GameInstance to handle damage/destruction
+	# (Will be connected by GameInstance)
+	if has_signal("explosion_expanded"):
+		emit_signal("explosion_expanded", tiles_this_frame)
 
 func get_state() -> Dictionary:
 	return {

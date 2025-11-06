@@ -224,6 +224,7 @@ func place_bomb(player: ServerPlayer):
 	bomb.explosion_range = player.bomb_range
 	bomb.position = player.position
 	bomb.name = "Bomb_" + bomb.bomb_id
+	bomb.game_instance = self  # Give bomb reference for collision checking
 	
 	# Add collision exception so player can walk out
 	player.add_bomb_collision_exception(bomb)
@@ -232,93 +233,96 @@ func place_bomb(player: ServerPlayer):
 	add_child(bomb)
 	
 	player.bombs_placed += 1
-	bomb.exploded.connect(func(b): _on_bomb_exploded(b, player))
+	bomb.exploded.connect(func(b, pattern): _on_bomb_exploded(b, player, pattern))
+	bomb.explosion_expanded.connect(func(tiles): _on_explosion_expanded(bomb, tiles))
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
 
-func _on_bomb_exploded(bomb: ServerBomb, bomb_owner: ServerPlayer):
-	print("[Game] Bomb exploded: ", bomb.bomb_id)
+func _on_bomb_exploded(bomb: ServerBomb, bomb_owner: ServerPlayer, explosion_pattern: Array):
+	print("[Game] Bomb exploded: ", bomb.bomb_id, " with ", explosion_pattern.size(), " tiles")
 	
-	# Process explosion damage
+	# Store explosion data for network sync
 	var bomb_tile = bomb.get_tile_position()
-	var explosion_cells = get_explosion_cells(bomb_tile, bomb.explosion_range)
-	
-	# Add explosion to tracking for visual display
 	explosions.append({
-		"cells": explosion_cells,
-		"time": Time.get_ticks_msec() / 1000.0
+		"bomb_id": bomb.bomb_id,
+		"center": bomb_tile,
+		"pattern": explosion_pattern,
+		"start_time": Time.get_ticks_msec() / 1000.0,
+		"owner_id": bomb_owner.username if bomb_owner else ""
 	})
-	
-	# Check for player hits
-	for peer_id in players:
-		var player = players[peer_id]
-		var player_tile = player.get_tile_position()
-		
-		if player_tile in explosion_cells:
-			player.die()
-			print("[Game] Player ", player.username, " killed by explosion!")
-	
-	# Remove bomb from tracking
-	if bombs.has(bomb.bomb_id):
-		bombs.erase(bomb.bomb_id)
 	
 	# Decrement owner's bomb count
 	if bomb_owner:
 		bomb_owner.bombs_placed = max(0, bomb_owner.bombs_placed - 1)
-	
-	# TODO: Destroy destructible blocks
-	# TODO: Chain reaction with other bombs
 
-func get_explosion_cells(center: Vector2i, explosion_range: int) -> Array:
-	var cells = [center]
+func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
+	"""Handle damage/destruction for tiles as explosion expands progressively"""
+	for tile_pos in tiles:
+		# Check for player hits
+		for peer_id in players:
+			var player = players[peer_id]
+			var player_tile = player.get_tile_position()
+			
+			if player_tile == tile_pos:
+				player.die()
+				print("[Game] Player ", player.username, " killed by explosion at ", tile_pos)
+		
+		# Check for destructible blocks
+		if tile_pos.y >= 0 and tile_pos.y < game_map.size():
+			if tile_pos.x >= 0 and tile_pos.x < game_map[0].size():
+				if game_map[tile_pos.y][tile_pos.x] == 2:
+					destroy_block(tile_pos)
+		
+		# Check for other bombs (chain reaction)
+		for bomb_id in bombs:
+			var other_bomb = bombs[bomb_id]
+			if other_bomb != bomb and other_bomb.get_tile_position() == tile_pos:
+				if not other_bomb.has_exploded:
+					print("[Game] Chain reaction: bomb ", bomb_id, " triggered at ", tile_pos)
+					other_bomb.explode()
+		
+		# Check for powerups (destroy them)
+		for powerup_id in powerups:
+			var powerup = powerups[powerup_id]
+			if powerup.get_tile_position() == tile_pos:
+				print("[Game] Powerup destroyed by explosion at ", tile_pos)
+				powerup.destroy()
+				break
+
+func destroy_block(cell: Vector2i):
+	"""Destroy a destructible block and optionally spawn powerup"""
+	var tile_key = "%d,%d" % [cell.x, cell.y]
+	print("[Game] Destroying block at ", cell, " (tile_key: ", tile_key, ")")
 	
-	# Check 4 directions
-	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
-		for i in range(1, explosion_range + 1):
-			var cell = center + dir * i
-			
-			# Check bounds
-			if cell.y < 0 or cell.y >= game_map.size():
-				break
-			if cell.x < 0 or cell.x >= game_map[0].size():
-				break
-			
-			# Check for wall
-			if game_map[cell.y][cell.x] == 1:
-				break  # Solid wall stops explosion
-			
-			cells.append(cell)
-			
-			# Destructible block stops explosion but gets destroyed
-			if game_map[cell.y][cell.x] == 2:
-				var tile_key = "%d,%d" % [cell.x, cell.y]
-				print("[Game] Destroying block at ", cell, " (tile_key: ", tile_key, ")")
-				
-				# Remove the physical collision body FIRST
-				if map_tiles.has(tile_key):
-					var tile_body = map_tiles[tile_key]
-					if is_instance_valid(tile_body):
-						tile_body.call_deferred("queue_free")  # Safe deferred deletion
-					map_tiles.erase(tile_key)
-					print("[Game] Block collision removed: ", tile_key)
-				else:
-					print("[Game] WARNING: Block not in map_tiles dictionary: ", tile_key)
-				
-				# Clear from map data
-				game_map[cell.y][cell.x] = 0
-				
-				# Spawn power-up (30% chance)
-				if randf() < 0.3:
-					spawn_powerup(cell)
-				
-				break
+	# Remove the physical collision body
+	if map_tiles.has(tile_key):
+		var tile_body = map_tiles[tile_key]
+		if is_instance_valid(tile_body):
+			tile_body.call_deferred("queue_free")
+		map_tiles.erase(tile_key)
+		print("[Game] Block collision removed: ", tile_key)
 	
-	return cells
+	# Clear from map data
+	game_map[cell.y][cell.x] = 0
+	
+	# Spawn power-up (30% chance - TODO: make configurable)
+	if randf() < 0.3:
+		spawn_powerup(cell)
+
+func get_tile_type(grid_pos: Vector2i) -> int:
+	"""Get tile type at grid position (0=empty, 1=wall, 2=destructible)"""
+	if grid_pos.y < 0 or grid_pos.y >= game_map.size():
+		return 1  # Treat out of bounds as wall
+	if grid_pos.x < 0 or grid_pos.x >= game_map[0].size():
+		return 1  # Treat out of bounds as wall
+	
+	return game_map[grid_pos.y][grid_pos.x]
 
 func sync_state_to_clients():
-	# Clean up old explosions
+	# Clean up old explosions (keep for progressive display duration)
 	var current_time = Time.get_ticks_msec() / 1000.0
-	explosions = explosions.filter(func(explosion): return current_time - explosion.time < EXPLOSION_DISPLAY_TIME)
+	var explosion_duration = 0.02 * 20  # ~20 expansion steps max
+	explosions = explosions.filter(func(explosion): return current_time - explosion["start_time"] < explosion_duration)
 	
 	# Build game state
 	var state = {
@@ -344,10 +348,15 @@ func sync_state_to_clients():
 	for powerup_id in powerups:
 		state.powerups[powerup_id] = powerups[powerup_id].get_state()
 	
-	# Add explosion cells for rendering
+	# Send progressive explosion data to clients
 	for explosion in explosions:
-		for cell in explosion.cells:
-			state.explosions.append({"x": cell.x, "y": cell.y})
+		state.explosions.append({
+			"bomb_id": explosion["bomb_id"],
+			"center": {"x": explosion["center"].x, "y": explosion["center"].y},
+			"pattern": explosion["pattern"],
+			"start_time": explosion["start_time"],
+			"owner_id": explosion["owner_id"]
+		})
 	
 	# Send to all REAL players in this game via ClientMain autoload
 	# Skip AI bots (they don't have network connections)
@@ -362,23 +371,31 @@ func spawn_powerup(tile_pos: Vector2i):
 	powerup.powerup_id = str(next_powerup_id)
 	next_powerup_id += 1
 	
-	# Random power-up type
+	# Random power-up type (weighted distribution)
+	# TODO: Make drop rates configurable via Constants
 	var rand_val = randf()
-	if rand_val < 0.5:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE  # 50%
-	elif rand_val < 0.8:
+	if rand_val < 0.35:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE  # 35%
+	elif rand_val < 0.65:
 		powerup.powerup_type = ServerPowerUp.PowerUpType.RANGE_INCREASE  # 30%
-	else:
+	elif rand_val < 0.85:
 		powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE  # 20%
+	elif rand_val < 0.92:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_KICKER  # 7%
+	elif rand_val < 0.97:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.POWER_GLOVE  # 5%
+	else:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.VIRUS  # 3%
 	
 	powerup.position = Vector2(
-tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-)
+		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
 	powerup.name = "PowerUp_" + powerup.powerup_id
 	
-	# Connect collection signal
+	# Connect signals
 	powerup.powerup_collected.connect(_on_powerup_collected)
+	powerup.powerup_destroyed.connect(_on_powerup_destroyed)
 	
 	powerups[powerup.powerup_id] = powerup
 	add_child(powerup)
@@ -388,6 +405,14 @@ tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 func _on_powerup_collected(powerup: ServerPowerUp):
 	"""Called when a power-up is collected"""
 	print("[Game] Power-up collected: ", powerup.powerup_id)
+	
+	if powerups.has(powerup.powerup_id):
+		powerups.erase(powerup.powerup_id)
+		powerup.queue_free()
+
+func _on_powerup_destroyed(powerup: ServerPowerUp):
+	"""Called when a power-up is destroyed by explosion"""
+	print("[Game] Power-up destroyed by explosion: ", powerup.powerup_id)
 	
 	if powerups.has(powerup.powerup_id):
 		powerups.erase(powerup.powerup_id)

@@ -20,6 +20,10 @@ var is_dead := false
 var debug_check_tile := Vector2i.ZERO  # Tile being checked for diagonal (for client debug)
 var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visualization)
 
+# Advanced abilities (Phase 2)
+var has_bomb_kicker := false  # Can kick bombs
+var has_power_glove := false  # Can pick up and throw bombs
+
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
@@ -531,6 +535,15 @@ func collect_powerup(powerup):
 		ServerPowerUp.PowerUpType.SPEED_INCREASE:
 			speed_multiplier += 0.2
 			print("[Player] ", username, " collected SPEED power-up! Speed: ", speed_multiplier)
+		ServerPowerUp.PowerUpType.BOMB_KICKER:
+			has_bomb_kicker = true
+			print("[Player] ", username, " collected BOMB KICKER! (Phase 2 feature)")
+		ServerPowerUp.PowerUpType.POWER_GLOVE:
+			has_power_glove = true
+			print("[Player] ", username, " collected POWER GLOVE! (Phase 2 feature)")
+		ServerPowerUp.PowerUpType.VIRUS:
+			# TODO: Implement virus debuffs in Phase 2
+			print("[Player] ", username, " collected VIRUS! (Phase 2 - no effect yet)")
 
 func get_state() -> Dictionary:
 	return {
@@ -543,6 +556,9 @@ func get_state() -> Dictionary:
 		"bombs_placed": bombs_placed,
 		"max_bombs": max_bombs,
 		"bomb_range": bomb_range,
+		"speed_multiplier": speed_multiplier,
+		"has_bomb_kicker": has_bomb_kicker,
+		"has_power_glove": has_power_glove,
 		"last_move_direction": {"x": last_move_direction.x, "y": last_move_direction.y},
 		"debug_check_tile": {"x": debug_check_tile.x, "y": debug_check_tile.y},
 		"debug_blocking_tile": {"x": debug_blocking_tile.x, "y": debug_blocking_tile.y},

@@ -6,6 +6,9 @@ extends Node2D
 const Constants = preload("res://shared/constants.gd")
 const ClientPlayerController = preload("res://client/prediction/client_player_controller.gd")
 const EntityInterpolator = preload("res://client/prediction/entity_interpolator.gd")
+const BombRenderer = preload("res://client/ui/bomb_renderer.gd")
+const ExplosionRenderer = preload("res://client/ui/explosion_renderer.gd")
+const PowerUpRenderer = preload("res://client/ui/powerup_renderer.gd")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -13,9 +16,9 @@ const EntityInterpolator = preload("res://client/prediction/entity_interpolator.
 @onready var camera = $Camera2D
 
 var player_nodes = {} # peer_id -> Node2D
-var bomb_nodes = {} # bomb_id -> Node2D
+var bomb_nodes = {} # bomb_id -> BombRenderer
 var powerup_nodes = {} # powerup_id -> Node2D
-var explosion_nodes = {} # cell_key -> Node2D
+var explosion_nodes = {} # explosion_id -> ExplosionRenderer
 var block_nodes = {} # tile_key -> Node2D (for destructible blocks)
 var wall_nodes = {} # tile_key -> Node2D (for solid walls)
 var debug_tiles = {} # tile_key -> ColorRect for debugging
@@ -431,74 +434,55 @@ func update_bomb(bomb_id: String, data: Dictionary):
 	var bomb_node
 	
 	if not bomb_nodes.has(bomb_id):
-		# Create new bomb visual
-		bomb_node = Node2D.new()
+		# Create new bomb visual with SBomberman animations
+		bomb_node = BombRenderer.new()
+		bomb_node.bomb_id = bomb_id
 		bomb_node.name = "Bomb_" + bomb_id
-		
-		var sprite = ColorRect.new()
-		sprite.size = Vector2(24, 24)
-		sprite.position = Vector2(-12, -12)
-		sprite.color = Color(0.1, 0.1, 0.1) # Dark/black for bomb
-		bomb_node.add_child(sprite)
-		
-		# Add bomb hitbox visualization (green square)
-		var hitbox_visual = Line2D.new()
-		hitbox_visual.width = 2.0
-		hitbox_visual.default_color = Color(0, 1, 0, 0.8) # Bright green
-		hitbox_visual.z_index = 101
-		
-		# Create square points (rectangle)
-		var half_size = GameConfig.PLAYER_HALF_WIDTH # Bombs use same size as player
-		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Top-left
-		hitbox_visual.add_point(Vector2(half_size, -half_size)) # Top-right
-		hitbox_visual.add_point(Vector2(half_size, half_size)) # Bottom-right
-		hitbox_visual.add_point(Vector2(-half_size, half_size)) # Bottom-left
-		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Close the square
-		
-		bomb_node.add_child(hitbox_visual)
-		
-		var label = Label.new()
-		label.position = Vector2(-15, -35)
-		label.add_theme_font_size_override("font_size", 20)
-		bomb_node.add_child(label)
 		
 		bombs_container.add_child(bomb_node)
 		bomb_nodes[bomb_id] = bomb_node
+		
+		# Play plant sound on first appearance
+		bomb_node.plant_bomb()
 	else:
 		bomb_node = bomb_nodes[bomb_id]
 	
 	# Update position and timer
 	bomb_node.position = Vector2(data.position.x, data.position.y)
-	var timer_label = bomb_node.get_child(1) as Label
-	if timer_label:
-		timer_label.text = "%.1f" % data.timer
+	bomb_node.update_timer(data.timer)
 
 func update_explosions(explosions_data: Array):
-	# Clear all current explosion nodes
-	for cell_key in explosion_nodes.keys():
-		explosion_nodes[cell_key].queue_free()
-	explosion_nodes.clear()
+	"""Update progressive explosions with SBomberman sprites"""
+	# Track which explosions are still active in the server state
+	var active_explosion_ids = {}
 	
-	# Create new explosion sprites for each cell
-	for explosion_cell in explosions_data:
-		var cell_key = "%d,%d" % [explosion_cell.x, explosion_cell.y]
+	for explosion_data in explosions_data:
+		var explosion_id = explosion_data["bomb_id"]
+		active_explosion_ids[explosion_id] = true
 		
-		var explosion_node = Node2D.new()
-		
-		# Create explosion visual (bright orange/red rectangle)
-		var sprite = ColorRect.new()
-		sprite.size = Vector2(32, 32)
-		sprite.position = Vector2(-16, -16)
-		sprite.color = Color(1.0, 0.5, 0.0, 0.8) # Bright orange with transparency
-		explosion_node.add_child(sprite)
-		
-		explosion_node.position = Vector2(
-			explosion_cell.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-			explosion_cell.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-		)
-		
-		explosions_container.add_child(explosion_node)
-		explosion_nodes[cell_key] = explosion_node
+		# Create new explosion renderer if not exists
+		if not explosion_nodes.has(explosion_id):
+			var explosion_node = ExplosionRenderer.new()
+			explosion_node.explosion_id = explosion_id
+			explosion_node.name = "Explosion_" + explosion_id
+			
+			# Initialize with pattern from server
+			explosion_node.initialize(
+				explosion_data["pattern"],
+				explosion_data["start_time"]
+			)
+			
+			explosions_container.add_child(explosion_node)
+			explosion_nodes[explosion_id] = explosion_node
+			
+			print("[GameView] Created explosion renderer: ", explosion_id, 
+				  " with ", explosion_data["pattern"].size(), " tiles")
+	
+	# Remove explosions no longer in server state
+	for explosion_id in explosion_nodes.keys():
+		if not active_explosion_ids.has(explosion_id):
+			explosion_nodes[explosion_id].queue_free()
+			explosion_nodes.erase(explosion_id)
 
 func _physics_process(delta):
 	# Update input buffer based on which keys are pressed
@@ -738,28 +722,19 @@ func update_powerup(powerup_id: String, data: Dictionary):
 	var powerup_node
 	
 	if not powerup_nodes.has(powerup_id):
-		# Create new power-up visual
-		powerup_node = Node2D.new()
+		# Create new power-up visual with SBomberman animations
+		powerup_node = PowerUpRenderer.new()
+		powerup_node.powerup_id = powerup_id
 		powerup_node.name = "PowerUp_" + powerup_id
+		powerup_node.position = Vector2(data.position.x, data.position.y)
 		
-		var sprite = ColorRect.new()
-		sprite.size = Vector2(20, 20)
-		sprite.position = Vector2(-10, -10)
+		# Set powerup type and start animation
+		powerup_node.set_powerup_type(data.type)
 		
-		# Color based on type
-		match data.type:
-			0: # BOMB_INCREASE
-				sprite.color = Color(1, 0.8, 0) # Gold
-			1: # RANGE_INCREASE
-				sprite.color = Color(1, 0.3, 0) # Orange
-			2: # SPEED_INCREASE
-				sprite.color = Color(0.3, 0.8, 1) # Light blue
-		
-		powerup_node.add_child(sprite)
 		add_child(powerup_node)
 		powerup_nodes[powerup_id] = powerup_node
 	else:
 		powerup_node = powerup_nodes[powerup_id]
-	
-	# Update position
-	powerup_node.position = Vector2(data.position.x, data.position.y)
+		# Update position (shouldn't change, but just in case)
+		powerup_node.position = Vector2(data.position.x, data.position.y)
+

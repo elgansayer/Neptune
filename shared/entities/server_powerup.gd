@@ -7,14 +7,18 @@ class_name ServerPowerUp
 const Constants = preload("res://shared/constants.gd")
 
 enum PowerUpType {
-	BOMB_INCREASE,   # +1 max bombs
-	RANGE_INCREASE,  # +1 explosion range
-	SPEED_INCREASE   # +movement speed
+	BOMB_INCREASE,    # +1 max bombs
+	RANGE_INCREASE,   # +1 explosion range  
+	SPEED_INCREASE,   # +movement speed
+	BOMB_KICKER,      # Ability to kick bombs (Phase 2)
+	POWER_GLOVE,      # Ability to pick up/throw bombs (Phase 2)
+	VIRUS             # Negative powerup (Phase 2 - multiple variants)
 }
 
 var powerup_id: String = ""
 var powerup_type: PowerUpType = PowerUpType.BOMB_INCREASE
 var collected: bool = false
+var destroyed: bool = false  # Destroyed by explosion
 
 func _ready():
 	# Set up collision detection
@@ -32,7 +36,7 @@ func _ready():
 	body_entered.connect(_on_body_entered)
 
 func _on_body_entered(body):
-	if collected:
+	if collected or destroyed:
 		return
 	
 	# Check if it's a player
@@ -41,6 +45,18 @@ func _on_body_entered(body):
 		body.collect_powerup(self)
 		# Power-up will be removed by GameInstance
 		emit_signal("powerup_collected", self)
+
+func destroy():
+	"""Called when powerup is destroyed by explosion"""
+	if collected or destroyed:
+		return
+	
+	destroyed = true
+	# Emit signal for visual effect (smoke animation on client)
+	emit_signal("powerup_destroyed", self)
+	# Will be removed by GameInstance
+
+signal powerup_destroyed(powerup)
 
 func get_tile_position() -> Vector2i:
 	return Vector2i(
