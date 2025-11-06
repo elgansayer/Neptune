@@ -20,6 +20,7 @@ var scale_factor: float = 1.0  # TILE_SIZE / REFERENCE_TILE_SIZE
 const BASE_SPEED_REFERENCE = 45.0  # Speed at 16px tile size
 const SNAP_TO_CENTER_SPEED_REFERENCE = 30.0  # Snap speed at 16px tile size
 const CORNER_ASSIST_THRESHOLD_REFERENCE = 5.0  # Corner assist at 16px tile size
+const COLLISION_CHECK_DISTANCE_REFERENCE = 2.0  # Collision check distance at 16px tile size
 
 # PLAYER_HALF_WIDTH is dynamic: always TILE_SIZE / 2
 # This ensures collision boxes always match the tile grid
@@ -29,6 +30,7 @@ var PLAYER_HALF_WIDTH: float = 32.0  # Default for 64px tiles, updated in load_m
 var BASE_SPEED: float = 180.0  # BASE_SPEED_REFERENCE * scale_factor
 var SNAP_TO_CENTER_SPEED: float = 120.0  # SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
 var CORNER_ASSIST_THRESHOLD: float = 20.0  # CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
+var COLLISION_CHECK_DISTANCE: float = 8.0  # COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
 var SNAP_THRESHOLD: float = 2.0  # Scaled proportionally
 
 # Collision Layers (physics layer bit positions)
@@ -80,12 +82,14 @@ func load_map_config(map_data: Dictionary):
 		scale_factor = float(TILE_SIZE) / REFERENCE_TILE_SIZE
 		
 		# Update dynamic values based on tile size
-		PLAYER_HALF_WIDTH = TILE_SIZE / 2.0  # Always half the tile size
+		# Player is 87.5% of tile size (56/64 = 0.875) to allow clearance
+		PLAYER_HALF_WIDTH = (TILE_SIZE * 0.875) / 2.0  # 7px at 16px tiles, 28px at 64px tiles
 		
 		# Scale movement speeds proportionally
 		BASE_SPEED = BASE_SPEED_REFERENCE * scale_factor
 		SNAP_TO_CENTER_SPEED = SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
 		CORNER_ASSIST_THRESHOLD = CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
+		COLLISION_CHECK_DISTANCE = COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
 		SNAP_THRESHOLD = 0.5 * scale_factor  # Snap threshold scales too
 		
 		print("[GameConfig] Loaded TILE_SIZE: ", TILE_SIZE, "px (scale: ", scale_factor, "x)")
@@ -109,10 +113,11 @@ func reset_to_defaults():
 	"""Reset to default values"""
 	TILE_SIZE = 64
 	scale_factor = float(TILE_SIZE) / REFERENCE_TILE_SIZE
-	PLAYER_HALF_WIDTH = TILE_SIZE / 2.0
+	PLAYER_HALF_WIDTH = (TILE_SIZE * 0.875) / 2.0
 	BASE_SPEED = BASE_SPEED_REFERENCE * scale_factor
 	SNAP_TO_CENTER_SPEED = SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
 	CORNER_ASSIST_THRESHOLD = CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
+	COLLISION_CHECK_DISTANCE = COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
 	SNAP_THRESHOLD = 0.5 * scale_factor
 	map_width = 17
 	map_height = 11

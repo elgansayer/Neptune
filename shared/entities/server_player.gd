@@ -33,8 +33,7 @@ var debug_arrow: Polygon2D
 var debug_tiles: Dictionary = {}  # Store debug tile overlays
 var debug_raycast_line: Line2D  # Visualize the raycast
 
-# Constants for corner sliding
-const COLLISION_CHECK_DISTANCE = 8.0  # How far ahead to check for obstacles
+# Note: COLLISION_CHECK_DISTANCE moved to GameConfig for dynamic scaling
 const ENABLE_GRID_SNAPPING = true  # Re-enabled with matching client prediction
 const ENABLE_CORNER_SLIDING = true  # Toggle manual corner sliding logic
 
@@ -118,7 +117,7 @@ func _check_direction_clear(direction: Vector2) -> bool:
 		return false
 	
 	# Use ShapeCast2D for collision detection
-	var motion = direction.normalized() * COLLISION_CHECK_DISTANCE
+	var motion = direction.normalized() * GameConfig.COLLISION_CHECK_DISTANCE
 	
 	# Add collision exceptions (bombs)
 	for bomb in collision_exceptions:
