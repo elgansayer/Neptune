@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b8m557vn0y23x"
-path="res://.godot/imported/spr_pbomb_normal_2.png-730f6790126a85318f96a4642549a189.ctex"
+uid="uid://crejhambof8ko"
+path="res://.godot/imported/robin_hood.png-a20d67b92e15a53b63d245a99a80f880.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://res/bombs/normal/spr_pbomb_normal_2.png"
-dest_files=["res://.godot/imported/spr_pbomb_normal_2.png-730f6790126a85318f96a4642549a189.ctex"]
+source_file="res://robin_hood.png"
+dest_files=["res://.godot/imported/robin_hood.png-a20d67b92e15a53b63d245a99a80f880.ctex"]
 
 [params]
 

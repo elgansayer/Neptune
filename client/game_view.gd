@@ -25,6 +25,7 @@ var debug_tiles = {} # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
 var map_scene_instance = null # Hold reference to loaded PCK map scene
+var removed_dead_players = {} # peer_id -> bool when death animation has finished and node was removed
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -170,8 +171,13 @@ func update_blocks(map_data: Array):
 
 func update_player(peer_id: String, data: Dictionary):
 	var player_node
+
+	if not data.has("is_dead") or not data.is_dead:
+		removed_dead_players.erase(peer_id)
 	
 	if not player_nodes.has(peer_id):
+		if data.has("is_dead") and data.is_dead and removed_dead_players.get(peer_id, false):
+			return
 		# Create new player visual
 		player_node = Node2D.new()
 		player_node.name = "Player_" + peer_id
@@ -313,34 +319,26 @@ func update_player(peer_id: String, data: Dictionary):
 		
 		# Handle death animation and removal
 		if is_player_dead:
-			# Check if we've already started the death animation
-			var death_anim_started = player_node.get_meta("death_anim_started", false)
-			
-			if not death_anim_started:
-				# Start death animation
+			# Ensure we only start the death animation once
+			if not player_node.get_meta("death_anim_started", false):
+				player_node.set_meta("death_anim_started", true)
+				print("[GameView] Player ", peer_id, " killed - playing death animation")
 				if animated_sprite.sprite_frames.has_animation("state_defeat"):
 					animated_sprite.play("state_defeat")
-					player_node.set_meta("death_anim_started", true)
-					player_node.set_meta("death_timer", 0.0)
-					print("[GameView] Player ", peer_id, " killed - playing death animation")
-			else:
-				# Update death timer
-				var death_timer = player_node.get_meta("death_timer", 0.0)
-				death_timer += get_process_delta_time()
-				player_node.set_meta("death_timer", death_timer)
+				else:
+					animated_sprite.visible = false
+					_remove_dead_player(peer_id)
+					return
 				
-				# state_defeat has 9 frames at 5 FPS = 1.8 seconds
-				# Wait 2.0 seconds to ensure animation completes
-				if death_timer >= 2.0:
-					print("[GameView] Removing dead player ", peer_id, " from view")
-					player_node.queue_free()
-					player_nodes.erase(peer_id)
-					if remote_player_interpolators.has(peer_id):
-						remote_player_interpolators[peer_id].queue_free()
-						remote_player_interpolators.erase(peer_id)
-					return  # Exit early - player is being removed
+				if not player_node.get_meta("death_anim_cleanup_connected", false):
+					var cleanup_callable := func(anim_name: StringName = &""):
+						if anim_name != &"" and anim_name != "state_defeat":
+							return
+						_remove_dead_player(peer_id)
+					player_node.set_meta("death_anim_cleanup_connected", true)
+					animated_sprite.animation_finished.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
 			
-			# Don't update position/animations during death
+			# Don't update position/animations during death beyond this point
 			return
 		
 		# Get direction prefix from facing data
@@ -472,6 +470,12 @@ func update_explosions(explosions_data: Array):
 				explosion_data["start_time"]
 			)
 			
+			# Trigger the paired bomb's explode animation/audio the moment the explosion spawns
+			if bomb_nodes.has(explosion_id):
+				var linked_bomb = bomb_nodes[explosion_id]
+				if is_instance_valid(linked_bomb) and linked_bomb.has_method("explode"):
+					linked_bomb.explode()
+			
 			explosions_container.add_child(explosion_node)
 			explosion_nodes[explosion_id] = explosion_node
 			
@@ -534,6 +538,19 @@ func _physics_process(delta):
 		"input_y": input_y,
 		"place_bomb": place_bomb
 	})
+
+func _remove_dead_player(peer_id: String):
+	if player_nodes.has(peer_id):
+		var node = player_nodes[peer_id]
+		if is_instance_valid(node):
+			node.queue_free()
+		player_nodes.erase(peer_id)
+	if remote_player_interpolators.has(peer_id):
+		remote_player_interpolators[peer_id].queue_free()
+		remote_player_interpolators.erase(peer_id)
+	if peer_id == my_player_id:
+		my_player_id = ""
+	removed_dead_players[peer_id] = true
 
 func render_map(map_data):
 	# Get map dimensions

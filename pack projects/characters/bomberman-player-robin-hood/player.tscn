@@ -474,4 +474,5 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_q13i1")
-animation = &"west_stopped"
+animation = &"state_defeat"
+offset = Vector2(0, -8)
