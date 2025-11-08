@@ -13,6 +13,7 @@ const BehaviorTree = preload("res://shared/ai/behavior_tree.gd")
 const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 const AIQLearningClass = preload("res://shared/ai/ai_q_learning.gd")
 const AIMCTSClass = preload("res://shared/ai/ai_mcts.gd")
+const ServerPlayerBase = preload("res://shared/entities/server_player.gd")
 
 # ============================================================================
 # AI STATE MACHINE
@@ -97,6 +98,10 @@ func _init(game_instance: Node2D, personality: int = 0):
 
 func decide_action(ai_player: Node2D) -> Dictionary:
 	var current_time = Time.get_ticks_msec() / 1000.0
+	if ai_player == null:
+		return {"direction": Vector2.ZERO, "place_bomb": false}
+	if ai_player is ServerPlayerBase and ai_player.is_dead:
+		return {"direction": Vector2.ZERO, "place_bomb": false}
 	var current_tile = ai_player.get_tile_position()
 	
 	# Update position history for all players (for prediction)

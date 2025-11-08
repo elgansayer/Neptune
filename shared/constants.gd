@@ -12,6 +12,19 @@ const COLLISION_LAYER_BOMBS = 4      # Layer 3 (bit 2): Bombs
 const COLLISION_LAYER_EXPLOSIONS = 8 # Layer 4 (bit 3): Explosion damage areas
 const COLLISION_LAYER_POWERUPS = 16  # Layer 5 (bit 4): Power-up items
 
+# Canvas layering for consistent draw order (higher values render above lower ones)
+const Z_LAYERS = {
+	"FLOOR": -100,
+	"SOFT_BLOCK": -40,
+	"SOFT_BLOCK_EFFECT": 5,
+	"BOMB": -10,
+	"POWERUP": 0,
+	"EXPLOSION": 10,
+	"PLAYER_BASE": 100,
+	"PLAYER_STEP": 1,
+	"UI": 1000
+}
+
 # Movement
 const WALK_MULTIPLIER = 0.6
 const RUN_MULTIPLIER = 1.0

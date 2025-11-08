@@ -31,6 +31,11 @@ func _physics_process(delta):
 	if not controller:
 		super._physics_process(delta)
 		return
+
+	if is_dead:
+		# Ensure dead bots stay inactive
+		super._physics_process(delta)
+		return
 	
 	# Generate AI decision
 	var input_data: Dictionary = controller.decide_action(self)

@@ -509,9 +509,13 @@ func set_input(input_x: float, input_y: float):
 	input_direction = Vector2(input_x, input_y)
 
 func request_bomb_placement():
+	if is_dead:
+		return
 	place_bomb_requested = true
 
 func can_place_bomb() -> bool:
+	if is_dead:
+		return false
 	return bombs_placed < max_bombs
 
 func add_bomb_collision_exception(bomb):
@@ -537,6 +541,9 @@ func _apply_bomb_collision_exception(bomb):
 
 func die():
 	is_dead = true
+	place_bomb_requested = false
+	input_direction = Vector2.ZERO
+	velocity = Vector2.ZERO
 	# TODO: Play death animation
 	# TODO: Respawn logic
 
