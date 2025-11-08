@@ -358,7 +358,8 @@ class MoveToTarget extends BTNode:
 			context.my_tile,
 			context.target_tile,
 			ai_player.position,
-			context.current_time
+			context.current_time,
+			context.game_state
 		)
 		
 		context.action_result.direction = direction
@@ -385,7 +386,8 @@ class MoveToSafety extends BTNode:
 			context.my_tile,
 			nearest_safe,
 			ai_player.position,
-			context.current_time
+			context.current_time,
+			context.game_state
 		)
 		return Status.SUCCESS
 

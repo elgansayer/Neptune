@@ -5,7 +5,7 @@ class_name ServerPlayer
 # Uses Godot's built-in physics and collision system
 
 const Constants = preload("res://shared/constants.gd")
-const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
+const ServerPowerUpScript = preload("res://shared/entities/server_powerup.gd")
 
 var player_id: String = ""
 var username: String = ""
@@ -314,7 +314,7 @@ func _physics_process(_delta):
 	
 	# CHECK 1: Is the input_direction clear?
 	var input_clear = _check_direction_clear(input_dir)
-	var input_blocking_tile = debug_blocking_tile  # Save the blocking tile from input check
+	var _input_blocking_tile = debug_blocking_tile  # Save the blocking tile from input check
 	_is_diagonal_blocked(last_move_direction, input_dir)
 	
 	print("Input dir: ", input_dir, " Clear: ", input_clear, " Colliding: ", shape_cast_desired.is_colliding())
@@ -394,6 +394,7 @@ func _physics_process(_delta):
 		
 		if player_tile != bomb_tile:
 			bomb.remove_collision_exception_with(self)
+			remove_collision_exception_with(bomb)
 			collision_exceptions.remove_at(i)
 
 func _update_debug_arrow():
@@ -511,12 +512,28 @@ func request_bomb_placement():
 	place_bomb_requested = true
 
 func can_place_bomb() -> bool:
-	return bombs_placed < max_bombs and not place_bomb_requested
+	return bombs_placed < max_bombs
 
 func add_bomb_collision_exception(bomb):
-	if bomb not in collision_exceptions:
-		collision_exceptions.append(bomb)
-		bomb.add_collision_exception_with(self)
+	if bomb in collision_exceptions:
+		return
+
+	collision_exceptions.append(bomb)
+
+	if bomb.is_inside_tree():
+		_apply_bomb_collision_exception(bomb)
+	else:
+		call_deferred("_apply_bomb_collision_exception", bomb)
+
+func _apply_bomb_collision_exception(bomb):
+	if not is_instance_valid(bomb):
+		return
+	if not bomb.is_inside_tree():
+		call_deferred("_apply_bomb_collision_exception", bomb)
+		return
+
+	bomb.add_collision_exception_with(self)
+	add_collision_exception_with(bomb)
 
 func die():
 	is_dead = true
@@ -526,22 +543,22 @@ func die():
 func collect_powerup(powerup):
 	"""Called when player collects a power-up"""
 	match powerup.powerup_type:
-		ServerPowerUp.PowerUpType.BOMB_INCREASE:
+		ServerPowerUpScript.PowerUpType.BOMB_INCREASE:
 			max_bombs += 1
 			print("[Player] ", username, " collected BOMB power-up! Max bombs: ", max_bombs)
-		ServerPowerUp.PowerUpType.RANGE_INCREASE:
+		ServerPowerUpScript.PowerUpType.RANGE_INCREASE:
 			bomb_range += 1
 			print("[Player] ", username, " collected RANGE power-up! Range: ", bomb_range)
-		ServerPowerUp.PowerUpType.SPEED_INCREASE:
+		ServerPowerUpScript.PowerUpType.SPEED_INCREASE:
 			speed_multiplier += 0.2
 			print("[Player] ", username, " collected SPEED power-up! Speed: ", speed_multiplier)
-		ServerPowerUp.PowerUpType.BOMB_KICKER:
+		ServerPowerUpScript.PowerUpType.BOMB_KICKER:
 			has_bomb_kicker = true
 			print("[Player] ", username, " collected BOMB KICKER! (Phase 2 feature)")
-		ServerPowerUp.PowerUpType.POWER_GLOVE:
+		ServerPowerUpScript.PowerUpType.POWER_GLOVE:
 			has_power_glove = true
 			print("[Player] ", username, " collected POWER GLOVE! (Phase 2 feature)")
-		ServerPowerUp.PowerUpType.VIRUS:
+		ServerPowerUpScript.PowerUpType.VIRUS:
 			# TODO: Implement virus debuffs in Phase 2
 			print("[Player] ", username, " collected VIRUS! (Phase 2 - no effect yet)")
 

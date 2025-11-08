@@ -6,9 +6,9 @@ extends Node2D
 const Constants = preload("res://shared/constants.gd")
 const ClientPlayerController = preload("res://client/prediction/client_player_controller.gd")
 const EntityInterpolator = preload("res://client/prediction/entity_interpolator.gd")
-const BombRenderer = preload("res://client/ui/bomb_renderer.gd")
+const BombScene = preload("res://client/ui/bomb.tscn")
 const ExplosionRenderer = preload("res://client/ui/explosion_renderer.gd")
-const PowerUpRenderer = preload("res://client/ui/powerup_renderer.gd")
+const PowerUpScene = preload("res://client/ui/powerup.tscn")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -16,7 +16,7 @@ const PowerUpRenderer = preload("res://client/ui/powerup_renderer.gd")
 @onready var camera = $Camera2D
 
 var player_nodes = {} # peer_id -> Node2D
-var bomb_nodes = {} # bomb_id -> BombRenderer
+var bomb_nodes = {} # bomb_id -> Node2D
 var powerup_nodes = {} # powerup_id -> Node2D
 var explosion_nodes = {} # explosion_id -> ExplosionRenderer
 var block_nodes = {} # tile_key -> Node2D (for destructible blocks)
@@ -435,7 +435,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 	
 	if not bomb_nodes.has(bomb_id):
 		# Create new bomb visual with SBomberman animations
-		bomb_node = BombRenderer.new()
+		bomb_node = BombScene.instantiate()
 		bomb_node.bomb_id = bomb_id
 		bomb_node.name = "Bomb_" + bomb_id
 		
@@ -723,15 +723,15 @@ func update_powerup(powerup_id: String, data: Dictionary):
 	
 	if not powerup_nodes.has(powerup_id):
 		# Create new power-up visual with SBomberman animations
-		powerup_node = PowerUpRenderer.new()
+		powerup_node = PowerUpScene.instantiate()
 		powerup_node.powerup_id = powerup_id
 		powerup_node.name = "PowerUp_" + powerup_id
 		powerup_node.position = Vector2(data.position.x, data.position.y)
+		powerup_node.powerup_type = data.type
+		add_child(powerup_node)
 		
 		# Set powerup type and start animation
 		powerup_node.set_powerup_type(data.type)
-		
-		add_child(powerup_node)
 		powerup_nodes[powerup_id] = powerup_node
 	else:
 		powerup_node = powerup_nodes[powerup_id]

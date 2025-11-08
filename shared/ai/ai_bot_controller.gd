@@ -55,6 +55,9 @@ var astar: AStar2D
 var tile_to_id: Dictionary = {}  # Maps "x,y" -> AStar2D point ID
 var astar_initialized: bool = false
 var last_replan_time: float = 0.0
+var astar_last_build_time: float = -1.0
+var last_obstacle_signature: String = ""
+var last_danger_signature: String = ""
 const REPLAN_INTERVAL: float = 0.2  # Replan every 200ms
 const WAYPOINT_REACH_DISTANCE: float = 4.0  # Pixels to consider waypoint reached
 
@@ -955,15 +958,15 @@ func find_strategic_position(from_tile: Vector2i, game_state: Dictionary) -> Vec
 	
 	return best_tile
 
-func get_direction_to_tile(from_tile: Vector2i, to_tile: Vector2i, from_position: Vector2, current_time: float) -> Vector2:
+func get_direction_to_tile(from_tile: Vector2i, to_tile: Vector2i, from_position: Vector2, current_time: float, game_state: Dictionary = {}) -> Vector2:
 	"""Get direction using A* pathfinding with smooth waypoint-based movement"""
 	if from_tile == to_tile:
 		return Vector2.ZERO
 	
-	# Initialize AStar2D graph if needed
-	if not astar_initialized:
-		build_astar_graph()
-		astar_initialized = true
+	if game_state.is_empty():
+		game_state = observer.get_world_state()
+
+	_ensure_astar_ready(game_state, current_time)
 	
 	# Check if we need to replan (target changed or timer expired or path blocked)
 	var should_replan = false
@@ -973,6 +976,8 @@ func get_direction_to_tile(from_tile: Vector2i, to_tile: Vector2i, from_position
 	elif current_time - last_replan_time > REPLAN_INTERVAL:
 		should_replan = true
 	elif current_path.is_empty():
+		should_replan = true
+	elif not _is_path_viable(from_tile):
 		should_replan = true
 	
 	# Replan path using A*
@@ -1004,45 +1009,116 @@ func get_direction_to_tile(from_tile: Vector2i, to_tile: Vector2i, from_position
 	
 	return direction
 
-func build_astar_graph():
+func _ensure_astar_ready(game_state: Dictionary, current_time: float) -> void:
+	var obstacle_signature = _compute_obstacle_signature(game_state)
+	var needs_rebuild = not astar_initialized or obstacle_signature != last_obstacle_signature
+	if not needs_rebuild and astar_last_build_time >= 0.0 and current_time - astar_last_build_time > 0.5:
+		needs_rebuild = true
+
+	if needs_rebuild:
+		build_astar_graph(game_state)
+		astar_initialized = true
+		astar_last_build_time = current_time
+		last_obstacle_signature = obstacle_signature
+		current_path.clear()
+		current_target_tile = Vector2i(-1, -1)
+
+	if not astar_initialized:
+		return
+
+	var danger_signature = _compute_danger_signature()
+	if danger_signature != last_danger_signature:
+		update_astar_for_danger(_collect_danger_tiles())
+		last_danger_signature = danger_signature
+
+func _compute_obstacle_signature(game_state: Dictionary) -> String:
+	var parts := PackedStringArray()
+	if game_state.has("map"):
+		var map_data: Array = game_state.map
+		for y in range(map_data.size()):
+			var row: Array = map_data[y]
+			for x in range(row.size()):
+				if row[x] == 2:
+					parts.append("d%d_%d" % [x, y])
+
+	if game_state.has("bombs"):
+		for bomb_id in game_state.bombs:
+			var bomb = game_state.bombs[bomb_id]
+			if is_instance_valid(bomb):
+				var tile = bomb.get_tile_position()
+				parts.append("b%d_%d" % [tile.x, tile.y])
+
+	parts.sort()
+	return ",".join(parts)
+
+func _compute_danger_signature() -> String:
+	var keys: Array = observer.danger_map.keys()
+	keys.sort()
+	var parts := PackedStringArray()
+	for key in keys:
+		parts.append(str(key))
+	return ",".join(parts)
+
+func _collect_danger_tiles() -> Array:
+	var tiles: Array[Vector2i] = []
+	for key in observer.danger_map.keys():
+		var components = str(key).split(",")
+		if components.size() != 2:
+			continue
+		tiles.append(Vector2i(components[0].to_int(), components[1].to_int()))
+	return tiles
+
+func _is_path_viable(from_tile: Vector2i) -> bool:
+	if current_path.is_empty():
+		return false
+	var waypoint: Vector2 = current_path[0]
+	var target_tile = Vector2i(int(floor(waypoint.x / Constants.TILE_SIZE)), int(floor(waypoint.y / Constants.TILE_SIZE)))
+	return observer._is_tile_walkable(target_tile) or target_tile == from_tile
+
+func build_astar_graph(game_state: Dictionary):
 	"""Build AStar2D graph from current map state"""
 	astar.clear()
 	tile_to_id.clear()
-	
-	var game_state = observer.get_world_state()
-	var map = game_state.map
+
+	var map = game_state.get("map", [])
+	if map.is_empty():
+		return
 	var point_id = 0
-	
+
 	# Add all walkable tiles as points
 	for y in range(map.size()):
-		for x in range(map[0].size()):
+		var row: Array = map[y]
+		for x in range(row.size()):
 			var tile = Vector2i(x, y)
 			if observer._is_tile_valid(tile) and observer._is_tile_walkable(tile):
 				var tile_key = "%d,%d" % [x, y]
 				tile_to_id[tile_key] = point_id
-				
+
 				# Position at tile center
-				var tile_center = Vector2(x * Constants.TILE_SIZE + Constants.TILE_SIZE / 2,
-										  y * Constants.TILE_SIZE + Constants.TILE_SIZE / 2)
+				var tile_center = Vector2(
+					float(x) * Constants.TILE_SIZE + Constants.TILE_SIZE * 0.5,
+					float(y) * Constants.TILE_SIZE + Constants.TILE_SIZE * 0.5
+				)
 				astar.add_point(point_id, tile_center)
 				point_id += 1
-	
+
 	# Connect adjacent walkable tiles
 	for y in range(map.size()):
-		for x in range(map[0].size()):
+		var row: Array = map[y]
+		for x in range(row.size()):
 			var tile = Vector2i(x, y)
 			var tile_key = "%d,%d" % [x, y]
-			
+
 			if not tile_to_id.has(tile_key):
 				continue
-			
+
 			var from_id = tile_to_id[tile_key]
-			
+
 			# Check 4 directions
 			for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
 				var neighbor = tile + dir
 				var neighbor_key = "%d,%d" % [neighbor.x, neighbor.y]
-				
+
 				if tile_to_id.has(neighbor_key):
 					var to_id = tile_to_id[neighbor_key]
 					# Bidirectional connection with cost = 1.0 per tile

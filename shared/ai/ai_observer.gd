@@ -265,6 +265,8 @@ func _is_tile_walkable(tile: Vector2i) -> bool:
 	# Check if there's a bomb on this tile
 	for bomb_id in game_instance.bombs:
 		var bomb = game_instance.bombs[bomb_id]
+		if not is_instance_valid(bomb):
+			continue
 		if bomb.get_tile_position() == tile:
 			return false
 	

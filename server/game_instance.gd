@@ -235,6 +235,10 @@ func place_bomb(player: ServerPlayer):
 	player.bombs_placed += 1
 	bomb.exploded.connect(func(b, pattern): _on_bomb_exploded(b, player, pattern))
 	bomb.explosion_expanded.connect(func(tiles): _on_explosion_expanded(bomb, tiles))
+	# Ensure dictionary entry is cleaned up when the bomb leaves the scene tree
+	bomb.tree_exited.connect(func():
+		if bombs.has(bomb.bomb_id):
+			bombs.erase(bomb.bomb_id), Object.CONNECT_ONE_SHOT)
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
 
@@ -254,6 +258,10 @@ func _on_bomb_exploded(bomb: ServerBomb, bomb_owner: ServerPlayer, explosion_pat
 	# Decrement owner's bomb count
 	if bomb_owner:
 		bomb_owner.bombs_placed = max(0, bomb_owner.bombs_placed - 1)
+
+	# Remove bomb from active dictionary so AI/pathfinding no longer sees it as blocking
+	if bombs.has(bomb.bomb_id):
+		bombs.erase(bomb.bomb_id)
 
 func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 	"""Handle damage/destruction for tiles as explosion expands progressively"""

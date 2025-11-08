@@ -1,0 +1,69 @@
+[gd_scene load_steps=49 format=4]
+
+[ext_resource path="res://client/ui/powerup_renderer.gd" type="Script" id=1]
+[ext_resource path="res://res/items/sbomberman/shadow.png" type="Texture2D" id=2]
+[ext_resource path="res://res/items/sbomberman/itm-bomb-01.png" type="Texture2D" id=3]
+[ext_resource path="res://res/items/sbomberman/itm-bomb-02.png" type="Texture2D" id=4]
+[ext_resource path="res://res/items/sbomberman/itm-bomb-03.png" type="Texture2D" id=5]
+[ext_resource path="res://res/items/sbomberman/itm-bomb-04.png" type="Texture2D" id=6]
+[ext_resource path="res://res/items/sbomberman/itm-bomb-05.png" type="Texture2D" id=7]
+[ext_resource path="res://res/items/sbomberman/itm-bomb-06.png" type="Texture2D" id=8]
+[ext_resource path="res://res/items/sbomberman/itm-fire-01.png" type="Texture2D" id=9]
+[ext_resource path="res://res/items/sbomberman/itm-fire-02.png" type="Texture2D" id=10]
+[ext_resource path="res://res/items/sbomberman/itm-fire-03.png" type="Texture2D" id=11]
+[ext_resource path="res://res/items/sbomberman/itm-fire-04.png" type="Texture2D" id=12]
+[ext_resource path="res://res/items/sbomberman/itm-fire-05.png" type="Texture2D" id=13]
+[ext_resource path="res://res/items/sbomberman/itm-fire-06.png" type="Texture2D" id=14]
+[ext_resource path="res://res/items/sbomberman/itm-skate-01.png" type="Texture2D" id=15]
+[ext_resource path="res://res/items/sbomberman/itm-skate-02.png" type="Texture2D" id=16]
+[ext_resource path="res://res/items/sbomberman/itm-skate-03.png" type="Texture2D" id=17]
+[ext_resource path="res://res/items/sbomberman/itm-skate-04.png" type="Texture2D" id=18]
+[ext_resource path="res://res/items/sbomberman/itm-skate-05.png" type="Texture2D" id=19]
+[ext_resource path="res://res/items/sbomberman/itm-skate-06.png" type="Texture2D" id=20]
+[ext_resource path="res://res/items/sbomberman/itm-kickbomb-01.png" type="Texture2D" id=21]
+[ext_resource path="res://res/items/sbomberman/itm-kickbomb-02.png" type="Texture2D" id=22]
+[ext_resource path="res://res/items/sbomberman/itm-kickbomb-03.png" type="Texture2D" id=23]
+[ext_resource path="res://res/items/sbomberman/itm-kickbomb-04.png" type="Texture2D" id=24]
+[ext_resource path="res://res/items/sbomberman/itm-kickbomb-05.png" type="Texture2D" id=25]
+[ext_resource path="res://res/items/sbomberman/itm-kickbomb-06.png" type="Texture2D" id=26]
+[ext_resource path="res://res/items/sbomberman/itm-pglove-01.png" type="Texture2D" id=27]
+[ext_resource path="res://res/items/sbomberman/itm-pglove-02.png" type="Texture2D" id=28]
+[ext_resource path="res://res/items/sbomberman/itm-pglove-03.png" type="Texture2D" id=29]
+[ext_resource path="res://res/items/sbomberman/itm-pglove-04.png" type="Texture2D" id=30]
+[ext_resource path="res://res/items/sbomberman/itm-pglove-05.png" type="Texture2D" id=31]
+[ext_resource path="res://res/items/sbomberman/itm-pglove-06.png" type="Texture2D" id=32]
+[ext_resource path="res://res/items/sbomberman/itm-skull-01.png" type="Texture2D" id=33]
+[ext_resource path="res://res/items/sbomberman/itm-skull-02.png" type="Texture2D" id=34]
+[ext_resource path="res://res/items/sbomberman/itm-skull-03.png" type="Texture2D" id=35]
+[ext_resource path="res://res/items/sbomberman/itm-skull-04.png" type="Texture2D" id=36]
+[ext_resource path="res://res/items/sbomberman/itm-skull-05.png" type="Texture2D" id=37]
+[ext_resource path="res://res/items/sbomberman/itm-skull-06.png" type="Texture2D" id=38]
+[ext_resource path="res://res/items/sbomberman/itemsmoke-01.png" type="Texture2D" id=39]
+[ext_resource path="res://res/items/sbomberman/itemsmoke-02.png" type="Texture2D" id=40]
+[ext_resource path="res://res/items/sbomberman/itemsmoke-03.png" type="Texture2D" id=41]
+[ext_resource path="res://res/items/sbomberman/itemsmoke-04.png" type="Texture2D" id=42]
+[ext_resource path="res://res/items/sbomberman/itemsmoke-05.png" type="Texture2D" id=43]
+[sub_resource type="SpriteFrames" id=1]
+animations = [{"frames":[ExtResource(3),ExtResource(4),ExtResource(5),ExtResource(6),ExtResource(7),ExtResource(8)],"loop":true,"name":"bomb","speed":8.0},{"frames":[ExtResource(9),ExtResource(10),ExtResource(11),ExtResource(12),ExtResource(13),ExtResource(14)],"loop":true,"name":"fire","speed":8.0},{"frames":[ExtResource(15),ExtResource(16),ExtResource(17),ExtResource(18),ExtResource(19),ExtResource(20)],"loop":true,"name":"skate","speed":8.0},{"frames":[ExtResource(21),ExtResource(22),ExtResource(23),ExtResource(24),ExtResource(25),ExtResource(26)],"loop":true,"name":"kickbomb","speed":8.0},{"frames":[ExtResource(27),ExtResource(28),ExtResource(29),ExtResource(30),ExtResource(31),ExtResource(32)],"loop":true,"name":"pglove","speed":8.0},{"frames":[ExtResource(33),ExtResource(34),ExtResource(35),ExtResource(36),ExtResource(37),ExtResource(38)],"loop":true,"name":"skull","speed":8.0},{"frames":[ExtResource(39),ExtResource(40),ExtResource(41),ExtResource(42),ExtResource(43)],"loop":false,"name":"explode","speed":10.0}]
+
+[node name="PowerUp" type="Node2D"]
+script = ExtResource(1)
+
+[node name="Shadow" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(0, 4)
+texture = ExtResource(2)
+
+[node name="ItemSprite" type="AnimatedSprite2D" parent="."]
+frames = SubResource(1)
+animation = "bomb"
+playing = true
+centered = true
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+
+[node name="SpinTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+```},
