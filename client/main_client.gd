@@ -25,6 +25,7 @@ func _ready():
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	print("[Client] RPC config:", get_script().get_rpc_config())
 
 func connect_to_server(address: String = "127.0.0.1"):
 	server_address = address

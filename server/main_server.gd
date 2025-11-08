@@ -23,6 +23,7 @@ func _ready():
 	print("=== Bomberman Server Starting ===")
 	print("[Server] Node name: ", name)
 	print("[Server] Node path: ", get_path())
+	print("[Server] RPC config:", get_script().get_rpc_config())
 	
 	# Load backend service (local SQLite for now)
 	auth_service = load("res://auth/local_backend.gd").new()
