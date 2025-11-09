@@ -30,62 +30,59 @@ func _init(game_ref: Node2D, obs_ref, danger_ref, personality: Dictionary):
 
 ## Main function: Can we safely place a bomb here? (Phase 4: Adaptive thresholds)
 func can_place_bomb_safely(bomb_tile: Vector2i, ai_player: Node2D, current_time: float) -> Dictionary:
-	# Basic checks
+	# --- Rigorous Safety Check for Bomb Placement ---
+	
+	# Personality-driven safety buffer. Aggressive AI are more reckless.
+	var required_time_buffer = lerp(0.8, 0.25, personality_weights.get("aggression_normalized", 0.5))
+
+	# Basic checks: Does the AI have a bomb to place?
 	if not ai_player.can_place_bomb():
 		return _failure_result("No bombs available")
 	
+	# Is the target tile even walkable?
 	if not observer._is_tile_walkable(bomb_tile):
 		return _failure_result("Tile not walkable")
 	
-	# Check if already a bomb on this tile
+	# Is there already a bomb on this tile?
 	for bomb_id in game_instance.bombs:
 		var bomb = game_instance.bombs[bomb_id]
 		if bomb.get_tile_position() == bomb_tile:
-			return _failure_result("Bomb already here")
-	
-	# Phase 4: Check for ally bomb overlap (avoid friendly fire cascade)
-	var ally_overlap = _check_ally_bomb_overlap(bomb_tile, ai_player)
-	if ally_overlap.overlaps:
-		# Allow overlap only if personality permits risky plays
-		if personality_weights.get("aggression", 0.5) < 0.7:
-			return _failure_result("Ally bomb overlap - too risky")
-	
-	# Simulate bomb placement
+			return _failure_result("Bomb already on tile")
+
+	# Simulate the explosion and its effects
 	var simulation = danger_mapper.simulate_bomb_placement(bomb_tile, ai_player.bomb_range, current_time)
 	
-	# Phase 4: Update opponent trajectories for trap evaluation
-	_update_opponent_trajectories(current_time)
-	
-	# Calculate escape routes AFTER bomb is placed
+	# Find all possible escape routes from the blast radius
 	var escape_analysis = _analyze_escape_routes(bomb_tile, simulation.affected_tiles, current_time)
 	
-	# Must have at least one escape route
+	# CRITICAL: If there are absolutely no escape routes, it's an immediate failure.
 	if escape_analysis.safe_routes.is_empty():
-		return _failure_result("No escape routes")
+		return _failure_result("No escape routes found")
 	
-	# Phase 4: Use adaptive escape buffer based on risk tolerance
-	var bomb_timer = Constants.BOMB_TIMER  # Default 3.0 seconds
-	var movement_speed = Constants.BASE_SPEED  # Pixels per second
-	var required_buffer = min_escape_buffer * risk_tolerance
+	# Now, check if any of the available escape routes are actually reachable in time.
+	var bomb_timer = Constants.BOMB_TIMER
+	var movement_speed = ai_player.get("current_speed", Constants.BASE_SPEED) # Use player's actual speed
 	
 	for route in escape_analysis.safe_routes:
+		# Calculate the real distance in pixels the AI must travel.
 		var distance_to_safety = route.distance * Constants.TILE_SIZE
+		# Calculate the time it will take to cover that distance.
 		var time_needed = distance_to_safety / movement_speed
 		
-		# Add adaptive buffer for reaction time
-		if time_needed + required_buffer < bomb_timer:
-			# This route is reachable!
+		# THE CORE LOGIC: Is the time needed to escape less than the bomb's fuse time,
+		# considering our mandatory safety buffer?
+		if time_needed + required_time_buffer < bomb_timer:
+			# SUCCESS: This route is viable. We can safely place the bomb.
 			return {
 				"safe": true,
 				"escape_route": route,
 				"time_to_escape": time_needed,
-				"time_buffer": bomb_timer - time_needed - required_buffer,
+				"time_buffer": bomb_timer - time_needed,
 				"simulation": simulation,
-				"escape_direction": route.direction,
-				"ally_overlap": ally_overlap
 			}
-	
-	return _failure_result("Escape routes too far")
+			
+	# If we loop through all safe routes and none are reachable in time, it's a failure.
+	return _failure_result("Escape routes are too far or AI is too slow")
 
 ## Evaluate bomb placement value (for strategic decisions)
 func evaluate_bomb_placement(bomb_tile: Vector2i, ai_player: Node2D, current_time: float) -> Dictionary:

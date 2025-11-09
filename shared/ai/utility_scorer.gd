@@ -872,7 +872,14 @@ func _apply_cooldowns(scores: Array, current_time: float) -> Array:
 
 ## Phase 3: Generate guaranteed fallback to prevent deadlock
 func _generate_fallback_action(current_tile: Vector2i, current_time: float) -> Dictionary:
-	# Find any safe adjacent tile to move to
+	# Per user request, prefer exploration over standing still.
+	# Find a safe, explorable tile nearby.
+	var explore_score = score_explore_map(current_tile, current_time)
+	if explore_score.get("score", 0.0) > 0.0:
+		explore_score["score"] = MIN_ACTION_SCORE * 2.5 # Boost score to ensure it's picked
+		return explore_score
+
+	# If exploration fails, find any safe adjacent tile to move to.
 	var directions = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
 	directions.shuffle()
 	
@@ -885,15 +892,17 @@ func _generate_fallback_action(current_tile: Vector2i, current_time: float) -> D
 					"score": MIN_ACTION_SCORE * 2.0,
 					"action": ActionType.EXPLORE_MAP,
 					"target_tile": fallback_tile,
-					"place_bomb": false
+					"place_bomb": false,
+					"reasoning": "FALLBACK_EXPLORE"
 				}
 	
-	# Ultimate fallback: stay in place
+	# Ultimate fallback: stay in place if truly trapped
 	return {
 		"score": MIN_ACTION_SCORE,
 		"action": ActionType.REPOSITION_STRATEGIC,
 		"target_tile": current_tile,
-		"place_bomb": false
+		"place_bomb": false,
+		"reasoning": "FALLBACK_STUCK"
 	}
 
 ## Phase 6: Apply role-based scoring modifiers

@@ -165,9 +165,12 @@ func decide_action(ai_player: Node2D) -> Dictionary:
 	current_action = best_action
 	
 	# Debug: Log best action
-	if Engine.get_physics_frames() % 60 == 0:  # Every second
-		print("[ImprovedAI] Best action: ", best_action.get("action", "?"), " score: ", best_action.get("score", 0), " target: ", best_action.get("target_tile", "none"))
-	
+	if Engine.get_physics_frames() % 30 == 0:  # Log more frequently for debugging
+		var action_name = "UNKNOWN"
+		if best_action.get("action") is int and best_action.action >= 0 and best_action.action < utility_scorer.ActionType.size():
+			action_name = utility_scorer.ActionType.keys()[best_action.action]
+		print("[ImprovedAI] Best action: ", action_name, " | Score: ", "%.2f" % best_action.get("score", 0.0), " | Target: ", best_action.get("target_tile", "none"), " | Reasoning: ", best_action.get("reasoning", "N/A"))
+
 	# Phase 1: Track action distribution
 	if debug_enabled:
 		var action_name = best_action.get("action", "UNKNOWN")
@@ -181,7 +184,11 @@ func decide_action(ai_player: Node2D) -> Dictionary:
 	
 	# Update debug visualization
 	if debug_visualizer != null:
-		debug_visualizer.update_reasoning(decision.get("reasoning", "Unknown"))
+		var reasoning_text = str(best_action.get("action", "UNKNOWN"))
+		if best_action.get("action") is int and best_action.action >= 0 and best_action.action < utility_scorer.ActionType.size():
+			reasoning_text = utility_scorer.ActionType.keys()[best_action.action]
+		
+		debug_visualizer.update_reasoning(reasoning_text)
 		debug_visualizer.update_target(best_action.get("target_tile", Vector2i(-1, -1)))
 		debug_visualizer.update_path(current_path)
 	

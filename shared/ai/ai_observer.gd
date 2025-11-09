@@ -98,7 +98,7 @@ func get_time_until_explosion(tile: Vector2i) -> float:
 	var current_time = Time.get_ticks_msec() / 1000.0
 	return danger_map[tile_key] - current_time
 
-func get_recent_velocity(player_id: int) -> Vector2:
+func get_recent_velocity(player_id: String) -> Vector2:
 	"""Get recent velocity for a player from position history"""
 	if not player_position_history.has(player_id):
 		return Vector2.ZERO
