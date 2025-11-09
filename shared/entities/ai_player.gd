@@ -4,11 +4,13 @@ extends "res://shared/entities/server_player.gd"
 # Extends ServerPlayer but generates input locally instead of from network
 
 const AIBotController = preload("res://shared/ai/ai_bot_controller.gd")
+const ImprovedAIController = preload("res://shared/ai/improved_ai_controller.gd")
 const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 
-var controller: AIBotController
+var controller  # Can be AIBotController or ImprovedAIController
 var personality_type: int  # AIPersonality.Type enum value
 var bot_name: String = "Bot"
+var use_improved_ai: bool = true  # Set to true to use new intelligent AI
 
 func is_ai_bot() -> bool:
 	"""Helper to identify AI players"""
@@ -17,7 +19,14 @@ func is_ai_bot() -> bool:
 func setup_ai(game_instance: Node2D, personality: int = 0):  # 0 = BALANCED
 	"""Initialize AI controller with personality"""
 	personality_type = personality
-	controller = AIBotController.new(game_instance, personality)
+	
+	# Choose AI controller type
+	if use_improved_ai:
+		controller = ImprovedAIController.new(game_instance, personality)
+		print("[AIPlayer] Using IMPROVED AI system")
+	else:
+		controller = AIBotController.new(game_instance, personality)
+		print("[AIPlayer] Using legacy AI system")
 	
 	# Generate bot name based on personality
 	var personality_name = controller.get_personality_name()
@@ -26,6 +35,13 @@ func setup_ai(game_instance: Node2D, personality: int = 0):  # 0 = BALANCED
 	username = bot_name
 	
 	print("[AIPlayer] Initialized: ", bot_name, " (", personality_name, ")")
+	
+	# Setup debug visualizer if in debug mode
+	if OS.is_debug_build() and use_improved_ai:
+		# Wait for next frame to ensure we're in scene tree
+		await get_tree().process_frame
+		if is_instance_valid(controller) and controller.has_method("setup_debug_visualizer"):
+			controller.setup_debug_visualizer(game_instance, self)
 
 func _physics_process(delta):
 	if not controller:
