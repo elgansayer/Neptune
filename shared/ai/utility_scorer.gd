@@ -82,68 +82,68 @@ func score_all_actions(ai_player: Node2D, current_time: float) -> Array:
 	var scores: Array = []
 
 	var escape_score = score_escape_danger(current_tile, current_time)
-	if escape_score.score > 0:
+	if escape_score.get("score", 0.0) > 0:
 		scores.append(escape_score)
 
 	var attack_score = score_attack_opportunity(ai_player, current_tile, current_time)
-	if attack_score.score > 0:
+	if attack_score.get("score", 0.0) > 0:
 		scores.append(attack_score)
 
 	var pressure_score = score_pressure_position(ai_player, current_tile, current_time)
-	if pressure_score.score > 0:
+	if pressure_score.get("score", 0.0) > 0:
 		scores.append(pressure_score)
 
 	var shadow_score = score_shadow_tracking(ai_player, current_tile, current_time)
-	if shadow_score.score > 0:
+	if shadow_score.get("score", 0.0) > 0:
 		scores.append(shadow_score)
 
 	var cutoff_score = score_cutoff_trap(ai_player, current_tile, current_time)
-	if cutoff_score.score > 0:
+	if cutoff_score.get("score", 0.0) > 0:
 		scores.append(cutoff_score)
 
 	var powerup_score = score_powerup_collection(current_tile, ai_player, current_time)
-	if powerup_score.score > 0:
+	if powerup_score.get("score", 0.0) > 0:
 		scores.append(powerup_score)
 
 	var denial_score = score_powerup_denial(ai_player, current_tile, current_time)
-	if denial_score.score > 0:
+	if denial_score.get("score", 0.0) > 0:
 		scores.append(denial_score)
 
 	var block_score = score_block_destruction(current_tile, ai_player, current_time)
-	if block_score.score > 0:
+	if block_score.get("score", 0.0) > 0:
 		scores.append(block_score)
 
 	var chain_score = score_chain_bomb_setup(current_tile, ai_player, current_time)
-	if chain_score.score > 0:
+	if chain_score.get("score", 0.0) > 0:
 		scores.append(chain_score)
 
 	var reposition_score = score_strategic_reposition(current_tile, current_time)
-	if reposition_score.score > 0:
+	if reposition_score.get("score", 0.0) > 0:
 		scores.append(reposition_score)
 	
 	# Phase 3: New tactical actions
 	var flank_score = score_flank_opponent(ai_player, current_tile, current_time)
-	if flank_score.score > 0:
+	if flank_score.get("score", 0.0) > 0:
 		scores.append(flank_score)
 	
 	var kite_score = score_kite_danger(ai_player, current_tile, current_time)
-	if kite_score.score > 0:
+	if kite_score.get("score", 0.0) > 0:
 		scores.append(kite_score)
 	
 	var explore_score = score_explore_map(current_tile, current_time)
-	if explore_score.score > 0:
+	if explore_score.get("score", 0.0) > 0:
 		scores.append(explore_score)
 	
 	var control_score = score_control_center(current_tile, current_time)
-	if control_score.score > 0:
+	if control_score.get("score", 0.0) > 0:
 		scores.append(control_score)
 
 	if personality_weights.get("trap_bonus", 0) > 0:
 		var ambush_score = score_ambush_setup(current_tile, current_time)
-		if ambush_score.score > 0:
+		if ambush_score.get("score", 0.0) > 0:
 			scores.append(ambush_score)
 
-	scores.sort_custom(func(a, b): return a.score > b.score)
+	scores.sort_custom(func(a, b): return a.get("score", 0.0) > b.get("score", 0.0))
 	
 	# Phase 3: Apply cooldowns and hysteresis
 	scores = _apply_cooldowns(scores, current_time)
@@ -156,10 +156,10 @@ func score_all_actions(ai_player: Node2D, current_time: float) -> Array:
 		for action_dict in scores:
 			var action_type = action_dict.get("action", -1)
 			var role_mod = _get_role_modifier(action_type, target_role, role_confidence)
-			action_dict.score *= role_mod
+			action_dict["score"] = action_dict.get("score", 0.0) * role_mod
 	
 	# Phase 3: Guaranteed non-zero fallback to prevent deadlock
-	if scores.is_empty() or scores[0].score < MIN_ACTION_SCORE:
+	if scores.is_empty() or scores[0].get("score", 0.0) < MIN_ACTION_SCORE:
 		var fallback = _generate_fallback_action(current_tile, current_time)
 		if not scores.is_empty():
 			scores[0] = fallback
@@ -378,7 +378,7 @@ func score_powerup_collection(current_tile: Vector2i, _ai_player: Node2D, curren
 	}
 
 func score_powerup_denial(_ai_player: Node2D, current_tile: Vector2i, _current_time: float) -> Dictionary:
-	if not game_instance.has("powerups"):
+	if not game_instance.get("powerups"):
 		return {"score": 0.0, "action": ActionType.DENY_POWERUP}
 
 	var best = {"score": 0.0}
@@ -396,14 +396,14 @@ func score_powerup_denial(_ai_player: Node2D, current_tile: Vector2i, _current_t
 			continue
 		var score = (closest_target.profile.get("power_level", 1.0) + 8.0) / max(1.0, float(ai_distance))
 		score = _apply_bias(score * 2.2, false, true)
-		if score > best.score:
+		if score > best.get("score", 0.0):
 			best = {
 				"score": score,
 				"action": ActionType.DENY_POWERUP,
 				"target_tile": tile
 			}
 
-	if best.score == 0.0:
+	if best.get("score", 0.0) == 0.0:
 		return {"score": 0.0, "action": ActionType.DENY_POWERUP}
 	return best
 
@@ -848,13 +848,13 @@ func _apply_cooldowns(scores: Array, current_time: float) -> Array:
 		if action_cooldowns.has(action_type):
 			if current_time < action_cooldowns[action_type]:
 				# Still on cooldown, reduce score significantly
-				score_data.score *= 0.2
+				score_data["score"] = score_data.get("score", 0.0) * 0.2
 		
 		# Penalize repeating same action
 		if action_type == last_action_type:
 			var time_since = current_time - last_action_time
 			if time_since < 0.5:
-				score_data.score *= 0.4
+				score_data["score"] = score_data.get("score", 0.0) * 0.4
 		
 		filtered_scores.append(score_data)
 	

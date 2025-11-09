@@ -99,10 +99,19 @@ func _init(game_inst: Node2D, personality: int = 0):
 ## Main decision function
 func decide_action(ai_player: Node2D) -> Dictionary:
 	if ai_player == null or (ai_player.has_method("is_dead") and ai_player.is_dead):
-		return {"direction": Vector2.ZERO, "place_bomb": false}
+		return {"direction": Vector2.ZERO, "place_bomb": false, "reasoning": "NULL_OR_DEAD"}
 	
 	var current_time = Time.get_ticks_msec() / 1000.0
 	var current_tile = ai_player.get_tile_position()
+	
+	# Debug: Check if observer/danger_mapper exist
+	if observer == null:
+		print("[ImprovedAI] ERROR: observer is null!")
+		return {"direction": Vector2.ZERO, "place_bomb": false, "reasoning": "NO_OBSERVER"}
+	if danger_mapper == null:
+		print("[ImprovedAI] ERROR: danger_mapper is null!")
+		return {"direction": Vector2.ZERO, "place_bomb": false, "reasoning": "NO_DANGER_MAPPER"}
+	
 	latest_game_state = observer.get_world_state()
 	
 	# Update danger map
@@ -144,14 +153,20 @@ func decide_action(ai_player: Node2D) -> Dictionary:
 
 	if action_scores.is_empty():
 		# Fallback: just try to stay safe
+		print("[ImprovedAI] WARNING: No action scores, using emergency fallback")
 		return _emergency_fallback(ai_player, current_tile, current_time)
 
 	# Pick the highest-value action that is actually viable right now
 	var best_action = _choose_viable_action(action_scores, ai_player, current_tile, current_time)
 	if best_action.is_empty():
+		print("[ImprovedAI] WARNING: No viable action found, using emergency fallback")
 		return _emergency_fallback(ai_player, current_tile, current_time)
 
 	current_action = best_action
+	
+	# Debug: Log best action
+	if Engine.get_physics_frames() % 60 == 0:  # Every second
+		print("[ImprovedAI] Best action: ", best_action.get("action", "?"), " score: ", best_action.get("score", 0), " target: ", best_action.get("target_tile", "none"))
 	
 	# Phase 1: Track action distribution
 	if debug_enabled:
@@ -230,6 +245,8 @@ func _action_to_decision(action_data: Dictionary, ai_player: Node2D, current_til
 	# Get movement direction using pathfinding or direct vector
 	if target_tile != null and target_tile != Vector2i(-1, -1):
 		direction = _get_direction_to_tile(current_tile, target_tile, ai_player.position, current_time)
+		if Engine.get_physics_frames() % 60 == 0:
+			print("[ImprovedAI] Moving from ", current_tile, " to ", target_tile, " direction: ", direction)
 	elif action_data.has("direction"):
 		# Direct direction provided (e.g., from escape action)
 		direction = action_data.direction
@@ -528,14 +545,14 @@ func _update_priority_targets() -> void:
 			"score": threat,
 			"tile": profile.tile,
 			"predicted_tile": profile.predicted_tile,
-			"aggression": profile.aggression,
-			"power": profile.power_level,
-			"behavior_role": profile.get("behavior_role", "balanced"),
-			"role_confidence": profile.get("role_confidence", 0.0)
-		})
+		"aggression": profile.aggression,
+		"power": profile.power_level,
+		"behavior_role": profile.get("behavior_role", "balanced"),
+		"role_confidence": profile.get("role_confidence", 0.0)
+	})
 
 	priority_targets.sort_custom(func(a, b):
-		return a.score > b.score
+		return a.get("score", 0.0) > b.get("score", 0.0)
 	)
 
 func _update_dynamic_biases(ai_player: Node2D) -> void:
@@ -611,7 +628,7 @@ func _log_diagnostics(_current_time: float) -> void:
 ## Phase 5: Check for replanning triggers
 func _check_replanning_triggers(current_tile: Vector2i, current_time: float) -> void:
 	# Trigger 1: New bomb placed
-	var current_bomb_count = game_instance.bombs.size() if game_instance.has("bombs") else 0
+	var current_bomb_count = game_instance.bombs.size() if game_instance.get("bombs") else 0
 	if current_bomb_count != last_bomb_count:
 		if current_bomb_count > last_bomb_count:
 			# New bomb detected - force replan

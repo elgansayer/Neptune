@@ -98,6 +98,24 @@ func get_time_until_explosion(tile: Vector2i) -> float:
 	var current_time = Time.get_ticks_msec() / 1000.0
 	return danger_map[tile_key] - current_time
 
+func get_recent_velocity(player_id: int) -> Vector2:
+	"""Get recent velocity for a player from position history"""
+	if not player_position_history.has(player_id):
+		return Vector2.ZERO
+	
+	var history = player_position_history[player_id]
+	if history.size() < 2:
+		return Vector2.ZERO
+	
+	# Calculate velocity from last two positions
+	var recent = history[-1]
+	var prev = history[-2]
+	var time_delta = recent.time - prev.time
+	if time_delta < 0.001:
+		return Vector2.ZERO
+	
+	return (recent.position - prev.position) / time_delta
+
 func find_nearest_safe_tiles(from_tile: Vector2i, max_distance: int = 10) -> Array:
 	"""Find all safe tiles within max_distance, sorted by distance"""
 	var safe_tiles = []

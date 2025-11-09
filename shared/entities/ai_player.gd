@@ -36,15 +36,19 @@ func setup_ai(game_instance: Node2D, personality: int = 0):  # 0 = BALANCED
 	
 	print("[AIPlayer] Initialized: ", bot_name, " (", personality_name, ")")
 	
-	# Setup debug visualizer if in debug mode
+	# Setup debug visualizer if in debug mode (deferred until in scene tree)
 	if OS.is_debug_build() and use_improved_ai:
-		# Wait for next frame to ensure we're in scene tree
-		await get_tree().process_frame
-		if is_instance_valid(controller) and controller.has_method("setup_debug_visualizer"):
-			controller.setup_debug_visualizer(game_instance, self)
+		# Defer setup until we're in the scene tree
+		call_deferred("_setup_debug_visualizer_deferred", game_instance)
+
+func _setup_debug_visualizer_deferred(game_ref: Node2D):
+	"""Deferred debug visualizer setup after AI is in scene tree"""
+	if is_instance_valid(controller) and controller.has_method("setup_debug_visualizer"):
+		controller.setup_debug_visualizer(game_ref, self)
 
 func _physics_process(delta):
 	if not controller:
+		print("[AIPlayer] ERROR: No controller for ", bot_name)
 		super._physics_process(delta)
 		return
 
@@ -55,6 +59,10 @@ func _physics_process(delta):
 	
 	# Generate AI decision
 	var input_data: Dictionary = controller.decide_action(self)
+	
+	# Debug: Log occasionally
+	if Engine.get_physics_frames() % 120 == 0:  # Every 2 seconds at 60fps
+		print("[AIPlayer] ", bot_name, " decision: ", input_data.get("reasoning", "no reasoning"))
 	
 	# Apply AI-generated input (use bracket access for Dictionary)
 	var dir: Vector2 = input_data.get("direction", Vector2.ZERO)
