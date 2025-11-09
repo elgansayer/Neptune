@@ -148,6 +148,16 @@ func score_all_actions(ai_player: Node2D, current_time: float) -> Array:
 	# Phase 3: Apply cooldowns and hysteresis
 	scores = _apply_cooldowns(scores, current_time)
 	
+	# Phase 6: Apply role-based modifiers
+	var primary_target = _get_primary_target()
+	if not primary_target.is_empty():
+		var target_role = primary_target.get("behavior_role", "balanced")
+		var role_confidence = primary_target.get("role_confidence", 0.0)
+		for action_dict in scores:
+			var action_type = action_dict.get("action", -1)
+			var role_mod = _get_role_modifier(action_type, target_role, role_confidence)
+			action_dict.score *= role_mod
+	
 	# Phase 3: Guaranteed non-zero fallback to prevent deadlock
 	if scores.is_empty() or scores[0].score < MIN_ACTION_SCORE:
 		var fallback = _generate_fallback_action(current_tile, current_time)
@@ -885,3 +895,37 @@ func _generate_fallback_action(current_tile: Vector2i, current_time: float) -> D
 		"target_tile": current_tile,
 		"place_bomb": false
 	}
+
+## Phase 6: Apply role-based scoring modifiers
+func _get_role_modifier(action_type: int, target_role: String, role_confidence: float) -> float:
+	if role_confidence < 0.3:
+		return 1.0  # Low confidence, don't modify
+	
+	var modifier = 1.0
+	
+	match action_type:
+		ActionType.ESCAPE_DANGER:
+			if target_role == "pressurer":
+				modifier = 1.8
+		ActionType.FLANK_OPPONENT:
+			if target_role == "trapper":
+				modifier = 2.0
+		ActionType.ATTACK_PLAYER:
+			if target_role == "item_hog":
+				modifier = 2.0
+			elif target_role == "pressurer":
+				modifier = 0.6
+		ActionType.PLACE_BOMB:
+			if target_role == "item_hog" or target_role == "trapper":
+				modifier = 1.8
+		ActionType.MOVE_TO_POWERUP:
+			if target_role == "item_hog":
+				modifier = 2.5
+			elif target_role == "trapper":
+				modifier = 1.4
+		ActionType.KITE_DANGER:
+			if target_role == "pressurer":
+				modifier = 2.2
+	
+	# Blend with confidence
+	return lerp(1.0, modifier, role_confidence)

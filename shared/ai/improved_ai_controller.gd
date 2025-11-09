@@ -5,12 +5,12 @@ extends Node
 ## NO MORE SUICIDES - AI always ensures escape routes exist
 
 const Constants = preload("res://shared/constants.gd")
-const PersonalityResource = preload("res://server/shared/ai/ai_personalities.gd")
-const DangerMapperResource = preload("res://server/shared/ai/danger_mapper.gd")
-const UtilityScorerResource = preload("res://server/shared/ai/utility_scorer.gd")
-const BombPlannerResource = preload("res://server/shared/ai/bomb_planner.gd")
-const DebugVisualizerResource = preload("res://server/shared/ai/ai_debug_visualizer.gd")
-const ObserverResource = preload("res://server/shared/ai/ai_observer.gd")
+const PersonalityResource = preload("res://shared/ai/ai_personalities.gd")
+const DangerMapperResource = preload("res://shared/ai/danger_mapper.gd")
+const UtilityScorerResource = preload("res://shared/ai/utility_scorer.gd")
+const BombPlannerResource = preload("res://shared/ai/bomb_planner.gd")
+const DebugVisualizerResource = preload("res://shared/ai/ai_debug_visualizer.gd")
+const ObserverResource = preload("res://shared/ai/ai_observer.gd")
 
 # === Phase 1: Diagnostic Flags ===
 var debug_enabled: bool = false
@@ -22,11 +22,12 @@ var debug_last_log_time: float = 0.0
 const DEBUG_LOG_INTERVAL: float = 3.0  # Log every 3 seconds
 
 # Core systems
+var game_instance: Node2D
 var observer
-var danger_mapper: DangerMapper
-var utility_scorer: UtilityScorer
-var bomb_planner: BombPlanner
-var debug_visualizer: AIDebugVisualizer
+var danger_mapper
+var utility_scorer
+var bomb_planner
+var debug_visualizer
 
 # Configuration
 var personality_type: int
@@ -58,9 +59,24 @@ var dynamic_item_bias: float = 1.0
 var last_profile_update: float = 0.0
 const PROFILE_UPDATE_INTERVAL: float = 0.2
 
+# Phase 5: Hybrid navigation and steering
+var target_velocity: Vector2 = Vector2.ZERO
+var current_velocity: Vector2 = Vector2.ZERO
+var steering_force: Vector2 = Vector2.ZERO
+const MAX_STEERING_FORCE: float = 400.0
+const VELOCITY_SMOOTHING: float = 0.15  # Lower = smoother
+const ARRIVAL_RADIUS: float = 8.0  # Pixels - slow down when close to target
+
+# Phase 5: Replanning triggers
+var last_bomb_count: int = 0
+var last_danger_snapshot: float = 0.0
+var force_replan: bool = false
+const DANGER_SPIKE_THRESHOLD: float = 0.3  # Trigger replan if danger increases by this much
+
 var latest_game_state: Dictionary = {}
 
-func _init(game_instance: Node2D, personality: int = 0):
+func _init(game_inst: Node2D, personality: int = 0):
+	game_instance = game_inst
 	observer = ObserverResource.new(game_instance)
 
 	personality_type = personality
@@ -92,6 +108,12 @@ func decide_action(ai_player: Node2D) -> Dictionary:
 	# Update danger map
 	danger_mapper.update(current_time)
 	_update_dynamic_state(latest_game_state, ai_player, current_time)
+
+	# Phase 5: Check for replanning triggers
+	_check_replanning_triggers(current_tile, current_time)
+	# Phase 5: Check for replanning triggers
+	_check_replanning_triggers(current_tile, current_time)
+
 	utility_scorer.set_context({
 		"opponent_profiles": opponent_profiles,
 		"priority_targets": priority_targets,
@@ -106,10 +128,12 @@ func decide_action(ai_player: Node2D) -> Dictionary:
 	if danger_mapper.is_emergency_danger(current_tile, current_time):
 		return _handle_emergency_escape(ai_player, current_tile, current_time)
 	
-	in_emergency = false
-	
-	# Regular decision making (throttled)
-	if current_time - last_decision_time < decision_interval:
+	# Phase 5: Force replan if triggered
+	var should_replan = force_replan or (current_time - last_decision_time >= decision_interval)
+	force_replan = false
+
+	# Regular decision making (throttled unless forced)
+	if not should_replan:
 		# Continue executing current action
 		return _execute_current_action(ai_player, current_tile, current_time)
 	
@@ -487,6 +511,9 @@ func _update_dynamic_state(game_state: Dictionary, ai_player: Node2D, current_ti
 		if stored_id not in active_ids:
 			opponent_profiles.erase(stored_id)
 
+	# Phase 6: Classify behavior roles
+	_classify_behavior_roles()
+	
 	_update_priority_targets()
 	_update_dynamic_biases(ai_player)
 
@@ -502,7 +529,9 @@ func _update_priority_targets() -> void:
 			"tile": profile.tile,
 			"predicted_tile": profile.predicted_tile,
 			"aggression": profile.aggression,
-			"power": profile.power_level
+			"power": profile.power_level,
+			"behavior_role": profile.get("behavior_role", "balanced"),
+			"role_confidence": profile.get("role_confidence", 0.0)
 		})
 
 	priority_targets.sort_custom(func(a, b):
@@ -510,6 +539,15 @@ func _update_priority_targets() -> void:
 	)
 
 func _update_dynamic_biases(ai_player: Node2D) -> void:
+	# Phase 6: Use per-opponent power gaps instead of global highest
+	var power_gaps = _calculate_power_gaps(ai_player)
+	var weight_mods = _apply_power_gap_biases(power_gaps)
+	
+	# Apply Phase 6 adaptive weights
+	dynamic_item_bias = weight_mods.item_focus
+	dynamic_aggression_bias = weight_mods.aggression
+	
+	# Store for utility scorer
 	var my_power = _calculate_power_score(ai_player)
 	var highest_opponent_power = 0.0
 	var highest_aggression = 0.0
@@ -517,14 +555,6 @@ func _update_dynamic_biases(ai_player: Node2D) -> void:
 		var profile: Dictionary = opponent_profiles[player_id]
 		highest_opponent_power = max(highest_opponent_power, profile.power_level)
 		highest_aggression = max(highest_aggression, profile.aggression)
-
-	var power_gap = clamp(highest_opponent_power - my_power, -5.0, 5.0)
-	dynamic_item_bias = clamp(1.0 + power_gap * 0.35, 0.6, 4.5)
-
-	var aggression_base = highest_aggression * 0.25
-	if my_power > highest_opponent_power:
-		aggression_base += 0.4
-	dynamic_aggression_bias = clamp(1.0 + aggression_base, 0.7, 3.5)
 
 func _calculate_power_score(player: Node2D) -> float:
 	var max_bombs = _extract_float(player, "max_bombs", 1.0)
@@ -544,7 +574,7 @@ func _extract_float(target: Object, property_name: String, fallback: float) -> f
 
 ## Initialize debug visualizer
 func setup_debug_visualizer(parent_node: Node2D, ai_player: Node2D) -> void:
-	debug_visualizer = AIDebugVisualizer.new()
+	debug_visualizer = DebugVisualizerResource.new()
 	debug_visualizer.setup(danger_mapper, self, ai_player)
 	parent_node.add_child(debug_visualizer)
 	
@@ -552,7 +582,7 @@ func setup_debug_visualizer(parent_node: Node2D, ai_player: Node2D) -> void:
 
 ## Get personality name
 func get_personality_name() -> String:
-	return AIPersonality.get_personality_name(personality_type)
+	return PersonalityResource.get_personality_name(personality_type)
 
 ## Get current state for debugging
 func get_current_state_name() -> String:
@@ -577,3 +607,185 @@ func _log_diagnostics(_current_time: float) -> void:
 		print("    ", action, ": ", debug_action_distribution[action], " (", "%.1f" % percentage, "%)")
 	print("  Priority Targets: ", priority_targets.size())
 	print("  Opponent Profiles: ", opponent_profiles.size())
+
+## Phase 5: Check for replanning triggers
+func _check_replanning_triggers(current_tile: Vector2i, current_time: float) -> void:
+	# Trigger 1: New bomb placed
+	var current_bomb_count = game_instance.bombs.size() if game_instance.has("bombs") else 0
+	if current_bomb_count != last_bomb_count:
+		if current_bomb_count > last_bomb_count:
+			# New bomb detected - force replan
+			force_replan = true
+		last_bomb_count = current_bomb_count
+	
+	# Trigger 2: Danger spike at current location
+	var current_danger = danger_mapper.get_danger_at_tile(current_tile, current_time, 0.5)
+	if current_danger - last_danger_snapshot > DANGER_SPIKE_THRESHOLD:
+		# Significant danger increase - force replan
+		force_replan = true
+	last_danger_snapshot = current_danger
+
+## Phase 5: Calculate steering force for smooth movement
+func _calculate_steering(from_position: Vector2, target_position: Vector2) -> Vector2:
+	var to_target = target_position - from_position
+	var distance = to_target.length()
+	
+	if distance < 0.1:
+		return Vector2.ZERO
+	
+	# Calculate desired velocity
+	var desired_speed = Constants.BASE_SPEED
+	
+	# Arrival behavior - slow down when close
+	if distance < ARRIVAL_RADIUS:
+		desired_speed *= (distance / ARRIVAL_RADIUS)
+	
+	target_velocity = to_target.normalized() * desired_speed
+	
+	# Calculate steering force
+	steering_force = (target_velocity - current_velocity).limit_length(MAX_STEERING_FORCE)
+	
+	# Apply steering with smoothing
+	current_velocity = current_velocity.lerp(current_velocity + steering_force * VELOCITY_SMOOTHING, 0.3)
+	current_velocity = current_velocity.limit_length(Constants.BASE_SPEED)
+	
+	return current_velocity
+
+## Phase 5: Enhanced direction calculation with steering (overrides tile-based)
+func _get_direction_with_steering(from_position: Vector2, target_position: Vector2) -> Vector2:
+	var steering_velocity = _calculate_steering(from_position, target_position)
+	return steering_velocity.normalized()
+
+## Phase 6: Calculate per-opponent power gaps for adaptive strategy
+func _calculate_power_gaps(ai_player: Node2D) -> Dictionary:
+	var my_power = _calculate_power_score(ai_player)
+	var gaps: Dictionary = {}
+	
+	for player_id in opponent_profiles.keys():
+		var profile: Dictionary = opponent_profiles[player_id]
+		var opponent_power = profile.power_level
+		gaps[player_id] = {
+			"gap": opponent_power - my_power,
+			"ratio": opponent_power / max(0.1, my_power),
+			"advantage": my_power > opponent_power
+		}
+	
+	return gaps
+
+## Phase 6: Adjust utility weights based on power dynamics
+func _apply_power_gap_biases(power_gaps: Dictionary) -> Dictionary:
+	var avg_gap = 0.0
+	var num_stronger = 0
+	var num_weaker = 0
+	
+	for player_id in power_gaps:
+		var gap_data = power_gaps[player_id]
+		avg_gap += gap_data.gap
+		if gap_data.gap > 1.0:
+			num_stronger += 1
+		elif gap_data.gap < -1.0:
+			num_weaker += 1
+	
+	if power_gaps.size() > 0:
+		avg_gap /= power_gaps.size()
+	
+	var weight_mods = {
+		"item_focus": 1.0,
+		"aggression": 1.0,
+		"retreat": 1.0,
+		"trap": 1.0
+	}
+	
+	# Outmatched: prioritize items, reduce aggression
+	if avg_gap > 2.0 or num_stronger >= 2:
+		weight_mods.item_focus = 2.8
+		weight_mods.aggression = 0.4
+		weight_mods.retreat = 1.6
+		weight_mods.trap = 0.7
+	
+	# Dominant: aggressive trapping
+	elif avg_gap < -2.0 or num_weaker >= 2:
+		weight_mods.item_focus = 0.6
+		weight_mods.aggression = 2.5
+		weight_mods.retreat = 0.5
+		weight_mods.trap = 2.2
+	
+	# Roughly even: balanced
+	else:
+		weight_mods.item_focus = 1.2
+		weight_mods.aggression = 1.4
+		weight_mods.retreat = 1.0
+		weight_mods.trap = 1.3
+	
+	return weight_mods
+
+## Phase 6: Classify opponent behavior roles for targeted counter-play
+func _classify_behavior_roles() -> void:
+	for player_id in opponent_profiles.keys():
+		var profile: Dictionary = opponent_profiles[player_id]
+		
+		# Initialize counters if needed
+		if not profile.has("bomb_placements"):
+			profile.bomb_placements = 0
+			profile.item_pickups = 0
+			profile.aggressive_moves = 0
+			profile.observation_window = 0.0
+		
+		# Classify based on observed patterns
+		var window_size = max(1.0, profile.observation_window)
+		var bomb_rate = profile.bomb_placements / window_size
+		var item_rate = profile.item_pickups / window_size
+		var aggression_rate = profile.aggressive_moves / window_size
+		
+		var role = "balanced"
+		var confidence = 0.0
+		
+		# Pressurer: high aggression, frequent bombs
+		if aggression_rate > 2.0 and bomb_rate > 1.5:
+			role = "pressurer"
+			confidence = min(1.0, (aggression_rate + bomb_rate) / 5.0)
+		
+		# Trapper: strategic bomb placement, moderate aggression
+		elif bomb_rate > 1.0 and aggression_rate < 1.5:
+			role = "trapper"
+			confidence = min(1.0, bomb_rate / 2.0)
+		
+		# Item-hog: focuses on pickups, avoids confrontation
+		elif item_rate > 1.2 and aggression_rate < 0.8:
+			role = "item_hog"
+			confidence = min(1.0, item_rate / 2.0)
+		
+		profile.behavior_role = role
+		profile.role_confidence = confidence
+
+## Phase 6: Adjust scoring weights based on opponent roles
+func _get_role_counter_weights(target_role: String) -> Dictionary:
+	match target_role:
+		"pressurer":
+			return {
+				"retreat_bonus": 1.8,
+				"kite_bonus": 2.2,
+				"trap_bonus": 1.5,
+				"approach_penalty": 0.6
+			}
+		"trapper":
+			return {
+				"retreat_bonus": 1.3,
+				"flank_bonus": 2.0,
+				"item_priority": 1.4,
+				"cautious_advance": 1.6
+			}
+		"item_hog":
+			return {
+				"item_priority": 2.5,
+				"pressure_bonus": 2.0,
+				"trap_bonus": 1.8,
+				"retreat_penalty": 0.7
+			}
+		_:
+			return {
+				"retreat_bonus": 1.0,
+				"flank_bonus": 1.0,
+				"item_priority": 1.0,
+				"trap_bonus": 1.0
+			}

@@ -72,15 +72,22 @@ func _draw():
 	if ai_player != null:
 		_draw_ai_marker()
 	
+	# Phase 7: Draw opponent role badges
+	_draw_opponent_roles()
+	
 	# Draw reasoning text
 	if show_reasoning and current_reasoning != "":
 		_draw_reasoning_text()
 
 func _draw_danger_zones(current_time: float):
-	var danger_zones = danger_mapper.get_all_danger_zones()
+	# Phase 7: Use Phase 2 heatmap instead of old danger_zones
+	if not danger_mapper.has_method("get_danger_heatmap"):
+		return  # Fallback if heatmap not available
 	
-	for tile_key in danger_zones.keys():
-		var zone = danger_zones[tile_key]
+	var heatmap = danger_mapper.danger_heatmap
+	
+	for tile_key in heatmap.keys():
+		var tile_data = heatmap[tile_key]
 		var coords = tile_key.split(",")
 		var tile_x = int(coords[0])
 		var tile_y = int(coords[1])
@@ -90,19 +97,31 @@ func _draw_danger_zones(current_time: float):
 			tile_y * Constants.TILE_SIZE
 		)
 		
-		# Choose color based on danger intensity and time until explosion
-		var time_until = zone.explosion_time - current_time
+		# Phase 7: Visualize danger intensity with per-tick countdown
+		var peak_danger = 0.0
+		var earliest_explosion = INF
+		
+		for countdown in tile_data.explosion_countdowns:
+			var time_until = countdown / 60.0  # Convert ticks to seconds
+			var intensity = clamp(1.0 - (countdown / 180.0), 0.0, 1.0)  # Fade over 3s
+			peak_danger = max(peak_danger, intensity)
+			earliest_explosion = min(earliest_explosion, time_until)
+		
+		if peak_danger < 0.05:
+			continue
+		
+		# Choose color based on urgency
 		var color = COLOR_SAFE
 		
-		if time_until < 0.5:
+		if earliest_explosion < 0.5:
 			color = COLOR_HIGH_DANGER
-		elif time_until < 1.5:
+		elif earliest_explosion < 1.5:
 			color = COLOR_MEDIUM_DANGER
-		elif time_until < 2.5:
+		elif earliest_explosion < 2.5:
 			color = COLOR_LOW_DANGER
 		
-		# Adjust alpha based on intensity
-		color.a = zone.intensity * 0.5
+		# Adjust alpha based on peak danger
+		color.a = peak_danger * 0.6
 		
 		# Draw filled rectangle for danger zone
 		draw_rect(
@@ -110,17 +129,18 @@ func _draw_danger_zones(current_time: float):
 			color
 		)
 		
-		# Draw timer text
-		var timer_text = "%.1f" % time_until
-		draw_string(
-			ThemeDB.fallback_font,
-			tile_pos + Vector2(Constants.TILE_SIZE * 0.5, Constants.TILE_SIZE * 0.5),
-			timer_text,
-			HORIZONTAL_ALIGNMENT_CENTER,
-			-1,
-			12,
-			Color.WHITE
-		)
+		# Draw timer text for earliest explosion
+		if earliest_explosion < INF:
+			var timer_text = "%.1f" % earliest_explosion
+			draw_string(
+				ThemeDB.fallback_font,
+				tile_pos + Vector2(Constants.TILE_SIZE * 0.5, Constants.TILE_SIZE * 0.5),
+				timer_text,
+				HORIZONTAL_ALIGNMENT_CENTER,
+				-1,
+				12,
+				Color.WHITE
+			)
 
 func _draw_path():
 	if current_path.size() < 2:
@@ -227,3 +247,67 @@ func toggle_targets():
 
 func toggle_reasoning():
 	show_reasoning = not show_reasoning
+
+## Phase 7: Visualize opponent roles and power gaps
+func _draw_opponent_roles():
+	if ai_controller == null or not ai_controller.has_method("get"):
+		return
+	
+	var opponent_profiles = ai_controller.opponent_profiles
+	if opponent_profiles == null or opponent_profiles.is_empty():
+		return
+	
+	for player_id in opponent_profiles.keys():
+		var profile = opponent_profiles[player_id]
+		var tile = profile.get("tile", Vector2i(-1, -1))
+		if tile == Vector2i(-1, -1):
+			continue
+		
+		var role = profile.get("behavior_role", "balanced")
+		var confidence = profile.get("role_confidence", 0.0)
+		var power = profile.get("power_level", 0.0)
+		
+		var tile_pos = Vector2(
+tile.x * Constants.TILE_SIZE + Constants.TILE_SIZE * 0.5,
+tile.y * Constants.TILE_SIZE + Constants.TILE_SIZE * 0.5
+)
+		
+		# Draw role badge
+		var role_color = Color.WHITE
+		match role:
+			"pressurer":
+				role_color = Color.RED
+			"trapper":
+				role_color = Color.ORANGE
+			"item_hog":
+				role_color = Color.YELLOW
+			_:
+				role_color = Color.GRAY
+		
+		# Confidence ring
+		draw_arc(tile_pos, 30.0, 0, TAU * confidence, 32, role_color, 2.5)
+		
+		# Role label
+		var label = role.substr(0, 3).to_upper()
+		var label_pos = tile_pos - Vector2(0, 40)
+		draw_string(
+ThemeDB.fallback_font,
+label_pos,
+label,
+HORIZONTAL_ALIGNMENT_CENTER,
+-1,
+12,
+role_color
+)
+		
+		# Power indicator
+		var power_text = "P:%.1f" % power
+		draw_string(
+ThemeDB.fallback_font,
+tile_pos + Vector2(0, 45),
+power_text,
+HORIZONTAL_ALIGNMENT_CENTER,
+-1,
+10,
+Color.CYAN
+)
