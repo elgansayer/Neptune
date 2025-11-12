@@ -448,6 +448,10 @@ func update_bomb(bomb_id: String, data: Dictionary):
 	# Update position and timer
 	bomb_node.position = Vector2(data.position.x, data.position.y)
 	bomb_node.update_timer(data.timer)
+	
+	# Update kicked state if present
+	if data.has("is_kicked"):
+		bomb_node.set_kicked_state(data.is_kicked)
 
 func update_explosions(explosions_data: Array):
 	"""Update progressive explosions with SBomberman sprites"""
@@ -523,6 +527,7 @@ func _physics_process(delta):
 				input_y = -1.0
 	
 	var place_bomb = Input.is_action_just_pressed("ui_accept")
+	var stop_kicked_bomb = Input.is_action_just_pressed("ui_cancel")  # ESC or similar
 	
 	# SIMPLIFIED APPROACH: Just use server state with smooth interpolation
 	# Prediction is too complex to match server's corner sliding + grid snapping
@@ -536,7 +541,8 @@ func _physics_process(delta):
 	get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
 		"input_x": input_x,
 		"input_y": input_y,
-		"place_bomb": place_bomb
+		"place_bomb": place_bomb,
+		"stop_kicked_bomb": stop_kicked_bomb
 	})
 
 func _remove_dead_player(peer_id: String):
