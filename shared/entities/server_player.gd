@@ -590,6 +590,11 @@ func try_kick_bomb_at_tile(tile_pos: Vector2i, kick_direction: Vector2) -> bool:
 	# Check if there's a bomb at this tile
 	var bomb = game_inst.get_bomb_at_tile(tile_pos)
 	if bomb and not bomb.is_kicked and not bomb.has_exploded:
+		# Don't kick bombs that we have collision exceptions with (bombs we just placed)
+		# The player should only be able to kick bombs they walk INTO, not bombs they're walking OUT of
+		if bomb in collision_exceptions:
+			return false
+		
 		# Kick the bomb in the direction we're facing
 		bomb.kick(kick_direction)
 		return true
