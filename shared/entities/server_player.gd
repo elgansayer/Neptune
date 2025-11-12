@@ -385,13 +385,24 @@ func _physics_process(_delta):
 	
 	# Check for bomb collisions and kick them if we have the ability
 	if has_bomb_kicker and final_direction.length() > 0.1:
-		for i in range(get_slide_collision_count()):
+		var collision_count = get_slide_collision_count()
+		if collision_count > 0:
+			print("[Player] Detected ", collision_count, " collisions after move_and_slide")
+		
+		for i in range(collision_count):
 			var collision = get_slide_collision(i)
 			var collider = collision.get_collider()
+			print("[Player] Collision ", i, ": collider=", collider, " type=", collider.get_class() if collider else "null")
 			
 			# Check if we collided with a bomb
 			if collider and collider.has_method("kick"):
+				# Don't kick bombs that are in our collision exceptions (we're walking out of them)
+				if collider in collision_exceptions:
+					print("[Player] Bomb is in collision exceptions, skipping kick")
+					continue
+				
 				# Kick the bomb in the direction we're moving
+				print("[Player] Kicking bomb via collision detection!")
 				collider.kick(final_direction)
 	
 	# Clear collision exceptions when player is no longer overlapping bomb

@@ -197,7 +197,10 @@ func get_state() -> Dictionary:
 
 func kick(direction: Vector2):
 	"""Kick the bomb in the given direction"""
+	print("[Bomb] kick() called with direction: ", direction, " is_kicked=", is_kicked, " has_exploded=", has_exploded)
+	
 	if is_kicked or has_exploded:
+		print("[Bomb] Already kicked or exploded, ignoring kick")
 		return
 	
 	# Normalize direction to ensure consistent speed
@@ -213,7 +216,7 @@ func kick(direction: Vector2):
 	collision_layer = Constants.COLLISION_LAYER_BOMBS
 	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS | Constants.COLLISION_LAYER_PLAYERS
 	
-	print("[Bomb] Kicked in direction ", kick_direction, " at speed ", kick_speed)
+	print("[Bomb] Successfully kicked! Direction: ", kick_direction, " at speed ", kick_speed)
 
 func stop_kick():
 	"""Stop the bomb from sliding"""
