@@ -33,7 +33,8 @@ func can_place_bomb_safely(bomb_tile: Vector2i, ai_player: Node2D, current_time:
 	# --- Rigorous Safety Check for Bomb Placement ---
 	
 	# Personality-driven safety buffer. Aggressive AI are more reckless.
-	var required_time_buffer = lerp(0.8, 0.25, personality_weights.get("aggression_normalized", 0.5))
+	# Reduced from (0.8, 0.25) to be less conservative
+	var required_time_buffer = lerp(0.5, 0.15, personality_weights.get("aggression_normalized", 0.5))
 
 	# Basic checks: Does the AI have a bomb to place?
 	if not ai_player.can_place_bomb():
@@ -57,11 +58,16 @@ func can_place_bomb_safely(bomb_tile: Vector2i, ai_player: Node2D, current_time:
 	
 	# CRITICAL: If there are absolutely no escape routes, it's an immediate failure.
 	if escape_analysis.safe_routes.is_empty():
+		if Engine.get_physics_frames() % 60 == 0:
+			print("[BombPlanner] No escape routes at ", bomb_tile, " checked dirs:", escape_analysis.all_routes.size())
 		return _failure_result("No escape routes found")
 	
 	# Now, check if any of the available escape routes are actually reachable in time.
 	var bomb_timer = Constants.BOMB_TIMER
-	var movement_speed = ai_player.get("current_speed", Constants.BASE_SPEED) # Use player's actual speed
+	# Use player's actual speed (fallback to BASE_SPEED if not available)
+	var movement_speed = GameConfig.BASE_SPEED
+	if "speed_multiplier" in ai_player:
+		movement_speed *= ai_player.speed_multiplier
 	
 	for route in escape_analysis.safe_routes:
 		# Calculate the real distance in pixels the AI must travel.
@@ -73,6 +79,8 @@ func can_place_bomb_safely(bomb_tile: Vector2i, ai_player: Node2D, current_time:
 		# considering our mandatory safety buffer?
 		if time_needed + required_time_buffer < bomb_timer:
 			# SUCCESS: This route is viable. We can safely place the bomb.
+			if Engine.get_physics_frames() % 60 == 0:
+				print("[BombPlanner] SAFE to bomb at ", bomb_tile, " escape_time:", time_needed, " buffer:", bomb_timer - time_needed)
 			return {
 				"safe": true,
 				"escape_route": route,
@@ -81,8 +89,24 @@ func can_place_bomb_safely(bomb_tile: Vector2i, ai_player: Node2D, current_time:
 				"simulation": simulation,
 			}
 			
-	# If we loop through all safe routes and none are reachable in time, it's a failure.
-	return _failure_result("Escape routes are too far or AI is too slow")
+	# If we loop through all safe routes and none are reachable in time, try simple fallback
+	# Simple heuristic: if there's at least one adjacent walkable tile not in danger, allow bomb
+	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		var test_tile = bomb_tile + dir
+		if observer._is_tile_valid(test_tile) and observer._is_tile_walkable(test_tile):
+			var tile_danger = danger_mapper.get_danger_at_tile(test_tile, current_time, 0.5)
+			if tile_danger < 0.3:  # Low danger
+				# Found a simple escape
+				return {
+					"safe": true,
+					"escape_route": {"direction": dir, "tiles": [test_tile], "safe": true, "distance": 1},
+					"time_to_escape": 0.3,
+					"time_buffer": bomb_timer - 0.3,
+					"simulation": simulation,
+					"simple_fallback": true
+				}
+	
+	return _failure_result("No escape routes found even with simple fallback")
 
 ## Evaluate bomb placement value (for strategic decisions)
 func evaluate_bomb_placement(bomb_tile: Vector2i, ai_player: Node2D, current_time: float) -> Dictionary:
@@ -642,7 +666,7 @@ func evaluate_trap_placement(bomb_tile: Vector2i, target_player_id: int, ai_play
 		score += 30.0
 	
 	# Bonus for chain reactions
-	var chain_data = danger_mapper.get_chain_prediction(null)  # Would need bomb_id
+	var _chain_data = danger_mapper.get_chain_prediction(null)  # Would need bomb_id
 	if safety_check.has("ally_overlap") and safety_check.ally_overlap.chain_potential > 0:
 		score += safety_check.ally_overlap.chain_potential * 25.0
 	

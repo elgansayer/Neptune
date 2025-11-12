@@ -1,0 +1,12 @@
+[application]
+config/name="Neptune Bomberman Tests"
+run/main_scene="res://test_suite/runner.tscn"
+
+[rendering]
+vram_compression/import_etc2_astc=true
+
+[editor]
+export/convert_text_resources_to_binary_on_export=false
+
+[physics]
+common/physics_ticks_per_second=60

@@ -27,9 +27,9 @@ static func get_weights(personality_type: Type) -> Dictionary:
 			return {
 				"safety": 1000.0,
 				"danger_penalty": -10000.0,
-				"powerup": 500.0,
+				"powerup": 1200.0,  # MUCH higher - seek items first
 				"aggression": 400.0,  # Increased
-				"exploration": 150.0,  # Increased
+				"exploration": 800.0,  # MUCH higher - escape corners
 				"escape_route": 50.0,
 				"proximity_penalty": -150.0,  # Less penalty
 				"idle_penalty": -50.0,
@@ -50,9 +50,9 @@ static func get_weights(personality_type: Type) -> Dictionary:
 			return {
 				"safety": 700.0,  # Increased slightly
 				"danger_penalty": -8000.0,  # Less risky
-				"powerup": 300.0,
+				"powerup": 900.0,  # Higher
 				"aggression": 1000.0,  # Much higher
-				"exploration": 200.0,  # Increased
+				"exploration": 600.0,  # Higher - move out fast
 				"escape_route": 30.0,
 				"proximity_penalty": 0.0,  # Loves being close
 				"idle_penalty": -150.0,
@@ -73,9 +73,9 @@ static func get_weights(personality_type: Type) -> Dictionary:
 			return {
 				"safety": 2000.0,
 				"danger_penalty": -15000.0,
-				"powerup": 500.0,  # Increased
+				"powerup": 1000.0,  # Higher - needs items for survival
 				"aggression": 100.0,  # Increased
-				"exploration": 250.0,  # Increased
+				"exploration": 700.0,  # Higher - must escape spawn
 				"escape_route": 150.0,
 				"proximity_penalty": -500.0,
 				"idle_penalty": -30.0,
@@ -96,9 +96,9 @@ static func get_weights(personality_type: Type) -> Dictionary:
 			return {
 				"safety": 800.0,
 				"danger_penalty": -9000.0,
-				"powerup": 1500.0,  # Much higher
+				"powerup": 2000.0,  # MAXIMUM - obsessed with items
 				"aggression": 300.0,  # Increased
-				"exploration": 500.0,  # Much higher
+				"exploration": 900.0,  # Maximum exploration
 				"escape_route": 80.0,
 				"proximity_penalty": -100.0,
 				"idle_penalty": -80.0,
@@ -119,9 +119,9 @@ static func get_weights(personality_type: Type) -> Dictionary:
 			return {
 				"safety": 600.0,  # Increased
 				"danger_penalty": -7000.0,  # Less crazy
-				"powerup": 600.0,
+				"powerup": 1100.0,  # Higher
 				"aggression": 900.0,  # Higher
-				"exploration": 350.0,  # Increased
+				"exploration": 750.0,  # Higher - chaotic movement
 				"escape_route": 25.0,  # Increased
 				"proximity_penalty": 0.0,
 				"idle_penalty": -250.0,

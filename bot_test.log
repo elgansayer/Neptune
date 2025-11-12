@@ -1,0 +1,1788 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+
+=== Bomberman Server Starting ===
+[Server] Node name: ServerMain
+[Server] Node path: /root/ServerMain
+[Server] RPC config:{ &"authenticate_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"send_player_input": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"auth_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"receive_state": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 } }
+[LocalBackend] In-memory auth initialized
+[LocalBackend] WARNING: Data will not persist between restarts!
+[LocalBackend] TODO: Install GodotSQLite addon for persistence
+Server listening on port 7777
+Max players: 8
+[Server] Multiplayer authority: true
+[Server] Unique ID: 1
+
+[BotSpawner] Checking for game instance...
+[BotSpawner] Found ServerMain
+[BotSpawner] No game found, creating one...
+[GameInstance] Loading map from PCK...
+[MapPackLoader] Mounted PCK: res://res/maps/stage1.pck
+[MapPackLoader] Loaded map: Saturn Stage 1 (21x14)
+[MapPackLoader] Found 147 hard blocks, 135 soft slots, 4 spawns
+[GameInstance] Using PCK map with 96/135 soft blocks
+[GameConfig] Loaded TILE_SIZE: 16px (scale: 1.0x)
+[GameConfig] Scaled BASE_SPEED: 45.0 px/s
+[GameConfig] Map: Saturn Stage 1 (21x14) Tile size: 16px, Player size: 14.0px
+[GameInstance] Loaded map 'Saturn Stage 1' with 4 spawn points
+[BotSpawner] Reducing soft blocks for better gameplay...
+[BotSpawner] Soft blocks reduced to 38/96 (39%)
+[BotSpawner] Spawning 4 AI bots...
+[ImprovedAI] Initialized with personality: Balanced
+[AIPlayer] Using IMPROVED AI system
+[AIPlayer] Initialized: Balanced_Bot_294 (Balanced)
+[Game] AI Bot spawned: Balanced_Bot_294 at (40.0, 40.0)
+[ImprovedAI] Debug visualizer enabled
+[ImprovedAI] Starting up at time 5.45 - bombs disabled for 2.0s
+[ImprovedAI-SPAWN] Starting STRATEGIC spawn clearing at (2, 2)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] Initialized with personality: Aggressive
+[AIPlayer] Using IMPROVED AI system
+[AIPlayer] Initialized: Aggressive_Bot_948 (Aggressive)
+[Game] AI Bot spawned: Aggressive_Bot_948 at (296.0, 40.0)
+[ImprovedAI] Debug visualizer enabled
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] Starting up at time 5.957 - bombs disabled for 2.0s
+[ImprovedAI-SPAWN] Starting STRATEGIC spawn clearing at (18, 2)
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] Startup safety active: 0.656/2.0s
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (5, 2) (will hit 1 blocks)
+[ImprovedAI] Startup safety active: 0.15/2.0s
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[BombPlanner] No escape routes at (18, 2) checked dirs:4
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] STARTUP SAFETY: Blocking bomb (0.15/2.0s)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] Initialized with personality: Timid
+[AIPlayer] Using IMPROVED AI system
+[AIPlayer] Initialized: Timid_Bot_571 (Timid)
+[Game] AI Bot spawned: Timid_Bot_571 at (40.0, 200.0)
+[ImprovedAI] Debug visualizer enabled
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] Starting up at time 6.452 - bombs disabled for 2.0s
+[ImprovedAI-SPAWN] Starting STRATEGIC spawn clearing at (2, 12)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] Initialized with personality: Greedy
+[AIPlayer] Using IMPROVED AI system
+[AIPlayer] Initialized: Greedy_Bot_930 (Greedy)
+[Game] AI Bot spawned: Greedy_Bot_930 at (296.0, 200.0)
+[ImprovedAI] Debug visualizer enabled
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] Starting up at time 6.956 - bombs disabled for 2.0s
+[ImprovedAI-SPAWN] Starting STRATEGIC spawn clearing at (18, 12)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (5, 2) (will hit 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[BombPlanner] No escape routes at (18, 2) checked dirs:4
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] STARTUP SAFETY: Blocking bomb (1.143/2.0s)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] STARTUP SAFETY: Blocking bomb (0.649/2.0s)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI] STARTUP SAFETY: Blocking bomb (0.145/2.0s)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[BotSpawner] All bots spawned! Game starting...
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Startup override: bombing from current position (18, 2) (hits 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (5, 2) (will hit 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[BombPlanner] No escape routes at (18, 2) checked dirs:4
+[ImprovedAI-SPAWN] Moving to strategic position (16, 2) (will hit 2 blocks)
+[ImprovedAI] Startup safety active: 1.649/2.0s
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] STARTUP SAFETY: Blocking bomb (1.649/2.0s)
+[ImprovedAI] Startup safety active: 1.145/2.0s
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI] STARTUP SAFETY: Blocking bomb (1.145/2.0s)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[Game] Bomb placed by Timid_Bot_571 at tile (10, 50)
+[Game] Timid_Bot_571 committing escape dir (0.0, -1.0) for 15 frames
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (18, 12) (hits 1 blocks)
+[Game] Bomb placed by Greedy_Bot_930 at tile (74, 50)
+[Game] Greedy_Bot_930 committing escape dir (0.0, -1.0) for 15 frames
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (5, 2) (will hit 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[BombPlanner] No escape routes at (18, 2) checked dirs:4
+[ImprovedAI-SPAWN] Moving to strategic position (16, 2) (will hit 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (6, 12) (will hit 3 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI] A* path from (18, 12) to (16, 12): 2 waypoints
+[ImprovedAI-SPAWN] Moving to strategic position (16, 12) (will hit 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (5, 2) (will hit 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[BombPlanner] No escape routes at (18, 2) checked dirs:4
+[ImprovedAI-SPAWN] Moving to strategic position (16, 2) (will hit 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (6, 12) (will hit 3 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (16, 12) (will hit 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (5, 2) (will hit 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[BombPlanner] No escape routes at (18, 2) checked dirs:4
+[ImprovedAI-SPAWN] Moving to strategic position (16, 2) (will hit 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (6, 12) (will hit 3 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Moving to strategic position (16, 12) (will hit 2 blocks)
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI] STUCK DETECTED! Oscillating in 0.0px radius for 20 frames - FORCING RANDOM WALK
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[Game] Bomb exploded: 0 with 1 tiles
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Safe bomb from current position (2, 12) (hits 1 blocks)
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[Game] Bomb placed by Timid_Bot_571 at tile (10, 50)
+[Game] Timid_Bot_571 committing escape dir (0.0, -1.0) for 15 frames
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 17 positions, best score: 39.0 hits 1 blocks
+[ImprovedAI-SPAWN] Evaluated 13 positions, best score: 51.0 hits 2 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 52.0 hits 3 blocks
+[ImprovedAI-SPAWN] Evaluated 15 positions, best score: 46.0 hits 2 blocks

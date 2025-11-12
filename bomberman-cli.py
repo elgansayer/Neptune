@@ -203,21 +203,23 @@ def start_both(args):
 def run_tests(args):
     """Run test suite"""
     print_header("Running Tests")
-    
-    test_path = PROJECT_ROOT / "test_suite"
+    # Adjusted: run tests inside main project so test scripts can access game code
+    test_path = PROJECT_ROOT / "test_suite/runner.tscn"
     if not test_path.exists():
-        print_error("Test suite not found")
+        print_error("Runner scene not found at test_suite/runner.tscn")
         return 1
-    
-    print_info(f"Test path: {test_path}")
-    print_info("Running tests...\n")
-    
+
+    print_info("Executing test suite using main project context (access to server/client scripts).")
+    print_info("Runner: res://test_suite/runner.tscn\n")
+
     try:
         cmd = [
             'godot',
             '--headless',
-            '--path', str(test_path),
-            'res://runner.tscn'
+            '--fixed-fps', '60',
+            '--disable-render-loop',
+            '--path', str(PROJECT_ROOT),
+            'res://test_suite/runner.tscn'
         ]
         
         if args.verbose:

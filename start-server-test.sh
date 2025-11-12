@@ -4,7 +4,7 @@
 cd /home/elgan/bomberman
 
 echo "Starting server in background..."
-godot --headless --path . res://server/main_server.tscn > /tmp/bomberman-server.log 2>&1 &
+godot --headless --path server/ > /tmp/bomberman-server.log 2>&1 &
 SERVER_PID=$!
 
 echo "Server PID: $SERVER_PID"

@@ -20,6 +20,13 @@ var is_dead := false
 var debug_check_tile := Vector2i.ZERO  # Tile being checked for diagonal (for client debug)
 var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visualization)
 
+# Recovery state (prevents oscillation when blocked)
+var recovery_direction := Vector2.ZERO  # Direction to move during recovery
+var recovery_frames_remaining := 0  # How many frames to stay in recovery
+# Base movement recovery commitment (frames). 9 frames @60fps ~= 0.15s
+const RECOVERY_DURATION := 9  # Reduced from 15 (0.25s) per updated design
+const POST_BOMB_ESCAPE_DURATION := 15  # Frames (~0.25s) to keep moving away after planting
+
 # Advanced abilities (Phase 2)
 var has_bomb_kicker := false  # Can kick bombs
 var has_power_glove := false  # Can pick up and throw bombs
@@ -301,6 +308,13 @@ func _physics_process(_delta):
 		move_and_slide()
 		return
 	
+	# DIAGNOSTIC: Log input state for AI bots
+	var is_bot = has_method("is_ai_bot") and call("is_ai_bot")
+	if is_bot and Engine.get_physics_frames() % 30 == 0:
+		print("[ServerPlayer] %s RawInput:(%.2f,%.2f) Length:%.3f" % [
+			username, input_direction.x, input_direction.y, input_direction.length()
+		])
+	
 	# Get the input direction (strict 4-way)
 	var input_dir = get_4way_input()
 	
@@ -312,40 +326,80 @@ func _physics_process(_delta):
 	
 	var final_direction := Vector2.ZERO
 	
-	# CHECK 1: Is the input_direction clear?
-	var input_clear = _check_direction_clear(input_dir)
-	var _input_blocking_tile = debug_blocking_tile  # Save the blocking tile from input check
-	_is_diagonal_blocked(last_move_direction, input_dir)
-	
-	print("Input dir: ", input_dir, " Clear: ", input_clear, " Colliding: ", shape_cast_desired.is_colliding())
-	
-	if input_clear:
-		# Clear debug tiles when moving freely
-		for tile_key in debug_tiles.keys():
-			if is_instance_valid(debug_tiles[tile_key]):
-				debug_tiles[tile_key].queue_free()
-		debug_tiles.clear()
-		
-		# YES - Move in input direction and UPDATE last_move_direction
-		final_direction = input_dir
-	else:
-		# Input direction blocked - try corner sliding
-		var slide_direction = _can_corner_slide(input_dir)
-		
-		if slide_direction != Vector2.ZERO:
-			# We can slide around the corner!
-			final_direction = slide_direction
-		#else:
-		#	# Can't slide, try continuing in last_move_direction
-		#	if _check_direction_clear(last_move_direction):
-		#		final_direction = last_move_direction
+	# CHECK: Are we in recovery mode?
+	if recovery_frames_remaining > 0:
+		# Continue moving in recovery direction
+		if _check_direction_clear(recovery_direction):
+			final_direction = recovery_direction
+			recovery_frames_remaining -= 1
+			if is_bot and Engine.get_physics_frames() % 10 == 0:
+				print("[Recovery] %s moving %s for %d more frames" % [username, recovery_direction, recovery_frames_remaining])
 		else:
-			# Completely blocked, reset
-			last_move_direction = input_dir
+			# Recovery direction now blocked, exit recovery
+			recovery_frames_remaining = 0
+			recovery_direction = Vector2.ZERO
+			if is_bot:
+				print("[Recovery] %s recovery path blocked, exiting recovery" % username)
+	else:
+		# Normal movement logic
+		var input_clear = _check_direction_clear(input_dir)
+		var _input_blocking_tile = debug_blocking_tile  # Save the blocking tile from input check
+		_is_diagonal_blocked(last_move_direction, input_dir)
+		
+		if is_bot and Engine.get_physics_frames() % 30 == 0:
+			print("Input dir: ", input_dir, " Clear: ", input_clear, " Colliding: ", shape_cast_desired.is_colliding())
+		
+		if input_clear:
+			# Clear debug tiles when moving freely
+			for tile_key in debug_tiles.keys():
+				if is_instance_valid(debug_tiles[tile_key]):
+					debug_tiles[tile_key].queue_free()
+			debug_tiles.clear()
+			
+			# YES - Move in input direction and UPDATE last_move_direction
+			final_direction = input_dir
+		else:
+			# Input direction blocked - try corner sliding
+			var slide_direction = _can_corner_slide(input_dir)
+			
+			if slide_direction != Vector2.ZERO:
+				# We can slide around the corner!
+				final_direction = slide_direction
+			else:
+				# Can't slide, try perpendicular directions and ENTER RECOVERY MODE
+				var perp_dirs = _get_perpendicular_directions(input_dir)
+				var found_alternative = false
+				for perp in perp_dirs:
+					if _check_direction_clear(perp):
+						final_direction = perp
+						# ENTER RECOVERY MODE
+						recovery_direction = perp
+						recovery_frames_remaining = RECOVERY_DURATION
+						found_alternative = true
+						if is_bot:
+							print("[Recovery] %s blocked by wall, entering recovery mode: %s for %d frames" % [username, perp, RECOVERY_DURATION])
+							# Signal AI to abandon current goal and replan
+							set_meta("force_replan", true)
+						break
+				
+				if not found_alternative:
+					# Still blocked, try last known good direction
+					if last_move_direction != Vector2.ZERO and _check_direction_clear(last_move_direction):
+						final_direction = last_move_direction
+					else:
+						# Completely blocked, reset facing
+						last_move_direction = input_dir
 	
 	# Update last_move_direction if we're actively moving
 	if final_direction.length() > 0:
 		last_move_direction = final_direction
+
+	# DIAGNOSTIC: Log movement decision for AI bots
+	var is_bot_final = has_method("is_ai_bot") and call("is_ai_bot")
+	if is_bot_final and Engine.get_physics_frames() % 30 == 0:
+		print("[ServerPlayer] %s FinalDir:(%.2f,%.2f) Recovery:%s" % [
+			username, final_direction.x, final_direction.y, recovery_frames_remaining > 0
+		])
 
 	# Update debug arrow rotation
 	_update_debug_arrow()
@@ -379,8 +433,11 @@ func _physics_process(_delta):
 	move_and_slide()
 	var pos_after = position
 	
+	# Detect stuck condition - wanted to move but didn't
 	if final_direction.length() > 0 and pos_before.distance_to(pos_after) < 0.1:
-		print("WARNING: Wanted to move in direction ", final_direction, " but barely moved! Distance: ", pos_before.distance_to(pos_after))
+		if has_method("is_ai_bot") and call("is_ai_bot"):
+			# Signal AI controller that we're stuck (handled in ai_player.gd)
+			set_meta("stuck_frame", Engine.get_physics_frames())
 	
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):

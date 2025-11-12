@@ -1,0 +1,25 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+
+SCRIPT ERROR: Parse Error: Too many arguments for "get()" call. Expected at most 1 but received 2.
+          at: GDScript::reload (res://shared/ai/bomb_planner.gd:64)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://shared/ai/improved_ai_controller.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://shared/entities/ai_player.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://game_instance.gd:0)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://main_server.gd:0)
+ERROR: Failed to load script "res://main_server.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript.cpp:3041)
+=== Bomberman Server Starting ===
+[Server] Node name: ServerMain
+[Server] Node path: /root/ServerMain
+[Server] RPC config:{ &"authenticate_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"send_player_input": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"auth_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"receive_state": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 } }
+[LocalBackend] In-memory auth initialized
+[LocalBackend] WARNING: Data will not persist between restarts!
+[LocalBackend] TODO: Install GodotSQLite addon for persistence
+Server listening on port 7777
+Max players: 8
+[Server] Multiplayer authority: true
+[Server] Unique ID: 1

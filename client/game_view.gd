@@ -170,6 +170,7 @@ func update_blocks(map_data: Array):
 			block_nodes.erase(tile_key)
 
 func update_player(peer_id: String, data: Dictionary):
+	print("[Client] update_player called for: ", peer_id, " username: ", data.get("username", "unknown"))
 	var player_node
 
 	if not data.has("is_dead") or not data.is_dead:

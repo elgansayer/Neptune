@@ -1,0 +1,13 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+
+=== Bomberman Server Starting ===
+[Server] Node name: ServerMain
+[Server] Node path: /root/ServerMain
+[Server] RPC config:{ &"authenticate_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"send_player_input": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"auth_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"receive_state": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 } }
+[LocalBackend] In-memory auth initialized
+[LocalBackend] WARNING: Data will not persist between restarts!
+[LocalBackend] TODO: Install GodotSQLite addon for persistence
+Server listening on port 7777
+Max players: 8
+[Server] Multiplayer authority: true
+[Server] Unique ID: 1

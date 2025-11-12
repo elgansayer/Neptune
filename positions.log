@@ -1,0 +1,1031 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.2.6-1ubuntu1 - Compatibility - Using Device: AMD - AMD Radeon RX 7900 XTX (radeonsi, navi31, LLVM 20.1.8, DRM 3.64, 6.17.4-1-liquorix-amd64)
+
+[PCKLoader] Successfully mounted: res://characters/player-robin-hood.pck
+=== Bomberman Client Starting ===
+[Client] RPC config:{ &"authenticate_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"send_player_input": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"auth_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"receive_state": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 } }
+[DebugBotSpawner] Ready - Press F9 to spawn bots
+[Client] Connecting to 127.0.0.1:7777
+[Client] Connected to server!
+[Client] Multiplayer peer valid: true
+[Client] Multiplayer unique ID: 2081530121
+[Client] Attempting registration: Player_4050
+[Client] Registration successful!
+[Client] Attempting login as: Player_4050
+[Client] Authentication successful!
+[GameConfig] Loaded TILE_SIZE: 16px (scale: 1.0x)
+[GameConfig] Scaled BASE_SPEED: 45.0 px/s
+[GameConfig] Map: Saturn Stage 1 (21x14) Tile size: 16px, Player size: 14.0px
+[GameView] Mounted PCK: res://res/maps/stage1.pck
+[GameView] Loaded map from PCK: res://Stage.tscn
+[GameView] Camera positioned at (168.0, 112.0) with zoom (2.62987, 2.62987)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003"]
+[Client] Player count: 5
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Creating visual for player: 2081530121
+[Client] PCK scene loaded successfully for: 2081530121
+[Client] Adding player node to scene: 2081530121 container exists: true
+[Client] Player node added. Total nodes: 1
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] Creating visual for player: 1000
+[Client] PCK scene loaded successfully for: 1000
+[Client] Adding player node to scene: 1000 container exists: true
+[Client] Player node added. Total nodes: 2
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] Creating visual for player: 1001
+[Client] PCK scene loaded successfully for: 1001
+[Client] Adding player node to scene: 1001 container exists: true
+[Client] Player node added. Total nodes: 3
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] Creating visual for player: 1002
+[Client] PCK scene loaded successfully for: 1002
+[Client] Adding player node to scene: 1002 container exists: true
+[Client] Player node added. Total nodes: 4
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] Creating visual for player: 1003
+[Client] PCK scene loaded successfully for: 1003
+[Client] Adding player node to scene: 1003 container exists: true
+[Client] Player node added. Total nodes: 5
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003"]
+[Client] Player count: 5
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] Creating visual for player: 1004
+[Client] PCK scene loaded successfully for: 1004
+[Client] Adding player node to scene: 1004 container exists: true
+[Client] Player node added. Total nodes: 6
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004"]
+[Client] Player count: 6
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] Creating visual for player: 1005
+[Client] PCK scene loaded successfully for: 1005
+[Client] Adding player node to scene: 1005 container exists: true
+[Client] Player node added. Total nodes: 7
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005"]
+[Client] Player count: 7
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] Creating visual for player: 1006
+[Client] PCK scene loaded successfully for: 1006
+[Client] Adding player node to scene: 1006 container exists: true
+[Client] Player node added. Total nodes: 8
+[Client] AI bot 1006 pos: (296.0, 200.0) target: (296.0, 200.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (562.4, 380.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (554.3273, 374.5455) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (743.2291, 502.1818) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (875.4604, 591.5273) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (968.0223, 654.0691) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] === PLAYER POSITIONS (FRAME 180) ===
+[Client]   Player 2081530121: (40.0, 40.0) visible: true
+[Client]   Player 1000: (1184.0, 160.0) visible: true
+[Client]   Player 1001: (160.0, 800.0) visible: true
+[Client]   Player 1002: (1184.0, 800.0) visible: true
+[Client]   Player 1003: (160.1426, 166.8562) visible: true
+[Client]   Player 1004: (1184.0, 160.0) visible: true
+[Client]   Player 1005: (160.0, 800.0) visible: true
+[Client]   Player 1006: (1184.0, 800.0) visible: true
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] Received players: ["2081530121", "1000", "1001", "1002", "1003", "1004", "1005", "1006"]
+[Client] Player count: 8
+[Client] update_player called for: 2081530121 username: Player_4050
+[Client] Local player pos: (40.0, 40.0)
+[Client] update_player called for: 1000 username: Balanced_Bot_377
+[Client] AI bot 1000 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1001 username: Aggressive_Bot_399
+[Client] AI bot 1001 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1002 username: Timid_Bot_243
+[Client] AI bot 1002 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[Client] update_player called for: 1003 username: Balanced_Bot_746
+[Client] AI bot 1003 pos: (160.1426, 166.8562) target: (160.1426, 166.8562)
+[Client] update_player called for: 1004 username: Aggressive_Bot_568
+[Client] AI bot 1004 pos: (1184.0, 160.0) target: (1184.0, 160.0)
+[Client] update_player called for: 1005 username: Timid_Bot_914
+[Client] AI bot 1005 pos: (160.0, 800.0) target: (160.0, 800.0)
+[Client] update_player called for: 1006 username: Greedy_Bot_690
+[Client] AI bot 1006 pos: (1184.0, 800.0) target: (1184.0, 800.0)
+[1m[96m============================================================[0m
+[1m[96m                  Starting Server & Client                  [0m
+[1m[96m============================================================[0m
+
+[92m✓ Godot found: 4.5.1.stable.official.f62fdbde1[0m
+[94mℹ Starting server in background...[0m
+[92m✓ Server started (PID: 14251)[0m
+[94mℹ Server log: /home/elgan/bomberman/server.log[0m
+[94mℹ Waiting 2 seconds for server to initialize...[0m
+[94mℹ Launching client...
+[0m
+[94mℹ 
+Client closed. Stopping server...[0m
+[92m✓ Server stopped[0m
+[94mℹ Server log saved to: /home/elgan/bomberman/server.log[0m

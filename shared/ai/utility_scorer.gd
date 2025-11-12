@@ -769,17 +769,23 @@ func score_kite_danger(ai_player: Node2D, current_tile: Vector2i, current_time: 
 
 ## Phase 3: Explore unmapped/unseen areas
 func score_explore_map(current_tile: Vector2i, current_time: float) -> Dictionary:
-	# Low priority action to prevent total idleness
+	# IMPORTANT: High priority at game start to escape corners
 	var map_width = game_instance.game_map[0].size()
 	var map_height = game_instance.game_map.size()
 	var center = Vector2i(map_width / 2, map_height / 2)
 	
-	# Find edge or corner tiles
+	# Check if we're in a corner or edge (spawn area)
+	var is_corner = (current_tile.x < 3 or current_tile.x > map_width - 4) and \
+	                (current_tile.y < 3 or current_tile.y > map_height - 4)
+	var is_edge = current_tile.x < 4 or current_tile.x > map_width - 5 or \
+	              current_tile.y < 4 or current_tile.y > map_height - 5
+	
+	# Find tiles toward center or open space
 	var best_explore_tile = current_tile
-	var best_distance = 0.0
+	var best_score_value = 0.0
 	
 	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
-		for dist in range(3, 8):
+		for dist in range(3, 10):  # Look further
 			var explore_tile = current_tile + dir * dist
 			if not observer._is_tile_valid(explore_tile) or not observer._is_tile_walkable(explore_tile):
 				break
@@ -788,13 +794,28 @@ func score_explore_map(current_tile: Vector2i, current_time: float) -> Dictionar
 			if danger > 0.3:
 				continue
 			
-			var distance_from_center = _manhattan_distance(explore_tile, center)
-			if distance_from_center > best_distance:
-				best_distance = distance_from_center
+			# Score based on distance from current position and moving toward center
+			var distance_from_current = _manhattan_distance(current_tile, explore_tile)
+			var distance_to_center = _manhattan_distance(explore_tile, center)
+			var current_distance_to_center = _manhattan_distance(current_tile, center)
+			
+			# Prefer tiles that are: far from current position AND closer to center
+			var tile_score = distance_from_current * 2.0
+			if distance_to_center < current_distance_to_center:
+				tile_score += 5.0  # Big bonus for moving toward center
+			
+			if tile_score > best_score_value:
+				best_score_value = tile_score
 				best_explore_tile = explore_tile
 	
-	if best_distance > 0:
-		var base_score = 0.15 * personality_weights.get("exploration", 0.3)
+	if best_score_value > 0:
+		# MUCH higher base score, especially if in corner
+		var base_score = 1.5 * personality_weights.get("exploration", 0.3)  # 10x higher than before
+		if is_corner:
+			base_score *= 3.0  # Triple score if in corner - MUST escape
+		elif is_edge:
+			base_score *= 2.0  # Double if on edge
+		
 		return {
 			"score": base_score * idle_penalty_multiplier,
 			"action": ActionType.EXPLORE_MAP,

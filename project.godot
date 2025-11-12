@@ -22,6 +22,7 @@ ClientMain="*res://client/main_client.gd"
 ServerMain="*res://shared/server_stub.gd"
 Constants="*res://shared/constants.gd"
 GameConfig="*res://shared/game_config.gd"
+DebugBotSpawner="*res://scripts/debug_bot_spawner.gd"
 
 [dotnet]
 

@@ -34,10 +34,32 @@ const EXPLOSION_DISPLAY_TIME = 0.5  # How long to show explosions
 
 signal game_ended(winner_id: String)
 
+# Optional: Tests may set this to use a provided map deterministically
+var test_mode: bool = false
+
+func load_custom_map(map_data: Dictionary):
+	# Remove existing tile bodies named Tile_x_y
+	for child in get_children():
+		if child is StaticBody2D and String(child.name).begins_with("Tile_"):
+			child.queue_free()
+
+	map_tiles.clear()
+	game_map = map_data.get("grid", [])
+	spawn_points = map_data.get("spawn_points", [])
+	# Load into GameConfig for consistency
+	GameConfig.load_map_config(map_data)
+	# Recreate collision
+	create_map_collision()
+
 func _ready():
 	# Initialize map manager
 	map_manager = load("res://shared/maps/map_manager.gd").new()
 	add_child(map_manager)
+	
+	# Skip map loading in test mode (tests will inject custom maps)
+	if test_mode:
+		print("[GameInstance] Test mode: skipping automatic map loading")
+		return
 	
 	# Seed randomness with current time for unique maps each game
 	randomize()
@@ -88,8 +110,30 @@ func _ready():
 	# Load map configuration into GameConfig singleton
 	GameConfig.load_map_config(map_data)
 	
-	print("[GameInstance] Loaded map '", map_data.get("name", "Unknown"), 
-		  "' with ", spawn_points.size(), " spawn points")
+	# CRITICAL FIX: Rescale spawn points if they were calculated with wrong tile size
+	# Spawn points are world coordinates calculated as: tile_pos * old_tile_size + old_tile_size/2
+	# We need to convert them to the correct tile size
+	var map_tile_size = map_data.get("tile_size", 16)
+	if map_tile_size != GameConfig.TILE_SIZE:
+		print("[GameInstance] WARNING: Spawn points calculated with tile_size=", map_tile_size, 
+			  " but GameConfig has TILE_SIZE=", GameConfig.TILE_SIZE, ". Rescaling spawns...")
+		
+		var rescaled_spawns = []
+		for spawn_pos in spawn_points:
+			# Convert world coord back to tile coord using OLD tile size
+			var tile_x = int((spawn_pos.x - map_tile_size / 2.0) / map_tile_size)
+			var tile_y = int((spawn_pos.y - map_tile_size / 2.0) / map_tile_size)
+			# Convert tile coord to world coord using NEW tile size
+			var new_world_x = (tile_x * GameConfig.TILE_SIZE) + (GameConfig.TILE_SIZE / 2.0)
+			var new_world_y = (tile_y * GameConfig.TILE_SIZE) + (GameConfig.TILE_SIZE / 2.0)
+			rescaled_spawns.append(Vector2(new_world_x, new_world_y))
+			print("[GameInstance]   Spawn tile (", tile_x, ",", tile_y, "): ", spawn_pos, " -> ", Vector2(new_world_x, new_world_y))
+		
+		spawn_points = rescaled_spawns
+	
+	print("[GameInstance] Map '", map_data.get("name", "Unknown"), "' loaded with ", spawn_points.size(), " spawn points.")
+	if spawn_points.is_empty():
+		push_error("[GameInstance] CRITICAL: No spawn points were loaded from the map. Bots will use a fallback position.")
 	
 	# Create physics collision bodies for walls and blocks
 	create_map_collision()
@@ -147,7 +191,7 @@ func _physics_process(delta):
 func get_next_spawn_point() -> Vector2:
 	"""Get the next available spawn point from the map"""
 	if spawn_points.is_empty():
-		push_warning("[GameInstance] No spawn points available, using fallback")
+		push_error("[GameInstance] FATAL: No spawn points available! Using hardcoded fallback Vector2(64, 64). Check map file and loading process.")
 		return Vector2(64, 64)
 	
 	var spawn_pos = spawn_points[next_spawn_index % spawn_points.size()]
@@ -184,8 +228,9 @@ func add_ai_bot(personality: int = -1) -> int:
 	# Get spawn position
 	var spawn_pos = get_next_spawn_point()
 	
-	# Create AI player
-	var bot = AIPlayerScript.new()
+	# Create AI player - must instantiate base class then apply script
+	var bot = ServerPlayer.new()
+	bot.set_script(AIPlayerScript)
 	bot.player_id = str(bot_id)
 	bot.position = spawn_pos
 	bot.setup_ai(self, personality)
@@ -242,6 +287,26 @@ func place_bomb(player: ServerPlayer):
 	bomb.tree_exited.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
+
+	# Post-bomb escape commitment: keep moving away (~0.25s)
+	var escape_dir: Vector2 = player.get_4way_input()
+	if escape_dir.length() < 0.1:
+		escape_dir = player.last_move_direction
+	if escape_dir.length() < 0.1:
+		# Pick first walkable adjacent direction
+		for d in [Vector2.UP, Vector2.DOWN, Vector2.LEFT, Vector2.RIGHT]:
+			var t: Vector2i = player.get_tile_position() + Vector2i(int(d.x), int(d.y))
+			if player.is_tile_walkable(t):
+				escape_dir = d
+				break
+
+	if escape_dir.length() >= 0.1:
+		player.recovery_direction = escape_dir
+		# Use explicit constant from ServerPlayer (~0.25s @60fps)
+		player.recovery_frames_remaining = ServerPlayer.POST_BOMB_ESCAPE_DURATION
+		# Hint AI to replan goals immediately after planting
+		player.set_meta("force_replan", true)
+		print("[Game] ", player.username, " committing escape dir ", escape_dir, " for ", ServerPlayer.POST_BOMB_ESCAPE_DURATION, " frames")
 
 func _on_bomb_exploded(bomb: ServerBomb, bomb_owner: ServerPlayer, explosion_pattern: Array):
 	print("[Game] Bomb exploded: ", bomb.bomb_id, " with ", explosion_pattern.size(), " tiles")
