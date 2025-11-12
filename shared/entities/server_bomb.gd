@@ -204,6 +204,10 @@ func kick(direction: Vector2):
 	kick_direction = direction.normalized()
 	is_kicked = true
 	
+	# Clear any collision exceptions (player can no longer walk through this bomb)
+	# Note: This requires iterating through all players, but we don't have a reference
+	# The collision exceptions will naturally clear as the bomb moves away
+	
 	# Change collision layer to allow bomb to move through its original tile
 	# Keep collision with walls and other bombs
 	collision_layer = Constants.COLLISION_LAYER_BOMBS
