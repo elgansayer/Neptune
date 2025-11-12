@@ -184,6 +184,10 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	player.position = spawn_position
 	player.name = "Player_" + str(peer_id)
 	
+	# TESTING: Give bomb kicker ability by default for testing
+	player.has_bomb_kicker = true
+	print("[Game] Player spawned with bomb kicker ability for testing")
+	
 	players[peer_id] = player
 	add_child(player)
 	
