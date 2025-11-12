@@ -6,6 +6,7 @@ extends Node2D
 const Constants = preload("res://shared/constants.gd")
 const ClientPlayerController = preload("res://client/prediction/client_player_controller.gd")
 const EntityInterpolator = preload("res://client/prediction/entity_interpolator.gd")
+const BombThrowPredictor = preload("res://client/prediction/bomb_throw_predictor.gd")
 const BombScene = preload("res://client/ui/bomb.tscn")
 const ExplosionRenderer = preload("res://client/ui/explosion_renderer.gd")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
@@ -32,6 +33,7 @@ var hud: CanvasLayer # Reference to HUD
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
 var remote_player_interpolators = {} # peer_id -> EntityInterpolator for remote players
+var bomb_throw_predictor: BombThrowPredictor # Power Glove throw prediction
 
 # Input buffering: track order of pressed keys
 var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
@@ -46,6 +48,10 @@ func _ready():
 	# Initialize prediction system for local player
 	local_player_controller = ClientPlayerController.new()
 	add_child(local_player_controller)
+	
+	# Initialize bomb throw predictor for Power Glove
+	bomb_throw_predictor = BombThrowPredictor.new()
+	add_child(bomb_throw_predictor)
 	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
@@ -488,6 +494,17 @@ func update_bomb(bomb_id: String, data: Dictionary):
 	# Update position and timer
 	bomb_node.position = Vector2(data.position.x, data.position.y)
 	bomb_node.update_timer(data.timer)
+	
+	# Handle Power Glove states
+	if data.has("state"):
+		var bomb_state = data.state
+		bomb_node.set_bomb_state(bomb_state)
+		
+		# Update Z-height for thrown bombs
+		if bomb_state == BombRenderer.BombState.THROWN and data.has("z_height"):
+			bomb_node.update_z_height(data.z_height)
+		else:
+			bomb_node.update_z_height(0.0)  # Reset Z height for other states
 
 func update_explosions(explosions_data: Array):
 	"""Update progressive explosions with SBomberman sprites"""
@@ -563,6 +580,12 @@ func _physics_process(delta):
 				input_y = -1.0
 	
 	var place_bomb = Input.is_action_just_pressed("ui_accept")
+	var action_released = Input.is_action_just_released("ui_accept")
+	
+	# Note: For now, ui_accept serves dual purpose:
+	# - Normal: place bomb
+	# - With Power Glove: pickup on press, throw on release
+	# The server will determine the appropriate action based on player state
 	
 	# SIMPLIFIED APPROACH: Just use server state with smooth interpolation
 	# Prediction is too complex to match server's corner sliding + grid snapping
@@ -576,7 +599,9 @@ func _physics_process(delta):
 	get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
 		"input_x": input_x,
 		"input_y": input_y,
-		"place_bomb": place_bomb
+		"place_bomb": place_bomb,
+		"action_pressed": place_bomb,
+		"action_released": action_released
 	})
 
 func _remove_dead_player(peer_id: String):
