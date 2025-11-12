@@ -9,6 +9,7 @@ const EntityInterpolator = preload("res://client/prediction/entity_interpolator.
 const BombScene = preload("res://client/ui/bomb.tscn")
 const ExplosionRenderer = preload("res://client/ui/explosion_renderer.gd")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
+const GameHUDScene = preload("res://client/ui/game_hud.tscn")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -26,6 +27,7 @@ var my_player_id = ""
 var map_rendered = false
 var map_scene_instance = null # Hold reference to loaded PCK map scene
 var removed_dead_players = {} # peer_id -> bool when death animation has finished and node was removed
+var hud: CanvasLayer # Reference to HUD
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -44,6 +46,14 @@ func _ready():
 	# Initialize prediction system for local player
 	local_player_controller = ClientPlayerController.new()
 	add_child(local_player_controller)
+	
+	# Initialize HUD
+	hud = GameHUDScene.instantiate()
+	add_child(hud)
+	
+	# Set player name in HUD once we know it
+	if ClientMain.username:
+		hud.set_player_name(ClientMain.username)
 
 func update_game_state(state: Dictionary):
 	# Load map configuration if present (first time only)
@@ -59,10 +69,40 @@ func update_game_state(state: Dictionary):
 	if state.has("map"):
 		update_blocks(state.map)
 	
+	# Update HUD timer
+	if state.has("match_timer") and hud:
+		hud.update_timer(state.match_timer)
+	
+	# Count alive players and update HUD
+	if state.has("players") and hud:
+		var alive_count = 0
+		for peer_id in state.players:
+			if not state.players[peer_id].get("is_dead", false):
+				alive_count += 1
+		hud.update_players_alive(alive_count, state.players.size())
+	
 	# Update players
 	for peer_id_str in state.players:
 		var player_data = state.players[peer_id_str]
 		update_player(peer_id_str, player_data)
+	
+	# Update local player stats in HUD
+	if state.players.has(str(multiplayer.get_unique_id())) and hud:
+		var my_data = state.players[str(multiplayer.get_unique_id())]
+		hud.update_player_stats(
+			my_data.get("bombs_placed", 0),
+			my_data.get("max_bombs", 1),
+			my_data.get("bomb_range", 2),
+			my_data.get("speed_multiplier", 1.0)
+		)
+	
+	# Check for game over
+	if state.has("match_active") and not state.match_active and hud:
+		var winner_name = ""
+		if state.has("winner_id") and state.winner_id:
+			if state.players.has(state.winner_id):
+				winner_name = state.players[state.winner_id].get("username", "Unknown")
+		hud.show_game_over(winner_name)
 	
 	# Remove players no longer in state
 	for peer_id in player_nodes.keys():
