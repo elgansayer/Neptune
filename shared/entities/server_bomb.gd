@@ -39,9 +39,10 @@ signal exploded(bomb, explosion_pattern)
 signal explosion_expanded(tiles)
 
 func _ready():
-	# Set collision layers: bombs on layer 3, collide with walls (1) only
+	# Set collision layers: bombs on layer 3, collide with walls and players
+	# Players need to collide with bombs to detect them for kicking
 	collision_layer = Constants.COLLISION_LAYER_BOMBS
-	collision_mask = Constants.COLLISION_LAYER_WALLS
+	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_PLAYERS
 	
 	# Set up collision shape
 	var collision_shape = CollisionShape2D.new()

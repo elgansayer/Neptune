@@ -383,27 +383,26 @@ func _physics_process(_delta):
 	if final_direction.length() > 0 and pos_before.distance_to(pos_after) < 0.1:
 		print("WARNING: Wanted to move in direction ", final_direction, " but barely moved! Distance: ", pos_before.distance_to(pos_after))
 	
-	# Check for bomb collisions and kick them if we have the ability
+	# Check for bomb kicking by looking at the tile we're moving into
 	if has_bomb_kicker and final_direction.length() > 0.1:
-		var collision_count = get_slide_collision_count()
-		if collision_count > 0:
-			print("[Player] Detected ", collision_count, " collisions after move_and_slide")
+		# Calculate the tile we're trying to move into
+		var current_tile = get_tile_position()
+		var direction_vector = final_direction.normalized()
+		var target_tile = current_tile + Vector2i(
+			int(round(direction_vector.x)),
+			int(round(direction_vector.y))
+		)
 		
-		for i in range(collision_count):
-			var collision = get_slide_collision(i)
-			var collider = collision.get_collider()
-			print("[Player] Collision ", i, ": collider=", collider, " type=", collider.get_class() if collider else "null")
+		# Get game instance to check for bombs
+		var game_instance = get_parent()
+		if game_instance and game_instance.has_method("get_bomb_at_tile"):
+			var bomb = game_instance.get_bomb_at_tile(target_tile)
 			
-			# Check if we collided with a bomb
-			if collider and collider.has_method("kick"):
-				# Don't kick bombs that are in our collision exceptions (we're walking out of them)
-				if collider in collision_exceptions:
-					print("[Player] Bomb is in collision exceptions, skipping kick")
-					continue
-				
-				# Kick the bomb in the direction we're moving
-				print("[Player] Kicking bomb via collision detection!")
-				collider.kick(final_direction)
+			# If there's a bomb in the target tile and we're not in our exceptions list
+			if bomb and not (bomb in collision_exceptions):
+				print("[Player] Found bomb at tile ", target_tile, " - attempting kick!")
+				bomb.kick(direction_vector)
+
 	
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):

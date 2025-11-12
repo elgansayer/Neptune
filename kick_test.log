@@ -1,0 +1,20 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+OpenGL API 4.6 (Core Profile) Mesa 25.3.0-devel - Compatibility - Using Device: AMD - Radeon RX 7900 XTX (radeonsi, navi31, LLVM 20.1.8, DRM 3.64, 6.17.4-1-liquorix-amd64)
+
+[PCKLoader] Successfully mounted: res://characters/player-robin-hood.pck
+=== Bomberman Client Starting ===
+[Client] RPC config:{ &"authenticate_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"send_player_input": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"auth_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"receive_state": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 } }
+[Client] Connecting to 127.0.0.1:7777
+[Client] Connected to server!
+[Client] Multiplayer peer valid: true
+[Client] Multiplayer unique ID: 1423876860
+[Client] Attempting registration: Player_6420
+[Client] Registration successful!
+[Client] Attempting login as: Player_6420
+[Client] Authentication successful!
+[GameConfig] Loaded TILE_SIZE: 16px (scale: 1.0x)
+[GameConfig] Scaled BASE_SPEED: 45.0 px/s
+[GameConfig] Map: Saturn Stage 1 (21x14) Tile size: 16px, Player size: 14.0px
+[GameView] Mounted PCK: res://res/maps/stage1.pck
+[GameView] Loaded map from PCK: res://Stage.tscn
+[GameView] Camera positioned at (168.0, 112.0) with zoom (2.62987, 2.62987)
