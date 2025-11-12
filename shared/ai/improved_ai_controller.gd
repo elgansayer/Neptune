@@ -123,6 +123,11 @@ func decide_action(ai_player: Node2D) -> Dictionary:
 	# Phase 5: Check for replanning triggers
 	_check_replanning_triggers(current_tile, current_time)
 
+	# Defensive null check for utility_scorer (prevents crash if initialization failed)
+	if not utility_scorer:
+		push_error("[ImprovedAI] utility_scorer is null - AI initialization failed!")
+		return {"direction": Vector2.ZERO, "place_bomb": false, "reasoning": "ERROR: AI not initialized"}
+	
 	utility_scorer.set_context({
 		"opponent_profiles": opponent_profiles,
 		"priority_targets": priority_targets,
@@ -132,6 +137,11 @@ func decide_action(ai_player: Node2D) -> Dictionary:
 		"current_position": current_tile,
 		"current_time": current_time
 	})
+	
+	# Defensive null check for danger_mapper
+	if not danger_mapper:
+		push_error("[ImprovedAI] danger_mapper is null - AI initialization failed!")
+		return {"direction": Vector2.ZERO, "place_bomb": false, "reasoning": "ERROR: AI not initialized"}
 	
 	# EMERGENCY CHECK: Are we in immediate danger?
 	if danger_mapper.is_emergency_danger(current_tile, current_time):
