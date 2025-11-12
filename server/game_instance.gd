@@ -154,19 +154,8 @@ func _physics_process(delta):
 			place_bomb(player)
 			player.place_bomb_requested = false
 		
-		# Handle bomb kicking for players with the ability
-		if player.has_bomb_kicker and not player.is_dead:
-			# Check if player just entered a new tile with a bomb
-			var player_tile = player.get_tile_position()
-			var prev_tile = player.previous_tile
-			var facing_direction = player.last_move_direction
-			
-			# Only kick if:
-			# 1. Player is moving (has direction)
-			# 2. Player just entered this tile (previous_tile != current_tile)
-			if facing_direction.length() > 0.1 and prev_tile != player_tile:
-				# Try to kick bomb at current tile (player just walked into bomb)
-				player.try_kick_bomb_at_tile(player_tile, facing_direction)
+		# Note: Bomb kicking is now handled by collision detection in ServerPlayer._physics_process()
+		# Players kick bombs when they collide with them during movement
 		
 		# Handle stop kicked bomb request
 		if player.stop_kicked_bomb_requested:

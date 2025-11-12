@@ -25,9 +25,6 @@ var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visuali
 var has_bomb_kicker := false  # Can kick bombs
 var has_power_glove := false  # Can pick up and throw bombs
 
-# Track previous tile position for kick detection
-var previous_tile := Vector2i.ZERO
-
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
@@ -62,9 +59,6 @@ func _ready():
 	
 	# Set up debug arrow
 	_setup_debug_arrow()
-	
-	# Initialize previous tile position
-	previous_tile = get_tile_position()
 	
 	# Set up debug raycast line
 	_setup_debug_raycast()
@@ -389,6 +383,17 @@ func _physics_process(_delta):
 	if final_direction.length() > 0 and pos_before.distance_to(pos_after) < 0.1:
 		print("WARNING: Wanted to move in direction ", final_direction, " but barely moved! Distance: ", pos_before.distance_to(pos_after))
 	
+	# Check for bomb collisions and kick them if we have the ability
+	if has_bomb_kicker and final_direction.length() > 0.1:
+		for i in range(get_slide_collision_count()):
+			var collision = get_slide_collision(i)
+			var collider = collision.get_collider()
+			
+			# Check if we collided with a bomb
+			if collider and collider.has_method("kick"):
+				# Kick the bomb in the direction we're moving
+				collider.kick(final_direction)
+	
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):
 		var bomb = collision_exceptions[i]
@@ -403,9 +408,6 @@ func _physics_process(_delta):
 			bomb.remove_collision_exception_with(self)
 			remove_collision_exception_with(bomb)
 			collision_exceptions.remove_at(i)
-	
-	# Update previous tile position at the end of frame for next frame's kick detection
-	previous_tile = get_tile_position()
 
 func _update_debug_arrow():
 	"""Update the debug arrow rotation based on last move direction"""
@@ -584,27 +586,6 @@ func collect_powerup(powerup):
 		ServerPowerUpScript.PowerUpType.VIRUS:
 			# TODO: Implement virus debuffs in Phase 2
 			print("[Player] ", username, " collected VIRUS! (Phase 2 - no effect yet)")
-
-func try_kick_bomb_at_tile(tile_pos: Vector2i, kick_direction: Vector2) -> bool:
-	"""Try to kick a bomb at the specified tile position in the given direction
-	Returns true if a bomb was kicked"""
-	if not has_bomb_kicker:
-		return false
-	
-	# Get game instance to find bombs
-	var game_inst = get_parent()
-	if not game_inst or not game_inst.has_method("get_bomb_at_tile"):
-		return false
-	
-	# Check if there's a bomb at this tile
-	var bomb = game_inst.get_bomb_at_tile(tile_pos)
-	if bomb and not bomb.is_kicked and not bomb.has_exploded:
-		# Kick the bomb in the direction we're facing
-		# The bomb's internal just_placed_timer will prevent kicking if it was just placed
-		bomb.kick(kick_direction)
-		return true
-	
-	return false
 
 func get_state() -> Dictionary:
 	return {
