@@ -123,11 +123,12 @@ func receive_state(state: Dictionary):
 
 # === AI Bot Commands ===
 
-func request_spawn_bot(personality: int = -1):
-	"""Request server to spawn an AI bot"""
-	if not authenticated:
-		push_error("Must be authenticated to spawn bots")
-		return
-	
-	print("[Client] Requesting AI bot spawn (personality: ", personality, ")")
-	get_node("/root/ServerMain").rpc_id(1, "spawn_ai_bot", personality)
+# AI System removed - preparing for rebuild
+# func request_spawn_bot(personality: int = -1):
+# 	"""Request server to spawn an AI bot"""
+# 	if not authenticated:
+# 		push_error("Must be authenticated to spawn bots")
+# 		return
+# 	
+# 	print("[Client] Requesting AI bot spawn (personality: ", personality, ")")
+# 	get_node("/root/ServerMain").rpc_id(1, "spawn_ai_bot", personality)
