@@ -179,10 +179,13 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	player.position = spawn_position
 	player.name = "Player_" + str(peer_id)
 	
+	# TESTING: Give player Power Glove at start for testing bomb throwing
+	player.has_power_glove = true
+	
 	players[peer_id] = player
 	add_child(player)
 	
-	print("[Game] Player joined: ", username, " at ", spawn_position)
+	print("[Game] Player joined: ", username, " at ", spawn_position, " (Power Glove: ", player.has_power_glove, ")")
 
 func add_ai_bot(personality: int = -1) -> int:
 	"""Spawn an AI bot with specified personality (-1 = random)
@@ -203,10 +206,13 @@ func add_ai_bot(personality: int = -1) -> int:
 	bot.position = spawn_pos
 	bot.setup_ai(self, personality)
 	
+	# TESTING: Give AI bot Power Glove at start for testing bomb throwing
+	bot.has_power_glove = true
+	
 	players[bot_id] = bot
 	add_child(bot)
 	
-	print("[Game] AI Bot spawned: ", bot.bot_name, " at ", spawn_pos)
+	print("[Game] AI Bot spawned: ", bot.bot_name, " at ", spawn_pos, " (Power Glove: ", bot.has_power_glove, ")")
 	return bot_id
 
 func remove_player(peer_id: int):
