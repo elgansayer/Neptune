@@ -12,6 +12,7 @@ var username: String = ""
 var input_direction := Vector2.ZERO
 var last_move_direction := Vector2.ZERO  # The last direction we successfully moved (persists when stationary)
 var place_bomb_requested := false
+var stop_kicked_bomb_requested := false  # New input for stopping kicked bombs
 var bombs_placed := 0
 var max_bombs := 1
 var bomb_range := 2
@@ -382,6 +383,27 @@ func _physics_process(_delta):
 	if final_direction.length() > 0 and pos_before.distance_to(pos_after) < 0.1:
 		print("WARNING: Wanted to move in direction ", final_direction, " but barely moved! Distance: ", pos_before.distance_to(pos_after))
 	
+	# Check for bomb kicking by looking at the tile we're moving into
+	if has_bomb_kicker and final_direction.length() > 0.1:
+		# Calculate the tile we're trying to move into
+		var current_tile = get_tile_position()
+		var direction_vector = final_direction.normalized()
+		var target_tile = current_tile + Vector2i(
+			int(round(direction_vector.x)),
+			int(round(direction_vector.y))
+		)
+		
+		# Get game instance to check for bombs
+		var game_instance = get_parent()
+		if game_instance and game_instance.has_method("get_bomb_at_tile"):
+			var bomb = game_instance.get_bomb_at_tile(target_tile)
+			
+			# If there's a bomb in the target tile and we're not in our exceptions list
+			if bomb and not (bomb in collision_exceptions):
+				print("[Player] Found bomb at tile ", target_tile, " - attempting kick!")
+				bomb.kick(direction_vector)
+
+	
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):
 		var bomb = collision_exceptions[i]
@@ -513,6 +535,12 @@ func request_bomb_placement():
 		return
 	place_bomb_requested = true
 
+func request_stop_kicked_bomb():
+	"""Request to stop a nearby kicked bomb"""
+	if is_dead:
+		return
+	stop_kicked_bomb_requested = true
+
 func can_place_bomb() -> bool:
 	if is_dead:
 		return false
@@ -561,7 +589,7 @@ func collect_powerup(powerup):
 			print("[Player] ", username, " collected SPEED power-up! Speed: ", speed_multiplier)
 		ServerPowerUpScript.PowerUpType.BOMB_KICKER:
 			has_bomb_kicker = true
-			print("[Player] ", username, " collected BOMB KICKER! (Phase 2 feature)")
+			print("[Player] ", username, " collected BOMB KICKER!")
 		ServerPowerUpScript.PowerUpType.POWER_GLOVE:
 			has_power_glove = true
 			print("[Player] ", username, " collected POWER GLOVE! (Phase 2 feature)")

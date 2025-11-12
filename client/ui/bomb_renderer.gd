@@ -13,6 +13,7 @@ const SOUND_EXPLOSION: AudioStream = preload("res://res/sounds/bombs/bomb_explos
 
 var bomb_id: String = ""
 var bomb_timer: float = 3.0
+var is_kicked := false
 
 var is_planted := false
 var has_exploded := false
@@ -51,6 +52,17 @@ func update_timer(timer: float):
 	bomb_timer = timer
 	if timer_label:
 		timer_label.text = "%.1f" % bomb_timer
+
+func set_kicked_state(kicked: bool):
+	"""Update visual feedback for kicked bombs"""
+	is_kicked = kicked
+	if animated_sprite and is_kicked:
+		# Make the bomb visually distinct when kicked (faster animation, different color modulation)
+		animated_sprite.speed_scale = 2.0
+		animated_sprite.modulate = Color(1.0, 0.8, 0.8, 1.0)  # Slight red tint
+	elif animated_sprite:
+		animated_sprite.speed_scale = 1.0
+		animated_sprite.modulate = Color(1.0, 1.0, 1.0, 1.0)  # Normal color
 
 func explode():
 	"""Play explosion audio and hide the sprite until the node is removed."""
