@@ -57,6 +57,10 @@ var debug_visualizer
 var personality_type: int
 var personality_weights: Dictionary
 
+# Phase 4: Team coordination
+var team_id: int = -1  # -1 = free-for-all, 0+ = team number
+var teammates: Array = []  # List of teammate player IDs
+
 # Behavior Trees per state
 var explore_tree: BehaviorTree.BTNode
 var hunt_tree: BehaviorTree.BTNode
@@ -630,11 +634,20 @@ func calculate_bomb_value(tile: Vector2i, game_state: Dictionary, ai_player: Nod
 		if is_breakable_block(cell, game_state):
 			value += 100.0
 	
-	# Value from trapping opponents
+	# Value from trapping opponents (Phase 4: Team-aware)
 	for peer_id in game_state.get("players", {}):
 		var player = game_state.players[peer_id]
 		if player == ai_player:
 			continue
+		
+		# Phase 4: Skip teammates
+		if team_id >= 0 and is_teammate(peer_id):
+			# Penalty for hitting teammates
+			var player_tile = player.get_tile_position()
+			if player_tile in explosion_cells:
+				value -= 500.0  # Large penalty for friendly fire
+			continue
+		
 		var player_tile = player.get_tile_position()
 		if player_tile in explosion_cells:
 			value += personality_weights.get("trap_bonus", 400) * 0.5
@@ -857,3 +870,97 @@ func on_match_end():
 	if q_learning:
 		q_learning.save_q_table()
 		print("[UnifiedAI] Q-table saved")
+
+# ============================================================================
+# PHASE 4: TEAM COORDINATION
+# ============================================================================
+
+func set_team(team_number: int, teammate_ids: Array = []):
+"""
+Set team for this bot (Phase 4 Enhancement)
+
+Args:
+team_number: Team ID (0+ for teams, -1 for free-for-all)
+teammate_ids: Array of peer IDs that are teammates
+"""
+team_id = team_number
+teammates = teammate_ids.duplicate()
+
+if team_id >= 0:
+print("[UnifiedAI] Joined team ", team_id, " with ", teammates.size(), " teammates")
+
+func is_teammate(peer_id: int) -> bool:
+"""Check if a player is a teammate"""
+return peer_id in teammates
+
+func find_nearest_opponent_team_aware(from_tile: Vector2i, game_state: Dictionary, ai_player: Node2D) -> Vector2i:
+"""
+Find nearest opponent, excluding teammates (Phase 4 Enhancement)
+"""
+var nearest = Vector2i(-1, -1)
+var min_dist = INF
+
+for peer_id in game_state.players:
+var player = game_state.players[peer_id]
+if player == ai_player:
+continue
+
+# Skip teammates
+if team_id >= 0 and is_teammate(peer_id):
+continue
+
+var player_tile = player.get_tile_position()
+var dist = abs(player_tile.x - from_tile.x) + abs(player_tile.y - from_tile.y)
+
+if dist < min_dist:
+min_dist = dist
+nearest = player_tile
+
+return nearest
+
+func should_coordinate_attack(target_tile: Vector2i) -> Dictionary:
+"""
+Check if teammates are also targeting this opponent (Phase 4 Enhancement)
+
+Returns: {
+"coordinated": bool,
+"teammate_count": int,
+"recommended_action": String  # "attack", "support", "retreat"
+}
+"""
+if team_id < 0 or teammates.is_empty():
+return {"coordinated": false, "teammate_count": 0, "recommended_action": "attack"}
+
+var teammates_nearby = 0
+var teammates_targeting = 0
+
+for teammate_id in teammates:
+if not game_instance.players.has(teammate_id):
+continue
+
+var teammate = game_instance.players[teammate_id]
+if teammate.has_method("is_dead") and teammate.is_dead:
+continue
+
+var teammate_tile = teammate.get_tile_position()
+var distance_to_target = abs(teammate_tile.x - target_tile.x) + abs(teammate_tile.y - target_tile.y)
+
+if distance_to_target <= 5:
+teammates_nearby += 1
+
+if distance_to_target <= 3:
+teammates_targeting += 1
+
+var coordinated = teammates_targeting > 0
+var action = "attack"
+
+if teammates_targeting >= 2:
+action = "support"  # Multiple teammates already attacking, provide support
+elif teammates_nearby >= 1:
+action = "attack"  # Coordinate pincer attack
+
+return {
+"coordinated": coordinated,
+"teammate_count": teammates_targeting,
+"recommended_action": action
+}
