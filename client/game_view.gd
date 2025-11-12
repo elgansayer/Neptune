@@ -476,6 +476,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		bomb_node = BombScene.instantiate()
 		bomb_node.bomb_id = bomb_id
 		bomb_node.name = "Bomb_" + bomb_id
+		bomb_node.z_index = 10  # Render bombs above explosions
 		
 		bombs_container.add_child(bomb_node)
 		bomb_nodes[bomb_id] = bomb_node
@@ -503,6 +504,7 @@ func update_explosions(explosions_data: Array):
 			var explosion_node = ExplosionRenderer.new()
 			explosion_node.explosion_id = explosion_id
 			explosion_node.name = "Explosion_" + explosion_id
+			explosion_node.z_index = 5  # Render explosions below bombs (z_index 10)
 			
 			# Initialize with pattern from server
 			explosion_node.initialize(
