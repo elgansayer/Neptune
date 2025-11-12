@@ -25,6 +25,9 @@ var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visuali
 var has_bomb_kicker := false  # Can kick bombs
 var has_power_glove := false  # Can pick up and throw bombs
 
+# Track previous tile position for kick detection
+var previous_tile := Vector2i.ZERO
+
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
@@ -59,6 +62,9 @@ func _ready():
 	
 	# Set up debug arrow
 	_setup_debug_arrow()
+	
+	# Initialize previous tile position
+	previous_tile = get_tile_position()
 	
 	# Set up debug raycast line
 	_setup_debug_raycast()
@@ -397,6 +403,9 @@ func _physics_process(_delta):
 			bomb.remove_collision_exception_with(self)
 			remove_collision_exception_with(bomb)
 			collision_exceptions.remove_at(i)
+	
+	# Update previous tile position at the end of frame for next frame's kick detection
+	previous_tile = get_tile_position()
 
 func _update_debug_arrow():
 	"""Update the debug arrow rotation based on last move direction"""
