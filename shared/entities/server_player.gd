@@ -12,6 +12,7 @@ var username: String = ""
 var input_direction := Vector2.ZERO
 var last_move_direction := Vector2.ZERO  # The last direction we successfully moved (persists when stationary)
 var place_bomb_requested := false
+var stop_kicked_bomb_requested := false  # New input for stopping kicked bombs
 var bombs_placed := 0
 var max_bombs := 1
 var bomb_range := 2
@@ -513,6 +514,12 @@ func request_bomb_placement():
 		return
 	place_bomb_requested = true
 
+func request_stop_kicked_bomb():
+	"""Request to stop a nearby kicked bomb"""
+	if is_dead:
+		return
+	stop_kicked_bomb_requested = true
+
 func can_place_bomb() -> bool:
 	if is_dead:
 		return false
@@ -561,13 +568,33 @@ func collect_powerup(powerup):
 			print("[Player] ", username, " collected SPEED power-up! Speed: ", speed_multiplier)
 		ServerPowerUpScript.PowerUpType.BOMB_KICKER:
 			has_bomb_kicker = true
-			print("[Player] ", username, " collected BOMB KICKER! (Phase 2 feature)")
+			print("[Player] ", username, " collected BOMB KICKER!")
 		ServerPowerUpScript.PowerUpType.POWER_GLOVE:
 			has_power_glove = true
 			print("[Player] ", username, " collected POWER GLOVE! (Phase 2 feature)")
 		ServerPowerUpScript.PowerUpType.VIRUS:
 			# TODO: Implement virus debuffs in Phase 2
 			print("[Player] ", username, " collected VIRUS! (Phase 2 - no effect yet)")
+
+func try_kick_bomb_at_tile(tile_pos: Vector2i, kick_direction: Vector2) -> bool:
+	"""Try to kick a bomb at the specified tile position in the given direction
+	Returns true if a bomb was kicked"""
+	if not has_bomb_kicker:
+		return false
+	
+	# Get game instance to find bombs
+	var game_inst = get_parent()
+	if not game_inst or not game_inst.has_method("get_bomb_at_tile"):
+		return false
+	
+	# Check if there's a bomb at this tile
+	var bomb = game_inst.get_bomb_at_tile(tile_pos)
+	if bomb and not bomb.is_kicked and not bomb.has_exploded:
+		# Kick the bomb in the direction we're facing
+		bomb.kick(kick_direction)
+		return true
+	
+	return false
 
 func get_state() -> Dictionary:
 	return {

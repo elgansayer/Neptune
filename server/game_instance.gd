@@ -132,12 +132,36 @@ func create_map_collision():
 func _physics_process(delta):
 	last_sync_time += delta
 	
-	# Process AI bot bomb requests
+	# Process player actions (both real and AI players)
 	for peer_id in players:
 		var player = players[peer_id]
+		
+		# Handle bomb placement for AI bots
 		if player.has_method("is_ai_bot") and player.is_ai_bot() and player.place_bomb_requested and player.can_place_bomb():
 			place_bomb(player)
 			player.place_bomb_requested = false
+		
+		# Handle bomb kicking for players with the ability
+		if player.has_bomb_kicker and not player.is_dead:
+			# Check if player is moving into a tile with a bomb
+			var player_tile = player.get_tile_position()
+			var facing_direction = player.last_move_direction
+			
+			# Only try to kick if player is actually moving
+			if facing_direction.length() > 0.1:
+				# Check the tile in front of the player
+				var next_tile = player_tile + Vector2i(
+					int(sign(facing_direction.x)),
+					int(sign(facing_direction.y))
+				)
+				
+				# Try to kick bomb at next tile
+				player.try_kick_bomb_at_tile(next_tile, facing_direction)
+		
+		# Handle stop kicked bomb request
+		if player.stop_kicked_bomb_requested:
+			player.stop_kicked_bomb_requested = false
+			stop_nearby_kicked_bombs(player)
 	
 	# Send state updates to all clients
 	if last_sync_time >= SYNC_INTERVAL:
@@ -215,6 +239,10 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 	# Handle bomb placement
 	if input_data.get("place_bomb", false) and player.can_place_bomb():
 		place_bomb(player)
+	
+	# Handle stop kicked bomb request
+	if input_data.get("stop_kicked_bomb", false):
+		player.request_stop_kicked_bomb()
 
 func place_bomb(player: ServerPlayer):
 	var bomb = ServerBomb.new()
@@ -423,3 +451,25 @@ func _on_powerup_destroyed(powerup: ServerPowerUp):
 	if powerups.has(powerup.powerup_id):
 		powerups.erase(powerup.powerup_id)
 		powerup.queue_free()
+
+func get_bomb_at_tile(tile_pos: Vector2i):
+	"""Get the bomb at a specific tile position, or null if none exists"""
+	for bomb_id in bombs:
+		var bomb = bombs[bomb_id]
+		if bomb.get_tile_position() == tile_pos:
+			return bomb
+	return null
+
+func stop_nearby_kicked_bombs(player: ServerPlayer):
+	"""Stop any kicked bombs near the player"""
+	var player_tile = player.get_tile_position()
+	
+	# Check bombs in a 3x3 area around the player
+	for dy in range(-1, 2):
+		for dx in range(-1, 2):
+			var check_tile = player_tile + Vector2i(dx, dy)
+			var bomb = get_bomb_at_tile(check_tile)
+			
+			if bomb and bomb.is_kicked:
+				bomb.stop_kick()
+				print("[Game] Player ", player.username, " stopped kicked bomb at ", check_tile)

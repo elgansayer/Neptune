@@ -1,7 +1,8 @@
-extends StaticBody2D
+extends CharacterBody2D
 class_name ServerBomb
 
 # Server-authoritative bomb with progressive explosion system
+# Supports being kicked by players with the kick ability
 # Uses Godot's built-in collision system with exceptions
 
 const Constants = preload("res://shared/constants.gd")
@@ -13,6 +14,11 @@ var explosion_range: int = 2
 var explosion_timer: float = Constants.BOMB_TIMER
 var has_exploded := false
 var game_instance: Node = null  # Reference to GameInstance for collision checking
+
+# Bomb kick state
+var is_kicked := false
+var kick_direction := Vector2.ZERO
+var kick_speed := 200.0  # Speed when kicked (pixels per second)
 
 # Progressive explosion state
 const EXPLOSION_GROWTH_INTERVAL = 0.02  # 50 tiles/second
@@ -60,6 +66,16 @@ func _physics_process(delta):
 				explosion_growth_timer -= EXPLOSION_GROWTH_INTERVAL
 				expand_explosion()
 		return
+	
+	# Handle kicked bomb movement
+	if is_kicked:
+		velocity = kick_direction * kick_speed
+		var collision = move_and_collide(velocity * delta)
+		
+		if collision:
+			# Stop the bomb when it hits something
+			stop_kick()
+			print("[Bomb] Kicked bomb stopped - hit ", collision.get_collider())
 	
 	explosion_timer -= delta
 	if explosion_timer <= 0:
@@ -174,5 +190,41 @@ func get_state() -> Dictionary:
 		"owner_id": owner_id,
 		"position": {"x": position.x, "y": position.y},
 		"timer": explosion_timer,
-		"range": explosion_range
+		"range": explosion_range,
+		"is_kicked": is_kicked,
+		"kick_direction": {"x": kick_direction.x, "y": kick_direction.y}
 	}
+
+func kick(direction: Vector2):
+	"""Kick the bomb in the given direction"""
+	if is_kicked or has_exploded:
+		return
+	
+	# Normalize direction to ensure consistent speed
+	kick_direction = direction.normalized()
+	is_kicked = true
+	
+	# Change collision layer to allow bomb to move through its original tile
+	# Keep collision with walls and other bombs
+	collision_layer = Constants.COLLISION_LAYER_BOMBS
+	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS | Constants.COLLISION_LAYER_PLAYERS
+	
+	print("[Bomb] Kicked in direction ", kick_direction, " at speed ", kick_speed)
+
+func stop_kick():
+	"""Stop the bomb from sliding"""
+	if not is_kicked:
+		return
+	
+	is_kicked = false
+	kick_direction = Vector2.ZERO
+	velocity = Vector2.ZERO
+	
+	# Snap to grid center when stopped
+	var tile_pos = get_tile_position()
+	position = Vector2(
+		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
+	
+	print("[Bomb] Stopped at tile ", tile_pos)
