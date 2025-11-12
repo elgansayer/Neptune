@@ -399,10 +399,11 @@ func enter_state(new_state: State):
 func build_behavior_trees():
 	"""Build behavior trees for each state"""
 	# EXPLORING: Find blocks, move strategically
-	explore_tree = BehaviorTree.BTSelector.new([
+	explore_tree = BehaviorTree.Selector.new()
+	explore_tree.children = [
 		build_explore_sequence(),
-		BehaviorTree.BTAction.new("ExploreRandomly")
-	])
+		BehaviorTree.ExploreRandomly.new()
+	]
 	
 	# HUNTING: Chase opponent, place traps
 	hunt_tree = build_hunt_sequence()
@@ -411,66 +412,87 @@ func build_behavior_trees():
 	corner_tree = build_corner_sequence()
 	
 	# ESCAPING: Just run to safety
-	escape_tree = BehaviorTree.BTAction.new("MoveToSafety")
+	escape_tree = BehaviorTree.MoveToSafety.new()
 	
 	# AMBUSHING: Wait or strike
-	ambush_tree = BehaviorTree.BTSelector.new([
+	ambush_tree = BehaviorTree.Selector.new()
+	ambush_tree.children = [
 		build_ambush_strike_sequence(),
-		BehaviorTree.BTAction.new("Wait")
-	])
+		BehaviorTree.Wait.new(1.0)
+	]
 
 func build_explore_sequence() -> BehaviorTree.BTNode:
 	"""Build exploration behavior sequence"""
-	return BehaviorTree.BTSequence.new([
-		BehaviorTree.BTAction.new("FindBlockCluster"),
-		BehaviorTree.BTAction.new("MoveToTarget"),
-		BehaviorTree.BTSelector.new([
-			BehaviorTree.BTSequence.new([
-				BehaviorTree.BTCondition.new("CanPlaceBomb"),
-				BehaviorTree.BTCondition.new("IsBombValuable"),
-				BehaviorTree.BTCondition.new("HasEscapeRoute"),
-				BehaviorTree.BTAction.new("PlaceBomb")
-			]),
-			BehaviorTree.BTNode.new()  # Always succeed
-		])
-	])
+	var find_and_move = BehaviorTree.Sequence.new()
+	find_and_move.children = [
+		BehaviorTree.FindBlockCluster.new(),
+		BehaviorTree.MoveToTarget.new()
+	]
+	
+	var bomb_check = BehaviorTree.Sequence.new()
+	bomb_check.children = [
+		BehaviorTree.CanPlaceBomb.new(),
+		BehaviorTree.IsBombValuable.new(250.0),
+		BehaviorTree.HasEscapeRoute.new(1),
+		BehaviorTree.PlaceBomb.new()
+	]
+	
+	var bomb_optional = BehaviorTree.Selector.new()
+	bomb_optional.children = [bomb_check, BehaviorTree.BTNode.new()]
+	
+	var main_seq = BehaviorTree.Sequence.new()
+	main_seq.children = [find_and_move, bomb_optional]
+	
+	return main_seq
 
 func build_hunt_sequence() -> BehaviorTree.BTNode:
 	"""Build hunting behavior sequence"""
-	return BehaviorTree.BTSequence.new([
-		BehaviorTree.BTAction.new("FindNearestOpponent"),
-		BehaviorTree.BTAction.new("MoveToTarget"),
-		BehaviorTree.BTSelector.new([
-			BehaviorTree.BTSequence.new([
-				BehaviorTree.BTCondition.new("IsOpponentNear"),
-				BehaviorTree.BTCondition.new("CanPlaceBomb"),
-				BehaviorTree.BTCondition.new("IsBombValuable"),
-				BehaviorTree.BTCondition.new("HasEscapeRoute"),
-				BehaviorTree.BTAction.new("PlaceBomb")
-			]),
-			BehaviorTree.BTNode.new()  # Always succeed
-		])
-	])
+	var find_and_chase = BehaviorTree.Sequence.new()
+	find_and_chase.children = [
+		BehaviorTree.FindNearestOpponent.new(),
+		BehaviorTree.MoveToTarget.new()
+	]
+	
+	var bomb_attack = BehaviorTree.Sequence.new()
+	bomb_attack.children = [
+		BehaviorTree.IsOpponentNear.new(4),
+		BehaviorTree.CanPlaceBomb.new(),
+		BehaviorTree.IsBombValuable.new(150.0),
+		BehaviorTree.HasEscapeRoute.new(1),
+		BehaviorTree.PlaceBomb.new()
+	]
+	
+	var bomb_optional = BehaviorTree.Selector.new()
+	bomb_optional.children = [bomb_attack, BehaviorTree.BTNode.new()]
+	
+	var main_seq = BehaviorTree.Sequence.new()
+	main_seq.children = [find_and_chase, bomb_optional]
+	
+	return main_seq
 
 func build_corner_sequence() -> BehaviorTree.BTNode:
 	"""Build cornering behavior sequence"""
-	return BehaviorTree.BTSequence.new([
-		BehaviorTree.BTCondition.new("CanPlaceBomb"),
-		BehaviorTree.BTCondition.new("HasEscapeRoute"),
-		BehaviorTree.BTAction.new("PlaceBomb"),
-		BehaviorTree.BTAction.new("Wait", {"duration": 0.2}),
-		BehaviorTree.BTAction.new("MoveToSafety")
-	])
+	var seq = BehaviorTree.Sequence.new()
+	seq.children = [
+		BehaviorTree.CanPlaceBomb.new(),
+		BehaviorTree.HasEscapeRoute.new(1),
+		BehaviorTree.PlaceBomb.new(),
+		BehaviorTree.Wait.new(0.2),
+		BehaviorTree.MoveToSafety.new()
+	]
+	return seq
 
 func build_ambush_strike_sequence() -> BehaviorTree.BTNode:
 	"""Build ambush strike sequence"""
-	return BehaviorTree.BTSequence.new([
-		BehaviorTree.BTCondition.new("IsOpponentNear"),
-		BehaviorTree.BTCondition.new("CanPlaceBomb"),
-		BehaviorTree.BTCondition.new("HasEscapeRoute"),
-		BehaviorTree.BTAction.new("PlaceBomb"),
-		BehaviorTree.BTAction.new("MoveToSafety")
-	])
+	var seq = BehaviorTree.Sequence.new()
+	seq.children = [
+		BehaviorTree.IsOpponentNear.new(4),
+		BehaviorTree.CanPlaceBomb.new(),
+		BehaviorTree.HasEscapeRoute.new(1),
+		BehaviorTree.PlaceBomb.new(),
+		BehaviorTree.MoveToSafety.new()
+	]
+	return seq
 
 func get_current_state_tree() -> BehaviorTree.BTNode:
 	"""Get behavior tree for current state"""
@@ -504,17 +526,44 @@ func build_bt_context(ai_player: Node2D, current_tile: Vector2i, current_time: f
 
 func get_direction_to_tile(from_tile: Vector2i, to_tile: Vector2i, from_position: Vector2, current_time: float) -> Vector2:
 	"""Get movement direction to target tile using A* pathfinding"""
-	# TODO: Implement pathfinding
-	# For now, simple direct movement
-	var dx = to_tile.x - from_tile.x
-	var dy = to_tile.y - from_tile.y
+	if from_tile == to_tile:
+		return Vector2.ZERO
 	
-	if abs(dx) > abs(dy):
-		return Vector2(sign(dx), 0).normalized()
-	elif dy != 0:
-		return Vector2(0, sign(dy)).normalized()
+	# Rebuild A* graph if needed
+	_ensure_astar_ready(current_time)
 	
-	return Vector2.ZERO
+	# Update path if needed
+	if current_time - last_path_update > path_update_interval or current_path.is_empty():
+		current_path = _calculate_astar_path(from_tile, to_tile)
+		last_path_update = current_time
+	
+	# Follow path
+	if current_path.is_empty():
+		# No path found - return fallback direction
+		var dx = to_tile.x - from_tile.x
+		var dy = to_tile.y - from_tile.y
+		if abs(dx) > abs(dy):
+			return Vector2(sign(dx), 0) if dx != 0 else Vector2.ZERO
+		else:
+			return Vector2(0, sign(dy)) if dy != 0 else Vector2.ZERO
+	
+	# Get next waypoint
+	var next_waypoint = current_path[0]
+	
+	# Calculate direction to next waypoint (cardinal only)
+	var delta = next_waypoint - from_position
+	var direction = Vector2.ZERO
+	
+	if abs(delta.x) > abs(delta.y):
+		direction.x = sign(delta.x)
+	else:
+		direction.y = sign(delta.y)
+	
+	# Check if we reached waypoint
+	if from_position.distance_to(next_waypoint) < Constants.TILE_SIZE * 0.3:
+		current_path.remove_at(0)
+	
+	return direction
 
 func find_nearest_opponent(from_tile: Vector2i) -> Dictionary:
 	"""Find nearest opponent using Manhattan distance"""
@@ -542,6 +591,108 @@ func find_nearest_opponent(from_tile: Vector2i) -> Dictionary:
 	
 	return result
 
+func calculate_bomb_value(tile: Vector2i, game_state: Dictionary, ai_player: Node2D) -> float:
+	"""Calculate tactical value of placing bomb at tile"""
+	var value = 0.0
+	var bomb_range = ai_player.bomb_range if ai_player.has("bomb_range") else 2
+	
+	# Simulate explosion to find affected tiles
+	var explosion_cells = simulate_explosion(tile, bomb_range, game_state.get("map", []))
+	
+	# Value from blocks destroyed
+	for cell in explosion_cells:
+		if is_breakable_block(cell, game_state):
+			value += 100.0
+	
+	# Value from trapping opponents
+	for peer_id in game_state.get("players", {}):
+		var player = game_state.players[peer_id]
+		if player == ai_player:
+			continue
+		var player_tile = player.get_tile_position()
+		if player_tile in explosion_cells:
+			value += personality_weights.get("trap_bonus", 400) * 0.5
+	
+	return value
+
+func simulate_explosion(center: Vector2i, bomb_range: int, map: Array) -> Array:
+	"""Simulate bomb explosion pattern"""
+	var cells = [center]
+	
+	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		for i in range(1, bomb_range + 1):
+			var cell = center + dir * i
+			
+			if cell.y < 0 or cell.y >= map.size() or cell.x < 0 or cell.x >= map[0].size():
+				break
+			
+			if map[cell.y][cell.x] == 1:  # Hard wall
+				break
+			
+			cells.append(cell)
+			
+			if map[cell.y][cell.x] == 2:  # Soft block
+				break
+	
+	return cells
+
+func is_breakable_block(tile: Vector2i, game_state: Dictionary) -> bool:
+	"""Check if tile contains a breakable block"""
+	var map = game_state.get("map", [])
+	if tile.y < 0 or tile.y >= map.size() or tile.x < 0 or tile.x >= map[0].size():
+		return false
+	return map[tile.y][tile.x] == 2
+
+func find_valuable_block_clusters(from_tile: Vector2i, game_state: Dictionary, max_search: int) -> Array:
+	"""Find clusters of breakable blocks"""
+	var clusters = []
+	var map = game_state.get("map", [])
+	
+	for y in range(max(0, from_tile.y - max_search), min(map.size(), from_tile.y + max_search)):
+		for x in range(max(0, from_tile.x - max_search), min(map[0].size(), from_tile.x + max_search)):
+			var tile = Vector2i(x, y)
+			if is_breakable_block(tile, game_state):
+				var cluster_count = 1
+				# Count adjacent breakable blocks
+				for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+					if is_breakable_block(tile + dir, game_state):
+						cluster_count += 1
+				
+				var distance = abs(tile.x - from_tile.x) + abs(tile.y - from_tile.y)
+				clusters.append({
+					"tile": tile,
+					"count": cluster_count,
+					"distance": distance,
+					"value": float(cluster_count) / max(1.0, float(distance))
+				})
+	
+	# Sort by value
+	clusters.sort_custom(func(a, b): return a.value > b.value)
+	return clusters.slice(0, 5)  # Top 5 clusters
+
+func find_strategic_position(from_tile: Vector2i, game_state: Dictionary) -> Vector2i:
+	"""Find strategic position (map center control)"""
+	var map = game_state.get("map", [])
+	if map.is_empty():
+		return from_tile
+	
+	var map_center = Vector2i(map[0].size() / 2, map.size() / 2)
+	
+	# Find walkable tile nearest to center
+	var best_tile = from_tile
+	var min_distance = INF
+	
+	for dy in range(-5, 6):
+		for dx in range(-5, 6):
+			var tile = map_center + Vector2i(dx, dy)
+			if observer._is_tile_walkable(tile):
+				var distance = abs(tile.x - from_tile.x) + abs(tile.y - from_tile.y)
+				if distance < min_distance:
+					min_distance = distance
+					best_tile = tile
+	
+	return best_tile
+
 func count_escape_routes(tile: Vector2i) -> int:
 	"""Count number of safe tiles adjacent to position"""
 	var count = 0
@@ -556,6 +707,93 @@ func count_escape_routes(tile: Vector2i) -> int:
 func get_personality_name() -> String:
 	"""Get name of current personality"""
 	return AIPersonality.get_name(personality_type)
+
+# ============================================================================
+# PATHFINDING SYSTEM
+# ============================================================================
+
+func _ensure_astar_ready(current_time: float) -> void:
+	"""Ensure A* graph is built and updated"""
+	if not astar_initialized or current_time - last_path_update > 0.5:
+		_build_astar_graph()
+		astar_initialized = true
+
+func _build_astar_graph() -> void:
+	"""Build A* navigation graph with danger awareness"""
+	astar.clear()
+	tile_to_id.clear()
+	
+	var game_state = observer.get_world_state()
+	var map = game_state.get("map", [])
+	if map.is_empty():
+		return
+	
+	var point_id = 0
+	
+	# Add all walkable tiles
+	for y in range(map.size()):
+		for x in range(map[y].size()):
+			var tile = Vector2i(x, y)
+			var tile_key = "%d,%d" % [x, y]
+			var tile_center = Vector2(
+				x * Constants.TILE_SIZE + Constants.TILE_SIZE * 0.5,
+				y * Constants.TILE_SIZE + Constants.TILE_SIZE * 0.5
+			)
+			
+			if observer._is_tile_walkable(tile):
+				tile_to_id[tile_key] = point_id
+				astar.add_point(point_id, tile_center)
+				point_id += 1
+	
+	# Connect adjacent tiles with danger-aware weights
+	for y in range(map.size()):
+		for x in range(map[y].size()):
+			var tile = Vector2i(x, y)
+			var tile_key = "%d,%d" % [x, y]
+			
+			if tile_to_id.has(tile_key):
+				var from_id = tile_to_id[tile_key]
+				
+				for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+					var neighbor = tile + dir
+					var neighbor_key = "%d,%d" % [neighbor.x, neighbor.y]
+					
+					if not tile_to_id.has(neighbor_key):
+						continue
+					
+					var to_id = tile_to_id[neighbor_key]
+					var danger = danger_mapper.get_danger_at_tile(neighbor)
+					var weight = 1.0
+					
+					# Penalize dangerous tiles
+					if danger > 0.7:
+						weight = 100.0
+					elif danger > 0.3:
+						weight = 10.0
+					
+					astar.connect_points(from_id, to_id, true)
+					astar.set_point_weight_scale(to_id, weight)
+
+func _calculate_astar_path(from_tile: Vector2i, to_tile: Vector2i) -> Array:
+	"""Calculate A* path avoiding danger"""
+	var from_key = "%d,%d" % [from_tile.x, from_tile.y]
+	var to_key = "%d,%d" % [to_tile.x, to_tile.y]
+	
+	if not tile_to_id.has(from_key) or not tile_to_id.has(to_key):
+		return []
+	
+	var from_id = tile_to_id[from_key]
+	var to_id = tile_to_id[to_key]
+	
+	# Get path
+	var path_points = astar.get_point_path(from_id, to_id)
+	
+	# Convert to waypoints (skip first point as we're already there)
+	var waypoints = []
+	for i in range(1, path_points.size()):
+		waypoints.append(path_points[i])
+	
+	return waypoints
 
 # ============================================================================
 # DEBUG VISUALIZATION
