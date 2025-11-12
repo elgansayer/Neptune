@@ -24,6 +24,10 @@ var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visuali
 var has_bomb_kicker := false  # Can kick bombs
 var has_power_glove := false  # Can pick up and throw bombs
 
+# Power Glove state
+var carried_bomb: Node = null  # Reference to bomb being carried
+var action_button_pressed := false  # Track action button state for throw timing
+
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
@@ -513,10 +517,75 @@ func request_bomb_placement():
 		return
 	place_bomb_requested = true
 
+func request_action_press():
+	"""Called when action button is pressed (for Power Glove pickup/throw)"""
+	if is_dead:
+		return
+	action_button_pressed = true
+
+func request_action_release():
+	"""Called when action button is released (for Power Glove throw)"""
+	action_button_pressed = false
+
 func can_place_bomb() -> bool:
 	if is_dead:
 		return false
 	return bombs_placed < max_bombs
+
+# ============ POWER GLOVE SYSTEM ============
+
+func try_pickup_bomb(bomb: Node) -> bool:
+	"""Try to pick up a bomb with Power Glove (server-side)"""
+	if not has_power_glove:
+		return false
+	
+	if not is_instance_valid(bomb):
+		return false
+	
+	if carried_bomb != null:
+		return false  # Already carrying a bomb
+	
+	# Check if standing on the bomb's tile
+	var player_tile = get_tile_position()
+	var bomb_tile = bomb.get_tile_position()
+	
+	if player_tile != bomb_tile:
+		return false  # Not on the same tile
+	
+	# Attempt pickup
+	if bomb.pick_up(self):
+		carried_bomb = bomb
+		print("[ServerPlayer] ", username, " picked up bomb ", bomb.bomb_id)
+		return true
+	
+	return false
+
+func throw_carried_bomb() -> bool:
+	"""Throw the currently carried bomb (server-side)"""
+	if not has_power_glove:
+		return false
+	
+	if not is_instance_valid(carried_bomb):
+		carried_bomb = null
+		return false
+	
+	# Throw in the direction player is facing
+	var throw_direction = last_move_direction
+	if throw_direction.length() < 0.1:
+		throw_direction = Vector2.DOWN  # Default direction if not moving
+	
+	if carried_bomb.throw_bomb(throw_direction):
+		print("[ServerPlayer] ", username, " threw bomb ", carried_bomb.bomb_id, " in direction ", throw_direction)
+		carried_bomb = null
+		return true
+	
+	return false
+
+func is_carrying_bomb() -> bool:
+	"""Check if player is currently carrying a bomb"""
+	return carried_bomb != null and is_instance_valid(carried_bomb)
+
+# ============ END POWER GLOVE SYSTEM ============
 
 func add_bomb_collision_exception(bomb):
 	if bomb in collision_exceptions:
@@ -583,6 +652,8 @@ func get_state() -> Dictionary:
 		"speed_multiplier": speed_multiplier,
 		"has_bomb_kicker": has_bomb_kicker,
 		"has_power_glove": has_power_glove,
+		"is_carrying_bomb": is_carrying_bomb(),
+		"carried_bomb_id": carried_bomb.bomb_id if is_carrying_bomb() else "",
 		"last_move_direction": {"x": last_move_direction.x, "y": last_move_direction.y},
 		"debug_check_tile": {"x": debug_check_tile.x, "y": debug_check_tile.y},
 		"debug_blocking_tile": {"x": debug_blocking_tile.x, "y": debug_blocking_tile.y},

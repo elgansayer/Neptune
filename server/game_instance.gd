@@ -252,9 +252,46 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 	# Set movement input
 	player.set_input(input_data.get("input_x", 0.0), input_data.get("input_y", 0.0))
 	
-	# Handle bomb placement
+	# Handle Power Glove actions
+	var action_pressed = input_data.get("action_pressed", false)
+	var action_released = input_data.get("action_released", false)
+	
+	if player.has_power_glove:
+		if action_pressed:
+			# Action button pressed
+			player.request_action_press()
+			
+			# If carrying a bomb, don't do pickup (will throw on release)
+			# If not carrying, try to pick up bomb at current position
+			if not player.is_carrying_bomb():
+				_try_pickup_bomb_at_player(player)
+		
+		if action_released:
+			# Action button released - throw if carrying
+			player.request_action_release()
+			if player.is_carrying_bomb():
+				player.throw_carried_bomb()
+	
+	# Handle bomb placement (normal action if no Power Glove)
 	if input_data.get("place_bomb", false) and player.can_place_bomb():
 		place_bomb(player)
+
+func _try_pickup_bomb_at_player(player: ServerPlayer):
+	"""Try to pick up a bomb at the player's current tile"""
+	var player_tile = player.get_tile_position()
+	
+	# Find bomb at player's position
+	for bomb_id in bombs:
+		var bomb = bombs[bomb_id]
+		if not is_instance_valid(bomb):
+			continue
+		
+		var bomb_tile = bomb.get_tile_position()
+		if bomb_tile == player_tile:
+			# Attempt pickup
+			if player.try_pickup_bomb(bomb):
+				print("[Game] Player ", player.username, " picked up bomb ", bomb_id)
+				break  # Only pick up one bomb
 
 func place_bomb(player: ServerPlayer):
 	var bomb = ServerBomb.new()
