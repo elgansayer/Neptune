@@ -196,7 +196,8 @@ func create_player_portrait(player_id: String, player_data: Dictionary) -> Panel
 	
 	# Player name label with shadow for readability
 	var label = Label.new()
-	label.text = player_data.get("username", "Player")[:8]  # Truncate long names
+	var username = player_data.get("username", "Player")
+	label.text = username.substr(0, 8)  # Truncate long names
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 10)
 	label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
