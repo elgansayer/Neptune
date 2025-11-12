@@ -32,6 +32,12 @@ var last_sync_time := 0.0
 const SYNC_INTERVAL = 1.0 / Constants.NETWORK_SEND_RATE
 const EXPLOSION_DISPLAY_TIME = 0.5  # How long to show explosions
 
+# Match timer
+var match_duration := 180.0  # 3 minutes default
+var match_time_remaining := match_duration
+var match_active := true
+var winner_id := ""
+
 signal game_ended(winner_id: String)
 
 # Optional: Tests may set this to use a provided map deterministically
@@ -174,6 +180,13 @@ func create_map_collision():
 					map_tiles[tile_key] = tile_body
 
 func _physics_process(delta):
+	# Update match timer if active
+	if match_active:
+		match_time_remaining -= delta
+		if match_time_remaining <= 0:
+			match_time_remaining = 0
+			end_match()
+	
 	last_sync_time += delta
 	
 	# Process AI bot bomb requests
@@ -247,6 +260,33 @@ func remove_player(peer_id: int):
 		player.queue_free()
 		players.erase(peer_id)
 		print("[Game] Player left: ", peer_id)
+
+func end_match():
+	"""End the match and determine winner"""
+	if not match_active:
+		return  # Already ended
+	
+	match_active = false
+	winner_id = find_winner()
+	
+	print("[GameInstance] Match ended. Winner: ", winner_id if winner_id else "Draw")
+	game_ended.emit(winner_id)
+	
+	# TODO: Add delay before returning to lobby
+	# await get_tree().create_timer(5.0).timeout
+	# Return players to lobby
+
+func find_winner() -> String:
+	"""Find the winner (last player alive)"""
+	var alive_players = []
+	for peer_id in players:
+		if not players[peer_id].is_dead:
+			alive_players.append(str(peer_id))
+	
+	# Return single survivor, or empty string if draw/no survivors
+	if alive_players.size() == 1:
+		return alive_players[0]
+	return ""
 
 func handle_player_input(peer_id: int, input_data: Dictionary):
 	if not players.has(peer_id):
@@ -337,6 +377,9 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 			if player_tile == tile_pos:
 				player.die()
 				print("[Game] Player ", player.username, " killed by explosion at ", tile_pos)
+				
+				# Check if match should end (only 1 or 0 players left alive)
+				check_match_end_condition()
 		
 		# Check for destructible blocks
 		if tile_pos.y >= 0 and tile_pos.y < game_map.size():
@@ -359,6 +402,20 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 				print("[Game] Powerup destroyed by explosion at ", tile_pos)
 				powerup.destroy()
 				break
+
+func check_match_end_condition():
+	"""Check if the match should end based on alive players"""
+	if not match_active:
+		return
+	
+	var alive_count = 0
+	for peer_id in players:
+		if not players[peer_id].is_dead:
+			alive_count += 1
+	
+	# End match if 1 or fewer players alive
+	if alive_count <= 1:
+		end_match()
 
 func destroy_block(cell: Vector2i):
 	"""Destroy a destructible block and optionally spawn powerup"""
@@ -407,7 +464,10 @@ func sync_state_to_clients():
 			"width": GameConfig.map_width,
 			"height": GameConfig.map_height,
 			"name": GameConfig.map_name
-		}
+		},
+		"match_timer": match_time_remaining,
+		"match_active": match_active,
+		"winner_id": winner_id
 	}
 	
 	for peer_id in players:
