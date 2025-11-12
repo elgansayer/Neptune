@@ -1,3 +1,6 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Archive directory (old code preserved for reference)
+.archive/
