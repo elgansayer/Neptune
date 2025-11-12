@@ -97,7 +97,7 @@ var spawn_blocks_to_clear: Array = []  # Soft blocks near spawn
 var spawn_clearing_complete: bool = false
 var spawn_stuck_tile: Vector2i = Vector2i(-1, -1)  # Track if stuck at same tile
 var spawn_stuck_frames: int = 0  # How many frames stuck at this tile
-const SPAWN_STUCK_BOMB_THRESHOLD: int = 30  # Bomb after 0.5 seconds stuck (30 frames = aggressive!)
+const SPAWN_STUCK_BOMB_THRESHOLD: int = 90  # Increased from 30 to 90 (1.5 seconds instead of 0.5)
 var last_stuck_bomb_time: float = 0.0  # Last time we did a stuck-bomb
 const STUCK_BOMB_COOLDOWN: float = 2.5  # Bomb every 2.5 seconds when stuck
 
@@ -411,7 +411,10 @@ func _state_wander(ai_player: Node2D, current_tile: Vector2i, current_time: floa
 					blocked_count += 1
 			
 			# More aggressive bombing if surrounded (trapped in corner)
-			var bomb_chance = 0.4 if blocked_count < 2 else 0.7  # 40% normal, 70% if blocked
+			var bomb_chance = 0.20  # REDUCED from 40% to 20% to let bots explore more
+			
+			if blocked_count >= 2:
+				bomb_chance = 0.5  # Increased chance if trapped (reduced from 70% to 50%)
 			
 			if randf() < bomb_chance:
 				var bomb_safety = bomb_planner.can_place_bomb_safely(current_tile, ai_player, current_time)

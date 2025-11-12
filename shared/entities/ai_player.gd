@@ -3,14 +3,12 @@ extends "res://shared/entities/server_player.gd"
 # Note: Using full resource path instead of class_name to fix parse issues
 # Extends ServerPlayer but generates input locally instead of from network
 
-const AIBotController = preload("res://shared/ai/ai_bot_controller.gd")
-const ImprovedAIController = preload("res://shared/ai/improved_ai_controller.gd")
+const UnifiedAIController = preload("res://shared/ai/unified_ai_controller.gd")
 const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 
-var controller  # Can be AIBotController or ImprovedAIController
+var controller: UnifiedAIController  # Unified AI system
 var personality_type: int  # AIPersonality.Type enum value
 var bot_name: String = "Bot"
-var use_improved_ai: bool = true  # Set to true to use new intelligent AI
 
 # Spawn delay
 var spawn_time: float = 0.0
@@ -42,13 +40,8 @@ func setup_ai(game_instance: Node2D, personality: int = 0):  # 0 = BALANCED
 	# Set spawn time for delay
 	spawn_time = Time.get_ticks_msec() / 1000.0
 	
-	# Choose AI controller type
-	if use_improved_ai:
-		controller = ImprovedAIController.new(game_instance, personality)
-		print("[AIPlayer] Using IMPROVED AI system")
-	else:
-		controller = AIBotController.new(game_instance, personality)
-		print("[AIPlayer] Using legacy AI system")
+	# Initialize unified AI controller
+	controller = UnifiedAIController.new(game_instance, personality)
 	
 	# Generate bot name based on personality
 	var personality_name = controller.get_personality_name()
@@ -56,11 +49,10 @@ func setup_ai(game_instance: Node2D, personality: int = 0):  # 0 = BALANCED
 	bot_name = "%s_Bot_%03d" % [personality_name, bot_number]
 	username = bot_name
 	
-	print("[AIPlayer] Initialized: ", bot_name, " (", personality_name, ") at time ", spawn_time)
+	print("[AIPlayer] Initialized: ", bot_name, " (", personality_name, ") using Unified AI")
 	
 	# Setup debug visualizer if in debug mode (deferred until in scene tree)
-	if OS.is_debug_build() and use_improved_ai:
-		# Defer setup until we're in the scene tree
+	if OS.is_debug_build():
 		call_deferred("_setup_debug_visualizer_deferred", game_instance)
 
 func _setup_debug_visualizer_deferred(game_ref: Node2D):
