@@ -19,6 +19,7 @@ var game_instance: Node = null  # Reference to GameInstance for collision checki
 var is_kicked := false
 var kick_direction := Vector2.ZERO
 var kick_speed := 200.0  # Speed when kicked (pixels per second)
+var just_placed_timer := 0.2  # Grace period after placement before bomb can be kicked (seconds)
 
 # Progressive explosion state
 const EXPLOSION_GROWTH_INTERVAL = 0.02  # 50 tiles/second
@@ -66,6 +67,10 @@ func _physics_process(delta):
 				explosion_growth_timer -= EXPLOSION_GROWTH_INTERVAL
 				expand_explosion()
 		return
+	
+	# Decrement just placed timer
+	if just_placed_timer > 0:
+		just_placed_timer -= delta
 	
 	# Handle kicked bomb movement
 	if is_kicked:
@@ -198,6 +203,10 @@ func get_state() -> Dictionary:
 func kick(direction: Vector2):
 	"""Kick the bomb in the given direction"""
 	if is_kicked or has_exploded:
+		return
+	
+	# Don't kick bombs that were just placed (grace period)
+	if just_placed_timer > 0:
 		return
 	
 	# Normalize direction to ensure consistent speed
