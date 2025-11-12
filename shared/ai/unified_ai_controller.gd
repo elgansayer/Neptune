@@ -96,10 +96,13 @@ var spawn_clearing_complete: bool = false
 # INITIALIZATION
 # ============================================================================
 
-func _init(game_inst: Node2D, personality: int = 0):
+func _init(game_inst: Node2D, personality: int = 0, difficulty: int = AIPersonality.Difficulty.NORMAL):
 	game_instance = game_inst
 	personality_type = personality
-	personality_weights = AIPersonality.get_weights(personality)
+	
+	# Phase 4: Apply difficulty scaling
+	var base_weights = AIPersonality.get_weights(personality)
+	personality_weights = AIPersonality.apply_difficulty_modifier(base_weights, difficulty)
 	
 	# Initialize safety systems
 	observer = AIObserverClass.new(game_instance)
@@ -122,7 +125,8 @@ func _init(game_inst: Node2D, personality: int = 0):
 		mcts = AIMCTSClass.new(self, observer)
 		print("[UnifiedAI] MCTS enabled for PERFECT personality")
 	
-	print("[UnifiedAI] Initialized with personality: ", AIPersonality.get_name(personality))
+	var difficulty_name = AIPersonality.get_difficulty_name(difficulty)
+	print("[UnifiedAI] Initialized: ", AIPersonality.get_name(personality), " (", difficulty_name, " difficulty)")
 
 # ============================================================================
 # MAIN DECISION SYSTEM
@@ -592,11 +596,33 @@ func find_nearest_opponent(from_tile: Vector2i) -> Dictionary:
 	return result
 
 func calculate_bomb_value(tile: Vector2i, game_state: Dictionary, ai_player: Node2D) -> float:
-	"""Calculate tactical value of placing bomb at tile"""
+	"""Calculate tactical value of placing bomb at tile - Phase 4 Enhanced"""
 	var value = 0.0
 	var bomb_range = ai_player.bomb_range if ai_player.has("bomb_range") else 2
 	
-	# Simulate explosion to find affected tiles
+	# Phase 4: Use advanced chain reaction if enabled
+	if personality_weights.get("use_advanced_chains", false):
+		var chain_result = observer.calculate_advanced_chain_reaction(tile, bomb_range, 3.0)
+		
+		# Value from blocks destroyed (with chain multiplier)
+		value += chain_result.blocks_destroyed * 100.0
+		
+		# Exponential bonus for deep chains
+		if chain_result.chain_depth > 0:
+			var chain_bonus = 200.0 * chain_result.chain_depth
+			if chain_result.chain_depth >= 3:
+				chain_bonus += 500.0  # Major bonus for 3+ chain
+			value += chain_bonus
+		
+		# Bonus for trapped players
+		value += chain_result.players_trapped.size() * personality_weights.get("trap_bonus", 400)
+		
+		# Bonus for powerup reveals
+		value += chain_result.powerups_revealed.size() * 50.0
+		
+		return value
+	
+	# Standard chain reaction (fallback)
 	var explosion_cells = simulate_explosion(tile, bomb_range, game_state.get("map", []))
 	
 	# Value from blocks destroyed

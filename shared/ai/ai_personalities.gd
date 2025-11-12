@@ -301,3 +301,90 @@ static func get_personality_name(personality_type: Type) -> String:
 
 static func get_random_personality() -> Type:
 	return Type.values()[randi() % Type.size()]
+
+# ============================================================================
+# PHASE 4: DIFFICULTY SCALING SYSTEM
+# ============================================================================
+
+enum Difficulty {
+EASY,     # Slower reactions, higher thresholds, more mistakes
+NORMAL,   # Standard personality weights
+HARD,     # Faster reactions, lower thresholds, better decisions
+EXPERT    # Near-perfect play, MCTS-level planning
+}
+
+static func apply_difficulty_modifier(weights: Dictionary, difficulty: Difficulty) -> Dictionary:
+"""
+Apply difficulty scaling to personality weights
+
+Modifies reaction times, thresholds, and decision quality based on difficulty
+"""
+var modified = weights.duplicate(true)
+
+match difficulty:
+Difficulty.EASY:
+# Slower reactions
+modified.reaction_delay = weights.get("reaction_delay", 0.05) * 2.0  # 2x slower
+# Higher bomb value threshold (bombs less often)
+modified.bomb_frequency = weights.get("bomb_frequency", 0.4) * 0.5  # Half as often
+# Less aggressive
+modified.aggression = weights.get("aggression", 400.0) * 0.6
+# More cautious
+modified.safety = weights.get("safety", 1000.0) * 1.5
+# Worse pathfinding updates (less accurate)
+modified.pathfinding_frequency = weights.get("pathfinding_frequency", 0.3) * 1.5
+
+Difficulty.NORMAL:
+# Use default weights (no modification)
+pass
+
+Difficulty.HARD:
+# Faster reactions
+modified.reaction_delay = weights.get("reaction_delay", 0.05) * 0.6  # 40% faster
+# Lower bomb threshold (bombs more often when strategic)
+modified.bomb_frequency = weights.get("bomb_frequency", 0.4) * 1.3
+# More aggressive
+modified.aggression = weights.get("aggression", 400.0) * 1.4
+# Better trap detection
+modified.trap_bonus = weights.get("trap_bonus", 500.0) * 1.5
+# Faster pathfinding updates
+modified.pathfinding_frequency = weights.get("pathfinding_frequency", 0.3) * 0.7
+
+Difficulty.EXPERT:
+# Very fast reactions (near-instant)
+modified.reaction_delay = weights.get("reaction_delay", 0.05) * 0.3  # 70% faster
+# Optimal bombing frequency
+modified.bomb_frequency = weights.get("bomb_frequency", 0.4) * 1.5
+# Maximum aggression
+modified.aggression = weights.get("aggression", 400.0) * 2.0
+# Perfect trap setup
+modified.trap_bonus = weights.get("trap_bonus", 500.0) * 2.0
+# Maximum pathfinding frequency
+modified.pathfinding_frequency = weights.get("pathfinding_frequency", 0.3) * 0.5
+# Enable advanced chain reaction prediction
+modified.use_advanced_chains = true
+
+return modified
+
+static func get_difficulty_name(difficulty: Difficulty) -> String:
+"""Get human-readable difficulty name"""
+match difficulty:
+Difficulty.EASY: return "Easy"
+Difficulty.NORMAL: return "Normal"
+Difficulty.HARD: return "Hard"
+Difficulty.EXPERT: return "Expert"
+_: return "Unknown"
+
+static func get_recommended_personality_for_difficulty(difficulty: Difficulty) -> Type:
+"""Get recommended personality type for a given difficulty"""
+match difficulty:
+Difficulty.EASY:
+return Type.TIMID  # Defensive, cautious
+Difficulty.NORMAL:
+return Type.BALANCED  # Well-rounded
+Difficulty.HARD:
+return Type.AGGRESSIVE  # Challenging
+Difficulty.EXPERT:
+return Type.PERFECT  # MCTS-based
+_:
+return Type.BALANCED

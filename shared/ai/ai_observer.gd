@@ -24,8 +24,35 @@ func get_world_state() -> Dictionary:
 		"bombs": game_instance.bombs,
 		"players": game_instance.players,
 		"danger_map": danger_map,
-		"powerups": []  # TODO: Add when power-ups are implemented
+		"powerups": _get_visible_powerups()  # Phase 4: Track visible powerups
 	}
+
+func _get_visible_powerups() -> Array:
+	"""Get list of visible powerups with their locations and types - Phase 4 Enhancement"""
+	var powerups = []
+	
+	# Check if game instance has powerups dictionary
+	if not game_instance.has("powerups"):
+		return powerups
+	
+	for powerup_id in game_instance.powerups:
+		var powerup = game_instance.powerups[powerup_id]
+		
+		# Skip collected or destroyed powerups
+		if powerup.has("collected") and powerup.collected:
+			continue
+		if powerup.has("destroyed") and powerup.destroyed:
+			continue
+		
+		var powerup_tile = powerup.get_tile_position()
+		powerups.append({
+			"id": powerup_id,
+			"tile": powerup_tile,
+			"type": powerup.powerup_type if powerup.has("powerup_type") else 0,
+			"position": powerup.position
+		})
+	
+	return powerups
 
 func update_danger_map():
 	"""Calculate which tiles are dangerous and when they'll explode"""
@@ -469,3 +496,168 @@ func _predict_random_movement(player_id: String, time_ahead: float) -> Vector2:
 	distance = clamp(distance, tile_size * 2, tile_size * 4)
 	
 	return current_pos + random_direction * distance
+
+
+# ============================================================================
+# PHASE 4 ENHANCEMENTS
+# ============================================================================
+
+func calculate_advanced_chain_reaction(bomb_tile: Vector2i, bomb_range: int, time_offset: float = 0.0) -> Dictionary:
+"""
+Phase 4 Enhancement: Advanced chain reaction prediction with timing
+
+Predicts chain reactions with accurate timing for better strategic planning
+
+Args:
+bomb_tile: Position of the initial bomb
+bomb_range: Explosion range of the bomb
+time_offset: Time until initial bomb explodes (seconds)
+
+Returns:
+{
+"blocks_destroyed": int,
+"players_trapped": Array of player_ids,
+"chain_depth": int,
+"affected_tiles": Array of Vector2i,
+"explosion_sequence": Array of {tile, time, range},
+"total_damage_tiles": int,
+"powerups_revealed": Array of tiles where powerups might spawn
+}
+"""
+var result = {
+"blocks_destroyed": 0,
+"players_trapped": [],
+"chain_depth": 0,
+"affected_tiles": [],
+"explosion_sequence": [],
+"total_damage_tiles": 0,
+"powerups_revealed": []
+}
+
+# Track which bombs have been processed
+var processed_bombs = {}
+var explosion_queue = []  # Priority queue of explosions by time
+
+# Add initial bomb
+explosion_queue.append({
+"tile": bomb_tile,
+"range": bomb_range,
+"time": time_offset,
+"depth": 0
+})
+
+# Process explosion queue
+while not explosion_queue.is_empty():
+# Get next explosion (earliest time)
+explosion_queue.sort_custom(func(a, b): return a.time < b.time)
+var explosion = explosion_queue.pop_front()
+
+var tile_key = "%d,%d" % [explosion.tile.x, explosion.tile.y]
+if processed_bombs.has(tile_key):
+continue
+
+processed_bombs[tile_key] = true
+result.chain_depth = max(result.chain_depth, explosion.depth)
+
+# Calculate explosion pattern
+var explosion_tiles = _simulate_explosion_pattern(explosion.tile, explosion.range)
+
+# Add to explosion sequence
+result.explosion_sequence.append({
+"tile": explosion.tile,
+"time": explosion.time,
+"range": explosion.range,
+"tiles": explosion_tiles
+})
+
+result.total_damage_tiles += explosion_tiles.size()
+
+# Check each tile in explosion
+for exp_tile in explosion_tiles:
+if exp_tile not in result.affected_tiles:
+result.affected_tiles.append(exp_tile)
+
+# Check for destructible blocks
+if _is_tile_valid(exp_tile):
+var tile_type = game_instance.game_map[exp_tile.y][exp_tile.x]
+if tile_type == 2:  # Soft block
+result.blocks_destroyed += 1
+# Track potential powerup spawn
+if exp_tile not in result.powerups_revealed:
+result.powerups_revealed.append(exp_tile)
+
+# Check for chain reaction bombs
+for bomb_id in game_instance.bombs:
+var bomb = game_instance.bombs[bomb_id]
+var bomb_pos = bomb.get_tile_position()
+
+if bomb_pos == exp_tile:
+var bomb_key = "%d,%d" % [bomb_pos.x, bomb_pos.y]
+if not processed_bombs.has(bomb_key):
+# Add chained bomb to queue
+explosion_queue.append({
+"tile": bomb_pos,
+"range": bomb.explosion_range if bomb.has("explosion_range") else 2,
+"time": explosion.time + 0.1,  # Chain reaction delay
+"depth": explosion.depth + 1
+})
+
+# Check for trapped players
+for peer_id in game_instance.players:
+var player = game_instance.players[peer_id]
+if player.has_method("is_dead") and player.is_dead:
+continue
+
+var player_tile = player.get_tile_position()
+
+# Check if player is in any explosion at any time
+for explosion_data in result.explosion_sequence:
+if player_tile in explosion_data.tiles:
+# Check if player can escape before explosion
+var time_to_escape = explosion_data.time
+var escape_routes = _count_safe_escape_routes(player_tile, result.explosion_sequence, time_to_escape)
+
+if escape_routes == 0:
+if peer_id not in result.players_trapped:
+result.players_trapped.append(peer_id)
+break
+
+return result
+
+func _simulate_explosion_pattern(center: Vector2i, range: int) -> Array:
+"""Simulate cross-shaped explosion pattern"""
+var tiles = [center]
+
+for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+for dist in range(1, range + 1):
+var tile = center + dir * dist
+
+if not _is_tile_valid(tile):
+break
+
+tiles.append(tile)
+
+# Check if explosion stops
+var tile_type = game_instance.game_map[tile.y][tile.x]
+if tile_type == 1 or tile_type == 2:  # Wall or soft block
+break
+
+return tiles
+
+func _count_safe_escape_routes(player_tile: Vector2i, explosion_sequence: Array, current_time: float) -> int:
+"""Count safe escape routes for a player given explosion sequence"""
+var safe_routes = 0
+
+for adj_tile in get_adjacent_tiles(player_tile):
+var is_safe = true
+
+# Check if this route is hit by any explosion
+for explosion_data in explosion_sequence:
+if adj_tile in explosion_data.tiles and explosion_data.time <= current_time + 0.5:
+is_safe = false
+break
+
+if is_safe:
+safe_routes += 1
+
+return safe_routes

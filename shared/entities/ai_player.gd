@@ -33,20 +33,29 @@ func is_ai_bot() -> bool:
 	"""Helper to identify AI players"""
 	return true
 
-func setup_ai(game_instance: Node2D, personality: int = 0):  # 0 = BALANCED
-	"""Initialize AI controller with personality"""
+func setup_ai(game_instance: Node2D, personality: int = 0, difficulty: int = AIPersonality.Difficulty.NORMAL):
+	"""Initialize AI controller with personality and difficulty - Phase 4 Enhanced"""
 	personality_type = personality
 	
 	# Set spawn time for delay
 	spawn_time = Time.get_ticks_msec() / 1000.0
 	
-	# Initialize unified AI controller
-	controller = UnifiedAIController.new(game_instance, personality)
+	# Initialize unified AI controller with difficulty scaling
+	controller = UnifiedAIController.new(game_instance, personality, difficulty)
 	
-	# Generate bot name based on personality
+	# Generate bot name based on personality and difficulty
 	var personality_name = controller.get_personality_name()
+	var difficulty_name = AIPersonality.get_difficulty_name(difficulty)
 	var bot_number = randi() % 1000
-	bot_name = "%s_Bot_%03d" % [personality_name, bot_number]
+	
+	if difficulty == AIPersonality.Difficulty.NORMAL:
+		# Normal difficulty: just personality name
+		bot_name = "%s_Bot_%03d" % [personality_name, bot_number]
+	else:
+		# Other difficulties: include difficulty indicator
+		var diff_prefix = difficulty_name.substr(0, 1)  # E, H, or X for Expert
+		bot_name = "%s%s_Bot_%03d" % [diff_prefix, personality_name, bot_number]
+	
 	username = bot_name
 	
 	print("[AIPlayer] Initialized: ", bot_name, " (", personality_name, ") using Unified AI")
