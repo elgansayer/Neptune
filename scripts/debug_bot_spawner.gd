@@ -57,7 +57,9 @@ func spawn_bots():
 		game_instance.players[bot_id] = bot
 		
 		# Initialize AI
-		bot.setup_ai(game_instance, personality)
+		# Note: setup_ai is a dynamic method call - parser warning can be ignored
+		if bot.has_method("setup_ai"):
+			bot.setup_ai(game_instance, personality)
 		
 		print("[DebugBotSpawner] Spawned bot: ", bot.username, " at ", spawn_tile)
 	
