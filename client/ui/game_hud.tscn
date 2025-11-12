@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cky7xvw3qr8mo"]
+[gd_scene load_steps=3 format=3 uid="uid://cky7xvw3qr8mo"]
 
 [ext_resource type="Script" path="res://client/ui/game_hud.gd" id="1"]
+[ext_resource type="StyleBox" uid="uid://ca25epb0prtgo" path="res://themes/hud_panel_style.tres" id="2"]
 
 [node name="GameHUD" type="CanvasLayer"]
 layer = 100
@@ -11,6 +12,7 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 70.0
 grow_horizontal = 2
+theme_override_styles/panel = ExtResource("2")
 
 [node name="LeftScoreTally" type="HBoxContainer" parent="TopBar"]
 layout_mode = 1

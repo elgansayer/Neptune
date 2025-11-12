@@ -1,12 +1,26 @@
 extends CanvasLayer
 class_name GameHUD
 
-# In-Game HUD displaying match timer, player stats, and game status
-# Simplified HUD for 9/10-player widescreen battle mode
-# - Time limit at top center (digital format)
-# - Round score tally flanking the timer
-# - Player identifiers on edges
-# - NO item counters (bomb/range/speed)
+# Simplified HUD for 9/10-Player Widescreen Battle Mode
+# =======================================================
+# Designed to be minimal and non-obstructive for large multiplayer battles.
+#
+# Visual Specification (based on classic Bomberman Saturn aesthetic):
+# - TIME LIMIT: Top center, bright white/yellow digital numbers (3:00 format)
+# - ROUND SCORE TALLY: Diamond icons flanking timer, player-colored
+# - PLAYER IDENTIFIERS: Small portraits on left/right edges with player colors
+# - NO item counters (bomb/range/speed) to minimize HUD clutter
+#
+# Color Palette:
+# - Timer: Bright white (>60s), yellow (60-30s), red (<30s)
+# - Background: Dark grey/black panels (0.1, 0.1, 0.15)
+# - Borders: Teal/grey (0.3, 0.4, 0.5)
+# - Text: High-contrast white with black shadow
+#
+# Font Style:
+# - Clean, blocky digital font (36px for timer)
+# - Centrally aligned for all numerical displays
+# - No anti-aliasing for retro pixel aesthetic
 
 @onready var match_timer: Label = $TopBar/TimerPanel/MatchTimer
 @onready var left_score_tally: HBoxContainer = $TopBar/LeftScoreTally
@@ -82,12 +96,37 @@ func update_round_scores(player_scores: Dictionary):
 			var icon = create_score_icon(get_player_color(player_id))
 			right_score_tally.add_child(icon)
 
-func create_score_icon(color: Color) -> ColorRect:
+func create_score_icon(color: Color) -> Control:
 	"""Create a small colored trophy/diamond icon for round wins"""
-	var icon = ColorRect.new()
-	icon.custom_minimum_size = Vector2(12, 12)
-	icon.color = color
-	return icon
+	# Create a diamond shape using a Polygon2D
+	var control = Control.new()
+	control.custom_minimum_size = Vector2(16, 16)
+	
+	var polygon = Polygon2D.new()
+	# Diamond/rhombus shape points
+	var diamond_points = PackedVector2Array([
+		Vector2(8, 2),   # Top
+		Vector2(14, 8),  # Right
+		Vector2(8, 14),  # Bottom
+		Vector2(2, 8)    # Left
+	])
+	polygon.polygon = diamond_points
+	polygon.color = color
+	
+	# Add a slight border for better visibility
+	var outline = Line2D.new()
+	outline.add_point(Vector2(8, 2))
+	outline.add_point(Vector2(14, 8))
+	outline.add_point(Vector2(8, 14))
+	outline.add_point(Vector2(2, 8))
+	outline.add_point(Vector2(8, 2))
+	outline.width = 1.5
+	outline.default_color = Color(0, 0, 0, 0.5)  # Dark outline
+	
+	control.add_child(outline)
+	control.add_child(polygon)
+	
+	return control
 
 func get_player_color(player_id: String) -> Color:
 	"""Get color for a player based on their ID"""
@@ -129,22 +168,41 @@ func update_player_identifiers(players: Dictionary):
 func create_player_portrait(player_id: String, player_data: Dictionary) -> PanelContainer:
 	"""Create a small character portrait for player identification"""
 	var container = PanelContainer.new()
-	container.custom_minimum_size = Vector2(60, 60)
+	container.custom_minimum_size = Vector2(60, 70)
+	
+	# Create a dark panel style for player portraits
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.15, 0.15, 0.2, 0.9)  # Dark background
+	panel_style.border_width_left = 2
+	panel_style.border_width_top = 2
+	panel_style.border_width_right = 2
+	panel_style.border_width_bottom = 2
+	panel_style.border_color = get_player_color(player_id)  # Player-colored border
+	panel_style.corner_radius_top_left = 4
+	panel_style.corner_radius_top_right = 4
+	panel_style.corner_radius_bottom_right = 4
+	panel_style.corner_radius_bottom_left = 4
+	container.add_theme_stylebox_override("panel", panel_style)
 	
 	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 2)
 	container.add_child(vbox)
 	
-	# Character portrait (colored square for now)
+	# Character portrait (colored square representing player)
 	var portrait = ColorRect.new()
 	portrait.custom_minimum_size = Vector2(40, 40)
 	portrait.color = get_player_color(player_id)
 	vbox.add_child(portrait)
 	
-	# Player name label
+	# Player name label with shadow for readability
 	var label = Label.new()
-	label.text = player_data.get("username", "Player")
+	label.text = player_data.get("username", "Player")[:8]  # Truncate long names
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 10)
+	label.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.8))
+	label.add_theme_constant_override("shadow_offset_x", 1)
+	label.add_theme_constant_override("shadow_offset_y", 1)
 	vbox.add_child(label)
 	
 	return container
