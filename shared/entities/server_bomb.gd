@@ -424,12 +424,3 @@ func _land_bomb():
 	state_changed.emit(self, bomb_state)
 
 # ============ END POWER GLOVE SYSTEM ============
-
-func get_state() -> Dictionary:
-	return {
-		"bomb_id": bomb_id,
-		"owner_id": owner_id,
-		"position": {"x": position.x, "y": position.y},
-		"timer": explosion_timer,
-		"range": explosion_range
-	}
