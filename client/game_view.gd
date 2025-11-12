@@ -73,13 +73,20 @@ func update_game_state(state: Dictionary):
 	if state.has("match_timer") and hud:
 		hud.update_timer(state.match_timer)
 	
-	# Count alive players and update HUD
+	# Update player identifiers in HUD (for simplified HUD)
 	if state.has("players") and hud:
+		hud.update_player_identifiers(state.players)
+		
+		# Count alive players (for legacy compatibility)
 		var alive_count = 0
 		for peer_id in state.players:
 			if not state.players[peer_id].get("is_dead", false):
 				alive_count += 1
 		hud.update_players_alive(alive_count, state.players.size())
+	
+	# Update round scores if present
+	if state.has("round_scores") and hud:
+		hud.update_round_scores(state.round_scores)
 	
 	# Update players
 	for peer_id_str in state.players:
