@@ -8,14 +8,16 @@ const Constants = preload("res://shared/constants.gd")
 const ServerPlayer = preload("res://shared/entities/server_player.gd")
 const ServerBomb = preload("res://shared/entities/server_bomb.gd")
 const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
-const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
-const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
+# AI System removed - preparing for rebuild
+# const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
+# const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 const MapGenerator = preload("res://shared/maps/map_generator.gd")
 const MapPackLoader = preload("res://shared/maps/map_pack_loader.gd")
 
 var game_id: String = ""
-var players := {}  # peer_id -> ServerPlayer (includes AI bots)
-var ai_bot_counter := 1000  # Start AI bot IDs from 1000
+var players := {}  # peer_id -> ServerPlayer
+# AI System removed - preparing for rebuild
+# var ai_bot_counter := 1000  # Start AI bot IDs from 1000
 var bombs := {}  # bomb_id -> ServerBomb
 var powerups := {}  # powerup_id -> ServerPowerUp
 var next_powerup_id := 0
@@ -145,12 +147,13 @@ func _physics_process(delta):
 	
 	last_sync_time += delta
 	
+	# AI System removed - preparing for rebuild
 	# Process AI bot bomb requests
-	for peer_id in players:
-		var player = players[peer_id]
-		if player.has_method("is_ai_bot") and player.is_ai_bot() and player.place_bomb_requested and player.can_place_bomb():
-			place_bomb(player)
-			player.place_bomb_requested = false
+	# for peer_id in players:
+	# 	var player = players[peer_id]
+	# 	if player.has_method("is_ai_bot") and player.is_ai_bot() and player.place_bomb_requested and player.can_place_bomb():
+	# 		place_bomb(player)
+	# 		player.place_bomb_requested = false
 	
 	# Send state updates to all clients
 	if last_sync_time >= SYNC_INTERVAL:
@@ -186,34 +189,6 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	add_child(player)
 	
 	print("[Game] Player joined: ", username, " at ", spawn_position, " (Power Glove: ", player.has_power_glove, ")")
-
-func add_ai_bot(personality: int = -1) -> int:
-	"""Spawn an AI bot with specified personality (-1 = random)
-	Returns the bot's peer_id
-	"""
-	if personality == -1:
-		personality = randi() % 3  # Random: 0=Balanced, 1=Aggressive, 2=Timid
-	
-	var bot_id = ai_bot_counter
-	ai_bot_counter += 1
-	
-	# Get spawn position
-	var spawn_pos = get_next_spawn_point()
-	
-	# Create AI player
-	var bot = AIPlayerScript.new()
-	bot.player_id = str(bot_id)
-	bot.position = spawn_pos
-	bot.setup_ai(self, personality)
-	
-	# TESTING: Give AI bot Power Glove at start for testing bomb throwing
-	bot.has_power_glove = true
-	
-	players[bot_id] = bot
-	add_child(bot)
-	
-	print("[Game] AI Bot spawned: ", bot.bot_name, " at ", spawn_pos, " (Power Glove: ", bot.has_power_glove, ")")
-	return bot_id
 
 func remove_player(peer_id: int):
 	if players.has(peer_id):
@@ -467,12 +442,8 @@ func sync_state_to_clients():
 			"owner_id": explosion["owner_id"]
 		})
 	
-	# Send to all REAL players in this game via ClientMain autoload
-	# Skip AI bots (they don't have network connections)
+	# Send to all players in this game via ClientMain autoload
 	for peer_id in players:
-		var player = players[peer_id]
-		if player.has_method("is_ai_bot") and player.is_ai_bot():
-			continue  # Skip AI bots
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position"""

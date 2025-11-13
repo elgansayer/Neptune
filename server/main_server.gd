@@ -154,11 +154,12 @@ func quick_start_game(peer_id: int, username: String):
 		add_child(game)
 		active_games[shared_game_id] = game
 		
+		# AI System removed - preparing for rebuild
 		# Auto-spawn AI bots for testing (3 bots with different personalities)
-		print("[Server] Auto-spawning 3 AI bots for testing...")
-		game.call_deferred("add_ai_bot", 0)  # Balanced
-		game.call_deferred("add_ai_bot", 1)  # Aggressive
-		game.call_deferred("add_ai_bot", 2)  # Timid
+		# print("[Server] Auto-spawning 3 AI bots for testing...")
+		# game.call_deferred("add_ai_bot", 0)  # Balanced
+		# game.call_deferred("add_ai_bot", 1)  # Aggressive
+		# game.call_deferred("add_ai_bot", 2)  # Timid
 	
 	var game = active_games[shared_game_id]
 	player_to_game[peer_id] = shared_game_id
@@ -168,17 +169,18 @@ func quick_start_game(peer_id: int, username: String):
 	
 	print("[Server] Player ", username, " joined shared game. Total players: ", game.players.size())
 
+# AI System removed - preparing for rebuild
 # AI bot spawning disabled - see spawn_ai_bot_local() for local testing
 # @rpc("any_peer", "call_remote", "reliable")
 # func spawn_ai_bot(personality: int = -1):
 
-func spawn_ai_bot_local(game_id: String, personality: int = -1):
-	"""Spawn AI bot directly (for testing/single-player)"""
-	if not active_games.has(game_id):
-		print("[Server] Game not found: ", game_id)
-		return
-	
-	var game = active_games[game_id]
-	game.add_ai_bot(personality)
-	print("[Server] AI bot spawned in ", game_id, ". Total players: ", game.players.size())
+# func spawn_ai_bot_local(game_id: String, personality: int = -1):
+# 	"""Spawn AI bot directly (for testing/single-player)"""
+# 	if not active_games.has(game_id):
+# 		print("[Server] Game not found: ", game_id)
+# 		return
+# 	
+# 	var game = active_games[game_id]
+# 	game.add_ai_bot(personality)
+# 	print("[Server] AI bot spawned in ", game_id, ". Total players: ", game.players.size())
 
