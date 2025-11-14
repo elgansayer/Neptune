@@ -2,3 +2,4 @@
 .godot/
 /android/
 server.log
+\n# Logs\n*.log\nfirebase-debug.log\nkick_debug.log\nkick_test.log\nserver.log
