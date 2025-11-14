@@ -506,6 +506,12 @@ func update_bomb(bomb_id: String, data: Dictionary):
 	bomb_node.position = Vector2(data.position.x, data.position.y)
 	bomb_node.update_timer(data.timer)
 	
+	# Handle visibility (for out-of-bounds during wrap-around)
+	if data.has("is_visible"):
+		bomb_node.visible = data.is_visible
+	else:
+		bomb_node.visible = true  # Default to visible
+	
 	# Handle Power Glove states
 	if data.has("state"):
 		var bomb_state = data.state

@@ -29,7 +29,7 @@ var carrier_id: String = ""
 
 # Throw physics (pseudo-3D arc simulation)
 const THROW_RANGE: int = 2  # Grid tiles
-const THROW_DURATION: float = 0.375  # Seconds per arc segment (fast throw)
+const THROW_DURATION: float = 0.3375  # Seconds per arc segment (fast throw)
 const THROW_HEIGHT: float = 8.0  # Visual height in pixels for arc
 const BOUNCE_HEIGHT_REDUCTION: float = 0.6  # Height reduction per bounce
 var throw_start_pos: Vector2 = Vector2.ZERO
@@ -43,6 +43,7 @@ var current_waypoint_index: int = 0
 var current_arc_start: Vector2 = Vector2.ZERO
 var current_arc_target: Vector2 = Vector2.ZERO
 var current_arc_height: float = THROW_HEIGHT
+var is_out_of_bounds: bool = false  # Track if bomb is currently outside map boundaries
 
 # Progressive explosion state
 const EXPLOSION_GROWTH_INTERVAL = 0.02  # 50 tiles/second
@@ -238,7 +239,8 @@ func get_state() -> Dictionary:
 		"range": explosion_range,
 		"state": bomb_state,
 		"carrier_id": carrier_id,
-		"z_height": current_z_height
+		"z_height": current_z_height,
+		"is_visible": not is_out_of_bounds
 	}
 	
 	# Add throw-specific data if in THROWN state
@@ -352,6 +354,8 @@ func _calculate_bounce_waypoints(start_tile: Vector2i) -> Array[Vector2]:
 	
 	Returns array of world positions for each bounce point (including final landing).
 	Waypoints are calculated from the player's tile position (not bomb's offset position).
+	Bounces on any collision (including out-of-bounds) and wraps around map edges.
+	Adds intermediate waypoints at map boundaries for smooth visual transitions.
 	"""
 	# Cardinalize throw direction
 	var dir_i: Vector2i = Vector2i(0, 0)
@@ -364,38 +368,50 @@ func _calculate_bounce_waypoints(start_tile: Vector2i) -> Array[Vector2]:
 	
 	var waypoints: Array[Vector2] = []
 	var landing_tile: Vector2i = start_tile + dir_i * 2
+	var previous_tile: Vector2i = start_tile
 	
 	# Build waypoints by checking each potential landing spot
 	var safety: int = 20
 	while safety > 0:
-		if not GridHelpers.is_valid_grid_position(landing_tile):
-			# Out of bounds - step back
-			landing_tile -= dir_i
-			break
+		# Handle map wrap-around when going out of bounds
+		var wrapped_tile = _wrap_tile_position(landing_tile)
 		
-		# Calculate tile center position
+		# Calculate tile center position (use wrapped coordinates)
 		var tile_world_pos := Vector2(
-			landing_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-			landing_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+			wrapped_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+			wrapped_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 		)
 		
-		if _is_tile_free_for_landing(landing_tile):
+		# Check if tile is free or has collision
+		var has_collision = _check_tile_has_collision(wrapped_tile)
+		
+		if has_collision:
+			# Collision detected - check if continuing forward will cross boundary
+			var next_tile = landing_tile + dir_i
+			if _crosses_map_boundary(landing_tile, next_tile):
+				# Don't add this tile as bounce - instead add edge transition waypoints
+				_add_edge_transition_waypoints(waypoints, landing_tile, next_tile, dir_i)
+				previous_tile = next_tile
+				landing_tile = next_tile + dir_i
+			else:
+				# Normal bounce - add waypoint and continue
+				waypoints.append(tile_world_pos)
+				previous_tile = landing_tile
+				landing_tile += dir_i
+		else:
 			# Found free tile - this is final landing
 			waypoints.append(tile_world_pos)
 			break
-		else:
-			# Blocked - add as bounce waypoint and continue
-			waypoints.append(tile_world_pos)
-			landing_tile += dir_i
 		
 		safety -= 1
 	
 	if waypoints.size() == 0:
 		# Fallback - calculate position relative to throw start
 		var fallback_tile := start_tile + dir_i * 2
+		var wrapped_fallback = _wrap_tile_position(fallback_tile)
 		waypoints.append(Vector2(
-			fallback_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-			fallback_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+			wrapped_fallback.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+			wrapped_fallback.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 		))
 	
 	return waypoints
@@ -444,6 +460,114 @@ func _calculate_throw_target() -> Vector2i:
 	if GridHelpers.is_valid_grid_position(landing_tile):
 		return landing_tile
 	return start_tile
+
+func _wrap_tile_position(grid_pos: Vector2i) -> Vector2i:
+	"""Wrap tile position around map edges (toroidal topology).
+	
+	If bomb goes off the right edge, it appears on the left.
+	If bomb goes off the bottom, it appears on the top, etc.
+	"""
+	var wrapped_x = grid_pos.x
+	var wrapped_y = grid_pos.y
+	
+	# Wrap X coordinate
+	if wrapped_x < 0:
+		wrapped_x = GameConfig.map_width + (wrapped_x % GameConfig.map_width)
+	elif wrapped_x >= GameConfig.map_width:
+		wrapped_x = wrapped_x % GameConfig.map_width
+	
+	# Wrap Y coordinate
+	if wrapped_y < 0:
+		wrapped_y = GameConfig.map_height + (wrapped_y % GameConfig.map_height)
+	elif wrapped_y >= GameConfig.map_height:
+		wrapped_y = wrapped_y % GameConfig.map_height
+	
+	return Vector2i(wrapped_x, wrapped_y)
+
+func _crosses_map_boundary(from_tile: Vector2i, to_tile: Vector2i) -> bool:
+	"""Check if movement from one tile to another crosses a map boundary."""
+	# Check X boundary crossing
+	if (from_tile.x >= 0 and from_tile.x < GameConfig.map_width) and \
+	   (to_tile.x < 0 or to_tile.x >= GameConfig.map_width):
+		return true
+	
+	# Check Y boundary crossing
+	if (from_tile.y >= 0 and from_tile.y < GameConfig.map_height) and \
+	   (to_tile.y < 0 or to_tile.y >= GameConfig.map_height):
+		return true
+	
+	return false
+
+func _add_edge_transition_waypoints(waypoints: Array[Vector2], from_tile: Vector2i, to_tile: Vector2i, direction: Vector2i):
+	"""Add intermediate waypoints for smooth edge transitions.
+	
+	Adds only exit and entry waypoints - bomb will teleport between them.
+	"""
+	# Determine which edge is being crossed
+	var exit_tile: Vector2i
+	var entry_tile: Vector2i
+	
+	if to_tile.x < 0:
+		# Crossing left edge -> wrapping to right
+		exit_tile = Vector2i(0, from_tile.y)
+		entry_tile = Vector2i(GameConfig.map_width - 1, from_tile.y)
+	elif to_tile.x >= GameConfig.map_width:
+		# Crossing right edge -> wrapping to left
+		exit_tile = Vector2i(GameConfig.map_width - 1, from_tile.y)
+		entry_tile = Vector2i(0, from_tile.y)
+	elif to_tile.y < 0:
+		# Crossing top edge -> wrapping to bottom
+		exit_tile = Vector2i(from_tile.x, 0)
+		entry_tile = Vector2i(from_tile.x, GameConfig.map_height - 1)
+	elif to_tile.y >= GameConfig.map_height:
+		# Crossing bottom edge -> wrapping to top
+		exit_tile = Vector2i(from_tile.x, GameConfig.map_height - 1)
+		entry_tile = Vector2i(from_tile.x, 0)
+	else:
+		return  # No boundary crossing
+	
+	# Add exit waypoint (last tile before leaving map)
+	var exit_pos = Vector2(
+		exit_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		exit_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
+	waypoints.append(exit_pos)
+	
+	# Add entry waypoint (first tile after entering from opposite edge)
+	# Bomb will teleport from exit to entry
+	var entry_pos = Vector2(
+		entry_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		entry_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
+	waypoints.append(entry_pos)
+
+func _check_tile_has_collision(grid_pos: Vector2i) -> bool:
+	"""Check if a tile has any collision (wall, block, player, or bomb).
+	
+	Returns true if there's a collision (bomb should bounce).
+	Returns false if tile is free (bomb can land).
+	"""
+	# Check static map (0 = empty, anything else = collision)
+	if game_instance and game_instance.has_method("get_tile_type"):
+		if game_instance.get_tile_type(grid_pos) != 0:
+			return true  # Wall or destructible block
+	
+	# Check dynamic occupancy: players and other bombs
+	if game_instance:
+		# Players
+		for peer_id in game_instance.players:
+			var player = game_instance.players[peer_id]
+			if is_instance_valid(player) and not player.is_dead:
+				if player.get_tile_position() == grid_pos:
+					return true  # Player collision - bounce
+		# Bombs
+		for other_id in game_instance.bombs:
+			var other_bomb = game_instance.bombs[other_id]
+			if is_instance_valid(other_bomb) and not other_bomb.has_exploded:
+				if other_bomb.bomb_id != bomb_id and other_bomb.get_tile_position() == grid_pos:
+					return true  # Bomb collision - bounce
+	
+	return false  # Tile is free
 
 func _is_tile_free_for_landing(grid_pos: Vector2i) -> bool:
 	"""Check if a tile is suitable for landing: empty map cell and no players/bombs.
@@ -530,12 +654,42 @@ func _update_throw_physics(delta: float):
 			throw_progress = 0.0
 			current_arc_start = current_arc_target
 			current_arc_target = bounce_waypoints[current_waypoint_index]
+			
+			# Check if this is a teleport segment (edge wrap)
+			# If start and target are far apart but both in bounds, it's a teleport
+			var distance = current_arc_start.distance_to(current_arc_target)
+			var diagonal_distance = sqrt(
+				pow(GameConfig.map_width * GameConfig.TILE_SIZE, 2) + 
+				pow(GameConfig.map_height * GameConfig.TILE_SIZE, 2)
+			)
+			
+			if distance > diagonal_distance * 0.5:
+				# Large distance indicates edge wrap - teleport instantly
+				throw_progress = 1.0
+				return
+			
 			# Reset to standard arc height for bounces (no initial carry offset)
 			current_arc_height = THROW_HEIGHT
 			current_z_height = 0.0  # Bounces start from ground
 	
 	# Calculate current X/Y position along arc segment (ground-level trajectory)
 	position = current_arc_start.lerp(current_arc_target, throw_progress)
+	
+	# Update visibility based on whether position is within map bounds
+	# Check both tile position AND actual world position to handle interpolation
+	var tile_pos = get_tile_position()
+	var world_bounds_min = Vector2.ZERO
+	var world_bounds_max = Vector2(
+		GameConfig.map_width * GameConfig.TILE_SIZE,
+		GameConfig.map_height * GameConfig.TILE_SIZE
+	)
+	
+	# Out of bounds if tile is invalid OR position is outside world bounds
+	is_out_of_bounds = not GridHelpers.is_valid_grid_position(tile_pos) or \
+					   position.x < world_bounds_min.x or \
+					   position.x >= world_bounds_max.x or \
+					   position.y < world_bounds_min.y or \
+					   position.y >= world_bounds_max.y
 	
 	# Calculate pseudo-3D height (parabolic arc)
 	# For first segment (index 0), we need to transition from initial carry z_height
@@ -565,8 +719,9 @@ func _land_bomb():
 		final_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
 	
-	# Reset Z height
+	# Reset Z height and ensure visible
 	current_z_height = 0.0
+	is_out_of_bounds = false
 	
 	# Re-enable collision
 	collision_layer = Constants.COLLISION_LAYER_BOMBS
