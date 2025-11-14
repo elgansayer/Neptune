@@ -17,26 +17,26 @@ const AIPersonalitiesConfig = preload("res://shared/ai/config/personalities.gd")
 var game_instance
 var personality := "BALANCED"
 var player_ref
-var grid_sampler: GridSampler
-var hazard_predictor: HazardPredictor
-var opponent_tracker: OpponentTracker
-var bomb_planner: BombPlanner
+var grid_sampler
+var hazard_predictor
+var opponent_tracker
+var bomb_planner
 
-var _bt_runner: BehaviorTreeRunner
+var _bt_runner
 var _blackboard := {}
 var _behavior_weights := {}
 var _personality_profile := {}
 var _decision_interval := 0.1
 var _decision_accumulator := 0.0
 
-var _escape_sequence: BTSequence
-var _attack_sequence: BTSequence
-var _collect_sequence: BTSequence
-var _ambush_node: BTWaitAmbushNode
+var _escape_sequence
+var _attack_sequence
+var _collect_sequence
+var _ambush_node
 
 func configure(instance, player, personality_name: String,
-		sampler: GridSampler, predictor: HazardPredictor,
-		tracker: OpponentTracker, planner: BombPlanner) -> void:
+		sampler, predictor,
+		tracker, planner) -> void:
 	game_instance = instance
 	player_ref = player
 	grid_sampler = sampler
@@ -101,8 +101,10 @@ func _update_blackboard() -> void:
 	_blackboard["current_world"] = player_ref.position
 	var nearest = opponent_tracker.get_nearest_opponent(player_ref.position)
 	_blackboard["nearest_opponent"] = nearest
-	if nearest and not nearest.is_empty():
+	if nearest:
 		_blackboard["opponent_tile"] = nearest.get("tile")
+	else:
+		_blackboard["opponent_tile"] = null
 	_blackboard["move_vector"] = Vector2.ZERO
 	_blackboard["request_bomb"] = false
 
@@ -126,8 +128,8 @@ func _score_behavior(child, blackboard: Dictionary) -> float:
 		if not hazard_predictor.is_tile_safe(current_tile, now, _personality_profile.get("danger_buffer", 1.0)):
 			base += 8.0
 	elif child == _attack_sequence:
-		var opponent: Dictionary = blackboard.get("nearest_opponent")
-		if opponent == null or opponent.is_empty():
+		var opponent = blackboard.get("nearest_opponent")
+		if opponent == null:
 			return 0.0
 		var tile: Vector2i = opponent.get("tile", current_tile)
 		if tile != null and grid_sampler:

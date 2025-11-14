@@ -6,11 +6,11 @@ const Constants = preload("res://shared/constants.gd")
 ## Tracks bomb danger windows by sampling bombs from the authoritative GameInstance.
 
 var _game_instance: Node
-var _grid_sampler: GridSampler
+var _grid_sampler
 var _default_buffer := 0.5
 var _danger_cache := {}
 
-func configure(instance: Node, sampler: GridSampler, default_buffer: float = 0.5) -> void:
+func configure(instance: Node, sampler, default_buffer: float = 0.5) -> void:
 	_game_instance = instance
 	_grid_sampler = sampler
 	_default_buffer = default_buffer

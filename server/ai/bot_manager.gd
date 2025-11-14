@@ -68,7 +68,7 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	if ServerBotControllerScript == null:
 		push_error("[BotManager] Bot controller script unavailable; aborting spawn")
 		return
-	var controller := ServerBotControllerScript.new()
+	var controller = ServerBotControllerScript.new()
 	controller.configure(game_instance, player, personality, grid_sampler, hazard_predictor, opponent_tracker, bomb_planner)
 	controllers.append(controller)
 	add_child(controller)
