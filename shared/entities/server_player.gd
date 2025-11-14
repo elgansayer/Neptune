@@ -1,8 +1,12 @@
 extends CharacterBody2D
 class_name ServerPlayer
 
-# Server-authoritative player controller with Bomberman-style corner sliding
-# Uses Godot's built-in physics and collision system
+const ServerBomb = preload("res://shared/entities/server_bomb.gd")
+
+# Server-authoritative player character
+# Handles movement, collision, bomb placement, and power-ups
+# Uses Godot's built-in collision system with exceptions
+# Implements corner sliding for smoother navigation
 
 const Constants = preload("res://shared/constants.gd")
 const ServerPowerUpScript = preload("res://shared/entities/server_powerup.gd")
@@ -40,6 +44,7 @@ var collision_exceptions := []
 var shape_cast_desired: ShapeCast2D
 var shape_cast_perp1: ShapeCast2D
 var shape_cast_perp2: ShapeCast2D
+var kick_detector: ShapeCast2D
 
 # Debug visualization
 var debug_arrow: Polygon2D
@@ -109,6 +114,13 @@ func _setup_shape_casts():
 	add_child(shape_cast_desired)
 	# Explicitly exclude this player's physics body
 	shape_cast_desired.add_exception(self)
+	
+	# ShapeCast for kick detection
+	kick_detector = ShapeCast2D.new()
+	kick_detector.shape = cast_shape
+	kick_detector.collision_mask = Constants.COLLISION_LAYER_BOMBS
+	kick_detector.enabled = true
+	add_child(kick_detector)
 	
 	# ShapeCast for perpendicular direction 1
 	shape_cast_perp1 = ShapeCast2D.new()
@@ -310,6 +322,17 @@ func _physics_process(_delta):
 		move_and_slide()
 		return
 	
+	# --- NEW KICK DETECTION LOGIC ---
+	if has_bomb_kicker and input_direction.length() > 0.1:
+		kick_detector.target_position = input_direction.normalized() * (GameConfig.TILE_SIZE / 2.0)
+		kick_detector.force_shapecast_update()
+		
+		if kick_detector.is_colliding():
+			var collider = kick_detector.get_collider(0)
+			if collider is ServerBomb and not (collider in collision_exceptions):
+				print("[Player] Kick Detector found bomb: ", collider.name)
+				collider.kick(input_direction)
+
 	# Update pickup animation timer
 	if is_picking_up_bomb:
 		pickup_animation_time += _delta
@@ -319,6 +342,10 @@ func _physics_process(_delta):
 	
 	# Get the input direction (strict 4-way)
 	var input_dir = get_4way_input()
+	
+	# Debug: Print input state every frame for a few seconds
+	if Engine.get_process_frames() % 60 == 0:  # Every 60 frames (~1 second)
+		print("[ServerPlayer DEBUG] ", username, " has_bomb_kicker=", has_bomb_kicker, " input_dir=", input_dir, " input_direction=", input_direction)
 	
 	if input_dir.length() < Constants.INPUT_DEADZONE:
 		# No input - stop moving but keep last_move_direction
@@ -394,30 +421,6 @@ func _physics_process(_delta):
 	var pos_before = position
 	move_and_slide()
 	var pos_after = position
-	
-	if final_direction.length() > 0 and pos_before.distance_to(pos_after) < 0.1:
-		print("WARNING: Wanted to move in direction ", final_direction, " but barely moved! Distance: ", pos_before.distance_to(pos_after))
-	
-	# Check for bomb kicking by looking at the tile we're moving into
-	if has_bomb_kicker and final_direction.length() > 0.1:
-		# Calculate the tile we're trying to move into
-		var current_tile = get_tile_position()
-		var direction_vector = final_direction.normalized()
-		var target_tile = current_tile + Vector2i(
-			int(round(direction_vector.x)),
-			int(round(direction_vector.y))
-		)
-		
-		# Get game instance to check for bombs
-		var game_instance = get_parent()
-		if game_instance and game_instance.has_method("get_bomb_at_tile"):
-			var bomb = game_instance.get_bomb_at_tile(target_tile)
-			
-			# If there's a bomb in the target tile and we're not in our exceptions list
-			if bomb and not (bomb in collision_exceptions):
-				print("[Player] Found bomb at tile ", target_tile, " - attempting kick!")
-				bomb.kick(direction_vector)
-
 	
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):

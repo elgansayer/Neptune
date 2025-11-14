@@ -127,6 +127,12 @@ func _physics_process(delta):
 			stop_kick()
 			print("[Bomb] Kicked bomb stopped - hit ", collision.get_collider())
 	
+	# In planted/landed/kicked state (not carried/thrown/exploded), timer counts up
+	if bomb_state == BombState.PLANTED or bomb_state == BombState.LANDED or bomb_state == BombState.KICKED:
+		explosion_timer += delta
+		if explosion_timer >= Constants.BOMB_TIMER:
+			explode()
+
 	if has_exploded:
 		# Handle progressive explosion expansion
 		if explosion_started and current_explosion_length <= explosion_range:
@@ -135,11 +141,6 @@ func _physics_process(delta):
 				explosion_growth_timer -= EXPLOSION_GROWTH_INTERVAL
 				expand_explosion()
 		return
-	
-	# In planted/landed/kicked state (not carried/thrown/exploded), timer counts up
-	explosion_timer += delta
-	if explosion_timer >= Constants.BOMB_TIMER:
-		explode()
 
 func get_tile_position() -> Vector2i:
 	return Vector2i(
@@ -377,14 +378,14 @@ func throw_bomb(direction: Vector2) -> bool:
 
 # ============ BOMB KICK SYSTEM METHODS ============
 
-func kick(direction: Vector2):
-	"""Kick the bomb in the given direction"""
+func kick(direction: Vector2) -> bool:
+	"""Kick the bomb in the given direction. Returns true if successful."""
 	print("[Bomb] kick() called with direction: ", direction, " state=", bomb_state, " has_exploded=", has_exploded)
 	
 	# Cannot kick if already in motion or exploded
 	if bomb_state != BombState.PLANTED or has_exploded:
 		print("[Bomb] Cannot kick - wrong state or exploded")
-		return
+		return false
 	
 	# Normalize direction to ensure consistent speed
 	kick_direction = direction.normalized()
@@ -404,6 +405,7 @@ func kick(direction: Vector2):
 	state_changed.emit(self, bomb_state)
 	
 	print("[Bomb] Successfully kicked! Direction: ", kick_direction, " at speed ", kick_speed)
+	return true
 
 func stop_kick():
 	"""Stop the bomb from sliding"""
@@ -499,11 +501,6 @@ func _calculate_bounce_waypoints(start_tile: Vector2i) -> Array[Vector2]:
 		))
 	
 	return waypoints
-
-	
-	return waypoints
-
-func _wrap_tile_position(grid_pos: Vector2i) -> Vector2i:
 
 func _wrap_tile_position(grid_pos: Vector2i) -> Vector2i:
 	"""Wrap tile position around map edges (toroidal topology).
@@ -748,4 +745,3 @@ func _land_bomb():
 	state_changed.emit(self, bomb_state)
 
 # ============ END THROW PHYSICS HELPER METHODS ============
->>>>>>> copilot/implement-power-glove-bomb-throwing
