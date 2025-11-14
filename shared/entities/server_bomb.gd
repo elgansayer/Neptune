@@ -248,6 +248,12 @@ func get_state() -> Dictionary:
 		state_dict["throw_start"] = {"x": throw_start_pos.x, "y": throw_start_pos.y}
 		state_dict["throw_target"] = {"x": throw_target_pos.x, "y": throw_target_pos.y}
 		state_dict["throw_progress"] = throw_progress
+		
+		# Add current arc segment for smooth network interpolation
+		state_dict["arc_start"] = {"x": current_arc_start.x, "y": current_arc_start.y}
+		state_dict["arc_target"] = {"x": current_arc_target.x, "y": current_arc_target.y}
+		state_dict["arc_height"] = current_arc_height
+		state_dict["waypoint_index"] = current_waypoint_index
 	
 	return state_dict
 
