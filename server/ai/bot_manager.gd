@@ -21,8 +21,9 @@ var bomb_planner
 var next_bot_peer_id := -1
 var auto_spawned := false
 
-const DEFAULT_PERSONALITY := "BALANCED"
 const DEFAULT_BOT_COUNT := 3  # Adjust for heavier load testing as needed
+const PERSONALITY_POOL := ["BALANCED", "AGGRESSIVE", "DEFENSIVE", "TIMID", "GREEDY", "CHAOS", "KAMIKAZE", "STRATEGIC", "TRAPPER"]
+var _personality_index := 0
 
 func configure(instance) -> void:
 	game_instance = instance
@@ -41,8 +42,11 @@ func _auto_spawn_bots() -> void:
 	if auto_spawned:
 		return
 	auto_spawned = true
-	print("[BotManager] Auto-spawning %d bots" % DEFAULT_BOT_COUNT)
-	spawn_bots(DEFAULT_BOT_COUNT, DEFAULT_PERSONALITY)
+	print("[BotManager] Auto-spawning %d bots with diverse personalities" % DEFAULT_BOT_COUNT)
+	for i in range(DEFAULT_BOT_COUNT):
+		var personality = PERSONALITY_POOL[_personality_index % PERSONALITY_POOL.size()]
+		_personality_index += 1
+		spawn_bot(personality)
 
 func _physics_process(_delta: float) -> void:
 	if game_instance == null:
@@ -50,11 +54,11 @@ func _physics_process(_delta: float) -> void:
 	hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
 	opponent_tracker.update_from_players(game_instance.players.values())
 
-func spawn_bots(count: int, personality: String = DEFAULT_PERSONALITY) -> void:
+func spawn_bots(count: int, personality: String = "BALANCED") -> void:
 	for i in range(count):
 		spawn_bot(personality)
 
-func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
+func spawn_bot(personality: String = "BALANCED") -> void:
 	if game_instance == null:
 		push_warning("[BotManager] GameInstance not assigned yet")
 		return
