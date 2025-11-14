@@ -65,18 +65,23 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 		return
 	var player = game_instance.players[peer_id]
 	print("[BotManager] Spawned bot %s (peer %d)" % [player.player_name, peer_id])
+	
+	# TODO: Enable bot controller once behavior tree nodes are implemented
+	# For now, bots spawn but don't have AI decision-making
 	if ServerBotControllerScript == null:
-		push_error("[BotManager] Bot controller script unavailable; aborting spawn")
+		push_warning("[BotManager] Bot controller script unavailable; bot will be inactive")
 		return
-	var controller = ServerBotControllerScript.new()
-	controller.configure(game_instance, player, personality, grid_sampler, hazard_predictor, opponent_tracker, bomb_planner)
-	controllers.append(controller)
-	add_child(controller)
-	player.tree_exited.connect(func():
-		controllers.erase(controller)
-		if is_instance_valid(controller):
-			controller.queue_free()
-	, Object.CONNECT_ONE_SHOT)
+	
+	# Uncomment when behavior tree implementation is ready:
+	# var controller = ServerBotControllerScript.new()
+	# controller.configure(game_instance, player, personality, grid_sampler, hazard_predictor, opponent_tracker, bomb_planner)
+	# controllers.append(controller)
+	# add_child(controller)
+	# player.tree_exited.connect(func():
+	# 	controllers.erase(controller)
+	# 	if is_instance_valid(controller):
+	# 		controller.queue_free()
+	# , Object.CONNECT_ONE_SHOT)
 
 static func _load_script_variant(paths: Array) -> Script:
 	for path in paths:

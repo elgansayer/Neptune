@@ -114,7 +114,10 @@ func _apply_outputs() -> void:
 	var desired: Vector2 = _blackboard.get("move_vector", Vector2.ZERO)
 	var axis := Vector2.ZERO
 	if desired.length() > 0.05:
-		axis = abs(desired.x) > abs(desired.y) ? Vector2(sign(desired.x), 0.0) : Vector2(0.0, sign(desired.y))
+		if abs(desired.x) > abs(desired.y):
+			axis = Vector2(sign(desired.x), 0.0)
+		else:
+			axis = Vector2(0.0, sign(desired.y))
 	player_ref.set_input(axis.x, axis.y)
 	if _blackboard.get("request_bomb", false):
 		game_instance.place_bomb(player_ref)

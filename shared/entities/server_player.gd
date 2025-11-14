@@ -12,6 +12,8 @@ const Constants = preload("res://shared/constants.gd")
 const ServerPowerUpScript = preload("res://shared/entities/server_powerup.gd")
 
 var player_id: String = ""
+var peer_id: int = 0
+var player_name: String = ""
 var username: String = ""
 var input_direction := Vector2.ZERO
 var last_move_direction := Vector2.ZERO  # The last direction we successfully moved (persists when stationary)
