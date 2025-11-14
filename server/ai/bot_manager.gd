@@ -1,11 +1,13 @@
 extends Node
 class_name ServerBotManager
 
-const _BOT_CONTROLLER_PATHS := [
-	"res://server/ai/bot_controller.gd",
-	"res://ai/bot_controller.gd"
-]
-var ServerBotControllerScript: Script = _load_script_variant(_BOT_CONTROLLER_PATHS)
+# TODO: Uncomment when behavior tree nodes are implemented
+# const _BOT_CONTROLLER_PATHS := [
+# 	"res://server/ai/bot_controller.gd",
+# 	"res://ai/bot_controller.gd"
+# ]
+# var ServerBotControllerScript: Script = _load_script_variant(_BOT_CONTROLLER_PATHS)
+
 const GridSamplerScript = preload("res://shared/ai/perception/grid_sampler.gd")
 const HazardPredictorScript = preload("res://shared/ai/perception/hazard_predictor.gd")
 const OpponentTrackerScript = preload("res://shared/ai/perception/opponent_tracker.gd")
@@ -68,11 +70,12 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	
 	# TODO: Enable bot controller once behavior tree nodes are implemented
 	# For now, bots spawn but don't have AI decision-making
-	if ServerBotControllerScript == null:
-		push_warning("[BotManager] Bot controller script unavailable; bot will be inactive")
-		return
+	push_warning("[BotManager] Bot controllers disabled - awaiting behavior tree implementation")
 	
 	# Uncomment when behavior tree implementation is ready:
+	# if ServerBotControllerScript == null:
+	# 	push_warning("[BotManager] Bot controller script unavailable; bot will be inactive")
+	# 	return
 	# var controller = ServerBotControllerScript.new()
 	# controller.configure(game_instance, player, personality, grid_sampler, hazard_predictor, opponent_tracker, bomb_planner)
 	# controllers.append(controller)
