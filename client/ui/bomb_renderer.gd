@@ -117,11 +117,13 @@ func _show_thrown_visual():
 
 func update_z_height(z_height: float):
 	"""Update visual position based on pseudo-3D height"""
+	print("[BombRenderer] update_z_height called with z_height=", z_height)
 	z_offset = z_height
 	
 	# Offset sprite upward to simulate height
 	if animated_sprite:
 		animated_sprite.position = Vector2(0, -z_offset)
+		print("[BombRenderer] Set sprite position to: ", animated_sprite.position)
 		
 		# Scale slightly larger when higher (perspective effect)
 		var scale_factor = 1.0 + (z_height / 200.0)  # Subtle scaling

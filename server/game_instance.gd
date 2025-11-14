@@ -233,33 +233,46 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 	# Set movement input
 	player.set_input(input_data.get("input_x", 0.0), input_data.get("input_y", 0.0))
 	
-	# Handle Power Glove actions
 	var action_pressed = input_data.get("action_pressed", false)
 	var action_released = input_data.get("action_released", false)
-	
+
+	# Branch logic based on whether player has Power Glove
 	if player.has_power_glove:
+		# Power Glove Logic: Place -> Pickup -> Throw, all on press
 		if action_pressed:
-			# Action button pressed
 			player.request_action_press()
-			
-			# If carrying a bomb, don't do pickup (will throw on release)
-			# If not carrying, try to pick up bomb at current position
-			if not player.is_carrying_bomb():
-				_try_pickup_bomb_at_player(player)
-		
-		if action_released:
-			# Action button released - throw if carrying
-			player.request_action_release()
+			# If currently carrying, throw on press
 			if player.is_carrying_bomb():
 				player.throw_carried_bomb()
-	
-	# Handle bomb placement (normal action if no Power Glove)
-	if input_data.get("place_bomb", false) and player.can_place_bomb():
-		place_bomb(player)
+			else:
+				# Not carrying: try to pick up a bomb underfoot
+				var pickup_successful = _try_pickup_bomb_at_player(player)
+				if not pickup_successful:
+					# Only place a new bomb if NOT on an existing bomb
+					var player_tile = player.get_tile_position()
+					var bomb_at_position = false
+					for bomb_id in bombs:
+						var bomb = bombs[bomb_id]
+						if is_instance_valid(bomb) and bomb.get_tile_position() == player_tile:
+							bomb_at_position = true
+							break
+					# Place if no bomb here and allowed
+					if not bomb_at_position and player.can_place_bomb():
+						place_bomb(player)
+		elif action_released:
+			# Maintain state for completeness; no throw on release now
+			player.request_action_release()
+	else:
+		# Standard Logic: Place bomb
+		if input_data.get("place_bomb", false) and player.can_place_bomb():
+			place_bomb(player)
 
-func _try_pickup_bomb_at_player(player: ServerPlayer):
-	"""Try to pick up a bomb at the player's current tile"""
+func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
+	"""Try to pick up a bomb at the player's current tile. Returns true if successful."""
 	var player_tile = player.get_tile_position()
+	
+	print("[DEBUG] Trying to pick up bomb at tile: ", player_tile)
+	print("[DEBUG] Total bombs in game: ", bombs.size())
 	
 	# Find bomb at player's position
 	for bomb_id in bombs:
@@ -268,11 +281,19 @@ func _try_pickup_bomb_at_player(player: ServerPlayer):
 			continue
 		
 		var bomb_tile = bomb.get_tile_position()
+		print("[DEBUG] Checking bomb ", bomb_id, " at tile ", bomb_tile, " state=", bomb.bomb_state)
+		
 		if bomb_tile == player_tile:
+			print("[DEBUG] Found bomb at player position! can_be_picked_up=", bomb.can_be_picked_up())
 			# Attempt pickup
 			if player.try_pickup_bomb(bomb):
 				print("[Game] Player ", player.username, " picked up bomb ", bomb_id)
-				break  # Only pick up one bomb
+				return true  # Bomb picked up
+			else:
+				print("[DEBUG] Pickup failed for bomb ", bomb_id)
+	
+	print("[DEBUG] No bomb found at player position")
+	return false  # No bomb picked up
 
 func place_bomb(player: ServerPlayer):
 	var bomb = ServerBomb.new()
@@ -283,6 +304,8 @@ func place_bomb(player: ServerPlayer):
 	bomb.position = player.position
 	bomb.name = "Bomb_" + bomb.bomb_id
 	bomb.game_instance = self  # Give bomb reference for collision checking
+	# Start fuse from zero on placement (count-up logic)
+	bomb.explosion_timer = 0.0
 	
 	# Add collision exception so player can walk out
 	player.add_bomb_collision_exception(bomb)
@@ -291,7 +314,7 @@ func place_bomb(player: ServerPlayer):
 	add_child(bomb)
 	
 	player.bombs_placed += 1
-	bomb.exploded.connect(func(b, pattern): _on_bomb_exploded(b, player, pattern))
+	bomb.exploded.connect(_on_bomb_exploded)
 	bomb.explosion_expanded.connect(func(tiles): _on_explosion_expanded(bomb, tiles))
 	# Ensure dictionary entry is cleaned up when the bomb leaves the scene tree
 	var cleanup_callable := func():
@@ -301,8 +324,13 @@ func place_bomb(player: ServerPlayer):
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
 
-func _on_bomb_exploded(bomb: ServerBomb, bomb_owner: ServerPlayer, explosion_pattern: Array):
+func _on_bomb_exploded(bomb: ServerBomb, explosion_pattern: Array):
 	print("[Game] Bomb exploded: ", bomb.bomb_id, " with ", explosion_pattern.size(), " tiles")
+	
+	# Find owner from bomb.owner_id
+	var bomb_owner = null
+	if bomb.owner_id and players.has(int(bomb.owner_id)):
+		bomb_owner = players[int(bomb.owner_id)]
 	
 	# Store explosion data for network sync
 	var bomb_tile = bomb.get_tile_position()

@@ -4,9 +4,9 @@ class_name BombThrowPredictor
 # Client-side prediction for Power Glove bomb throwing
 # Provides immediate visual feedback while waiting for server confirmation
 
-const THROW_RANGE: int = 3  # Must match ServerBomb.THROW_RANGE
-const THROW_DURATION: float = 0.6  # Must match ServerBomb.THROW_DURATION
-const THROW_HEIGHT: float = 100.0  # Must match ServerBomb.THROW_HEIGHT
+const THROW_RANGE: int = 2  # Must match ServerBomb.THROW_RANGE
+const THROW_DURATION: float = 1.5  # Must match ServerBomb.THROW_DURATION
+const THROW_HEIGHT: float = 8.0  # Must match ServerBomb.THROW_HEIGHT
 
 # Prediction state
 var predicted_throws := {}  # bomb_id -> prediction data

@@ -28,16 +28,21 @@ var carrying_player: Node = null  # Reference to player carrying this bomb
 var carrier_id: String = ""
 
 # Throw physics (pseudo-3D arc simulation)
-const THROW_RANGE: int = 3  # Grid tiles
-const THROW_DURATION: float = 0.6  # Seconds for full throw
-const THROW_HEIGHT: float = 100.0  # Peak Z-axis height in pixels
-const THROW_BOUNCE_REDUCTION: float = 0.5  # Momentum reduction on bounce
+const THROW_RANGE: int = 2  # Grid tiles
+const THROW_DURATION: float = 0.375  # Seconds per arc segment (fast throw)
+const THROW_HEIGHT: float = 8.0  # Visual height in pixels for arc
+const BOUNCE_HEIGHT_REDUCTION: float = 0.6  # Height reduction per bounce
 var throw_start_pos: Vector2 = Vector2.ZERO
 var throw_target_pos: Vector2 = Vector2.ZERO
 var throw_direction: Vector2 = Vector2.ZERO
-var throw_progress: float = 0.0  # 0.0 to 1.0
+var throw_progress: float = 0.0  # 0.0 to 1.0 within current segment
 var throw_distance_remaining: int = THROW_RANGE
 var current_z_height: float = 0.0  # Pseudo-3D height for shadow positioning
+var bounce_waypoints: Array[Vector2] = []  # List of bounce positions
+var current_waypoint_index: int = 0
+var current_arc_start: Vector2 = Vector2.ZERO
+var current_arc_target: Vector2 = Vector2.ZERO
+var current_arc_height: float = THROW_HEIGHT
 
 # Progressive explosion state
 const EXPLOSION_GROWTH_INTERVAL = 0.02  # 50 tiles/second
@@ -84,9 +89,11 @@ func _physics_process(delta):
 	# Handle carried state - follow player position
 	if bomb_state == BombState.CARRIED:
 		if is_instance_valid(carrying_player):
-			# Position will be set by client-side visual attachment
-			# Server just tracks the carrier
-			explosion_timer -= delta  # Timer continues while carried
+			# Attach to carrier with animated offset based on pickup animation
+			var bomb_offset = carrying_player.get_carried_bomb_offset()
+			position = carrying_player.position + bomb_offset
+			current_z_height = 0.0  # visual z handled client-side if needed
+			# Timer paused while carried
 		else:
 			# Carrier invalid - drop bomb
 			bomb_state = BombState.PLANTED
@@ -98,11 +105,7 @@ func _physics_process(delta):
 	# Handle thrown state - update throw physics
 	if bomb_state == BombState.THROWN:
 		_update_throw_physics(delta)
-		explosion_timer -= delta  # Timer continues during throw
-		
-		# Check if timer expired mid-air
-		if explosion_timer <= 0:
-			explode()  # Bomb can explode in mid-air!
+		# Timer paused while thrown; restarts on landing. No mid-air explosion.
 		return
 	
 	if has_exploded:
@@ -114,8 +117,9 @@ func _physics_process(delta):
 				expand_explosion()
 		return
 	
-	explosion_timer -= delta
-	if explosion_timer <= 0:
+	# In planted/landed state (not carried/thrown/exploded), timer counts up
+	explosion_timer += delta
+	if explosion_timer >= Constants.BOMB_TIMER:
 		explode()
 
 func get_tile_position() -> Vector2i:
@@ -267,11 +271,15 @@ func pick_up(player: Node) -> bool:
 	# Change state to carried
 	bomb_state = BombState.CARRIED
 	carrying_player = player
-	carrier_id = player.player_id if player.has("player_id") else ""
+	# ServerPlayer defines `player_id`; avoid using non-existent Object.has()
+	carrier_id = player.player_id
 	
 	# Disable collision while carried
 	collision_layer = 0
 	collision_mask = 0
+
+	# Immediately sync position to carrier for authoritative state
+	position = player.position
 	
 	# Emit signals for network sync
 	picked_up.emit(self, player)
@@ -287,19 +295,47 @@ func throw_bomb(direction: Vector2) -> bool:
 	if not is_instance_valid(carrying_player):
 		return false
 	
-	# Calculate throw trajectory
+	# Calculate throw trajectory with bounce waypoints
 	bomb_state = BombState.THROWN
-	throw_start_pos = carrying_player.position
+	# Store the actual start position (includes overhead offset) for network sync
+	throw_start_pos = position
 	throw_direction = direction.normalized()
 	throw_progress = 0.0
 	throw_distance_remaining = THROW_RANGE
 	
-	# Calculate target position (server-authoritative)
-	var final_tile = _calculate_throw_target()
-	throw_target_pos = Vector2(
-		final_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-		final_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	# Get player's tile as the throw origin (not bomb's current tile which may be offset)
+	var player_tile = carrying_player.get_tile_position()
+	
+	# Calculate all bounce waypoints (server-authoritative)
+	bounce_waypoints = _calculate_bounce_waypoints(player_tile)
+	
+	# Final target is last waypoint
+	if bounce_waypoints.size() > 0:
+		throw_target_pos = bounce_waypoints[-1]
+	else:
+		# Fallback
+		throw_target_pos = throw_start_pos + throw_direction * GameConfig.TILE_SIZE * 2
+	
+	# Initialize arc segment tracking
+	current_waypoint_index = 0
+	# For physics, always use ground-level positions (tile centers)
+	# Use player's tile position as throw origin (not bomb's offset position)
+	var start_tile_center = Vector2(
+		player_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		player_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
+	current_arc_start = start_tile_center
+	if bounce_waypoints.size() > 0:
+		current_arc_target = bounce_waypoints[0]
+	else:
+		current_arc_target = throw_target_pos
+	
+	# Calculate initial z_height to match where bomb is currently held
+	# This creates smooth transition from carried position to arc
+	var carry_offset = throw_start_pos - start_tile_center
+	current_z_height = -carry_offset.y  # Convert Y offset to z_height
+	current_arc_height = THROW_HEIGHT
+	print("[ServerBomb] throw_bomb() - Starting z_height: ", current_z_height, ", arc height: ", current_arc_height)
 	
 	# Clear carrying references
 	carrying_player = null
@@ -311,38 +347,133 @@ func throw_bomb(direction: Vector2) -> bool:
 	
 	return true
 
-func _calculate_throw_target() -> Vector2i:
-	"""Calculate where the bomb will land (server-authoritative with collision)"""
-	var start_tile = get_tile_position()
-	var current_tile = start_tile
-	var remaining_distance = THROW_RANGE
+func _calculate_bounce_waypoints(start_tile: Vector2i) -> Array[Vector2]:
+	"""Calculate all bounce positions from throw start to final landing.
 	
-	# Cast forward to find landing position
-	while remaining_distance > 0:
-		var next_tile = current_tile + Vector2i(
-			int(throw_direction.x),
-			int(throw_direction.y)
+	Returns array of world positions for each bounce point (including final landing).
+	Waypoints are calculated from the player's tile position (not bomb's offset position).
+	"""
+	# Cardinalize throw direction
+	var dir_i: Vector2i = Vector2i(0, 0)
+	if abs(throw_direction.x) > abs(throw_direction.y):
+		dir_i.x = int(sign(throw_direction.x))
+	else:
+		dir_i.y = int(sign(throw_direction.y))
+	if dir_i == Vector2i.ZERO:
+		dir_i = Vector2i(0, 1)
+	
+	var waypoints: Array[Vector2] = []
+	var landing_tile: Vector2i = start_tile + dir_i * 2
+	
+	# Build waypoints by checking each potential landing spot
+	var safety: int = 20
+	while safety > 0:
+		if not GridHelpers.is_valid_grid_position(landing_tile):
+			# Out of bounds - step back
+			landing_tile -= dir_i
+			break
+		
+		# Calculate tile center position
+		var tile_world_pos := Vector2(
+			landing_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+			landing_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 		)
 		
-		# Check if next tile is valid and walkable
-		var collision = check_tile_collision(next_tile)
-		
-		if collision["blocked"]:
-			# Hit an obstacle - try to bounce to adjacent tile
-			var bounce_tile = _find_bounce_tile(current_tile, next_tile)
-			if bounce_tile != current_tile:
-				# Successful bounce - reduce momentum and continue
-				current_tile = bounce_tile
-				remaining_distance = int(remaining_distance * THROW_BOUNCE_REDUCTION)
-			else:
-				# No valid bounce - land here
-				break
+		if _is_tile_free_for_landing(landing_tile):
+			# Found free tile - this is final landing
+			waypoints.append(tile_world_pos)
+			break
 		else:
-			# Clear path - move to next tile
-			current_tile = next_tile
-			remaining_distance -= 1
+			# Blocked - add as bounce waypoint and continue
+			waypoints.append(tile_world_pos)
+			landing_tile += dir_i
+		
+		safety -= 1
 	
-	return current_tile
+	if waypoints.size() == 0:
+		# Fallback - calculate position relative to throw start
+		var fallback_tile := start_tile + dir_i * 2
+		waypoints.append(Vector2(
+			fallback_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+			fallback_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+		))
+	
+	return waypoints
+
+func _calculate_throw_target() -> Vector2i:
+	"""Calculate where the bomb will land (server-authoritative, fixed 2-tile throw).
+
+	Rules:
+	- ALWAYS throw exactly +2 tiles in the cardinal direction (ignoring blockers).
+	- When landing, if the tile is not empty, bounce +1 tile forward.
+	- Continue bouncing +1 until finding an empty tile or hitting map bounds.
+	"""
+	var start_tile: Vector2i = get_tile_position()
+
+	# Cardinalize throw direction to strict grid steps
+	var dir_i: Vector2i = Vector2i(0, 0)
+	if abs(throw_direction.x) > abs(throw_direction.y):
+		dir_i.x = int(sign(throw_direction.x))
+	else:
+		dir_i.y = int(sign(throw_direction.y))
+	if dir_i == Vector2i.ZERO:
+		# Fallback - default DOWN
+		dir_i = Vector2i(0, 1)
+
+	# Always target +2 tiles initially
+	var landing_tile: Vector2i = start_tile + dir_i * 2
+	
+	# Bounce forward +1 at a time until we find an empty tile
+	var safety: int = 20  # Prevent infinite loops
+	while safety > 0:
+		# Check if current landing tile is valid and free
+		if not GridHelpers.is_valid_grid_position(landing_tile):
+			# Out of bounds - use last valid tile we calculated
+			landing_tile -= dir_i
+			break
+		
+		if _is_tile_free_for_landing(landing_tile):
+			# Found a free tile, land here
+			return landing_tile
+		
+		# Tile is blocked, bounce +1 forward
+		landing_tile += dir_i
+		safety -= 1
+	
+	# Fallback: if we exhausted safety or went OOB, return best guess
+	if GridHelpers.is_valid_grid_position(landing_tile):
+		return landing_tile
+	return start_tile
+
+func _is_tile_free_for_landing(grid_pos: Vector2i) -> bool:
+	"""Check if a tile is suitable for landing: empty map cell and no players/bombs.
+	Ignores this bomb's own ID when checking bombs.
+	"""
+	# Must be in bounds
+	if not GridHelpers.is_valid_grid_position(grid_pos):
+		return false
+
+	# Check static map first (0 = empty)
+	if game_instance and game_instance.has_method("get_tile_type"):
+		if game_instance.get_tile_type(grid_pos) != 0:
+			return false
+	
+	# Check dynamic occupancy: players and other bombs
+	if game_instance:
+		# Players
+		for peer_id in game_instance.players:
+			var player = game_instance.players[peer_id]
+			if is_instance_valid(player) and not player.is_dead:
+				if player.get_tile_position() == grid_pos:
+					return false
+		# Bombs
+		for other_id in game_instance.bombs:
+			var other_bomb = game_instance.bombs[other_id]
+			if is_instance_valid(other_bomb) and not other_bomb.has_exploded:
+				if other_bomb.bomb_id != bomb_id and other_bomb.get_tile_position() == grid_pos:
+					return false
+
+	return true
 
 func _find_bounce_tile(current_tile: Vector2i, blocked_tile: Vector2i) -> Vector2i:
 	"""Find an adjacent tile to bounce to when landing is blocked"""
@@ -379,24 +510,49 @@ func _find_bounce_tile(current_tile: Vector2i, blocked_tile: Vector2i) -> Vector
 	return current_tile
 
 func _update_throw_physics(delta: float):
-	"""Update bomb position during throw (called in _physics_process)"""
+	"""Update bomb position during throw with bounces (called in _physics_process)"""
 	if bomb_state != BombState.THROWN:
 		return
 	
-	# Update throw progress
+	# Update progress within current arc segment
 	throw_progress += delta / THROW_DURATION
 	
 	if throw_progress >= 1.0:
-		# Throw complete - land the bomb
-		_land_bomb()
-		return
+		# Completed current arc segment
+		current_waypoint_index += 1
+		
+		if current_waypoint_index >= bounce_waypoints.size():
+			# All segments complete - land the bomb
+			_land_bomb()
+			return
+		else:
+			# Move to next arc segment (bounce) - start from ground level
+			throw_progress = 0.0
+			current_arc_start = current_arc_target
+			current_arc_target = bounce_waypoints[current_waypoint_index]
+			# Reset to standard arc height for bounces (no initial carry offset)
+			current_arc_height = THROW_HEIGHT
+			current_z_height = 0.0  # Bounces start from ground
 	
-	# Calculate current position along arc
-	position = throw_start_pos.lerp(throw_target_pos, throw_progress)
+	# Calculate current X/Y position along arc segment (ground-level trajectory)
+	position = current_arc_start.lerp(current_arc_target, throw_progress)
 	
 	# Calculate pseudo-3D height (parabolic arc)
-	var height_progress = 1.0 - abs(throw_progress * 2.0 - 1.0)  # Peak at 0.5
-	current_z_height = THROW_HEIGHT * height_progress
+	# For first segment (index 0), we need to transition from initial carry z_height
+	if current_waypoint_index == 0:
+		# Blend from initial z_height (carry offset) to parabolic arc
+		var initial_z = -((throw_start_pos - current_arc_start).y)  # Initial height from carry
+		var peak_z = current_arc_height
+		
+		# Create arc that starts at initial_z, peaks at peak_z, and ends at 0
+		# Use a quadratic bezier-like curve
+		var t = throw_progress
+		var arc_z = initial_z * (1.0 - t) * (1.0 - t) + peak_z * 2.0 * t * (1.0 - t) + 0.0 * t * t
+		current_z_height = arc_z
+	else:
+		# Standard parabolic arc for bounces (starts and ends at ground)
+		var height_progress = 1.0 - abs(throw_progress * 2.0 - 1.0)  # Peak at 0.5
+		current_z_height = current_arc_height * height_progress
 
 func _land_bomb():
 	"""Land the bomb at final position and snap to grid"""
@@ -415,6 +571,9 @@ func _land_bomb():
 	# Re-enable collision
 	collision_layer = Constants.COLLISION_LAYER_BOMBS
 	collision_mask = Constants.COLLISION_LAYER_WALLS
+
+	# Restart fuse from zero upon landing
+	explosion_timer = 0.0
 	
 	# Transition to planted state
 	bomb_state = BombState.PLANTED

@@ -414,16 +414,27 @@ func update_player(peer_id: String, data: Dictionary):
 		# Priority 2: Panic state (near explosion)
 		elif data.has("is_panicking") and data.is_panicking:
 			anim_name = "state_panic"
-		# Priority 3: Carrying bomb
+		# Priority 3: Picking up bomb (animation)
+		elif data.has("is_picking_up_bomb") and data.is_picking_up_bomb:
+			# Get pickup animation direction
+			var pickup_dir = "south"  # Default
+			if data.has("pickup_animation_direction"):
+				var pickup_vec = Vector2(data.pickup_animation_direction.x, data.pickup_animation_direction.y)
+				if abs(pickup_vec.y) > abs(pickup_vec.x):
+					pickup_dir = "north" if pickup_vec.y < 0 else "south"
+				else:
+					pickup_dir = "west" if pickup_vec.x < 0 else "east"
+			anim_name = pickup_dir + "_pglove_pickup"
+		# Priority 4: Carrying bomb
 		elif data.has("is_carrying_bomb") and data.is_carrying_bomb:
 			if is_moving:
 				anim_name = direction_prefix + "_carry"
 			else:
 				anim_name = direction_prefix + "_hold"
-		# Priority 4: Walking
+		# Priority 5: Walking
 		elif is_moving:
 			anim_name = direction_prefix + "_walk"
-		# Priority 5: Stopped (directional idle)
+		# Priority 6: Stopped (directional idle)
 		else:
 			anim_name = direction_prefix + "_stopped"
 		
@@ -500,7 +511,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		var bomb_state = data.state
 		bomb_node.set_bomb_state(bomb_state)
 		
-		# Update Z-height for thrown bombs
+		# Update Z-height for thrown bombs (server handles CARRIED positioning already)
 		if bomb_state == BombRenderer.BombState.THROWN and data.has("z_height"):
 			bomb_node.update_z_height(data.z_height)
 		else:

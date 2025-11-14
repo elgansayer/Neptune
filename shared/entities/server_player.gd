@@ -27,6 +27,11 @@ var has_power_glove := false  # Can pick up and throw bombs
 # Power Glove state
 var carried_bomb: Node = null  # Reference to bomb being carried
 var action_button_pressed := false  # Track action button state for throw timing
+var is_picking_up_bomb := false  # True during pickup animation
+var pickup_animation_time := 0.0  # Time elapsed in pickup animation
+var pickup_animation_direction := Vector2.DOWN  # Direction player is facing during pickup
+
+const PICKUP_ANIMATION_DURATION = 0.3  # Duration of pickup animation in seconds (fast like SBomberman)
 
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
@@ -305,6 +310,13 @@ func _physics_process(_delta):
 		move_and_slide()
 		return
 	
+	# Update pickup animation timer
+	if is_picking_up_bomb:
+		pickup_animation_time += _delta
+		if pickup_animation_time >= PICKUP_ANIMATION_DURATION:
+			is_picking_up_bomb = false
+			pickup_animation_time = 0.0
+	
 	# Get the input direction (strict 4-way)
 	var input_dir = get_4way_input()
 	
@@ -555,6 +567,9 @@ func try_pickup_bomb(bomb: Node) -> bool:
 	# Attempt pickup
 	if bomb.pick_up(self):
 		carried_bomb = bomb
+		is_picking_up_bomb = true
+		pickup_animation_time = 0.0
+		pickup_animation_direction = last_move_direction if last_move_direction.length() > 0.1 else Vector2.DOWN
 		print("[ServerPlayer] ", username, " picked up bomb ", bomb.bomb_id)
 		return true
 	
@@ -584,6 +599,59 @@ func throw_carried_bomb() -> bool:
 func is_carrying_bomb() -> bool:
 	"""Check if player is currently carrying a bomb"""
 	return carried_bomb != null and is_instance_valid(carried_bomb)
+
+func get_carried_bomb_offset() -> Vector2:
+	"""Calculate the visual offset for carried bomb based on pickup animation or carry state.
+	Mimics SBomberman's frame-by-frame bomb positioning during pickup animation.
+	"""
+	if not is_carrying_bomb():
+		return Vector2.ZERO
+	
+	# Get facing direction for animation
+	var facing_dir = pickup_animation_direction if is_picking_up_bomb else last_move_direction
+	if facing_dir.length() < 0.1:
+		facing_dir = Vector2.DOWN
+	
+	# Convert to direction string
+	var direction = ""
+	if abs(facing_dir.y) > abs(facing_dir.x):
+		direction = "up" if facing_dir.y < 0 else "down"
+	else:
+		direction = "left" if facing_dir.x < 0 else "right"
+	
+	# Calculate animation frame (0, 1, or 2) based on animation progress
+	var frame = 2  # Default to final frame (fully held overhead)
+	if is_picking_up_bomb:
+		var progress = pickup_animation_time / PICKUP_ANIMATION_DURATION
+		frame = int(progress * 3.0)  # 3 frames total
+		frame = clamp(frame, 0, 2)
+	
+	# Bomb position table from SBomberman (frame-by-frame positioning)
+	# Each frame has position offset relative to player center
+	var bomb_position_table = {
+		"up": {
+			0: Vector2(0, 0),      # Frame 0: at player center
+			1: Vector2(0, -8),     # Frame 1: slightly above
+			2: Vector2(0, -20)     # Frame 2: fully overhead
+		},
+		"down": {
+			0: Vector2(0, 16),     # Frame 0: in front/below
+			1: Vector2(0, -8),     # Frame 1: rising up
+			2: Vector2(0, -20)     # Frame 2: fully overhead
+		},
+		"left": {
+			0: Vector2(-10, 8),    # Frame 0: to the side
+			1: Vector2(-16, 0),    # Frame 1: moving up and out
+			2: Vector2(0, -24)     # Frame 2: fully overhead
+		},
+		"right": {
+			0: Vector2(10, 8),     # Frame 0: to the side
+			1: Vector2(16, 0),     # Frame 1: moving up and out
+			2: Vector2(0, -24)     # Frame 2: fully overhead
+		}
+	}
+	
+	return bomb_position_table[direction][frame]
 
 # ============ END POWER GLOVE SYSTEM ============
 
@@ -654,6 +722,8 @@ func get_state() -> Dictionary:
 		"has_power_glove": has_power_glove,
 		"is_carrying_bomb": is_carrying_bomb(),
 		"carried_bomb_id": carried_bomb.bomb_id if is_carrying_bomb() else "",
+		"is_picking_up_bomb": is_picking_up_bomb,
+		"pickup_animation_direction": {"x": pickup_animation_direction.x, "y": pickup_animation_direction.y},
 		"last_move_direction": {"x": last_move_direction.x, "y": last_move_direction.y},
 		"debug_check_tile": {"x": debug_check_tile.x, "y": debug_check_tile.y},
 		"debug_blocking_tile": {"x": debug_blocking_tile.x, "y": debug_blocking_tile.y},
