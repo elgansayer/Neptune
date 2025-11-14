@@ -1,0 +1,10 @@
+extends BTNode
+class_name BTSequence
+
+var children: Array = []
+
+func tick(blackboard: Dictionary, delta: float) -> bool:
+	for child in children:
+		if not child.tick(blackboard, delta):
+			return false
+	return true

@@ -383,12 +383,35 @@ When rebuilding the AI system, consider starting with:
 
 ---
 
+## Rebuild Progress (2025-11-14)
+
+With the clean slate in place we have started reconstructing the AI stack using small, easily swappable building blocks:
+
+- `shared/ai/perception/` now hosts `GridSampler`, `HazardPredictor`, and `OpponentTracker` Resources. They currently provide tile/world conversion, bomb danger queries, and opponent snapshots while waiting to be fed authoritative data from `GameConfig`, the live map, and any future DangerMapper rewrite.
+- `shared/ai/behavior_tree/` contains a lightweight `BehaviorTreeRunner`, simple composite nodes (`selector.gd`, `sequence.gd`, `utility_selector.gd`), and placeholder leaf tasks (move, place bomb, collect power-up, wait/ambush). These scripts establish the updated BT contract (root tick with shared blackboard) but intentionally omit scoring logic until perception is wired.
+- `shared/ai/config/` provides stubs for personalities and general tuning so we can start capturing balancing constants without re-introducing the old 7k LOC system.
+- `server/ai/bot_controller.gd` and `server/ai/bot_manager.gd` act as server-only owners of the forthcoming AI controllers. `ServerGameInstance` now preloads and instantiates `ServerBotManager`, so every match can spin up controllers without touching networking glue again.
+
+This scaffolding keeps everything server-authoritative and ready for the latency-mitigation techniques documented in `PLAN.md` (client-side prediction on the human side, interpolation for spectators, server reconciliation for all authoritative state).
+
 ## Next Steps
 
-1. **Verify Testing**: Run the game to confirm no runtime errors
-2. **Design New AI**: Plan simplified or rebuilt AI architecture
-3. **Implement Incrementally**: Add AI features one at a time
-4. **Test Continuously**: Validate each AI component as it's built
+1. **Feed perception with real data**: Point `GridSampler` at the active `NavigationRegion2D`, add tile-occupancy caching, and connect `HazardPredictor` to the new bomb danger history so bots always operate on replicated authoritative maps.
+2. **Finish behavior trees**: Flesh out composite/leaf logic, migrate scoring heuristics into the new `utility_selector`, and define per-personality weight tables inside `shared/ai/config/personalities.gd`.
+3. **Drive controllers**: Give `ServerBotController` a concrete link to `ServerPlayer` (input queue and reconciliation) and let `ServerBotManager` spawn controllers via `GameInstance` spawn points while respecting bandwidth/interest-management goals.
+4. **Exercise under load**: Once a single bot loop works, run multiple automated matches to profile server tick time, confirm authoritative corrections feel smooth, and adjust lag-compensation hooks before exposing the feature to clients.
+
+## Bot Load Testing Plan (Live Nov 14)
+
+- `ServerBotManager` now seeds a shared `GridSampler`, `HazardPredictor`, `OpponentTracker`, and `BombPlanner` straight from the authoritative `GameInstance`. The manager refreshes bomb danger maps each physics tick and can spawn controllers via `spawn_bots(count, personality)`.
+- `ServerBotController` instantiates a full BT stack (escape, chase, collect, ambush) and writes inputs directly onto `ServerPlayer` nodes. Bomb placement now routes through `BombPlanner` and the live hazard cache so every drop has a verified escape path.
+- Set `DEFAULT_BOT_COUNT` inside `server/ai/bot_manager.gd` (currently `2`) to control automatic bot spawning per match. For heavier tests call `bot_manager.spawn_bots(6, "AGGRESSIVE")` from the server console or attach a debug command.
+- **Load Test Checklist**
+   1. Launch the headless server (`python3 bomberman-cli.py server`) so each new `GameInstance` auto-spawns the configured number of bots.
+   2. Join with one or more human clients to observe authority corrections, then bump `DEFAULT_BOT_COUNT` upward (4, 8, 12) to profile tick time and ENet bandwidth.
+   3. Watch the server log for `[BotManager]` warnings plus the per-bot decision cadence (~100ms default). Any skipped ticks indicate overload.
+   4. Capture frame times via Godot's profiler—goal is <2ms per bot decision at 60 Hz. If exceeded, raise `decision_interval` in `AIPersonalitiesConfig` or trim `path_depth`.
+   5. Validate fairness: bots escape from active bombs, place new bombs only when `BombPlanner` reports a safe exit, and prefer power-ups/pursuit according to their personality weights.
 
 ---
 

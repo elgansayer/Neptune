@@ -138,6 +138,17 @@ func register_response(_data: Dictionary):
 func receive_state(_state: Dictionary):
 	pass # Stub - actual implementation on client
 
+@rpc("any_peer", "call_remote", "reliable")
+func spawn_bot_request(personality: String = "BALANCED"):
+	var peer_id = multiplayer.get_remote_sender_id()
+	if not player_to_game.has(peer_id):
+		return
+	var game_id = player_to_game[peer_id]
+	if not active_games.has(game_id):
+		return
+	active_games[game_id].spawn_bot(personality)
+	print("[Server] Peer ", peer_id, " requested bot (", personality, ") in ", game_id)
+
 # Quick-start game system (no lobby for now)
 func quick_start_game(peer_id: int, username: String):
 	# For now, all players join the SAME shared game

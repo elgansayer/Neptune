@@ -8,6 +8,12 @@ const Constants = preload("res://shared/constants.gd")
 const ServerPlayer = preload("res://shared/entities/server_player.gd")
 const ServerBomb = preload("res://shared/entities/server_bomb.gd")
 const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
+# AI System scaffolding (new behavior tree implementation will hook here)
+const _BOT_MANAGER_PATHS := [
+	"res://server/ai/bot_manager.gd",
+	"res://ai/bot_manager.gd"
+]
+var ServerBotManagerScript: Script = _load_script_variant(_BOT_MANAGER_PATHS)
 # AI System removed - preparing for rebuild
 # const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
 # const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
@@ -28,6 +34,7 @@ var next_bomb_id := 0
 var map_manager: Node  # MapManager instance
 var spawn_points := []  # Available spawn points from map
 var next_spawn_index := 0  # Track which spawn point to use next
+var bot_manager: Node
 
 # State sync
 var last_sync_time := 0.0
@@ -102,6 +109,33 @@ func _ready():
 	# Create physics collision bodies for walls and blocks
 	create_map_collision()
 
+	# Initialize empty bot manager; actual bot spawning will be triggered later.
+	if ServerBotManagerScript == null:
+		push_error("[GameInstance] Bot manager script missing; bots disabled")
+	else:
+		bot_manager = ServerBotManagerScript.new()
+		bot_manager.configure(self)
+		add_child(bot_manager)
+
+func spawn_bot(personality: String = "BALANCED") -> void:
+	if bot_manager == null:
+		push_warning("[GameInstance] Bot manager not ready; cannot spawn bot")
+		return
+	bot_manager.spawn_bot(personality)
+
+func spawn_bots(count: int, personality: String = "BALANCED") -> void:
+	if bot_manager == null:
+		push_warning("[GameInstance] Bot manager not ready; cannot spawn bots")
+		return
+	bot_manager.spawn_bots(count, personality)
+
+static func _load_script_variant(paths: Array) -> Script:
+	for path in paths:
+		if ResourceLoader.exists(path):
+			return load(path)
+	push_error("[GameInstance] Failed to load bot manager script. Checked paths: %s" % [paths])
+	return null
+
 func create_map_collision():
 	"""Create StaticBody2D collision shapes for all walls and destructible blocks"""
 	for y in range(game_map.size()):
@@ -170,10 +204,12 @@ func get_next_spawn_point() -> Vector2:
 	next_spawn_index += 1
 	return spawn_pos
 
-func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO):
+func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO, is_bot: bool = false, personality: String = ""):
 	var player = ServerPlayer.new()
 	player.player_id = str(peer_id)
 	player.username = username
+	if is_bot:
+		player.set_bot_metadata(personality)
 	
 	# Use provided spawn position, or get next available spawn from map
 	if spawn_position == Vector2.ZERO:
@@ -474,6 +510,9 @@ func sync_state_to_clients():
 	
 	# Send to all players in this game via ClientMain autoload
 	for peer_id in players:
+		var player = players[peer_id]
+		if player.has_method("is_ai_bot") and player.is_ai_bot():
+			continue
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position"""

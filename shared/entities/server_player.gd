@@ -21,6 +21,8 @@ var max_bombs := 1
 var bomb_range := 2
 var speed_multiplier := 1.0  # Power-up speed multiplier
 var is_dead := false
+var is_bot := false
+var bot_personality := ""
 var debug_check_tile := Vector2i.ZERO  # Tile being checked for diagonal (for client debug)
 var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visualization)
 
@@ -734,6 +736,8 @@ func get_state() -> Dictionary:
 	return {
 		"player_id": player_id,
 		"username": username,
+		"is_bot": is_bot,
+		"bot_personality": bot_personality,
 		"position": {"x": position.x, "y": position.y},
 		"velocity": {"x": velocity.x, "y": velocity.y},
 		"facing": _vector_to_facing(last_move_direction),
@@ -754,4 +758,11 @@ func get_state() -> Dictionary:
 		"shape_cast_target": {"x": shape_cast_desired.target_position.x, "y": shape_cast_desired.target_position.y},
 		"shape_cast_colliding": shape_cast_desired.is_colliding()
 	}
+
+func set_bot_metadata(personality: String) -> void:
+	is_bot = true
+	bot_personality = personality
+
+func is_ai_bot() -> bool:
+	return is_bot
 
