@@ -6,6 +6,7 @@ extends Node2D
 const Constants = preload("res://shared/constants.gd")
 const ClientPlayerController = preload("res://client/prediction/client_player_controller.gd")
 const EntityInterpolator = preload("res://client/prediction/entity_interpolator.gd")
+const BombThrowPredictor = preload("res://client/prediction/bomb_throw_predictor.gd")
 const BombScene = preload("res://client/ui/bomb.tscn")
 const ExplosionRenderer = preload("res://client/ui/explosion_renderer.gd")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
@@ -32,6 +33,7 @@ var hud: CanvasLayer # Reference to HUD
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
 var remote_player_interpolators = {} # peer_id -> EntityInterpolator for remote players
+var bomb_throw_predictor: BombThrowPredictor # Power Glove throw prediction
 
 # Input buffering: track order of pressed keys
 var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
@@ -46,6 +48,10 @@ func _ready():
 	# Initialize prediction system for local player
 	local_player_controller = ClientPlayerController.new()
 	add_child(local_player_controller)
+	
+	# Initialize bomb throw predictor for Power Glove
+	bomb_throw_predictor = BombThrowPredictor.new()
+	add_child(bomb_throw_predictor)
 	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
@@ -408,16 +414,27 @@ func update_player(peer_id: String, data: Dictionary):
 		# Priority 2: Panic state (near explosion)
 		elif data.has("is_panicking") and data.is_panicking:
 			anim_name = "state_panic"
-		# Priority 3: Carrying bomb
+		# Priority 3: Picking up bomb (animation)
+		elif data.has("is_picking_up_bomb") and data.is_picking_up_bomb:
+			# Get pickup animation direction
+			var pickup_dir = "south"  # Default
+			if data.has("pickup_animation_direction"):
+				var pickup_vec = Vector2(data.pickup_animation_direction.x, data.pickup_animation_direction.y)
+				if abs(pickup_vec.y) > abs(pickup_vec.x):
+					pickup_dir = "north" if pickup_vec.y < 0 else "south"
+				else:
+					pickup_dir = "west" if pickup_vec.x < 0 else "east"
+			anim_name = pickup_dir + "_pglove_pickup"
+		# Priority 4: Carrying bomb
 		elif data.has("is_carrying_bomb") and data.is_carrying_bomb:
 			if is_moving:
 				anim_name = direction_prefix + "_carry"
 			else:
 				anim_name = direction_prefix + "_hold"
-		# Priority 4: Walking
+		# Priority 5: Walking
 		elif is_moving:
 			anim_name = direction_prefix + "_walk"
-		# Priority 5: Stopped (directional idle)
+		# Priority 6: Stopped (directional idle)
 		else:
 			anim_name = direction_prefix + "_stopped"
 		
@@ -490,9 +507,22 @@ func update_bomb(bomb_id: String, data: Dictionary):
 	bomb_node.position = Vector2(data.position.x, data.position.y)
 	bomb_node.update_timer(data.timer)
 	
-	# Update kicked state if present
-	if data.has("is_kicked"):
-		bomb_node.set_kicked_state(data.is_kicked)
+	# Handle visibility (for out-of-bounds during wrap-around)
+	if data.has("is_visible"):
+		bomb_node.visible = data.is_visible
+	else:
+		bomb_node.visible = true  # Default to visible
+	
+	# Handle Power Glove states
+	if data.has("state"):
+		var bomb_state = data.state
+		bomb_node.set_bomb_state(bomb_state)
+		
+		# Update Z-height for thrown bombs (server handles CARRIED positioning already)
+		if bomb_state == BombRenderer.BombState.THROWN and data.has("z_height"):
+			bomb_node.update_z_height(data.z_height)
+		else:
+			bomb_node.update_z_height(0.0)  # Reset Z height for other states
 
 func update_explosions(explosions_data: Array):
 	"""Update progressive explosions with SBomberman sprites"""
@@ -569,7 +599,12 @@ func _physics_process(delta):
 				input_y = -1.0
 	
 	var place_bomb = Input.is_action_just_pressed("ui_accept")
-	var stop_kicked_bomb = Input.is_action_just_pressed("ui_cancel")  # ESC or similar
+	var action_released = Input.is_action_just_released("ui_accept")
+	
+	# Note: For now, ui_accept serves dual purpose:
+	# - Normal: place bomb
+	# - With Power Glove: pickup on press, throw on release
+	# The server will determine the appropriate action based on player state
 	
 	# SIMPLIFIED APPROACH: Just use server state with smooth interpolation
 	# Prediction is too complex to match server's corner sliding + grid snapping
@@ -584,7 +619,8 @@ func _physics_process(delta):
 		"input_x": input_x,
 		"input_y": input_y,
 		"place_bomb": place_bomb,
-		"stop_kicked_bomb": stop_kicked_bomb
+		"action_pressed": place_bomb,
+		"action_released": action_released
 	})
 
 func _remove_dead_player(peer_id: String):

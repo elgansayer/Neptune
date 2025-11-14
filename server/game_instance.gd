@@ -8,14 +8,16 @@ const Constants = preload("res://shared/constants.gd")
 const ServerPlayer = preload("res://shared/entities/server_player.gd")
 const ServerBomb = preload("res://shared/entities/server_bomb.gd")
 const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
-const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
-const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
+# AI System removed - preparing for rebuild
+# const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
+# const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 const MapGenerator = preload("res://shared/maps/map_generator.gd")
 const MapPackLoader = preload("res://shared/maps/map_pack_loader.gd")
 
 var game_id: String = ""
-var players := {}  # peer_id -> ServerPlayer (includes AI bots)
-var ai_bot_counter := 1000  # Start AI bot IDs from 1000
+var players := {}  # peer_id -> ServerPlayer
+# AI System removed - preparing for rebuild
+# var ai_bot_counter := 1000  # Start AI bot IDs from 1000
 var bombs := {}  # bomb_id -> ServerBomb
 var powerups := {}  # powerup_id -> ServerPowerUp
 var next_powerup_id := 0
@@ -145,22 +147,13 @@ func _physics_process(delta):
 	
 	last_sync_time += delta
 	
-	# Process player actions (both real and AI players)
-	for peer_id in players:
-		var player = players[peer_id]
-		
-		# Handle bomb placement for AI bots
-		if player.has_method("is_ai_bot") and player.is_ai_bot() and player.place_bomb_requested and player.can_place_bomb():
-			place_bomb(player)
-			player.place_bomb_requested = false
-		
-		# Note: Bomb kicking is now handled by collision detection in ServerPlayer._physics_process()
-		# Players kick bombs when they collide with them during movement
-		
-		# Handle stop kicked bomb request
-		if player.stop_kicked_bomb_requested:
-			player.stop_kicked_bomb_requested = false
-			stop_nearby_kicked_bombs(player)
+	# AI System removed - preparing for rebuild
+	# Process AI bot bomb requests when AI system is re-implemented
+	# for peer_id in players:
+	# 	var player = players[peer_id]
+	# 	if player.has_method("is_ai_bot") and player.is_ai_bot() and player.place_bomb_requested and player.can_place_bomb():
+	# 		place_bomb(player)
+	# 		player.place_bomb_requested = false
 	
 	# Send state updates to all clients
 	if last_sync_time >= SYNC_INTERVAL:
@@ -189,39 +182,15 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	player.position = spawn_position
 	player.name = "Player_" + str(peer_id)
 	
-	# TESTING: Give bomb kicker ability by default for testing
+	# TESTING: Give both abilities by default for testing
 	player.has_bomb_kicker = true
-	print("[Game] Player spawned with bomb kicker ability for testing")
+	player.has_power_glove = true
+	print("[Game] Player spawned with bomb kicker and Power Glove for testing")
 	
 	players[peer_id] = player
 	add_child(player)
 	
-	print("[Game] Player joined: ", username, " at ", spawn_position)
-
-func add_ai_bot(personality: int = -1) -> int:
-	"""Spawn an AI bot with specified personality (-1 = random)
-	Returns the bot's peer_id
-	"""
-	if personality == -1:
-		personality = randi() % 3  # Random: 0=Balanced, 1=Aggressive, 2=Timid
-	
-	var bot_id = ai_bot_counter
-	ai_bot_counter += 1
-	
-	# Get spawn position
-	var spawn_pos = get_next_spawn_point()
-	
-	# Create AI player
-	var bot = AIPlayerScript.new()
-	bot.player_id = str(bot_id)
-	bot.position = spawn_pos
-	bot.setup_ai(self, personality)
-	
-	players[bot_id] = bot
-	add_child(bot)
-	
-	print("[Game] AI Bot spawned: ", bot.bot_name, " at ", spawn_pos)
-	return bot_id
+	print("[Game] Player joined: ", username, " at ", spawn_position, " (Power Glove: ", player.has_power_glove, ")")
 
 func remove_player(peer_id: int):
 	if players.has(peer_id):
@@ -266,13 +235,67 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 	# Set movement input
 	player.set_input(input_data.get("input_x", 0.0), input_data.get("input_y", 0.0))
 	
-	# Handle bomb placement
-	if input_data.get("place_bomb", false) and player.can_place_bomb():
-		place_bomb(player)
+	var action_pressed = input_data.get("action_pressed", false)
+	var action_released = input_data.get("action_released", false)
+
+	# Branch logic based on whether player has Power Glove
+	if player.has_power_glove:
+		# Power Glove Logic: Place -> Pickup -> Throw, all on press
+		if action_pressed:
+			player.request_action_press()
+			# If currently carrying, throw on press
+			if player.is_carrying_bomb():
+				player.throw_carried_bomb()
+			else:
+				# Not carrying: try to pick up a bomb underfoot
+				var pickup_successful = _try_pickup_bomb_at_player(player)
+				if not pickup_successful:
+					# Only place a new bomb if NOT on an existing bomb
+					var player_tile = player.get_tile_position()
+					var bomb_at_position = false
+					for bomb_id in bombs:
+						var bomb = bombs[bomb_id]
+						if is_instance_valid(bomb) and bomb.get_tile_position() == player_tile:
+							bomb_at_position = true
+							break
+					# Place if no bomb here and allowed
+					if not bomb_at_position and player.can_place_bomb():
+						place_bomb(player)
+		elif action_released:
+			# Maintain state for completeness; no throw on release now
+			player.request_action_release()
+	else:
+		# Standard Logic: Place bomb
+		if input_data.get("place_bomb", false) and player.can_place_bomb():
+			place_bomb(player)
+
+func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
+	"""Try to pick up a bomb at the player's current tile. Returns true if successful."""
+	var player_tile = player.get_tile_position()
 	
-	# Handle stop kicked bomb request
-	if input_data.get("stop_kicked_bomb", false):
-		player.request_stop_kicked_bomb()
+	print("[DEBUG] Trying to pick up bomb at tile: ", player_tile)
+	print("[DEBUG] Total bombs in game: ", bombs.size())
+	
+	# Find bomb at player's position
+	for bomb_id in bombs:
+		var bomb = bombs[bomb_id]
+		if not is_instance_valid(bomb):
+			continue
+		
+		var bomb_tile = bomb.get_tile_position()
+		print("[DEBUG] Checking bomb ", bomb_id, " at tile ", bomb_tile, " state=", bomb.bomb_state)
+		
+		if bomb_tile == player_tile:
+			print("[DEBUG] Found bomb at player position! can_be_picked_up=", bomb.can_be_picked_up())
+			# Attempt pickup
+			if player.try_pickup_bomb(bomb):
+				print("[Game] Player ", player.username, " picked up bomb ", bomb_id)
+				return true  # Bomb picked up
+			else:
+				print("[DEBUG] Pickup failed for bomb ", bomb_id)
+	
+	print("[DEBUG] No bomb found at player position")
+	return false  # No bomb picked up
 
 func place_bomb(player: ServerPlayer):
 	var bomb = ServerBomb.new()
@@ -283,6 +306,8 @@ func place_bomb(player: ServerPlayer):
 	bomb.position = player.position
 	bomb.name = "Bomb_" + bomb.bomb_id
 	bomb.game_instance = self  # Give bomb reference for collision checking
+	# Start fuse from zero on placement (count-up logic)
+	bomb.explosion_timer = 0.0
 	
 	# Add collision exception so player can walk out
 	player.add_bomb_collision_exception(bomb)
@@ -291,7 +316,7 @@ func place_bomb(player: ServerPlayer):
 	add_child(bomb)
 	
 	player.bombs_placed += 1
-	bomb.exploded.connect(func(b, pattern): _on_bomb_exploded(b, player, pattern))
+	bomb.exploded.connect(_on_bomb_exploded)
 	bomb.explosion_expanded.connect(func(tiles): _on_explosion_expanded(bomb, tiles))
 	# Ensure dictionary entry is cleaned up when the bomb leaves the scene tree
 	var cleanup_callable := func():
@@ -301,8 +326,13 @@ func place_bomb(player: ServerPlayer):
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
 
-func _on_bomb_exploded(bomb: ServerBomb, bomb_owner: ServerPlayer, explosion_pattern: Array):
+func _on_bomb_exploded(bomb: ServerBomb, explosion_pattern: Array):
 	print("[Game] Bomb exploded: ", bomb.bomb_id, " with ", explosion_pattern.size(), " tiles")
+	
+	# Find owner from bomb.owner_id
+	var bomb_owner = null
+	if bomb.owner_id and players.has(int(bomb.owner_id)):
+		bomb_owner = players[int(bomb.owner_id)]
 	
 	# Store explosion data for network sync
 	var bomb_tile = bomb.get_tile_position()
@@ -442,12 +472,8 @@ func sync_state_to_clients():
 			"owner_id": explosion["owner_id"]
 		})
 	
-	# Send to all REAL players in this game via ClientMain autoload
-	# Skip AI bots (they don't have network connections)
+	# Send to all players in this game via ClientMain autoload
 	for peer_id in players:
-		var player = players[peer_id]
-		if player.has_method("is_ai_bot") and player.is_ai_bot():
-			continue  # Skip AI bots
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position"""
