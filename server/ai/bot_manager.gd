@@ -6,17 +6,17 @@ const _BOT_CONTROLLER_PATHS := [
 	"res://ai/bot_controller.gd"
 ]
 var ServerBotControllerScript: Script = _load_script_variant(_BOT_CONTROLLER_PATHS)
-const GridSampler = preload("res://shared/ai/perception/grid_sampler.gd")
-const HazardPredictor = preload("res://shared/ai/perception/hazard_predictor.gd")
-const OpponentTracker = preload("res://shared/ai/perception/opponent_tracker.gd")
-const BombPlanner = preload("res://shared/ai/perception/bomb_planner.gd")
+const GridSamplerScript = preload("res://shared/ai/perception/grid_sampler.gd")
+const HazardPredictorScript = preload("res://shared/ai/perception/hazard_predictor.gd")
+const OpponentTrackerScript = preload("res://shared/ai/perception/opponent_tracker.gd")
+const BombPlannerScript = preload("res://shared/ai/perception/bomb_planner.gd")
 
 var game_instance
 var controllers: Array = []
-var grid_sampler: GridSampler
-var hazard_predictor: HazardPredictor
-var opponent_tracker: OpponentTracker
-var bomb_planner: BombPlanner
+var grid_sampler
+var hazard_predictor
+var opponent_tracker
+var bomb_planner
 var next_bot_peer_id := -1
 var auto_spawned := false
 
@@ -25,12 +25,12 @@ const DEFAULT_BOT_COUNT := 3  # Adjust for heavier load testing as needed
 
 func configure(instance) -> void:
 	game_instance = instance
-	grid_sampler = GridSampler.new()
+	grid_sampler = GridSamplerScript.new()
 	grid_sampler.configure(game_instance, null, GameConfig.TILE_SIZE)
-	hazard_predictor = HazardPredictor.new()
+	hazard_predictor = HazardPredictorScript.new()
 	hazard_predictor.configure(game_instance, grid_sampler)
-	opponent_tracker = OpponentTracker.new()
-	bomb_planner = BombPlanner.new()
+	opponent_tracker = OpponentTrackerScript.new()
+	bomb_planner = BombPlannerScript.new()
 	bomb_planner.configure(grid_sampler, hazard_predictor)
 	if DEFAULT_BOT_COUNT > 0:
 		print("[BotManager] Queuing auto-spawn for %d bots" % DEFAULT_BOT_COUNT)
