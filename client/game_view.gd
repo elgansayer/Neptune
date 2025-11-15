@@ -11,6 +11,7 @@ const BombScene = preload("res://client/ui/bomb.tscn")
 const ExplosionRenderer = preload("res://client/ui/explosion_renderer.gd")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
+const InGameMenuScene = preload("res://client/ui/in_game_menu.tscn")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -29,6 +30,7 @@ var map_rendered = false
 var map_scene_instance = null # Hold reference to loaded PCK map scene
 var removed_dead_players = {} # peer_id -> bool when death animation has finished and node was removed
 var hud: CanvasLayer # Reference to HUD
+var in_game_menu: CanvasLayer # Reference to in-game menu
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -60,6 +62,13 @@ func _ready():
 	# Set player name in HUD once we know it
 	if ClientMain.username:
 		hud.set_player_name(ClientMain.username)
+	
+	# Initialize in-game menu
+	in_game_menu = InGameMenuScene.instantiate()
+	add_child(in_game_menu)
+	
+	# Connect menu signals
+	in_game_menu.leave_match_requested.connect(_on_leave_match_requested)
 
 func update_game_state(state: Dictionary):
 	# Load map configuration if present (first time only)
@@ -143,6 +152,21 @@ func update_game_state(state: Dictionary):
 	# Update explosions
 	if state.has("explosions"):
 		update_explosions(state.explosions)
+	
+	# Update in-game menu with current match status
+	if in_game_menu and state.has("match_timer") and state.has("players"):
+		var alive_count = 0
+		for peer_id in state.players:
+			if not state.players[peer_id].get("is_dead", false):
+				alive_count += 1
+		in_game_menu.update_match_status(
+			state.match_timer,
+			alive_count,
+			state.players.size(),
+			"Free For All"
+		)
+		# Update player list in menu
+		in_game_menu.update_player_list(state.players)
 
 func update_blocks(map_data: Array):
 	"""Update destructible blocks based on current server map state"""
@@ -838,4 +862,14 @@ func update_powerup(powerup_id: String, data: Dictionary):
 		powerup_node = powerup_nodes[powerup_id]
 		# Update position (shouldn't change, but just in case)
 		powerup_node.position = Vector2(data.position.x, data.position.y)
+
+func _on_leave_match_requested():
+	"""Handle player request to leave the match"""
+	print("[GameView] Player requested to leave match")
+	# Disconnect from server and return to lobby/login
+	if multiplayer.multiplayer_peer:
+		multiplayer.multiplayer_peer.close()
+	# Return to login screen
+	get_tree().change_scene_to_file("res://client/ui/login_screen.tscn")
+
 

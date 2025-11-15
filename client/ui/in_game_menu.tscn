@@ -1,0 +1,364 @@
+[gd_scene load_steps=2 format=3 uid="uid://bx8vw3qr8mo"]
+
+[ext_resource type="Script" path="res://client/ui/in_game_menu.gd" id="1"]
+
+[node name="InGameMenu" type="CanvasLayer"]
+layer = 110
+visible = false
+script = ExtResource("1")
+
+[node name="BackgroundOverlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="MenuContainer" type="Panel" parent="."]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_vertical = 2
+
+[node name="MainMenu" type="Panel" parent="MenuContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuContainer/MainMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="MenuContainer/MainMenu/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "GAME MENU"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="MenuContainer/MainMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="MenuContainer/MainMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Resume Battle"
+
+[node name="MatchStatusButton" type="Button" parent="MenuContainer/MainMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Match Status"
+
+[node name="PlayerListButton" type="Button" parent="MenuContainer/MainMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Player List"
+
+[node name="OptionsButton" type="Button" parent="MenuContainer/MainMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Options"
+
+[node name="Spacer2" type="Control" parent="MenuContainer/MainMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeaveMatchButton" type="Button" parent="MenuContainer/MainMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Leave Match"
+
+[node name="MatchStatusPanel" type="Panel" parent="MenuContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuContainer/MatchStatusPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="MenuContainer/MatchStatusPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "MATCH STATUS"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="MenuContainer/MatchStatusPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="TimerLabel" type="Label" parent="MenuContainer/MatchStatusPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Time Remaining: 3:00"
+
+[node name="PlayersLabel" type="Label" parent="MenuContainer/MatchStatusPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Players Alive: 4 / 8"
+
+[node name="RulesLabel" type="Label" parent="MenuContainer/MatchStatusPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Rules: Free For All"
+
+[node name="Spacer" type="Control" parent="MenuContainer/MatchStatusPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="MenuContainer/MatchStatusPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Back"
+
+[node name="PlayerListPanel" type="Panel" parent="MenuContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuContainer/PlayerListPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="MenuContainer/PlayerListPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "PLAYER LIST"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="MenuContainer/PlayerListPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MenuContainer/PlayerListPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlayerListContainer" type="VBoxContainer" parent="MenuContainer/PlayerListPanel/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="MenuContainer/PlayerListPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Back"
+
+[node name="OptionsPanel" type="Panel" parent="MenuContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuContainer/OptionsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "OPTIONS"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="AudioLabel" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Audio Settings"
+
+[node name="MasterVolumeContainer" type="HBoxContainer" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer/MasterVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Master Volume:"
+
+[node name="Slider" type="HSlider" parent="MenuContainer/OptionsPanel/VBoxContainer/MasterVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="ValueLabel" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer/MasterVolumeContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "80%"
+
+[node name="MusicVolumeContainer" type="HBoxContainer" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer/MusicVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "Music Volume:"
+
+[node name="Slider" type="HSlider" parent="MenuContainer/OptionsPanel/VBoxContainer/MusicVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 70.0
+
+[node name="ValueLabel" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer/MusicVolumeContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "70%"
+
+[node name="SFXVolumeContainer" type="HBoxContainer" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer/SFXVolumeContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "SFX Volume:"
+
+[node name="Slider" type="HSlider" parent="MenuContainer/OptionsPanel/VBoxContainer/SFXVolumeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 90.0
+
+[node name="ValueLabel" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer/SFXVolumeContainer"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+text = "90%"
+
+[node name="Separator2" type="HSeparator" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ControlsLabel" type="Label" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Controls:
+Arrow Keys - Move
+Space - Place/Pick/Throw Bomb
+ESC - This Menu"
+
+[node name="Spacer" type="Control" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackButton" type="Button" parent="MenuContainer/OptionsPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Back"
+
+[node name="LeaveConfirmPanel" type="Panel" parent="MenuContainer"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuContainer/LeaveConfirmPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="TitleLabel" type="Label" parent="MenuContainer/LeaveConfirmPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "LEAVE MATCH?"
+horizontal_alignment = 1
+
+[node name="Separator1" type="HSeparator" parent="MenuContainer/LeaveConfirmPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="WarningLabel" type="Label" parent="MenuContainer/LeaveConfirmPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Are you sure you want to leave?
+The match is still in progress.
+
+You will lose your current score
+and progress."
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="MenuContainer/LeaveConfirmPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ConfirmButton" type="Button" parent="MenuContainer/LeaveConfirmPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Yes, Leave Match"
+
+[node name="CancelButton" type="Button" parent="MenuContainer/LeaveConfirmPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Cancel"
