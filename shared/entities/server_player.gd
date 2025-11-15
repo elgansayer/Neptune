@@ -63,27 +63,27 @@ func _ready():
 	# Set collision layers: players on layer 2, collide with walls (1), bombs (4), and powerups (16)
 	collision_layer = Constants.COLLISION_LAYER_PLAYERS
 	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS | Constants.COLLISION_LAYER_POWERUPS
-	
+
 	# Set up collision shape - USE RECTANGLE for precise collision
 	var collision_shape = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
 	shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2)  # Dynamic size based on tile
 	collision_shape.shape = shape
 	add_child(collision_shape)
-	
+
 	# Set up ShapeCast2D nodes for collision checking
 	_setup_shape_casts()
-	
+
 	# Set up debug arrow
 	_setup_debug_arrow()
-	
+
 	# Set up debug raycast line
 	_setup_debug_raycast()
 
 func _setup_debug_arrow():
 	"""Create a visual arrow to show facing direction"""
 	debug_arrow = Polygon2D.new()
-	
+
 	# Smaller arrow shape pointing right
 	var arrow_points = PackedVector2Array([
 		Vector2(0, -8),       # Top left
@@ -91,7 +91,7 @@ func _setup_debug_arrow():
 		Vector2(0, 8),        # Bottom left
 		Vector2(6, 0)         # Inner notch
 	])
-	
+
 	debug_arrow.polygon = arrow_points
 	debug_arrow.color = Color(1, 0.5, 0, 0.8)  # Orange, semi-transparent
 	debug_arrow.z_index = 100
@@ -108,7 +108,7 @@ func _setup_shape_casts():
 	# Create shape for casting
 	var cast_shape = RectangleShape2D.new()
 	cast_shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2)  # Dynamic size
-	
+
 	# ShapeCast for desired direction (check walls and bombs, not other players)
 	shape_cast_desired = ShapeCast2D.new()
 	shape_cast_desired.shape = cast_shape
@@ -118,21 +118,21 @@ func _setup_shape_casts():
 	add_child(shape_cast_desired)
 	# Explicitly exclude this player's physics body
 	shape_cast_desired.add_exception(self)
-	
+
 	# ShapeCast for kick detection
 	kick_detector = ShapeCast2D.new()
 	kick_detector.shape = cast_shape
 	kick_detector.collision_mask = Constants.COLLISION_LAYER_BOMBS
 	kick_detector.enabled = true
 	add_child(kick_detector)
-	
+
 	# ShapeCast for perpendicular direction 1
 	shape_cast_perp1 = ShapeCast2D.new()
 	shape_cast_perp1.shape = cast_shape
 	shape_cast_perp1.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
 	shape_cast_perp1.enabled = false
 	add_child(shape_cast_perp1)
-	
+
 	# ShapeCast for perpendicular direction 2
 	shape_cast_perp2 = ShapeCast2D.new()
 	shape_cast_perp2.shape = cast_shape
@@ -144,43 +144,43 @@ func _check_direction_clear(direction: Vector2) -> bool:
 	"""Check if movement in a given direction is clear using ShapeCast2D"""
 	if direction.length() < 0.1:
 		return false
-	
+
 	# Use ShapeCast2D for collision detection
 	var motion = direction.normalized() * GameConfig.COLLISION_CHECK_DISTANCE
-	
+
 	# Add collision exceptions (bombs)
 	for bomb in collision_exceptions:
 		if is_instance_valid(bomb):
 			shape_cast_desired.add_exception(bomb)
-	
+
 	# Configure and perform shape cast
 	shape_cast_desired.target_position = motion
 	shape_cast_desired.force_shapecast_update()
-	
+
 	var collision_detected = shape_cast_desired.is_colliding()
-	
+
 	# Store collision data BEFORE clearing exceptions (otherwise collision info is lost!)
 	if collision_detected:
 		# Get the collision point and calculate which tile was hit
 		var collision_point = shape_cast_desired.get_collision_point(0)
 		var collision_normal = shape_cast_desired.get_collision_normal(0)
 		var collider = shape_cast_desired.get_collider(0)
-		
+
 		print("COLLISION DETECTED! Collider: ", collider, " Type: ", collider.get_class() if collider else "null", " Name: ", collider.name if collider else "null")
-		
+
 		# Sample slightly inside the collider to get the blocking tile
 		var sample_point = collision_point - collision_normal * 0.5
-		
+
 		debug_blocking_tile = Vector2i(
 			int(floor(sample_point.x / GameConfig.TILE_SIZE)),
 			int(floor(sample_point.y / GameConfig.TILE_SIZE))
 		)
-	
+
 	# Clear bomb exceptions AFTER getting collision data
 	shape_cast_desired.clear_exceptions()
 	# Re-add the permanent self-exception (clear_exceptions removes ALL exceptions)
 	shape_cast_desired.add_exception(self)
-	
+
 	# Return true if NO collision was detected (path is clear)
 	return not collision_detected
 
@@ -188,7 +188,7 @@ func _get_perpendicular_directions(direction: Vector2) -> Array:
 	"""Get the two perpendicular directions for a given direction"""
 	if direction.length() < 0.1:
 		return [Vector2.ZERO, Vector2.ZERO]
-	
+
 	# For cardinal directions, return the other two cardinal directions
 	if abs(direction.x) > abs(direction.y):
 		# Moving horizontally, perpendiculars are up and down
@@ -200,37 +200,37 @@ func _get_perpendicular_directions(direction: Vector2) -> Array:
 func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 	"""Check if we can slide around a corner when blocked.
 	Returns the direction we can slide in, or Vector2.ZERO if no slide possible.
-	
+
 	Logic:
 	- If blocked moving horizontally (LEFT/RIGHT), check if near top/bottom edge of tile
 	- If blocked moving vertically (UP/DOWN), check if near left/right edge of tile
 	- If near an edge, try moving in that perpendicular direction
 	"""
-	
+
 	# Get the center of the BLOCKING tile (not our current tile)
 	var blocking_tile_center = Vector2(
 		debug_blocking_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
 		debug_blocking_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
-	
+
 	# Calculate our offset from the blocking tile's center
 	var offset_from_blocking = position - blocking_tile_center
-	
+
 	# Also get our current tile center for reference
 	var current_tile_center = get_current_tile_center()
 	var offset_from_current = position - current_tile_center
-	
+
 	# Edge threshold: within 0.5 of tile edge means we can slide
 	# For a 64px tile, half is 32px, so edge_threshold should be around 24-28px
 	var edge_threshold = GameConfig.TILE_SIZE / 4.0  # Within 8px of edge
-	
+
 	print("Blocked dir: ", blocked_direction)
 	print("Blocking tile: ", debug_blocking_tile, " center: ", blocking_tile_center)
 	print("Our position: ", position)
 	print("Offset from blocking tile: ", offset_from_blocking)
 	print("Offset from current tile: ", offset_from_current)
 	print("Edge threshold: ", edge_threshold)
-	
+
 	# Blocked moving horizontally (LEFT or RIGHT)?
 	if abs(blocked_direction.x) > 0.5:
 		# Check if near TOP edge relative to blocking tile
@@ -253,7 +253,7 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 			if _check_direction_clear(Vector2.DOWN) and is_tile_walkable(tile_below_blocking):
 				print("  -> Both DOWN path and tile below blocking are clear!")
 				return Vector2.DOWN
-	
+
 	# Blocked moving vertically (UP or DOWN)?
 	elif abs(blocked_direction.y) > 0.5:
 		# Check if near LEFT edge relative to blocking tile
@@ -274,13 +274,13 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 			if _check_direction_clear(Vector2.RIGHT) and is_tile_walkable(tile_right_of_blocking):
 				print("  -> Both RIGHT path and tile right of blocking are clear!")
 				return Vector2.RIGHT
-	
+
 	# No slide possible
 	return Vector2.ZERO
 
 func _is_diagonal_blocked(_move_vec: Vector2, _input_vec: Vector2) -> bool:
 	"""Check if we can slide using corner sliding logic
-	
+
 	The logic is simple:
 	1. The blocking tile was already detected by _check_direction_clear() via raycast
 	2. Calculate the desired_tile = blocking_tile + move_direction (facing)
@@ -289,22 +289,22 @@ func _is_diagonal_blocked(_move_vec: Vector2, _input_vec: Vector2) -> bool:
 	# The blocking tile was already set by _check_direction_clear() via actual physics raycast
 	# Use that real collision data (stored in debug_blocking_tile)
 	var blocking_tile = debug_blocking_tile
-	
+
 	# The desired tile is where we want to slide to
 	# Formula: blocking_tile + move_direction (our facing direction)
 	var desired_tile = Vector2i(
 		blocking_tile.x + int(_move_vec.x),
 		blocking_tile.y + int(_move_vec.y)
 	)
-	
+
 	# Store for debug visualization
 	debug_check_tile = desired_tile
-	
+
 	# Simple check: is the tile itself walkable?
 	# If the desired tile is a wall, we definitely can't slide there
 	if not is_tile_walkable(desired_tile):
 		return true  # Blocked - tile is a wall
-	
+
 	# If the tile is walkable (empty), we can slide
 	# The slide direction (_move_vec) is already checked as clear in the main logic
 	return false
@@ -313,7 +313,7 @@ func _vector_to_facing(direction: Vector2) -> String:
 	"""Convert direction Vector2 to facing string"""
 	if direction.length() < 0.1:
 		return "DOWN"  # Default facing
-	
+
 	if abs(direction.y) > abs(direction.x):
 		return "UP" if direction.y < 0 else "DOWN"
 	else:
@@ -325,12 +325,12 @@ func _physics_process(_delta):
 		# last_move_direction = Vector2.ZERO
 		move_and_slide()
 		return
-	
+
 	# --- NEW KICK DETECTION LOGIC ---
 	if has_bomb_kicker and input_direction.length() > 0.1:
 		kick_detector.target_position = input_direction.normalized() * (GameConfig.TILE_SIZE / 2.0)
 		kick_detector.force_shapecast_update()
-		
+
 		if kick_detector.is_colliding():
 			var collider = kick_detector.get_collider(0)
 			if collider is ServerBomb and not (collider in collision_exceptions):
@@ -343,42 +343,42 @@ func _physics_process(_delta):
 		if pickup_animation_time >= PICKUP_ANIMATION_DURATION:
 			is_picking_up_bomb = false
 			pickup_animation_time = 0.0
-	
+
 	# Get the input direction (strict 4-way)
 	var input_dir = get_4way_input()
-	
+
 	# Debug: Print input state every frame for a few seconds
 	if Engine.get_process_frames() % 60 == 0:  # Every 60 frames (~1 second)
 		print("[ServerPlayer DEBUG] ", username, " has_bomb_kicker=", has_bomb_kicker, " input_dir=", input_dir, " input_direction=", input_direction)
-	
+
 	if input_dir.length() < Constants.INPUT_DEADZONE:
 		# No input - stop moving but keep last_move_direction
 		velocity = Vector2.ZERO
 		move_and_slide()
 		return
-	
+
 	var final_direction := Vector2.ZERO
-	
+
 	# CHECK 1: Is the input_direction clear?
 	var input_clear = _check_direction_clear(input_dir)
 	var _input_blocking_tile = debug_blocking_tile  # Save the blocking tile from input check
 	_is_diagonal_blocked(last_move_direction, input_dir)
-	
-	print("Input dir: ", input_dir, " Clear: ", input_clear, " Colliding: ", shape_cast_desired.is_colliding())
-	
+
+	# print("Input dir: ", input_dir, " Clear: ", input_clear, " Colliding: ", shape_cast_desired.is_colliding())
+
 	if input_clear:
 		# Clear debug tiles when moving freely
 		for tile_key in debug_tiles.keys():
 			if is_instance_valid(debug_tiles[tile_key]):
 				debug_tiles[tile_key].queue_free()
 		debug_tiles.clear()
-		
+
 		# YES - Move in input direction and UPDATE last_move_direction
 		final_direction = input_dir
 	else:
 		# Input direction blocked - try corner sliding
 		var slide_direction = _can_corner_slide(input_dir)
-		
+
 		if slide_direction != Vector2.ZERO:
 			# We can slide around the corner!
 			final_direction = slide_direction
@@ -389,31 +389,31 @@ func _physics_process(_delta):
 		else:
 			# Completely blocked, reset
 			last_move_direction = input_dir
-	
+
 	# Update last_move_direction if we're actively moving
 	if final_direction.length() > 0:
 		last_move_direction = final_direction
 
 	# Update debug arrow rotation
 	_update_debug_arrow()
-	
+
 	if final_direction.length() > 0:
 		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
 		velocity = final_direction * speed
-		
+
 		# Auto-align to grid: Add correction to movement vector
 		# When moving horizontally, gradually align vertically
 		# When moving vertically, gradually align horizontally
 		if ENABLE_GRID_SNAPPING:
 			var tile_center = get_current_tile_center()
 			var offset_from_center = tile_center - position
-			
+
 			if abs(final_direction.x) > 0.5:
 				# Moving horizontally - align vertically to grid
 				if abs(offset_from_center.y) > GameConfig.SNAP_THRESHOLD:
 					var correction_y = sign(offset_from_center.y) * GameConfig.SNAP_TO_CENTER_SPEED
 					velocity.y += correction_y
-			
+
 			if abs(final_direction.y) > 0.5:
 				# Moving vertically - align horizontally to grid
 				if abs(offset_from_center.x) > GameConfig.SNAP_THRESHOLD:
@@ -421,21 +421,21 @@ func _physics_process(_delta):
 					velocity.x += correction_x
 	else:
 		velocity = Vector2.ZERO
-	
+
 	var pos_before = position
 	move_and_slide()
 	var pos_after = position
-	
+
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):
 		var bomb = collision_exceptions[i]
 		if not is_instance_valid(bomb):
 			collision_exceptions.remove_at(i)
 			continue
-		
+
 		var player_tile = get_tile_position()
 		var bomb_tile = bomb.get_tile_position()
-		
+
 		if player_tile != bomb_tile:
 			bomb.remove_collision_exception_with(self)
 			remove_collision_exception_with(bomb)
@@ -445,7 +445,7 @@ func _update_debug_arrow():
 	"""Update the debug arrow rotation based on last move direction"""
 	if not debug_arrow:
 		return
-	
+
 	var facing = _vector_to_facing(last_move_direction)
 	var rotation_map = {
 		"RIGHT": 0.0,
@@ -453,19 +453,19 @@ func _update_debug_arrow():
 		"LEFT": PI,
 		"UP": -PI / 2.0
 	}
-	
+
 	if facing in rotation_map:
 		debug_arrow.rotation = rotation_map[facing]
 
 func _show_debug_tile(tile_pos: Vector2i, color: Color):
 	"""Show a colored overlay on a tile for debugging"""
 	var tile_key = "%d,%d" % [tile_pos.x, tile_pos.y]
-	
+
 	# Remove old debug tile if exists
 	if debug_tiles.has(tile_key):
 		debug_tiles[tile_key].queue_free()
 		debug_tiles.erase(tile_key)
-	
+
 	# Create new debug overlay with border
 	var debug_rect = ColorRect.new()
 	debug_rect.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
@@ -475,11 +475,11 @@ func _show_debug_tile(tile_pos: Vector2i, color: Color):
 		tile_pos.y * GameConfig.TILE_SIZE
 	)
 	debug_rect.z_index = 99
-	
+
 	# Add to scene
 	get_parent().add_child(debug_rect)
 	debug_tiles[tile_key] = debug_rect
-	
+
 	# Auto-remove after a short time
 	await get_tree().create_timer(0.1).timeout
 	if is_instance_valid(debug_rect):
@@ -491,7 +491,7 @@ func get_4way_input() -> Vector2:
 	"""Convert input to strict 4-way cardinal directions (no diagonal movement)"""
 	if input_direction.length() < Constants.INPUT_DEADZONE:
 		return Vector2.ZERO
-	
+
 	# Choose the stronger axis
 	if abs(input_direction.x) > abs(input_direction.y):
 		# Horizontal movement
@@ -528,17 +528,17 @@ func is_tile_walkable(tile_pos: Vector2i) -> bool:
 	var game_instance = get_parent()
 	if not game_instance or not game_instance.has_method("get"):
 		return true  # Assume walkable if we can't check
-	
+
 	var game_map = game_instance.game_map
 	if not game_map:
 		return true
-	
+
 	# Check bounds
 	if tile_pos.y < 0 or tile_pos.y >= game_map.size():
 		return false
 	if tile_pos.x < 0 or tile_pos.x >= game_map[0].size():
 		return false
-	
+
 	# Check tile type: 0 = empty (walkable), 1 = wall, 2 = destructible block
 	var tile_type = game_map[tile_pos.y][tile_pos.x]
 	return tile_type == 0
@@ -578,20 +578,20 @@ func try_pickup_bomb(bomb: Node) -> bool:
 	"""Try to pick up a bomb with Power Glove (server-side)"""
 	if not has_power_glove:
 		return false
-	
+
 	if not is_instance_valid(bomb):
 		return false
-	
+
 	if carried_bomb != null:
 		return false  # Already carrying a bomb
-	
+
 	# Check if standing on the bomb's tile
 	var player_tile = get_tile_position()
 	var bomb_tile = bomb.get_tile_position()
-	
+
 	if player_tile != bomb_tile:
 		return false  # Not on the same tile
-	
+
 	# Attempt pickup
 	if bomb.pick_up(self):
 		carried_bomb = bomb
@@ -600,28 +600,28 @@ func try_pickup_bomb(bomb: Node) -> bool:
 		pickup_animation_direction = last_move_direction if last_move_direction.length() > 0.1 else Vector2.DOWN
 		print("[ServerPlayer] ", username, " picked up bomb ", bomb.bomb_id)
 		return true
-	
+
 	return false
 
 func throw_carried_bomb() -> bool:
 	"""Throw the currently carried bomb (server-side)"""
 	if not has_power_glove:
 		return false
-	
+
 	if not is_instance_valid(carried_bomb):
 		carried_bomb = null
 		return false
-	
+
 	# Throw in the direction player is facing
 	var throw_direction = last_move_direction
 	if throw_direction.length() < 0.1:
 		throw_direction = Vector2.DOWN  # Default direction if not moving
-	
+
 	if carried_bomb.throw_bomb(throw_direction):
 		print("[ServerPlayer] ", username, " threw bomb ", carried_bomb.bomb_id, " in direction ", throw_direction)
 		carried_bomb = null
 		return true
-	
+
 	return false
 
 func is_carrying_bomb() -> bool:
@@ -634,26 +634,26 @@ func get_carried_bomb_offset() -> Vector2:
 	"""
 	if not is_carrying_bomb():
 		return Vector2.ZERO
-	
+
 	# Get facing direction for animation
 	var facing_dir = pickup_animation_direction if is_picking_up_bomb else last_move_direction
 	if facing_dir.length() < 0.1:
 		facing_dir = Vector2.DOWN
-	
+
 	# Convert to direction string
 	var direction = ""
 	if abs(facing_dir.y) > abs(facing_dir.x):
 		direction = "up" if facing_dir.y < 0 else "down"
 	else:
 		direction = "left" if facing_dir.x < 0 else "right"
-	
+
 	# Calculate animation frame (0, 1, or 2) based on animation progress
 	var frame = 2  # Default to final frame (fully held overhead)
 	if is_picking_up_bomb:
 		var progress = pickup_animation_time / PICKUP_ANIMATION_DURATION
 		frame = int(progress * 3.0)  # 3 frames total
 		frame = clamp(frame, 0, 2)
-	
+
 	# Bomb position table from SBomberman (frame-by-frame positioning)
 	# Each frame has position offset relative to player center
 	var bomb_position_table = {
@@ -678,7 +678,7 @@ func get_carried_bomb_offset() -> Vector2:
 			2: Vector2(0, -24)     # Frame 2: fully overhead
 		}
 	}
-	
+
 	return bomb_position_table[direction][frame]
 
 # ============ END POWER GLOVE SYSTEM ============
@@ -767,4 +767,3 @@ func set_bot_metadata(personality: String) -> void:
 
 func is_ai_bot() -> bool:
 	return is_bot
-

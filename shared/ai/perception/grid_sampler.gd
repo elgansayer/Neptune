@@ -114,5 +114,15 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 func get_manhattan_distance(a: Vector2i, b: Vector2i) -> int:
 	return abs(a.x - b.x) + abs(a.y - b.y)
 
+func get_map_bounds() -> Vector2i:
+	if _map_size == Vector2i.ZERO:
+		_update_map_size()
+	return _map_size
+
+func get_tile_type(tile_position: Vector2i) -> int:
+	if _game_instance == null:
+		return 0  # Default to empty
+	return _game_instance.get_tile_type(tile_position)
+
 func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]

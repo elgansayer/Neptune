@@ -8,6 +8,7 @@ const Constants = preload("res://shared/constants.gd")
 const ServerPlayer = preload("res://shared/entities/server_player.gd")
 const ServerBomb = preload("res://shared/entities/server_bomb.gd")
 const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
+const AIManager = preload("res://shared/ai/ai_manager.gd")
 # AI System scaffolding (new behavior tree implementation will hook here)
 const _BOT_MANAGER_PATHS := [
 	"res://server/ai/bot_manager.gd",
@@ -35,6 +36,7 @@ var map_manager: Node  # MapManager instance
 var spawn_points := []  # Available spawn points from map
 var next_spawn_index := 0  # Track which spawn point to use next
 var bot_manager: Node
+var ai_manager: AIManager  # Centralized AI brain with ThreatMatrix and pathfinding
 
 # State sync
 var last_sync_time := 0.0
@@ -108,6 +110,16 @@ func _ready():
 	
 	# Create physics collision bodies for walls and blocks
 	create_map_collision()
+	
+	# Initialize AI Manager (must happen after map is created)
+	var grid_sampler = load("res://shared/ai/perception/grid_sampler.gd").new()
+	grid_sampler.configure(self, null, GameConfig.TILE_SIZE)
+	
+	ai_manager = AIManager.new()
+	var map_width = game_map[0].size() if game_map.size() > 0 else 0
+	var map_height = game_map.size()
+	ai_manager.configure(self, grid_sampler, map_width, map_height)
+	print("[GameInstance] AIManager initialized with ", map_width, "x", map_height, " grid")
 
 	# Initialize empty bot manager; actual bot spawning will be triggered later.
 	if ServerBotManagerScript == null:
@@ -172,6 +184,11 @@ func create_map_collision():
 					map_tiles[tile_key] = tile_body
 
 func _physics_process(delta):
+	# Update AI Manager's ThreatMatrix
+	if ai_manager != null:
+		var current_time_msec := Time.get_ticks_msec()
+		ai_manager.refresh_threat_matrix(current_time_msec)
+	
 	# Update match timer if active
 	if match_active:
 		match_time_remaining -= delta
@@ -451,6 +468,10 @@ func destroy_block(cell: Vector2i):
 	
 	# Clear from map data
 	game_map[cell.y][cell.x] = 0
+	
+	# Update AI pathfinder (soft wall destroyed = new path opened)
+	if ai_manager != null:
+		ai_manager.on_wall_destroyed(cell)
 	
 	# Spawn power-up (30% chance - TODO: make configurable)
 	if randf() < 0.3:
