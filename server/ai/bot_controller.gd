@@ -55,7 +55,8 @@ func _build_behavior_tree() -> void:
 	_escape_sequence = BTSequence.new()
 	_escape_sequence.children = [BTEscapeNode.new(), BTMoveToNode.new()]
 	_attack_sequence = BTSequence.new()
-	_attack_sequence.children = [BTChaseOpponentNode.new(), BTMoveToNode.new(), BTPlaceBombNode.new()]
+	# Attack: chase opponent, place bomb, then IMMEDIATELY move to safety
+	_attack_sequence.children = [BTChaseOpponentNode.new(), BTPlaceBombNode.new(), BTMoveToNode.new()]
 	_collect_sequence = BTSequence.new()
 	_collect_sequence.children = [BTCollectPowerUpNode.new(), BTMoveToNode.new()]
 	_ambush_node = BTWaitAmbushNode.new()
@@ -130,7 +131,7 @@ func _score_behavior(child, blackboard: Dictionary) -> float:
 	var now = blackboard.get("time", 0.0)
 	if child == _escape_sequence and hazard_predictor and current_tile:
 		if not hazard_predictor.is_tile_safe(current_tile, now, _personality_profile.get("danger_buffer", 1.0)):
-			base += 8.0
+			base += 10.0  # High priority but allow movement when safe
 	elif child == _attack_sequence:
 		var opponent = blackboard.get("nearest_opponent")
 		if opponent == null:

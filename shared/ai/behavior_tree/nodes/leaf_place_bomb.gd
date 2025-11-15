@@ -13,9 +13,15 @@ func tick(blackboard: Dictionary, _delta: float) -> bool:
 	var current_tile: Vector2i = blackboard.get("current_tile")
 	var opponent_tile: Vector2i = blackboard.get("opponent_tile")
 	var now = blackboard.get("time", 0.0)
+	var escape_tile = bomb_planner.plan_escape_after_bomb(current_tile, player, now)
 	if opponent_tile != null and not bomb_planner.should_attack_target(current_tile, opponent_tile, player.bomb_range):
 		return true
-	if not bomb_planner.can_place_bomb_safely(current_tile, player, now):
+	if escape_tile == null:
 		return true
+	
+	# Place the bomb
 	blackboard["request_bomb"] = true
+	blackboard["goal_tile"] = escape_tile
+	blackboard["behavior"] = "escape_after_bomb"
+	
 	return true
