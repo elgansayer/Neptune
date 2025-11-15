@@ -1,4 +1,4 @@
-extends BTNode
+extends "res://shared/ai/behavior_tree/nodes/base_node.gd"
 class_name BTWaitAmbushNode
 
 ## Keeps the bot idle for a short window, useful for trapper personalities.

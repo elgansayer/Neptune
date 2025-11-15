@@ -1,6 +1,7 @@
 extends Node
 class_name ServerBotController
 
+const BTNode = preload("res://shared/ai/behavior_tree/nodes/base_node.gd")
 const BehaviorTreeRunner = preload("res://shared/ai/behavior_tree/bt_runner.gd")
 const BTSequence = preload("res://shared/ai/behavior_tree/nodes/sequence.gd")
 const BTUtilitySelector = preload("res://shared/ai/behavior_tree/nodes/utility_selector.gd")

@@ -1,12 +1,10 @@
 extends Node
 class_name ServerBotManager
 
-# TODO: Uncomment when behavior tree nodes are implemented
-# const _BOT_CONTROLLER_PATHS := [
-# 	"res://server/ai/bot_controller.gd",
-# 	"res://ai/bot_controller.gd"
-# ]
-# var ServerBotControllerScript: Script = _load_script_variant(_BOT_CONTROLLER_PATHS)
+const _BOT_CONTROLLER_PATHS := [
+	"res://ai/bot_controller.gd"
+]
+var ServerBotControllerScript = _load_script_variant(_BOT_CONTROLLER_PATHS)
 
 const GridSamplerScript = preload("res://shared/ai/perception/grid_sampler.gd")
 const HazardPredictorScript = preload("res://shared/ai/perception/hazard_predictor.gd")
@@ -67,28 +65,25 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 		return
 	var player = game_instance.players[peer_id]
 	print("[BotManager] Spawned bot %s (peer %d)" % [player.player_name, peer_id])
-	
-	# TODO: Enable bot controller once behavior tree nodes are implemented
-	# For now, bots spawn but don't have AI decision-making
-	push_warning("[BotManager] Bot controllers disabled - awaiting behavior tree implementation")
-	
-	# Uncomment when behavior tree implementation is ready:
-	# if ServerBotControllerScript == null:
-	# 	push_warning("[BotManager] Bot controller script unavailable; bot will be inactive")
-	# 	return
-	# var controller = ServerBotControllerScript.new()
-	# controller.configure(game_instance, player, personality, grid_sampler, hazard_predictor, opponent_tracker, bomb_planner)
-	# controllers.append(controller)
-	# add_child(controller)
-	# player.tree_exited.connect(func():
-	# 	controllers.erase(controller)
-	# 	if is_instance_valid(controller):
-	# 		controller.queue_free()
-	# , Object.CONNECT_ONE_SHOT)
+	# Enable bot controller and behavior tree
+	if ServerBotControllerScript == null:
+		push_warning("[BotManager] Bot controller script unavailable; bot will be inactive")
+		return
+	var controller = ServerBotControllerScript.new()
+	controller.configure(game_instance, player, personality, grid_sampler, hazard_predictor, opponent_tracker, bomb_planner)
+	controllers.append(controller)
+	add_child(controller)
+	player.tree_exited.connect(func():
+		controllers.erase(controller)
+		if is_instance_valid(controller):
+			controller.queue_free()
+	, Object.CONNECT_ONE_SHOT)
 
 static func _load_script_variant(paths: Array) -> Script:
 	for path in paths:
 		if ResourceLoader.exists(path):
-			return load(path)
-	push_error("[BotManager] Failed to load bot controller. Checked paths: %s" % [paths])
+			var script = load(path)
+			# Check if script loaded successfully
+			if script != null and script is Script:
+				return script
 	return null

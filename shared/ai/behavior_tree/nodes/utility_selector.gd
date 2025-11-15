@@ -1,4 +1,4 @@
-extends BTNode
+extends "res://shared/ai/behavior_tree/nodes/base_node.gd"
 class_name BTUtilitySelector
 
 ## Chooses child with highest score using optional scorer callable on the blackboard.

@@ -1,10 +1,10 @@
-extends BTNode
+extends "res://shared/ai/behavior_tree/nodes/base_node.gd"
 class_name BTMoveToNode
 
 ## Requests a grid path and maps it to a normalized move vector for the player.
 
 func tick(blackboard: Dictionary, _delta: float) -> bool:
-	var grid_sampler: GridSampler = blackboard.get("grid_sampler")
+	var grid_sampler = blackboard.get("grid_sampler")
 	var goal_tile: Vector2i = blackboard.get("goal_tile")
 	var current_tile: Vector2i = blackboard.get("current_tile")
 	var player = blackboard.get("player")
@@ -21,7 +21,7 @@ func tick(blackboard: Dictionary, _delta: float) -> bool:
 	blackboard["next_tile"] = next_tile
 	var next_world = grid_sampler.tile_to_world_center(next_tile)
 	var current_world: Vector2 = blackboard.get("current_world", next_world)
-	var move_vec := (next_world - current_world)
+	var move_vec: Vector2 = (next_world - current_world)
 	if move_vec.length() < 0.01:
 		return false
 	blackboard["move_vector"] = move_vec.normalized()

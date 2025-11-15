@@ -1,12 +1,12 @@
-extends BTNode
+extends "res://shared/ai/behavior_tree/nodes/base_node.gd"
 class_name BTCollectPowerUpNode
 
 ## Chooses the closest safe power-up tile and sets it as the movement goal.
 
 func tick(blackboard: Dictionary, _delta: float) -> bool:
 	var game_instance = blackboard.get("game_instance")
-	var grid_sampler: GridSampler = blackboard.get("grid_sampler")
-	var hazard_predictor: HazardPredictor = blackboard.get("hazard_predictor")
+	var grid_sampler = blackboard.get("grid_sampler")
+	var hazard_predictor = blackboard.get("hazard_predictor")
 	var current_tile: Vector2i = blackboard.get("current_tile")
 	if game_instance == null or grid_sampler == null or current_tile == null:
 		return false
@@ -22,7 +22,7 @@ func tick(blackboard: Dictionary, _delta: float) -> bool:
 			continue
 		if hazard_predictor and not hazard_predictor.is_tile_safe(tile, now):
 			continue
-		var distance := grid_sampler.get_manhattan_distance(current_tile, tile)
+		var distance: int = grid_sampler.get_manhattan_distance(current_tile, tile)
 		if distance < best_score:
 			best_score = distance
 			best_tile = tile

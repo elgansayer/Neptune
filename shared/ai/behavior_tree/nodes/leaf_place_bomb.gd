@@ -1,10 +1,10 @@
-extends BTNode
+extends "res://shared/ai/behavior_tree/nodes/base_node.gd"
 class_name BTPlaceBombNode
 
 ## Requests bomb placement when BombPlanner and personality gates approve.
 
 func tick(blackboard: Dictionary, _delta: float) -> bool:
-	var bomb_planner: BombPlanner = blackboard.get("bomb_planner")
+	var bomb_planner = blackboard.get("bomb_planner")
 	var player = blackboard.get("player")
 	if bomb_planner == null or player == null:
 		return true
