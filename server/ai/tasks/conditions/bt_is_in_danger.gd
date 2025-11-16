@@ -22,11 +22,14 @@ func _tick(delta: float) -> int:
 	var player_tile = player.get_tile_position()
 	var current_time = Time.get_ticks_msec() / 1000.0
 	
-	var is_dangerous: bool
+	# is_tile_safe returns true if safe, so we need to invert for danger check
+	var is_safe: bool
 	if check_immediate:
-		is_dangerous = hazard_predictor.is_tile_dangerous(player_tile, 0.0)
+		is_safe = hazard_predictor.is_tile_safe(player_tile, current_time, 0.0)
 	else:
-		is_dangerous = hazard_predictor.is_tile_dangerous(player_tile, danger_buffer)
+		is_safe = hazard_predictor.is_tile_safe(player_tile, current_time, danger_buffer)
+	
+	var is_dangerous = not is_safe
 	
 	if is_dangerous:
 		# Store danger info in blackboard for potential use by other nodes

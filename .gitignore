@@ -1,5 +1,8 @@
 # Godot 4+ specific ignores
 .godot/
+!server/.godot/
+server/.godot/*
+!server/.godot/extension_list.cfg
 /android/
 server.log
 \n# Logs\n*.log\nfirebase-debug.log\nkick_debug.log\nkick_test.log\nserver.log

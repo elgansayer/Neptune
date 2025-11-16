@@ -46,6 +46,9 @@ func configure(instance, player, personality_name: String,
 	bomb_planner = planner
 	bomb_safety_checker = safety_checker
 	
+	# Store game_instance for BTPlayer scene_root_hint
+	# (needed before _build_limbo_tree is called)
+	
 	# Initialize opening gambit planner
 	opening_gambit = OpeningGambit.new()
 	# Initialize utility scorer
@@ -206,19 +209,34 @@ func _build_limbo_tree() -> void:
 	# Create BTPlayer node
 	var limbo_player_node = ClassDB.instantiate("BTPlayer")
 	_limbo_player = limbo_player_node
-	add_child(_limbo_player)
 	
-	# Create Blackboard
+	# Create Blackboard FIRST (before any initialization)
 	var limbo_bb = ClassDB.instantiate("Blackboard")
 	_limbo_blackboard = limbo_bb
 	_limbo_player.set_blackboard(_limbo_blackboard)
 	
+	# CRITICAL: BTPlayer needs scene_root to initialize. It tries get_owner() first, then scene_root_hint.
+	# Since this controller is dynamically created and added to bot_manager (not part of a saved scene),
+	# we must manually set scene_root_hint to game_instance BEFORE add_child().
+	# Reference: bt_player.cpp:41 "_get_scene_root() returns scene_root_hint ? scene_root_hint : get_owner()"
+	if game_instance and is_instance_valid(game_instance):
+		_limbo_player.call("set_scene_root_hint", game_instance)
+	
+	# Set the agent node - this is what BTPlayer controls
+	if player_ref and is_instance_valid(player_ref):
+		_limbo_player.set("agent", player_ref)  # Direct node reference
+	else:
+		_limbo_player.set("agent", self)
+	
+	add_child(_limbo_player)
+	
 	# OPTION A: Load pre-built tree resource (editable in LimboAI visual editor)
-	if ResourceLoader.exists("res://server/ai/trees/bot_default.tres"):
-		_limbo_tree = ResourceLoader.load("res://server/ai/trees/bot_default.tres")
-		_limbo_player.set_behavior_tree(_limbo_tree)
-		print("[BotController] Loaded Limbo tree from resource for ", player_ref.player_name if player_ref else "bot")
-		return
+	# Temporarily disabled to use programmatic tree while debugging
+	#if ResourceLoader.exists("res://server/ai/trees/bot_default.tres"):
+	#	_limbo_tree = ResourceLoader.load("res://server/ai/trees/bot_default.tres")
+	#	_limbo_player.set_behavior_tree(_limbo_tree)
+	#	print("[BotController] Loaded Limbo tree from resource for ", player_ref.player_name if player_ref else "bot")
+	#	return
 	
 	# OPTION B: Build tree programmatically (fallback if resource missing)
 	print("[BotController] Building Limbo tree programmatically for ", player_ref.player_name if player_ref else "bot")
@@ -277,6 +295,11 @@ func _build_limbo_tree() -> void:
 	# Set root
 	_limbo_tree.call("set_root_task", root_selector)
 	_limbo_player.set_behavior_tree(_limbo_tree)
+	
+	# CRITICAL: Populate blackboard AFTER setting behavior tree
+	# When set_behavior_tree() is called, BTPlayer creates a new BTInstance with a fresh blackboard
+	# We need to populate it before the first tick
+	_update_limbo_blackboard()
 	
 	print("[BotController] Limbo tree built for ", player_ref.player_name if player_ref else "bot")
 

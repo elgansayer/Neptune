@@ -23,20 +23,22 @@ func _tick(delta: float) -> int:
 	var player_tile = player.get_tile_position()
 	var current_time_msec = Time.get_ticks_msec()
 	
+	# TODO: Implement find_nearest_safe_cell on pathfinder or use BombSafetyChecker's BFS directly
+	# For now, fail gracefully - bots will rely on other behavior tree branches
 	# Use danger-aware pathfinder to find safe cell
-	if ai_manager.pathfinder:
-		var escape_cell = ai_manager.pathfinder.find_nearest_safe_cell(
-			player_tile,
-			current_time_msec,
-			escape_radius
-		)
-		
-		if escape_cell and escape_cell != player_tile:
-			# Found an escape route
-			blackboard.set_var(target_cell_var, escape_cell)
-			blackboard.set_var("escape_route_found", true)
-			return SUCCESS
+	#if ai_manager.pathfinder and ai_manager.pathfinder.has_method("find_nearest_safe_cell"):
+	#	var escape_cell = ai_manager.pathfinder.find_nearest_safe_cell(
+	#		player_tile,
+	#		current_time_msec,
+	#		escape_radius
+	#	)
+	#	
+	#	if escape_cell and escape_cell != player_tile:
+	#		# Found an escape route
+	#		blackboard.set_var(target_cell_var, escape_cell)
+	#		blackboard.set_var("escape_route_found", true)
+	#		return SUCCESS
 	
-	# No escape route found
+	# No escape route found (or not implemented yet)
 	blackboard.set_var("escape_route_found", false)
 	return FAILURE
