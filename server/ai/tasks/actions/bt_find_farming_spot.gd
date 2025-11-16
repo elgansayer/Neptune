@@ -49,6 +49,12 @@ func _tick(_delta: float) -> int:
 			if path.is_empty() and check_tile != current_tile:
 				continue
 			
+			# CRITICAL: Check if there's ALREADY a safe tile nearby (without planting bomb)
+			# This ensures we're not in a dead-end surrounded by soft blocks
+			var has_nearby_safety = _has_safe_tile_nearby(check_tile, grid_sampler, current_time_msec)
+			if not has_nearby_safety:
+				continue
+			
 			# Check if we can safely plant a bomb HERE (at check_tile) and escape
 			# IMPORTANT: bot_pos is check_tile because that's where we'll be when planting
 			if not bomb_safety_checker.can_safely_plant_bomb(
@@ -116,3 +122,29 @@ func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler
 			break
 	
 	return count
+
+func _has_safe_tile_nearby(position: Vector2i, grid_sampler, current_time_msec: float) -> bool:
+	"""Check if there's at least one safe tile within reasonable distance (no threats, walkable)"""
+	var ai_manager = blackboard.get_var("ai_manager")
+	if not ai_manager:
+		return false
+	
+	var threat_matrix = ai_manager.get_current_threat_matrix()
+	var max_distance = 4  # tiles
+	
+	# Check if ANY nearby tile is safe (not in threat matrix and walkable)
+	for dx in range(-max_distance, max_distance + 1):
+		for dy in range(-max_distance, max_distance + 1):
+			var check_pos = position + Vector2i(dx, dy)
+			
+			if not grid_sampler.is_tile_walkable(check_pos):
+				continue
+			
+			var tile_key = "%d,%d" % [check_pos.x, check_pos.y]
+			
+			# If this tile is not in the threat matrix, it's safe
+			if not threat_matrix.has(tile_key):
+				return true
+	
+	# No safe tiles found nearby - we're in a danger zone
+	return false
