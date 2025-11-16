@@ -27,6 +27,10 @@ GameConfig="*res://shared/game_config.gd"
 
 project/assembly_name="bomberman"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg")
+
 [plugin]
 
 enable=true
