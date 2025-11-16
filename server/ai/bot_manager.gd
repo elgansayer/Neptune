@@ -2,7 +2,8 @@ extends Node
 class_name ServerBotManager
 
 const _BOT_CONTROLLER_PATHS := [
-	"res://ai/bot_controller.gd"
+	"res://ai/bot_controller_limbo.gd",  # LimboAI version (preferred)
+	"res://ai/bot_controller.gd"  # Fallback to custom BT
 ]
 var ServerBotControllerScript = _load_script_variant(_BOT_CONTROLLER_PATHS)
 
