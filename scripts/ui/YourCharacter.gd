@@ -1,5 +1,9 @@
 extends Control
 
+# LEGACY: This UI uses NakamaService which is not currently integrated
+# Check if NakamaService singleton exists to prevent errors
+const HAS_NAKAMA = false  # Set to true when NakamaService is re-integrated
+
 # Header Nodes
 @onready var display_name_edit = $VBoxContainer/Header/HBoxContainer/DisplayName
 @onready var nakama_status_label = $VBoxContainer/Header/HBoxContainer/NakamaStatus
@@ -129,40 +133,55 @@ func _ready():
     _update_ui_from_session()
 
 func _update_ui_from_session():
-    if NakamaService.session and not NakamaService.session.is_expired():
-        nakama_status_label.text = "Logged In"
-        login_button.text = "Logout"
-        display_name_edit.text = NakamaService.session.username
-    else:
-        nakama_status_label.text = "Not Logged In"
-        login_button.text = "Login"
+    if not HAS_NAKAMA:
+        nakama_status_label.text = "Nakama Disabled"
+        login_button.disabled = true
+        return
+    
+    # Original Nakama code (disabled)
+    #if NakamaService.session and not NakamaService.session.is_expired():
+    #    nakama_status_label.text = "Logged In"
+    #    login_button.text = "Logout"
+    #    display_name_edit.text = NakamaService.session.username
+    #else:
+    #    nakama_status_label.text = "Not Logged In"
+    #    login_button.text = "Login"
 
 func _on_login_button_pressed():
-    if NakamaService.session and not NakamaService.session.is_expired():
-        # Logout
-        NakamaService.session = null
-        _update_ui_from_session()
-    else:
-        # Login (this is a placeholder for your actual login flow)
-        var session = await NakamaService.authenticate_device("my_device_id")
-        if session:
-            NakamaService.session = session
-            _update_ui_from_session()
+    if not HAS_NAKAMA:
+        return
+    
+    # Original Nakama code (disabled)
+    #if NakamaService.session and not NakamaService.session.is_expired():
+    #    # Logout
+    #    NakamaService.session = null
+    #    _update_ui_from_session()
+    #else:
+    #    # Login (this is a placeholder for your actual login flow)
+    #    var session = await NakamaService.authenticate_device("my_device_id")
+    #    if session:
+    #        NakamaService.session = session
+    #        _update_ui_from_session()
 
 func _on_save_button_pressed():
-    if NakamaService.session and not NakamaService.session.is_expired():
-        var account_update = {
-            "display_name": display_name_edit.text,
-            "username": display_name_edit.text,
-            "metadata": {
-                "character": selected_character_name
-            }
-        }
-        var result = await NakamaService.nakama_client.update_account(NakamaService.session, account_update)
-        if result.is_exception():
-            print("Error updating account: %s" % result.get_exception().message)
-        else:
-            print("Account updated successfully")
+    if not HAS_NAKAMA:
+        print("Nakama integration disabled - cannot save to server")
+        return
+    
+    # Original Nakama code (disabled)
+    #if NakamaService.session and not NakamaService.session.is_expired():
+    #    var account_update = {
+    #        "display_name": display_name_edit.text,
+    #        "username": display_name_edit.text,
+    #        "metadata": {
+    #            "character": selected_character_name
+    #        }
+    #    }
+    #    var result = await NakamaService.nakama_client.update_account(NakamaService.session, account_update)
+    #    if result.is_exception():
+    #        print("Error updating account: %s" % result.get_exception().message)
+    #    else:
+    #        print("Account updated successfully")
 
 func _on_back_button_pressed():
     get_tree().change_scene_to_file("res://Main.tscn")

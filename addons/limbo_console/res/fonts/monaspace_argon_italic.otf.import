@@ -3,12 +3,12 @@
 importer="font_data_dynamic"
 type="FontFile"
 uid="uid://dhm45nttm5i3s"
-path="res://.godot/imported/monaspace_argon_italic.otf-69716ea05f30a2f6d19f470002fe35a3.fontdata"
+path="res://.godot/imported/monaspace_argon_italic.otf-69d64783adde526699a99a191cd14ed6.fontdata"
 
 [deps]
 
-source_file="res://limbo_console/res/fonts/monaspace_argon_italic.otf"
-dest_files=["res://.godot/imported/monaspace_argon_italic.otf-69716ea05f30a2f6d19f470002fe35a3.fontdata"]
+source_file="res://addons/limbo_console/res/fonts/monaspace_argon_italic.otf"
+dest_files=["res://.godot/imported/monaspace_argon_italic.otf-69d64783adde526699a99a191cd14ed6.fontdata"]
 
 [params]
 
