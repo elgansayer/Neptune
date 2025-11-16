@@ -235,6 +235,9 @@ func _build_limbo_tree() -> void:
 		_limbo_tree = ResourceLoader.load("res://ai/trees/bot_default.tres")
 		_limbo_player.set_behavior_tree(_limbo_tree)
 		print("[BotController] Loaded Limbo tree from resource for ", player_ref.player_name if player_ref else "bot")
+		
+		# CRITICAL: Populate blackboard after loading tree
+		_update_limbo_blackboard()
 		return
 	
 	# OPTION B: Build tree programmatically (fallback if resource missing)

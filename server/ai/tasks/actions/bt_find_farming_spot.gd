@@ -39,20 +39,25 @@ func _tick(_delta: float) -> int:
 			if not grid_sampler.is_tile_walkable(check_tile):
 				continue
 			
-			# Check if we can safely plant a bomb here and escape
+			# Count soft blocks in bomb range - skip if none
+			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, grid_sampler)
+			if soft_blocks_hit == 0:
+				continue
+			
+			# Check if we can reach this tile
+			var path = grid_sampler.find_path(current_tile, check_tile, 15, player)
+			if path.is_empty() and check_tile != current_tile:
+				continue
+			
+			# Check if we can safely plant a bomb HERE (at check_tile) and escape
+			# IMPORTANT: bot_pos is check_tile because that's where we'll be when planting
 			if not bomb_safety_checker.can_safely_plant_bomb(
-				check_tile,
-				check_tile,
+				check_tile,  # Where the bot will be standing when planting
+				check_tile,  # Where the bomb will be planted
 				bomb_range,
 				5.0,  # bot speed
 				current_time_msec
 			):
-				continue
-			
-			# Count soft blocks in bomb range
-			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, grid_sampler)
-			
-			if soft_blocks_hit == 0:
 				continue
 			
 			# Score: prioritize closer tiles with more soft blocks
