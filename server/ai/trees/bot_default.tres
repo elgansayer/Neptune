@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=28 format=3 uid="uid://chqxceh757yg0"]
+[gd_resource type="BehaviorTree" load_steps=32 format=3 uid="uid://chqxceh757yg0"]
 
 [ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://ai/tasks/conditions/bt_is_in_danger.gd" id="1_danger"]
 [ext_resource type="Script" uid="uid://3btukveudf74" path="res://ai/tasks/actions/bt_find_escape_route.gd" id="2_escape"]
@@ -76,13 +76,26 @@ script = ExtResource("3_move")
 custom_name = "Collect Powerup Sequence"
 children = [SubResource("BTCondition_has_powerup"), SubResource("BTAction_find_powerup"), SubResource("BTAction_collect_move")]
 
+[sub_resource type="BTAction" id="BTAction_3ugk0"]
+script = ExtResource("4_bomb")
+
+[sub_resource type="BTAction" id="BTAction_tn3ky"]
+script = ExtResource("2_escape")
+
+[sub_resource type="BTAction" id="BTAction_y3cnp"]
+script = ExtResource("3_move")
+
+[sub_resource type="BTSequence" id="BTSequence_dvb2i"]
+custom_name = "Farm Blocks Sequence"
+children = [SubResource("BTAction_3ugk0"), SubResource("BTAction_tn3ky"), SubResource("BTAction_y3cnp")]
+
 [sub_resource type="BTAction" id="BTAction_ambush"]
 custom_name = "Ambush/Patrol"
 script = ExtResource("9_ambush")
 wait_time = 2.0
 
 [sub_resource type="BTSelector" id="BTSelector_root"]
-children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTAction_ambush")]
+children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_dvb2i"), SubResource("BTAction_ambush")]
 
 [resource]
 description = "Complete LimboAI bot behavior tree: Escape > Chase+Attack > Collect > Ambush"
