@@ -74,34 +74,40 @@ func _tick(_delta: float) -> int:
 func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler) -> int:
 	var count = 0
 	
-	# Check horizontal
+	# Check horizontal (right)
 	for dx in range(1, bomb_range + 1):
 		var tile = center + Vector2i(dx, 0)
-		if grid_sampler.is_tile_soft_block(tile):
+		var tile_type = grid_sampler.get_tile_type(tile)
+		if tile_type == 2:  # Soft block
 			count += 1
-		if not grid_sampler.is_tile_walkable(tile) and not grid_sampler.is_tile_soft_block(tile):
+		if tile_type == 1:  # Hard block - stops blast
 			break
 	
+	# Check horizontal (left)
 	for dx in range(1, bomb_range + 1):
 		var tile = center + Vector2i(-dx, 0)
-		if grid_sampler.is_tile_soft_block(tile):
+		var tile_type = grid_sampler.get_tile_type(tile)
+		if tile_type == 2:  # Soft block
 			count += 1
-		if not grid_sampler.is_tile_walkable(tile) and not grid_sampler.is_tile_soft_block(tile):
+		if tile_type == 1:  # Hard block - stops blast
 			break
 	
-	# Check vertical
+	# Check vertical (down)
 	for dy in range(1, bomb_range + 1):
 		var tile = center + Vector2i(0, dy)
-		if grid_sampler.is_tile_soft_block(tile):
+		var tile_type = grid_sampler.get_tile_type(tile)
+		if tile_type == 2:  # Soft block
 			count += 1
-		if not grid_sampler.is_tile_walkable(tile) and not grid_sampler.is_tile_soft_block(tile):
+		if tile_type == 1:  # Hard block - stops blast
 			break
 	
+	# Check vertical (up)
 	for dy in range(1, bomb_range + 1):
 		var tile = center + Vector2i(0, -dy)
-		if grid_sampler.is_tile_soft_block(tile):
+		var tile_type = grid_sampler.get_tile_type(tile)
+		if tile_type == 2:  # Soft block
 			count += 1
-		if not grid_sampler.is_tile_walkable(tile) and not grid_sampler.is_tile_soft_block(tile):
+		if tile_type == 1:  # Hard block - stops blast
 			break
 	
 	return count
