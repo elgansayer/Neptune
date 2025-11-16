@@ -361,3 +361,95 @@ This refactoring provides:
 
 **Ready to start?**
 → `docs/LIMBOAI_QUICKSTART.md`
+
+---
+## Current Repository Integration Delta (Live State)
+
+This section captures the precise delta between the documented plan above and the current implementation in the repository as of this summary update.
+
+### Legacy Systems Still Active
+- `server/ai/bot_controller.gd` uses custom `BTUtilitySelector` + utility scoring + opening gambit state machine.
+- Debug RPC `ai_debug_update` streams plan/utility data (needs extension for Limbo fields).
+- Mirror & visualization (HUD + overlay) operational on client; expects legacy payload structure.
+
+### Limbo Components Present
+- Custom Limbo nodes in `shared/ai/limbo_nodes/` (conditions & actions) ready for composition.
+- Limbo demo content in `demo/` confirms plugin assets are available (e.g., `BTPlayer`, tasks).
+
+### Not Yet Implemented
+| Component | Status |
+|-----------|--------|
+| Runtime Limbo tree build (`_build_limbo_tree`) | Missing |
+| Limbo tick path in `ServerBotController` | Missing |
+| Blackboard bridge (legacy → Limbo) | Partial (concept only) |
+| Utility weighting adapter for Limbo selector | Missing |
+| Extended debug payload (in_danger, escape_route_found, target_cell) | Missing |
+| Config flag `use_limbo_ai` | Missing |
+| Sequence conditions wrapping (opponent exists, safe to bomb) | Missing |
+| Optional safety pre-check node before `BTPlaceBomb` | Missing |
+
+### Immediate Actionable Steps (Execution Order)
+1. Add config flag & Limbo availability check (`ClassDB.class_exists("BTIsInDanger")`).
+2. Implement blackboard population function `_update_limbo_blackboard()` mirroring legacy keys.
+3. Build minimal Limbo selector: Escape > Attack > Collect > Ambush.
+4. Add decision loop branch: if `limbo_active` then tick Limbo logic else legacy.
+5. Extend debug payload with Limbo fields (guarded by `limbo_active`).
+6. Verify single bot runtime; compare escape response vs legacy.
+7. Introduce utility weighting (optional second pass).
+
+### Validation Targets
+- Escape latency: Limbo vs legacy (ticks until movement begins when bomb appears).
+- Consistency: Bomb placement + immediate retreat still occurs.
+- No regression: Opening gambit unaffected prior to Limbo activation.
+- Debug overlay: Proper rendering of `target_cell` when Limbo selects escape route.
+
+### Performance Monitoring
+- Log tick duration when Limbo active (`Engine.get_physics_frames()` delta sampling) for first 100 ticks.
+- Ensure pathfinding frequency unchanged (escape finder only when in_danger or retreat).
+
+### Risk Mitigations
+- Keep legacy BT in place for instant rollback (toggle flag).
+- Encapsulate Limbo-specific code (no pervasive changes across unrelated systems).
+- Use defensive null checks on all blackboard accesses in custom nodes (already present).
+
+### Proposed New Helper Nodes (Future)
+- `bt_opponent_exists.gd` (Condition): SUCCESS if nearest opponent present.
+- `bt_is_safe_to_bomb.gd` (Condition): SUCCESS only if bomb_safety_checker deems placement safe.
+
+---
+## Phase 2–6 Condensed Execution Grid
+| Phase | Goal | Output Artifact | Completion Criteria |
+|-------|------|-----------------|---------------------|
+| 2 | Detect & flag Limbo availability | Config + detection log | Log prints "LimboAI detected" |
+| 3 | Minimal Limbo tree scaffold | `_build_limbo_tree()` | Escape test works |
+| 4 | Full behavior parity | Limbo selector + sequences | Attack/Collect/Ambush trigger |
+| 5 | Utility weighting bridge | Weighted selector adapter | Utility influences selection |
+| 6 | Debug & polish | Extended payload + overlay updates | HUD shows Limbo vars |
+
+---
+## Implementation Readiness Score
+- Node Assets: 100%
+- Controller Adaptation: 0% (pending)
+- Debug Extensions: 30% (infrastructure exists)
+- Risk Level: Low (additive approach)
+
+---
+## Next Operational Commit (Planned Content)
+```
+server/ai/bot_controller.gd
+    + _use_limbo_ai flag
+    + _limbo_active bool
+    + _build_limbo_tree()
+    + _tick_limbo(delta)
+    + debug payload extension hook
+```
+No removal of existing code; all additions are guarded.
+
+---
+## Request for Review
+Before proceeding with code changes, confirm:
+1. Preferred config flag location (project setting vs hardcoded constant).
+2. Include utility weighting in first pass or defer to later?
+3. Add new safety condition nodes now or after base parity?
+
+Reply with decisions or adjustments; implementation can begin immediately after confirmation.

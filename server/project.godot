@@ -31,3 +31,7 @@ window/vsync/vsync_mode=0
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[gdextension]
+
+load_once=PackedStringArray("res://../addons/limboai/bin/limboai.gdextension")

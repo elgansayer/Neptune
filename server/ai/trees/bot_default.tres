@@ -1,0 +1,88 @@
+[gd_resource type="BehaviorTree" load_steps=24 format=3 uid="uid://chqxceh757yg0"]
+
+[ext_resource type="Script" path="res://shared/ai/limbo_nodes/conditions/bt_is_in_danger.gd" id="1_danger"]
+[ext_resource type="Script" path="res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd" id="2_escape"]
+[ext_resource type="Script" path="res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd" id="3_move"]
+[ext_resource type="Script" path="res://shared/ai/limbo_nodes/actions/bt_place_bomb.gd" id="4_bomb"]
+
+[sub_resource type="BlackboardPlan" id="BlackboardPlan_bot"]
+entries = {
+	"ai_manager": {"type": 1},
+	"bomb_planner": {"type": 1},
+	"bomb_safety_checker": {"type": 1},
+	"current_tile": {"type": 5},
+	"game_instance": {"type": 1},
+	"grid_sampler": {"type": 1},
+	"hazard_predictor": {"type": 1},
+	"nearest_opponent": {"type": 1},
+	"opponent_tile": {"type": 5},
+	"player": {"type": 1, "hint": 0, "hint_string": "ServerPlayer"},
+	"target_cell": {"type": 5},
+	"target_powerup_cell": {"type": 5},
+	"time": {"type": 2}
+}
+
+[sub_resource type="BTCondition" id="BTCondition_escape_check"]
+script = ExtResource("1_danger")
+custom_name = "Check Danger"
+danger_buffer = 1.0
+check_immediate = false
+
+[sub_resource type="BTAction" id="BTAction_escape_find"]
+script = ExtResource("2_escape")
+custom_name = "Find Escape Route"
+escape_radius = 8
+target_cell_var = &"target_cell"
+
+[sub_resource type="BTAction" id="BTAction_escape_move"]
+script = ExtResource("3_move")
+custom_name = "Move To Safe Tile"
+cell_var = &"target_cell"
+reach_threshold = 0.3
+clear_on_success = true
+
+[sub_resource type="BTSequence" id="BTSequence_escape"]
+custom_name = "Escape Sequence"
+children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escape_find"), SubResource("BTAction_escape_move")]
+
+[sub_resource type="BTAction" id="BTAction_attack_place"]
+script = ExtResource("4_bomb")
+custom_name = "Place Bomb"
+check_capacity = true
+check_existing = true
+
+[sub_resource type="BTAction" id="BTAction_attack_plan_retreat"]
+script = ExtResource("2_escape")
+custom_name = "Plan Retreat"
+escape_radius = 6
+target_cell_var = &"target_cell"
+
+[sub_resource type="BTAction" id="BTAction_attack_move"]
+script = ExtResource("3_move")
+custom_name = "Retreat To Safety"
+cell_var = &"target_cell"
+reach_threshold = 0.3
+clear_on_success = true
+
+[sub_resource type="BTSequence" id="BTSequence_attack"]
+custom_name = "Attack Sequence"
+children = [SubResource("BTAction_attack_place"), SubResource("BTAction_attack_plan_retreat"), SubResource("BTAction_attack_move")]
+
+[sub_resource type="BTAction" id="BTAction_collect_move"]
+script = ExtResource("3_move")
+custom_name = "Move To Powerup"
+cell_var = &"target_powerup_cell"
+reach_threshold = 0.3
+clear_on_success = true
+
+[sub_resource type="BTSequence" id="BTSequence_collect"]
+custom_name = "Collect Powerup Sequence"
+children = [SubResource("BTAction_collect_move")]
+
+[sub_resource type="BTSelector" id="BTSelector_root"]
+children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect")]
+
+[resource]
+description = "Complete LimboAI bot behavior tree: Escape > Attack > Collect"
+blackboard_plan = SubResource("BlackboardPlan_bot")
+root_task = SubResource("BTSelector_root")

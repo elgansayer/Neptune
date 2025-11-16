@@ -1,6 +1,9 @@
 extends Node
 class_name ServerBotController
 
+# Config: Enable LimboAI when available (set to false to force legacy BT)
+const USE_LIMBO_AI := true
+
 const BTNode = preload("res://shared/ai/behavior_tree/nodes/base_node.gd")
 const BehaviorTreeRunner = preload("res://shared/ai/behavior_tree/bt_runner.gd")
 const BTSequence = preload("res://shared/ai/behavior_tree/nodes/sequence.gd")
@@ -31,6 +34,12 @@ var _behavior_weights := {}
 var _personality_profile := {}
 var _decision_interval := 0.1
 var _decision_accumulator := 0.0
+
+# Limbo AI integration
+var _limbo_active := false
+var _limbo_player  # BTPlayer instance
+var _limbo_blackboard  # Blackboard instance
+var _limbo_tree  # BehaviorTree resource
 
 var _escape_sequence
 var _attack_sequence
@@ -69,7 +78,17 @@ func configure(instance, player, personality_name: String,
 	personality = personality_name
 	_personality_profile = AIPersonalitiesConfig.get_profile(personality_name)
 	_decision_interval = _personality_profile.get("decision_interval", 0.1)
-	_build_behavior_tree()
+	
+	# Detect LimboAI availability
+	if USE_LIMBO_AI and ClassDB.class_exists("BTPlayer"):
+		print("[BotController] LimboAI detected, building Limbo tree for ", player_ref.player_name if player_ref else "bot")
+		_limbo_active = true
+		_build_limbo_tree()
+	else:
+		print("[BotController] Using legacy BT for ", player_ref.player_name if player_ref else "bot")
+		_limbo_active = false
+		_build_behavior_tree()
+	
 	if player_ref:
 		player_ref.tree_exited.connect(_on_player_removed, Object.CONNECT_ONE_SHOT)
 
@@ -107,23 +126,29 @@ func _build_behavior_tree() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player_ref) or player_ref.is_dead:
 		return
-	if _bt_runner == null:
-		return
 	
 	# Opening Gambit State Machine (overrides normal behavior tree during opening)
 	if _current_state != BotState.NORMAL:
 		_execute_opening_gambit(delta)
 		return
 	
-	# Normal behavior tree execution
+	# Decision tick throttling
 	_decision_accumulator += delta
 	if _decision_accumulator < _decision_interval:
 		return
 	_decision_accumulator = 0.0
-	_update_blackboard()
-	_bt_runner.set_blackboard(_blackboard)
-	_bt_runner.tick(_decision_interval)
-	_apply_outputs()
+	
+	# Route to Limbo or legacy BT
+	if _limbo_active:
+		_tick_limbo(delta)
+	else:
+		if _bt_runner == null:
+			return
+		# Legacy behavior tree execution
+		_update_blackboard()
+		_bt_runner.set_blackboard(_blackboard)
+		_bt_runner.tick(_decision_interval)
+		_apply_outputs()
 
 func _update_blackboard() -> void:
 	_blackboard.clear()
@@ -375,6 +400,174 @@ func _move_to_tile(target: Vector2i) -> void:
 		axis = Vector2(0.0, sign(delta.y))
 	
 	player_ref.set_input(axis.x, axis.y)
+
+func _build_limbo_tree() -> void:
+	"""Build LimboAI behavior tree using custom nodes"""
+	if not ClassDB.class_exists("BTPlayer"):
+		push_warning("[BotController] LimboAI not available, cannot build tree")
+		return
+	
+	# Create BTPlayer node
+	var limbo_player_node = ClassDB.instantiate("BTPlayer")
+	_limbo_player = limbo_player_node
+	add_child(_limbo_player)
+	
+	# Create Blackboard
+	var limbo_bb = ClassDB.instantiate("Blackboard")
+	_limbo_blackboard = limbo_bb
+	_limbo_player.set_blackboard(_limbo_blackboard)
+	
+	# OPTION A: Load pre-built tree resource (editable in LimboAI visual editor)
+	if ResourceLoader.exists("res://server/ai/trees/bot_default.tres"):
+		_limbo_tree = ResourceLoader.load("res://server/ai/trees/bot_default.tres")
+		_limbo_player.set_behavior_tree(_limbo_tree)
+		print("[BotController] Loaded Limbo tree from resource for ", player_ref.player_name if player_ref else "bot")
+		return
+	
+	# OPTION B: Build tree programmatically (fallback if resource missing)
+	print("[BotController] Building Limbo tree programmatically for ", player_ref.player_name if player_ref else "bot")
+	var limbo_tree_res = ClassDB.instantiate("BehaviorTree")
+	_limbo_tree = limbo_tree_res
+	
+	# Build tree structure: BTSelector root with priority sequences
+	var root_selector = ClassDB.instantiate("BTSelector")
+	
+	# Sequence 1: ESCAPE (highest priority)
+	var escape_seq = ClassDB.instantiate("BTSequence")
+	var is_in_danger = load("res://shared/ai/limbo_nodes/conditions/bt_is_in_danger.gd").new()
+	is_in_danger.danger_buffer = _personality_profile.get("danger_buffer", 1.0)
+	is_in_danger.check_immediate = false
+	var find_escape = load("res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd").new()
+	find_escape.escape_radius = _personality_profile.get("escape_radius", 8)
+	find_escape.target_cell_var = &"target_cell"
+	var move_to = load("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+	move_to.cell_var = &"target_cell"
+	move_to.reach_threshold = 0.3
+	
+	# Escape sequence expects: BTIsInDanger -> BTFindEscapeRoute -> BTMoveToCell
+	# Note: BTSelector/BTSequence use add_child for composition
+	escape_seq.call("add_child", is_in_danger)
+	escape_seq.call("add_child", find_escape)
+	escape_seq.call("add_child", move_to)
+	
+	# Sequence 2: ATTACK (if opponent exists and not in danger)
+	# Simplified for now: just place bomb + move (no opponent check condition yet)
+	var attack_seq = ClassDB.instantiate("BTSequence")
+	var place_bomb = load("res://shared/ai/limbo_nodes/actions/bt_place_bomb.gd").new()
+	place_bomb.check_capacity = true
+	place_bomb.check_existing = true
+	var retreat_after_bomb = load("res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd").new()
+	retreat_after_bomb.escape_radius = 6
+	retreat_after_bomb.target_cell_var = &"target_cell"
+	var move_retreat = load("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+	move_retreat.cell_var = &"target_cell"
+	attack_seq.call("add_child", place_bomb)
+	attack_seq.call("add_child", retreat_after_bomb)
+	attack_seq.call("add_child", move_retreat)
+	
+	# Sequence 3: COLLECT (low priority, placeholder for now)
+	# TODO: Add BTHasPowerup check and pathfinding to powerup
+	var collect_seq = ClassDB.instantiate("BTSequence")
+	# Placeholder: just move to a cell if target_powerup is set
+	var move_collect = load("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+	move_collect.cell_var = &"target_powerup_cell"
+	collect_seq.call("add_child", move_collect)
+	
+	# Assemble selector
+	root_selector.call("add_child", escape_seq)
+	root_selector.call("add_child", attack_seq)
+	root_selector.call("add_child", collect_seq)
+	
+	# Set root
+	_limbo_tree.call("set_root_task", root_selector)
+	_limbo_player.set_behavior_tree(_limbo_tree)
+	
+	print("[BotController] Limbo tree built for ", player_ref.player_name if player_ref else "bot")
+
+func _update_limbo_blackboard() -> void:
+	"""Populate Limbo blackboard with current game state"""
+	if not _limbo_blackboard:
+		return
+	
+	# Entity references
+	_limbo_blackboard.set_var("player", player_ref)
+	_limbo_blackboard.set_var("game_instance", game_instance)
+	_limbo_blackboard.set_var("ai_manager", game_instance.ai_manager if game_instance else null)
+	
+	# Perception systems
+	_limbo_blackboard.set_var("grid_sampler", grid_sampler)
+	_limbo_blackboard.set_var("hazard_predictor", hazard_predictor)
+	_limbo_blackboard.set_var("opponent_tracker", opponent_tracker)
+	_limbo_blackboard.set_var("bomb_planner", bomb_planner)
+	_limbo_blackboard.set_var("bomb_safety_checker", bomb_safety_checker)
+	
+	# State
+	_limbo_blackboard.set_var("current_tile", player_ref.get_tile_position() if player_ref else Vector2i.ZERO)
+	_limbo_blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+	_limbo_blackboard.set_var("danger_buffer", _personality_profile.get("danger_buffer", 0.1))
+	_limbo_blackboard.set_var("escape_radius", _personality_profile.get("escape_radius", 8))
+	
+	# Opponent tracking
+	var nearest = opponent_tracker.get_nearest_opponent(player_ref.position) if player_ref else null
+	_limbo_blackboard.set_var("nearest_opponent", nearest)
+	if nearest:
+		_limbo_blackboard.set_var("opponent_tile", nearest.get("tile"))
+	else:
+		_limbo_blackboard.set_var("opponent_tile", null)
+	
+	# Powerup tracking (simplified)
+	if game_instance and game_instance.powerups.size() > 0:
+		var closest_powerup = game_instance.powerups[0]
+		var powerup_tile = grid_sampler.world_to_tile(closest_powerup.position) if closest_powerup else Vector2i(-1, -1)
+		_limbo_blackboard.set_var("target_powerup_cell", powerup_tile)
+	else:
+		_limbo_blackboard.set_var("target_powerup_cell", null)
+
+func _tick_limbo(delta: float) -> void:
+	"""Execute Limbo BT tick"""
+	if not _limbo_player or not _limbo_blackboard:
+		return
+	
+	# Update blackboard from game state
+	_update_limbo_blackboard()
+	
+	# Tick the BTPlayer (automatically uses assigned blackboard)
+	_limbo_player.update(delta)
+	
+	# Read outputs from blackboard (nodes write movement intent here)
+	# Note: Our custom nodes call player.set_input directly, so no additional apply needed
+	# But we can read diagnostic vars for debug payload
+	# (Actual movement handled by BTMoveToCell node directly)
+
+func get_debug_payload() -> Dictionary:
+	"""Generate debug payload for streaming to clients"""
+	if not is_instance_valid(player_ref):
+		return {}
+	
+	var payload := {
+		"peer_id": player_ref.peer_id,
+		"player_name": player_ref.player_name,
+		"current_tile": player_ref.get_tile_position(),
+		"limbo_active": _limbo_active,
+		"bot_state": BotState.keys()[_current_state],
+	}
+	
+	if _limbo_active and _limbo_blackboard:
+		# Limbo-specific debug data
+		payload["in_danger"] = _limbo_blackboard.get_var("in_danger", false)
+		payload["danger_tile"] = _limbo_blackboard.get_var("danger_tile", null)
+		payload["escape_route_found"] = _limbo_blackboard.get_var("escape_route_found", false)
+		payload["target_cell"] = _limbo_blackboard.get_var("target_cell", null)
+		payload["plan_type"] = "limbo_tree"  # Placeholder
+	else:
+		# Legacy BT debug data
+		if utility_scorer and utility_scorer.last_result:
+			payload["plan_type"] = utility_scorer.last_result.get("action", "unknown")
+			payload["utilities"] = utility_scorer.last_result.get("utilities", {})
+		else:
+			payload["plan_type"] = "legacy_bt"
+	
+	return payload
 
 func _on_player_removed() -> void:
 	player_ref = null

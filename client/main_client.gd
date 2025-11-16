@@ -115,6 +115,13 @@ func register_response(data: Dictionary):
 		print("[Client] Registration failed: ", data.get("error", "Unknown error"))
 
 @rpc("any_peer", "call_remote", "unreliable")
+func ai_debug_update(debug_data: Dictionary):
+	"""Receive AI debug data from server"""
+	var game_view = get_tree().current_scene
+	if game_view and game_view.has_method("update_ai_debug"):
+		game_view.update_ai_debug(debug_data)
+
+@rpc("any_peer", "call_remote", "unreliable")
 func receive_state(state: Dictionary):
 	# Forward to active game view scene
 	var game_view = get_tree().current_scene

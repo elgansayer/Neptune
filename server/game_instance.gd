@@ -379,7 +379,25 @@ func place_bomb(player: ServerPlayer):
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
 
-func _on_bomb_exploded(bomb: ServerBomb, explosion_pattern: Array):
+	# Broadcast AI debug data (throttled)
+	if bot_manager and Engine.get_physics_frames() % 6 == 0:  # Every 6 frames (10Hz at 60fps)
+		for child in bot_manager.get_children():
+			if child.has_method("get_debug_payload"):
+				var payload = child.get_debug_payload()
+				if payload.size() > 0:
+					ServerMain.rpc("ai_debug_update", payload)
+
+func _on_bomb_exploded(bomb, explosion_pattern: Array) -> void:
+	# Bomb now passes itself and explosion pattern directly
+	if not is_instance_valid(bomb):
+		push_warning("[Game] Bomb exploded callback with invalid bomb reference")
+		return
+	
+	var bomb_id = bomb.bomb_id
+	if not bombs.has(bomb_id):
+		push_warning("[Game] Bomb exploded callback for unknown bomb: ", bomb_id)
+		return
+	
 	print("[Game] Bomb exploded: ", bomb.bomb_id, " with ", explosion_pattern.size(), " tiles")
 	
 	# Find owner from bomb.owner_id

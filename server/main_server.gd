@@ -135,6 +135,10 @@ func register_response(_data: Dictionary):
 	pass # Stub - actual implementation on client
 
 @rpc("any_peer", "call_remote", "unreliable")
+func ai_debug_update(_debug_data: Dictionary):
+	pass # Stub - clients receive this
+
+@rpc("any_peer", "call_remote", "unreliable")
 func receive_state(_state: Dictionary):
 	pass # Stub - actual implementation on client
 

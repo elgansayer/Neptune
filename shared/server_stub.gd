@@ -33,6 +33,17 @@ func register_response(_data: Dictionary):
 	pass
 
 @rpc("any_peer", "call_remote", "unreliable")
+func ai_debug_update(_debug_data: Dictionary):
+	# Stub - actual implementation on client
+	pass
+
+@rpc("any_peer", "call_remote", "unreliable")
 func receive_state(_state: Dictionary):
 	# Stub - actual implementation on client
+	pass
+
+@rpc("any_peer", "call_remote", "reliable")
+func spawn_bot_request(personality: String = "BALANCED"):
+	if false:
+		print(personality)
 	pass

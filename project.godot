@@ -35,6 +35,10 @@ enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg")
 
 enable=true
 
+[gdextension]
+
+load_once=PackedStringArray("res://addons/limboai/bin/limboai.gdextension")
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
