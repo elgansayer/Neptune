@@ -10,6 +10,7 @@ const ServerBomb = preload("res://shared/entities/server_bomb.gd")
 
 const Constants = preload("res://shared/constants.gd")
 const ServerPowerUpScript = preload("res://shared/entities/server_powerup.gd")
+const InputBufferScript = preload("res://shared/entities/input_buffer.gd")
 
 var player_id: String = ""
 var peer_id: int = 0
@@ -43,6 +44,10 @@ const PICKUP_ANIMATION_DURATION = 0.3  # Duration of pickup animation in seconds
 
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
+
+# LimboAI integration for player-controlled entities (optional)
+var input_buffer: InputBufferScript = null  # Input buffering for BT-based player control
+var bt_player: BTPlayer = null  # Optional: LimboAI BT player for input processing
 
 # ShapeCast2D nodes for checking directions
 var shape_cast_desired: ShapeCast2D
@@ -550,7 +555,25 @@ func get_tile_position() -> Vector2i:
 	)
 
 func set_input(input_x: float, input_y: float):
+	"""Set movement input direction.
+	Can be called directly or via input buffer for BT-based control."""
 	input_direction = Vector2(input_x, input_y)
+
+func queue_input(input_data: Dictionary) -> void:
+	"""Queue input for BT-based processing.
+	Used when LimboAI input buffer is enabled."""
+	if input_buffer:
+		input_buffer.push_input(input_data)
+	else:
+		# Fallback to direct input if buffer not initialized
+		set_input(input_data.get("input_x", 0.0), input_data.get("input_y", 0.0))
+		place_bomb_requested = input_data.get("place_bomb", false)
+		action_button_pressed = input_data.get("action_pressed", false)
+
+func initialize_input_buffer() -> void:
+	"""Initialize input buffer for LimboAI-based player control."""
+	if not input_buffer:
+		input_buffer = InputBufferScript.new()
 
 func request_bomb_placement():
 	if is_dead:
