@@ -28,9 +28,10 @@ func _tick(delta: float) -> int:
 	
 	# Set anchor point if not yet established
 	if not _has_anchor:
-		if prefer_center and ai_manager:
+		if prefer_center:
 			# Use map center as anchor
-			_anchor_point = Vector2i(ai_manager.grid_width / 2, ai_manager.grid_height / 2)
+			var map_bounds = grid_sampler.get_map_bounds()
+			_anchor_point = Vector2i(map_bounds.x / 2, map_bounds.y / 2)
 		else:
 			# Use current position as anchor
 			_anchor_point = player_tile

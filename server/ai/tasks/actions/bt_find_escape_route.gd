@@ -15,30 +15,59 @@ func _tick(delta: float) -> int:
 	var player = blackboard.get_var("player")
 	var game_instance = blackboard.get_var("game_instance")
 	var ai_manager = blackboard.get_var("ai_manager")
+	var grid_sampler = blackboard.get_var("grid_sampler")
 	
-	if not player or not game_instance or not ai_manager:
+	if not player or not game_instance or not ai_manager or not grid_sampler:
 		push_warning("[BTFindEscapeRoute] Missing required blackboard variables")
 		return FAILURE
 	
 	var player_tile = player.get_tile_position()
-	var current_time_msec = Time.get_ticks_msec()
+	var threat_matrix = ai_manager.get_current_threat_matrix()
 	
-	# TODO: Implement find_nearest_safe_cell on pathfinder or use BombSafetyChecker's BFS directly
-	# For now, fail gracefully - bots will rely on other behavior tree branches
-	# Use danger-aware pathfinder to find safe cell
-	#if ai_manager.pathfinder and ai_manager.pathfinder.has_method("find_nearest_safe_cell"):
-	#	var escape_cell = ai_manager.pathfinder.find_nearest_safe_cell(
-	#		player_tile,
-	#		current_time_msec,
-	#		escape_radius
-	#	)
-	#	
-	#	if escape_cell and escape_cell != player_tile:
-	#		# Found an escape route
-	#		blackboard.set_var(target_cell_var, escape_cell)
-	#		blackboard.set_var("escape_route_found", true)
-	#		return SUCCESS
+	# Find nearest safe tile (not in threat matrix)
+	var best_safe_tile: Vector2i = Vector2i(-1, -1)
+	var best_distance: int = 999999
 	
-	# No escape route found (or not implemented yet)
+	for radius in range(1, escape_radius + 1):
+		for dx in range(-radius, radius + 1):
+			for dy in range(-radius, radius + 1):
+				if abs(dx) + abs(dy) != radius:  # Only check tiles at exact radius (diamond pattern)
+					continue
+				
+				var check_tile = player_tile + Vector2i(dx, dy)
+				
+				# Must be walkable
+				if not grid_sampler.is_tile_walkable(check_tile):
+					continue
+				
+				# Must not be in threat matrix (safe from explosions)
+				var tile_key = "%d,%d" % [check_tile.x, check_tile.y]
+				if threat_matrix.has(tile_key):
+					continue
+				
+				# Must be reachable
+				var path = grid_sampler.find_path(player_tile, check_tile, escape_radius, player)
+				if path.is_empty():
+					continue
+				
+				# Found a safe tile - prefer closest
+				var distance = abs(dx) + abs(dy)
+				if distance < best_distance:
+					best_distance = distance
+					best_safe_tile = check_tile
+		
+		# If we found a safe tile at this radius, use it (prefer closer tiles)
+		if best_safe_tile != Vector2i(-1, -1):
+			break
+	
+	if best_safe_tile != Vector2i(-1, -1):
+		# Found an escape route
+		blackboard.set_var(target_cell_var, best_safe_tile)
+		blackboard.set_var("escape_route_found", true)
+		print("[BTFindEscapeRoute] Found escape route to ", best_safe_tile, " (distance: ", best_distance, ")")
+		return SUCCESS
+	
+	# No escape route found
 	blackboard.set_var("escape_route_found", false)
+	print("[BTFindEscapeRoute] No escape route found!")
 	return FAILURE

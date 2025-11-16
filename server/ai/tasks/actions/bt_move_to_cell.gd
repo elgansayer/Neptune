@@ -50,6 +50,7 @@ func _tick(delta: float) -> int:
 	
 	if distance < threshold_pixels:
 		# Reached destination
+		print("[BTMoveToCell] Reached target cell: ", target_cell)
 		if clear_on_success:
 			blackboard.set_var(cell_var, null)
 		

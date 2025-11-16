@@ -77,9 +77,11 @@ func _tick(_delta: float) -> int:
 	# If we found a good spot, store it
 	if best_spot != Vector2i(-1, -1):
 		blackboard.set_var(target_cell_var, best_spot)
+		print("[BTFindFarmingSpot] Found farming spot at ", best_spot, " (score: ", best_score, ")")
 		return SUCCESS
 	
 	# No good farming spot found
+	print("[BTFindFarmingSpot] No safe farming spots found")
 	return FAILURE
 
 func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler) -> int:

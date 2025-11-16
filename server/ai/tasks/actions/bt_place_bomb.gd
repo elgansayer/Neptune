@@ -38,8 +38,11 @@ func _tick(delta: float) -> int:
 	# Place the bomb
 	game_instance.place_bomb(player)
 	
+	var bomb_pos = player.get_tile_position()
+	print("[BTPlaceBomb] Placed bomb at ", bomb_pos)
+	
 	# Store bomb placement info in blackboard for debugging/tracking
-	blackboard.set_var("last_bomb_placed_at", player.get_tile_position())
+	blackboard.set_var("last_bomb_placed_at", bomb_pos)
 	blackboard.set_var("last_bomb_placed_time", Time.get_ticks_msec() / 1000.0)
 	
 	return SUCCESS
