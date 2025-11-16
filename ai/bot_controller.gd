@@ -2,8 +2,8 @@ extends Node
 class_name ServerBotController
 
 const BehaviorTreeRunner = preload("res://shared/ai/behavior_tree/bt_runner.gd")
-const BTSequence = preload("res://shared/ai/behavior_tree/nodes/sequence.gd")
-const BTUtilitySelector = preload("res://shared/ai/behavior_tree/nodes/utility_selector.gd")
+const LegacyBTSequence = preload("res://shared/ai/behavior_tree/nodes/sequence.gd")
+const LegacyBTUtilitySelector = preload("res://shared/ai/behavior_tree/nodes/utility_selector.gd")
 const BTEscapeNode = preload("res://shared/ai/behavior_tree/nodes/leaf_find_escape.gd")
 const BTMoveToNode = preload("res://shared/ai/behavior_tree/nodes/leaf_move_to.gd")
 const BTCollectPowerUpNode = preload("res://shared/ai/behavior_tree/nodes/leaf_collect_powerup.gd")
@@ -51,14 +51,14 @@ func configure(instance, player, personality_name: String,
 		player_ref.tree_exited.connect(_on_player_removed, Object.CONNECT_ONE_SHOT)
 
 func _build_behavior_tree() -> void:
-	_escape_sequence = BTSequence.new()
+	_escape_sequence = LegacyBTSequence.new()
 	_escape_sequence.children = [BTEscapeNode.new(), BTMoveToNode.new()]
-	_attack_sequence = BTSequence.new()
+	_attack_sequence = LegacyBTSequence.new()
 	_attack_sequence.children = [BTChaseOpponentNode.new(), BTMoveToNode.new(), BTPlaceBombNode.new()]
-	_collect_sequence = BTSequence.new()
+	_collect_sequence = LegacyBTSequence.new()
 	_collect_sequence.children = [BTCollectPowerUpNode.new(), BTMoveToNode.new()]
 	_ambush_node = BTWaitAmbushNode.new()
-	var utility_selector = BTUtilitySelector.new()
+	var utility_selector = LegacyBTUtilitySelector.new()
 	utility_selector.children = [_escape_sequence, _attack_sequence, _collect_sequence, _ambush_node]
 	utility_selector.score_func = Callable(self, "_score_behavior")
 	_bt_runner = BehaviorTreeRunner.new()

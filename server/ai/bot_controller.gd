@@ -6,8 +6,8 @@ const USE_LIMBO_AI := true
 
 const BTNode = preload("res://shared/ai/behavior_tree/nodes/base_node.gd")
 const BehaviorTreeRunner = preload("res://shared/ai/behavior_tree/bt_runner.gd")
-const BTSequence = preload("res://shared/ai/behavior_tree/nodes/sequence.gd")
-const BTUtilitySelector = preload("res://shared/ai/behavior_tree/nodes/utility_selector.gd")
+const LegacyBTSequence = preload("res://shared/ai/behavior_tree/nodes/sequence.gd")
+const LegacyBTUtilitySelector = preload("res://shared/ai/behavior_tree/nodes/utility_selector.gd")
 const BTEscapeNode = preload("res://shared/ai/behavior_tree/nodes/leaf_find_escape.gd")
 const BTMoveToNode = preload("res://shared/ai/behavior_tree/nodes/leaf_move_to.gd")
 const BTCollectPowerUpNode = preload("res://shared/ai/behavior_tree/nodes/leaf_collect_powerup.gd")
@@ -103,15 +103,15 @@ func _configure_utility_scorer() -> void:
 		print("[BotController] UtilityScorer configured for ", player_ref.player_name if player_ref else "bot")
 
 func _build_behavior_tree() -> void:
-	_escape_sequence = BTSequence.new()
+	_escape_sequence = LegacyBTSequence.new()
 	_escape_sequence.children = [BTEscapeNode.new(), BTMoveToNode.new()]
-	_attack_sequence = BTSequence.new()
+	_attack_sequence = LegacyBTSequence.new()
 	# Attack: chase opponent, place bomb, then IMMEDIATELY move to safety
 	_attack_sequence.children = [BTChaseOpponentNode.new(), BTPlaceBombNode.new(), BTMoveToNode.new()]
-	_collect_sequence = BTSequence.new()
+	_collect_sequence = LegacyBTSequence.new()
 	_collect_sequence.children = [BTCollectPowerUpNode.new(), BTMoveToNode.new()]
 	_ambush_node = BTWaitAmbushNode.new()
-	var utility_selector = BTUtilitySelector.new()
+	var utility_selector = LegacyBTUtilitySelector.new()
 	utility_selector.children = [_escape_sequence, _attack_sequence, _collect_sequence, _ambush_node]
 	utility_selector.score_func = Callable(self, "_score_behavior")
 	_bt_runner = BehaviorTreeRunner.new()
