@@ -47,7 +47,7 @@ var collision_exceptions := []
 
 # LimboAI integration for player-controlled entities (optional)
 var input_buffer: InputBufferScript = null  # Input buffering for BT-based player control
-var bt_player: BTPlayer = null  # Optional: LimboAI BT player for input processing
+var bt_player = null  # Optional: LimboAI BT player for input processing
 
 # ShapeCast2D nodes for checking directions
 var shape_cast_desired: ShapeCast2D
