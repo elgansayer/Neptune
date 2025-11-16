@@ -2,7 +2,7 @@ extends Node
 class_name ServerBotManager
 
 const _BOT_CONTROLLER_PATHS := [
-	"res://ai/bot_controller.gd"
+	"res://server/ai/bot_controller.gd"
 ]
 var ServerBotControllerScript = _load_script_variant(_BOT_CONTROLLER_PATHS)
 

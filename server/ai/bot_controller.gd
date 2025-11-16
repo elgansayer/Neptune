@@ -1,24 +1,11 @@
 extends Node
 class_name ServerBotController
 
-# Config: Enable LimboAI when available (set to false to force legacy BT)
-const USE_LIMBO_AI := true
-
-const BTNode = preload("res://shared/ai/behavior_tree/nodes/base_node.gd")
-const BehaviorTreeRunner = preload("res://shared/ai/behavior_tree/bt_runner.gd")
-const LegacyBTSequence = preload("res://shared/ai/behavior_tree/nodes/sequence.gd")
-const LegacyBTUtilitySelector = preload("res://shared/ai/behavior_tree/nodes/utility_selector.gd")
-const BTEscapeNode = preload("res://shared/ai/behavior_tree/nodes/leaf_find_escape.gd")
-const BTMoveToNode = preload("res://shared/ai/behavior_tree/nodes/leaf_move_to.gd")
-const BTCollectPowerUpNode = preload("res://shared/ai/behavior_tree/nodes/leaf_collect_powerup.gd")
-const BTPlaceBombNode = preload("res://shared/ai/behavior_tree/nodes/leaf_place_bomb.gd")
-const BTWaitAmbushNode = preload("res://shared/ai/behavior_tree/nodes/leaf_wait_ambush.gd")
-const BTChaseOpponentNode = preload("res://shared/ai/behavior_tree/nodes/leaf_chase_opponent.gd")
 const AIPersonalitiesConfig = preload("res://shared/ai/config/personalities.gd")
 const OpeningGambit = preload("res://shared/ai/planning/opening_gambit.gd")
 const UtilityScorer = preload("res://shared/ai/decision/utility_scorer.gd")
 
-## Behavior-tree-powered controller that simulates authoritative inputs for AI players.
+## LimboAI-powered bot controller that simulates authoritative inputs for AI players.
 
 var game_instance
 var personality := "BALANCED"
@@ -28,23 +15,15 @@ var hazard_predictor
 var opponent_tracker
 var bomb_planner
 
-var _bt_runner
-var _blackboard := {}
-var _behavior_weights := {}
 var _personality_profile := {}
 var _decision_interval := 0.1
 var _decision_accumulator := 0.0
 
 # Limbo AI integration
-var _limbo_active := false
 var _limbo_player  # BTPlayer instance
 var _limbo_blackboard  # Blackboard instance
 var _limbo_tree  # BehaviorTree resource
 
-var _escape_sequence
-var _attack_sequence
-var _collect_sequence
-var _ambush_node
 var bomb_safety_checker  # New: time-aware BFS suicide check
 var opening_gambit: OpeningGambit  # Opening strategy planner
 var utility_scorer: UtilityScorer  # Mathematical (Reward * P_Success) - (Risk * P_Failure)
@@ -79,15 +58,12 @@ func configure(instance, player, personality_name: String,
 	_personality_profile = AIPersonalitiesConfig.get_profile(personality_name)
 	_decision_interval = _personality_profile.get("decision_interval", 0.1)
 	
-	# Detect LimboAI availability
-	if USE_LIMBO_AI and ClassDB.class_exists("BTPlayer"):
-		print("[BotController] LimboAI detected, building Limbo tree for ", player_ref.player_name if player_ref else "bot")
-		_limbo_active = true
+	# LimboAI is now the only BT system
+	if ClassDB.class_exists("BTPlayer"):
+		print("[BotController] Building LimboAI tree for ", player_ref.player_name if player_ref else "bot")
 		_build_limbo_tree()
 	else:
-		print("[BotController] Using legacy BT for ", player_ref.player_name if player_ref else "bot")
-		_limbo_active = false
-		_build_behavior_tree()
+		push_error("[BotController] LimboAI not available! Bot will be disabled.")
 	
 	if player_ref:
 		player_ref.tree_exited.connect(_on_player_removed, Object.CONNECT_ONE_SHOT)
@@ -101,27 +77,6 @@ func _configure_utility_scorer() -> void:
 	if game_instance != null and game_instance.ai_manager != null:
 		utility_scorer.configure(game_instance.ai_manager, grid_sampler, bomb_safety_checker)
 		print("[BotController] UtilityScorer configured for ", player_ref.player_name if player_ref else "bot")
-
-func _build_behavior_tree() -> void:
-	_escape_sequence = LegacyBTSequence.new()
-	_escape_sequence.children = [BTEscapeNode.new(), BTMoveToNode.new()]
-	_attack_sequence = LegacyBTSequence.new()
-	# Attack: chase opponent, place bomb, then IMMEDIATELY move to safety
-	_attack_sequence.children = [BTChaseOpponentNode.new(), BTPlaceBombNode.new(), BTMoveToNode.new()]
-	_collect_sequence = LegacyBTSequence.new()
-	_collect_sequence.children = [BTCollectPowerUpNode.new(), BTMoveToNode.new()]
-	_ambush_node = BTWaitAmbushNode.new()
-	var utility_selector = LegacyBTUtilitySelector.new()
-	utility_selector.children = [_escape_sequence, _attack_sequence, _collect_sequence, _ambush_node]
-	utility_selector.score_func = Callable(self, "_score_behavior")
-	_bt_runner = BehaviorTreeRunner.new()
-	_bt_runner.set_root(utility_selector)
-	_behavior_weights = {
-		_escape_sequence: _personality_profile.get("escape_bias", 1.0),
-		_attack_sequence: _personality_profile.get("attack_bias", 1.0),
-		_collect_sequence: _personality_profile.get("powerup_bias", 0.8),
-		_ambush_node: _personality_profile.get("ambush_bias", 0.2)
-	}
 
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player_ref) or player_ref.is_dead:
@@ -138,166 +93,11 @@ func _physics_process(delta: float) -> void:
 		return
 	_decision_accumulator = 0.0
 	
-	# Route to Limbo or legacy BT
-	if _limbo_active:
-		_tick_limbo(delta)
-	else:
-		if _bt_runner == null:
-			return
-		# Legacy behavior tree execution
-		_update_blackboard()
-		_bt_runner.set_blackboard(_blackboard)
-		_bt_runner.tick(_decision_interval)
-		_apply_outputs()
-
-func _update_blackboard() -> void:
-	_blackboard.clear()
-	_blackboard["game_instance"] = game_instance
-	_blackboard["grid_sampler"] = grid_sampler
-	_blackboard["hazard_predictor"] = hazard_predictor
-	_blackboard["opponent_tracker"] = opponent_tracker
-	_blackboard["bomb_planner"] = bomb_planner
-	_blackboard["bomb_safety_checker"] = bomb_safety_checker
-	_blackboard["ai_manager"] = game_instance.ai_manager if game_instance else null
-	_blackboard["player"] = player_ref
-	_blackboard["personality"] = _personality_profile
-	_blackboard["time"] = Time.get_ticks_msec() / 1000.0
-	_blackboard["danger_buffer"] = _personality_profile.get("danger_buffer", 0.1)
-	_blackboard["escape_radius"] = _personality_profile.get("escape_radius", 8)
-	_blackboard["path_depth"] = _personality_profile.get("path_depth", 40)
-	_blackboard["current_tile"] = player_ref.get_tile_position()
-	_blackboard["current_world"] = player_ref.position
-	var nearest = opponent_tracker.get_nearest_opponent(player_ref.position)
-	_blackboard["nearest_opponent"] = nearest
-	if nearest:
-		_blackboard["opponent_tile"] = nearest.get("tile")
-	else:
-		_blackboard["opponent_tile"] = null
-	_blackboard["move_vector"] = Vector2.ZERO
-	_blackboard["request_bomb"] = false
-
-func _apply_outputs() -> void:
-	if not is_instance_valid(player_ref):
-		return
-	var desired: Vector2 = _blackboard.get("move_vector", Vector2.ZERO)
-	var axis := Vector2.ZERO
-	if desired.length() > 0.05:
-		if abs(desired.x) > abs(desired.y):
-			axis = Vector2(sign(desired.x), 0.0)
-		else:
-			axis = Vector2(0.0, sign(desired.y))
-	player_ref.set_input(axis.x, axis.y)
-	if _blackboard.get("request_bomb", false):
-		game_instance.place_bomb(player_ref)
-	_blackboard["request_bomb"] = false
-
-func _score_behavior(child, blackboard: Dictionary) -> float:
-	var base := float(_behavior_weights.get(child, 0.1))
-	var current_tile: Vector2i = blackboard.get("current_tile")
-	var now = blackboard.get("time", 0.0)
-	var current_time_msec := Time.get_ticks_msec()
-	
-	# UTILITY FUNCTION OVERRIDE: Use mathematical decision-making if scorer is configured
-	if utility_scorer != null and _personality_profile.get("use_utility_function", true):
-		var nearest_enemy_pos := Vector2i(-1, -1)
-		var nearest_enemy_id := -999
-		var nearest_opponent = blackboard.get("nearest_opponent")
-		if nearest_opponent:
-			var tile = nearest_opponent.get("tile", null)
-			if tile != null:
-				nearest_enemy_pos = tile
-			nearest_enemy_id = nearest_opponent.get("peer_id", -999)
-		
-		var nearest_powerup_pos := Vector2i(-1, -1)
-		var powerup_type := ""
-		if game_instance and game_instance.powerups.size() > 0:
-			var closest_dist := 999999
-			for powerup in game_instance.powerups:
-				var p_tile: Vector2i = grid_sampler.world_to_tile(powerup.position) if powerup else Vector2i(-1, -1)
-				if p_tile != Vector2i(-1, -1):
-					var dist: int = grid_sampler.get_manhattan_distance(current_tile, p_tile)
-					if dist < closest_dist:
-						closest_dist = dist
-						nearest_powerup_pos = p_tile
-						powerup_type = powerup.powerup_type if powerup.has_method("powerup_type") else "fire_up"
-		
-		var utility_result := utility_scorer.select_best_action(
-			current_tile,
-			player_ref.bomb_range if player_ref else 1,
-			5.0,  # bot speed
-			nearest_enemy_pos,
-			nearest_enemy_id,
-			nearest_powerup_pos,
-			powerup_type,
-			current_time_msec
-		)
-		
-		# Apply utility decision to behavior tree scores
-		var selected_action = utility_result["action"]
-		var utility_score = utility_result["utility"]
-		
-		# Map utility actions to behavior tree nodes
-		if selected_action == "get_powerup" and child == _collect_sequence:
-			return base + utility_score
-		elif selected_action in ["kick_snipe", "bait_panic", "nuisance_bomb"] and child == _attack_sequence:
-			return base + utility_score
-		elif selected_action == "establish_territory" and child == _ambush_node:
-			return base + utility_score
-	
-	# SURVIVAL PRIORITY: Use new is_in_mortal_danger check
-	if child == _escape_sequence and hazard_predictor and current_tile:
-		var buffer: float = _personality_profile.get("danger_buffer", 0.1)
-		if hazard_predictor.is_in_mortal_danger(current_tile, now, buffer):
-			# CRITICAL DANGER - maximum priority
-			base += 1000.0  # Overwhelming priority for survival
-	elif child == _attack_sequence:
-		var opponent = blackboard.get("nearest_opponent")
-		if opponent == null:
-			return 0.0
-		
-		# Don't attack if we're in mortal danger
-		if hazard_predictor and hazard_predictor.is_in_mortal_danger(current_tile, now, 0.1):
-			return 0.0  # Survival overrides aggression
-		
-		var tile: Vector2i = opponent.get("tile", current_tile)
-		if tile != null and grid_sampler:
-			var distance: int = grid_sampler.get_manhattan_distance(current_tile, tile)
-			var base_aggression: float = max(0, 6 - distance) * _personality_profile.get("aggression", 0.5)
-			
-			# Use OpponentProfile to modify attack priority
-			if game_instance and game_instance.ai_manager:
-				var opp_id = opponent.get("peer_id", -999)
-				if opp_id != -999:
-					var profile = game_instance.ai_manager.get_opponent_profile(opp_id, "")
-					
-					# If opponent is aggressive (> 0.5), switch to defensive tactics
-					if profile.aggression_score > 0.5:
-						base_aggression *= 0.5  # Reduce attack priority against aggressive enemies
-					
-					# If opponent is panic bomber (> 0.7), use bait tactics
-					if profile.panic_bomber_rating > 0.7:
-						base_aggression *= 1.5  # Increase priority to bait them
-			
-			base += base_aggression
-	elif child == _collect_sequence:
-		if game_instance.powerups.size() == 0:
-			return 0.0
-		
-		# Don't collect powerups if in mortal danger
-		if hazard_predictor and hazard_predictor.is_in_mortal_danger(current_tile, now, 0.1):
-			return 0.0  # Survival overrides greed
-		
-		base += 0.5
-	elif child == _ambush_node:
-		# Can't ambush if in danger
-		if hazard_predictor and hazard_predictor.is_in_mortal_danger(current_tile, now, 0.1):
-			return 0.0
-		base += 0.2  # Low priority normally
-	
-	return base
+	# Tick LimboAI tree
+	_tick_limbo(delta)
 
 ## Opening Gambit State Machine - deterministic opening strategy
-func _execute_opening_gambit(delta: float) -> void:
+func _execute_opening_gambit(_delta: float) -> void:
 	var current_pos: Vector2i = player_ref.get_tile_position()
 	var current_time_msec: int = Time.get_ticks_msec()
 	
@@ -355,11 +155,7 @@ func _execute_opening_gambit(delta: float) -> void:
 				print("[Bot ", player_ref.player_name, "] Path opened! Farming to ", _second_target)
 				_current_state = BotState.FARMING
 			else:
-				# Path blocked, stay in safe spawn pocket
-				# Move to spawn position if not already there
-				var spawn_pos := opening_gambit.get_first_target()  # Use first target as reference
-				# Actually move towards spawn (where we came from)
-				# For now, stay still in the waiting room
+				# Path blocked, stay in safe spawn pocket waiting for explosion
 				pass
 		
 		BotState.FARMING:
@@ -548,24 +344,16 @@ func get_debug_payload() -> Dictionary:
 		"peer_id": player_ref.peer_id,
 		"player_name": player_ref.player_name,
 		"current_tile": player_ref.get_tile_position(),
-		"limbo_active": _limbo_active,
 		"bot_state": BotState.keys()[_current_state],
+		"plan_type": "limbo_tree",
 	}
 	
-	if _limbo_active and _limbo_blackboard:
-		# Limbo-specific debug data
+	# LimboAI blackboard debug data
+	if _limbo_blackboard:
 		payload["in_danger"] = _limbo_blackboard.get_var("in_danger", false)
 		payload["danger_tile"] = _limbo_blackboard.get_var("danger_tile", null)
 		payload["escape_route_found"] = _limbo_blackboard.get_var("escape_route_found", false)
 		payload["target_cell"] = _limbo_blackboard.get_var("target_cell", null)
-		payload["plan_type"] = "limbo_tree"  # Placeholder
-	else:
-		# Legacy BT debug data
-		if utility_scorer and utility_scorer.last_result:
-			payload["plan_type"] = utility_scorer.last_result.get("action", "unknown")
-			payload["utilities"] = utility_scorer.last_result.get("utilities", {})
-		else:
-			payload["plan_type"] = "legacy_bt"
 	
 	return payload
 

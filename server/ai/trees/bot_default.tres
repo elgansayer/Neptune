@@ -1,14 +1,14 @@
-[gd_resource type="BehaviorTree" load_steps=29 format=3 uid="uid://chqxceh757yg0"]
+[gd_resource type="BehaviorTree" load_steps=28 format=3 uid="uid://chqxceh757yg0"]
 
 [ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://shared/ai/limbo_nodes/conditions/bt_is_in_danger.gd" id="1_danger"]
 [ext_resource type="Script" uid="uid://3btukveudf74" path="res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd" id="2_escape"]
 [ext_resource type="Script" uid="uid://d1xrs36ub786k" path="res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd" id="3_move"]
 [ext_resource type="Script" uid="uid://bx7tlwus8pbtw" path="res://shared/ai/limbo_nodes/actions/bt_place_bomb.gd" id="4_bomb"]
-[ext_resource type="Script" path="res://shared/ai/limbo_nodes/conditions/bt_has_opponent.gd" id="5_has_opp"]
-[ext_resource type="Script" path="res://shared/ai/limbo_nodes/actions/bt_find_opponent.gd" id="6_find_opp"]
-[ext_resource type="Script" path="res://shared/ai/limbo_nodes/conditions/bt_has_powerup_available.gd" id="7_has_powerup"]
-[ext_resource type="Script" path="res://shared/ai/limbo_nodes/actions/bt_find_powerup.gd" id="8_find_powerup"]
-[ext_resource type="Script" path="res://shared/ai/limbo_nodes/actions/bt_wait_ambush.gd" id="9_ambush"]
+[ext_resource type="Script" uid="uid://by34roa2wptm1" path="res://shared/ai/limbo_nodes/conditions/bt_has_opponent.gd" id="5_has_opp"]
+[ext_resource type="Script" uid="uid://dpcl4vkvplpr" path="res://shared/ai/limbo_nodes/actions/bt_find_opponent.gd" id="6_find_opp"]
+[ext_resource type="Script" uid="uid://dd2pwn7pbjlje" path="res://shared/ai/limbo_nodes/conditions/bt_has_powerup_available.gd" id="7_has_powerup"]
+[ext_resource type="Script" uid="uid://d3coarigsg7cj" path="res://shared/ai/limbo_nodes/actions/bt_find_powerup.gd" id="8_find_powerup"]
+[ext_resource type="Script" uid="uid://dwu6i8josl3h0" path="res://shared/ai/limbo_nodes/actions/bt_wait_ambush.gd" id="9_ambush"]
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bot"]
 
@@ -25,8 +25,6 @@ script = ExtResource("2_escape")
 custom_name = "Move To Safe Tile"
 script = ExtResource("3_move")
 
-[sub_resource type="BTCheckTrigger" id="BTCheckTrigger_jpewe"]
-
 [sub_resource type="BTSequence" id="BTSequence_escape"]
 custom_name = "Escape Sequence"
 children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escape_find"), SubResource("BTAction_escape_move")]
@@ -39,7 +37,6 @@ max_distance = 10.0
 [sub_resource type="BTAction" id="BTAction_find_opponent"]
 custom_name = "Find Opponent"
 script = ExtResource("6_find_opp")
-preferred_distance = 2
 
 [sub_resource type="BTAction" id="BTAction_chase_move"]
 custom_name = "Move Toward Opponent"
@@ -82,34 +79,7 @@ children = [SubResource("BTCondition_has_powerup"), SubResource("BTAction_find_p
 [sub_resource type="BTAction" id="BTAction_ambush"]
 custom_name = "Ambush/Patrol"
 script = ExtResource("9_ambush")
-patrol_radius = 3
 wait_time = 2.0
-
-[sub_resource type="BTAction" id="BTAction_attack_place"]
-custom_name = "Place Bomb"
-script = ExtResource("4_bomb")
-
-[sub_resource type="BTAction" id="BTAction_attack_plan_retreat"]
-custom_name = "Plan Retreat"
-script = ExtResource("2_escape")
-escape_radius = 6
-
-[sub_resource type="BTAction" id="BTAction_attack_move"]
-custom_name = "Retreat To Safety"
-script = ExtResource("3_move")
-
-[sub_resource type="BTSequence" id="BTSequence_attack"]
-custom_name = "Attack Sequence"
-children = [SubResource("BTAction_attack_place"), SubResource("BTAction_attack_plan_retreat"), SubResource("BTAction_attack_move")]
-
-[sub_resource type="BTAction" id="BTAction_collect_move"]
-custom_name = "Move To Powerup"
-script = ExtResource("3_move")
-cell_var = &"target_powerup_cell"
-
-[sub_resource type="BTSequence" id="BTSequence_collect"]
-custom_name = "Collect Powerup Sequence"
-children = [SubResource("BTAction_collect_move")]
 
 [sub_resource type="BTSelector" id="BTSelector_root"]
 children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTAction_ambush")]

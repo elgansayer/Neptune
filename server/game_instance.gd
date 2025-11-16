@@ -11,8 +11,7 @@ const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
 const AIManager = preload("res://shared/ai/ai_manager.gd")
 # AI System scaffolding (new behavior tree implementation will hook here)
 const _BOT_MANAGER_PATHS := [
-	"res://server/ai/bot_manager.gd",
-	"res://ai/bot_manager.gd"
+	"res://server/ai/bot_manager.gd"
 ]
 var ServerBotManagerScript: Script = _load_script_variant(_BOT_MANAGER_PATHS)
 # AI System removed - preparing for rebuild
