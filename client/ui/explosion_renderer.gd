@@ -24,7 +24,7 @@ const ExplosionSegmentScene = preload("res://client/ui/explosion_segment.tscn")
 func _ready():
 	pass
 
-func initialize(pattern: Array, start_t: float):
+func initialize(pattern: Array, _start_t: float):
 	"""Initialize explosion with pattern from server"""
 	explosion_pattern = pattern
 	start_time = Time.get_ticks_msec() / 1000.0  # Use current time, not server time

@@ -4,11 +4,7 @@ extends Node2D
 # Implements Client-Side Prediction, Server Reconciliation, and Entity Interpolation
 
 const Constants = preload("res://shared/constants.gd")
-const ClientPlayerController = preload("res://client/prediction/client_player_controller.gd")
-const EntityInterpolator = preload("res://client/prediction/entity_interpolator.gd")
-const BombThrowPredictor = preload("res://client/prediction/bomb_throw_predictor.gd")
 const BombScene = preload("res://client/ui/bomb.tscn")
-const ExplosionRenderer = preload("res://client/ui/explosion_renderer.gd")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
 
@@ -236,10 +232,10 @@ func update_player(peer_id: String, data: Dictionary):
 			sprite_root.position = Vector2.ZERO
 			player_node.add_child(sprite_root)
 			# Store reference to AnimatedSprite2D for animation control
-			var animated_sprite = sprite_root.get_node_or_null("AnimatedSprite2D")
-			if animated_sprite:
-				animated_sprite.play("state_idle")
-				player_node.set_meta("animated_sprite", animated_sprite)
+			var anim_sprite = sprite_root.get_node_or_null("AnimatedSprite2D")
+			if anim_sprite:
+				anim_sprite.play("state_idle")
+				player_node.set_meta("animated_sprite", anim_sprite)
 		else:
 			# Fallback to colored rectangle if PCK not loaded
 			var sprite = ColorRect.new()
@@ -376,13 +372,13 @@ func update_player(peer_id: String, data: Dictionary):
 					_remove_dead_player(peer_id)
 					return
 				
-				if not player_node.get_meta("death_anim_cleanup_connected", false):
-					var cleanup_callable := func(anim_name: StringName = &""):
-						if anim_name != &"" and anim_name != "state_defeat":
-							return
-						_remove_dead_player(peer_id)
-					player_node.set_meta("death_anim_cleanup_connected", true)
-					animated_sprite.animation_finished.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
+			if not player_node.get_meta("death_anim_cleanup_connected", false):
+				var cleanup_callable := func(finished_anim: StringName = &""):
+					if finished_anim != &"" and finished_anim != "state_defeat":
+						return
+					_remove_dead_player(peer_id)
+				player_node.set_meta("death_anim_cleanup_connected", true)
+				animated_sprite.animation_finished.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
 			
 			# Don't update position/animations during death beyond this point
 			return
@@ -838,4 +834,3 @@ func update_powerup(powerup_id: String, data: Dictionary):
 		powerup_node = powerup_nodes[powerup_id]
 		# Update position (shouldn't change, but just in case)
 		powerup_node.position = Vector2(data.position.x, data.position.y)
-

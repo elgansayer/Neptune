@@ -36,16 +36,16 @@ func update_players_alive(alive: int, total: int):
 	"""Update alive player count"""
 	players_alive.text = "%d / %d Players" % [alive, total]
 
-func update_player_stats(bombs_current: int, bombs_max: int, range: int, speed_mult: float):
+func update_player_stats(bombs_current: int, bombs_max: int, bomb_range: int, speed_mult: float):
 	"""Update local player's stats display"""
 	var bombs_available = bombs_max - bombs_current
 	bomb_label.text = "%d / %d" % [bombs_available, bombs_max]
-	range_label.text = "Range: %d" % range
+	range_label.text = "Range: %d" % bomb_range
 	speed_label.text = "Speed: %d%%" % int(speed_mult * 100)
 
-func set_player_name(name: String):
+func set_player_name(player_name_text: String):
 	"""Set the local player's name display"""
-	player_name.text = name
+	player_name.text = player_name_text
 
 func show_game_over(winner_name: String):
 	"""Display game over screen with winner"""

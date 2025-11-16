@@ -148,7 +148,6 @@ func apply_correction(bomb_id: String, server_pos: Vector2, delta: float) -> Vec
 	if not predicted_throws.has(bomb_id):
 		return server_pos
 	
-	var prediction = predicted_throws[bomb_id]
 	var current_time = Time.get_ticks_msec() / 1000.0
 	var predicted = get_predicted_position(bomb_id, current_time)
 	

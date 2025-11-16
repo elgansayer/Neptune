@@ -31,13 +31,13 @@ project/assembly_name="bomberman"
 
 enabled=PackedStringArray("res://addons/godot-sqlite/plugin.cfg")
 
-[plugin]
-
-enable=true
-
 [gdextension]
 
 load_once=PackedStringArray("res://addons/limboai/bin/limboai.gdextension")
+
+[plugin]
+
+enable=true
 
 [rendering]
 
