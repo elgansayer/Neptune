@@ -326,6 +326,16 @@ func _update_limbo_blackboard() -> void:
 	_limbo_blackboard.set_var("danger_buffer", _personality_profile.get("danger_buffer", 0.1))
 	_limbo_blackboard.set_var("escape_radius", _personality_profile.get("escape_radius", 8))
 	
+	# Optional state variables (initialized to prevent C++ errors when reading before writing)
+	if not _limbo_blackboard.has_var("in_danger"):
+		_limbo_blackboard.set_var("in_danger", false)
+	if not _limbo_blackboard.has_var("danger_tile"):
+		_limbo_blackboard.set_var("danger_tile", null)
+	if not _limbo_blackboard.has_var("target_cell"):
+		_limbo_blackboard.set_var("target_cell", null)
+	if not _limbo_blackboard.has_var("escape_route_found"):
+		_limbo_blackboard.set_var("escape_route_found", false)
+	
 	# Opponent tracking
 	var nearest = opponent_tracker.get_nearest_opponent(player_ref.position) if player_ref else null
 	_limbo_blackboard.set_var("nearest_opponent", nearest)

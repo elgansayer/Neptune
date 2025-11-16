@@ -19,8 +19,8 @@ var/charge_speed/hint = 0
 var/charge_speed/hint_string = ""
 
 [sub_resource type="BBNode" id="BBNode_nrd4b"]
-resource_name = "AnimationPlayer"
 saved_value = NodePath("AnimationPlayer")
+resource_name = "AnimationPlayer"
 
 [sub_resource type="BTPlayAnimation" id="BTPlayAnimation_qiw21"]
 animation_player = SubResource("BBNode_nrd4b")
@@ -34,7 +34,6 @@ max_duration = 1.5
 [sub_resource type="BTAction" id="BTAction_ulbrf"]
 script = ExtResource("1_sf4l8")
 group = &"player"
-output_var = &"target"
 
 [sub_resource type="BTSequence" id="BTSequence_yhjh1"]
 custom_name = "Pause before action"
@@ -42,15 +41,10 @@ children = [SubResource("BTPlayAnimation_qiw21"), SubResource("BTRandomWait_xlud
 
 [sub_resource type="BTAction" id="BTAction_85keo"]
 script = ExtResource("2_5nwkp")
-target_var = &"target"
-flank_side = 0
-range_min = 300
-range_max = 400
-position_var = &"pos"
 
 [sub_resource type="BBNode" id="BBNode_wpj6d"]
-resource_name = "AnimationPlayer"
 saved_value = NodePath("AnimationPlayer")
+resource_name = "AnimationPlayer"
 
 [sub_resource type="BTPlayAnimation" id="BTPlayAnimation_olf37"]
 animation_player = SubResource("BBNode_wpj6d")
@@ -59,10 +53,6 @@ blend = 0.1
 
 [sub_resource type="BTAction" id="BTAction_ygjnc"]
 script = ExtResource("3_3tom2")
-target_position_var = &"pos"
-speed_var = &"speed"
-tolerance = 50.0
-avoid_var = &""
 
 [sub_resource type="BTTimeLimit" id="BTTimeLimit_xek5v"]
 children = [SubResource("BTAction_ygjnc")]
@@ -73,11 +63,10 @@ children = [SubResource("BTAction_85keo"), SubResource("BTPlayAnimation_olf37"),
 
 [sub_resource type="BTAction" id="BTAction_kidxn"]
 script = ExtResource("4_hi228")
-target_var = &"target"
 
 [sub_resource type="BBNode" id="BBNode_giv5l"]
-resource_name = "AnimationPlayer"
 saved_value = NodePath("AnimationPlayer")
+resource_name = "AnimationPlayer"
 
 [sub_resource type="BTPlayAnimation" id="BTPlayAnimation_usdja"]
 animation_player = SubResource("BBNode_giv5l")
@@ -88,8 +77,8 @@ blend = 0.1
 duration = 0.4
 
 [sub_resource type="BBNode" id="BBNode_s8evu"]
-resource_name = "AnimationPlayer"
 saved_value = NodePath("AnimationPlayer")
+resource_name = "AnimationPlayer"
 
 [sub_resource type="BTPlayAnimation" id="BTPlayAnimation_ppmxd"]
 await_completion = 2.0
@@ -99,18 +88,17 @@ animation_name = &"attack_1"
 [sub_resource type="BTAction" id="BTAction_u22bc"]
 script = ExtResource("5_au5yc")
 speed_var = &"charge_speed"
-duration = 0.1
 
 [sub_resource type="BTParallel" id="BTParallel_ec2e3"]
-children = [SubResource("BTPlayAnimation_ppmxd"), SubResource("BTAction_u22bc")]
 num_successes_required = 2
+children = [SubResource("BTPlayAnimation_ppmxd"), SubResource("BTAction_u22bc")]
 
 [sub_resource type="BTWait" id="BTWait_c0lo0"]
 duration = 0.2
 
 [sub_resource type="BBNode" id="BBNode_3oljv"]
-resource_name = "AnimationPlayer"
 saved_value = NodePath("AnimationPlayer")
+resource_name = "AnimationPlayer"
 
 [sub_resource type="BTPlayAnimation" id="BTPlayAnimation_q4uis"]
 await_completion = 2.0
@@ -120,18 +108,17 @@ animation_name = &"attack_2"
 [sub_resource type="BTAction" id="BTAction_yuxl3"]
 script = ExtResource("5_au5yc")
 speed_var = &"charge_speed"
-duration = 0.1
 
 [sub_resource type="BTParallel" id="BTParallel_thojy"]
-children = [SubResource("BTPlayAnimation_q4uis"), SubResource("BTAction_yuxl3")]
 num_successes_required = 2
+children = [SubResource("BTPlayAnimation_q4uis"), SubResource("BTAction_yuxl3")]
 
 [sub_resource type="BTWait" id="BTWait_y3pmv"]
 duration = 0.2
 
 [sub_resource type="BBNode" id="BBNode_ot40l"]
-resource_name = "AnimationPlayer"
 saved_value = NodePath("AnimationPlayer")
+resource_name = "AnimationPlayer"
 
 [sub_resource type="BTPlayAnimation" id="BTPlayAnimation_ye5pt"]
 await_completion = 2.0
@@ -141,11 +128,10 @@ animation_name = &"attack_3"
 [sub_resource type="BTAction" id="BTAction_rwp18"]
 script = ExtResource("5_au5yc")
 speed_var = &"charge_speed"
-duration = 0.1
 
 [sub_resource type="BTParallel" id="BTParallel_qmdfb"]
-children = [SubResource("BTPlayAnimation_ye5pt"), SubResource("BTAction_rwp18")]
 num_successes_required = 2
+children = [SubResource("BTPlayAnimation_ye5pt"), SubResource("BTAction_rwp18")]
 
 [sub_resource type="BTWait" id="BTWait_nxyko"]
 duration = 0.5

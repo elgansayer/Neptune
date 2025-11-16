@@ -20,8 +20,8 @@ func _tick(delta: float) -> int:
 		push_warning("[BTMoveToCell] Missing player in blackboard")
 		return FAILURE
 	
+	# If no target cell, fail silently (expected when no powerups/objectives available)
 	if target_cell == null:
-		push_warning("[BTMoveToCell] No target cell set in blackboard variable '%s'" % cell_var)
 		return FAILURE
 	
 	# Convert to Vector2i if needed
