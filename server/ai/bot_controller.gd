@@ -30,7 +30,7 @@ var utility_scorer: UtilityScorer  # Mathematical (Reward * P_Success) - (Risk *
 
 # State machine for opening gambit
 enum BotState { ANALYZING_SPAWN, MOVING_TO_FIRST_BOMB, PLANTING_FIRST_BOMB, WAITING_FOR_BLAST, FARMING, NORMAL }
-var _current_state: BotState = BotState.ANALYZING_SPAWN
+var _current_state: BotState = BotState.NORMAL  # Start in NORMAL to use behavior tree immediately
 var _first_target: Vector2i = Vector2i.ZERO
 var _second_target: Vector2i = Vector2i.ZERO
 var _has_planted_first_bomb := false
@@ -231,12 +231,11 @@ func _build_limbo_tree() -> void:
 	add_child(_limbo_player)
 	
 	# OPTION A: Load pre-built tree resource (editable in LimboAI visual editor)
-	# Temporarily disabled to use programmatic tree while debugging
-	#if ResourceLoader.exists("res://server/ai/trees/bot_default.tres"):
-	#	_limbo_tree = ResourceLoader.load("res://server/ai/trees/bot_default.tres")
-	#	_limbo_player.set_behavior_tree(_limbo_tree)
-	#	print("[BotController] Loaded Limbo tree from resource for ", player_ref.player_name if player_ref else "bot")
-	#	return
+	if ResourceLoader.exists("res://ai/trees/bot_default.tres"):
+		_limbo_tree = ResourceLoader.load("res://ai/trees/bot_default.tres")
+		_limbo_player.set_behavior_tree(_limbo_tree)
+		print("[BotController] Loaded Limbo tree from resource for ", player_ref.player_name if player_ref else "bot")
+		return
 	
 	# OPTION B: Build tree programmatically (fallback if resource missing)
 	print("[BotController] Building Limbo tree programmatically for ", player_ref.player_name if player_ref else "bot")
