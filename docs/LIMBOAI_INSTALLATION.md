@@ -192,7 +192,7 @@ Once LimboAI is successfully installed:
    - See `docs/LIMBOAI_REFACTOR_GUIDE.md`
 
 2. **Explore Example Nodes**
-   - Check `shared/ai/limbo_nodes/` for custom node examples
+   - Check `server/ai/tasks/` for custom node examples
 
 3. **Start with Phase 1**
    - Create a simple BT for bomb lifecycle

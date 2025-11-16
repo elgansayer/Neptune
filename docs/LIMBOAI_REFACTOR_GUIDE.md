@@ -130,7 +130,7 @@ Root (BTSequence)
 **Implementation**:
 
 ```gdscript
-# File: res://shared/ai/limbo_nodes/bt_check_fuse_expired.gd
+# File: res://server/ai/tasks/bt_check_fuse_expired.gd
 @tool
 extends BTCondition
 
@@ -144,7 +144,7 @@ func _tick(delta: float) -> int:
 ```
 
 ```gdscript
-# File: res://shared/ai/limbo_nodes/bt_explode_bomb.gd
+# File: res://server/ai/tasks/bt_explode_bomb.gd
 @tool
 extends BTAction
 
@@ -206,7 +206,7 @@ func evaluate(blackboard: Dictionary) -> int:
 
 **After** (LimboAI version):
 ```gdscript
-# res://shared/ai/limbo_nodes/bt_is_in_danger.gd
+# res://server/ai/tasks/bt_is_in_danger.gd
 @tool
 extends BTCondition
 
@@ -228,7 +228,7 @@ func _tick(delta: float) -> int:
 
 **After** (LimboAI version):
 ```gdscript
-# res://shared/ai/limbo_nodes/bt_move_to.gd
+# res://server/ai/tasks/bt_move_to.gd
 @tool
 extends BTAction
 
@@ -283,7 +283,7 @@ Root (BTSelector - Priority based)
 **Utility Scoring (Custom Decorator)**:
 
 ```gdscript
-# res://shared/ai/limbo_nodes/bt_utility_decorator.gd
+# res://server/ai/tasks/bt_utility_decorator.gd
 @tool
 extends BTDecorator
 
@@ -472,7 +472,7 @@ Root (BTSequence - Always runs each frame)
 ##### Step 3.4: Implement Player BT Nodes
 
 ```gdscript
-# res://shared/ai/limbo_nodes/bt_update_input_from_buffer.gd
+# res://server/ai/tasks/bt_update_input_from_buffer.gd
 @tool
 extends BTAction
 
@@ -513,7 +513,7 @@ func _tick(delta: float) -> int:
 ```
 
 ```gdscript
-# res://shared/ai/limbo_nodes/bt_has_power_glove.gd
+# res://server/ai/tasks/bt_has_power_glove.gd
 @tool
 extends BTCondition
 
@@ -523,7 +523,7 @@ func _tick(delta: float) -> int:
 ```
 
 ```gdscript
-# res://shared/ai/limbo_nodes/bt_process_power_glove.gd
+# res://server/ai/tasks/bt_process_power_glove.gd
 @tool
 extends BTAction
 

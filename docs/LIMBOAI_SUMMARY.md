@@ -56,7 +56,7 @@ This pull request provides a **complete, production-ready plan and implementatio
 ### ✅ Supporting Systems
 
 - `input_buffer.gd` - Input buffering for authoritative server
-- `limbo_nodes/README.md` - Complete API documentation for custom nodes
+- `server/ai/tasks/README.md` - Complete API documentation for custom nodes
 
 ## Why This Refactoring?
 
@@ -160,7 +160,7 @@ Neptune-Bomberman/
 │
 ├── shared/
 │   ├── ai/
-│   │   └── limbo_nodes/             # Custom BT nodes
+│   │   └── tasks/             # Custom BT nodes
 │   │       ├── README.md            # Node API docs
 │   │       ├── conditions/          # 4 condition nodes
 │   │       └── actions/             # 5 action nodes
@@ -301,7 +301,7 @@ You'll know it worked when:
 - **Installation**: `docs/LIMBOAI_INSTALLATION.md`
 - **Main Guide**: `docs/LIMBOAI_REFACTOR_GUIDE.md`
 - **Examples**: `docs/LIMBOAI_BT_EXAMPLES.md`
-- **Node API**: `shared/ai/limbo_nodes/README.md`
+- **Node API**: `server/ai/tasks/README.md`
 
 ### Learning
 - **Behavior Trees Introduction**: https://limboai.readthedocs.io/en/stable/behavior-trees/introduction.html
@@ -356,7 +356,7 @@ This refactoring provides:
 
 **Questions or concerns?**
 - Review the documentation in `docs/`
-- Check the custom nodes in `shared/ai/limbo_nodes/`
+- Check the custom nodes in `server/ai/tasks/`
 - Join LimboAI Discord for community support
 
 **Ready to start?**
@@ -373,7 +373,7 @@ This section captures the precise delta between the documented plan above and th
 - Mirror & visualization (HUD + overlay) operational on client; expects legacy payload structure.
 
 ### Limbo Components Present
-- Custom Limbo nodes in `shared/ai/limbo_nodes/` (conditions & actions) ready for composition.
+- Custom Limbo nodes in `server/ai/tasks/` (conditions & actions) ready for composition.
 - Limbo demo content in `demo/` confirms plugin assets are available (e.g., `BTPlayer`, tasks).
 
 ### Not Yet Implemented

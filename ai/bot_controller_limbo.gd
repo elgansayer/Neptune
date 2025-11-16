@@ -64,15 +64,15 @@ func _build_behavior_tree_for_personality(personality_name: String) -> BTTask:
 	# Escape sequence (highest priority when in danger)
 	var escape_seq = BTSequence.new()
 	
-	var is_in_danger = preload("res://shared/ai/limbo_nodes/conditions/bt_is_in_danger.gd").new()
+	var is_in_danger = preload("res://ai/tasks/conditions/bt_is_in_danger.gd").new()
 	is_in_danger.danger_buffer = _personality_profile.get("danger_buffer", 1.0)
 	escape_seq.add_child(is_in_danger)
 	
-	var find_escape = preload("res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd").new()
+	var find_escape = preload("res://ai/tasks/actions/bt_find_escape_route.gd").new()
 	find_escape.escape_radius = _personality_profile.get("escape_radius", 8)
 	escape_seq.add_child(find_escape)
 	
-	var move_to_safety = preload("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+	var move_to_safety = preload("res://ai/tasks/actions/bt_move_to_cell.gd").new()
 	escape_seq.add_child(move_to_safety)
 	
 	root.add_child(escape_seq)
@@ -83,10 +83,10 @@ func _build_behavior_tree_for_personality(personality_name: String) -> BTTask:
 		
 		# TODO: Add BTIsOpponentNearby condition
 		# For now, just move and place bomb
-		var move_to_opponent = preload("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+		var move_to_opponent = preload("res://ai/tasks/actions/bt_move_to_cell.gd").new()
 		attack_seq.add_child(move_to_opponent)
 		
-		var place_bomb = preload("res://shared/ai/limbo_nodes/actions/bt_place_bomb.gd").new()
+		var place_bomb = preload("res://ai/tasks/actions/bt_place_bomb.gd").new()
 		attack_seq.add_child(place_bomb)
 		
 		root.add_child(attack_seq)
@@ -96,7 +96,7 @@ func _build_behavior_tree_for_personality(personality_name: String) -> BTTask:
 		var collect_seq = BTSequence.new()
 		
 		# TODO: Add BTIsPowerupAvailable condition
-		var move_to_powerup = preload("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+		var move_to_powerup = preload("res://ai/tasks/actions/bt_move_to_cell.gd").new()
 		collect_seq.add_child(move_to_powerup)
 		
 		root.add_child(collect_seq)

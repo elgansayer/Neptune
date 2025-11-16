@@ -12,17 +12,17 @@ All 10 GDScript files have been thoroughly validated and are confirmed to be syn
 ## Files Validated
 
 ### Condition Nodes (4 files)
-1. ✅ `shared/ai/limbo_nodes/conditions/bt_is_in_danger.gd`
-2. ✅ `shared/ai/limbo_nodes/conditions/bt_is_cell_walkable.gd`
-3. ✅ `shared/ai/limbo_nodes/conditions/bt_has_powerup.gd`
-4. ✅ `shared/ai/limbo_nodes/conditions/bt_has_client_input.gd`
+1. ✅ `server/ai/tasks/conditions/bt_is_in_danger.gd`
+2. ✅ `server/ai/tasks/conditions/bt_is_cell_walkable.gd`
+3. ✅ `server/ai/tasks/conditions/bt_has_powerup.gd`
+4. ✅ `server/ai/tasks/conditions/bt_has_client_input.gd`
 
 ### Action Nodes (5 files)
-5. ✅ `shared/ai/limbo_nodes/actions/bt_move_to_cell.gd`
-6. ✅ `shared/ai/limbo_nodes/actions/bt_place_bomb.gd`
-7. ✅ `shared/ai/limbo_nodes/actions/bt_update_input_from_buffer.gd`
-8. ✅ `shared/ai/limbo_nodes/actions/bt_process_power_glove.gd`
-9. ✅ `shared/ai/limbo_nodes/actions/bt_find_escape_route.gd`
+5. ✅ `server/ai/tasks/actions/bt_move_to_cell.gd`
+6. ✅ `server/ai/tasks/actions/bt_place_bomb.gd`
+7. ✅ `server/ai/tasks/actions/bt_update_input_from_buffer.gd`
+8. ✅ `server/ai/tasks/actions/bt_process_power_glove.gd`
+9. ✅ `server/ai/tasks/actions/bt_find_escape_route.gd`
 
 ### Supporting System (1 file)
 10. ✅ `shared/entities/input_buffer.gd`

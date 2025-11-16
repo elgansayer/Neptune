@@ -26,7 +26,7 @@ Since .tres files cannot be created without the Godot editor, the bot controller
    - `res://shared/ai/limbo_trees/bot_aggressive.tres`
    - `res://shared/ai/limbo_trees/bot_defensive.tres`
    - `res://shared/ai/limbo_trees/bot_balanced.tres`
-4. Use the custom nodes from `shared/ai/limbo_nodes/`
+4. Use the custom nodes from `server/ai/tasks/`
 
 Alternatively, the current implementation builds trees programmatically in code (see `bot_controller_limbo.gd`).
 
@@ -237,8 +237,8 @@ print("[Bot] BT tick time: %.2f ms" % elapsed)
 - `docs/LIMBOAI_INTEGRATION_COMPLETE.md` - This file
 
 ### Files Ready (No Changes Needed)
-- `shared/ai/limbo_nodes/conditions/*.gd` - All condition nodes
-- `shared/ai/limbo_nodes/actions/*.gd` - All action nodes
+- `server/ai/tasks/conditions/*.gd` - All condition nodes
+- `server/ai/tasks/actions/*.gd` - All action nodes
 - `shared/entities/input_buffer.gd` - Input buffer system
 - `docs/LIMBOAI_*.md` - All documentation guides
 

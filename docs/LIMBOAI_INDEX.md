@@ -42,7 +42,7 @@ Welcome to the complete documentation for refactoring Neptune-Bomberman to use L
    - Advanced patterns
    - **Copy/paste starting points**
 
-6. **[../shared/ai/limbo_nodes/README.md](../shared/ai/limbo_nodes/README.md)** (API reference)
+6. **[../server/ai/tasks/README.md](../server/ai/tasks/README.md)** (API reference)
    - Custom node documentation
    - Blackboard conventions
    - Node creation templates
@@ -174,7 +174,7 @@ Welcome to the complete documentation for refactoring Neptune-Bomberman to use L
 
 ---
 
-### ../shared/ai/limbo_nodes/README.md
+### ../server/ai/tasks/README.md
 **Size**: 11 KB | **Read Time**: 20-30 minutes  
 **Purpose**: Custom node API documentation
 
@@ -224,7 +224,7 @@ Welcome to the complete documentation for refactoring Neptune-Bomberman to use L
 → Check **LIMBOAI_BT_EXAMPLES.md**
 
 ### "I'm creating/using custom nodes"
-→ Reference **limbo_nodes/README.md**
+→ Reference **server/ai/tasks/README.md**
 
 ### "I have a specific question"
 → Check FAQ in **LIMBOAI_SUMMARY.md**
@@ -243,7 +243,7 @@ Welcome to the complete documentation for refactoring Neptune-Bomberman to use L
 | INSTALLATION | 6 KB | 10 | 5 |
 | REFACTOR_GUIDE | 28 KB | 6 major | 25+ |
 | BT_EXAMPLES | 12 KB | 4 major | 15+ |
-| limbo_nodes/README | 11 KB | 9 | 10+ |
+| server/ai/tasks/README | 11 KB | 9 | 10+ |
 | **TOTAL** | **81 KB** | **52+** | **66+** |
 
 ---
@@ -259,7 +259,7 @@ docs/
 ├── LIMBOAI_REFACTOR_GUIDE.md     # Main refactoring plan
 └── LIMBOAI_BT_EXAMPLES.md        # Concrete examples
 
-shared/ai/limbo_nodes/
+server/ai/tasks/
 ├── README.md                     # Custom nodes API
 ├── conditions/                   # 4 condition nodes
 │   ├── bt_is_in_danger.gd
@@ -395,7 +395,7 @@ Track your progress:
 | INSTALLATION.md | 2024-11-15 | 2024-11-15 | ✅ Current |
 | REFACTOR_GUIDE.md | 2024-11-15 | 2024-11-15 | ✅ Current |
 | BT_EXAMPLES.md | 2024-11-15 | 2024-11-15 | ✅ Current |
-| limbo_nodes/README.md | 2024-11-15 | 2024-11-15 | ✅ Current |
+| server/ai/tasks/README.md | 2024-11-15 | 2024-11-15 | ✅ Current |
 
 ---
 

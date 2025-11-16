@@ -1,11 +1,11 @@
 # LimboAI Custom Nodes for Neptune-Bomberman
 
-This directory contains custom Behavior Tree nodes for use with LimboAI in the Neptune-Bomberman project.
+This directory (`res://ai/tasks`) contains custom Behavior Tree nodes for use with LimboAI in the Neptune-Bomberman project.
 
 ## Directory Structure
 
 ```
-limbo_nodes/
+tasks/
 ├── conditions/          # BTCondition nodes (decision points)
 │   ├── bt_is_in_danger.gd
 │   ├── bt_is_cell_walkable.gd

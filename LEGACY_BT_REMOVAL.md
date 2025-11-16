@@ -49,7 +49,7 @@ Completed migration from custom legacy behavior tree system to **LimboAI** plugi
 
 ### `server/game_instance.gd`
 **Updated:**
-- `_BOT_MANAGER_PATHS` - removed fallback path `"res://ai/bot_manager.gd"`, kept only `"res://server/ai/bot_manager.gd"`
+- `_BOT_MANAGER_PATHS` - standardizes on `"res://ai/bot_manager.gd"` (LimboAI server controller)
 
 ## Current AI System Architecture
 
@@ -60,7 +60,7 @@ The bot AI now uses **LimboAI** plugin exclusively:
 - **BehaviorTree** resource loaded from `server/ai/trees/bot_default.tres`
 
 ### Custom LimboAI Nodes
-Located in `shared/ai/limbo_nodes/`:
+Located in `server/ai/tasks/`:
 
 **Conditions:**
 - `bt_is_in_danger.gd` - Checks if bot is in blast radius

@@ -230,13 +230,13 @@ func _build_limbo_tree() -> void:
 	
 	# Sequence 1: ESCAPE (highest priority)
 	var escape_seq = ClassDB.instantiate("BTSequence")
-	var is_in_danger = load("res://shared/ai/limbo_nodes/conditions/bt_is_in_danger.gd").new()
+	var is_in_danger = load("res://ai/tasks/conditions/bt_is_in_danger.gd").new()
 	is_in_danger.danger_buffer = _personality_profile.get("danger_buffer", 1.0)
 	is_in_danger.check_immediate = false
-	var find_escape = load("res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd").new()
+	var find_escape = load("res://ai/tasks/actions/bt_find_escape_route.gd").new()
 	find_escape.escape_radius = _personality_profile.get("escape_radius", 8)
 	find_escape.target_cell_var = &"target_cell"
-	var move_to = load("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+	var move_to = load("res://ai/tasks/actions/bt_move_to_cell.gd").new()
 	move_to.cell_var = &"target_cell"
 	move_to.reach_threshold = 0.3
 	
@@ -249,13 +249,13 @@ func _build_limbo_tree() -> void:
 	# Sequence 2: ATTACK (if opponent exists and not in danger)
 	# Simplified for now: just place bomb + move (no opponent check condition yet)
 	var attack_seq = ClassDB.instantiate("BTSequence")
-	var place_bomb = load("res://shared/ai/limbo_nodes/actions/bt_place_bomb.gd").new()
+	var place_bomb = load("res://ai/tasks/actions/bt_place_bomb.gd").new()
 	place_bomb.check_capacity = true
 	place_bomb.check_existing = true
-	var retreat_after_bomb = load("res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd").new()
+	var retreat_after_bomb = load("res://ai/tasks/actions/bt_find_escape_route.gd").new()
 	retreat_after_bomb.escape_radius = 6
 	retreat_after_bomb.target_cell_var = &"target_cell"
-	var move_retreat = load("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+	var move_retreat = load("res://ai/tasks/actions/bt_move_to_cell.gd").new()
 	move_retreat.cell_var = &"target_cell"
 	attack_seq.call("add_child", place_bomb)
 	attack_seq.call("add_child", retreat_after_bomb)
@@ -265,7 +265,7 @@ func _build_limbo_tree() -> void:
 	# TODO: Add BTHasPowerup check and pathfinding to powerup
 	var collect_seq = ClassDB.instantiate("BTSequence")
 	# Placeholder: just move to a cell if target_powerup is set
-	var move_collect = load("res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd").new()
+	var move_collect = load("res://ai/tasks/actions/bt_move_to_cell.gd").new()
 	move_collect.cell_var = &"target_powerup_cell"
 	collect_seq.call("add_child", move_collect)
 	

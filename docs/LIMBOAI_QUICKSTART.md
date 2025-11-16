@@ -219,32 +219,29 @@ Neptune-Bomberman/
 │   ├── LIMBOAI_BT_EXAMPLES.md       # Examples
 │   └── LIMBOAI_QUICKSTART.md        # This file
 │
-├── shared/
+├── server/
 │   ├── ai/
-│   │   ├── limbo_nodes/             # Custom BT nodes
+│   │   ├── tasks/             # Custom BT nodes (res://ai/tasks)
 │   │   │   ├── conditions/
 │   │   │   │   ├── bt_is_in_danger.gd
 │   │   │   │   ├── bt_is_cell_walkable.gd
 │   │   │   │   ├── bt_has_powerup.gd
 │   │   │   │   └── bt_has_client_input.gd
-│   │   │   └── actions/
-│   │   │       ├── bt_move_to_cell.gd
-│   │   │       ├── bt_place_bomb.gd
-│   │   │       ├── bt_update_input_from_buffer.gd
-│   │   │       ├── bt_process_power_glove.gd
-│   │   │       └── bt_find_escape_route.gd
-│   │   │
-│   │   └── limbo_trees/             # BT resources (created by you)
-│   │       ├── bomb_lifecycle.tres
-│   │       ├── bot_aggressive.tres
-│   │       ├── bot_defensive.tres
-│   │       ├── bot_balanced.tres
-│   │       └── player_controller.tres
+│   │   │   ├── actions/
+│   │   │   │   ├── bt_move_to_cell.gd
+│   │   │   │   ├── bt_place_bomb.gd
+│   │   │   │   ├── bt_update_input_from_buffer.gd
+│   │   │   │   ├── bt_process_power_glove.gd
+│   │   │   │   └── bt_find_escape_route.gd
+│   │   │   └── composites/
+│   │   │       └── bt_utility_selector.gd
+│   │   └── trees/
+│   │       └── bot_default.tres
 │   │
-│   └── entities/
-│       ├── input_buffer.gd          # New input buffering system
-│       ├── server_player.gd         # Modified to use BT
-│       └── server_bomb.gd           # Modified to use BT (optional)
+│   └── shared/
+│       └── ...
+
+> **Note:** The top-level project also exposes `res://ai/tasks` as a symlink to `server/ai/tasks` so the LimboAI editor can discover these tasks using the default search path.
 │
 ├── server/
 │   ├── ai/
@@ -262,7 +259,7 @@ Neptune-Bomberman/
 
 ## 🛠️ Custom Nodes Reference
 
-All custom nodes are in `shared/ai/limbo_nodes/`:
+All custom nodes are in `server/ai/tasks/`:
 
 ### Conditions
 - **BTIsInDanger**: Check if entity is in explosion danger

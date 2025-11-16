@@ -1,14 +1,14 @@
 [gd_resource type="BehaviorTree" load_steps=28 format=3 uid="uid://chqxceh757yg0"]
 
-[ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://shared/ai/limbo_nodes/conditions/bt_is_in_danger.gd" id="1_danger"]
-[ext_resource type="Script" uid="uid://3btukveudf74" path="res://shared/ai/limbo_nodes/actions/bt_find_escape_route.gd" id="2_escape"]
-[ext_resource type="Script" uid="uid://d1xrs36ub786k" path="res://shared/ai/limbo_nodes/actions/bt_move_to_cell.gd" id="3_move"]
-[ext_resource type="Script" uid="uid://bx7tlwus8pbtw" path="res://shared/ai/limbo_nodes/actions/bt_place_bomb.gd" id="4_bomb"]
-[ext_resource type="Script" uid="uid://by34roa2wptm1" path="res://shared/ai/limbo_nodes/conditions/bt_has_opponent.gd" id="5_has_opp"]
-[ext_resource type="Script" uid="uid://dpcl4vkvplpr" path="res://shared/ai/limbo_nodes/actions/bt_find_opponent.gd" id="6_find_opp"]
-[ext_resource type="Script" uid="uid://dd2pwn7pbjlje" path="res://shared/ai/limbo_nodes/conditions/bt_has_powerup_available.gd" id="7_has_powerup"]
-[ext_resource type="Script" uid="uid://d3coarigsg7cj" path="res://shared/ai/limbo_nodes/actions/bt_find_powerup.gd" id="8_find_powerup"]
-[ext_resource type="Script" uid="uid://dwu6i8josl3h0" path="res://shared/ai/limbo_nodes/actions/bt_wait_ambush.gd" id="9_ambush"]
+[ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://ai/tasks/conditions/bt_is_in_danger.gd" id="1_danger"]
+[ext_resource type="Script" uid="uid://3btukveudf74" path="res://ai/tasks/actions/bt_find_escape_route.gd" id="2_escape"]
+[ext_resource type="Script" uid="uid://d1xrs36ub786k" path="res://ai/tasks/actions/bt_move_to_cell.gd" id="3_move"]
+[ext_resource type="Script" uid="uid://bx7tlwus8pbtw" path="res://ai/tasks/actions/bt_place_bomb.gd" id="4_bomb"]
+[ext_resource type="Script" uid="uid://by34roa2wptm1" path="res://ai/tasks/conditions/bt_has_opponent.gd" id="5_has_opp"]
+[ext_resource type="Script" uid="uid://dpcl4vkvplpr" path="res://ai/tasks/actions/bt_find_opponent.gd" id="6_find_opp"]
+[ext_resource type="Script" uid="uid://dd2pwn7pbjlje" path="res://ai/tasks/conditions/bt_has_powerup_available.gd" id="7_has_powerup"]
+[ext_resource type="Script" uid="uid://d3coarigsg7cj" path="res://ai/tasks/actions/bt_find_powerup.gd" id="8_find_powerup"]
+[ext_resource type="Script" uid="uid://dwu6i8josl3h0" path="res://ai/tasks/actions/bt_wait_ambush.gd" id="9_ambush"]
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bot"]
 
