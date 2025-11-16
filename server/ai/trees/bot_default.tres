@@ -87,6 +87,7 @@ wait_time = 2.0
 
 [sub_resource type="BTSelector" id="BTSelector_root"]
 children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTAction_ambush")]
+_enabled = false
 
 [resource]
 description = "Complete LimboAI bot behavior tree: Escape > Chase+Attack > Collect > Ambush"
