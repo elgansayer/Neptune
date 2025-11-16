@@ -14,10 +14,10 @@ func _generate_name() -> String:
 func _tick(_delta: float) -> int:
 	var player = blackboard.get_var("player")
 	var game_instance = blackboard.get_var("game_instance")
-	var ai_manager = blackboard.get_var("ai_manager")
+	var grid_sampler = blackboard.get_var("grid_sampler")
 	var bomb_safety_checker = blackboard.get_var("bomb_safety_checker")
 	
-	if not player or not game_instance or not ai_manager or not bomb_safety_checker:
+	if not player or not game_instance or not grid_sampler or not bomb_safety_checker:
 		return FAILURE
 	
 	var current_tile = player.get_tile_position()
@@ -36,7 +36,7 @@ func _tick(_delta: float) -> int:
 			var check_tile = current_tile + Vector2i(dx, dy)
 			
 			# Must be walkable
-			if not ai_manager.grid_sampler.is_tile_walkable(check_tile):
+			if not grid_sampler.is_tile_walkable(check_tile):
 				continue
 			
 			# Check if we can safely plant a bomb here and escape
@@ -50,7 +50,7 @@ func _tick(_delta: float) -> int:
 				continue
 			
 			# Count soft blocks in bomb range
-			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, ai_manager)
+			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, grid_sampler)
 			
 			if soft_blocks_hit == 0:
 				continue
@@ -71,9 +71,8 @@ func _tick(_delta: float) -> int:
 	# No good farming spot found
 	return FAILURE
 
-func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, ai_manager) -> int:
+func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler) -> int:
 	var count = 0
-	var grid_sampler = ai_manager.grid_sampler
 	
 	# Check horizontal
 	for dx in range(1, bomb_range + 1):
