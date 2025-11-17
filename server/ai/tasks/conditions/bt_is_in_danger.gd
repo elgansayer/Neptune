@@ -7,6 +7,7 @@ class_name BTIsInDanger
 
 @export var danger_buffer: float = 1.0  ## Safety margin (seconds) before danger becomes lethal
 @export var check_immediate: bool = true  ## Check only immediate danger (no buffer)
+@export var debug_logging: bool = false
 
 func _generate_name() -> String:
 	return "IsInDanger"
@@ -35,7 +36,13 @@ func _tick(delta: float) -> int:
 		# Store danger info in blackboard for potential use by other nodes
 		blackboard.set_var("in_danger", true)
 		blackboard.set_var("danger_tile", player_tile)
+		_debug("Danger detected at %s (buffer=%s)" % [player_tile, danger_buffer if not check_immediate else 0.0])
 		return SUCCESS
 	else:
 		blackboard.set_var("in_danger", false)
+		_debug("Tile %s safe" % player_tile)
 		return FAILURE
+
+func _debug(message: String) -> void:
+	if debug_logging:
+		print("[BTIsInDanger] ", message)

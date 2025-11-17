@@ -21,6 +21,12 @@ func send_player_input(input_data: Dictionary):
 		print(input_data)
 	pass
 
+@rpc("any_peer", "call_remote", "reliable")
+func set_debug_timescale(timescale: float):
+	if false:
+		print(timescale)
+	pass
+
 # Client-side methods (stubs to match RPC indices with main_client.gd)
 @rpc("any_peer", "call_remote", "reliable")
 func auth_response(_data: Dictionary):

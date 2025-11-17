@@ -64,6 +64,15 @@ func _on_player_disconnected(peer_id: int):
 	# Clean up from lobby
 	lobby_manager.remove_player(peer_id)
 
+# === Debug RPCs ===
+
+@rpc("any_peer", "call_remote", "reliable")
+func set_debug_timescale(timescale: float) -> void:
+	# Clamp to sane range for debugging
+	var clamped = clamp(timescale, 0.1, 1.0)
+	Engine.time_scale = clamped
+	print("[Server] Debug time_scale set to ", Engine.time_scale)
+
 # === RPC Handlers ===
 
 @rpc("any_peer", "call_remote", "reliable")
@@ -183,6 +192,8 @@ func quick_start_game(peer_id: int, username: String):
 	game.add_player(peer_id, username)
 	
 	print("[Server] Player ", username, " joined shared game. Total players: ", game.players.size())
+
+# (no-op) Debug forwarding not required; broadcast happens from AI tasks via ClientMain
 
 # AI System removed - preparing for rebuild
 # AI bot spawning disabled - see spawn_ai_bot_local() for local testing

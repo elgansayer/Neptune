@@ -32,3 +32,8 @@ func ai_debug_update(_debug_data: Dictionary):
 @rpc("any_peer", "call_remote", "unreliable")
 func receive_state(_state: Dictionary):
 	pass
+
+@rpc("any_peer", "call_remote", "unreliable")
+func bomb_safety_update(_safety_data: Dictionary):
+	# Stub - actual implementation on client
+	pass

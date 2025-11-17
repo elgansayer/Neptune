@@ -48,7 +48,8 @@ func configure(instance) -> void:
 func _configure_safety_checker() -> void:
 	if game_instance != null and game_instance.ai_manager != null:
 		bomb_safety_checker.configure(game_instance.ai_manager, grid_sampler)
-		print("[BotManager] BombSafetyChecker configured with AIManager")
+		bomb_safety_checker.debug_logging = true  # Enable debug logs
+		print("[BotManager] BombSafetyChecker configured with AIManager (debug=ON)")
 
 func _auto_spawn_bots() -> void:
 	if auto_spawned:

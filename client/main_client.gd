@@ -128,6 +128,13 @@ func receive_state(state: Dictionary):
 	if game_view and game_view.has_method("update_game_state"):
 		game_view.update_game_state(state)
 
+@rpc("any_peer", "call_remote", "unreliable")
+func bomb_safety_update(safety_data: Dictionary):
+	# Forward bomb safety data to current GameView
+	var game_view = get_tree().current_scene
+	if game_view and game_view.has_method("bomb_safety_update"):
+		game_view.bomb_safety_update(safety_data)
+
 # === AI Bot Commands ===
 
 # AI System removed - preparing for rebuild

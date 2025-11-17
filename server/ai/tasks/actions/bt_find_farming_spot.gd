@@ -7,6 +7,8 @@ class_name BTFindFarmingSpot
 
 @export var search_radius: int = 5 ## How far to search for soft blocks
 @export var target_cell_var: StringName = &"target_cell" ## Where to store the target
+@export var debug_logging: bool = false ## Enable detailed rejection logging
+@export var broadcast_safety: bool = true ## Send safety eval to clients for visualization
 
 const INVALID_TILE := Vector2i(-1, -1)
 
@@ -34,6 +36,18 @@ func _tick(_delta: float) -> int:
 	# Search nearby tiles for soft blocks
 	var best_spot: Vector2i = INVALID_TILE
 	var best_score: float = 0.0
+	var candidates_checked := 0
+	var rejected_unwalkable := 0
+	var rejected_no_blocks := 0
+	var rejected_no_path := 0
+	var rejected_no_nearby_safe := 0
+	var rejected_no_escape := 0
+	
+	# Safety visualization data for client
+	var safety_eval := {}
+	
+	if debug_logging:
+		print("[BTFindFarmingSpot] Starting search from ", current_tile, " radius=", search_radius, " bomb_range=", bomb_range)
 	
 	for dx in range(-search_radius, search_radius + 1):
 		for dy in range(-search_radius, search_radius + 1):
@@ -41,25 +55,40 @@ func _tick(_delta: float) -> int:
 				continue
 			
 			var check_tile = current_tile + Vector2i(dx, dy)
+			candidates_checked += 1
 			
 			# Must be walkable
 			if not grid_sampler.is_tile_walkable(check_tile):
+				rejected_unwalkable += 1
 				continue
 			
 			# Count soft blocks in bomb range - skip if none
 			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, grid_sampler)
 			if soft_blocks_hit == 0:
+				rejected_no_blocks += 1
 				continue
+			
+			var tile_key := "%d,%d" % [check_tile.x, check_tile.y]
 			
 			# Check if we can reach this tile
 			var path = grid_sampler.find_path(current_tile, check_tile, 15, player)
 			if path.is_empty() and check_tile != current_tile:
+				rejected_no_path += 1
+				if broadcast_safety:
+					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_path"}
+				if debug_logging:
+					print("  [REJECT] ", check_tile, " - no path (blocks=", soft_blocks_hit, ")")
 				continue
 			
 			# CRITICAL: Check if there's ALREADY a safe tile nearby (without planting bomb)
 			# This ensures we're not in a dead-end surrounded by soft blocks
 			var has_nearby_safety = _has_safe_tile_nearby(check_tile, grid_sampler, current_time_msec)
 			if not has_nearby_safety:
+				rejected_no_nearby_safe += 1
+				if broadcast_safety:
+					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_nearby_safe"}
+				if debug_logging:
+					print("  [REJECT] ", check_tile, " - no nearby safe tile (blocks=", soft_blocks_hit, ")")
 				continue
 			
 			# Check if we can safely plant a bomb HERE (at check_tile) and escape
@@ -71,6 +100,11 @@ func _tick(_delta: float) -> int:
 				5.0, # bot speed
 				current_time_msec
 			):
+				rejected_no_escape += 1
+				if broadcast_safety:
+					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_escape"}
+				if debug_logging:
+					print("  [REJECT] ", check_tile, " - no escape route (blocks=", soft_blocks_hit, ")")
 				continue
 			
 			# Score: prioritize closer tiles with more soft blocks
@@ -80,15 +114,29 @@ func _tick(_delta: float) -> int:
 			if score > best_score:
 				best_score = score
 				best_spot = check_tile
+			
+			# Mark as safe for visualization
+			if broadcast_safety:
+				tile_key = "%d,%d" % [check_tile.x, check_tile.y]
+				safety_eval[tile_key] = {"status": 2, "soft_blocks": soft_blocks_hit, "explored_tiles": 0}
+	
+	# Broadcast safety data to all clients
+	if broadcast_safety and not safety_eval.is_empty():
+		_broadcast_safety_data(safety_eval)
 	
 	# If we found a good spot, store it
 	if best_spot != INVALID_TILE:
 		blackboard.set_var(target_cell_var, best_spot)
-		print("[BTFindFarmingSpot] Found farming spot at ", best_spot, " (score: ", best_score, ")")
+		print("[BTFindFarmingSpot] ✓ Found farming spot at ", best_spot, " (score: ", best_score, ")")
 		return SUCCESS
 	
-	# No good farming spot found
-	print("[BTFindFarmingSpot] No safe farming spots found")
+	# No good farming spot found - report why
+	print("[BTFindFarmingSpot] ✗ No safe farming spots found (checked=", candidates_checked, 
+		" unwalkable=", rejected_unwalkable, 
+		" no_blocks=", rejected_no_blocks,
+		" no_path=", rejected_no_path,
+		" no_nearby_safe=", rejected_no_nearby_safe,
+		" no_escape=", rejected_no_escape, ")")
 	return FAILURE
 
 func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler) -> int:
@@ -148,15 +196,30 @@ func _has_safe_tile_nearby(position: Vector2i, grid_sampler, current_time_msec: 
 			
 			if not grid_sampler.is_tile_walkable(check_pos):
 				continue
-			
-			var tile_key = "%d,%d" % [check_pos.x, check_pos.y]
-			
+
+			var tile_key := "%d,%d" % [check_pos.x, check_pos.y]
 			# If this tile is not in the threat matrix, it's safe
 			if not threat_matrix.has(tile_key):
 				return true
-	
+
 	# No safe tiles found nearby - we're in a danger zone
 	return false
+
+func _tile_key(tile: Vector2i) -> String:
+	return "%d,%d" % [tile.x, tile.y]
+
+func _broadcast_safety_data(data: Dictionary) -> void:
+	"""Send safety evaluation to all clients for visualization"""
+	# Get the game instance to access the multiplayer peer
+	var game_instance = agent.get_node("/root/ServerMain")
+	if game_instance and game_instance.has_node("GameInstance"):
+		var game = game_instance.get_node("GameInstance")
+		# Broadcast to all connected clients via ClientMain stub
+		if game.multiplayer and game.multiplayer.get_peers().size() > 0:
+			for peer_id in game.multiplayer.get_peers():
+				if peer_id > 0:  # Skip server itself
+					ClientMain.rpc_id(peer_id, "bomb_safety_update", data)
+			print("[BotAI] Broadcasting safety eval with ", data.size(), " tiles to ", game.multiplayer.get_peers().size(), " client(s)")
 
 func _coerce_to_tile(value) -> Vector2i:
 	if value == null:

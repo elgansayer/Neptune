@@ -194,7 +194,7 @@ func _draw_legend() -> void:
 	legend_y += line_height + 3
 	
 	# Info text
-	draw_string(font, Vector2(legend_x, legend_y), "F3:Viz F4:Coord F5:Time", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color.GRAY)
+	draw_string(font, Vector2(legend_x, legend_y), "F3:Viz", HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color.GRAY)
 	legend_y += line_height - 3
 	draw_string(font, Vector2(legend_x, legend_y), "Threats: %d tiles" % threat_matrix.size(), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color.CYAN)
 
@@ -213,18 +213,9 @@ func _get_threat_color(explosion_time_ms: float) -> Color:
 	else:
 		return COLOR_SAFE
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_F3:
-			toggle_visualization()
-		elif event.keycode == KEY_F4:
-			show_grid_coords = !show_grid_coords
-			print("[ThreatMatrix] Grid coordinates ", "enabled" if show_grid_coords else "disabled")
-			queue_redraw()
-		elif event.keycode == KEY_F5:
-			show_timing = !show_timing
-			print("[ThreatMatrix] Timing info ", "enabled" if show_timing else "disabled")
-			queue_redraw()
+func _input(_event: InputEvent) -> void:
+	# Input is handled centrally in GameView to avoid conflicts.
+	pass
 
 func _process(_delta: float) -> void:
 	# Continuously redraw when enabled (for time countdown updates)

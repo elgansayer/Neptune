@@ -8,6 +8,7 @@ const BombScene = preload("res://client/ui/bomb.tscn")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
 const ThreatMatrixVisualizerScene = preload("res://client/ui/threat_matrix_visualizer.tscn")
+const BombSafetyVisualizerScript = preload("res://client/ui/bomb_safety_visualizer.gd")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -35,9 +36,11 @@ var bomb_throw_predictor: BombThrowPredictor # Power Glove throw prediction
 
 # AI threat matrix visualization (debug)
 var threat_visualizer: Node2D = null
+var bomb_safety_visualizer: Node2D = null
 
 # Input buffering: track order of pressed keys
 var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
+var debug_label: Label = null
 
 func _ready():
 	# Set up FIXED camera to show entire arena (like classic Bomberman)
@@ -59,6 +62,22 @@ func _ready():
 	threat_visualizer.position = Vector2.ZERO  # Explicitly set to (0, 0)
 	add_child(threat_visualizer)
 	print("[GameView] ThreatVisualizer created successfully at position: ", threat_visualizer.position)
+	# Start with threat matrix hidden
+	threat_visualizer.visible = false
+	
+	# Initialize bomb safety visualizer (debug - toggle with F4)
+	bomb_safety_visualizer = BombSafetyVisualizerScript.new()
+	bomb_safety_visualizer.name = "BombSafetyVisualizer"
+	bomb_safety_visualizer.position = Vector2.ZERO
+	add_child(bomb_safety_visualizer)
+	print("[GameView] BombSafetyVisualizer created")
+	# Start with bomb safety shown
+	bomb_safety_visualizer.visible = true
+
+	# Start in slow motion for debugging and inform server
+	Engine.time_scale = 0.25
+	if has_node("/root/ServerMain"):
+		get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", 0.25)
 	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
@@ -67,6 +86,19 @@ func _ready():
 	# Set player name in HUD once we know it
 	if ClientMain.username:
 		hud.set_player_name(ClientMain.username)
+
+	# Add minimal debug banner label to HUD
+	debug_label = Label.new()
+	debug_label.name = "DebugBanner"
+	debug_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	debug_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	debug_label.offset_left = 8
+	debug_label.offset_top = 8
+	debug_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
+	debug_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	debug_label.add_theme_constant_override("outline_size", 2)
+	hud.add_child(debug_label)
+	update_debug_banner()
 
 func update_game_state(state: Dictionary):
 	# Load map configuration if present (first time only)
@@ -85,6 +117,13 @@ func update_game_state(state: Dictionary):
 			var map_height = state.map.size()
 			var map_width = state.map[0].size()
 			threat_visualizer.set_map_size(map_width, map_height)
+		
+		# Set map size for bomb safety visualizer
+		if bomb_safety_visualizer:
+			var map_height = state.map.size()
+			var map_width = state.map[0].size()
+			bomb_safety_visualizer.set_map_size(map_width, map_height)
+			bomb_safety_visualizer.update_tile_size(GameConfig.TILE_SIZE)
 	
 	# Update destructible blocks based on current map state
 	if state.has("map"):
@@ -102,6 +141,8 @@ func update_game_state(state: Dictionary):
 				threat_visualizer = ThreatMatrixVisualizerScene.instantiate()
 				threat_visualizer.position = Vector2.ZERO
 				add_child(threat_visualizer)
+				# Keep default state hidden when created on-demand
+				threat_visualizer.visible = false
 				print("[GameView] ThreatVisualizer created on-demand")
 				# Set map size if we have it
 				if map_rendered and state.has("map") and state.map.size() > 0:
@@ -706,6 +747,41 @@ func _remove_dead_player(peer_id: String):
 		my_player_id = ""
 	removed_dead_players[peer_id] = true
 
+func _input(event):
+	# Toggle debug visualizers with F3/F4
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == Key.KEY_F3:
+			if threat_visualizer:
+				threat_visualizer.visible = not threat_visualizer.visible
+				print("[GameView] Threat visualizer: ", "ON" if threat_visualizer.visible else "OFF")
+			update_debug_banner()
+		elif event.keycode == Key.KEY_F4:
+			if bomb_safety_visualizer:
+				bomb_safety_visualizer.visible = not bomb_safety_visualizer.visible
+				print("[GameView] Bomb safety visualizer: ", "ON" if bomb_safety_visualizer.visible else "OFF")
+			update_debug_banner()
+		elif event.keycode == Key.KEY_F6:
+			# Toggle slow motion for debugging
+			var new_scale := 1.0 if Engine.time_scale < 0.99 else 0.25
+			Engine.time_scale = new_scale
+			print("[GameView] Debug time_scale set to ", Engine.time_scale)
+			# Ask server to match time scale for consistent debug
+			if has_node("/root/ServerMain"):
+				get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", float(Engine.time_scale))
+			update_debug_banner()
+
+func update_debug_banner() -> void:
+	if not debug_label:
+		return
+	var safety_on = bomb_safety_visualizer and bomb_safety_visualizer.visible
+	var threat_on = threat_visualizer and threat_visualizer.visible
+	var ts = "%.2f" % Engine.time_scale
+	debug_label.text = "Safety: %s  |  Threat: %s  |  TimeScale: %s" % [
+		("ON" if safety_on else "OFF"),
+		("ON" if threat_on else "OFF"),
+		ts
+	]
+
 func render_map(map_data):
 	# Get map dimensions
 	var map_height = map_data.size()
@@ -888,6 +964,11 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 	if debug_tiles.has(tile_key):
 		debug_tiles.erase(tile_key)
 
+# RPC: Receive bomb safety evaluation data from server
+func bomb_safety_update(safety_data: Dictionary) -> void:
+	"""Update bomb safety visualizer with server's tile evaluations"""
+	if bomb_safety_visualizer and bomb_safety_visualizer.has_method("update_safety_data"):
+		bomb_safety_visualizer.update_safety_data(safety_data)
 
 func update_powerup(powerup_id: String, data: Dictionary):
 	var powerup_node

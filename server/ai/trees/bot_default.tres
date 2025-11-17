@@ -30,7 +30,6 @@ script = ExtResource("3_move")
 [sub_resource type="BTSequence" id="BTSequence_escape"]
 custom_name = "Escape Sequence"
 children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escape_find"), SubResource("BTAction_escape_move")]
-_enabled = false
 
 [sub_resource type="BTCondition" id="BTCondition_has_opponent"]
 custom_name = "Has Opponent?"
@@ -61,7 +60,6 @@ script = ExtResource("3_move")
 [sub_resource type="BTSequence" id="BTSequence_attack"]
 custom_name = "Chase + Attack Sequence"
 children = [SubResource("BTCondition_has_opponent"), SubResource("BTAction_find_opponent"), SubResource("BTAction_chase_move"), SubResource("BTAction_attack_place"), SubResource("BTAction_attack_plan_retreat"), SubResource("BTAction_attack_move")]
-_enabled = false
 
 [sub_resource type="BTCondition" id="BTCondition_has_powerup"]
 custom_name = "Has Powerup Available?"
@@ -79,36 +77,41 @@ script = ExtResource("3_move")
 [sub_resource type="BTSequence" id="BTSequence_collect"]
 custom_name = "Collect Powerup Sequence"
 children = [SubResource("BTCondition_has_powerup"), SubResource("BTAction_find_powerup"), SubResource("BTAction_collect_move")]
-_enabled = false
 
 [sub_resource type="BTAction" id="BTAction_dvb2i"]
 script = ExtResource("9_tn3ky")
-search_radius = 20
-
-[sub_resource type="BTRepeatUntilSuccess" id="BTRepeatUntilSuccess_y3cnp"]
-children = [SubResource("BTAction_dvb2i")]
-
-[sub_resource type="BTAction" id="BTAction_y3cnp"]
-script = ExtResource("3_move")
+search_radius = 8
+debug_logging = true
 
 [sub_resource type="BTCondition" id="BTCondition_dvb2i"]
 script = ExtResource("10_y3cnp")
 
+[sub_resource type="BTAction" id="BTAction_y3cnp"]
+script = ExtResource("3_move")
+
 [sub_resource type="BTAction" id="BTAction_3ugk0"]
 script = ExtResource("4_bomb")
 
-[sub_resource type="BTAction" id="BTAction_tn3ky"]
-script = ExtResource("2_escape")
+[sub_resource type="BTSequence" id="BTSequence_safe_attempt"]
+custom_name = "Safe Plant Attempt"
+children = [SubResource("BTAction_dvb2i"), SubResource("BTCondition_dvb2i"), SubResource("BTAction_y3cnp"), SubResource("BTAction_3ugk0")]
 
-[sub_resource type="BTRepeatUntilSuccess" id="BTRepeatUntilSuccess_dvb2i"]
-children = [SubResource("BTAction_tn3ky")]
+[sub_resource type="BTRepeatUntilSuccess" id="BTRepeatUntilSuccess_y3cnp"]
+children = [SubResource("BTSequence_safe_attempt")]
 
 [sub_resource type="BTAction" id="BTAction_815dk"]
+custom_name = "Move To Escape Cell"
 script = ExtResource("3_move")
+cell_var = &"target_escape_cell"
+
+[sub_resource type="BTAction" id="BTAction_postplant_ambush"]
+custom_name = "Ambush/Patrol (Post Plant)"
+script = ExtResource("9_ambush")
+wait_time = 2.0
 
 [sub_resource type="BTSequence" id="BTSequence_dvb2i"]
 custom_name = "Farm Blocks Sequence"
-children = [SubResource("BTRepeatUntilSuccess_y3cnp"), SubResource("BTAction_y3cnp"), SubResource("BTCondition_dvb2i"), SubResource("BTAction_3ugk0"), SubResource("BTRepeatUntilSuccess_dvb2i"), SubResource("BTAction_815dk")]
+children = [SubResource("BTRepeatUntilSuccess_y3cnp"), SubResource("BTAction_815dk"), SubResource("BTAction_postplant_ambush")]
 
 [sub_resource type="BTAction" id="BTAction_ambush"]
 custom_name = "Ambush/Patrol"

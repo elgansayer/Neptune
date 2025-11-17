@@ -9,6 +9,7 @@ const Constants = preload("res://shared/constants.gd")
 
 var _ai_manager = null
 var _grid_sampler = null
+var debug_logging: bool = false
 
 func configure(ai_manager, grid_sampler) -> void:
 	_ai_manager = ai_manager
@@ -25,6 +26,8 @@ func can_safely_plant_bomb(
 ) -> bool:
 	
 	if _ai_manager == null or _grid_sampler == null:
+		if debug_logging:
+			print("  [BombSafetyChecker] Missing dependencies")
 		return false
 	
 	# Get simulated threat matrix with hypothetical bomb
@@ -33,6 +36,9 @@ func can_safely_plant_bomb(
 		bomb_range, 
 		current_time_msec
 	)
+	
+	if debug_logging:
+		print("  [BombSafetyChecker] Checking plant at ", plant_pos, " range=", bomb_range, " threat_tiles=", future_threat_matrix.size())
 	
 	# Constants for BFS
 	var bomb_fuse_time_sec := 3.0
@@ -54,12 +60,14 @@ func can_safely_plant_bomb(
 		# 1. IS THIS TILE A SAFE HAVEN?
 		if not future_threat_matrix.has(current_key):
 			# SUCCESS! Found a tile that never explodes
+			if debug_logging:
+				print("  [BombSafetyChecker] ✓ Safe haven found at ", current_pos, " (arrival=", current_arrival_time, "ms)")
 			return true
 		
 		# 2. IF NOT, CAN WE PASS THROUGH SAFELY?
 		var tile_lethal_time: float = future_threat_matrix[current_key]
 		
-		# Only explore further if we arrive before tile explodes
+		# Only explore further if we're still alive on this tile
 		if current_arrival_time < tile_lethal_time:
 			# Check all 4 cardinal directions
 			for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
@@ -75,12 +83,20 @@ func can_safely_plant_bomb(
 				if visited.has(next_key) and visited[next_key] <= next_arrival_time:
 					continue
 				
-				# CRITICAL CHECK: Can we arrive at next tile BEFORE current tile explodes?
-				if next_arrival_time < tile_lethal_time:
+				# CRITICAL FIX: We must arrive at the NEXT tile before ITS lethal time too
+				var next_safe := true
+				if future_threat_matrix.has(next_key):
+					var next_lethal: float = future_threat_matrix[next_key]
+					next_safe = next_arrival_time < next_lethal
+				# Also ensure we leave current before it explodes
+				var leave_current_safe := next_arrival_time <= tile_lethal_time
+				if leave_current_safe and next_safe:
 					visited[next_key] = next_arrival_time
 					queue.append(next_pos)
 	
 	# Queue exhausted - no safe escape route found
+	if debug_logging:
+		print("  [BombSafetyChecker] ✗ No escape found (explored ", visited.size(), " tiles)")
 	return false
 
 ## Tile key helper
