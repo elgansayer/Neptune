@@ -7,7 +7,7 @@ const Constants = preload("res://shared/constants.gd")
 const BombScene = preload("res://client/ui/bomb.tscn")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
-const ThreatMatrixVisualizer = preload("res://client/ui/threat_matrix_visualizer.gd")
+const ThreatMatrixVisualizerScene = preload("res://client/ui/threat_matrix_visualizer.tscn")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -54,10 +54,10 @@ func _ready():
 	add_child(bomb_throw_predictor)
 	
 	# Initialize threat matrix visualizer (debug - toggle with F3)
-	threat_visualizer = ThreatMatrixVisualizer.new()
+	threat_visualizer = ThreatMatrixVisualizerScene.instantiate()
 	threat_visualizer.position = Vector2.ZERO  # Explicitly set to (0, 0)
 	add_child(threat_visualizer)
-	print("[GameView] ThreatVisualizer created at position: ", threat_visualizer.position)
+	print("[GameView] ThreatVisualizer created successfully at position: ", threat_visualizer.position)
 	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
@@ -80,7 +80,7 @@ func update_game_state(state: Dictionary):
 		print("[GameView] Map rendered, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
 		
 		# Set map size for threat visualizer
-		if threat_visualizer and state.map.size() > 0:
+		if threat_visualizer and threat_visualizer.has_method("set_map_size"):
 			var map_height = state.map.size()
 			var map_width = state.map[0].size()
 			threat_visualizer.set_map_size(map_width, map_height)
@@ -91,10 +91,26 @@ func update_game_state(state: Dictionary):
 	
 	# Update threat matrix visualization (debug)
 	if state.has("threat_matrix") and state.has("current_time_msec"):
-		if threat_visualizer:
-			threat_visualizer.update_threat_matrix(state.threat_matrix, state.current_time_msec)
+		if threat_visualizer and is_instance_valid(threat_visualizer):
+			# Check if the script has been fully initialized
+			if threat_visualizer.has_method("update_threat_matrix"):
+				threat_visualizer.update_threat_matrix(state.threat_matrix, state.current_time_msec)
 		else:
-			print("[GameView] WARNING: Received threat matrix but visualizer is null!")
+			# Create visualizer on-demand if it doesn't exist yet
+			if not threat_visualizer:
+				threat_visualizer = ThreatMatrixVisualizerScene.instantiate()
+				threat_visualizer.position = Vector2.ZERO
+				add_child(threat_visualizer)
+				print("[GameView] ThreatVisualizer created on-demand")
+				# Set map size if we have it
+				if map_rendered and state.has("map") and state.map.size() > 0:
+					var map_height = state.map.size()
+					var map_width = state.map[0].size()
+					if threat_visualizer.has_method("set_map_size"):
+						threat_visualizer.set_map_size(map_width, map_height)
+				# Now update with threat data
+				if threat_visualizer.has_method("update_threat_matrix"):
+					threat_visualizer.update_threat_matrix(state.threat_matrix, state.current_time_msec)
 	
 	# Update HUD timer
 	if state.has("match_timer") and hud:
@@ -253,7 +269,6 @@ func update_player(peer_id: String, data: Dictionary):
 		var player_pck_scene = load("res://player.tscn")
 		if player_pck_scene:
 			var sprite_root = player_pck_scene.instantiate()
-			# sprite_root.scale = Vector2(2.0, 2.0)
 			sprite_root.position = Vector2.ZERO
 			player_node.add_child(sprite_root)
 			# Store reference to AnimatedSprite2D for animation control
@@ -264,30 +279,33 @@ func update_player(peer_id: String, data: Dictionary):
 		else:
 			# Fallback to colored rectangle if PCK not loaded
 			var sprite = ColorRect.new()
-			sprite.size = Vector2(32, 32)
-			sprite.position = Vector2(-16, -16)
+			var sprite_size = GameConfig.TILE_SIZE / 2.0  # Half tile size
+			sprite.size = Vector2(sprite_size, sprite_size)
+			sprite.position = Vector2(-sprite_size / 2, -sprite_size / 2)
 			var is_local = str(peer_id) == str(multiplayer.get_unique_id())
 			sprite.color = Color(0.2, 0.6, 1.0) if is_local else Color(1.0, 0.3, 0.3)
 			player_node.add_child(sprite)
 		
 		# Add debug arrow to show facing direction
 		var arrow = Polygon2D.new()
+		var arrow_scale = GameConfig.TILE_SIZE / 32.0  # Scale based on tile size
 		var arrow_points = PackedVector2Array([
-			Vector2(0, -15), # Top left
-			Vector2(40, 0), # Tip (pointing right)
-			Vector2(0, 15), # Bottom left
-			Vector2(10, 0) # Inner notch
+			Vector2(0, -15 * arrow_scale), # Top left
+			Vector2(40 * arrow_scale, 0), # Tip (pointing right)
+			Vector2(0, 15 * arrow_scale), # Bottom left
+			Vector2(10 * arrow_scale, 0) # Inner notch
 		])
 		arrow.polygon = arrow_points
 		arrow.color = Color(1, 0, 0, 1.0) # Bright RED
 		arrow.z_index = 100
-		arrow.position = Vector2(0, -50) # Above the sprite
+		arrow.position = Vector2(0, -50 * arrow_scale) # Above the sprite
 		arrow.name = "DebugArrow"
 		player_node.add_child(arrow)
 		
 		var label = Label.new()
 		label.text = data.username
-		label.position = Vector2(-30, -40)
+		var label_offset = GameConfig.TILE_SIZE * 0.625  # Proportional offset (40px at 64px tiles)
+		label.position = Vector2(-label_offset / 2, -label_offset)
 		player_node.add_child(label)
 		
 		# Add hitbox visualization (green square/rectangle)

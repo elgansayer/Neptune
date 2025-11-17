@@ -87,14 +87,15 @@ func _draw():
 		for x in range(map_width):
 			var tile_key = "%d,%d" % [x, y]
 			var color: Color
-			var time_until_explosion: float = -1.0
+			var threat_value: float = -1.0
 			
 			if threat_matrix.has(tile_key):
-				var explosion_time: float = threat_matrix[tile_key]
-				time_until_explosion = explosion_time - current_time_msec
-				color = _get_threat_color(time_until_explosion)
+				# Threat matrix contains absolute explosion time in milliseconds
+				threat_value = threat_matrix[tile_key]
+				# Color directly based on the threat value
+				color = _get_threat_color(threat_value)
 			else:
-				# No threat - safe
+				# No threat in matrix - completely safe
 				color = COLOR_SAFE
 			
 			# Draw filled rectangle for this tile
@@ -109,13 +110,17 @@ func _draw():
 				var text_pos = rect_pos + Vector2(4, 12)
 				draw_string(font, text_pos, coord_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color.WHITE)
 			
-			# Draw timing info for threatened tiles
-			if show_timing and time_until_explosion >= 0:
-				var ms_text = "%.0fms" % time_until_explosion
-				var text_pos = rect_pos + Vector2(4, tile_size - 8)
-				draw_string(font, text_pos, ms_text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color.WHITE)
-	
-	# Draw comprehensive legend
+			# Draw timing information if enabled
+			if show_timing and threat_value > 0:
+				var time_text = "%.1f" % [threat_value / 1000.0]
+				var time_pos = rect_pos + Vector2(4, tile_size - 4)
+				draw_string(font,
+					time_pos,
+					time_text,
+					HORIZONTAL_ALIGNMENT_LEFT,
+					-1,
+					10,
+					Color.WHITE)	# Draw comprehensive legend
 	_draw_legend()
 
 func _draw_legend() -> void:
@@ -159,7 +164,10 @@ func _draw_legend() -> void:
 	legend_y += line_height - 3
 	draw_string(font, Vector2(legend_x, legend_y), "Threats: %d tiles" % threat_matrix.size(), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color.CYAN)
 
-func _get_threat_color(time_until_explosion_ms: float) -> Color:
+func _get_threat_color(explosion_time_ms: float) -> Color:
+	# Calculate time remaining until explosion
+	var time_until_explosion_ms = explosion_time_ms - current_time_msec
+	
 	if time_until_explosion_ms < 500.0:
 		return COLOR_IMMEDIATE
 	elif time_until_explosion_ms < 1500.0:

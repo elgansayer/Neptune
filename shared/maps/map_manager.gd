@@ -89,12 +89,14 @@ func get_spawn_point(player_index: int) -> Vector2:
 	"""Get spawn point for a specific player index"""
 	if current_map.is_empty() or not current_map.has("spawn_points"):
 		push_error("[MapManager] No map loaded or no spawn points available")
-		return Vector2(64, 64)  # Default fallback
+		var default_tile_size = GameConfig.TILE_SIZE if GameConfig.TILE_SIZE > 0 else 64
+		return Vector2(default_tile_size, default_tile_size)  # Default fallback to (1,1) in world coords
 	
 	var spawns = current_map.spawn_points
 	if spawns.is_empty():
 		push_error("[MapManager] Map has no spawn points")
-		return Vector2(64, 64)
+		var default_tile_size = GameConfig.TILE_SIZE if GameConfig.TILE_SIZE > 0 else 64
+		return Vector2(default_tile_size, default_tile_size)
 	
 	# Cycle through available spawns
 	var spawn_index = player_index % spawns.size()

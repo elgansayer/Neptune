@@ -39,6 +39,7 @@ var ai_manager: AIManager  # Centralized AI brain with ThreatMatrix and pathfind
 
 # State sync
 var last_sync_time := 0.0
+var current_time_msec := 0.0  # Current physics frame time in milliseconds
 const SYNC_INTERVAL = 1.0 / Constants.NETWORK_SEND_RATE
 const EXPLOSION_DISPLAY_TIME = 0.5  # How long to show explosions
 
@@ -188,7 +189,7 @@ func create_map_collision():
 func _physics_process(delta):
 	# Update AI Manager's ThreatMatrix
 	if ai_manager != null:
-		var current_time_msec := Time.get_ticks_msec()
+		current_time_msec = Time.get_ticks_msec()
 		ai_manager.refresh_threat_matrix(current_time_msec)
 	
 	# Update match timer if active
@@ -555,7 +556,7 @@ func sync_state_to_clients():
 		if threat_data.size() > 0:
 			print("[Server] Sending threat matrix with ", threat_data.size(), " tiles")
 		state["threat_matrix"] = threat_data
-		state["current_time_msec"] = Time.get_ticks_msec()
+		state["current_time_msec"] = current_time_msec  # Use the SAME timestamp used for threat calculation
 	
 	# Send to all players in this game via ClientMain autoload
 	for peer_id in players:
