@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=37 format=3 uid="uid://chqxceh757yg0"]
+[gd_resource type="BehaviorTree" load_steps=39 format=3 uid="uid://chqxceh757yg0"]
 
 [ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://ai/tasks/conditions/bt_is_in_danger.gd" id="1_danger"]
 [ext_resource type="Script" uid="uid://3btukveudf74" path="res://ai/tasks/actions/bt_find_escape_route.gd" id="2_escape"]
@@ -85,6 +85,9 @@ _enabled = false
 script = ExtResource("9_tn3ky")
 search_radius = 20
 
+[sub_resource type="BTRepeatUntilSuccess" id="BTRepeatUntilSuccess_y3cnp"]
+children = [SubResource("BTAction_dvb2i")]
+
 [sub_resource type="BTAction" id="BTAction_y3cnp"]
 script = ExtResource("3_move")
 
@@ -97,12 +100,15 @@ script = ExtResource("4_bomb")
 [sub_resource type="BTAction" id="BTAction_tn3ky"]
 script = ExtResource("2_escape")
 
+[sub_resource type="BTRepeatUntilSuccess" id="BTRepeatUntilSuccess_dvb2i"]
+children = [SubResource("BTAction_tn3ky")]
+
 [sub_resource type="BTAction" id="BTAction_815dk"]
 script = ExtResource("3_move")
 
 [sub_resource type="BTSequence" id="BTSequence_dvb2i"]
 custom_name = "Farm Blocks Sequence"
-children = [SubResource("BTAction_dvb2i"), SubResource("BTAction_y3cnp"), SubResource("BTCondition_dvb2i"), SubResource("BTAction_3ugk0"), SubResource("BTAction_tn3ky"), SubResource("BTAction_815dk")]
+children = [SubResource("BTRepeatUntilSuccess_y3cnp"), SubResource("BTAction_y3cnp"), SubResource("BTCondition_dvb2i"), SubResource("BTAction_3ugk0"), SubResource("BTRepeatUntilSuccess_dvb2i"), SubResource("BTAction_815dk")]
 
 [sub_resource type="BTAction" id="BTAction_ambush"]
 custom_name = "Ambush/Patrol"

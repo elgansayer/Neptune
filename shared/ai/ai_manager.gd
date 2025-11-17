@@ -86,7 +86,7 @@ func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
 		if not is_instance_valid(bomb) or bomb.has_exploded:
 			continue
 		
-		var fuse_remaining: float = bomb.explosion_timer
+		var fuse_remaining: float = max(Constants.BOMB_TIMER - bomb.explosion_timer, 0.0)
 		var detonation_time: float = current_time_msec + (fuse_remaining * 1000.0)
 		bomb_queue.append([bomb_id, detonation_time])
 	

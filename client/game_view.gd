@@ -26,6 +26,7 @@ var map_rendered = false
 var map_scene_instance = null # Hold reference to loaded PCK map scene
 var removed_dead_players = {} # peer_id -> bool when death animation has finished and node was removed
 var hud: CanvasLayer # Reference to HUD
+var ai_debug_targets := {} # peer_id -> {"tile": Vector2i, "player_name": String}
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -115,7 +116,7 @@ func update_game_state(state: Dictionary):
 	# Update HUD timer
 	if state.has("match_timer") and hud:
 		hud.update_timer(state.match_timer)
-	
+
 	# Count alive players and update HUD
 	if state.has("players") and hud:
 		var alive_count = 0
@@ -123,12 +124,12 @@ func update_game_state(state: Dictionary):
 			if not state.players[peer_id].get("is_dead", false):
 				alive_count += 1
 		hud.update_players_alive(alive_count, state.players.size())
-	
+
 	# Update players
 	for peer_id_str in state.players:
 		var player_data = state.players[peer_id_str]
 		update_player(peer_id_str, player_data)
-	
+
 	# Update local player stats in HUD
 	if state.players.has(str(multiplayer.get_unique_id())) and hud:
 		var my_data = state.players[str(multiplayer.get_unique_id())]
@@ -138,7 +139,7 @@ func update_game_state(state: Dictionary):
 			my_data.get("bomb_range", 2),
 			my_data.get("speed_multiplier", 1.0)
 		)
-	
+
 	# Check for game over
 	if state.has("match_active") and not state.match_active and hud:
 		var winner_name = ""
@@ -146,24 +147,24 @@ func update_game_state(state: Dictionary):
 			if state.players.has(state.winner_id):
 				winner_name = state.players[state.winner_id].get("username", "Unknown")
 		hud.show_game_over(winner_name)
-	
+
 	# Remove players no longer in state
 	for peer_id in player_nodes.keys():
 		if not state.players.has(peer_id):
 			player_nodes[peer_id].queue_free()
 			player_nodes.erase(peer_id)
-	
+
 	# Update bombs
 	for bomb_id in state.bombs:
 		var bomb_data = state.bombs[bomb_id]
 		update_bomb(bomb_id, bomb_data)
-	
+
 	# Remove bombs no longer in state
 	for bomb_id in bomb_nodes.keys():
 		if not state.bombs.has(bomb_id):
 			bomb_nodes[bomb_id].queue_free()
 			bomb_nodes.erase(bomb_id)
-	
+
 	# Update power-ups
 	if state.has("powerups"):
 		for powerup_id in state.powerups:
@@ -180,6 +181,36 @@ func update_game_state(state: Dictionary):
 	# Update explosions
 	if state.has("explosions"):
 		update_explosions(state.explosions)
+
+func update_ai_debug(debug_data: Dictionary) -> void:
+	# Extract target cell from AI debug payload and forward to visualizer
+	if debug_data.is_empty() or not debug_data.has("peer_id"):
+		return
+
+	var peer_id = str(debug_data.peer_id)
+	var target_value = debug_data.get("target_cell", null)
+	var normalized_tile = _normalize_tile(target_value)
+
+	if normalized_tile == null:
+		ai_debug_targets.erase(peer_id)
+	else:
+		ai_debug_targets[peer_id] = {
+			"tile": normalized_tile,
+			"player_name": debug_data.get("player_name", "Bot %s" % peer_id)
+		}
+
+	if threat_visualizer and threat_visualizer.has_method("update_target_tiles"):
+		threat_visualizer.update_target_tiles(ai_debug_targets)
+
+func _normalize_tile(value):
+	if value == null:
+		return null
+	if value is Vector2i:
+		return value
+	if value is Vector2:
+		return Vector2i(int(value.x), int(value.y))
+	if typeof(value) == TYPE_DICTIONARY and value.has("x") and value.has("y"):
+		return Vector2i(int(value.x), int(value.y))
 
 func update_blocks(map_data: Array):
 	"""Update destructible blocks based on current server map state"""

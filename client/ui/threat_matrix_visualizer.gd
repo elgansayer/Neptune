@@ -14,6 +14,7 @@ var current_time_msec: float = 0.0
 var tile_size: float = 64.0  # Will be updated when map loads
 var map_width: int = 0
 var map_height: int = 0
+var bot_targets: Dictionary = {}  # peer_id -> {"tile": Vector2i, "player_name": String}
 
 # Color scheme with better contrast
 const COLOR_SAFE = Color(0.0, 0.8, 0.0, 0.4)           # Green - completely safe
@@ -60,6 +61,11 @@ func update_threat_matrix(matrix: Dictionary, time_msec: float) -> void:
 				print("  - Tile %s: grid(%d,%d) → pixels(%.0f,%.0f) explodes in %.0fms" % [key, tile_x, tile_y, pixel_x, pixel_y, time_until])
 				count += 1
 	
+	if enabled:
+		queue_redraw()
+
+func update_target_tiles(targets: Dictionary) -> void:
+	bot_targets = targets.duplicate(true)
 	if enabled:
 		queue_redraw()
 
@@ -122,6 +128,34 @@ func _draw():
 					10,
 					Color.WHITE)	# Draw comprehensive legend
 	_draw_legend()
+
+	# Draw bot target crosses on top of heatmap
+	for peer_id in bot_targets:
+		var bot_data = bot_targets[peer_id]
+		if bot_data == null or not bot_data.has("tile"):
+			continue
+		var tile = bot_data.get("tile")
+		if tile == null:
+			continue
+		if not (tile is Vector2i):
+			tile = Vector2i(int(tile.x), int(tile.y))
+		if tile.x < 0 or tile.x >= map_width or tile.y < 0 or tile.y >= map_height:
+			continue
+		var tile_pos = Vector2(tile.x * tile_size, tile.y * tile_size)
+		var top_left = tile_pos
+		var top_right = tile_pos + Vector2(tile_size, 0)
+		var bottom_left = tile_pos + Vector2(0, tile_size)
+		var bottom_right = tile_pos + Vector2(tile_size, tile_size)
+		var center = tile_pos + Vector2(tile_size / 2.0, tile_size / 2.0)
+		var cross_color = Color.BLACK
+		var line_width = max(2.0, tile_size * 0.06)
+		draw_line(top_left, bottom_right, cross_color, line_width)
+		draw_line(top_right, bottom_left, cross_color, line_width)
+		draw_circle(center, tile_size * 0.08, cross_color)
+		if bot_data.has("player_name"):
+			var name_text = str(bot_data.get("player_name"))
+			var text_pos = tile_pos + Vector2(4, tile_size * 0.3)
+			draw_string(font, text_pos, name_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Color.BLACK)
 
 func _draw_legend() -> void:
 	var font = ThemeDB.fallback_font
