@@ -118,14 +118,17 @@ func _ready():
 	var map_width = game_map[0].size() if game_map.size() > 0 else 0
 	var map_height = game_map.size()
 	ai_manager.configure(self, grid_sampler, map_width, map_height)
+	print("[AIManager] Configured with ", map_width, "x", map_height, " grid")
 	print("[GameInstance] AIManager initialized with ", map_width, "x", map_height, " grid")
-
-	# Initialize empty bot manager; actual bot spawning will be triggered later.
+	
+	# Initialize bot manager; actual bot spawning will be triggered later.
 	if ServerBotManagerScript == null:
 		push_error("[GameInstance] Bot manager script missing; bots disabled")
 	else:
 		bot_manager = ServerBotManagerScript.new()
+		bot_manager.auto_spawn_count = 1  # Only spawn 1 bot for easier testing
 		bot_manager.configure(self)
+		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
 
 func spawn_bot(personality: String = "BALANCED") -> void:
@@ -545,6 +548,14 @@ func sync_state_to_clients():
 			"start_time": explosion["start_time"],
 			"owner_id": explosion["owner_id"]
 		})
+	
+	# Send threat matrix for debug visualization (if enabled)
+	if ai_manager != null:
+		var threat_data = ai_manager.get_current_threat_matrix()
+		if threat_data.size() > 0:
+			print("[Server] Sending threat matrix with ", threat_data.size(), " tiles")
+		state["threat_matrix"] = threat_data
+		state["current_time_msec"] = Time.get_ticks_msec()
 	
 	# Send to all players in this game via ClientMain autoload
 	for peer_id in players:

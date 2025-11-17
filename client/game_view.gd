@@ -7,6 +7,7 @@ const Constants = preload("res://shared/constants.gd")
 const BombScene = preload("res://client/ui/bomb.tscn")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
+const ThreatMatrixVisualizer = preload("res://client/ui/threat_matrix_visualizer.gd")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -31,6 +32,9 @@ var local_player_controller: ClientPlayerController # Prediction for local playe
 var remote_player_interpolators = {} # peer_id -> EntityInterpolator for remote players
 var bomb_throw_predictor: BombThrowPredictor # Power Glove throw prediction
 
+# AI threat matrix visualization (debug)
+var threat_visualizer: Node2D = null
+
 # Input buffering: track order of pressed keys
 var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
 
@@ -49,6 +53,10 @@ func _ready():
 	bomb_throw_predictor = BombThrowPredictor.new()
 	add_child(bomb_throw_predictor)
 	
+	# Initialize threat matrix visualizer (debug - toggle with F3)
+	threat_visualizer = ThreatMatrixVisualizer.new()
+	add_child(threat_visualizer)
+	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
 	add_child(hud)
@@ -66,10 +74,23 @@ func update_game_state(state: Dictionary):
 	if not map_rendered and state.has("map"):
 		render_map(state.map)
 		map_rendered = true
+		
+		# Set map size for threat visualizer
+		if threat_visualizer and state.map.size() > 0:
+			var map_height = state.map.size()
+			var map_width = state.map[0].size()
+			threat_visualizer.set_map_size(map_width, map_height)
 	
 	# Update destructible blocks based on current map state
 	if state.has("map"):
 		update_blocks(state.map)
+	
+	# Update threat matrix visualization (debug)
+	if state.has("threat_matrix") and state.has("current_time_msec"):
+		if threat_visualizer:
+			threat_visualizer.update_threat_matrix(state.threat_matrix, state.current_time_msec)
+		else:
+			print("[GameView] WARNING: Received threat matrix but visualizer is null!")
 	
 	# Update HUD timer
 	if state.has("match_timer") and hud:
