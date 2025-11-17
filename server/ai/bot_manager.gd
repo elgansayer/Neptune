@@ -23,7 +23,7 @@ var next_bot_peer_id := -1
 var auto_spawned := false
 
 const DEFAULT_PERSONALITY := "BALANCED"
-const DEFAULT_BOT_COUNT := 3  # Adjust for heavier load testing as needed
+var auto_spawn_count := 3  # Can be overridden by game_instance
 
 func configure(instance) -> void:
 	game_instance = instance
@@ -41,8 +41,8 @@ func configure(instance) -> void:
 	# Wait for ai_manager to be initialized in game_instance
 	call_deferred("_configure_safety_checker")
 	
-	if DEFAULT_BOT_COUNT > 0:
-		print("[BotManager] Queuing auto-spawn for %d bots" % DEFAULT_BOT_COUNT)
+	if auto_spawn_count > 0:
+		print("[BotManager] Queuing auto-spawn for %d bots" % auto_spawn_count)
 		call_deferred("_auto_spawn_bots")
 
 func _configure_safety_checker() -> void:
@@ -54,8 +54,8 @@ func _auto_spawn_bots() -> void:
 	if auto_spawned:
 		return
 	auto_spawned = true
-	print("[BotManager] Auto-spawning %d bots" % DEFAULT_BOT_COUNT)
-	spawn_bots(DEFAULT_BOT_COUNT, DEFAULT_PERSONALITY)
+	print("[BotManager] Auto-spawning %d bots" % auto_spawn_count)
+	spawn_bots(auto_spawn_count, DEFAULT_PERSONALITY)
 
 func _physics_process(_delta: float) -> void:
 	if game_instance == null:

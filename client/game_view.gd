@@ -55,7 +55,9 @@ func _ready():
 	
 	# Initialize threat matrix visualizer (debug - toggle with F3)
 	threat_visualizer = ThreatMatrixVisualizer.new()
+	threat_visualizer.position = Vector2.ZERO  # Explicitly set to (0, 0)
 	add_child(threat_visualizer)
+	print("[GameView] ThreatVisualizer created at position: ", threat_visualizer.position)
 	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
@@ -74,6 +76,8 @@ func update_game_state(state: Dictionary):
 	if not map_rendered and state.has("map"):
 		render_map(state.map)
 		map_rendered = true
+		
+		print("[GameView] Map rendered, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
 		
 		# Set map size for threat visualizer
 		if threat_visualizer and state.map.size() > 0:

@@ -153,8 +153,10 @@ func _get_blast_tiles(center: Vector2i, range_val: int) -> Array[Vector2i]:
 			if not _grid_sampler.is_tile_walkable(tile):
 				var tile_type = _grid_sampler.get_tile_type(tile)
 				if tile_type == 1:  # Hard wall
+					print("[ThreatMatrix] Blast from ", center, " stopped by HARD WALL at ", tile, " direction ", dir)
 					break
 				elif tile_type == 2:  # Soft wall (destroys but stops)
+					print("[ThreatMatrix] Blast from ", center, " stopped by SOFT BLOCK at ", tile, " direction ", dir)
 					tiles.append(tile)
 					break
 			
