@@ -17,6 +17,8 @@ func _tick(delta: float) -> int:
 	var ai_manager = blackboard.get_var("ai_manager")
 	var grid_sampler = blackboard.get_var("grid_sampler")
 	
+	print("[BTFindEscapeRoute] STARTING escape route search for bot at ", player.get_tile_position() if player else "unknown")
+	
 	if not player or not game_instance or not ai_manager or not grid_sampler:
 		push_warning("[BTFindEscapeRoute] Missing required blackboard variables")
 		return FAILURE
@@ -48,6 +50,9 @@ func _tick(delta: float) -> int:
 					simulated_threat_matrix[tile_key] = explosion_time
 			
 			print("[BTFindEscapeRoute] Simulating threat from bomb just planted at ", last_bomb_placed_at)
+			print("[BTFindEscapeRoute] Bomb will hit tiles: ", blast_tiles)
+			print("[BTFindEscapeRoute] Current position: ", player_tile)
+			print("[BTFindEscapeRoute] Is current position in blast? ", blast_tiles.has(player_tile))
 	
 	# BFS to find safe tiles considering TIMING and WALLS
 	# A tile is safe if either:
@@ -68,26 +73,33 @@ func _tick(delta: float) -> int:
 		var current_key := _tile_key(current_pos)
 		var arrival_time: float = visited[current_key]
 		
-		# Check if this tile is safe (using simulated threat matrix)
-		var is_permanently_safe = not simulated_threat_matrix.has(current_key)
-		var safety_margin: float = 0.0
-		
-		if is_permanently_safe:
-			# This tile never explodes - best possible safety
-			blackboard.set_var(target_cell_var, current_pos)
-			blackboard.set_var("escape_route_found", true)
-			print("[BTFindEscapeRoute] Found permanently safe tile at ", current_pos)
-			return SUCCESS
+		# CRITICAL: Don't consider current position as safe if it's in blast zone
+		# Bot must MOVE to escape, not stay put
+		if current_pos == player_tile and simulated_threat_matrix.has(current_key):
+			# Current position is threatened - must move away
+			# Don't return this as safe, just explore neighbors
+			pass
 		else:
-			# Tile will explode at some point - check if we have time
-			var explosion_time: float = simulated_threat_matrix[current_key]
-			safety_margin = explosion_time - arrival_time
+			# Check if this tile is safe (using simulated threat matrix)
+			var is_permanently_safe = not simulated_threat_matrix.has(current_key)
+			var safety_margin: float = 0.0
 			
-			# Need at least 500ms safety margin to consider it "safe enough"
-			if safety_margin > 500.0:
-				if safety_margin > best_safety_margin:
-					best_safety_margin = safety_margin
-					best_safe_tile = current_pos
+			if is_permanently_safe:
+				# This tile never explodes - best possible safety
+				blackboard.set_var(target_cell_var, current_pos)
+				blackboard.set_var("escape_route_found", true)
+				print("[BTFindEscapeRoute] Found permanently safe tile at ", current_pos)
+				return SUCCESS
+			else:
+				# Tile will explode at some point - check if we have time
+				var explosion_time: float = simulated_threat_matrix[current_key]
+				safety_margin = explosion_time - arrival_time
+				
+				# Need at least 500ms safety margin to consider it "safe enough"
+				if safety_margin > 500.0:
+					if safety_margin > best_safety_margin:
+						best_safety_margin = safety_margin
+						best_safe_tile = current_pos
 		
 		# Continue searching - explore neighbors if we can pass through safely
 		var can_pass_through = false
@@ -101,7 +113,7 @@ func _tick(delta: float) -> int:
 			for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 				var next_pos := current_pos + dir
 				var next_key := _tile_key(next_pos)
-				var next_arrival_time := arrival_time + msec_per_tile
+				var next_arrival_time: float = arrival_time + msec_per_tile
 				
 				# Must be walkable (walls block movement AND explosions)
 				if not grid_sampler.is_tile_walkable(next_pos):
