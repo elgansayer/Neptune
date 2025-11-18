@@ -7,8 +7,9 @@ class_name BTFindFarmingSpot
 
 @export var search_radius: int = 5 ## How far to search for soft blocks
 @export var target_cell_var: StringName = &"target_cell" ## Where to store the target
-@export var debug_logging: bool = false ## Enable detailed rejection logging
+@export var debug_logging: bool = true ## Enable detailed rejection logging
 @export var broadcast_safety: bool = true ## Send safety eval to clients for visualization
+@export var always_broadcast: bool = true ## Broadcast continuously even when reusing cached target
 
 const INVALID_TILE := Vector2i(-1, -1)
 
@@ -31,6 +32,10 @@ func _tick(_delta: float) -> int:
 	# If we already have a valid farming target, reuse it to avoid expensive rescans every tick
 	var existing_target = _coerce_to_tile(blackboard.get_var(target_cell_var))
 	if _is_valid_target(existing_target, grid_sampler, bomb_range):
+		# Still broadcast for continuous visualization even when reusing target
+		if always_broadcast:
+			var ai_manager = blackboard.get_var("ai_manager")
+			_do_full_search_and_broadcast(current_tile, bomb_range, current_time_msec, player, game_instance, grid_sampler, bomb_safety_checker, ai_manager)
 		return SUCCESS
 	
 	# Search nearby tiles for soft blocks
@@ -53,8 +58,7 @@ func _tick(_delta: float) -> int:
 	
 	for dx in range(-search_radius, search_radius + 1):
 		for dy in range(-search_radius, search_radius + 1):
-			if dx == 0 and dy == 0:
-				continue
+			# Include current tile (dx=0, dy=0) in evaluation
 			
 			var check_tile = current_tile + Vector2i(dx, dy)
 			candidates_checked += 1
@@ -72,15 +76,18 @@ func _tick(_delta: float) -> int:
 			
 			var tile_key := "%d,%d" % [check_tile.x, check_tile.y]
 			
-			# Check if we can reach this tile
-			var path = grid_sampler.find_path(current_tile, check_tile, 15, player)
-			if path.is_empty() and check_tile != current_tile:
-				rejected_no_path += 1
-				if broadcast_safety:
-					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_path"}
-				if debug_logging:
-					print("  [REJECT] ", check_tile, " - no path (blocks=", soft_blocks_hit, ")")
-				continue
+			# Check if we can reach this tile - adjacent tiles are always reachable if walkable
+			var manhattan_dist = abs(dx) + abs(dy)
+			if manhattan_dist > 1:
+				var path = grid_sampler.find_path(current_tile, check_tile, 15, player)
+				if path.is_empty():
+					rejected_no_path += 1
+					if broadcast_safety:
+						safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_path"}
+					if debug_logging:
+						print("  [REJECT] ", check_tile, " - no path (blocks=", soft_blocks_hit, ")")
+					continue
+			# Adjacent tile (distance == 1 or 0) - skip pathfinding, assume reachable
 			
 			# CRITICAL: Check if there's ALREADY a safe tile nearby (without planting bomb)
 			# This ensures we're not in a dead-end surrounded by soft blocks
@@ -204,6 +211,7 @@ func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler
 		var tile_type = grid_sampler.get_tile_type(tile)
 		if tile_type == 2: # Soft block
 			count += 1
+			break # Soft block stops the blast
 		if tile_type == 1: # Hard block - stops blast
 			break
 	
@@ -213,6 +221,7 @@ func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler
 		var tile_type = grid_sampler.get_tile_type(tile)
 		if tile_type == 2: # Soft block
 			count += 1
+			break # Soft block stops the blast
 		if tile_type == 1: # Hard block - stops blast
 			break
 	
@@ -222,6 +231,7 @@ func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler
 		var tile_type = grid_sampler.get_tile_type(tile)
 		if tile_type == 2: # Soft block
 			count += 1
+			break # Soft block stops the blast
 		if tile_type == 1: # Hard block - stops blast
 			break
 	
@@ -231,6 +241,7 @@ func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler
 		var tile_type = grid_sampler.get_tile_type(tile)
 		if tile_type == 2: # Soft block
 			count += 1
+			break # Soft block stops the blast
 		if tile_type == 1: # Hard block - stops blast
 			break
 	
@@ -239,6 +250,12 @@ func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler
 func _has_safe_tile_nearby(position: Vector2i, grid_sampler, current_time_msec: float) -> bool:
 	"""Check if there's at least one safe tile within reasonable distance (no threats, walkable)"""
 	var ai_manager = blackboard.get_var("ai_manager")
+	if not ai_manager:
+		return false
+	return _has_safe_tile_nearby_static(position, grid_sampler, current_time_msec, ai_manager)
+
+func _has_safe_tile_nearby_static(position: Vector2i, grid_sampler, current_time_msec: float, ai_manager) -> bool:
+	"""Static version that accepts ai_manager as parameter"""
 	if not ai_manager:
 		return false
 	
@@ -256,6 +273,11 @@ func _has_safe_tile_nearby(position: Vector2i, grid_sampler, current_time_msec: 
 			var tile_key := "%d,%d" % [check_pos.x, check_pos.y]
 			# If this tile is not in the threat matrix, it's safe
 			if not threat_matrix.has(tile_key):
+				return true
+			
+			# Also consider it safe if the threat is far in the future (> 2.5 seconds)
+			# This prevents rejecting valid spots just because a distant bomb exists
+			if threat_matrix[tile_key] > current_time_msec + 2500.0:
 				return true
 
 	# No safe tiles found nearby - we're in a danger zone
@@ -310,3 +332,118 @@ func _is_valid_target(tile: Vector2i, grid_sampler, bomb_range: int) -> bool:
 	if _count_soft_blocks_in_range(tile, bomb_range, grid_sampler) == 0:
 		return false
 	return true
+
+func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, current_time_msec: int, player, game_instance, grid_sampler, bomb_safety_checker, ai_manager) -> void:
+	"""Perform full search and broadcast for continuous visualization"""
+	var safety_eval := {}
+	
+	if not ai_manager:
+		print("[BTFindFarmingSpot] BROADCAST SKIPPED - no ai_manager")
+		return  # Can't evaluate without ai_manager
+	
+	print("[BTFindFarmingSpot] Broadcasting from ", current_tile, " (search_radius=", search_radius, ")")
+	
+	var total_tiles = 0
+	var rejected_path = 0
+	var rejected_safety = 0
+	var rejected_escape = 0
+	var passed = 0
+	
+	for dx in range(-search_radius, search_radius + 1):
+		for dy in range(-search_radius, search_radius + 1):
+			var check_tile = current_tile + Vector2i(dx, dy)
+			total_tiles += 1
+			
+			if not grid_sampler.is_tile_walkable(check_tile):
+				continue
+			
+			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, grid_sampler)
+			if soft_blocks_hit == 0:
+				continue
+			
+			var tile_key := "%d,%d" % [check_tile.x, check_tile.y]
+			
+			# Check path - adjacent tiles are always reachable if walkable
+			var manhattan_dist = abs(dx) + abs(dy)
+			if manhattan_dist > 1:
+				var path = grid_sampler.find_path(current_tile, check_tile, 15, player)
+				if path.is_empty():
+					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_path"}
+					rejected_path += 1
+					continue
+			# Adjacent tile (distance == 1) - skip pathfinding, assume reachable
+			
+			# Check nearby safety
+			var has_nearby_safety = _has_safe_tile_nearby_static(check_tile, grid_sampler, current_time_msec, ai_manager)
+			if not has_nearby_safety:
+				safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_nearby_safe"}
+				rejected_safety += 1
+				continue
+			
+			# Check escape
+			var safety_result = bomb_safety_checker.check_plant_safety_detailed(
+				check_tile,
+				check_tile,
+				bomb_range,
+				5.0,
+				current_time_msec
+			)
+			
+			if not safety_result.safe:
+				safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": safety_result.get("explored_tiles", 0), "reason": "no_escape"}
+				rejected_escape += 1
+				continue
+			
+			# Calculate score
+			var damage_score = soft_blocks_hit * 10.0
+			var margin = safety_result.get("margin_ms", 1000.0)
+			var escape_tile = safety_result.get("escape_tile", null)
+			
+			var escape_distance = 999
+			if escape_tile:
+				if escape_tile is Vector2i:
+					escape_distance = abs(escape_tile.x - check_tile.x) + abs(escape_tile.y - check_tile.y)
+				elif escape_tile is Dictionary:
+					escape_distance = abs(int(escape_tile.x) - check_tile.x) + abs(int(escape_tile.y) - check_tile.y)
+			
+			var safety_multiplier = 1.0
+			if escape_distance == 1:
+				safety_multiplier *= 1.5
+			elif escape_distance == 2:
+				safety_multiplier *= 1.2
+			elif escape_distance >= 5:
+				safety_multiplier *= 0.7
+			
+			if margin > 1000.0:
+				safety_multiplier *= 1.2
+			elif margin < 800.0:
+				safety_multiplier *= 0.8
+			
+			var score = damage_score * safety_multiplier
+			var distance = abs(dx) + abs(dy)
+			score -= distance * 0.3
+			
+			var status = 2 if margin > 800.0 else 1
+			var eval_data = {
+				"status": status,
+				"soft_blocks": soft_blocks_hit,
+				"explored_tiles": safety_result.get("explored_tiles", 0),
+				"margin_ms": margin,
+				"escape_distance": escape_distance,
+				"final_score": score
+			}
+			if escape_tile:
+				eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
+			safety_eval[tile_key] = eval_data
+			passed += 1
+	
+	# Debug logging
+	print("BTFind: passed=", passed, " path=", rejected_path, " safety=", rejected_safety, " escape=", rejected_escape, " dict_size=", safety_eval.size())
+	
+	# Broadcast
+	if not safety_eval.is_empty():
+		print("BTFind: Broadcasting ", safety_eval.size(), " tiles")
+		_broadcast_safety_data(safety_eval)
+	else:
+		print("BTFind: safety_eval is EMPTY - nothing to broadcast")
+
