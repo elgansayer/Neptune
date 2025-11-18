@@ -7,6 +7,8 @@ class_name BTPlaceBomb
 
 @export var check_capacity: bool = true  ## Verify player hasn't exceeded max bombs
 @export var check_existing: bool = true  ## Verify no bomb already at position
+@export var require_at_target: bool = true  ## Only plant if at target_cell (for farming)
+@export var target_cell_var: StringName = &"target_cell"  ## Target to verify against
 
 func _generate_name() -> String:
 	return "PlaceBomb"
@@ -23,6 +25,16 @@ func _tick(delta: float) -> int:
 		push_warning("[BTPlaceBomb] Missing game_instance in blackboard")
 		return FAILURE
 	
+	var player_tile = player.get_tile_position()
+	
+	# If require_at_target is enabled, verify we're at the target cell before planting
+	if require_at_target:
+		var target_tile = _coerce_to_tile(blackboard.get_var(target_cell_var))
+		if target_tile != Vector2i(-1, -1) and player_tile != target_tile:
+			# Not at target yet, move failed or incomplete
+			print("[BTPlaceBomb] REJECTED: Not at target tile yet. Current=", player_tile, " Target=", target_tile)
+			return FAILURE
+	
 	# Check if player can place a bomb
 	if check_capacity and not player.can_place_bomb():
 		# Can't place bomb (at max capacity or cooldown)
@@ -30,7 +42,6 @@ func _tick(delta: float) -> int:
 	
 	# Check if there's already a bomb at this position
 	if check_existing:
-		var player_tile = player.get_tile_position()
 		if _bomb_at_position(player_tile, game_instance):
 			# Already a bomb here
 			return FAILURE
@@ -38,11 +49,10 @@ func _tick(delta: float) -> int:
 	# Place the bomb
 	game_instance.place_bomb(player)
 	
-	var bomb_pos = player.get_tile_position()
-	print("[BTPlaceBomb] Placed bomb at ", bomb_pos)
+	print("[BTPlaceBomb] ✓ Placed bomb at ", player_tile)
 	
 	# Store bomb placement info in blackboard for debugging/tracking
-	blackboard.set_var("last_bomb_placed_at", bomb_pos)
+	blackboard.set_var("last_bomb_placed_at", player_tile)
 	blackboard.set_var("last_bomb_placed_time", Time.get_ticks_msec() / 1000.0)
 	
 	return SUCCESS
@@ -54,3 +64,11 @@ func _bomb_at_position(tile: Vector2i, game_instance) -> bool:
 		if is_instance_valid(bomb) and bomb.get_tile_position() == tile:
 			return true
 	return false
+
+func _coerce_to_tile(value) -> Vector2i:
+	"""Convert various types to Vector2i tile position"""
+	if value is Vector2i:
+		return value
+	if value is Vector2:
+		return Vector2i(int(value.x), int(value.y))
+	return Vector2i(-1, -1)
