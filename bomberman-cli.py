@@ -12,10 +12,10 @@ import signal
 import time
 from pathlib import Path
 
-# Get project root directory
+# Get project root directory (now unified)
 PROJECT_ROOT = Path(__file__).parent.absolute()
-SERVER_PATH = PROJECT_ROOT / "server"
-CLIENT_PATH = PROJECT_ROOT
+# Note: Server and client now run from the same unified project
+UNIFIED_PROJECT_PATH = PROJECT_ROOT
 
 class Colors:
     """Terminal colors"""
@@ -75,7 +75,7 @@ def start_server(args):
     if not check_godot():
         return 1
     
-    print_info(f"Server path: {SERVER_PATH}")
+    print_info(f"Project path: {UNIFIED_PROJECT_PATH}")
     print_info("Starting headless server on port 7777...")
     print_info("Press Ctrl+C to stop\n")
     
@@ -83,8 +83,8 @@ def start_server(args):
         cmd = [
             'godot',
             '--headless',
-            '--path', str(SERVER_PATH),  # Run from server directory
-            '--', '--server'  # Pass server argument
+            '--path', str(UNIFIED_PROJECT_PATH),
+            'res://main_server.tscn'  # Launch unified project server scene
         ]
         
         if args.verbose:
@@ -111,11 +111,11 @@ def start_client(args):
     if not check_godot():
         return 1
     
-    print_info(f"Client path: {CLIENT_PATH}")
+    print_info(f"Project path: {UNIFIED_PROJECT_PATH}")
     print_info("Launching client...\n")
     
     try:
-        cmd = ['godot', '--path', str(CLIENT_PATH)]
+        cmd = ['godot', '--path', str(UNIFIED_PROJECT_PATH)]
         
         if args.scene:
             cmd.extend(['res://' + args.scene])
@@ -143,13 +143,12 @@ def start_both(args):
     print_info("Starting server in background...")
     
     try:
-        # Start server in background (always show output for debugging)
+        # Start server in background (unified project, headless mode)
         server_cmd = [
             'godot',
             '--headless',
-            '--path', str(SERVER_PATH),
-            '--',
-            '--server'
+            '--path', str(UNIFIED_PROJECT_PATH),
+            'res://main_server.tscn'
         ]
         
         # Create log file for server output
@@ -167,9 +166,9 @@ def start_both(args):
         print_info("Waiting 2 seconds for server to initialize...")
         time.sleep(2)
         
-        # Start client with logging
+        # Start client (unified project, graphical mode)
         print_info("Launching client...\n")
-        client_cmd = ['godot', '--path', str(CLIENT_PATH)]
+        client_cmd = ['godot', '--path', str(UNIFIED_PROJECT_PATH)]
         
         if args.scene:
             client_cmd.extend(['res://' + args.scene])
@@ -255,9 +254,10 @@ def show_status(args):
     print(f"{Colors.BOLD}Project Paths:{Colors.END}")
     paths = {
         "Project Root": PROJECT_ROOT,
-        "Server": SERVER_PATH,
-        "Client": CLIENT_PATH,
+        "Unified Project": UNIFIED_PROJECT_PATH,
         "Shared": PROJECT_ROOT / "shared",
+        "Client": PROJECT_ROOT / "client",
+        "AI": PROJECT_ROOT / "ai",
     }
     
     for name, path in paths.items():
@@ -269,13 +269,15 @@ def show_status(args):
     # Check key files
     print(f"{Colors.BOLD}Key Files:{Colors.END}")
     key_files = [
-        "server/main_server.gd",
-        "server/game_instance.gd",
+        "main_server.gd",
+        "game_instance.gd",
         "client/main_client.gd",
         "client/game_view.gd",
         "shared/constants.gd",
         "shared/entities/server_player.gd",
         "shared/entities/server_bomb.gd",
+        "ai/bot_controller.gd",
+        "ai/bot_manager.gd",
     ]
     
     for file in key_files:
