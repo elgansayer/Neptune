@@ -144,6 +144,18 @@ func spawn_bots(count: int, personality: String = "BALANCED") -> void:
 		return
 	bot_manager.spawn_bots(count, personality)
 
+func test_farming_spot_search() -> void:
+	print("[GameInstance] TEST: Forcing farming spot search on all bots")
+	if bot_manager == null:
+		print("[GameInstance] TEST: No bot manager")
+		return
+	for bot in bot_manager.get_children():
+		if bot.has_method("test_farming_spot"):
+			bot.test_farming_spot()
+			print("[GameInstance] TEST: Called test_farming_spot on bot ", bot.name)
+		else:
+			print("[GameInstance] TEST: Bot missing test method: ", bot.name)
+
 static func _load_script_variant(paths: Array) -> Script:
 	for path in paths:
 		if ResourceLoader.exists(path):
@@ -638,3 +650,10 @@ func stop_nearby_kicked_bombs(player: ServerPlayer):
 			if bomb and bomb.is_kicked:
 				bomb.stop_kick()
 				print("[Game] Player ", player.username, " stopped kicked bomb at ", check_tile)
+
+# RPC: Forward bomb safety data to a specific client
+@rpc("any_peer", "call_remote", "unreliable")
+func bomb_safety_update(safety_data: Dictionary) -> void:
+	# This is called on game_instance but we need to forward to clients via their game_view
+	# The bot_controller will call this directly on clients via rpc_id
+	pass

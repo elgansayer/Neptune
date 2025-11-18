@@ -35,3 +35,7 @@ renderer/rendering_method.mobile="gl_compatibility"
 [gdextension]
 
 load_once=PackedStringArray("res://addons/limboai/bin/limboai.gdextension")
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/limboai/plugin.cfg")

@@ -85,6 +85,10 @@ func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player_ref) or player_ref.is_dead:
 		return
 	
+	# Automatic farming spot broadcasting disabled - use F8 key to manually trigger
+	# if Engine.get_physics_frames() % 60 == 0:
+	# 	_broadcast_farming_evaluation()
+	
 	# Opening Gambit State Machine (overrides normal behavior tree during opening)
 	if _current_state != BotState.NORMAL:
 		_execute_opening_gambit(delta)
@@ -395,4 +399,143 @@ func get_debug_payload() -> Dictionary:
 func _on_player_removed() -> void:
 	player_ref = null
 	queue_free()
+
+func test_farming_spot() -> void:
+	print("[BotController] TEST: Executing manual farming spot search")
+	if player_ref == null:
+		print("[BotController] TEST: No player ref")
+		return
+	
+	if game_instance == null or grid_sampler == null or bomb_safety_checker == null:
+		print("[BotController] TEST: Missing required components")
+		return
+	
+	# Directly call the farming spot evaluation logic
+	var current_tile = player_ref.get_tile_position()
+	var bomb_range = player_ref.bomb_range
+	var search_radius = 5
+	
+	print("[BotController] TEST: Searching from ", current_tile, " radius=", search_radius)
+	
+	var safety_eval := {}
+	var candidates_checked := 0
+	
+	for dx in range(-search_radius, search_radius + 1):
+		for dy in range(-search_radius, search_radius + 1):
+			if dx == 0 and dy == 0:
+				continue
+			
+			var check_tile = current_tile + Vector2i(dx, dy)
+			candidates_checked += 1
+			
+			# Check if walkable
+			if not grid_sampler.is_tile_walkable(check_tile):
+				continue
+			
+			# Count soft blocks in range
+			var soft_blocks = 0
+			for bx in range(-bomb_range, bomb_range + 1):
+				for by in range(-bomb_range, bomb_range + 1):
+					if abs(bx) + abs(by) > bomb_range:
+						continue
+					var block_tile = check_tile + Vector2i(bx, by)
+					if grid_sampler.has_soft_block(block_tile):
+						soft_blocks += 1
+			
+			if soft_blocks == 0:
+				continue
+			
+			# Check safety
+			var safety_result = bomb_safety_checker.is_bomb_placement_safe(check_tile, player_ref)
+			if not safety_result.safe:
+				continue
+			
+			# Calculate score
+			var margin = safety_result.get("margin_ms", 0.0)
+			var escape_distance = safety_result.get("escape_distance", 999)
+			
+			var safety_multiplier = 1.0
+			if escape_distance == 1:
+				safety_multiplier *= 1.5
+			elif escape_distance == 2:
+				safety_multiplier *= 1.2
+			elif escape_distance >= 5:
+				safety_multiplier *= 0.7
+			
+			if margin > 1000.0:
+				safety_multiplier *= 1.2
+			elif margin < 800.0:
+				safety_multiplier *= 0.8
+			
+			var damage_score = soft_blocks * 10.0
+			var final_score = damage_score * safety_multiplier
+			var distance = abs(dx) + abs(dy)
+			final_score -= distance * 0.3
+			
+			# Add to visualization data
+			var tile_key = "%d,%d" % [check_tile.x, check_tile.y]
+			var status = 2 if margin > 800.0 else 1
+			safety_eval[tile_key] = {
+				"status": status,
+				"soft_blocks": soft_blocks,
+				"margin_ms": margin,
+				"escape_distance": escape_distance,
+				"final_score": final_score
+			}
+	
+	print("[BotController] TEST: Checked %d candidates, found %d valid spots" % [candidates_checked, safety_eval.size()])
+	
+	# Broadcast to all clients
+	if not safety_eval.is_empty():
+		_broadcast_safety_to_clients(safety_eval)
+	else:
+		print("[BotController] TEST: No safe farming spots found")
+
+
+func _broadcast_safety_to_clients(safety_data: Dictionary) -> void:
+	"""Send safety evaluation to all connected clients"""
+	if not game_instance:
+		print("[BotController] Cannot broadcast: no game_instance")
+		return
+	
+	# Get the client game view node and call RPC on it
+	# Since we're on the server, we need to call the client's game_view
+	print("[BotController] Broadcasting %d tiles to clients via RPC" % safety_data.size())
+	
+	# Use the multiplayer's RPC system to call bomb_safety_update on all clients
+	if game_instance.has_method("rpc"):
+		game_instance.rpc("bomb_safety_update", safety_data)
+
+
+## Continuous farming spot evaluation broadcast for visualization
+func _broadcast_farming_evaluation() -> void:
+	if not is_instance_valid(player_ref):
+		print("[BotController] Broadcast skipped: player_ref invalid")
+		return
+	if not is_instance_valid(game_instance):
+		print("[BotController] Broadcast skipped: game_instance invalid")
+		return
+	
+	# Dynamically load and instantiate the farming spot task
+	var BTFindFarmingSpotScript = load("res://ai/tasks/actions/bt_find_farming_spot.gd")
+	if not BTFindFarmingSpotScript:
+		print("[BotController] Failed to load farming spot script")
+		return
+	
+	var task = BTFindFarmingSpotScript.new()
+	task.target_cell_var = "target_cell"
+	task.broadcast_safety = true
+	task.debug_logging = true
+	task.blackboard = _limbo_blackboard
+	
+	print("[BotController] Task created, blackboard valid: ", _limbo_blackboard != null)
+	
+	# Use the existing blackboard with all required variables
+	if _limbo_blackboard != null:
+		print("[BotController] Calling _tick...")
+		var result = task._tick(0.016)
+		print("[BotController] Broadcast complete, result: ", result)
+	else:
+		print("[BotController] Broadcast skipped: blackboard not initialized")
+
 

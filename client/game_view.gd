@@ -779,6 +779,11 @@ func _input(event):
 			if threat_visualizer and threat_visualizer.has_method("toggle_timing"):
 				threat_visualizer.show_timing = not threat_visualizer.show_timing
 				print("[GameView] Threat timing: ", "ON" if threat_visualizer.show_timing else "OFF")
+		elif event.keycode == Key.KEY_F8:
+			# Request test farming spot search from server
+			print("[GameView] Requesting test farming spot search (F8)")
+			if multiplayer.has_multiplayer_peer():
+				rpc_id(1, "test_farming_spot_broadcast")
 
 func update_debug_banner() -> void:
 	if not debug_label:
@@ -975,6 +980,7 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 		debug_tiles.erase(tile_key)
 
 # RPC: Receive bomb safety evaluation data from server
+@rpc("any_peer", "call_remote", "unreliable")
 func bomb_safety_update(safety_data: Dictionary) -> void:
 	"""Update bomb safety visualizer with server's tile evaluations"""
 	print("[GameView] RPC bomb_safety_update received with %d tiles" % safety_data.size())

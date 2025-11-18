@@ -162,6 +162,23 @@ func spawn_bot_request(personality: String = "BALANCED"):
 	active_games[game_id].spawn_bot(personality)
 	print("[Server] Peer ", peer_id, " requested bot (", personality, ") in ", game_id)
 
+@rpc("any_peer", "call_remote", "reliable")
+func test_farming_spot_broadcast():
+	var peer_id = multiplayer.get_remote_sender_id()
+	print("[Server] TEST: Peer ", peer_id, " requested farming spot search test (F8)")
+	if not player_to_game.has(peer_id):
+		print("[Server] TEST: Peer not in a game")
+		return
+	var game_id = player_to_game[peer_id]
+	if not active_games.has(game_id):
+		print("[Server] TEST: Game not found")
+		return
+	var game = active_games[game_id]
+	if game.has_method("test_farming_spot_search"):
+		game.test_farming_spot_search()
+	else:
+		print("[Server] TEST: GameInstance missing test method")
+
 # Quick-start game system (no lobby for now)
 func quick_start_game(peer_id: int, username: String):
 	# For now, all players join the SAME shared game

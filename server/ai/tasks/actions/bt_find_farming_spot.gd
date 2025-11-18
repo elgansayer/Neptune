@@ -46,6 +46,8 @@ func _tick(_delta: float) -> int:
 	# Safety visualization data for client
 	var safety_eval := {}
 	
+	print("[BTFindFarmingSpot] STARTING SEARCH - broadcast_safety=", broadcast_safety)
+	
 	if debug_logging:
 		print("[BTFindFarmingSpot] Starting search from ", current_tile, " radius=", search_radius, " bomb_range=", bomb_range)
 	
@@ -149,28 +151,29 @@ func _tick(_delta: float) -> int:
 			
 			# Proximity bonus (slightly favor closer tiles to avoid long walks)
 			var distance = abs(dx) + abs(dy)
-		score -= distance * 0.3
-		
-		if score > best_score:
-			best_score = score
-			best_spot = check_tile
-		
-		# Mark as safe or marginal for visualization based on safety margin
-		if broadcast_safety:
-			tile_key = "%d,%d" % [check_tile.x, check_tile.y]
-			var status = 2 if margin > 800.0 else 1  # Safe (cyan) if >800ms margin, marginal (orange) otherwise
-			var eval_data = {
-				"status": status,
-				"soft_blocks": soft_blocks_hit,
-				"explored_tiles": safety_result.get("explored_tiles", 0),
-				"margin_ms": margin,
-				"escape_distance": escape_distance,
-				"final_score": score  # Include score for debugging
-			}
-			if escape_tile:
-				eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
-			safety_eval[tile_key] = eval_data	# Broadcast safety data to all clients
-	if broadcast_safety and not safety_eval.is_empty():
+			score -= distance * 0.3
+			
+			if score > best_score:
+				best_score = score
+				best_spot = check_tile
+			
+			# Mark as safe or marginal for visualization based on safety margin
+			if broadcast_safety:
+				tile_key = "%d,%d" % [check_tile.x, check_tile.y]
+				var status = 2 if margin > 800.0 else 1  # Safe (cyan) if >800ms margin, marginal (orange) otherwise
+				var eval_data = {
+					"status": status,
+					"soft_blocks": soft_blocks_hit,
+					"explored_tiles": safety_result.get("explored_tiles", 0),
+					"margin_ms": margin,
+					"escape_distance": escape_distance,
+					"final_score": score  # Include score for debugging
+				}
+				if escape_tile:
+					eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
+				safety_eval[tile_key] = eval_data
+	
+	# Broadcast safety data to all clients
 	if broadcast_safety and not safety_eval.is_empty():
 		print("[BTFindFarmingSpot] Broadcasting %d safety evaluations" % safety_eval.size())
 		_broadcast_safety_data(safety_eval)
