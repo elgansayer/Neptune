@@ -109,31 +109,68 @@ func _tick(_delta: float) -> int:
 					print("  [REJECT] ", check_tile, " - no escape route (blocks=", soft_blocks_hit, ")")
 				continue
 			
-			# Score: prioritize closer tiles with more soft blocks
+			# CORRECTED SCORING: Safety-First Algorithm
+			# Score = Damage_Potential * Safety_Multiplier (NOT additive!)
+			
+			# Base damage score
+			var damage_score = soft_blocks_hit * 10.0
+			
+			# Safety multiplier based on escape quality
+			var margin = safety_result.get("margin_ms", 1000.0)
+			var escape_tile = safety_result.get("escape_tile", null)
+			
+			# Calculate escape distance (1-step escapes are ideal)
+			var escape_distance = 999
+			if escape_tile:
+				if escape_tile is Vector2i:
+					escape_distance = abs(escape_tile.x - check_tile.x) + abs(escape_tile.y - check_tile.y)
+				elif escape_tile is Dictionary:
+					escape_distance = abs(int(escape_tile.x) - check_tile.x) + abs(int(escape_tile.y) - check_tile.y)
+			
+			# Safety multiplier: heavily favor short escapes and high margins
+			var safety_multiplier = 1.0
+			
+			# Escape distance factor (1-step = 1.5x, 2-step = 1.2x, 3+ step = 1.0x)
+			if escape_distance == 1:
+				safety_multiplier *= 1.5  # HUGE bonus for "plant-and-hide-in-corner" strategy
+			elif escape_distance == 2:
+				safety_multiplier *= 1.2
+			elif escape_distance >= 5:
+				safety_multiplier *= 0.7  # Penalty for long escape runs
+			
+			# Margin factor (>1000ms = 1.2x, 800-1000ms = 1.0x, <800ms = 0.8x)
+			if margin > 1000.0:
+				safety_multiplier *= 1.2
+			elif margin < 800.0:
+				safety_multiplier *= 0.8
+			
+			# Final score: multiplicative formula
+			var score = damage_score * safety_multiplier
+			
+			# Proximity bonus (slightly favor closer tiles to avoid long walks)
 			var distance = abs(dx) + abs(dy)
-			var score = (soft_blocks_hit * 10.0) - (distance * 0.5)
-			
-			if score > best_score:
-				best_score = score
-				best_spot = check_tile
-			
-			# Mark as safe or marginal for visualization based on safety margin
-			if broadcast_safety:
-				tile_key = "%d,%d" % [check_tile.x, check_tile.y]
-				var margin = safety_result.get("margin_ms", 1000.0)
-				var status = 2 if margin > 800.0 else 1  # Safe (cyan) if >800ms margin, marginal (orange) otherwise
-				var escape_tile = safety_result.get("escape_tile", null)
-				var eval_data = {
-					"status": status,
-					"soft_blocks": soft_blocks_hit,
-					"explored_tiles": safety_result.get("explored_tiles", 0),
-					"margin_ms": margin
-				}
-				if escape_tile:
-					eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
-				safety_eval[tile_key] = eval_data
-	
-	# Broadcast safety data to all clients
+		score -= distance * 0.3
+		
+		if score > best_score:
+			best_score = score
+			best_spot = check_tile
+		
+		# Mark as safe or marginal for visualization based on safety margin
+		if broadcast_safety:
+			tile_key = "%d,%d" % [check_tile.x, check_tile.y]
+			var status = 2 if margin > 800.0 else 1  # Safe (cyan) if >800ms margin, marginal (orange) otherwise
+			var eval_data = {
+				"status": status,
+				"soft_blocks": soft_blocks_hit,
+				"explored_tiles": safety_result.get("explored_tiles", 0),
+				"margin_ms": margin,
+				"escape_distance": escape_distance,
+				"final_score": score  # Include score for debugging
+			}
+			if escape_tile:
+				eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
+			safety_eval[tile_key] = eval_data	# Broadcast safety data to all clients
+	if broadcast_safety and not safety_eval.is_empty():
 	if broadcast_safety and not safety_eval.is_empty():
 		print("[BTFindFarmingSpot] Broadcasting %d safety evaluations" % safety_eval.size())
 		_broadcast_safety_data(safety_eval)

@@ -167,21 +167,27 @@ def start_both(args):
         print_info("Waiting 2 seconds for server to initialize...")
         time.sleep(2)
         
-        # Start client
+        # Start client with logging
         print_info("Launching client...\n")
         client_cmd = ['godot', '--path', str(CLIENT_PATH)]
         
         if args.scene:
             client_cmd.extend(['res://' + args.scene])
         
-        subprocess.run(client_cmd)
+        # Create log file for client output
+        client_log = PROJECT_ROOT / 'client.log'
+        client_log_file = open(client_log, 'w')
+        
+        subprocess.run(client_cmd, stdout=client_log_file, stderr=subprocess.STDOUT)
         
         print_info("\nClient closed. Stopping server...")
+        client_log_file.close()
         log_file.close()
         server_process.terminate()
         server_process.wait(timeout=5)
         print_success("Server stopped")
         print_info(f"Server log saved to: {server_log}")
+        print_info(f"Client log saved to: {client_log}")
         
     except KeyboardInterrupt:
         print_info("\nShutting down...")
