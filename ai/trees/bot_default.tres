@@ -60,6 +60,7 @@ script = ExtResource("3_move")
 [sub_resource type="BTSequence" id="BTSequence_attack"]
 custom_name = "Chase + Attack Sequence"
 children = [SubResource("BTCondition_has_opponent"), SubResource("BTAction_find_opponent"), SubResource("BTAction_chase_move"), SubResource("BTAction_attack_place"), SubResource("BTAction_attack_plan_retreat"), SubResource("BTAction_attack_move")]
+_enabled = false
 
 [sub_resource type="BTCondition" id="BTCondition_has_powerup"]
 custom_name = "Has Powerup Available?"
@@ -77,6 +78,7 @@ script = ExtResource("3_move")
 [sub_resource type="BTSequence" id="BTSequence_collect"]
 custom_name = "Collect Powerup Sequence"
 children = [SubResource("BTCondition_has_powerup"), SubResource("BTAction_find_powerup"), SubResource("BTAction_collect_move")]
+_enabled = false
 
 [sub_resource type="BTAction" id="BTAction_dvb2i"]
 script = ExtResource("9_tn3ky")
@@ -116,6 +118,7 @@ children = [SubResource("BTRepeatUntilSuccess_y3cnp"), SubResource("BTAction_815
 custom_name = "Ambush/Patrol"
 script = ExtResource("9_ambush")
 wait_time = 2.0
+prefer_center = false
 
 [sub_resource type="BTSelector" id="BTSelector_root"]
 children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_dvb2i"), SubResource("BTAction_ambush")]

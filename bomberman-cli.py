@@ -83,8 +83,7 @@ def start_server(args):
         cmd = [
             'godot',
             '--headless',
-            '--path', str(UNIFIED_PROJECT_PATH),
-            'res://main_server.tscn'  # Launch unified project server scene
+            '--path', str(UNIFIED_PROJECT_PATH)
         ]
         
         if args.verbose:
@@ -117,6 +116,7 @@ def start_client(args):
     try:
         cmd = ['godot', '--path', str(UNIFIED_PROJECT_PATH)]
         
+        # Launch client (default scene is now login_screen.tscn)
         if args.scene:
             cmd.extend(['res://' + args.scene])
         
@@ -147,8 +147,7 @@ def start_both(args):
         server_cmd = [
             'godot',
             '--headless',
-            '--path', str(UNIFIED_PROJECT_PATH),
-            'res://main_server.tscn'
+            '--path', str(UNIFIED_PROJECT_PATH)
         ]
         
         # Create log file for server output
@@ -170,6 +169,7 @@ def start_both(args):
         print_info("Launching client...\n")
         client_cmd = ['godot', '--path', str(UNIFIED_PROJECT_PATH)]
         
+        # Launch client (default scene is now login_screen.tscn)
         if args.scene:
             client_cmd.extend(['res://' + args.scene])
         
@@ -325,6 +325,38 @@ def clean_project(args):
     
     return 0
 
+def kill_processes(args):
+    """Kill stray Godot processes"""
+    print_header("Killing Godot Processes")
+    
+    try:
+        # Find godot processes
+        cmd = ['pgrep', '-f', 'godot']
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            print_info("No Godot processes found")
+            return 0
+            
+        pids = result.stdout.strip().split('\n')
+        print_info(f"Found {len(pids)} process(es): {', '.join(pids)}")
+        
+        if not args.force:
+            response = input(f"\n{Colors.YELLOW}Kill these processes? (y/N): {Colors.END}")
+            if response.lower() != 'y':
+                print_info("Cancelled")
+                return 0
+        
+        # Kill them
+        subprocess.run(['kill', '-9'] + pids)
+        print_success("Processes killed")
+        
+    except Exception as e:
+        print_error(f"Failed to kill processes: {e}")
+        return 1
+    
+    return 0
+
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
@@ -337,6 +369,7 @@ Examples:
   %(prog)s both                Start both server and client
   %(prog)s status              Show project status
   %(prog)s test                Run tests
+  %(prog)s kill                Kill stray Godot processes
         """
     )
     
@@ -372,6 +405,12 @@ Examples:
     clean_parser.add_argument('-f', '--force', action='store_true',
                             help='skip confirmation')
     clean_parser.set_defaults(func=clean_project)
+
+    # Kill command
+    kill_parser = subparsers.add_parser('kill', help='kill stray godot processes')
+    kill_parser.add_argument('-f', '--force', action='store_true',
+                            help='skip confirmation')
+    kill_parser.set_defaults(func=kill_processes)
     
     args = parser.parse_args()
     

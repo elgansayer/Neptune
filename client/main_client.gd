@@ -17,6 +17,10 @@ signal authentication_succeeded
 signal authentication_failed(error: String)
 
 func _ready():
+	# Don't initialize client if running headless (server mode)
+	if DisplayServer.get_name() == "headless":
+		return
+	
 	# Don't initialize client if running server scene
 	if get_tree().current_scene and "server" in get_tree().current_scene.scene_file_path:
 		return
@@ -28,6 +32,11 @@ func _ready():
 	print("[Client] RPC config:", get_script().get_rpc_config())
 
 func connect_to_server(address: String = "127.0.0.1"):
+	# Safety check: Never connect as client if we are the headless server
+	if DisplayServer.get_name() == "headless":
+		print("[Client] Ignoring connect_to_server call in headless mode")
+		return
+
 	server_address = address
 	peer = ENetMultiplayerPeer.new()
 	
@@ -67,8 +76,8 @@ func login(user: String, password: String):
 	
 	print("[Client] Attempting login as: ", user)
 	username = user
-	# Call RPC through multiplayer
-	multiplayer.rpc_id(1, "authenticate_request", user, password)
+	# Call RPC through ServerMain autoload (exists on both client and server)
+	ServerMain.rpc_id(1, "authenticate_request", user, password)
 
 func register(user: String, password: String):
 	if not connected:
@@ -76,8 +85,8 @@ func register(user: String, password: String):
 		return
 	
 	print("[Client] Attempting registration: ", user)
-	# Call RPC through multiplayer
-	multiplayer.rpc_id(1, "register_request", user, password)
+	# Call RPC through ServerMain autoload (exists on both client and server)
+	ServerMain.rpc_id(1, "register_request", user, password)
 
 # === RPC Handlers ===
 
@@ -92,6 +101,10 @@ func register_request(_username: String, _password: String):
 
 @rpc("any_peer", "call_remote", "unreliable")
 func send_player_input(_input_data: Dictionary):
+	pass # Stub - actual implementation on server
+
+@rpc("any_peer", "call_remote", "reliable")
+func set_debug_timescale(_timescale: float):
 	pass # Stub - actual implementation on server
 
 # Client receives these from server authority

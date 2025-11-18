@@ -81,7 +81,12 @@ func _tick(delta: float) -> int:
 	if target_cell != _cached_target or _cached_path.is_empty():
 		_cached_target = target_cell
 		_current_waypoint_index = 0
-		_cached_path = grid_sampler.find_path(current_tile, target_cell, 40, player)
+		
+		# Special case: If we are already in the target tile, just move to center
+		if current_tile == target_cell:
+			_cached_path = [target_cell]
+		else:
+			_cached_path = grid_sampler.find_path(current_tile, target_cell, 40, player)
 		
 		if _cached_path.is_empty():
 			push_warning("[BTMoveToCell] No path found from %s to %s" % [current_tile, target_cell])

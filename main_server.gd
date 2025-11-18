@@ -17,18 +17,24 @@ func _ready():
 	# Only initialize once
 	if _initialized:
 		return
-	
-	# Don't initialize server if running client scene
-	if get_tree().current_scene and "client" in get_tree().current_scene.scene_file_path.to_lower():
-		print("[ServerMain] Running in client mode, skipping server initialization")
-		return
-	
-	# Also check if this is client mode by checking display server
-	if DisplayServer.get_name() != "headless" and get_tree().current_scene and get_tree().current_scene.scene_file_path.contains("login"):
-		print("[ServerMain] Running login screen, skipping server initialization")
-		return
-	
 	_initialized = true
+	
+	# Check if we're running in server mode
+	# Server runs when: headless OR main_server.tscn is the main scene OR has server scene
+	var is_headless = DisplayServer.get_name() == "headless"
+	var current_scene = get_tree().current_scene
+	var is_server_scene = current_scene and (current_scene.scene_file_path.contains("server") or current_scene == self)
+	var is_login_screen = current_scene and current_scene.scene_file_path.contains("login")
+	
+	# If we're showing the login screen, we're the client - don't initialize server
+	if not is_headless and is_login_screen:
+		print("[ServerMain] Running in client mode (login screen), acting as RPC router only")
+		return
+	
+	# If we're headless OR the server scene is loaded, we're the server
+	if not is_headless and not is_server_scene:
+		print("[ServerMain] Running in client mode, acting as RPC router only")
+		return
 	
 	print("=== Bomberman Server Starting ===")
 	print("[Server] Node name: ", name)
@@ -236,4 +242,3 @@ func quick_start_game(peer_id: int, username: String):
 # 	var game = active_games[game_id]
 # 	game.add_ai_bot(personality)
 # 	print("[Server] AI bot spawned in ", game_id, ". Total players: ", game.players.size())
-
