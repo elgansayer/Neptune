@@ -32,11 +32,14 @@ func update_safety_data(new_data: Dictionary) -> void:
 			"status": 0 (death trap) | 1 (marginal - tight timing) | 2 (safe with escape),
 			"escape_tile": Vector2i or null,
 			"explored_tiles": int,
-			"soft_blocks": int
+			"soft_blocks": int,
+			"margin_ms": float
 		}
 	}
 	"""
 	safety_data = new_data
+	if not new_data.is_empty():
+		print("[BombSafetyVisualizer] Received %d tile evaluations" % new_data.size())
 	queue_redraw()
 
 func _draw() -> void:
@@ -81,20 +84,32 @@ func _draw() -> void:
 			var text_pos = Vector2(pixel_x + 2, pixel_y + tile_size - 2)
 			draw_string(ThemeDB.fallback_font, text_pos, str(blocks), HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color.WHITE)
 		
-		# Draw arrow to escape tile if safe
-		if data.get("status") == 2 and data.has("escape_tile"):
+		# Draw arrow to escape tile if present (both marginal and safe)
+		if data.has("escape_tile"):
 			var escape = data.get("escape_tile")
+			# Handle both Vector2i and Dictionary {x, y} formats from server
+			var escape_pos: Vector2i
 			if escape is Vector2i:
-				var escape_center = Vector2(escape.x * tile_size + tile_size/2, escape.y * tile_size + tile_size/2)
-				var plant_center = Vector2(pixel_x + tile_size/2, pixel_y + tile_size/2)
-				draw_line(plant_center, escape_center, Color.CYAN, 1.0)
-				# Arrow head
-				var dir = (escape_center - plant_center).normalized()
-				var arrow_tip = escape_center
-				var arrow_left = arrow_tip - dir * 4 + Vector2(-dir.y, dir.x) * 3
-				var arrow_right = arrow_tip - dir * 4 + Vector2(dir.y, -dir.x) * 3
-				draw_line(arrow_tip, arrow_left, Color.CYAN, 1.0)
-				draw_line(arrow_tip, arrow_right, Color.CYAN, 1.0)
+				escape_pos = escape
+			elif escape is Dictionary and escape.has("x") and escape.has("y"):
+				escape_pos = Vector2i(int(escape.x), int(escape.y))
+			else:
+				continue  # Skip invalid escape data
+			
+			var escape_center = Vector2(escape_pos.x * tile_size + tile_size/2, escape_pos.y * tile_size + tile_size/2)
+			var plant_center = Vector2(pixel_x + tile_size/2, pixel_y + tile_size/2)
+			
+			# Color arrow based on status: cyan for safe, orange for marginal
+			var arrow_color = Color.CYAN if data.get("status") == 2 else Color.ORANGE
+			draw_line(plant_center, escape_center, arrow_color, 1.5)
+			
+			# Arrow head
+			var dir = (escape_center - plant_center).normalized()
+			var arrow_tip = escape_center
+			var arrow_left = arrow_tip - dir * 4 + Vector2(-dir.y, dir.x) * 3
+			var arrow_right = arrow_tip - dir * 4 + Vector2(dir.y, -dir.x) * 3
+			draw_line(arrow_tip, arrow_left, arrow_color, 1.5)
+			draw_line(arrow_tip, arrow_right, arrow_color, 1.5)
 
 func toggle_enabled() -> void:
 	enabled = !enabled

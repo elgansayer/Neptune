@@ -760,6 +760,11 @@ func _input(event):
 				bomb_safety_visualizer.visible = not bomb_safety_visualizer.visible
 				print("[GameView] Bomb safety visualizer: ", "ON" if bomb_safety_visualizer.visible else "OFF")
 			update_debug_banner()
+		elif event.keycode == Key.KEY_F5:
+			# Toggle grid coordinates on threat visualizer
+			if threat_visualizer and threat_visualizer.has_method("toggle_grid_coords"):
+				threat_visualizer.show_grid_coords = not threat_visualizer.show_grid_coords
+				print("[GameView] Threat grid coords: ", "ON" if threat_visualizer.show_grid_coords else "OFF")
 		elif event.keycode == Key.KEY_F6:
 			# Toggle slow motion for debugging
 			var new_scale := 1.0 if Engine.time_scale < 0.99 else 0.25
@@ -769,6 +774,11 @@ func _input(event):
 			if has_node("/root/ServerMain"):
 				get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", float(Engine.time_scale))
 			update_debug_banner()
+		elif event.keycode == Key.KEY_F7:
+			# Toggle timing display on threat visualizer
+			if threat_visualizer and threat_visualizer.has_method("toggle_timing"):
+				threat_visualizer.show_timing = not threat_visualizer.show_timing
+				print("[GameView] Threat timing: ", "ON" if threat_visualizer.show_timing else "OFF")
 
 func update_debug_banner() -> void:
 	if not debug_label:
@@ -967,8 +977,11 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 # RPC: Receive bomb safety evaluation data from server
 func bomb_safety_update(safety_data: Dictionary) -> void:
 	"""Update bomb safety visualizer with server's tile evaluations"""
+	print("[GameView] RPC bomb_safety_update received with %d tiles" % safety_data.size())
 	if bomb_safety_visualizer and bomb_safety_visualizer.has_method("update_safety_data"):
 		bomb_safety_visualizer.update_safety_data(safety_data)
+	else:
+		print("[GameView] WARNING: bomb_safety_visualizer not ready or missing method")
 
 func update_powerup(powerup_id: String, data: Dictionary):
 	var powerup_node

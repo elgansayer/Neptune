@@ -93,16 +93,18 @@ func _tick(_delta: float) -> int:
 			
 			# Check if we can safely plant a bomb HERE (at check_tile) and escape
 			# IMPORTANT: bot_pos is check_tile because that's where we'll be when planting
-			if not bomb_safety_checker.can_safely_plant_bomb(
+			var safety_result = bomb_safety_checker.check_plant_safety_detailed(
 				check_tile, # Where the bot will be standing when planting
 				check_tile, # Where the bomb will be planted
 				bomb_range,
 				5.0, # bot speed
 				current_time_msec
-			):
+			)
+			
+			if not safety_result.safe:
 				rejected_no_escape += 1
 				if broadcast_safety:
-					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_escape"}
+					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": safety_result.get("explored_tiles", 0), "reason": "no_escape"}
 				if debug_logging:
 					print("  [REJECT] ", check_tile, " - no escape route (blocks=", soft_blocks_hit, ")")
 				continue
@@ -115,14 +117,28 @@ func _tick(_delta: float) -> int:
 				best_score = score
 				best_spot = check_tile
 			
-			# Mark as safe for visualization
+			# Mark as safe or marginal for visualization based on safety margin
 			if broadcast_safety:
 				tile_key = "%d,%d" % [check_tile.x, check_tile.y]
-				safety_eval[tile_key] = {"status": 2, "soft_blocks": soft_blocks_hit, "explored_tiles": 0}
+				var margin = safety_result.get("margin_ms", 1000.0)
+				var status = 2 if margin > 800.0 else 1  # Safe (cyan) if >800ms margin, marginal (orange) otherwise
+				var escape_tile = safety_result.get("escape_tile", null)
+				var eval_data = {
+					"status": status,
+					"soft_blocks": soft_blocks_hit,
+					"explored_tiles": safety_result.get("explored_tiles", 0),
+					"margin_ms": margin
+				}
+				if escape_tile:
+					eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
+				safety_eval[tile_key] = eval_data
 	
 	# Broadcast safety data to all clients
 	if broadcast_safety and not safety_eval.is_empty():
+		print("[BTFindFarmingSpot] Broadcasting %d safety evaluations" % safety_eval.size())
 		_broadcast_safety_data(safety_eval)
+	elif broadcast_safety:
+		print("[BTFindFarmingSpot] No safety data to broadcast (empty)")
 	
 	# If we found a good spot, store it
 	if best_spot != INVALID_TILE:
@@ -210,16 +226,30 @@ func _tile_key(tile: Vector2i) -> String:
 
 func _broadcast_safety_data(data: Dictionary) -> void:
 	"""Send safety evaluation to all clients for visualization"""
-	# Get the game instance to access the multiplayer peer
-	var game_instance = agent.get_node("/root/ServerMain")
-	if game_instance and game_instance.has_node("GameInstance"):
-		var game = game_instance.get_node("GameInstance")
-		# Broadcast to all connected clients via ClientMain stub
-		if game.multiplayer and game.multiplayer.get_peers().size() > 0:
-			for peer_id in game.multiplayer.get_peers():
-				if peer_id > 0:  # Skip server itself
-					ClientMain.rpc_id(peer_id, "bomb_safety_update", data)
-			print("[BotAI] Broadcasting safety eval with ", data.size(), " tiles to ", game.multiplayer.get_peers().size(), " client(s)")
+	# Get the bot player node from blackboard
+	var player_node = blackboard.get_var("player")
+	if not player_node:
+		return
+	
+	# Navigate to the game instance (player's parent)
+	var game_instance = player_node.get_parent()
+	if not game_instance:
+		return
+	
+	# Broadcast via game instance's multiplayer peer
+	if not game_instance.multiplayer:
+		return
+	
+	var peers = game_instance.multiplayer.get_peers()
+	if peers.is_empty():
+		return
+	
+	# Send RPC to all connected clients
+	for peer_id in peers:
+		if peer_id > 0:  # Skip server (ID 1)
+			ClientMain.rpc_id(peer_id, "bomb_safety_update", data)
+	
+	print("[BotAI] Broadcasted safety data: %d tiles to %d peers" % [data.size(), peers.size()])
 
 func _coerce_to_tile(value) -> Vector2i:
 	if value == null:

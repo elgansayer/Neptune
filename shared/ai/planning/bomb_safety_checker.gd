@@ -99,6 +99,89 @@ func can_safely_plant_bomb(
 		print("  [BombSafetyChecker] ✗ No escape found (explored ", visited.size(), " tiles)")
 	return false
 
+## Detailed safety check that returns escape info and margin
+func check_plant_safety_detailed(
+	bot_pos: Vector2i,
+	plant_pos: Vector2i,
+	bomb_range: int,
+	bot_speed_tiles_per_sec: float = 5.0,
+	current_time_msec: float = 0.0
+) -> Dictionary:
+	"""Returns {safe: bool, escape_tile: Vector2i, margin_ms: float, explored_tiles: int}"""
+	
+	if _ai_manager == null or _grid_sampler == null:
+		return {"safe": false, "explored_tiles": 0}
+	
+	var future_threat_matrix: Dictionary = _ai_manager.simulate_threat_matrix(
+		plant_pos,
+		bomb_range,
+		current_time_msec
+	)
+	
+	var bomb_fuse_time_sec := 3.0
+	var time_to_explode_msec := current_time_msec + (bomb_fuse_time_sec * 1000.0)
+	var msec_per_tile := (1.0 / bot_speed_tiles_per_sec) * 1000.0
+	
+	var queue: Array[Vector2i] = [bot_pos]
+	var visited: Dictionary = {_tile_key(bot_pos): current_time_msec}
+	var head := 0
+	var best_escape: Vector2i = Vector2i(-1, -1)
+	var best_margin: float = -INF
+	
+	while head < queue.size():
+		var current_pos := queue[head]
+		head += 1
+		
+		var current_key := _tile_key(current_pos)
+		var current_arrival_time: float = visited[current_key]
+		
+		# Check if this is a safe haven
+		if not future_threat_matrix.has(current_key):
+			var margin = INF  # Perfectly safe - never explodes
+			return {
+				"safe": true,
+				"escape_tile": current_pos,
+				"margin_ms": margin,
+				"explored_tiles": visited.size()
+			}
+		
+		# Track best marginal option even if not perfectly safe
+		var tile_lethal_time: float = future_threat_matrix[current_key]
+		var margin = tile_lethal_time - current_arrival_time
+		if margin > best_margin:
+			best_margin = margin
+			best_escape = current_pos
+		
+		# Continue BFS if we can still traverse this tile
+		if current_arrival_time < tile_lethal_time:
+			for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+				var next_pos := current_pos + dir
+				var next_key := _tile_key(next_pos)
+				var next_arrival_time := current_arrival_time + msec_per_tile
+				
+				if not _grid_sampler.is_tile_walkable(next_pos):
+					continue
+				
+				if visited.has(next_key) and visited[next_key] <= next_arrival_time:
+					continue
+				
+				var next_safe := true
+				if future_threat_matrix.has(next_key):
+					var next_lethal: float = future_threat_matrix[next_key]
+					next_safe = next_arrival_time < next_lethal
+				var leave_current_safe := next_arrival_time <= tile_lethal_time
+				if leave_current_safe and next_safe:
+					visited[next_key] = next_arrival_time
+					queue.append(next_pos)
+	
+	# No perfect safe haven found - return best marginal option
+	return {
+		"safe": false,
+		"escape_tile": best_escape if best_escape != Vector2i(-1, -1) else null,
+		"margin_ms": best_margin if best_margin > -INF else 0.0,
+		"explored_tiles": visited.size()
+	}
+
 ## Tile key helper
 func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]
