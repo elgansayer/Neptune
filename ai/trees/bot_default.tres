@@ -81,7 +81,6 @@ children = [SubResource("BTCondition_has_powerup"), SubResource("BTAction_find_p
 [sub_resource type="BTAction" id="BTAction_dvb2i"]
 script = ExtResource("9_tn3ky")
 search_radius = 8
-debug_logging = true
 
 [sub_resource type="BTCondition" id="BTCondition_dvb2i"]
 script = ExtResource("10_y3cnp")

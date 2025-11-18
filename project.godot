@@ -19,7 +19,6 @@ config/icon="res://icon.svg"
 
 PCKLoader="*res://scripts/pck_loader.gd"
 ClientMain="*res://client/main_client.gd"
-ServerMain="*res://main_server.gd"
 Constants="*res://shared/constants.gd"
 GameConfig="*res://shared/game_config.gd"
 

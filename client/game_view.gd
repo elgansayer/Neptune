@@ -76,8 +76,8 @@ func _ready():
 
 	# Start in slow motion for debugging and inform server
 	Engine.time_scale = 0.25
-	if has_node("/root/ServerMain"):
-		get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", 0.25)
+	if multiplayer.has_multiplayer_peer():
+		multiplayer.rpc_id(1, "set_debug_timescale", 0.25)
 	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
@@ -726,7 +726,7 @@ func _physics_process(delta):
 		# Visual position comes from server via reconciliation in update_player
 	
 	# Send input to server (server remains authoritative)
-	get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
+	multiplayer.rpc_id(1, "send_player_input", {
 		"input_x": input_x,
 		"input_y": input_y,
 		"place_bomb": place_bomb,
@@ -771,8 +771,8 @@ func _input(event):
 			Engine.time_scale = new_scale
 			print("[GameView] Debug time_scale set to ", Engine.time_scale)
 			# Ask server to match time scale for consistent debug
-			if has_node("/root/ServerMain"):
-				get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", float(Engine.time_scale))
+			if multiplayer.has_multiplayer_peer():
+				multiplayer.rpc_id(1, "set_debug_timescale", float(Engine.time_scale))
 			update_debug_banner()
 		elif event.keycode == Key.KEY_F7:
 			# Toggle timing display on threat visualizer

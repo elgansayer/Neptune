@@ -446,4 +446,3 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 		_broadcast_safety_data(safety_eval)
 	else:
 		print("BTFind: safety_eval is EMPTY - nothing to broadcast")
-

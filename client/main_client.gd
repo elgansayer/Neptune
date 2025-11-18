@@ -67,8 +67,8 @@ func login(user: String, password: String):
 	
 	print("[Client] Attempting login as: ", user)
 	username = user
-	# Call RPC through ServerMain autoload
-	ServerMain.rpc_id(1, "authenticate_request", user, password)
+	# Call RPC through multiplayer
+	multiplayer.rpc_id(1, "authenticate_request", user, password)
 
 func register(user: String, password: String):
 	if not connected:
@@ -76,8 +76,8 @@ func register(user: String, password: String):
 		return
 	
 	print("[Client] Attempting registration: ", user)
-	# Call RPC through ServerMain autoload
-	ServerMain.rpc_id(1, "register_request", user, password)
+	# Call RPC through multiplayer
+	multiplayer.rpc_id(1, "register_request", user, password)
 
 # === RPC Handlers ===
 
