@@ -250,10 +250,10 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	player.position = spawn_position
 	player.name = "Player_" + str(peer_id)
 	
-	# TESTING: Give both abilities by default for testing
-	player.has_bomb_kicker = true
+	# TESTING: Disable bomb kicker for now, enable Power Glove for testing
+	player.has_bomb_kicker = false
 	player.has_power_glove = true
-	print("[Game] Player spawned with bomb kicker and Power Glove for testing")
+	print("[Game] Player spawned with Power Glove (bomb kicker disabled for testing)")
 	
 	players[peer_id] = player
 	add_child(player)
@@ -393,6 +393,15 @@ func place_bomb(player: ServerPlayer):
 	bomb.tree_exited.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
+	
+	# CRITICAL: Immediately update threat matrix so AI can react to newly placed bomb
+	if ai_manager:
+		ai_manager.refresh_threat_matrix(Time.get_ticks_msec())
+		print("[Game] Threat matrix refreshed immediately after bomb placement")
+	
+	# Also refresh BotManager's perception (HazardPredictor)
+	if bot_manager and bot_manager.has_method("refresh_perception"):
+		bot_manager.refresh_perception()
 
 	# Broadcast AI debug data (throttled)
 	if bot_manager and Engine.get_physics_frames() % 6 == 0:  # Every 6 frames (10Hz at 60fps)

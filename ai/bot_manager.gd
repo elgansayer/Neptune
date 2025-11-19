@@ -222,3 +222,8 @@ func _exit_tree() -> void:
 			bt_player.active = false
 			bt_player.queue_free()
 	_bot_players.clear()
+
+func refresh_perception() -> void:
+	"""Force immediate refresh of perception modules (e.g. after bomb placement)"""
+	if hazard_predictor:
+		hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)

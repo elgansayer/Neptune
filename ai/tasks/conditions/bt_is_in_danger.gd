@@ -16,6 +16,7 @@ func _generate_name() -> String:
 func _tick(delta: float) -> int:
 	var player = blackboard.get_var("player")
 	var hazard_predictor = blackboard.get_var("hazard_predictor")
+	var grid_sampler = blackboard.get_var("grid_sampler")
 	
 	if not player or not hazard_predictor:
 		push_warning("[BTIsInDanger] Missing required blackboard variables: player or hazard_predictor")
@@ -51,3 +52,31 @@ func _tick(delta: float) -> int:
 func _debug(message: String) -> void:
 	if debug_logging:
 		print("[BTIsInDanger] ", message)
+
+func _get_blast_tiles(center: Vector2i, range_val: int, grid_sampler) -> Array[Vector2i]:
+	"""Calculate which tiles will be hit by bomb explosion (respecting walls)"""
+	var tiles: Array[Vector2i] = [center]
+	
+	if not grid_sampler:
+		return tiles
+	
+	# Check four cardinal directions
+	var directions := [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.UP, Vector2i.DOWN]
+	
+	for dir: Vector2i in directions:
+		for dist in range(1, range_val + 1):
+			var tile: Vector2i = center + (dir * dist)
+			
+			# Check if walkable (walls block explosions)
+			if not grid_sampler.is_tile_walkable(tile):
+				var tile_type = grid_sampler.get_tile_type(tile)
+				if tile_type == 1:  # Hard wall - stop blast
+					break
+				elif tile_type == 2:  # Soft block - blast hits it but stops
+					tiles.append(tile)
+					break
+			else:
+				# Empty tile - blast continues
+				tiles.append(tile)
+	
+	return tiles

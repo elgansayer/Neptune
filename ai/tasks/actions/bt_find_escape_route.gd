@@ -29,31 +29,6 @@ func _tick(delta: float) -> int:
 	var bot_speed_tiles_per_sec = 5.0
 	var msec_per_tile = (1.0 / bot_speed_tiles_per_sec) * 1000.0
 	
-	# CRITICAL: Check if we just planted a bomb - if so, simulate its threat
-	var last_bomb_placed_at = blackboard.get_var("last_bomb_placed_at")
-	var last_bomb_placed_time = blackboard.get_var("last_bomb_placed_time")
-	
-	var simulated_threat_matrix = threat_matrix.duplicate()
-	
-	if last_bomb_placed_at and last_bomb_placed_time:
-		var time_since_plant = (current_time_msec / 1000.0) - last_bomb_placed_time
-		# If we planted a bomb in the last 0.5 seconds, add it to threat matrix
-		if time_since_plant < 0.5:
-			var bomb_range = player.bomb_range
-			var explosion_time = current_time_msec + 3000.0  # 3 second fuse
-			
-			# Add blast tiles to simulated threat matrix
-			var blast_tiles = _get_blast_tiles(last_bomb_placed_at, bomb_range, grid_sampler)
-			for tile in blast_tiles:
-				var tile_key = _tile_key(tile)
-				if not simulated_threat_matrix.has(tile_key) or explosion_time < simulated_threat_matrix[tile_key]:
-					simulated_threat_matrix[tile_key] = explosion_time
-			
-			print("[BTFindEscapeRoute] Simulating threat from bomb just planted at ", last_bomb_placed_at)
-			print("[BTFindEscapeRoute] Bomb will hit tiles: ", blast_tiles)
-			print("[BTFindEscapeRoute] Current position: ", player_tile)
-			print("[BTFindEscapeRoute] Is current position in blast? ", blast_tiles.has(player_tile))
-	
 	# BFS to find safe tiles considering TIMING and WALLS
 	# A tile is safe if either:
 	# 1. It's not in threat matrix at all (never explodes)
@@ -75,13 +50,13 @@ func _tick(delta: float) -> int:
 		
 		# CRITICAL: Don't consider current position as safe if it's in blast zone
 		# Bot must MOVE to escape, not stay put
-		if current_pos == player_tile and simulated_threat_matrix.has(current_key):
+		if current_pos == player_tile and threat_matrix.has(current_key):
 			# Current position is threatened - must move away
 			# Don't return this as safe, just explore neighbors
 			pass
 		else:
-			# Check if this tile is safe (using simulated threat matrix)
-			var is_permanently_safe = not simulated_threat_matrix.has(current_key)
+			# Check if this tile is safe (using threat matrix)
+			var is_permanently_safe = not threat_matrix.has(current_key)
 			var safety_margin: float = 0.0
 			
 			if is_permanently_safe:
@@ -92,19 +67,20 @@ func _tick(delta: float) -> int:
 				return SUCCESS
 			else:
 				# Tile will explode at some point - check if we have time
-				var explosion_time: float = simulated_threat_matrix[current_key]
+				var explosion_time: float = threat_matrix[current_key]
 				safety_margin = explosion_time - arrival_time
 				
-				# Need at least 500ms safety margin to consider it "safe enough"
-				if safety_margin > 500.0:
+				# Need at least 1000ms safety margin (increased from 500ms) to consider it "safe enough"
+				# This discourages stopping on tiles that will explode, even if fuse is long
+				if safety_margin > 1000.0:
 					if safety_margin > best_safety_margin:
 						best_safety_margin = safety_margin
 						best_safe_tile = current_pos
 		
 		# Continue searching - explore neighbors if we can pass through safely
 		var can_pass_through = false
-		if simulated_threat_matrix.has(current_key):
-			var explosion_time = simulated_threat_matrix[current_key]
+		if threat_matrix.has(current_key):
+			var explosion_time = threat_matrix[current_key]
 			can_pass_through = arrival_time < explosion_time  # Can we pass before explosion?
 		else:
 			can_pass_through = true  # Safe tile, definitely can pass
