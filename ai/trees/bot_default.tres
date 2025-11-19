@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=39 format=3 uid="uid://chqxceh757yg0"]
+[gd_resource type="BehaviorTree" load_steps=33 format=3 uid="uid://chqxceh757yg0"]
 
 [ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://ai/tasks/conditions/bt_is_in_danger.gd" id="1_danger"]
 [ext_resource type="Script" uid="uid://3btukveudf74" path="res://ai/tasks/actions/bt_find_escape_route.gd" id="2_escape"]
@@ -17,7 +17,6 @@
 custom_name = "Check Danger"
 script = ExtResource("1_danger")
 check_immediate = false
-evaluate_all_threats = true
 
 [sub_resource type="BTAction" id="BTAction_escape_find"]
 custom_name = "Find Escape Route"
@@ -84,23 +83,15 @@ _enabled = false
 custom_name = "Find Farming Spot"
 script = ExtResource("9_tn3ky")
 search_radius = 8
-target_cell_var = &"target_cell"
-debug_logging = true
-broadcast_safety = true
 
 [sub_resource type="BTAction" id="BTAction_move_farming"]
 custom_name = "Move To Farming Spot"
 script = ExtResource("3_move")
-cell_var = &"target_cell"
-reach_threshold = 0.1
+clear_on_success = false
 
 [sub_resource type="BTAction" id="BTAction_place_farming"]
 custom_name = "Place Bomb (Farming)"
 script = ExtResource("4_bomb")
-check_capacity = true
-check_existing = true
-require_at_target = true
-target_cell_var = &"target_cell"
 
 [sub_resource type="BTSequence" id="BTSequence_farming"]
 custom_name = "Farm Blocks Sequence"

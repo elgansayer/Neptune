@@ -29,7 +29,12 @@ func _tick(delta: float) -> int:
 	
 	# If require_at_target is enabled, verify we're at the target cell before planting
 	if require_at_target:
-		var target_tile = _coerce_to_tile(blackboard.get_var(target_cell_var))
+		var target_val = blackboard.get_var(target_cell_var)
+		if target_val == null:
+			# No target set, cannot verify position
+			return FAILURE
+			
+		var target_tile = _coerce_to_tile(target_val)
 		if target_tile != Vector2i(-1, -1) and player_tile != target_tile:
 			# Not at target yet, move failed or incomplete
 			print("[BTPlaceBomb] REJECTED: Not at target tile yet. Current=", player_tile, " Target=", target_tile)
