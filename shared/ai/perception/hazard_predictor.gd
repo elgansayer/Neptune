@@ -47,6 +47,11 @@ func is_tile_safe(tile: Vector2i, current_time: float, buffer: float = -1.0) -> 
 		return true
 	return current_time + buffer < danger_time
 
+func is_tile_threatened(tile: Vector2i) -> bool:
+	"""Check if tile has any threat registered, regardless of time"""
+	var danger_time = _danger_cache.get(_tile_key(tile), -INF)
+	return danger_time > 0.0
+
 func find_escape_tiles(from_tile: Vector2i, current_time: float, max_distance: int = 6) -> Array[Vector2i]:
 	if _grid_sampler == null:
 		return []

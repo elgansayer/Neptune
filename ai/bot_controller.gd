@@ -85,9 +85,10 @@ func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player_ref) or player_ref.is_dead:
 		return
 	
-	# Automatic farming spot broadcasting disabled - use F8 key to manually trigger
-	# if Engine.get_physics_frames() % 60 == 0:
-	# 	_broadcast_farming_evaluation()
+	# Continuous farming spot broadcasting for visualization
+	# Broadcast every 60 frames (~1 second at 60 FPS)
+	if Engine.get_physics_frames() % 60 == 0:
+		_broadcast_farming_evaluation()
 	
 	# Opening Gambit State Machine (overrides normal behavior tree during opening)
 	if _current_state != BotState.NORMAL:
@@ -257,6 +258,7 @@ func _build_limbo_tree() -> void:
 	var is_in_danger = load("res://ai/tasks/conditions/bt_is_in_danger.gd").new()
 	is_in_danger.danger_buffer = _personality_profile.get("danger_buffer", 1.0)
 	is_in_danger.check_immediate = false
+	is_in_danger.evaluate_all_threats = true
 	var find_escape = load("res://ai/tasks/actions/bt_find_escape_route.gd").new()
 	find_escape.escape_radius = _personality_profile.get("escape_radius", 8)
 	find_escape.target_cell_var = &"target_cell"
@@ -439,7 +441,8 @@ func test_farming_spot() -> void:
 					if abs(bx) + abs(by) > bomb_range:
 						continue
 					var block_tile = check_tile + Vector2i(bx, by)
-					if grid_sampler.has_soft_block(block_tile):
+					# Use get_tile_type instead of has_soft_block
+					if grid_sampler.get_tile_type(block_tile) == 2:  # 2 = soft block
 						soft_blocks += 1
 			
 			if soft_blocks == 0:
@@ -518,33 +521,160 @@ func _broadcast_safety_to_clients(safety_data: Dictionary) -> void:
 
 ## Continuous farming spot evaluation broadcast for visualization
 func _broadcast_farming_evaluation() -> void:
-	if not is_instance_valid(player_ref):
-		print("[BotController] Broadcast skipped: player_ref invalid")
+	"""Continuously broadcast farming spot evaluation for visualization"""
+	if not is_instance_valid(player_ref) or player_ref.is_dead:
 		return
 	if not is_instance_valid(game_instance):
-		print("[BotController] Broadcast skipped: game_instance invalid")
+		return
+	if not _limbo_blackboard:
 		return
 	
-	# Dynamically load and instantiate the farming spot task
-	var BTFindFarmingSpotScript = load("res://ai/tasks/actions/bt_find_farming_spot.gd")
-	if not BTFindFarmingSpotScript:
-		print("[BotController] Failed to load farming spot script")
+	# Get dependencies from blackboard
+	var grid_sampler_inst = _limbo_blackboard.get_var("grid_sampler")
+	var bomb_safety_checker_inst = _limbo_blackboard.get_var("bomb_safety_checker")
+	var ai_manager = _limbo_blackboard.get_var("ai_manager")
+	
+	if not grid_sampler_inst or not bomb_safety_checker_inst or not ai_manager:
 		return
 	
-	var task = BTFindFarmingSpotScript.new()
-	task.target_cell_var = "target_cell"
-	task.broadcast_safety = true
-	task.debug_logging = true
-	task.blackboard = _limbo_blackboard
+	print("[BotController] *** MANUAL BROADCAST - Starting evaluation")
 	
-	print("[BotController] Task created, blackboard valid: ", _limbo_blackboard != null)
+	# Perform the farming spot evaluation
+	var current_tile = player_ref.get_tile_position()
+	var bomb_range = player_ref.bomb_range
+	var current_time_msec = Time.get_ticks_msec()
+	var search_radius = 8
 	
-	# Use the existing blackboard with all required variables
-	if _limbo_blackboard != null:
-		print("[BotController] Calling _tick...")
-		var result = task._tick(0.016)
-		print("[BotController] Broadcast complete, result: ", result)
+	var safety_eval := {}
+	
+	for dx in range(-search_radius, search_radius + 1):
+		for dy in range(-search_radius, search_radius + 1):
+			var check_tile = current_tile + Vector2i(dx, dy)
+			
+			if not grid_sampler_inst.is_tile_walkable(check_tile):
+				continue
+			
+			# Count soft blocks using the helper function
+			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, grid_sampler_inst)
+			if soft_blocks_hit == 0:
+				continue
+			
+			var tile_key := "%d,%d" % [check_tile.x, check_tile.y]
+			
+			# Check path for non-adjacent tiles
+			var manhattan_dist = abs(dx) + abs(dy)
+			if manhattan_dist > 1:
+				var path = grid_sampler_inst.find_path(current_tile, check_tile, 15, player_ref)
+				if path.is_empty():
+					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_path"}
+					continue
+			
+			# Check if there's a safe tile nearby
+			if not _has_safe_tile_nearby_check(check_tile, grid_sampler_inst, current_time_msec, ai_manager):
+				safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_nearby_safe"}
+				continue
+			
+			# Check escape safety
+			var safety_result = bomb_safety_checker_inst.check_plant_safety_detailed(
+				check_tile,
+				check_tile,
+				bomb_range,
+				5.0,
+				current_time_msec
+			)
+			
+			if not safety_result.safe:
+				safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": safety_result.get("explored_tiles", 0), "reason": "no_escape"}
+				continue
+			
+			# Calculate score (same logic as BTFindFarmingSpot)
+			var damage_score = soft_blocks_hit * 10.0
+			var margin = safety_result.get("margin_ms", 1000.0)
+			var escape_tile = safety_result.get("escape_tile", null)
+			
+			var escape_distance = 999
+			if escape_tile:
+				if escape_tile is Vector2i:
+					escape_distance = abs(escape_tile.x - check_tile.x) + abs(escape_tile.y - check_tile.y)
+				elif escape_tile is Dictionary:
+					escape_distance = abs(int(escape_tile.x) - check_tile.x) + abs(int(escape_tile.y) - check_tile.y)
+			
+			var safety_multiplier = 1.0
+			if escape_distance == 1:
+				safety_multiplier *= 1.5
+			elif escape_distance == 2:
+				safety_multiplier *= 1.2
+			elif escape_distance >= 5:
+				safety_multiplier *= 0.7
+			
+			if margin > 1000.0:
+				safety_multiplier *= 1.2
+			elif margin < 800.0:
+				safety_multiplier *= 0.8
+			
+			var score = damage_score * safety_multiplier
+			var distance = abs(dx) + abs(dy)
+			score -= distance * 0.3
+			
+			var status = 2 if margin > 800.0 else 1
+			var eval_data = {
+				"status": status,
+				"soft_blocks": soft_blocks_hit,
+				"explored_tiles": safety_result.get("explored_tiles", 0),
+				"margin_ms": margin,
+				"escape_distance": escape_distance,
+				"final_score": score
+			}
+			if escape_tile:
+				eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
+			safety_eval[tile_key] = eval_data
+	
+	# Broadcast to clients
+	if not safety_eval.is_empty():
+		print("[BotController] *** Broadcasting %d tiles to clients" % safety_eval.size())
+		_broadcast_safety_to_clients(safety_eval)
 	else:
-		print("[BotController] Broadcast skipped: blackboard not initialized")
+		print("[BotController] *** No valid farming spots to broadcast")
+
+func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler) -> int:
+	"""Count soft blocks that would be hit by a bomb at this position"""
+	var count = 0
+	
+	# Check each direction
+	for dir in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+		for dist in range(1, bomb_range + 1):
+			var tile = center + dir * dist
+			var tile_type = grid_sampler.get_tile_type(tile)
+			if tile_type == 2: # Soft block
+				count += 1
+				break
+			if tile_type == 1: # Hard block
+				break
+	
+	return count
+
+func _has_safe_tile_nearby_check(position: Vector2i, grid_sampler, current_time_msec: float, ai_manager) -> bool:
+	"""Check if there's at least one safe tile nearby"""
+	if not ai_manager:
+		return false
+	
+	var threat_matrix = ai_manager.get_current_threat_matrix()
+	var max_distance = 4
+	
+	for dx in range(-max_distance, max_distance + 1):
+		for dy in range(-max_distance, max_distance + 1):
+			var check_pos = position + Vector2i(dx, dy)
+			
+			if not grid_sampler.is_tile_walkable(check_pos):
+				continue
+			
+			var tile_key := "%d,%d" % [check_pos.x, check_pos.y]
+			if not threat_matrix.has(tile_key):
+				return true
+			
+			if threat_matrix[tile_key] > current_time_msec + 2500.0:
+				return true
+	
+	return false
 
 

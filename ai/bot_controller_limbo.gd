@@ -66,6 +66,7 @@ func _build_behavior_tree_for_personality(personality_name: String) -> BTTask:
 	
 	var is_in_danger = preload("res://ai/tasks/conditions/bt_is_in_danger.gd").new()
 	is_in_danger.danger_buffer = _personality_profile.get("danger_buffer", 1.0)
+	is_in_danger.evaluate_all_threats = true
 	escape_seq.add_child(is_in_danger)
 	
 	var find_escape = preload("res://ai/tasks/actions/bt_find_escape_route.gd").new()

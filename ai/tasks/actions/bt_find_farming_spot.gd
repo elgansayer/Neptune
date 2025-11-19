@@ -17,12 +17,14 @@ func _generate_name() -> String:
 	return "FindFarmingSpot(radius=%d)" % search_radius
 
 func _tick(_delta: float) -> int:
+	print("[BTFindFarmingSpot] _tick() called - delta=", _delta)
 	var player = blackboard.get_var("player")
 	var game_instance = blackboard.get_var("game_instance")
 	var grid_sampler = blackboard.get_var("grid_sampler")
 	var bomb_safety_checker = blackboard.get_var("bomb_safety_checker")
 	
 	if not player or not game_instance or not grid_sampler or not bomb_safety_checker:
+		print("[BTFindFarmingSpot] _tick() FAILURE - missing dependencies")
 		return FAILURE
 	
 	var current_tile = player.get_tile_position()
@@ -32,8 +34,10 @@ func _tick(_delta: float) -> int:
 	# If we already have a valid farming target, reuse it to avoid expensive rescans every tick
 	var existing_target = _coerce_to_tile(blackboard.get_var(target_cell_var))
 	if _is_valid_target(existing_target, grid_sampler, bomb_range):
+		print("[BTFindFarmingSpot] *** REUSING CACHED TARGET at ", existing_target, " always_broadcast=", always_broadcast)
 		# Still broadcast for continuous visualization even when reusing target
 		if always_broadcast:
+			print("[BTFindFarmingSpot] *** BROADCASTING FOR CACHED TARGET")
 			var ai_manager = blackboard.get_var("ai_manager")
 			_do_full_search_and_broadcast(current_tile, bomb_range, current_time_msec, player, game_instance, grid_sampler, bomb_safety_checker, ai_manager)
 		return SUCCESS
@@ -181,11 +185,14 @@ func _tick(_delta: float) -> int:
 				safety_eval[tile_key] = eval_data
 	
 	# Broadcast safety data to all clients
+	print("[BTFindFarmingSpot] *** BROADCAST CHECK: broadcast_safety=", broadcast_safety, " safety_eval.size()=", safety_eval.size())
 	if broadcast_safety and not safety_eval.is_empty():
-		print("[BTFindFarmingSpot] Broadcasting %d safety evaluations" % safety_eval.size())
+		print("[BTFindFarmingSpot] *** BROADCASTING %d safety evaluations to clients" % safety_eval.size())
 		_broadcast_safety_data(safety_eval)
 	elif broadcast_safety:
-		print("[BTFindFarmingSpot] No safety data to broadcast (empty)")
+		print("[BTFindFarmingSpot] *** WARNING: No safety data to broadcast (empty)")
+	else:
+		print("[BTFindFarmingSpot] *** WARNING: broadcast_safety is FALSE")
 	
 	# If we found a good spot, store it
 	if best_spot != INVALID_TILE:
@@ -288,34 +295,40 @@ func _tile_key(tile: Vector2i) -> String:
 
 func _broadcast_safety_data(data: Dictionary) -> void:
 	"""Send safety evaluation to all clients for visualization"""
+	print("[BTFindFarmingSpot] >>> _broadcast_safety_data called with %d tiles" % data.size())
+	
 	# Get the bot player node from blackboard
 	var player_node = blackboard.get_var("player")
 	if not player_node:
-		print("[BTFindFarmingSpot] Cannot broadcast: no player in blackboard")
+		print("[BTFindFarmingSpot] !!! Cannot broadcast: no player in blackboard")
 		return
+	print("[BTFindFarmingSpot] >>> Got player_node: ", player_node.name)
 	
 	# Navigate to the game instance (player's parent)
 	var game_instance = player_node.get_parent()
 	if not game_instance:
-		print("[BTFindFarmingSpot] Cannot broadcast: no game_instance")
+		print("[BTFindFarmingSpot] !!! Cannot broadcast: no game_instance")
 		return
+	print("[BTFindFarmingSpot] >>> Got game_instance")
 	
 	# Get ClientMain autoload
 	var client_main = game_instance.get_node_or_null("/root/ClientMain")
 	if not client_main:
-		print("[BTFindFarmingSpot] Cannot broadcast: ClientMain not found")
+		print("[BTFindFarmingSpot] !!! Cannot broadcast: ClientMain not found")
 		return
+	print("[BTFindFarmingSpot] >>> Got ClientMain, players count: ", game_instance.players.size())
 	
 	# Send RPC to all connected clients (iterate through players, not multiplayer.get_peers())
 	var sent_count = 0
 	for peer_id in game_instance.players:
 		var player = game_instance.players[peer_id]
+		print("[BTFindFarmingSpot] >>> Checking peer_id ", peer_id, " is_ai_bot=", player.is_ai_bot())
 		if not player.is_ai_bot():
-			print("[BTFindFarmingSpot] Sending to peer %d with %d tiles" % [peer_id, data.size()])
+			print("[BTFindFarmingSpot] >>> Sending RPC to peer %d with %d tiles" % [peer_id, data.size()])
 			client_main.rpc_id(peer_id, "bomb_safety_update", data)
 			sent_count += 1
 	
-	print("[BTFindFarmingSpot] Broadcasted safety data: %d tiles to %d clients" % [data.size(), sent_count])
+	print("[BTFindFarmingSpot] >>> BROADCAST COMPLETE: %d tiles to %d clients" % [data.size(), sent_count])
 
 func _coerce_to_tile(value) -> Vector2i:
 	if value == null:
@@ -442,11 +455,11 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 			passed += 1
 	
 	# Debug logging
-	print("BTFind: passed=", passed, " path=", rejected_path, " safety=", rejected_safety, " escape=", rejected_escape, " dict_size=", safety_eval.size())
+	print("[BTFindFarmingSpot] _do_full_search_and_broadcast: passed=", passed, " path=", rejected_path, " safety=", rejected_safety, " escape=", rejected_escape, " dict_size=", safety_eval.size())
 	
 	# Broadcast
 	if not safety_eval.is_empty():
-		print("BTFind: Broadcasting ", safety_eval.size(), " tiles")
+		print("[BTFindFarmingSpot] *** Broadcasting ", safety_eval.size(), " tiles from _do_full_search_and_broadcast")
 		_broadcast_safety_data(safety_eval)
 	else:
-		print("BTFind: safety_eval is EMPTY - nothing to broadcast")
+		print("[BTFindFarmingSpot] *** WARNING: safety_eval is EMPTY in _do_full_search_and_broadcast")

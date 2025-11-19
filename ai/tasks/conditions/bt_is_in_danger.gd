@@ -7,6 +7,7 @@ class_name BTIsInDanger
 
 @export var danger_buffer: float = 1.0  ## Safety margin (seconds) before danger becomes lethal
 @export var check_immediate: bool = true  ## Check only immediate danger (no buffer)
+@export var evaluate_all_threats: bool = true ## If true, returns SUCCESS if ANY threat exists on tile (regardless of time)
 @export var debug_logging: bool = false
 
 func _generate_name() -> String:
@@ -25,7 +26,11 @@ func _tick(delta: float) -> int:
 	
 	# is_tile_safe returns true if safe, so we need to invert for danger check
 	var is_safe: bool
-	if check_immediate:
+	
+	if evaluate_all_threats:
+		# Strict mode: Any threat is dangerous
+		is_safe = not hazard_predictor.is_tile_threatened(player_tile)
+	elif check_immediate:
 		is_safe = hazard_predictor.is_tile_safe(player_tile, current_time, 0.0)
 	else:
 		is_safe = hazard_predictor.is_tile_safe(player_tile, current_time, danger_buffer)
