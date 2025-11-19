@@ -150,7 +150,7 @@ func bomb_safety_update(safety_data: Dictionary):
 		print("[ClientMain] Forwarding to GameView")
 		game_view.bomb_safety_update(safety_data)
 	else:
-		print("[ClientMain] ERROR: GameView not found or missing method")
+		print("[ClientMain] GameView not ready yet, scene: ", game_view.name if game_view else "null")
 
 # === AI Bot Commands ===
 

@@ -55,8 +55,14 @@ func update_safety_data(new_data: Dictionary) -> void:
 	queue_redraw()
 
 func _draw() -> void:
-	if not enabled or map_width == 0 or map_height == 0:
+	if not visible or not enabled or map_width == 0 or map_height == 0:
 		return
+	
+	if safety_data.is_empty():
+		print("[BombSafetyVisualizer] _draw called but no safety_data")
+		return
+	
+	print("[BombSafetyVisualizer] Drawing %d tiles" % safety_data.size())
 	
 	# Draw semi-transparent overlay for each evaluated tile
 	for tile_key in safety_data:
