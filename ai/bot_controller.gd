@@ -2,8 +2,6 @@ extends Node
 class_name ServerBotController
 
 const AIPersonalitiesConfig = preload("res://shared/ai/config/personalities.gd")
-const OpeningGambit = preload("res://shared/ai/planning/opening_gambit.gd")
-const UtilityScorer = preload("res://shared/ai/decision/utility_scorer.gd")
 
 ## LimboAI-powered bot controller that simulates authoritative inputs for AI players.
 
@@ -24,16 +22,7 @@ var _limbo_player  # BTPlayer instance
 var _limbo_blackboard  # Blackboard instance
 var _limbo_tree  # BehaviorTree resource
 
-var bomb_safety_checker  # New: time-aware BFS suicide check
-var opening_gambit: OpeningGambit  # Opening strategy planner
-var utility_scorer: UtilityScorer  # Mathematical (Reward * P_Success) - (Risk * P_Failure)
-
-# State machine for opening gambit
-enum BotState { ANALYZING_SPAWN, MOVING_TO_FIRST_BOMB, PLANTING_FIRST_BOMB, WAITING_FOR_BLAST, FARMING, NORMAL }
-var _current_state: BotState = BotState.NORMAL  # Start in NORMAL to use behavior tree immediately
-var _first_target: Vector2i = Vector2i.ZERO
-var _second_target: Vector2i = Vector2i.ZERO
-var _has_planted_first_bomb := false
+var bomb_safety_checker  # Time-aware BFS suicide check
 
 func configure(instance, player, personality_name: String,
 		sampler, predictor,
@@ -49,14 +38,6 @@ func configure(instance, player, personality_name: String,
 	# Store game_instance for BTPlayer scene_root_hint
 	# (needed before _build_limbo_tree is called)
 	
-	# Initialize opening gambit planner
-	opening_gambit = OpeningGambit.new()
-	# Initialize utility scorer
-	utility_scorer = UtilityScorer.new()
-	# Will configure after game_instance.ai_manager is ready
-	call_deferred("_configure_opening_gambit")
-	call_deferred("_configure_utility_scorer")
-	
 	personality = personality_name
 	_personality_profile = AIPersonalitiesConfig.get_profile(personality_name)
 	_decision_interval = _personality_profile.get("decision_interval", 0.1)
@@ -71,16 +52,6 @@ func configure(instance, player, personality_name: String,
 	if player_ref:
 		player_ref.tree_exited.connect(_on_player_removed, Object.CONNECT_ONE_SHOT)
 
-func _configure_opening_gambit() -> void:
-	if game_instance != null and game_instance.ai_manager != null:
-		opening_gambit.configure(game_instance.ai_manager, grid_sampler, bomb_safety_checker)
-		print("[BotController] OpeningGambit configured for ", player_ref.player_name if player_ref else "bot")
-
-func _configure_utility_scorer() -> void:
-	if game_instance != null and game_instance.ai_manager != null:
-		utility_scorer.configure(game_instance.ai_manager, grid_sampler, bomb_safety_checker)
-		print("[BotController] UtilityScorer configured for ", player_ref.player_name if player_ref else "bot")
-
 func _physics_process(delta: float) -> void:
 	if not is_instance_valid(player_ref) or player_ref.is_dead:
 		return
@@ -90,11 +61,6 @@ func _physics_process(delta: float) -> void:
 	if Engine.get_physics_frames() % 60 == 0:
 		_broadcast_farming_evaluation()
 	
-	# Opening Gambit State Machine (overrides normal behavior tree during opening)
-	if _current_state != BotState.NORMAL:
-		_execute_opening_gambit(delta)
-		return
-	
 	# Decision tick throttling
 	_decision_accumulator += delta
 	if _decision_accumulator < _decision_interval:
@@ -103,107 +69,6 @@ func _physics_process(delta: float) -> void:
 	
 	# Tick LimboAI tree
 	_tick_limbo(delta)
-
-## Opening Gambit State Machine - deterministic opening strategy
-func _execute_opening_gambit(_delta: float) -> void:
-	var current_pos: Vector2i = player_ref.get_tile_position()
-	var current_time_msec: int = Time.get_ticks_msec()
-	
-	match _current_state:
-		BotState.ANALYZING_SPAWN:
-			# T=0.00s: Analyze spawn pocket
-			if opening_gambit.has_analyzed_spawn():
-				_current_state = BotState.MOVING_TO_FIRST_BOMB
-			else:
-				_first_target = opening_gambit.analyse_spawn_pocket(current_pos, player_ref.bomb_range)
-				print("[Bot ", player_ref.player_name, "] Opening analysis: target ", _first_target)
-				_current_state = BotState.MOVING_TO_FIRST_BOMB
-		
-		BotState.MOVING_TO_FIRST_BOMB:
-			# T=0.01s-0.2s: Move to optimal first bomb position
-			if current_pos == _first_target:
-				_current_state = BotState.PLANTING_FIRST_BOMB
-			else:
-				_move_to_tile(_first_target)
-		
-		BotState.PLANTING_FIRST_BOMB:
-			# T=0.21s: Plant first bomb with safety check
-			if not _has_planted_first_bomb and player_ref.can_place_bomb():
-				if bomb_safety_checker != null:
-					var is_safe: bool = bomb_safety_checker.can_safely_plant_bomb(
-						current_pos, _first_target, player_ref.bomb_range, 
-						5.0, current_time_msec
-					)
-					if is_safe:
-						game_instance.place_bomb(player_ref)
-						_has_planted_first_bomb = true
-						print("[Bot ", player_ref.player_name, "] First bomb planted at ", _first_target)
-						_current_state = BotState.WAITING_FOR_BLAST
-					else:
-						print("[Bot ", player_ref.player_name, "] First bomb unsafe, aborting opening gambit")
-						_current_state = BotState.NORMAL
-				else:
-					# Fallback if safety checker not ready
-					game_instance.place_bomb(player_ref)
-					_has_planted_first_bomb = true
-					_current_state = BotState.WAITING_FOR_BLAST
-			else:
-				# Can't plant yet, wait
-				pass
-		
-		BotState.WAITING_FOR_BLAST:
-			# T=0.22s-3.2s: Calculate chained action and wait for path to open
-			var chain_result := opening_gambit.calculate_chained_action(
-				current_pos, player_ref.bomb_range, current_time_msec
-			)
-			_second_target = chain_result["next_target"]
-			
-			# Check if path is available NOW
-			if chain_result["can_path_now"]:
-				print("[Bot ", player_ref.player_name, "] Path opened! Farming to ", _second_target)
-				_current_state = BotState.FARMING
-			else:
-				# Path blocked, stay in safe spawn pocket waiting for explosion
-				pass
-		
-		BotState.FARMING:
-			# T=3.21s+: Execute chained bomb placement
-			if current_pos == _second_target:
-				# Arrived at second target, plant bomb
-				if player_ref.can_place_bomb():
-					if bomb_safety_checker != null:
-						var is_safe: bool = bomb_safety_checker.can_safely_plant_bomb(
-							current_pos, _second_target, player_ref.bomb_range,
-							5.0, current_time_msec
-						)
-						if is_safe:
-							game_instance.place_bomb(player_ref)
-							print("[Bot ", player_ref.player_name, "] Second bomb planted, entering normal mode")
-					else:
-						game_instance.place_bomb(player_ref)
-				
-				# Transition to normal behavior tree after second bomb
-				_current_state = BotState.NORMAL
-			else:
-				# Move to second target
-				_move_to_tile(_second_target)
-
-## Simple tile movement helper for opening gambit
-func _move_to_tile(target: Vector2i) -> void:
-	if player_ref == null:
-		return
-	
-	var current_pos: Vector2i = player_ref.get_tile_position()
-	var delta: Vector2i = target - current_pos
-	
-	# Simple cardinal movement
-	var axis := Vector2.ZERO
-	if abs(delta.x) > abs(delta.y):
-		axis = Vector2(sign(delta.x), 0.0)
-	else:
-		axis = Vector2(0.0, sign(delta.y))
-	
-	player_ref.set_input(axis.x, axis.y)
 
 func _build_limbo_tree() -> void:
 	"""Build LimboAI behavior tree using custom nodes"""
