@@ -68,6 +68,18 @@ func _physics_process(delta: float) -> void:
 	hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
 	opponent_tracker.update_from_players(game_instance.players.values())
 	
+	# Update blackboard values for each bot before BTPlayer auto-updates
+	for peer_id in _bot_players:
+		var bt_player = _bot_players[peer_id]
+		if is_instance_valid(bt_player):
+			var blackboard = bt_player.get_blackboard()
+			if blackboard:
+				var player_ref = blackboard.get_var("player", null)
+				if is_instance_valid(player_ref):
+					# Update dynamic blackboard values
+					blackboard.set_var("current_tile", player_ref.get_tile_position())
+					blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+	
 	# Update opponent intelligence profiles
 	if game_instance.ai_manager != null:
 		var bot_positions := {}
@@ -104,16 +116,20 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	
 	# Create BTPlayer using ClassDB (native LimboAI class)
 	var bt_player = ClassDB.instantiate("BTPlayer")
-	bt_player.behavior_tree = bot_behavior_tree
+	bt_player.name = "BTPlayer_%d" % abs(peer_id)
 	
-	# Create blackboard using ClassDB
-	var blackboard = ClassDB.instantiate("Blackboard")
-	bt_player.blackboard = blackboard
+	# Add to scene tree FIRST (required before setting properties)
+	add_child(bt_player)
 	
-	# Set the agent (the player node that the BT will control) using set() for native class
+	# Set the agent FIRST
 	bt_player.set("agent", player)
 	
-	# Populate blackboard with all required references
+	# Set the behavior tree
+	bt_player.set("behavior_tree", bot_behavior_tree)
+	
+	# Create and populate blackboard
+	var blackboard = ClassDB.instantiate("Blackboard")
+	
 	blackboard.set_var("player", player)
 	blackboard.set_var("game_instance", game_instance)
 	blackboard.set_var("ai_manager", game_instance.ai_manager)
@@ -124,12 +140,27 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	blackboard.set_var("bomb_safety_checker", bomb_safety_checker)
 	blackboard.set_var("personality", personality)
 	
-	# Add to scene tree and activate
-	add_child(bt_player)
-	_bot_players[peer_id] = bt_player
-	bt_player.active = true
+	# Initialize dynamic values
+	blackboard.set_var("current_tile", player.get_tile_position())
+	blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+	blackboard.set_var("target_cell", null)
+	blackboard.set_var("in_danger", false)
 	
-	print("[BotManager] Bot %s configured with LimboAI BehaviorTree" % player.player_name)
+	# Set blackboard
+	bt_player.set("blackboard", blackboard)
+	
+	print("[BotManager] BehaviorTree set: ", bot_behavior_tree, " root_task: ", bot_behavior_tree.get("root_task") if bot_behavior_tree else "null")
+	
+	_bot_players[peer_id] = bt_player
+	
+	# Set update mode to PHYSICS and activate
+	bt_player.set("update_mode", 1)  # 1 = PHYSICS (auto-update in _physics_process)
+	bt_player.set("active", true)
+	
+	# Restart to initialize the behavior tree instance
+	bt_player.call("restart")
+	
+	print("[BotManager] Bot %s configured with LimboAI BehaviorTree (physics update mode), BTPlayer status: active=", bt_player.get("active"), " tree=", bt_player.get("behavior_tree"))
 	
 	# Clean up when player is removed
 	player.tree_exited.connect(func():

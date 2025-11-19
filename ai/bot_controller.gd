@@ -69,7 +69,6 @@ func _physics_process(delta: float) -> void:
 	
 	# Tick LimboAI tree
 	if Engine.get_physics_frames() % 60 == 0:
-	if Engine.get_physics_frames() % 60 == 0:
 		var danger = _limbo_blackboard.get_var("in_danger", false)
 		var target = _limbo_blackboard.get_var("target_cell", null)
 		print("[BotController] Heartbeat - Active: %s | Danger: %s | Target: %s | Player: %s" % [is_instance_valid(_limbo_player), danger, target, player_ref.name if is_instance_valid(player_ref) else "Invalid"])
