@@ -73,6 +73,9 @@ func _ready():
 	print("[GameView] BombSafetyVisualizer created")
 	# Start with bomb safety shown
 	bomb_safety_visualizer.visible = true
+	
+	# Request current safety data from server (in case we missed initial broadcasts)
+	call_deferred("_request_farming_spot_update")
 
 	# Start in slow motion for debugging and inform server
 	Engine.time_scale = 0.25
@@ -783,8 +786,12 @@ func _input(event):
 		elif event.keycode == Key.KEY_F8:
 			# Request test farming spot search from server
 			print("[GameView] Requesting test farming spot search (F8)")
-			if multiplayer.has_multiplayer_peer():
-				rpc_id(1, "test_farming_spot_broadcast")
+			_request_farming_spot_update()
+
+func _request_farming_spot_update() -> void:
+	"""Request the server to broadcast current farming spot evaluation"""
+	if multiplayer.has_multiplayer_peer():
+		ServerMain.rpc_id(1, "test_farming_spot_broadcast")
 
 func update_debug_banner() -> void:
 	if not debug_label:
