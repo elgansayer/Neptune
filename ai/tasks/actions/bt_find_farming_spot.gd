@@ -291,27 +291,31 @@ func _broadcast_safety_data(data: Dictionary) -> void:
 	# Get the bot player node from blackboard
 	var player_node = blackboard.get_var("player")
 	if not player_node:
+		print("[BTFindFarmingSpot] Cannot broadcast: no player in blackboard")
 		return
 	
 	# Navigate to the game instance (player's parent)
 	var game_instance = player_node.get_parent()
 	if not game_instance:
+		print("[BTFindFarmingSpot] Cannot broadcast: no game_instance")
 		return
 	
-	# Broadcast via game instance's multiplayer peer
-	if not game_instance.multiplayer:
+	# Get ClientMain autoload
+	var client_main = game_instance.get_node_or_null("/root/ClientMain")
+	if not client_main:
+		print("[BTFindFarmingSpot] Cannot broadcast: ClientMain not found")
 		return
 	
-	var peers = game_instance.multiplayer.get_peers()
-	if peers.is_empty():
-		return
+	# Send RPC to all connected clients (iterate through players, not multiplayer.get_peers())
+	var sent_count = 0
+	for peer_id in game_instance.players:
+		var player = game_instance.players[peer_id]
+		if not player.is_ai_bot():
+			print("[BTFindFarmingSpot] Sending to peer %d with %d tiles" % [peer_id, data.size()])
+			client_main.rpc_id(peer_id, "bomb_safety_update", data)
+			sent_count += 1
 	
-	# Send RPC to all connected clients
-	for peer_id in peers:
-		if peer_id > 0:  # Skip server (ID 1)
-			ClientMain.rpc_id(peer_id, "bomb_safety_update", data)
-	
-	print("[BotAI] Broadcasted safety data: %d tiles to %d peers" % [data.size(), peers.size()])
+	print("[BTFindFarmingSpot] Broadcasted safety data: %d tiles to %d clients" % [data.size(), sent_count])
 
 func _coerce_to_tile(value) -> Vector2i:
 	if value == null:

@@ -144,9 +144,13 @@ func receive_state(state: Dictionary):
 @rpc("any_peer", "call_remote", "unreliable")
 func bomb_safety_update(safety_data: Dictionary):
 	# Forward bomb safety data to current GameView
+	print("[ClientMain] RPC bomb_safety_update received with %d tiles" % safety_data.size())
 	var game_view = get_tree().current_scene
 	if game_view and game_view.has_method("bomb_safety_update"):
+		print("[ClientMain] Forwarding to GameView")
 		game_view.bomb_safety_update(safety_data)
+	else:
+		print("[ClientMain] ERROR: GameView not found or missing method")
 
 # === AI Bot Commands ===
 

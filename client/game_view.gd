@@ -980,11 +980,10 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 	if debug_tiles.has(tile_key):
 		debug_tiles.erase(tile_key)
 
-# RPC: Receive bomb safety evaluation data from server
-@rpc("any_peer", "call_remote", "unreliable")
+# Receive bomb safety evaluation data from server (called locally by ClientMain)
 func bomb_safety_update(safety_data: Dictionary) -> void:
 	"""Update bomb safety visualizer with server's tile evaluations"""
-	print("[GameView] RPC bomb_safety_update received with %d tiles" % safety_data.size())
+	print("[GameView] bomb_safety_update received with %d tiles" % safety_data.size())
 	if bomb_safety_visualizer and bomb_safety_visualizer.has_method("update_safety_data"):
 		bomb_safety_visualizer.update_safety_data(safety_data)
 	else:

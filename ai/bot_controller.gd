@@ -498,13 +498,22 @@ func _broadcast_safety_to_clients(safety_data: Dictionary) -> void:
 		print("[BotController] Cannot broadcast: no game_instance")
 		return
 	
-	# Get the client game view node and call RPC on it
-	# Since we're on the server, we need to call the client's game_view
 	print("[BotController] Broadcasting %d tiles to clients via RPC" % safety_data.size())
+	print("[BotController] Sample tile data: ", safety_data.values()[0] if safety_data.size() > 0 else "(empty)")
 	
-	# Use the multiplayer's RPC system to call bomb_safety_update on all clients
-	if game_instance.has_method("rpc"):
-		game_instance.rpc("bomb_safety_update", safety_data)
+	# To broadcast from the server to all clients, we must iterate through
+	# the players and send an RPC to each one's ClientMain instance.
+	var client_main = game_instance.get_node_or_null("/root/ClientMain")
+	if not client_main:
+		print("[BotController] Failed to find ClientMain for broadcast")
+		return
+		
+	for peer_id in game_instance.players:
+		var player = game_instance.players[peer_id]
+		if not player.is_ai_bot():
+			print("[BotController] Sending RPC to peer ", peer_id)
+			client_main.rpc_id(peer_id, "bomb_safety_update", safety_data)
+			print("[BotController] RPC sent successfully")
 
 
 ## Continuous farming spot evaluation broadcast for visualization
