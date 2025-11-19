@@ -48,11 +48,9 @@ func _tick(delta: float) -> int:
 		var current_key := _tile_key(current_pos)
 		var arrival_time: float = visited[current_key]
 		
-		# CRITICAL: Don't consider current position as safe if it's in blast zone
-		# Bot must MOVE to escape, not stay put
-		if current_pos == player_tile and threat_matrix.has(current_key):
-			# Current position is threatened - must move away
-			# Don't return this as safe, just explore neighbors
+		# CRITICAL: Never consider current tile as escape destination - bot MUST move
+		if current_pos == player_tile:
+			# Skip evaluation, just explore neighbors
 			pass
 		else:
 			# Check if this tile is safe (using threat matrix)
@@ -104,9 +102,22 @@ func _tick(delta: float) -> int:
 	
 	# Use best tile found (even if temporary safety)
 	if best_safe_tile != Vector2i(-1, -1):
+		# CRITICAL: Verify escape tile is not the current tile or a bomb location
+		if best_safe_tile == player_tile:
+			print("[BTFindEscapeRoute] ERROR: Escape tile is current tile! This should never happen.")
+			return FAILURE
+		
+		# Check if escape tile has a bomb
+		for bomb_id in game_instance.bombs:
+			var bomb = game_instance.bombs[bomb_id]
+			if is_instance_valid(bomb) and not bomb.has_exploded:
+				if bomb.get_tile_position() == best_safe_tile:
+					print("[BTFindEscapeRoute] ERROR: Escape tile ", best_safe_tile, " has a bomb! Rejecting.")
+					return FAILURE
+		
 		blackboard.set_var(target_cell_var, best_safe_tile)
 		blackboard.set_var("escape_route_found", true)
-		print("[BTFindEscapeRoute] Found escape tile at ", best_safe_tile, " (safety margin: ", best_safety_margin, "ms)")
+		print("[BTFindEscapeRoute] ✓ Found escape tile at ", best_safe_tile, " (safety margin: ", best_safety_margin, "ms) from current ", player_tile)
 		return SUCCESS
 	
 	# No escape route found

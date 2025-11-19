@@ -37,11 +37,12 @@ func _ready() -> void:
 func configure(instance) -> void:
 	game_instance = instance
 	
-	# Load LimboAI behavior tree
-	bot_behavior_tree = load("res://ai/trees/bot_default.tres")
+	# Load LimboAI behavior tree (force reload, ignore cache)
+	bot_behavior_tree = ResourceLoader.load("res://ai/trees/bot_default.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
 	if not bot_behavior_tree:
 		push_error("[BotManager] Failed to load bot_default.tres!")
 		return
+	print("[BotManager] Loaded bot_default.tres (cache ignored)")
 	
 	grid_sampler = GridSamplerScript.new()
 	grid_sampler.configure(game_instance, null, GameConfig.TILE_SIZE)

@@ -22,14 +22,17 @@ check_immediate = false
 custom_name = "Find Escape Route"
 script = ExtResource("2_escape")
 escape_radius = 12
+target_cell_var = &"escape_cell"
 
-[sub_resource type="BTAction" id="BTAction_escape_move"]
+[sub_resource type="BTAction" id="BTAction_escape_move_v2"]
 custom_name = "Move To Safe Tile"
 script = ExtResource("3_move")
+avoid_threats = true
+cell_var = &"escape_cell"
 
 [sub_resource type="BTSequence" id="BTSequence_escape"]
 custom_name = "Escape Sequence"
-children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escape_find"), SubResource("BTAction_escape_move")]
+children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escape_find"), SubResource("BTAction_escape_move_v2")]
 
 [sub_resource type="BTCondition" id="BTCondition_has_opponent"]
 custom_name = "Has Opponent?"
@@ -101,6 +104,8 @@ script = ExtResource("2_escape")
 [sub_resource type="BTAction" id="BTAction_farming_escape_move"]
 custom_name = "Move To Safety"
 script = ExtResource("3_move")
+cell_var = &"escape_cell"
+avoid_threats = true
 
 [sub_resource type="BTSequence" id="BTSequence_farming"]
 custom_name = "Farm Blocks Sequence"

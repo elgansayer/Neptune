@@ -9,6 +9,7 @@ class_name BTMoveToCell
 @export var reach_threshold: float = 0.5  ## Distance to consider "reached" (in tiles)
 @export var recalc_distance: int = 3  ## Manhattan distance to trigger path recalculation
 @export var clear_on_success: bool = true  ## Clear target_cell when reached
+@export var avoid_threats: bool = false  ## Whether to avoid threatened tiles during pathfinding
 @export var debug_logging: bool = false
 
 # State tracking between ticks
@@ -19,12 +20,15 @@ var _stuck_counter: int = 0
 var _last_position: Vector2 = Vector2.ZERO
 
 func _generate_name() -> String:
+	print("[BTMoveToCell] _generate_name() called - cell_var property is: '", cell_var, "'")
 	return "MoveToCell(%s)" % cell_var
 
 func _tick(delta: float) -> int:
 	var player = blackboard.get_var("player")
 	var target_cell = blackboard.get_var(cell_var)
 	var grid_sampler = blackboard.get_var("grid_sampler")
+	
+	print("[BTMoveToCell] _tick() called - cell_var='", cell_var, "' target_cell=", target_cell)
 	
 	if not player:
 		push_warning("[BTMoveToCell] Missing player in blackboard")
@@ -87,7 +91,7 @@ func _tick(delta: float) -> int:
 		if current_tile == target_cell:
 			_cached_path = [target_cell]
 		else:
-			_cached_path = grid_sampler.find_path(current_tile, target_cell, 40, player)
+			_cached_path = grid_sampler.find_path(current_tile, target_cell, 40, player, avoid_threats)
 		
 		if _cached_path.is_empty():
 			push_warning("[BTMoveToCell] No path found from %s to %s" % [current_tile, target_cell])
