@@ -8,7 +8,7 @@ class_name BTIsInDanger
 @export var danger_buffer: float = 1.0  ## Safety margin (seconds) before danger becomes lethal
 @export var check_immediate: bool = true  ## Check only immediate danger (no buffer)
 @export var evaluate_all_threats: bool = true ## If true, returns SUCCESS if ANY threat exists on tile (regardless of time)
-@export var debug_logging: bool = false
+@export var debug_logging: bool = true
 
 func _generate_name() -> String:
 	return "IsInDanger"

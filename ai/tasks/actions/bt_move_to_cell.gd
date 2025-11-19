@@ -5,10 +5,11 @@ class_name BTMoveToCell
 ## Moves the entity toward a target cell using pathfinding
 ## Calculates path once and follows waypoints, recalculating if stuck or target changes
 
-@export var cell_var: StringName = &"target_cell"  ## Blackboard variable containing target cell
-@export var reach_threshold: float = 0.3  ## Distance threshold (in tiles) to consider destination reached
-@export var clear_on_success: bool = true  ## Clear target_cell from blackboard when reached
-@export var recalc_distance: float = 1.5  ## Recalculate path if further than this many tiles from next waypoint
+@export var cell_var: StringName = &"target_cell"  ## Blackboard variable containing target Vector2i
+@export var reach_threshold: float = 0.5  ## Distance to consider "reached" (in tiles)
+@export var recalc_distance: int = 3  ## Manhattan distance to trigger path recalculation
+@export var clear_on_success: bool = true  ## Clear target_cell when reached
+@export var debug_logging: bool = true
 
 # State tracking between ticks
 var _cached_path: Array[Vector2i] = []
@@ -126,6 +127,10 @@ func _tick(delta: float) -> int:
 	
 	# Move toward current waypoint
 	var direction = (waypoint_pos - player.position).normalized()
+	
+	if debug_logging:
+		print("[BTMoveToCell] Setting input: direction=", direction, " waypoint_pos=", waypoint_pos, " player.position=", player.position)
+	
 	player.set_input(direction.x, direction.y)
 	
 	return RUNNING

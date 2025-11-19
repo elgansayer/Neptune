@@ -1,6 +1,10 @@
 extends Node
 class_name ServerBotManager
 
+# CRITICAL: Process BEFORE player entities to set input before their _physics_process
+# Negative priority means this runs first
+const PROCESS_PRIORITY = -100
+
 # LimboAI components - ONLY system used for AI
 # Note: BehaviorTree and BTPlayer are native classes, accessed via ClassDB
 
@@ -23,6 +27,12 @@ var bot_behavior_tree  # BehaviorTree resource
 
 const DEFAULT_PERSONALITY := "BALANCED"
 var auto_spawn_count := 3
+
+func _ready() -> void:
+	# Set process priority to run BEFORE player entities
+	# Lower numbers run first (negative = very early)
+	process_priority = PROCESS_PRIORITY
+	print("[BotManager] Process priority set to ", PROCESS_PRIORITY)
 
 func configure(instance) -> void:
 	game_instance = instance
@@ -68,6 +78,14 @@ func _physics_process(delta: float) -> void:
 	hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
 	opponent_tracker.update_from_players(game_instance.players.values())
 	
+	# Debug log every 120 frames (~2 seconds)
+	if Engine.get_physics_frames() % 120 == 0 and not _bot_players.is_empty():
+		print("[BotManager] _physics_process running, ", _bot_players.size(), " bots active")
+		for peer_id in _bot_players:
+			var bt_player = _bot_players[peer_id]
+			if is_instance_valid(bt_player):
+				print("  - BTPlayer active=", bt_player.get("active"), " update_mode=", bt_player.get("update_mode"))
+	
 	# Update blackboard values for each bot before BTPlayer auto-updates
 	for peer_id in _bot_players:
 		var bt_player = _bot_players[peer_id]
@@ -79,6 +97,10 @@ func _physics_process(delta: float) -> void:
 					# Update dynamic blackboard values
 					blackboard.set_var("current_tile", player_ref.get_tile_position())
 					blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+					
+					# Manually update BTPlayer to ensure it runs BEFORE player's physics
+					# This ensures bot input is set before player processes movement
+					bt_player.call("update", delta)
 	
 	# Update opponent intelligence profiles
 	if game_instance.ai_manager != null:
@@ -118,18 +140,32 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	var bt_player = ClassDB.instantiate("BTPlayer")
 	bt_player.name = "BTPlayer_%d" % abs(peer_id)
 	
-	# Add to scene tree FIRST (required before setting properties)
-	add_child(bt_player)
-	
-	# Set the agent FIRST
-	bt_player.set("agent", player)
-	
-	# Set the behavior tree
+	# Set behavior tree FIRST (this includes the blackboard_plan)
 	bt_player.set("behavior_tree", bot_behavior_tree)
 	
-	# Create and populate blackboard
-	var blackboard = ClassDB.instantiate("Blackboard")
+	# Set agent
+	bt_player.set("agent", player)
 	
+	# CRITICAL: Must set scene_root_hint BEFORE add_child
+	# because BTPlayer._enter_tree() needs it during initialization
+	# NOTE: .owner can't be set before add_child, so use scene_root_hint property
+	var scene_root = get_tree().current_scene
+	if scene_root:
+		bt_player.call("set_scene_root_hint", scene_root)
+	
+	# Now add to scene tree (this triggers _enter_tree() initialization with tree and agent set)
+	add_child(bt_player)
+	
+	# DEBUG: Check what owner was set
+	print("[BotManager] BTPlayer added. owner=", bt_player.owner, " get_tree()=", bt_player.get_tree(), " scene_root=", bt_player.get_tree().current_scene if bt_player.get_tree() else "null")
+	
+	# Get the blackboard that BTPlayer created from the blackboard_plan and populate it
+	var blackboard = bt_player.get_blackboard()
+	if not blackboard:
+		push_error("[BotManager] BTPlayer did not create a blackboard!")
+		return
+	
+	# Populate the BTPlayer's blackboard with all required references
 	blackboard.set_var("player", player)
 	blackboard.set_var("game_instance", game_instance)
 	blackboard.set_var("ai_manager", game_instance.ai_manager)
@@ -146,21 +182,22 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	blackboard.set_var("target_cell", null)
 	blackboard.set_var("in_danger", false)
 	
-	# Set blackboard
-	bt_player.set("blackboard", blackboard)
-	
+	print("[BotManager] Blackboard populated for ", player.player_name)
 	print("[BotManager] BehaviorTree set: ", bot_behavior_tree, " root_task: ", bot_behavior_tree.get("root_task") if bot_behavior_tree else "null")
 	
 	_bot_players[peer_id] = bt_player
 	
-	# Set update mode to PHYSICS and activate
-	bt_player.set("update_mode", 1)  # 1 = PHYSICS (auto-update in _physics_process)
+	# IMPORTANT: Set active BEFORE setting update mode
 	bt_player.set("active", true)
+	bt_player.set("update_mode", 0)  # 0 = MANUAL (we call update() ourselves in _physics_process)
 	
-	# Restart to initialize the behavior tree instance
+	# Ensure BTPlayer process mode is set correctly
+	bt_player.process_mode = Node.PROCESS_MODE_INHERIT
+	
+	# TESTING: Try explicitly calling restart() to initialize the behavior tree
 	bt_player.call("restart")
 	
-	print("[BotManager] Bot %s configured with LimboAI BehaviorTree (physics update mode), BTPlayer status: active=", bt_player.get("active"), " tree=", bt_player.get("behavior_tree"))
+	print("[BotManager] Bot %s BTPlayer setup complete: active=", bt_player.get("active"), " update_mode=", bt_player.get("update_mode"), " process_mode=", bt_player.process_mode)
 	
 	# Clean up when player is removed
 	player.tree_exited.connect(func():

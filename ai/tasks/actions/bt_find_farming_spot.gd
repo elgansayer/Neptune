@@ -7,7 +7,7 @@ class_name BTFindFarmingSpot
 
 @export var search_radius: int = 5 ## How far to search for soft blocks
 @export var target_cell_var: StringName = &"target_cell" ## Where to store the target
-@export var debug_logging: bool = true ## Enable detailed rejection logging
+@export var debug_logging: bool = true ## Enable detailed rejection logging (FORCED ON)
 @export var broadcast_safety: bool = true ## Send safety eval to clients for visualization
 @export var always_broadcast: bool = true ## Broadcast continuously even when reusing cached target
 
@@ -17,11 +17,13 @@ func _generate_name() -> String:
 	return "FindFarmingSpot(radius=%d)" % search_radius
 
 func _tick(_delta: float) -> int:
-	print("[BTFindFarmingSpot] _tick() called - delta=", _delta)
+	print("[BTFindFarmingSpot] ===== _tick() CALLED ===== delta=", _delta)
 	var player = blackboard.get_var("player")
 	var game_instance = blackboard.get_var("game_instance")
 	var grid_sampler = blackboard.get_var("grid_sampler")
 	var bomb_safety_checker = blackboard.get_var("bomb_safety_checker")
+	
+	print("[BTFindFarmingSpot] Retrieved from blackboard: player=", player != null, " game_instance=", game_instance != null, " grid_sampler=", grid_sampler != null, " bomb_safety_checker=", bomb_safety_checker != null)
 	
 	if not player or not game_instance or not grid_sampler or not bomb_safety_checker:
 		print("[BTFindFarmingSpot] _tick() FAILURE - missing dependencies")
