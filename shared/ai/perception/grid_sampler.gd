@@ -94,8 +94,18 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 		for neighbor in get_cardinal_neighbors(current):
 			if not is_tile_walkable(neighbor):
 				continue
-			if is_tile_occupied(neighbor, ignore_player) and neighbor != goal_tile:
-				continue
+			# Allow movement through bomb tiles (bots have collision exceptions)
+			# but still avoid other players
+			if neighbor != goal_tile:
+				var occupied_by_player = false
+				for peer_id in _game_instance.players:
+					var p = _game_instance.players[peer_id]
+					if is_instance_valid(p) and p != ignore_player and not p.is_dead:
+						if p.get_tile_position() == neighbor:
+							occupied_by_player = true
+							break
+				if occupied_by_player:
+					continue
 			var key = _tile_key(neighbor)
 			if depth_map.has(key):
 				continue

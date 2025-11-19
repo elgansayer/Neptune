@@ -21,6 +21,7 @@ check_immediate = false
 [sub_resource type="BTAction" id="BTAction_escape_find"]
 custom_name = "Find Escape Route"
 script = ExtResource("2_escape")
+escape_radius = 12
 
 [sub_resource type="BTAction" id="BTAction_escape_move"]
 custom_name = "Move To Safe Tile"
@@ -111,10 +112,10 @@ script = ExtResource("9_ambush")
 wait_time = 2.0
 prefer_center = false
 
-[sub_resource type="BTDynamicSelector" id="BTDynamicSelector_root"]
+[sub_resource type="BTSelector" id="BTSelector_root"]
 children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_farming"), SubResource("BTAction_ambush")]
 
 [resource]
 description = "Complete LimboAI bot behavior tree: Escape > Chase+Attack > Collect > Farming > Ambush"
 blackboard_plan = SubResource("BlackboardPlan_bot")
-root_task = SubResource("BTDynamicSelector_root")
+root_task = SubResource("BTSelector_root")

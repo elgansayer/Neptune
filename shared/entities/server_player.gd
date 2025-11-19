@@ -710,6 +710,7 @@ func add_bomb_collision_exception(bomb):
 	if bomb in collision_exceptions:
 		return
 
+	print("[Player] Adding collision exception for bomb at ", bomb.get_tile_position() if is_instance_valid(bomb) else "invalid")
 	collision_exceptions.append(bomb)
 
 	if bomb.is_inside_tree():

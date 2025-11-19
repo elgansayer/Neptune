@@ -9,7 +9,7 @@ class_name BTMoveToCell
 @export var reach_threshold: float = 0.5  ## Distance to consider "reached" (in tiles)
 @export var recalc_distance: int = 3  ## Manhattan distance to trigger path recalculation
 @export var clear_on_success: bool = true  ## Clear target_cell when reached
-@export var debug_logging: bool = true
+@export var debug_logging: bool = false
 
 # State tracking between ticks
 var _cached_path: Array[Vector2i] = []
@@ -125,11 +125,18 @@ func _tick(delta: float) -> int:
 		_cached_path = []
 		return RUNNING
 	
-	# Move toward current waypoint
-	var direction = (waypoint_pos - player.position).normalized()
+	# Move toward current waypoint using grid-aligned movement
+	# This prevents diagonal shortcuts through obstacles
+	var delta_pos = waypoint_pos - player.position
+	var direction: Vector2
 	
-	if debug_logging:
-		print("[BTMoveToCell] Setting input: direction=", direction, " waypoint_pos=", waypoint_pos, " player.position=", player.position)
+	# Prioritize the axis with larger difference (move one axis at a time)
+	if abs(delta_pos.x) > abs(delta_pos.y):
+		# Move horizontally
+		direction = Vector2(sign(delta_pos.x), 0.0)
+	else:
+		# Move vertically
+		direction = Vector2(0.0, sign(delta_pos.y))
 	
 	player.set_input(direction.x, direction.y)
 	
