@@ -10,7 +10,6 @@
 [ext_resource type="Script" uid="uid://d3coarigsg7cj" path="res://ai/tasks/actions/bt_find_powerup.gd" id="8_find_powerup"]
 [ext_resource type="Script" uid="uid://dwu6i8josl3h0" path="res://ai/tasks/actions/bt_wait_ambush.gd" id="9_ambush"]
 [ext_resource type="Script" uid="uid://c2iemmf5xt4vu" path="res://ai/tasks/actions/bt_find_farming_spot.gd" id="9_tn3ky"]
-[ext_resource type="Script" uid="uid://dj0a880q567jg" path="res://ai/tasks/conditions/bt_can_safely_plant.gd" id="10_y3cnp"]
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bot"]
 
@@ -18,6 +17,7 @@
 custom_name = "Check Danger"
 script = ExtResource("1_danger")
 check_immediate = false
+evaluate_all_threats = true
 
 [sub_resource type="BTAction" id="BTAction_escape_find"]
 custom_name = "Find Escape Route"
@@ -80,39 +80,31 @@ custom_name = "Collect Powerup Sequence"
 children = [SubResource("BTCondition_has_powerup"), SubResource("BTAction_find_powerup"), SubResource("BTAction_collect_move")]
 _enabled = false
 
-[sub_resource type="BTAction" id="BTAction_dvb2i"]
+[sub_resource type="BTAction" id="BTAction_find_farming"]
+custom_name = "Find Farming Spot"
 script = ExtResource("9_tn3ky")
 search_radius = 8
+target_cell_var = &"target_cell"
+debug_logging = true
+broadcast_safety = true
 
-[sub_resource type="BTCondition" id="BTCondition_dvb2i"]
-script = ExtResource("10_y3cnp")
-
-[sub_resource type="BTAction" id="BTAction_y3cnp"]
+[sub_resource type="BTAction" id="BTAction_move_farming"]
+custom_name = "Move To Farming Spot"
 script = ExtResource("3_move")
+cell_var = &"target_cell"
+reach_threshold = 0.1
 
-[sub_resource type="BTAction" id="BTAction_3ugk0"]
+[sub_resource type="BTAction" id="BTAction_place_farming"]
+custom_name = "Place Bomb (Farming)"
 script = ExtResource("4_bomb")
+check_capacity = true
+check_existing = true
+require_at_target = true
+target_cell_var = &"target_cell"
 
-[sub_resource type="BTSequence" id="BTSequence_safe_attempt"]
-custom_name = "Safe Plant Attempt"
-children = [SubResource("BTAction_dvb2i"), SubResource("BTCondition_dvb2i"), SubResource("BTAction_y3cnp"), SubResource("BTAction_3ugk0")]
-
-[sub_resource type="BTRepeatUntilSuccess" id="BTRepeatUntilSuccess_y3cnp"]
-children = [SubResource("BTSequence_safe_attempt")]
-
-[sub_resource type="BTAction" id="BTAction_815dk"]
-custom_name = "Move To Escape Cell"
-script = ExtResource("3_move")
-cell_var = &"target_escape_cell"
-
-[sub_resource type="BTAction" id="BTAction_postplant_ambush"]
-custom_name = "Ambush/Patrol (Post Plant)"
-script = ExtResource("9_ambush")
-wait_time = 2.0
-
-[sub_resource type="BTSequence" id="BTSequence_dvb2i"]
+[sub_resource type="BTSequence" id="BTSequence_farming"]
 custom_name = "Farm Blocks Sequence"
-children = [SubResource("BTRepeatUntilSuccess_y3cnp"), SubResource("BTAction_815dk"), SubResource("BTAction_postplant_ambush")]
+children = [SubResource("BTAction_find_farming"), SubResource("BTAction_move_farming"), SubResource("BTAction_place_farming")]
 
 [sub_resource type="BTAction" id="BTAction_ambush"]
 custom_name = "Ambush/Patrol"
@@ -121,9 +113,9 @@ wait_time = 2.0
 prefer_center = false
 
 [sub_resource type="BTSelector" id="BTSelector_root"]
-children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_dvb2i"), SubResource("BTAction_ambush")]
+children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_farming"), SubResource("BTAction_ambush")]
 
 [resource]
-description = "Complete LimboAI bot behavior tree: Escape > Chase+Attack > Collect > Ambush"
+description = "Complete LimboAI bot behavior tree: Escape > Chase+Attack > Collect > Farming > Ambush"
 blackboard_plan = SubResource("BlackboardPlan_bot")
 root_task = SubResource("BTSelector_root")

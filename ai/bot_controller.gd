@@ -58,8 +58,8 @@ func _physics_process(delta: float) -> void:
 	
 	# Continuous farming spot broadcasting for visualization
 	# Broadcast every 60 frames (~1 second at 60 FPS)
-	if Engine.get_physics_frames() % 60 == 0:
-		_broadcast_farming_evaluation()
+	# Note: BTFindFarmingSpot now handles broadcasting directly
+	pass
 	
 	# Decision tick throttling
 	_decision_accumulator += delta
@@ -152,7 +152,30 @@ func _build_limbo_tree() -> void:
 	attack_seq.call("add_child", retreat_after_bomb)
 	attack_seq.call("add_child", move_retreat)
 	
-	# Sequence 3: COLLECT (low priority, placeholder for now)
+	# Sequence 3: FARMING (medium priority)
+	# Find a safe spot near soft blocks -> Move there -> Plant bomb
+	var farming_seq = ClassDB.instantiate("BTSequence")
+	var find_farming = load("res://ai/tasks/actions/bt_find_farming_spot.gd").new()
+	find_farming.search_radius = 8
+	find_farming.target_cell_var = &"target_cell"
+	find_farming.debug_logging = true
+	find_farming.broadcast_safety = true
+	
+	var move_to_farming = load("res://ai/tasks/actions/bt_move_to_cell.gd").new()
+	move_to_farming.cell_var = &"target_cell"
+	move_to_farming.reach_threshold = 0.1 # Precise movement for planting
+	
+	var place_bomb_farming = load("res://ai/tasks/actions/bt_place_bomb.gd").new()
+	place_bomb_farming.check_capacity = true
+	place_bomb_farming.check_existing = true
+	place_bomb_farming.require_at_target = true
+	place_bomb_farming.target_cell_var = &"target_cell"
+	
+	farming_seq.call("add_child", find_farming)
+	farming_seq.call("add_child", move_to_farming)
+	farming_seq.call("add_child", place_bomb_farming)
+	
+	# Sequence 4: COLLECT (low priority, placeholder for now)
 	# TODO: Add BTHasPowerup check and pathfinding to powerup
 	var collect_seq = ClassDB.instantiate("BTSequence")
 	# Placeholder: just move to a cell if target_powerup is set
@@ -163,6 +186,7 @@ func _build_limbo_tree() -> void:
 	# Assemble selector
 	root_selector.call("add_child", escape_seq)
 	root_selector.call("add_child", attack_seq)
+	root_selector.call("add_child", farming_seq)
 	root_selector.call("add_child", collect_seq)
 	
 	# Set root
@@ -191,6 +215,12 @@ func _update_limbo_blackboard() -> void:
 	_limbo_blackboard.set_var("hazard_predictor", hazard_predictor)
 	_limbo_blackboard.set_var("opponent_tracker", opponent_tracker)
 	_limbo_blackboard.set_var("bomb_planner", bomb_planner)
+	
+	# Ensure safety checker is configured (handle race condition where manager might not have configured it yet)
+	if bomb_safety_checker and game_instance and game_instance.ai_manager:
+		# It's safe to call configure multiple times
+		bomb_safety_checker.configure(game_instance.ai_manager, grid_sampler)
+	
 	_limbo_blackboard.set_var("bomb_safety_checker", bomb_safety_checker)
 	
 	# State
