@@ -4,7 +4,7 @@ extends Node
 ## This replaces hardcoded constants with values from the active map
 
 # === MAP-DEPENDENT VALUES (loaded from map metadata) ===
-var TILE_SIZE: int = 64  # Default, overridden by map metadata
+var TILE_SIZE: int = 64 # Default, overridden by map metadata
 var map_width: int = 17
 var map_height: int = 11
 var map_name: String = "Unknown"
@@ -13,32 +13,32 @@ var spawn_points: Array = []
 # === DYNAMIC SCALING (computed from TILE_SIZE) ===
 # Reference tile size: 16px (native pixel art size)
 const REFERENCE_TILE_SIZE = 16.0
-var scale_factor: float = 1.0  # TILE_SIZE / REFERENCE_TILE_SIZE
+var scale_factor: float = 1.0 # TILE_SIZE / REFERENCE_TILE_SIZE
 
 # === STATIC CONSTANTS (scaled proportionally) ===
 # Base values are defined for 16px reference tile size
-const BASE_SPEED_REFERENCE = 45.0  # Speed at 16px tile size
-const SNAP_TO_CENTER_SPEED_REFERENCE = 30.0  # Snap speed at 16px tile size
-const CORNER_ASSIST_THRESHOLD_REFERENCE = 5.0  # Corner assist at 16px tile size
-const COLLISION_CHECK_DISTANCE_REFERENCE = 2.0  # Collision check distance at 16px tile size
+const BASE_SPEED_REFERENCE = 45.0 # Speed at 16px tile size
+const SNAP_TO_CENTER_SPEED_REFERENCE = 60.0 # Snap speed at 16px tile size (increased for better alignment)
+const CORNER_ASSIST_THRESHOLD_REFERENCE = 5.0 # Corner assist at 16px tile size
+const COLLISION_CHECK_DISTANCE_REFERENCE = 2.0 # Collision check distance at 16px tile size
 
 # PLAYER_HALF_WIDTH is dynamic: always TILE_SIZE / 2
 # This ensures collision boxes always match the tile grid
-var PLAYER_HALF_WIDTH: float = 32.0  # Default for 64px tiles, updated in load_map_config()
+var PLAYER_HALF_WIDTH: float = 32.0 # Default for 64px tiles, updated in load_map_config()
 
 # Scaled values (computed in load_map_config)
-var BASE_SPEED: float = 180.0  # BASE_SPEED_REFERENCE * scale_factor
-var SNAP_TO_CENTER_SPEED: float = 120.0  # SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
-var CORNER_ASSIST_THRESHOLD: float = 20.0  # CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
-var COLLISION_CHECK_DISTANCE: float = 8.0  # COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
-var SNAP_THRESHOLD: float = 2.0  # Scaled proportionally
+var BASE_SPEED: float = 180.0 # BASE_SPEED_REFERENCE * scale_factor
+var SNAP_TO_CENTER_SPEED: float = 120.0 # SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
+var CORNER_ASSIST_THRESHOLD: float = 20.0 # CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
+var COLLISION_CHECK_DISTANCE: float = 8.0 # COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
+var SNAP_THRESHOLD: float = 2.0 # Scaled proportionally
 
 # Collision Layers (physics layer bit positions)
-const COLLISION_LAYER_WALLS = 1      # Layer 1 (bit 0): Solid/destructible walls
-const COLLISION_LAYER_PLAYERS = 2    # Layer 2 (bit 1): Player characters
-const COLLISION_LAYER_BOMBS = 4      # Layer 3 (bit 2): Bombs
+const COLLISION_LAYER_WALLS = 1 # Layer 1 (bit 0): Solid/destructible walls
+const COLLISION_LAYER_PLAYERS = 2 # Layer 2 (bit 1): Player characters
+const COLLISION_LAYER_BOMBS = 4 # Layer 3 (bit 2): Bombs
 const COLLISION_LAYER_EXPLOSIONS = 8 # Layer 4 (bit 3): Explosion damage areas
-const COLLISION_LAYER_POWERUPS = 16  # Layer 5 (bit 4): Power-up items
+const COLLISION_LAYER_POWERUPS = 16 # Layer 5 (bit 4): Power-up items
 
 # Movement (multipliers are dimensionless, don't scale)
 const WALK_MULTIPLIER = 0.6
@@ -55,8 +55,8 @@ const DEFAULT_BOMB_RANGE = 2
 # Network
 const SERVER_PORT = 7777
 const MAX_PLAYERS = 8
-const TICK_RATE = 60  # Server physics runs at 60 FPS
-const NETWORK_SEND_RATE = 20  # Send state updates 20 times per second
+const TICK_RATE = 60 # Server physics runs at 60 FPS
+const NETWORK_SEND_RATE = 20 # Send state updates 20 times per second
 
 # Player states
 enum PlayerState {
@@ -83,14 +83,14 @@ func load_map_config(map_data: Dictionary):
 		
 		# Update dynamic values based on tile size
 		# Player is 87.5% of tile size (56/64 = 0.875) to allow clearance
-		PLAYER_HALF_WIDTH = (TILE_SIZE * 0.875) / 2.0  # 7px at 16px tiles, 28px at 64px tiles
+		PLAYER_HALF_WIDTH = (TILE_SIZE * 0.875) / 2.0 # 7px at 16px tiles, 28px at 64px tiles
 		
 		# Scale movement speeds proportionally
 		BASE_SPEED = BASE_SPEED_REFERENCE * scale_factor
 		SNAP_TO_CENTER_SPEED = SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
 		CORNER_ASSIST_THRESHOLD = CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
 		COLLISION_CHECK_DISTANCE = COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
-		SNAP_THRESHOLD = 0.5 * scale_factor  # Snap threshold scales too
+		SNAP_THRESHOLD = 0.5 * scale_factor # Snap threshold scales too
 		
 		print("[GameConfig] Loaded TILE_SIZE: ", TILE_SIZE, "px (scale: ", scale_factor, "x)")
 		print("[GameConfig] Scaled BASE_SPEED: ", BASE_SPEED, " px/s")

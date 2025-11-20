@@ -22,6 +22,10 @@ func _tick(delta: float) -> int:
 		push_warning("[BTIsInDanger] Missing required blackboard variables: player or hazard_predictor")
 		return FAILURE
 	
+	# DEBUG: Log every 60 frames to verify BT is running
+	if Engine.get_physics_frames() % 60 == 0:
+		print("[BTIsInDanger] TICK - player_tile=%s" % player.get_tile_position())
+	
 	var player_tile = player.get_tile_position()
 	var current_time = Time.get_ticks_msec() / 1000.0
 	

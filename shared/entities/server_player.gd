@@ -17,37 +17,37 @@ var peer_id: int = 0
 var player_name: String = ""
 var username: String = ""
 var input_direction := Vector2.ZERO
-var last_move_direction := Vector2.ZERO  # The last direction we successfully moved (persists when stationary)
+var last_move_direction := Vector2.ZERO # The last direction we successfully moved (persists when stationary)
 var place_bomb_requested := false
 var bombs_placed := 0
 var max_bombs := 1
 var bomb_range := 2
-var speed_multiplier := 1.0  # Power-up speed multiplier
+var speed_multiplier := 1.0 # Power-up speed multiplier
 var is_dead := false
 var is_bot := false
 var bot_personality := ""
-var debug_check_tile := Vector2i.ZERO  # Tile being checked for diagonal (for client debug)
-var debug_blocking_tile := Vector2i.ZERO  # The blocking tile (for debug visualization)
+var debug_check_tile := Vector2i.ZERO # Tile being checked for diagonal (for client debug)
+var debug_blocking_tile := Vector2i.ZERO # The blocking tile (for debug visualization)
 
 # Advanced abilities (Phase 2)
-var has_bomb_kicker := false  # Can kick bombs
-var has_power_glove := false  # Can pick up and throw bombs
+var has_bomb_kicker := false # Can kick bombs
+var has_power_glove := false # Can pick up and throw bombs
 
 # Power Glove state
-var carried_bomb: Node = null  # Reference to bomb being carried
-var action_button_pressed := false  # Track action button state for throw timing
-var is_picking_up_bomb := false  # True during pickup animation
-var pickup_animation_time := 0.0  # Time elapsed in pickup animation
-var pickup_animation_direction := Vector2.DOWN  # Direction player is facing during pickup
+var carried_bomb: Node = null # Reference to bomb being carried
+var action_button_pressed := false # Track action button state for throw timing
+var is_picking_up_bomb := false # True during pickup animation
+var pickup_animation_time := 0.0 # Time elapsed in pickup animation
+var pickup_animation_direction := Vector2.DOWN # Direction player is facing during pickup
 
-const PICKUP_ANIMATION_DURATION = 0.3  # Duration of pickup animation in seconds (fast like SBomberman)
+const PICKUP_ANIMATION_DURATION = 0.3 # Duration of pickup animation in seconds (fast like SBomberman)
 
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
 # LimboAI integration for player-controlled entities (optional)
-var input_buffer: InputBufferScript = null  # Input buffering for BT-based player control
-var bt_player = null  # Optional: LimboAI BT player for input processing
+var input_buffer: InputBufferScript = null # Input buffering for BT-based player control
+var bt_player = null # Optional: LimboAI BT player for input processing
 
 # ShapeCast2D nodes for checking directions
 var shape_cast_desired: ShapeCast2D
@@ -57,12 +57,13 @@ var kick_detector: ShapeCast2D
 
 # Debug visualization
 var debug_arrow: Polygon2D
-var debug_tiles: Dictionary = {}  # Store debug tile overlays
-var debug_raycast_line: Line2D  # Visualize the raycast
+var debug_tiles: Dictionary = {} # Store debug tile overlays
+var debug_raycast_line: Line2D # Visualize the raycast
+var debug_path_line: Line2D # Visualize AI path (replicated)
 
 # Note: COLLISION_CHECK_DISTANCE moved to GameConfig for dynamic scaling
-const ENABLE_GRID_SNAPPING = true  # Re-enabled with matching client prediction
-const ENABLE_CORNER_SLIDING = true  # Toggle manual corner sliding logic
+const ENABLE_GRID_SNAPPING = true # Re-enabled with matching client prediction
+const ENABLE_CORNER_SLIDING = true # Toggle manual corner sliding logic
 
 func _ready():
 	# Set collision layers: players on layer 2, collide with walls (1), bombs (4), and powerups (16)
@@ -72,7 +73,7 @@ func _ready():
 	# Set up collision shape - USE RECTANGLE for precise collision
 	var collision_shape = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
-	shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2)  # Dynamic size based on tile
+	shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2) # Dynamic size based on tile
 	collision_shape.shape = shape
 	add_child(collision_shape)
 
@@ -83,7 +84,11 @@ func _ready():
 	_setup_debug_arrow()
 
 	# Set up debug raycast line
+	# Set up debug raycast line
 	_setup_debug_raycast()
+	
+	# Set up debug path line
+	_setup_debug_path_line()
 
 func _setup_debug_arrow():
 	"""Create a visual arrow to show facing direction"""
@@ -91,14 +96,14 @@ func _setup_debug_arrow():
 
 	# Smaller arrow shape pointing right
 	var arrow_points = PackedVector2Array([
-		Vector2(0, -8),       # Top left
-		Vector2(25, 0),       # Tip (pointing right)
-		Vector2(0, 8),        # Bottom left
-		Vector2(6, 0)         # Inner notch
+		Vector2(0, -8), # Top left
+		Vector2(25, 0), # Tip (pointing right)
+		Vector2(0, 8), # Bottom left
+		Vector2(6, 0) # Inner notch
 	])
 
 	debug_arrow.polygon = arrow_points
-	debug_arrow.color = Color(1, 0.5, 0, 0.8)  # Orange, semi-transparent
+	debug_arrow.color = Color(1, 0.5, 0, 0.8) # Orange, semi-transparent
 	debug_arrow.z_index = 100
 	debug_arrow.z_as_relative = false
 	debug_arrow.position = Vector2(0, -35)
@@ -106,20 +111,20 @@ func _setup_debug_arrow():
 
 func _setup_debug_raycast():
 	"""ShapeCast2D will handle visualization - this is kept for compatibility"""
-	pass  # Visualization now done by ShapeCast2D
+	pass # Visualization now done by ShapeCast2D
 
 func _setup_shape_casts():
 	"""Create ShapeCast2D nodes for checking collisions in different directions"""
 	# Create shape for casting
 	var cast_shape = RectangleShape2D.new()
-	cast_shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2)  # Dynamic size
+	cast_shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2) # Dynamic size
 
 	# ShapeCast for desired direction (check walls and bombs, not other players)
 	shape_cast_desired = ShapeCast2D.new()
 	shape_cast_desired.shape = cast_shape
 	shape_cast_desired.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
-	shape_cast_desired.enabled = true  # Keep enabled for debugging
-	shape_cast_desired.exclude_parent = true  # Don't collide with self!
+	shape_cast_desired.enabled = true # Keep enabled for debugging
+	shape_cast_desired.exclude_parent = true # Don't collide with self!
 	add_child(shape_cast_desired)
 	# Explicitly exclude this player's physics body
 	shape_cast_desired.add_exception(self)
@@ -227,7 +232,7 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 
 	# Edge threshold: within 0.5 of tile edge means we can slide
 	# For a 64px tile, half is 32px, so edge_threshold should be around 24-28px
-	var edge_threshold = GameConfig.TILE_SIZE / 4.0  # Within 8px of edge
+	var edge_threshold = GameConfig.TILE_SIZE / 4.0 # Within 8px of edge
 
 	print("Blocked dir: ", blocked_direction)
 	print("Blocking tile: ", debug_blocking_tile, " center: ", blocking_tile_center)
@@ -308,7 +313,7 @@ func _is_diagonal_blocked(_move_vec: Vector2, _input_vec: Vector2) -> bool:
 	# Simple check: is the tile itself walkable?
 	# If the desired tile is a wall, we definitely can't slide there
 	if not is_tile_walkable(desired_tile):
-		return true  # Blocked - tile is a wall
+		return true # Blocked - tile is a wall
 
 	# If the tile is walkable (empty), we can slide
 	# The slide direction (_move_vec) is already checked as clear in the main logic
@@ -317,7 +322,7 @@ func _is_diagonal_blocked(_move_vec: Vector2, _input_vec: Vector2) -> bool:
 func _vector_to_facing(direction: Vector2) -> String:
 	"""Convert direction Vector2 to facing string"""
 	if direction.length() < 0.1:
-		return "DOWN"  # Default facing
+		return "DOWN" # Default facing
 
 	if abs(direction.y) > abs(direction.x):
 		return "UP" if direction.y < 0 else "DOWN"
@@ -353,7 +358,7 @@ func _physics_process(_delta):
 	var input_dir = get_4way_input()
 
 	# Debug: Print input state every frame for a few seconds
-	if Engine.get_process_frames() % 60 == 0:  # Every 60 frames (~1 second)
+	if Engine.get_process_frames() % 60 == 0: # Every 60 frames (~1 second)
 		print("[ServerPlayer DEBUG] ", username, " has_bomb_kicker=", has_bomb_kicker, " input_dir=", input_dir, " input_direction=", input_direction)
 
 	if input_dir.length() < Constants.INPUT_DEADZONE:
@@ -366,7 +371,7 @@ func _physics_process(_delta):
 
 	# CHECK 1: Is the input_direction clear?
 	var input_clear = _check_direction_clear(input_dir)
-	var _input_blocking_tile = debug_blocking_tile  # Save the blocking tile from input check
+	var _input_blocking_tile = debug_blocking_tile # Save the blocking tile from input check
 	_is_diagonal_blocked(last_move_direction, input_dir)
 
 	# print("Input dir: ", input_dir, " Clear: ", input_clear, " Colliding: ", shape_cast_desired.is_colliding())
@@ -456,7 +461,7 @@ func _update_debug_arrow():
 		"RIGHT": 0.0,
 		"DOWN": PI / 2.0,
 		"LEFT": PI,
-		"UP": -PI / 2.0
+		"UP": - PI / 2.0
 	}
 
 	if facing in rotation_map:
@@ -532,7 +537,7 @@ func is_tile_walkable(tile_pos: Vector2i) -> bool:
 	"""Check if a tile position is walkable (not a wall or block)"""
 	var game_instance = get_parent()
 	if not game_instance or not game_instance.has_method("get"):
-		return true  # Assume walkable if we can't check
+		return true # Assume walkable if we can't check
 
 	var game_map = game_instance.game_map
 	if not game_map:
@@ -557,7 +562,14 @@ func get_tile_position() -> Vector2i:
 func set_input(input_x: float, input_y: float):
 	"""Set movement input direction.
 	Can be called directly or via input buffer for BT-based control."""
-	input_direction = Vector2(input_x, input_y)
+	var new_input = Vector2(input_x, input_y)
+	
+	# DEBUG: Log ALL input changes for bots
+	if is_bot and new_input != input_direction:
+		print("[ServerPlayer.set_input] Bot %s input changing: %s -> %s" % [username, input_direction, new_input])
+	
+	input_direction = new_input
+
 
 func queue_input(input_data: Dictionary) -> void:
 	"""Queue input for BT-based processing.
@@ -606,14 +618,14 @@ func try_pickup_bomb(bomb: Node) -> bool:
 		return false
 
 	if carried_bomb != null:
-		return false  # Already carrying a bomb
+		return false # Already carrying a bomb
 
 	# Check if standing on the bomb's tile
 	var player_tile = get_tile_position()
 	var bomb_tile = bomb.get_tile_position()
 
 	if player_tile != bomb_tile:
-		return false  # Not on the same tile
+		return false # Not on the same tile
 
 	# Attempt pickup
 	if bomb.pick_up(self):
@@ -638,7 +650,7 @@ func throw_carried_bomb() -> bool:
 	# Throw in the direction player is facing
 	var throw_direction = last_move_direction
 	if throw_direction.length() < 0.1:
-		throw_direction = Vector2.DOWN  # Default direction if not moving
+		throw_direction = Vector2.DOWN # Default direction if not moving
 
 	if carried_bomb.throw_bomb(throw_direction):
 		print("[ServerPlayer] ", username, " threw bomb ", carried_bomb.bomb_id, " in direction ", throw_direction)
@@ -671,34 +683,34 @@ func get_carried_bomb_offset() -> Vector2:
 		direction = "left" if facing_dir.x < 0 else "right"
 
 	# Calculate animation frame (0, 1, or 2) based on animation progress
-	var frame = 2  # Default to final frame (fully held overhead)
+	var frame = 2 # Default to final frame (fully held overhead)
 	if is_picking_up_bomb:
 		var progress = pickup_animation_time / PICKUP_ANIMATION_DURATION
-		frame = int(progress * 3.0)  # 3 frames total
+		frame = int(progress * 3.0) # 3 frames total
 		frame = clamp(frame, 0, 2)
 
 	# Bomb position table from SBomberman (frame-by-frame positioning)
 	# Each frame has position offset relative to player center
 	var bomb_position_table = {
 		"up": {
-			0: Vector2(0, 0),      # Frame 0: at player center
-			1: Vector2(0, -8),     # Frame 1: slightly above
-			2: Vector2(0, -20)     # Frame 2: fully overhead
+			0: Vector2(0, 0), # Frame 0: at player center
+			1: Vector2(0, -8), # Frame 1: slightly above
+			2: Vector2(0, -20) # Frame 2: fully overhead
 		},
 		"down": {
-			0: Vector2(0, 16),     # Frame 0: in front/below
-			1: Vector2(0, -8),     # Frame 1: rising up
-			2: Vector2(0, -20)     # Frame 2: fully overhead
+			0: Vector2(0, 16), # Frame 0: in front/below
+			1: Vector2(0, -8), # Frame 1: rising up
+			2: Vector2(0, -20) # Frame 2: fully overhead
 		},
 		"left": {
-			0: Vector2(-10, 8),    # Frame 0: to the side
-			1: Vector2(-16, 0),    # Frame 1: moving up and out
-			2: Vector2(0, -24)     # Frame 2: fully overhead
+			0: Vector2(-10, 8), # Frame 0: to the side
+			1: Vector2(-16, 0), # Frame 1: moving up and out
+			2: Vector2(0, -24) # Frame 2: fully overhead
 		},
 		"right": {
-			0: Vector2(10, 8),     # Frame 0: to the side
-			1: Vector2(16, 0),     # Frame 1: moving up and out
-			2: Vector2(0, -24)     # Frame 2: fully overhead
+			0: Vector2(10, 8), # Frame 0: to the side
+			1: Vector2(16, 0), # Frame 1: moving up and out
+			2: Vector2(0, -24) # Frame 2: fully overhead
 		}
 	}
 
@@ -791,3 +803,33 @@ func set_bot_metadata(personality: String) -> void:
 
 func is_ai_bot() -> bool:
 	return is_bot
+func _setup_debug_path_line():
+	debug_path_line = Line2D.new()
+	debug_path_line.width = 3.0
+	debug_path_line.default_color = Color(0, 1, 0, 0.8)
+	debug_path_line.z_index = 4096
+	debug_path_line.joint_mode = Line2D.LINE_JOINT_BEVEL
+	add_child(debug_path_line)
+
+@rpc("authority", "call_remote", "unreliable")
+func client_update_debug_path(points: PackedVector2Array):
+	if not debug_path_line:
+		_setup_debug_path_line()
+	
+	var local_points = PackedVector2Array()
+	for p in points:
+		local_points.append(to_local(p))
+	debug_path_line.points = local_points
+
+func set_debug_path(points: PackedVector2Array):
+	# Update locally (server view)
+	if not debug_path_line:
+		_setup_debug_path_line()
+	
+	var local_points = PackedVector2Array()
+	for p in points:
+		local_points.append(to_local(p))
+	debug_path_line.points = local_points
+	
+	# Send to clients
+	client_update_debug_path.rpc(points)

@@ -65,7 +65,6 @@ func _tick(_delta: float) -> int:
 	for dx in range(-search_radius, search_radius + 1):
 		for dy in range(-search_radius, search_radius + 1):
 			# Include current tile (dx=0, dy=0) in evaluation
-			
 			var check_tile = current_tile + Vector2i(dx, dy)
 			candidates_checked += 1
 			
@@ -79,6 +78,17 @@ func _tick(_delta: float) -> int:
 			if soft_blocks_hit == 0:
 				rejected_no_blocks += 1
 				continue
+			
+			# Check if tile is threatened
+			var ai_manager = blackboard.get_var("ai_manager")
+			if ai_manager:
+				var threat_matrix = ai_manager.get_current_threat_matrix()
+				var t_key := "%d,%d" % [check_tile.x, check_tile.y]
+				if threat_matrix.has(t_key):
+					rejected_no_nearby_safe += 1
+					if debug_logging:
+						print("  [REJECT] ", check_tile, " - threatened")
+					continue
 			
 			var tile_key := "%d,%d" % [check_tile.x, check_tile.y]
 			
@@ -147,11 +157,11 @@ func _tick(_delta: float) -> int:
 			
 			# Escape distance factor (1-step = 1.5x, 2-step = 1.2x, 3+ step = 1.0x)
 			if escape_distance == 1:
-				safety_multiplier *= 1.5  # HUGE bonus for "plant-and-hide-in-corner" strategy
+				safety_multiplier *= 1.5 # HUGE bonus for "plant-and-hide-in-corner" strategy
 			elif escape_distance == 2:
 				safety_multiplier *= 1.2
 			elif escape_distance >= 5:
-				safety_multiplier *= 0.7  # Penalty for long escape runs
+				safety_multiplier *= 0.7 # Penalty for long escape runs
 			
 			# Margin factor (>1000ms = 1.2x, 800-1000ms = 1.0x, <800ms = 0.8x)
 			if margin > 1000.0:
@@ -173,14 +183,14 @@ func _tick(_delta: float) -> int:
 			# Mark as safe or marginal for visualization based on safety margin
 			if broadcast_safety:
 				tile_key = "%d,%d" % [check_tile.x, check_tile.y]
-				var status = 2 if margin > 800.0 else 1  # Safe (cyan) if >800ms margin, marginal (orange) otherwise
+				var status = 2 if margin > 800.0 else 1 # Safe (cyan) if >800ms margin, marginal (orange) otherwise
 				var eval_data = {
 					"status": status,
 					"soft_blocks": soft_blocks_hit,
 					"explored_tiles": safety_result.get("explored_tiles", 0),
 					"margin_ms": margin,
 					"escape_distance": escape_distance,
-					"final_score": score  # Include score for debugging
+					"final_score": score # Include score for debugging
 				}
 				if escape_tile:
 					eval_data["escape_tile"] = {"x": escape_tile.x, "y": escape_tile.y}
@@ -203,8 +213,8 @@ func _tick(_delta: float) -> int:
 		return SUCCESS
 	
 	# No good farming spot found - report why
-	print("[BTFindFarmingSpot] ✗ No safe farming spots found (checked=", candidates_checked, 
-		" unwalkable=", rejected_unwalkable, 
+	print("[BTFindFarmingSpot] ✗ No safe farming spots found (checked=", candidates_checked,
+		" unwalkable=", rejected_unwalkable,
 		" no_blocks=", rejected_no_blocks,
 		" no_path=", rejected_no_path,
 		" no_nearby_safe=", rejected_no_nearby_safe,
@@ -286,8 +296,8 @@ func _has_safe_tile_nearby_static(position: Vector2i, grid_sampler, current_time
 			
 			# Also consider it safe if the threat is far in the future (> 2.5 seconds)
 			# This prevents rejecting valid spots just because a distant bomb exists
-			if threat_matrix[tile_key] > current_time_msec + 2500.0:
-				return true
+			# if threat_matrix[tile_key] > current_time_msec + 2500.0:
+			#	return true
 
 	# No safe tiles found nearby - we're in a danger zone
 	return false
@@ -358,7 +368,7 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 	
 	if not ai_manager:
 		print("[BTFindFarmingSpot] BROADCAST SKIPPED - no ai_manager")
-		return  # Can't evaluate without ai_manager
+		return # Can't evaluate without ai_manager
 	
 	print("[BTFindFarmingSpot] Broadcasting from ", current_tile, " (search_radius=", search_radius, ")")
 	
@@ -379,6 +389,15 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 			var soft_blocks_hit = _count_soft_blocks_in_range(check_tile, bomb_range, grid_sampler)
 			if soft_blocks_hit == 0:
 				continue
+			
+			# Check if tile is threatened
+			if ai_manager:
+				var threat_matrix = ai_manager.get_current_threat_matrix()
+				var t_key := "%d,%d" % [check_tile.x, check_tile.y]
+				if threat_matrix.has(t_key):
+					safety_eval[t_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "threatened"}
+					rejected_safety += 1
+					continue
 			
 			var tile_key := "%d,%d" % [check_tile.x, check_tile.y]
 			

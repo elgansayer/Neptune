@@ -46,7 +46,8 @@ const EXPLOSION_DISPLAY_TIME = 0.5  # How long to show explosions
 # Match timer
 var match_duration := 180.0  # 3 minutes default
 var match_time_remaining := match_duration
-var match_active := true
+var match_active := false  # Start false, set true after countdown
+var countdown_time := 1.0  # 1 second countdown before match starts
 var winner_id := ""
 
 signal game_ended(winner_id: String)
@@ -203,6 +204,14 @@ func _physics_process(delta):
 	if ai_manager != null:
 		current_time_msec = Time.get_ticks_msec()
 		ai_manager.refresh_threat_matrix(current_time_msec)
+	
+	# Handle countdown before match starts
+	if not match_active and countdown_time > 0.0:
+		countdown_time -= delta
+		if countdown_time <= 0.0:
+			countdown_time = 0.0
+			match_active = true
+			print("[GameInstance] Match started! Countdown complete.")
 	
 	# Update match timer if active
 	if match_active:
@@ -366,6 +375,10 @@ func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
 	return false  # No bomb picked up
 
 func place_bomb(player: ServerPlayer):
+	# Prevent bomb placement during countdown
+	if not match_active:
+		return
+	
 	var bomb = ServerBomb.new()
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
@@ -549,6 +562,7 @@ func sync_state_to_clients():
 		},
 		"match_timer": match_time_remaining,
 		"match_active": match_active,
+		"countdown_time": countdown_time,
 		"winner_id": winner_id
 	}
 	

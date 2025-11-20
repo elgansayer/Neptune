@@ -5,9 +5,9 @@ class_name BTWaitAmbush
 ## Idle/patrol behavior for territorial control
 ## Bot stays near strategic positions (center, powerups, soft blocks)
 
-@export var patrol_radius: int = 3  ## How far to wander from anchor point
-@export var wait_time: float = 1.5  ## Seconds between patrol moves
-@export var prefer_center: bool = true  ## Gravitate toward map center
+@export var patrol_radius: int = 3 ## How far to wander from anchor point
+@export var wait_time: float = 1.5 ## Seconds between patrol moves
+@export var prefer_center: bool = true ## Gravitate toward map center
 
 var _wait_accumulator: float = 0.0
 var _anchor_point: Vector2i = Vector2i.ZERO
@@ -67,10 +67,10 @@ func _tick(delta: float) -> int:
 	var target_tile = player_tile + Vector2i(int(random_dir.x), int(random_dir.y))
 	
 	# Check if walkable
-	if ai_manager.is_walkable(target_tile):
+	if grid_sampler.is_tile_walkable(target_tile):
 		player.set_input(random_dir.x, random_dir.y)
 	else:
 		# Stay put if blocked
 		player.set_input(0, 0)
 	
-	return RUNNING  # Ambush is continuous behavior
+	return RUNNING # Ambush is continuous behavior

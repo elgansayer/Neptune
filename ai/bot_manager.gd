@@ -76,6 +76,20 @@ func _auto_spawn_bots() -> void:
 func _physics_process(delta: float) -> void:
 	if game_instance == null:
 		return
+	
+	# Handle match_active state for all bots
+	var should_be_active = game_instance.match_active
+	for peer_id in _bot_players:
+		var bt_player = _bot_players[peer_id]
+		if is_instance_valid(bt_player):
+			var current_active = bt_player.get("active")
+			if current_active != should_be_active:
+				bt_player.set("active", should_be_active)
+	
+	# Don't update bots during countdown
+	if not game_instance.match_active:
+		return
+	
 	hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
 	opponent_tracker.update_from_players(game_instance.players.values())
 	
@@ -98,6 +112,10 @@ func _physics_process(delta: float) -> void:
 					# Update dynamic blackboard values
 					blackboard.set_var("current_tile", player_ref.get_tile_position())
 					blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+					
+					# DEBUG: Log when calling update
+					if Engine.get_physics_frames() % 60 == 0:
+						print("[BotManager] Calling bt_player.update() for %s active=%s" % [player_ref.username, bt_player.get("active")])
 					
 					# Manually update BTPlayer to ensure it runs BEFORE player's physics
 					# This ensures bot input is set before player processes movement

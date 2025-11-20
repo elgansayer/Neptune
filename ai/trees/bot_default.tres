@@ -24,15 +24,15 @@ script = ExtResource("2_escape")
 escape_radius = 12
 target_cell_var = &"escape_cell"
 
-[sub_resource type="BTAction" id="BTAction_escape_move_v2"]
+[sub_resource type="BTAction" id="BTAction_escape_move"]
 custom_name = "Move To Safe Tile"
 script = ExtResource("3_move")
-avoid_threats = true
 cell_var = &"escape_cell"
+avoid_threats = false
 
 [sub_resource type="BTSequence" id="BTSequence_escape"]
 custom_name = "Escape Sequence"
-children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escape_find"), SubResource("BTAction_escape_move_v2")]
+children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escape_find"), SubResource("BTAction_escape_move")]
 
 [sub_resource type="BTCondition" id="BTCondition_has_opponent"]
 custom_name = "Has Opponent?"
@@ -55,10 +55,12 @@ script = ExtResource("4_bomb")
 custom_name = "Plan Retreat"
 script = ExtResource("2_escape")
 escape_radius = 6
+target_cell_var = &"escape_cell"
 
 [sub_resource type="BTAction" id="BTAction_attack_move"]
 custom_name = "Retreat To Safety"
 script = ExtResource("3_move")
+cell_var = &"escape_cell"
 
 [sub_resource type="BTSequence" id="BTSequence_attack"]
 custom_name = "Chase + Attack Sequence"
@@ -91,7 +93,9 @@ search_radius = 8
 [sub_resource type="BTAction" id="BTAction_move_farming"]
 custom_name = "Move To Farming Spot"
 script = ExtResource("3_move")
+cell_var = &"target_cell"
 clear_on_success = false
+avoid_threats = true
 
 [sub_resource type="BTAction" id="BTAction_place_farming"]
 custom_name = "Place Bomb (Farming)"
@@ -100,16 +104,26 @@ script = ExtResource("4_bomb")
 [sub_resource type="BTAction" id="BTAction_farming_escape_plan"]
 custom_name = "Plan Escape After Bomb"
 script = ExtResource("2_escape")
+target_cell_var = &"escape_cell"
 
 [sub_resource type="BTAction" id="BTAction_farming_escape_move"]
 custom_name = "Move To Safety"
 script = ExtResource("3_move")
 cell_var = &"escape_cell"
-avoid_threats = true
+avoid_threats = false
+
+[sub_resource type="BTCondition" id="BTCondition_farming_safe"]
+custom_name = "Check Safe (Not In Danger)"
+script = ExtResource("1_danger")
+check_immediate = false
+
+[sub_resource type="BTInvert" id="BTInvert_farming_safe"]
+custom_name = "NOT In Danger"
+children = [SubResource("BTCondition_farming_safe")]
 
 [sub_resource type="BTSequence" id="BTSequence_farming"]
 custom_name = "Farm Blocks Sequence"
-children = [SubResource("BTAction_find_farming"), SubResource("BTAction_move_farming"), SubResource("BTAction_place_farming"), SubResource("BTAction_farming_escape_plan"), SubResource("BTAction_farming_escape_move")]
+children = [SubResource("BTInvert_farming_safe"), SubResource("BTAction_find_farming"), SubResource("BTAction_move_farming"), SubResource("BTAction_place_farming"), SubResource("BTAction_farming_escape_plan"), SubResource("BTAction_farming_escape_move")]
 
 [sub_resource type="BTAction" id="BTAction_ambush"]
 custom_name = "Ambush/Patrol"

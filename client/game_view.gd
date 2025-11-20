@@ -157,9 +157,12 @@ func update_game_state(state: Dictionary):
 				if threat_visualizer.has_method("update_threat_matrix"):
 					threat_visualizer.update_threat_matrix(state.threat_matrix, state.current_time_msec)
 	
-	# Update HUD timer
+	# Update HUD timer and countdown
 	if state.has("match_timer") and hud:
 		hud.update_timer(state.match_timer)
+	
+	if state.has("countdown_time") and state.countdown_time > 0.0 and hud:
+		hud.show_countdown(state.countdown_time)
 
 	# Count alive players and update HUD
 	if state.has("players") and hud:

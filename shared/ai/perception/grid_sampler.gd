@@ -114,7 +114,20 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 			if is_in_bounds(p_pos) and p_pos != goal_tile:
 				_astar.set_point_solid(p_pos, true)
 	
-	# 3. Mark threats if requested
+	
+	# 3. Mark bombs as solid obstacles (bots need to path around them)
+	# Exception: Allow walking through the bot's OWN bomb tile (collision exception exists)
+	if "bombs" in _game_instance:
+		for bomb_id in _game_instance.bombs:
+			var bomb = _game_instance.bombs[bomb_id]
+			if is_instance_valid(bomb) and not bomb.has_exploded:
+				var bomb_tile = bomb.get_tile_position()
+				# Allow walking through start tile (might be own bomb) and goal tile
+				if bomb_tile != start_tile and bomb_tile != goal_tile:
+					if is_in_bounds(bomb_tile):
+						_astar.set_point_solid(bomb_tile, true)
+	
+	# 4. Mark threats if requested
 	if avoid_threats and _game_instance.ai_manager:
 		var threat_matrix = _game_instance.ai_manager.get_current_threat_matrix()
 		for tile_key in threat_matrix:
@@ -127,14 +140,15 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 					if is_in_bounds(tile):
 						_astar.set_point_solid(tile, true)
 	
-	# Note: We do NOT mark bombs as solid because bots have collision exceptions
-	# and can walk through their own bombs (and often others depending on rules)
-	
 	# 4. Get the path
 	var path = _astar.get_id_path(start_tile, goal_tile)
+	print("[GridSampler] Path from ", start_tile, " to ", goal_tile, ": ", path)
 	
 	# AStarGrid2D returns path including start point.
-	# If path is empty, no path found.
+	# Remove the start point since we're already there
+	if path.size() > 0 and path[0] == start_tile:
+		path.remove_at(0)
+	
 	return path
 
 func get_manhattan_distance(a: Vector2i, b: Vector2i) -> int:
@@ -147,7 +161,7 @@ func get_map_bounds() -> Vector2i:
 
 func get_tile_type(tile_position: Vector2i) -> int:
 	if _game_instance == null:
-		return 0  # Default to empty
+		return 0 # Default to empty
 	return _game_instance.get_tile_type(tile_position)
 
 func _tile_key(tile: Vector2i) -> String:

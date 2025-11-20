@@ -5,12 +5,12 @@ class_name BTMoveToCell
 ## Moves the entity toward a target cell using pathfinding
 ## Calculates path once and follows waypoints, recalculating if stuck or target changes
 
-@export var cell_var: StringName = &"target_cell"  ## Blackboard variable containing target Vector2i
-@export var reach_threshold: float = 0.5  ## Distance to consider "reached" (in tiles)
-@export var recalc_distance: int = 3  ## Manhattan distance to trigger path recalculation
-@export var clear_on_success: bool = true  ## Clear target_cell when reached
-@export var avoid_threats: bool = false  ## Whether to avoid threatened tiles during pathfinding
-@export var debug_logging: bool = false
+@export var cell_var: StringName = &"target_cell" ## Blackboard variable containing target Vector2i
+@export var reach_threshold: float = 0.5 ## Distance to consider "reached" (in tiles)
+@export var recalc_distance: int = 3 ## Manhattan distance to trigger path recalculation
+@export var clear_on_success: bool = true ## Clear target_cell when reached
+@export var avoid_threats: bool = false ## Whether to avoid threatened tiles during pathfinding
+@export var debug_logging: bool = true
 
 # State tracking between ticks
 var _cached_path: Array[Vector2i] = []
@@ -28,7 +28,11 @@ func _tick(delta: float) -> int:
 	var target_cell = blackboard.get_var(cell_var)
 	var grid_sampler = blackboard.get_var("grid_sampler")
 	
-	print("[BTMoveToCell] _tick() called - cell_var='", cell_var, "' target_cell=", target_cell)
+	# Only log occasionally to reduce spam
+	var should_log = debug_logging and (Engine.get_physics_frames() % 30 == 0)
+	
+	if should_log:
+		print("[BTMoveToCell] _tick() called - cell_var='", cell_var, "' target_cell=", target_cell)
 	
 	if not player:
 		push_warning("[BTMoveToCell] Missing player in blackboard")
@@ -40,6 +44,8 @@ func _tick(delta: float) -> int:
 	
 	# If no target cell, fail silently (expected when no powerups/objectives available)
 	if target_cell == null:
+		if player.has_method("set_debug_path"):
+			player.set_debug_path(PackedVector2Array())
 		_reset_state()
 		return FAILURE
 	
@@ -67,6 +73,8 @@ func _tick(delta: float) -> int:
 		
 		# Stop movement
 		player.set_input(0.0, 0.0)
+		if player.has_method("set_debug_path"):
+			player.set_debug_path(PackedVector2Array())
 		_reset_state()
 		
 		return SUCCESS
@@ -74,8 +82,28 @@ func _tick(delta: float) -> int:
 	# Detect if stuck (not moving)
 	if player.position.distance_to(_last_position) < 0.5:
 		_stuck_counter += 1
-		if _stuck_counter > 30:  # ~0.5 seconds at 60fps
-			print("[BTMoveToCell] Bot stuck, recalculating path")
+		if _stuck_counter > 30: # ~0.5 seconds at 60fps
+			print("[BTMoveToCell] Bot stuck at %s (last=%s dist=%.2f), recalculating path" % [player.position, _last_position, player.position.distance_to(_last_position)])
+			
+			# Debug collisions
+			for i in range(player.get_slide_collision_count()):
+				var collision = player.get_slide_collision(i)
+				if collision:
+					print("  COLLISION: ", collision.get_collider().name, " at ", collision.get_position())
+			
+			# Debug map around
+			var grid_sampler = blackboard.get_var("grid_sampler")
+			if grid_sampler:
+				var current_tile = player.get_tile_position()
+				print("  Map around ", current_tile, ":")
+				for dy in range(-1, 2):
+					var line = ""
+					for dx in range(-1, 2):
+						var t = current_tile + Vector2i(dx, dy)
+						var walkable = grid_sampler.is_tile_walkable(t)
+						line += "[%d,%d:%s] " % [t.x, t.y, "." if walkable else "X"]
+					print("    " + line)
+
 			_cached_path = []
 			_stuck_counter = 0
 	else:
@@ -99,7 +127,8 @@ func _tick(delta: float) -> int:
 			_reset_state()
 			return FAILURE
 		
-		print("[BTMoveToCell] Calculated path with %d waypoints to %s" % [_cached_path.size(), target_cell])
+		print("[BTMoveToCell] Calculated path with %d waypoints to %s: %s" % [_cached_path.size(), target_cell, _cached_path])
+		_draw_debug_path(player, grid_sampler)
 	
 	# Get current waypoint
 	if _current_waypoint_index >= _cached_path.size():
@@ -107,40 +136,45 @@ func _tick(delta: float) -> int:
 		_cached_path = []
 		return RUNNING
 	
+	
 	var waypoint = _cached_path[_current_waypoint_index]
 	var waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
 	
-	# Check if we need to advance to next waypoint
-	var waypoint_distance = player.position.distance_to(waypoint_pos)
-	if waypoint_distance < GameConfig.TILE_SIZE * 0.4:  # Within 40% of tile size
-		_current_waypoint_index += 1
-		if _current_waypoint_index >= _cached_path.size():
-			# Reached final waypoint, target should be very close now
-			waypoint_pos = target_pos
-		else:
-			waypoint = _cached_path[_current_waypoint_index]
-			waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
-	
-	# Check if we're too far off the path (collision pushed us away)
-	var expected_tile = grid_sampler.world_to_tile(waypoint_pos)
-	var tile_distance = grid_sampler.get_manhattan_distance(current_tile, expected_tile)
-	if tile_distance > recalc_distance:
-		print("[BTMoveToCell] Off path (distance: %d), recalculating" % tile_distance)
-		_cached_path = []
-		return RUNNING
-	
-	# Move toward current waypoint using grid-aligned movement
-	# This prevents diagonal shortcuts through obstacles
-	var delta_pos = waypoint_pos - player.position
+	# Move toward current waypoint using GRID-ALIGNED movement
+	# Calculate direction based on TILE POSITIONS, not pixel positions
+	# This ensures we only move orthogonally (up/down/left/right)
+	var current_tile_pos = player.get_tile_position()
 	var direction: Vector2
 	
-	# Prioritize the axis with larger difference (move one axis at a time)
-	if abs(delta_pos.x) > abs(delta_pos.y):
+	# Calculate tile difference
+	var tile_delta = waypoint - current_tile_pos
+	
+	# Sanity check: waypoint should be adjacent or we're on the same tile
+	var manhattan_dist = abs(tile_delta.x) + abs(tile_delta.y)
+	
+	if manhattan_dist == 0:
+		# Already on waypoint tile, advance to next waypoint
+		_current_waypoint_index += 1
+		if _current_waypoint_index >= _cached_path.size():
+			# Path complete, let success check handle it
+			return RUNNING
+		waypoint = _cached_path[_current_waypoint_index]
+		waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
+		tile_delta = waypoint - current_tile_pos
+	
+	# Move in the direction of the waypoint tile (one axis at a time)
+	# Prioritize the axis with larger tile distance
+	if abs(tile_delta.x) > abs(tile_delta.y):
 		# Move horizontally
-		direction = Vector2(sign(delta_pos.x), 0.0)
+		direction = Vector2(sign(tile_delta.x), 0.0)
 	else:
-		# Move vertically
-		direction = Vector2(0.0, sign(delta_pos.y))
+		# Move vertically (or both are 0, which becomes 0,0)
+		direction = Vector2(0.0, sign(tile_delta.y))
+	
+	if should_log:
+		print("[BTMoveToCell] tile=%s target_tile=%s delta=%s dir=%s waypoint_idx=%d/%d" % [
+			current_tile_pos, waypoint, tile_delta, direction, _current_waypoint_index, _cached_path.size()
+		])
 	
 	player.set_input(direction.x, direction.y)
 	
@@ -151,3 +185,32 @@ func _reset_state() -> void:
 	_cached_target = Vector2i(-999, -999)
 	_current_waypoint_index = 0
 	_stuck_counter = 0
+
+func _draw_debug_path(player, grid_sampler) -> void:
+	"""Draw the planned path as a visual line"""
+	if not is_instance_valid(player):
+		return
+	
+	# Build points array from path - follow grid with 90-degree turns
+	var points = PackedVector2Array()
+	points.append(player.position) # Start from player
+	
+	var current_pos = player.position
+	for tile in _cached_path:
+		var target_pos = grid_sampler.tile_to_world_center(tile)
+		
+		# Add intermediate point if we need to turn (create L-shape instead of diagonal)
+		var delta = target_pos - current_pos
+		if abs(delta.x) > 1 and abs(delta.y) > 1:
+			# Moving diagonally - add corner point
+			# Move horizontally first, then vertically
+			var corner = Vector2(target_pos.x, current_pos.y)
+			points.append(corner)
+			print("[DEBUG DRAW] Added corner at ", corner, " for delta ", delta)
+		
+		points.append(target_pos)
+		current_pos = target_pos
+	
+	# Use player's method to update path (replicated to clients)
+	if player.has_method("set_debug_path"):
+		player.set_debug_path(points)
