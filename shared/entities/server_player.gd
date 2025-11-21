@@ -330,6 +330,9 @@ func _vector_to_facing(direction: Vector2) -> String:
 		return "LEFT" if direction.x < 0 else "RIGHT"
 
 func _physics_process(_delta):
+	if Engine.get_physics_frames() % 300 == 0: # Log every 5 seconds
+		print("[ServerPlayer] _physics_process running. Version: DEBUG-DIAGNOSE-1")
+	
 	if is_dead:
 		velocity = Vector2.ZERO
 		# last_move_direction = Vector2.ZERO

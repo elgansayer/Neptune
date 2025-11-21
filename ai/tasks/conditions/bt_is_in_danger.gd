@@ -5,8 +5,8 @@ class_name BTIsInDanger
 ## Checks if the entity is currently in danger from explosions
 ## Uses the HazardPredictor to determine if current tile is dangerous
 
-@export var danger_buffer: float = 1.0  ## Safety margin (seconds) before danger becomes lethal
-@export var check_immediate: bool = true  ## Check only immediate danger (no buffer)
+@export var danger_buffer: float = 1.0 ## Safety margin (seconds) before danger becomes lethal
+@export var check_immediate: bool = true ## Check only immediate danger (no buffer)
 @export var evaluate_all_threats: bool = true ## If true, returns SUCCESS if ANY threat exists on tile (regardless of time)
 @export var debug_logging: bool = true
 
@@ -22,9 +22,11 @@ func _tick(delta: float) -> int:
 		push_warning("[BTIsInDanger] Missing required blackboard variables: player or hazard_predictor")
 		return FAILURE
 	
-	# DEBUG: Log every 60 frames to verify BT is running
-	if Engine.get_physics_frames() % 60 == 0:
-		print("[BTIsInDanger] TICK - player_tile=%s" % player.get_tile_position())
+	# DEBUG: Unconditional log to verify execution
+	print("[BTIsInDanger] _tick called. Tile: ", player.get_tile_position())
+	
+	# if Engine.get_physics_frames() % 60 == 0:
+	# 	print("[BTIsInDanger] TICK - player_tile=%s" % player.get_tile_position())
 	
 	var player_tile = player.get_tile_position()
 	var current_time = Time.get_ticks_msec() / 1000.0
@@ -74,9 +76,9 @@ func _get_blast_tiles(center: Vector2i, range_val: int, grid_sampler) -> Array[V
 			# Check if walkable (walls block explosions)
 			if not grid_sampler.is_tile_walkable(tile):
 				var tile_type = grid_sampler.get_tile_type(tile)
-				if tile_type == 1:  # Hard wall - stop blast
+				if tile_type == 1: # Hard wall - stop blast
 					break
-				elif tile_type == 2:  # Soft block - blast hits it but stops
+				elif tile_type == 2: # Soft block - blast hits it but stops
 					tiles.append(tile)
 					break
 			else:

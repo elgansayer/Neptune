@@ -5,4 +5,4 @@ server/.godot/*
 !server/.godot/extension_list.cfg
 /android/
 
-
+*.log
