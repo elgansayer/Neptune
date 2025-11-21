@@ -1,0 +1,226 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+
+[PCKLoader] Successfully mounted: res://characters/player-robin-hood.pck
+=== Bomberman Server Starting ===
+[Server] Node name: ServerMain
+[Server] Node path: /root/ServerMain
+[Server] RPC config:{ &"set_debug_timescale": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"authenticate_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"send_player_input": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"auth_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"register_response": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"ai_debug_update": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"receive_state": { "rpc_mode": 1, "call_local": false, "transfer_mode": 0 }, &"spawn_bot_request": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 }, &"test_farming_spot_broadcast": { "rpc_mode": 1, "call_local": false, "transfer_mode": 2 } }
+[LocalBackend] In-memory auth initialized
+[LocalBackend] WARNING: Data will not persist between restarts!
+[LocalBackend] TODO: Install GodotSQLite addon for persistence
+Server listening on port 7777
+Max players: 8
+[Server] Multiplayer authority: true
+[Server] Unique ID: 1
+[Client] Ignoring connect_to_server call in headless mode
+[Server] Peer connected: 167453967
+[Server] *** REGISTER_USER RPC RECEIVED ***
+[Server] Registration attempt from peer 167453967: Player_5925
+[LocalBackend] Registered user: Player_5925
+[Server] Registration successful: Player_5925
+[Server] *** AUTHENTICATE RPC RECEIVED ***
+[Server] Authentication attempt from peer 167453967: Player_5925
+[Server] Is server: true
+[Server] Authentication successful: Player_5925
+[Lobby] Player added: Player_5925 (167453967)
+[Server] Creating new shared game instance
+[GameInstance] Loading map from PCK...
+[MapPackLoader] Mounted PCK: res://res/maps/stage1.pck
+[MapPackLoader] Loaded map: Saturn Stage 1 (21x14)
+[MapPackLoader] Found 147 hard blocks, 135 soft slots, 4 spawns
+[GameInstance] Using PCK map with 94/135 soft blocks
+[GameConfig] Loaded TILE_SIZE: 16px (scale: 1.0x)
+[GameConfig] Scaled BASE_SPEED: 45.0 px/s
+[GameConfig] Map: Saturn Stage 1 (21x14) Tile size: 16px, Player size: 14.0px
+[GameInstance] Loaded map 'Saturn Stage 1' with 4 spawn points
+[AIManager] Configured with 21x14 grid
+[AIManager] Configured with 21x14 grid
+[GameInstance] AIManager initialized with 21x14 grid
+SCRIPT ERROR: Parse Error: There is already a variable named "grid_sampler" declared in this scope.
+          at: GDScript::reload (res://ai/tasks/actions/bt_move_to_cell.gd:97)
+          GDScript backtrace (most recent call first):
+              [0] configure (res://ai/bot_manager.gd:41)
+              [1] _ready (res://game_instance.gd:132)
+              [2] quick_start_game (res://main_server.gd:211)
+              [3] authenticate_request (res://main_server.gd:118)
+ERROR: Failed to load script "res://ai/tasks/actions/bt_move_to_cell.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript.cpp:3041)
+   GDScript backtrace (most recent call first):
+       [0] configure (res://ai/bot_manager.gd:41)
+       [1] _ready (res://game_instance.gd:132)
+       [2] quick_start_game (res://main_server.gd:211)
+       [3] authenticate_request (res://main_server.gd:118)
+[BotManager] Loaded bot_default.tres (cache ignored)
+[BotManager] Queuing auto-spawn for 1 bots
+[GameInstance] BotManager configured to spawn 1 bot(s)
+[BotManager] Process priority set to -100
+[Game] Player spawned with Power Glove (bomb kicker disabled for testing)
+[Game] Player joined: Player_5925 at (40.0, 40.0) (Power Glove: true)
+[Server] Player Player_5925 joined shared game. Total players: 1
+[BotManager] BombSafetyChecker configured with AIManager (debug=ON)
+[BotManager] Auto-spawning 1 bots
+[Game] Player spawned with Power Glove (bomb kicker disabled for testing)
+[Game] Player joined: Balanced_Bot_1 at (296.0, 40.0) (Power Glove: true)
+[BotManager] Spawned bot  (peer -1)
+[BotManager] BTPlayer added. owner=<Object#null> get_tree()=<SceneTree#26625443286> scene_root=LoginScreen:<Control#41674606064>
+[BotManager] Blackboard populated for 
+[BotManager] BehaviorTree set: <BehaviorTree#-9223371964662412981> root_task: <BTSelector#-9223371964679190198>
+[BotManager] Bot %s BTPlayer setup complete: active=true update_mode=0 process_mode=0
+WARNING: Sending 5000 bytes unreliably which is above the MTU (1392), this will result in higher packet loss
+     at: put_packet (modules/enet/enet_multiplayer_peer.cpp:363)
+     GDScript backtrace (most recent call first):
+         [0] sync_state_to_clients (res://game_instance.gd:601)
+         [1] _physics_process (res://game_instance.gd:236)
+[Server] Debug time_scale set to 0.25
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[Server] TEST: Peer 167453967 requested farming spot search test (F8)
+[GameInstance] TEST: Forcing farming spot search on all bots
+[GameInstance] TEST: Bot missing test method: BTPlayer_1
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[GameInstance] Match started! Countdown complete.
+[BTIsInDanger] Tile (18, 2) safe
+[BTIsInDanger] Tile (18, 2) safe
+[BTFindFarmingSpot] ===== _tick() CALLED ===== delta=0.00416666666667
+[BTFindFarmingSpot] Retrieved from blackboard: player=true game_instance=true grid_sampler=true bomb_safety_checker=true
+[BTFindFarmingSpot] STARTING SEARCH - broadcast_safety=true
+[BTFindFarmingSpot] Starting search from (18, 2) radius=8 bomb_range=2
+[GridSampler] Path from (18, 2) to (10, 4): []
+  [REJECT] (10, 4) - no path (blocks=4)
+[GridSampler] Path from (18, 2) to (11, 4): []
+  [REJECT] (11, 4) - no path (blocks=1)
+[GridSampler] Path from (18, 2) to (11, 6): []
+  [REJECT] (11, 6) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (11, 8): []
+  [REJECT] (11, 8) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (12, 2): []
+  [REJECT] (12, 2) - no path (blocks=3)
+[GridSampler] Path from (18, 2) to (12, 5): []
+  [REJECT] (12, 5) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (12, 8): []
+  [REJECT] (12, 8) - no path (blocks=4)
+[GridSampler] Path from (18, 2) to (13, 2): []
+  [REJECT] (13, 2) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (13, 6): []
+  [REJECT] (13, 6) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (14, 3): []
+  [REJECT] (14, 3) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (14, 4): []
+  [REJECT] (14, 4) - no path (blocks=4)
+[GridSampler] Path from (18, 2) to (15, 4): []
+  [REJECT] (15, 4) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (15, 8): []
+  [REJECT] (15, 8) - no path (blocks=2)
+[GridSampler] Path from (18, 2) to (16, 2): [(18, 2), (17, 2), (16, 2)]
+[ThreatMatrix] Blast from (16, 2) stopped by SOFT BLOCK at (15, 2) direction (-1, 0)
+[ThreatMatrix] Blast from (16, 2) stopped by HARD WALL at (16, 1) direction (0, -1)
+[ThreatMatrix] Blast from (16, 2) stopped by SOFT BLOCK at (16, 3) direction (0, 1)
+[GridSampler] Path from (18, 2) to (16, 7): []
+  [REJECT] (16, 7) - no path (blocks=1)
+[GridSampler] Path from (18, 2) to (16, 8): []
+  [REJECT] (16, 8) - no path (blocks=4)
+[GridSampler] Path from (18, 2) to (16, 9): []
+  [REJECT] (16, 9) - no path (blocks=1)
+[ThreatMatrix] Blast from (17, 2) stopped by HARD WALL at (19, 2) direction (1, 0)
+[ThreatMatrix] Blast from (17, 2) stopped by SOFT BLOCK at (15, 2) direction (-1, 0)
+[ThreatMatrix] Blast from (17, 2) stopped by HARD WALL at (17, 1) direction (0, -1)
+[ThreatMatrix] Blast from (17, 2) stopped by HARD WALL at (17, 3) direction (0, 1)
+[GridSampler] Path from (18, 2) to (17, 10): []
+  [REJECT] (17, 10) - no path (blocks=2)
+[ThreatMatrix] Blast from (18, 2) stopped by HARD WALL at (19, 2) direction (1, 0)
+[ThreatMatrix] Blast from (18, 2) stopped by HARD WALL at (18, 1) direction (0, -1)
+[ThreatMatrix] Blast from (18, 2) stopped by SOFT BLOCK at (18, 4) direction (0, 1)
+  [REJECT] (18, 2) - no escape route (blocks=1)
+[ThreatMatrix] Blast from (18, 3) stopped by HARD WALL at (19, 3) direction (1, 0)
+[ThreatMatrix] Blast from (18, 3) stopped by HARD WALL at (17, 3) direction (-1, 0)
+[ThreatMatrix] Blast from (18, 3) stopped by HARD WALL at (18, 1) direction (0, -1)
+[ThreatMatrix] Blast from (18, 3) stopped by SOFT BLOCK at (18, 4) direction (0, 1)
+[BTFindFarmingSpot] *** BROADCAST CHECK: broadcast_safety=true safety_eval.size()=21
+[BTFindFarmingSpot] *** BROADCASTING 21 safety evaluations to clients
+[BTFindFarmingSpot] >>> _broadcast_safety_data called with 21 tiles
+[BTFindFarmingSpot] >>> Got player_node: Player_-1
+[BTFindFarmingSpot] >>> Got game_instance
+[BTFindFarmingSpot] >>> Got ClientMain, players count: 2
+[BTFindFarmingSpot] >>> Checking peer_id 167453967 is_ai_bot=false
+[BTFindFarmingSpot] >>> Sending RPC to peer 167453967 with 21 tiles
+[BTFindFarmingSpot] >>> Checking peer_id -1 is_ai_bot=true
+[BTFindFarmingSpot] >>> BROADCAST COMPLETE: 21 tiles to 1 clients
+[BTFindFarmingSpot] ✓ Found farming spot at (16, 2) (score: 23.4)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer.set_input] Bot Balanced_Bot_1 input changing: (0.0, 0.0) -> (-1.0, 0.0)
+[ServerPlayer.set_input] Bot Balanced_Bot_1 input changing: (-1.0, 0.0) -> (0.0, 0.0)
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] _physics_process running, 1 bots active
+  - BTPlayer active=true update_mode=0
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Player_5925 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[ServerPlayer DEBUG] Balanced_Bot_1 has_bomb_kicker=false input_dir=(0.0, 0.0) input_direction=(0.0, 0.0)
+[BotManager] Calling bt_player.update() for Balanced_Bot_1 active=true
+[ServerPlayer.set_input] Bot Balanced_Bot_1 input changing: (0.0, 0.0) -> (-1.0, 0.0)
+[ServerPlayer.set_input] Bot Balanced_Bot_1 input changing: (-1.0, 0.0) -> (0.0, 0.0)
+[Server] Peer disconnected: 167453967
+[Game] Player left: 167453967
+[Lobby] Player removed: Player_5925

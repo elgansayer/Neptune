@@ -24,6 +24,7 @@ func _generate_name() -> String:
 	return "MoveToCell(%s)" % cell_var
 
 func _tick(delta: float) -> int:
+	print("[BTMoveToCell] _tick called") # UNCOMMENTED for debugging
 	var player = blackboard.get_var("player")
 	var target_cell = blackboard.get_var(cell_var)
 	var grid_sampler = blackboard.get_var("grid_sampler")
@@ -44,11 +45,13 @@ func _tick(delta: float) -> int:
 	
 	# If no target cell, fail silently (expected when no powerups/objectives available)
 	if target_cell == null:
+		# print("[BTMoveToCell] FAILURE: target_cell is null") # Commented out to avoid spam if expected
 		if player.has_method("set_debug_path"):
 			player.set_debug_path(PackedVector2Array())
 		_reset_state()
 		return FAILURE
 	
+
 	# Convert to Vector2i if needed
 	if not target_cell is Vector2i:
 		if target_cell is Vector2:
@@ -122,8 +125,9 @@ func _tick(delta: float) -> int:
 			_cached_path = grid_sampler.find_path(current_tile, target_cell, 40, player, avoid_threats)
 		
 		if _cached_path.is_empty():
-			push_warning("[BTMoveToCell] No path found from %s to %s" % [current_tile, target_cell])
-			player.set_input(0.0, 0.0)
+			print("[BTMoveToCell] FAILURE: No path found from ", current_tile, " to ", target_cell)
+			if player.has_method("set_debug_path"):
+				player.set_debug_path(PackedVector2Array())
 			_reset_state()
 			return FAILURE
 		
@@ -145,6 +149,10 @@ func _tick(delta: float) -> int:
 	# This ensures we only move orthogonally (up/down/left/right)
 	var current_tile_pos = player.get_tile_position()
 	var direction: Vector2
+	
+	# Log every 60 frames
+	if Engine.get_physics_frames() % 60 == 0:
+		print("[BTMoveToCell] Tick. Target=", target_cell, " Current=", current_tile_pos, " Waypoint=", waypoint, " Index=", _current_waypoint_index)
 	
 	# Calculate tile difference
 	var tile_delta = waypoint - current_tile_pos
@@ -213,4 +221,5 @@ func _draw_debug_path(player, grid_sampler) -> void:
 	
 	# Use player's method to update path (replicated to clients)
 	if player.has_method("set_debug_path"):
+		print("[DEBUG DRAW] Sending points: ", points)
 		player.set_debug_path(points)

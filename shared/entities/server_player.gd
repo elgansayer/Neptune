@@ -805,7 +805,7 @@ func is_ai_bot() -> bool:
 	return is_bot
 func _setup_debug_path_line():
 	debug_path_line = Line2D.new()
-	debug_path_line.width = 3.0
+	debug_path_line.width = 5.0
 	debug_path_line.default_color = Color(0, 0, 0.8, 1)
 	debug_path_line.z_index = 4096
 	debug_path_line.joint_mode = Line2D.LINE_JOINT_BEVEL

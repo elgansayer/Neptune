@@ -5,10 +5,10 @@ class_name BTPlaceBomb
 ## Places a bomb at the player's current position
 ## Checks if player can place a bomb before attempting
 
-@export var check_capacity: bool = true  ## Verify player hasn't exceeded max bombs
-@export var check_existing: bool = true  ## Verify no bomb already at position
-@export var require_at_target: bool = true  ## Only plant if at target_cell (for farming)
-@export var target_cell_var: StringName = &"target_cell"  ## Target to verify against
+@export var check_capacity: bool = true ## Verify player hasn't exceeded max bombs
+@export var check_existing: bool = true ## Verify no bomb already at position
+@export var require_at_target: bool = true ## Only plant if at target_cell (for farming)
+@export var target_cell_var: StringName = &"target_cell" ## Target to verify against
 
 func _generate_name() -> String:
 	return "PlaceBomb"
@@ -16,6 +16,8 @@ func _generate_name() -> String:
 func _tick(delta: float) -> int:
 	var player = blackboard.get_var("player")
 	var game_instance = blackboard.get_var("game_instance")
+	
+	# print("[BTPlaceBomb] Tick") # Uncomment for verbose debugging
 	
 	if not player:
 		push_warning("[BTPlaceBomb] Missing player in blackboard")
@@ -32,6 +34,7 @@ func _tick(delta: float) -> int:
 		var target_val = blackboard.get_var(target_cell_var)
 		if target_val == null:
 			# No target set, cannot verify position
+			print("[BTPlaceBomb] REJECTED: Target var '", target_cell_var, "' is null")
 			return FAILURE
 			
 		var target_tile = _coerce_to_tile(target_val)
@@ -43,6 +46,7 @@ func _tick(delta: float) -> int:
 	# Check if player can place a bomb
 	if check_capacity and not player.can_place_bomb():
 		# Can't place bomb (at max capacity or cooldown)
+		print("[BTPlaceBomb] REJECTED: Cannot place bomb (capacity/cooldown). Bombs=", player.bombs_placed, "/", player.max_bombs)
 		return FAILURE
 	
 	# Check if there's already a bomb at this position
