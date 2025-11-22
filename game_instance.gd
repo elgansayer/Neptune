@@ -244,6 +244,7 @@ func get_next_spawn_point() -> Vector2:
 
 func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO, is_bot: bool = false, personality: String = ""):
 	var player = ServerPlayer.new()
+	player.peer_id = peer_id  # CRITICAL: Set actual peer_id (-1, -2, -3 for bots)
 	player.player_id = str(peer_id)
 	player.username = username
 	if is_bot:
