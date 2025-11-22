@@ -55,6 +55,26 @@ func _tick(delta: float) -> int:
 			# Already a bomb here
 			return FAILURE
 	
+	# CRITICAL PRE-FLIGHT SAFETY CHECK: Verify escape route one final time
+	# This prevents suicide if situation changed since planning
+	var bomb_safety_checker = blackboard.get_var("bomb_safety_checker")
+	if bomb_safety_checker:
+		var current_time_msec = Time.get_ticks_msec()
+		var bomb_range = player.bomb_range if player else 2
+		var bot_speed = 5.0 # tiles per second
+		
+		var is_safe = bomb_safety_checker.can_safely_plant_bomb(
+			player_tile, # bot position
+			player_tile, # bomb position (same as bot)
+			bomb_range,
+			bot_speed,
+			current_time_msec
+		)
+		
+		if not is_safe:
+			print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: Safety check failed at placement time!")
+			return FAILURE
+	
 	# Place the bomb
 	game_instance.place_bomb(player)
 	

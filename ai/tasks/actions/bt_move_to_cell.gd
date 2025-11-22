@@ -63,24 +63,28 @@ func _tick(_delta: float) -> int:
 	
 	var current_tile = grid_sampler.world_to_tile(player.position)
 	
-	# Check if we've reached the destination
-	var target_pos = grid_sampler.tile_to_world_center(target_cell)
-	var distance = player.position.distance_to(target_pos)
-	var threshold_pixels = GameConfig.TILE_SIZE * reach_threshold
-	
-	if distance < threshold_pixels:
-		# Reached destination
-		print("[BTMoveToCell] Reached target cell: ", target_cell)
-		if clear_on_success:
-			blackboard.set_var(cell_var, null)
+	# Check if we've reached the destination tile AND are reasonably centered
+	# This is critical for safety - bot must be centered to avoid blast from adjacent tiles
+	if current_tile == target_cell:
+		var target_center = grid_sampler.tile_to_world_center(target_cell)
+		var distance_to_center = player.position.distance_to(target_center)
 		
-		# Stop movement
-		player.set_input(0.0, 0.0)
-		if player.has_method("set_debug_path"):
-			player.set_debug_path(PackedVector2Array())
-		_reset_state()
-		
-		return SUCCESS
+		# Allow 3 pixels tolerance (tiles are 16px, so this is well within safe zone)
+		# This is lenient enough to avoid getting stuck, but strict enough for safety
+		if distance_to_center < 3.0:
+			# Reached destination tile AND reasonably centered
+			print("[BTMoveToCell] Reached target cell: %s (centered within %.1fpx)" % [target_cell, distance_to_center])
+			if clear_on_success:
+				blackboard.set_var(cell_var, null)
+			
+			# Stop movement
+			player.set_input(0.0, 0.0)
+			if player.has_method("set_debug_path"):
+				player.set_debug_path(PackedVector2Array())
+			_reset_state()
+			
+			return SUCCESS
+		# else: In target tile but not centered yet, keep moving
 	
 	# Detect if stuck (not moving)
 	if player.position.distance_to(_last_position) < 0.5:
@@ -134,73 +138,48 @@ func _tick(_delta: float) -> int:
 		print("[BTMoveToCell] Calculated path with %d waypoints to %s: %s" % [_cached_path.size(), target_cell, _cached_path])
 		_draw_debug_path(player, grid_sampler)
 	
-	# Get current waypoint
+	
+	# Get current waypoint and its CENTER position
 	if _current_waypoint_index >= _cached_path.size():
 		# Reached end of path but not at target? Recalculate
 		_cached_path = []
 		return RUNNING
 	
-	
 	var waypoint = _cached_path[_current_waypoint_index]
-	# var waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
+	var waypoint_center = grid_sampler.tile_to_world_center(waypoint)
 	
-	# Move toward current waypoint using GRID-ALIGNED movement
-	# Calculate direction based on TILE POSITIONS, not pixel positions
-	# This ensures we only move orthogonally (up/down/left/right)
-	var current_tile_pos = player.get_tile_position()
-	var direction: Vector2
+	# Check PHYSICAL distance to waypoint center
+	var dist_to_waypoint_center = player.position.distance_to(waypoint_center)
+	var center_threshold = 3.0 # pixels - reasonable centering (tiles are 16px)
 	
 	# Log every 60 frames
 	if Engine.get_physics_frames() % 60 == 0:
-		print("[BTMoveToCell] Tick. Target=", target_cell, " Current=", current_tile_pos, " Waypoint=", waypoint, " Index=", _current_waypoint_index)
-	
-	# Calculate tile difference
-	var tile_delta = waypoint - current_tile_pos
-	
-	# Sanity check: waypoint should be adjacent or we're on the same tile
-	var manhattan_dist = abs(tile_delta.x) + abs(tile_delta.y)
-	
-	if manhattan_dist == 0:
-		# Already on waypoint tile.
-		# ALWAYS move to the center of the tile before advancing.
-		# This ensures we don't cut corners and always move in straight lines.
-		var waypoint_center = grid_sampler.tile_to_world_center(waypoint)
-		var dist_to_center = player.position.distance_to(waypoint_center)
-		
-		# Strict centering threshold (2.0 pixels)
-		if dist_to_center < 2.0:
-			# Advance to next waypoint
-			_current_waypoint_index += 1
-			if _current_waypoint_index >= _cached_path.size():
-				# Path complete, let success check handle it
-				return RUNNING
-			waypoint = _cached_path[_current_waypoint_index]
-			# waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
-			tile_delta = waypoint - current_tile_pos
-		else:
-			# Move towards center of current waypoint
-			var offset = waypoint_center - player.position
-			if abs(offset.x) > abs(offset.y):
-				direction = Vector2(sign(offset.x), 0.0)
-			else:
-				direction = Vector2(0.0, sign(offset.y))
-			
-			player.set_input(direction.x, direction.y)
-			return RUNNING
-	
-	# Move in the direction of the waypoint tile (one axis at a time)
-	# Prioritize the axis with larger tile distance
-	if abs(tile_delta.x) > abs(tile_delta.y):
-		# Move horizontally
-		direction = Vector2(sign(tile_delta.x), 0.0)
-	else:
-		# Move vertically (or both are 0, which becomes 0,0)
-		direction = Vector2(0.0, sign(tile_delta.y))
-	
-	if should_log:
-		print("[BTMoveToCell] tile=%s target_tile=%s delta=%s dir=%s waypoint_idx=%d/%d" % [
-			current_tile_pos, waypoint, tile_delta, direction, _current_waypoint_index, _cached_path.size()
+		var current_tile_pos = player.get_tile_position()
+		print("[BTMoveToCell] Target=%s Current=%s Waypoint=%s Dist=%.1f Index=%d/%d" % [
+			target_cell, current_tile_pos, waypoint, dist_to_waypoint_center, _current_waypoint_index, _cached_path.size()
 		])
+	
+	# If we've reached the waypoint center (within tolerance), advance to next waypoint
+	if dist_to_waypoint_center < center_threshold:
+		_current_waypoint_index += 1
+		if _current_waypoint_index >= _cached_path.size():
+			# Path complete, let success check at top handle it
+			return RUNNING
+		# Get next waypoint
+		waypoint = _cached_path[_current_waypoint_index]
+		waypoint_center = grid_sampler.tile_to_world_center(waypoint)
+	
+	# Move toward waypoint CENTER (not grid position!)
+	# Use ONE AXIS AT A TIME for strict orthogonal movement
+	var offset = waypoint_center - player.position
+	var direction: Vector2
+	
+	if abs(offset.x) > abs(offset.y):
+		# Move horizontally first
+		direction = Vector2(sign(offset.x), 0.0)
+	else:
+		# Move vertically
+		direction = Vector2(0.0, sign(offset.y))
 	
 	player.set_input(direction.x, direction.y)
 	
