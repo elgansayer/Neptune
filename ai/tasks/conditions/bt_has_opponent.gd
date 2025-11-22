@@ -20,9 +20,9 @@ func _tick(_delta: float) -> int:
 	if not player or not opponent_tracker:
 		return FAILURE
 	
-	var nearest = opponent_tracker.get_nearest_opponent(player.position)
+	var nearest = opponent_tracker.get_nearest_opponent(player.position, player.peer_id)
 	
-	if nearest == null:
+	if nearest == null or nearest.is_empty():
 		blackboard.set_var("nearest_opponent", null)
 		blackboard.set_var("opponent_tile", null)
 		return FAILURE

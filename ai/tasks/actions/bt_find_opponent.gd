@@ -20,8 +20,8 @@ func _tick(_delta: float) -> int:
 	if not player or not opponent_tracker or not grid_sampler:
 		return FAILURE
 	
-	var nearest = opponent_tracker.get_nearest_opponent(player.position)
-	if nearest == null:
+	var nearest = opponent_tracker.get_nearest_opponent(player.position, player.peer_id)
+	if nearest == null or nearest.is_empty():
 		return FAILURE
 	
 	var opponent_tile: Vector2i = nearest.get("tile")

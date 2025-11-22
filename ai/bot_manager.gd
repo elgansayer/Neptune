@@ -28,6 +28,82 @@ var bot_behavior_tree # BehaviorTree resource
 const DEFAULT_PERSONALITY := "BALANCED"
 var auto_spawn_count := 3
 
+# Personality configuration for competitive AI behaviors
+const PERSONALITY_CONFIGS = {
+	"BALANCED": {
+		"reaction_time_ms": 50,
+		"trap_aggression": 0.5,
+		"prediction_lookahead": 3,
+		"corner_preference": 0.5,
+		"ambush_patience": 5.0,
+		"bomb_placement_aggression": 0.4
+	},
+	"AGGRESSIVE": {
+		"reaction_time_ms": 20,
+		"trap_aggression": 0.9,
+		"prediction_lookahead": 4,
+		"corner_preference": 0.8,
+		"ambush_patience": 3.0,
+		"bomb_placement_aggression": 0.7
+	},
+	"DEFENSIVE": {
+		"reaction_time_ms": 90,
+		"trap_aggression": 0.1,
+		"prediction_lookahead": 2,
+		"corner_preference": 0.2,
+		"ambush_patience": 10.0,
+		"bomb_placement_aggression": 0.15
+	},
+	"STRATEGIC": {
+		"reaction_time_ms": 40,
+		"trap_aggression": 0.7,
+		"prediction_lookahead": 5,
+		"corner_preference": 0.6,
+		"ambush_patience": 6.0,
+		"bomb_placement_aggression": 0.5
+	},
+	"TRAPPER": {
+		"reaction_time_ms": 60,
+		"trap_aggression": 1.0,  # Maximum trap focus
+		"prediction_lookahead": 4,
+		"corner_preference": 0.9,
+		"ambush_patience": 10.0,
+		"bomb_placement_aggression": 0.3
+	},
+	"KAMIKAZE": {
+		"reaction_time_ms": 5,
+		"trap_aggression": 0.8,
+		"prediction_lookahead": 2,  # Short-term thinking
+		"corner_preference": 1.0,  # Always corners
+		"ambush_patience": 1.0,
+		"bomb_placement_aggression": 0.95
+	},
+	"CHAOS": {
+		"reaction_time_ms": 10,
+		"trap_aggression": 0.6,
+		"prediction_lookahead": 1,  # Unpredictable
+		"corner_preference": 0.5,
+		"ambush_patience": 2.0,
+		"bomb_placement_aggression": 0.8
+	},
+	"GREEDY": {
+		"reaction_time_ms": 30,
+		"trap_aggression": 0.3,
+		"prediction_lookahead": 3,
+		"corner_preference": 0.3,
+		"ambush_patience": 4.0,
+		"bomb_placement_aggression": 0.45
+	},
+	"TIMID": {
+		"reaction_time_ms": 80,
+		"trap_aggression": 0.1,
+		"prediction_lookahead": 2,
+		"corner_preference": 0.1,
+		"ambush_patience": 15.0,
+		"bomb_placement_aggression": 0.2
+	}
+}
+
 func _ready() -> void:
 	# Set process priority to run AFTER game instance (100)
 	# Higher numbers run later
@@ -37,12 +113,15 @@ func _ready() -> void:
 func configure(instance) -> void:
 	game_instance = instance
 	
-	# Load LimboAI behavior tree (force reload, ignore cache)
-	bot_behavior_tree = ResourceLoader.load("res://ai/trees/bot_default.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
+	# Load LimboAI behavior tree - use competitive tree with enhanced AI
+	bot_behavior_tree = ResourceLoader.load("res://ai/trees/bot_competitive.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
 	if not bot_behavior_tree:
-		push_error("[BotManager] Failed to load bot_default.tres!")
-		return
-	print("[BotManager] Loaded bot_default.tres (cache ignored)")
+		push_error("[BotManager] Failed to load bot_competitive.tres! Falling back to bot_default.tres")
+		bot_behavior_tree = ResourceLoader.load("res://ai/trees/bot_default.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
+		if not bot_behavior_tree:
+			push_error("[BotManager] Failed to load any behavior tree!")
+			return
+	print("[BotManager] Loaded competitive behavior tree (cache ignored)")
 	
 	grid_sampler = GridSamplerScript.new()
 	grid_sampler.configure(game_instance, null, GameConfig.TILE_SIZE)
@@ -194,6 +273,16 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	blackboard.set_var("bomb_planner", bomb_planner)
 	blackboard.set_var("bomb_safety_checker", bomb_safety_checker)
 	blackboard.set_var("personality", personality)
+	
+	# Add personality configuration parameters for advanced AI behaviors
+	var personality_config = PERSONALITY_CONFIGS.get(personality, PERSONALITY_CONFIGS["BALANCED"])
+	blackboard.set_var("personality_config", personality_config)
+	blackboard.set_var("reaction_time_ms", personality_config["reaction_time_ms"])
+	blackboard.set_var("trap_aggression", personality_config["trap_aggression"])
+	blackboard.set_var("prediction_lookahead", personality_config["prediction_lookahead"])
+	blackboard.set_var("corner_preference", personality_config["corner_preference"])
+	blackboard.set_var("ambush_patience", personality_config["ambush_patience"])
+	blackboard.set_var("bomb_placement_aggression", personality_config["bomb_placement_aggression"])
 	
 	# Initialize dynamic values
 	blackboard.set_var("current_tile", player.get_tile_position())
