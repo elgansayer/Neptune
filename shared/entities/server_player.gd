@@ -446,10 +446,15 @@ func _physics_process(_delta):
 			collision_exceptions.remove_at(i)
 			continue
 
-		var player_tile = get_tile_position()
-		var bomb_tile = bomb.get_tile_position()
-
-		if player_tile != bomb_tile:
+		# Check if we are physically clear of the bomb
+		# We need to be far enough away that our collision shapes don't overlap
+		# Player radius ~7, Bomb radius ~8. Sum = 15.
+		# Use a safe distance of 16.0 (one full tile) to be sure.
+		var dist = position.distance_to(bomb.position)
+		var safe_distance = GameConfig.TILE_SIZE * 1.1 # 16 * 1.1 = 17.6px
+		
+		if dist > safe_distance:
+			print("[Player] Removing collision exception for bomb at ", bomb.get_tile_position(), " (dist: ", dist, ")")
 			bomb.remove_collision_exception_with(self)
 			remove_collision_exception_with(bomb)
 			collision_exceptions.remove_at(i)

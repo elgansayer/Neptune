@@ -6,7 +6,7 @@ class_name BTMoveToCell
 ## Calculates path once and follows waypoints, recalculating if stuck or target changes
 
 @export var cell_var: StringName = &"target_cell" ## Blackboard variable containing target Vector2i
-@export var reach_threshold: float = 0.5 ## Distance to consider "reached" (in tiles)
+@export var reach_threshold: float = 0.1 ## Distance to consider "reached" (in tiles). 0.1 ~= 1.6px
 @export var recalc_distance: int = 3 ## Manhattan distance to trigger path recalculation
 @export var clear_on_success: bool = true ## Clear target_cell when reached
 @export var avoid_threats: bool = false ## Whether to avoid threatened tiles during pathfinding
@@ -162,14 +162,13 @@ func _tick(_delta: float) -> int:
 	
 	if manhattan_dist == 0:
 		# Already on waypoint tile.
-		# Check if we need to center before advancing to avoid corner clipping.
+		# ALWAYS move to the center of the tile before advancing.
+		# This ensures we don't cut corners and always move in straight lines.
 		var waypoint_center = grid_sampler.tile_to_world_center(waypoint)
 		var dist_to_center = player.position.distance_to(waypoint_center)
 		
-		# Only force centering if there is a next waypoint (turning)
-		var has_next = _current_waypoint_index < _cached_path.size() - 1
-		
-		if not has_next or dist_to_center < 4.0:
+		# Strict centering threshold (2.0 pixels)
+		if dist_to_center < 2.0:
 			# Advance to next waypoint
 			_current_waypoint_index += 1
 			if _current_waypoint_index >= _cached_path.size():
