@@ -125,7 +125,7 @@ func _ready():
 		push_error("[GameInstance] Bot manager script missing; bots disabled")
 	else:
 		bot_manager = ServerBotManagerScript.new()
-		bot_manager.auto_spawn_count = 1 # Only spawn 1 bot for easier testing
+		bot_manager.auto_spawn_count = 3 # Spawn 3 bots for competitive testing
 		bot_manager.configure(self)
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)

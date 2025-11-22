@@ -29,6 +29,7 @@ func _tick(_delta: float) -> int:
 	var nearest = opponent_tracker.get_nearest_opponent(player.position, player.peer_id)
 	if nearest == null or nearest.is_empty():
 		# No opponent to trap - don't waste time looking for trap positions
+		print("[BTSetTrap] No opponent found - skipping trap logic")
 		return FAILURE
 	
 	var opponent_tile: Vector2i = nearest.get("tile")

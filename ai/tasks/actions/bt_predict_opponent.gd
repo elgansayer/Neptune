@@ -28,6 +28,7 @@ func _tick(_delta: float) -> int:
 	# Get nearest opponent with velocity data (excluding self)
 	var nearest = opponent_tracker.get_nearest_opponent(player.position, player.peer_id)
 	if nearest == null or nearest.is_empty():
+		print("[BTPredictOpponent] No opponent to predict")
 		return FAILURE
 	
 	var opponent_tile: Vector2i = nearest.get("tile")

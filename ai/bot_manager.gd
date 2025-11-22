@@ -26,17 +26,17 @@ var auto_spawned := false
 var bot_behavior_tree # BehaviorTree resource
 
 const DEFAULT_PERSONALITY := "BALANCED"
-var auto_spawn_count := 3
+var auto_spawn_count := 3  # Spawn 3 bots for testing competitive play
 
 # Personality configuration for competitive AI behaviors
 const PERSONALITY_CONFIGS = {
 	"BALANCED": {
 		"reaction_time_ms": 50,
-		"trap_aggression": 0.5,
+		"trap_aggression": 0.7,  # Increased from 0.5
 		"prediction_lookahead": 3,
-		"corner_preference": 0.5,
+		"corner_preference": 0.6,  # Increased from 0.5
 		"ambush_patience": 5.0,
-		"bomb_placement_aggression": 0.4
+		"bomb_placement_aggression": 0.6  # Increased from 0.4
 	},
 	"AGGRESSIVE": {
 		"reaction_time_ms": 20,

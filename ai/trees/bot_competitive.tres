@@ -13,6 +13,9 @@
 [ext_resource type="Script" path="res://ai/tasks/actions/bt_set_trap.gd" id="10_trap"]
 [ext_resource type="Script" path="res://ai/tasks/actions/bt_predict_opponent.gd" id="11_predict"]
 [ext_resource type="Script" path="res://ai/tasks/actions/bt_evade_rubber_bomb.gd" id="12_evade"]
+[ext_resource type="Script" path="res://ai/tasks/actions/bt_tactical_assessment.gd" id="13_tac_assess"]
+[ext_resource type="Script" path="res://ai/tasks/actions/bt_execute_tactic.gd" id="14_tac_exec"]
+[ext_resource type="Script" path="res://ai/tasks/conditions/bt_is_safe_to_attack.gd" id="15_safe_attack"]
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bot"]
 
@@ -65,58 +68,41 @@ children = [SubResource("BTSequence_rubber_escape"), SubResource("BTSequence_nor
 [sub_resource type="BTCondition" id="BTCondition_has_opponent"]
 custom_name = "Has Opponent?"
 script = ExtResource("5_has_opp")
-max_distance = 10.0
+max_distance = 15.0
 
-[sub_resource type="BTAction" id="BTAction_set_trap"]
-custom_name = "Find Trap Position"
-script = ExtResource("10_trap")
-target_tile_var = &"trap_target_cell"
-min_choke_score = 0.6
-prediction_lookahead = 3
-require_opponent_nearby = true
+[sub_resource type="BTCondition" id="BTCondition_safe_to_attack"]
+custom_name = "Safe To Attack?"
+script = ExtResource("15_safe_attack")
+min_escape_routes = 1
+safety_time_margin = 1.5
 
-[sub_resource type="BTAction" id="BTAction_move_to_trap"]
-custom_name = "Move To Trap Position"
+[sub_resource type="BTAction" id="BTAction_tactical_assessment"]
+custom_name = "Assess Tactical Situation"
+script = ExtResource("13_tac_assess")
+assessment_var = &"tactical_plan"
+min_safety_margin = 1.5
+
+[sub_resource type="BTAction" id="BTAction_execute_tactic"]
+custom_name = "Execute Chosen Tactic"
+script = ExtResource("14_tac_exec")
+tactic_var = &"tactical_plan"
+target_var = &"tactic_target_cell"
+
+[sub_resource type="BTAction" id="BTAction_move_to_tactic_target"]
+custom_name = "Move To Tactical Position"
 script = ExtResource("3_move")
-cell_var = &"trap_target_cell"
+cell_var = &"tactic_target_cell"
 clear_on_success = false
 
-[sub_resource type="BTAction" id="BTAction_place_trap_bomb"]
-custom_name = "Place Trap Bomb"
+[sub_resource type="BTAction" id="BTAction_place_tactical_bomb"]
+custom_name = "Place Tactical Bomb"
 script = ExtResource("4_bomb")
 require_at_target = true
-target_cell_var = &"trap_target_cell"
+target_cell_var = &"tactic_target_cell"
 
-[sub_resource type="BTSequence" id="BTSequence_trap_strategy"]
-custom_name = "Trap Strategy"
-children = [SubResource("BTAction_set_trap"), SubResource("BTAction_move_to_trap"), SubResource("BTAction_place_trap_bomb")]
-
-[sub_resource type="BTAction" id="BTAction_predict_opponent"]
-custom_name = "Predict Opponent Movement"
-script = ExtResource("11_predict")
-target_tile_var = &"intercept_cell"
-prediction_distance = 5
-intercept_strategy = "BLOCK_PATH"
-
-[sub_resource type="BTAction" id="BTAction_intercept_move"]
-custom_name = "Move To Intercept"
-script = ExtResource("3_move")
-cell_var = &"intercept_cell"
-
-[sub_resource type="BTAction" id="BTAction_attack_place"]
-custom_name = "Place Bomb (Attack)"
-script = ExtResource("4_bomb")
-check_capacity = true
-check_existing = true
-require_at_target = false
-
-[sub_resource type="BTSequence" id="BTSequence_chase_strategy"]
-custom_name = "Chase Strategy"
-children = [SubResource("BTAction_predict_opponent"), SubResource("BTAction_intercept_move"), SubResource("BTAction_attack_place")]
-
-[sub_resource type="BTSelector" id="BTSelector_attack_strategy"]
-custom_name = "Attack Strategy Selector"
-children = [SubResource("BTSequence_trap_strategy"), SubResource("BTSequence_chase_strategy")]
+[sub_resource type="BTSequence" id="BTSequence_tactical_execution"]
+custom_name = "Tactical Execution Sequence"
+children = [SubResource("BTAction_execute_tactic"), SubResource("BTAction_move_to_tactic_target"), SubResource("BTAction_place_tactical_bomb")]
 
 [sub_resource type="BTAction" id="BTAction_attack_plan_retreat"]
 custom_name = "Plan Retreat"
@@ -130,8 +116,8 @@ script = ExtResource("3_move")
 cell_var = &"escape_cell"
 
 [sub_resource type="BTSequence" id="BTSequence_attack"]
-custom_name = "Hunt + Kill Sequence"
-children = [SubResource("BTCondition_has_opponent"), SubResource("BTSelector_attack_strategy"), SubResource("BTAction_attack_plan_retreat"), SubResource("BTAction_attack_retreat")]
+custom_name = "Tactical Hunt + Kill"
+children = [SubResource("BTCondition_has_opponent"), SubResource("BTCondition_safe_to_attack"), SubResource("BTAction_tactical_assessment"), SubResource("BTSequence_tactical_execution"), SubResource("BTAction_attack_plan_retreat"), SubResource("BTAction_attack_retreat")]
 
 ; === POWERUP COLLECTION (Priority 3) ===
 
@@ -213,6 +199,6 @@ custom_name = "Continuous Loop"
 children = [SubResource("BTSelector_root")]
 
 [resource]
-description = "Enhanced competitive AI: Rubber bomb evasion, trap-setting, opponent prediction, and killing strategies"
+description = "Master Bomberman tactical AI: One-Tile Trap, Choke Points, Space Denial, Predictive Intercept with defensive positioning"
 blackboard_plan = SubResource("BlackboardPlan_bot")
 root_task = SubResource("BTRepeatUntilFailure_loop")
