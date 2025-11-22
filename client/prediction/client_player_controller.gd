@@ -15,6 +15,12 @@ var predicted_position := Vector2.ZERO
 var predicted_velocity := Vector2.ZERO
 var predicted_last_move_direction := Vector2.ZERO
 
+# Saturn physics state (matches server_player.gd)
+var predicted_speed_level := 0  # Discrete speed level (0-7)
+var predicted_speed_multiplier := 1.0  # Calculated from speed_level
+var predicted_current_speed_magnitude := 0.0  # Accumulated speed for momentum
+var predicted_is_input_active := false  # Track input state for instant stop
+
 # Server state (for reconciliation)
 var server_position := Vector2.ZERO
 var server_velocity := Vector2.ZERO
@@ -59,32 +65,57 @@ func predict_movement(input_dir: Vector2, delta: float, _game_map: Array) -> Dic
 	if input_history.size() > INPUT_HISTORY_SIZE:
 		input_history.pop_front()
 	
-	# Predict movement (simplified - mirrors server logic)
+	# Update speed multiplier from discrete level (Saturn formula)
+	predicted_speed_multiplier = 1.0 + (predicted_speed_level * GameConfig.SPEED_LEVEL_INCREMENT)
+	
+	# Saturn stopping behavior: instant velocity drop on input release
 	if input_dir.length() < Constants.INPUT_DEADZONE:
+		predicted_is_input_active = false
+		# Instant stop (Saturn behavior - no grid snap on stop)
 		predicted_velocity = Vector2.ZERO
-	else:
-		# Match server speed calculation exactly
-		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER
-		var normalized_input = input_dir.normalized()
-		predicted_velocity = normalized_input * speed
+		predicted_current_speed_magnitude = 0.0
 		
-		# IMPORTANT: Match server's grid snapping logic EXACTLY
-		var tile_center = get_current_tile_center()
-		var offset_from_center = tile_center - predicted_position
+		# Apply stop movement
+		predicted_position += predicted_velocity * delta
 		
-		# When moving horizontally, snap vertically
-		if abs(normalized_input.x) > 0.5:
-			if abs(offset_from_center.y) > GameConfig.SNAP_THRESHOLD:
-				var correction_y = sign(offset_from_center.y) * GameConfig.SNAP_TO_CENTER_SPEED
-				predicted_velocity.y += correction_y
-		
-		# When moving vertically, snap horizontally
-		if abs(normalized_input.y) > 0.5:
-			if abs(offset_from_center.x) > GameConfig.SNAP_THRESHOLD:
-				var correction_x = sign(offset_from_center.x) * GameConfig.SNAP_TO_CENTER_SPEED
-				predicted_velocity.x += correction_x
-		
-		predicted_last_move_direction = normalized_input
+		return {
+			"position": predicted_position,
+			"velocity": predicted_velocity,
+			"last_move_direction": predicted_last_move_direction
+		}
+	
+	predicted_is_input_active = true
+	
+	# Match server speed calculation with Saturn physics
+	var normalized_input = input_dir.normalized()
+	var target_speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER * predicted_speed_multiplier
+	
+	# Saturn momentum preservation: maintain speed magnitude during direction changes
+	predicted_current_speed_magnitude = lerp(predicted_current_speed_magnitude, target_speed, GameConfig.ACCELERATION_RATE * delta)
+	
+	# Apply accumulated speed to current direction
+	var target_velocity = normalized_input * predicted_current_speed_magnitude
+	
+	# Set velocity (already smoothed by acceleration)
+	predicted_velocity = target_velocity
+	
+	# Match server's grid snapping logic EXACTLY (Saturn continuous alignment)
+	var tile_center = get_current_tile_center()
+	var offset_from_center = tile_center - predicted_position
+	
+	# When moving horizontally, snap vertically
+	if abs(normalized_input.x) > 0.5:
+		if abs(offset_from_center.y) > GameConfig.SNAP_THRESHOLD:
+			var correction_y = sign(offset_from_center.y) * GameConfig.SNAP_TO_CENTER_SPEED
+			predicted_velocity.y += correction_y
+	
+	# When moving vertically, snap horizontally
+	if abs(normalized_input.y) > 0.5:
+		if abs(offset_from_center.x) > GameConfig.SNAP_THRESHOLD:
+			var correction_x = sign(offset_from_center.x) * GameConfig.SNAP_TO_CENTER_SPEED
+			predicted_velocity.x += correction_x
+	
+	predicted_last_move_direction = normalized_input
 	
 	# Apply movement
 	predicted_position += predicted_velocity * delta
@@ -113,6 +144,12 @@ func reconcile_with_server(server_state: Dictionary):
 		# Without prediction, just use server state directly
 		predicted_position = Vector2(server_state.position.x, server_state.position.y)
 		predicted_velocity = Vector2(server_state.velocity.x, server_state.velocity.y)
+		
+		# Sync Saturn physics state from server
+		if server_state.has("speed_level"):
+			predicted_speed_level = server_state.speed_level
+			predicted_speed_multiplier = server_state.speed_multiplier
+		
 		if DEBUG_RECONCILIATION:
 			print("[No Prediction] Server pos: ", predicted_position)
 		return

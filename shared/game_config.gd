@@ -17,10 +17,15 @@ var scale_factor: float = 1.0 # TILE_SIZE / REFERENCE_TILE_SIZE
 
 # === STATIC CONSTANTS (scaled proportionally) ===
 # Base values are defined for 16px reference tile size
-const BASE_SPEED_REFERENCE = 45.0 # Speed at 16px tile size
+const BASE_SPEED_REFERENCE = 90.0 # Speed at 16px tile size (Saturn Bomberman: ~90 px/s)
 const SNAP_TO_CENTER_SPEED_REFERENCE = 60.0 # Snap speed at 16px tile size (increased for better alignment)
 const CORNER_ASSIST_THRESHOLD_REFERENCE = 5.0 # Corner assist at 16px tile size
 const COLLISION_CHECK_DISTANCE_REFERENCE = 2.0 # Collision check distance at 16px tile size
+
+# === SATURN PHYSICS CONSTANTS ===
+const ACCELERATION_RATE = 12.0 # Saturn Bomberman's subtle acceleration ramp-up
+const SPEED_LEVEL_INCREMENT = 0.125 # +12.5% per speed upgrade (Saturn Roller Skates)
+const MAX_SPEED_LEVEL = 7 # Maximum speed upgrades (0-7 levels)
 
 # PLAYER_HALF_WIDTH is dynamic: always TILE_SIZE / 2
 # This ensures collision boxes always match the tile grid

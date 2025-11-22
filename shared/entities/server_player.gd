@@ -22,10 +22,20 @@ var place_bomb_requested := false
 var bombs_placed := 0
 var max_bombs := 1
 var bomb_range := 2
-var speed_multiplier := 1.0 # Power-up speed multiplier
+var speed_multiplier := 1.0 # Calculated from speed_level (Saturn: 1.0 + level * 0.125)
+var speed_level := 0 # Discrete speed upgrade level (0-7, Saturn Roller Skates)
 var is_dead := false
 var is_bot := false
 var bot_personality := ""
+
+# Saturn physics state
+var current_speed_magnitude := 0.0 # Accumulated speed for momentum preservation
+var is_input_active := false # Track input state for instant stop behavior
+
+# Master Mode persistence (survive respawns)
+var persistent_speed_level := 0 # Speed level persists in Master Mode
+var persistent_max_bombs := 1 # Max bombs persists
+var persistent_bomb_range := 2 # Bomb range persists
 var debug_check_tile := Vector2i.ZERO # Tile being checked for diagonal (for client debug)
 var debug_blocking_tile := Vector2i.ZERO # The blocking tile (for debug visualization)
 
@@ -364,11 +374,16 @@ func _physics_process(_delta):
 	if Engine.get_process_frames() % 60 == 0: # Every 60 frames (~1 second)
 		print("[ServerPlayer DEBUG] ", username, " has_bomb_kicker=", has_bomb_kicker, " input_dir=", input_dir, " input_direction=", input_direction)
 
+	# Saturn stopping behavior: instant velocity drop on input release
 	if input_dir.length() < Constants.INPUT_DEADZONE:
-		# No input - stop moving but keep last_move_direction
+		is_input_active = false
+		# Instant stop (Saturn behavior - no grid snap on stop)
 		velocity = Vector2.ZERO
+		current_speed_magnitude = 0.0
 		move_and_slide()
 		return
+	
+	is_input_active = true
 
 	var final_direction := Vector2.ZERO
 
@@ -411,10 +426,20 @@ func _physics_process(_delta):
 	_update_debug_arrow()
 
 	if final_direction.length() > 0:
-		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
-		velocity = final_direction * speed
+		# Calculate target speed (Saturn physics with speed levels)
+		var target_speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
+		
+		# Saturn momentum preservation: maintain speed magnitude during direction changes
+		# (e.g., corner sliding from RIGHT to UP keeps accumulated speed)
+		current_speed_magnitude = lerp(current_speed_magnitude, target_speed, GameConfig.ACCELERATION_RATE * _delta)
+		
+		# Apply accumulated speed to current direction
+		var target_velocity = final_direction.normalized() * current_speed_magnitude
+		
+		# Set velocity (already smoothed by acceleration)
+		velocity = target_velocity
 
-		# Auto-align to grid: Add correction to movement vector
+		# Auto-align to grid: Add correction to movement vector (Saturn continuous alignment)
 		# When moving horizontally, gradually align vertically
 		# When moving vertically, gradually align horizontally
 		if ENABLE_GRID_SNAPPING:
@@ -434,6 +459,7 @@ func _physics_process(_delta):
 					velocity.x += correction_x
 	else:
 		velocity = Vector2.ZERO
+		current_speed_magnitude = 0.0
 
 	var pos_before = position
 	move_and_slide()
@@ -773,8 +799,10 @@ func collect_powerup(powerup):
 			bomb_range += 1
 			print("[Player] ", username, " collected RANGE power-up! Range: ", bomb_range)
 		ServerPowerUpScript.PowerUpType.SPEED_INCREASE:
-			speed_multiplier += 0.2
-			print("[Player] ", username, " collected SPEED power-up! Speed: ", speed_multiplier)
+			# Saturn discrete speed levels (0-7, +12.5% per level)
+			speed_level = min(speed_level + 1, GameConfig.MAX_SPEED_LEVEL)
+			persistent_speed_level = speed_level # Update persistent level for Master Mode
+			print("[Player] ", username, " collected SPEED power-up! Level: ", speed_level, "/", GameConfig.MAX_SPEED_LEVEL, " (", speed_multiplier, "x)")
 		ServerPowerUpScript.PowerUpType.BOMB_KICKER:
 			has_bomb_kicker = true
 			print("[Player] ", username, " collected BOMB KICKER!")
@@ -799,6 +827,7 @@ func get_state() -> Dictionary:
 		"max_bombs": max_bombs,
 		"bomb_range": bomb_range,
 		"speed_multiplier": speed_multiplier,
+		"speed_level": speed_level,
 		"has_bomb_kicker": has_bomb_kicker,
 		"has_power_glove": has_power_glove,
 		"is_carrying_bomb": is_carrying_bomb(),
