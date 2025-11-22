@@ -23,7 +23,7 @@ func _generate_name() -> String:
 	print("[BTMoveToCell] _generate_name() called - cell_var property is: '", cell_var, "'")
 	return "MoveToCell(%s)" % cell_var
 
-func _tick(delta: float) -> int:
+func _tick(_delta: float) -> int:
 	print("[BTMoveToCell] _tick called") # UNCOMMENTED for debugging
 	var player = blackboard.get_var("player")
 	var target_cell = blackboard.get_var(cell_var)
@@ -95,9 +95,9 @@ func _tick(delta: float) -> int:
 					print("  COLLISION: ", collision.get_collider().name, " at ", collision.get_position())
 			
 			# Debug map around
-			var grid_sampler = blackboard.get_var("grid_sampler")
+
 			if grid_sampler:
-				var current_tile = player.get_tile_position()
+				current_tile = player.get_tile_position()
 				print("  Map around ", current_tile, ":")
 				for dy in range(-1, 2):
 					var line = ""
@@ -142,7 +142,7 @@ func _tick(delta: float) -> int:
 	
 	
 	var waypoint = _cached_path[_current_waypoint_index]
-	var waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
+	# var waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
 	
 	# Move toward current waypoint using GRID-ALIGNED movement
 	# Calculate direction based on TILE POSITIONS, not pixel positions
@@ -161,14 +161,33 @@ func _tick(delta: float) -> int:
 	var manhattan_dist = abs(tile_delta.x) + abs(tile_delta.y)
 	
 	if manhattan_dist == 0:
-		# Already on waypoint tile, advance to next waypoint
-		_current_waypoint_index += 1
-		if _current_waypoint_index >= _cached_path.size():
-			# Path complete, let success check handle it
+		# Already on waypoint tile.
+		# Check if we need to center before advancing to avoid corner clipping.
+		var waypoint_center = grid_sampler.tile_to_world_center(waypoint)
+		var dist_to_center = player.position.distance_to(waypoint_center)
+		
+		# Only force centering if there is a next waypoint (turning)
+		var has_next = _current_waypoint_index < _cached_path.size() - 1
+		
+		if not has_next or dist_to_center < 4.0:
+			# Advance to next waypoint
+			_current_waypoint_index += 1
+			if _current_waypoint_index >= _cached_path.size():
+				# Path complete, let success check handle it
+				return RUNNING
+			waypoint = _cached_path[_current_waypoint_index]
+			# waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
+			tile_delta = waypoint - current_tile_pos
+		else:
+			# Move towards center of current waypoint
+			var offset = waypoint_center - player.position
+			if abs(offset.x) > abs(offset.y):
+				direction = Vector2(sign(offset.x), 0.0)
+			else:
+				direction = Vector2(0.0, sign(offset.y))
+			
+			player.set_input(direction.x, direction.y)
 			return RUNNING
-		waypoint = _cached_path[_current_waypoint_index]
-		waypoint_pos = grid_sampler.tile_to_world_center(waypoint)
-		tile_delta = waypoint - current_tile_pos
 	
 	# Move in the direction of the waypoint tile (one axis at a time)
 	# Prioritize the axis with larger tile distance
