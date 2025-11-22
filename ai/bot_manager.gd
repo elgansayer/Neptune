@@ -3,7 +3,7 @@ class_name ServerBotManager
 
 # CRITICAL: Process BEFORE player entities to set input before their _physics_process
 # Negative priority means this runs first
-const PROCESS_PRIORITY = -100
+const PROCESS_PRIORITY = 200
 
 # LimboAI components - ONLY system used for AI
 # Note: BehaviorTree and BTPlayer are native classes, accessed via ClassDB
@@ -15,7 +15,7 @@ const BombPlannerScript = preload("res://shared/ai/perception/bomb_planner.gd")
 const BombSafetyCheckerScript = preload("res://shared/ai/planning/bomb_safety_checker.gd")
 
 var game_instance
-var _bot_players: Dictionary = {}  # peer_id -> BTPlayer
+var _bot_players: Dictionary = {} # peer_id -> BTPlayer
 var grid_sampler
 var hazard_predictor
 var opponent_tracker
@@ -23,14 +23,14 @@ var bomb_planner
 var bomb_safety_checker
 var next_bot_peer_id := -1
 var auto_spawned := false
-var bot_behavior_tree  # BehaviorTree resource
+var bot_behavior_tree # BehaviorTree resource
 
 const DEFAULT_PERSONALITY := "BALANCED"
 var auto_spawn_count := 3
 
 func _ready() -> void:
-	# Set process priority to run BEFORE player entities
-	# Lower numbers run first (negative = very early)
+	# Set process priority to run AFTER game instance (100)
+	# Higher numbers run later
 	process_priority = PROCESS_PRIORITY
 	print("[BotManager] Process priority set to ", PROCESS_PRIORITY)
 
@@ -113,13 +113,13 @@ func _physics_process(delta: float) -> void:
 					blackboard.set_var("current_tile", player_ref.get_tile_position())
 					blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
 					
-					# DEBUG: Log when calling update
-					if Engine.get_physics_frames() % 60 == 0:
-						print("[BotManager] Calling bt_player.update() for %s active=%s" % [player_ref.username, bt_player.get("active")])
-					
-					# Manually update BTPlayer to ensure it runs BEFORE player's physics
-					# This ensures bot input is set before player processes movement
+					# WORKAROUND: Manual update since BTPlayer doesn't auto-update (update_mode stuck at 0)
+					# Call update() to tick the tree once
 					bt_player.call("update", delta)
+					
+					# CRITICAL: Unconditionally restart tree to force re-evaluation
+					# This makes BTRepeatUntilFailure work even with manual updates
+					bt_player.call("restart")
 	
 	# Update opponent intelligence profiles
 	if game_instance.ai_manager != null:
@@ -208,7 +208,7 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	
 	# IMPORTANT: Set active BEFORE setting update mode
 	bt_player.set("active", true)
-	bt_player.set("update_mode", 0)  # 0 = MANUAL (we call update() ourselves in _physics_process)
+	bt_player.set("update_mode", 0) # 0 = MANUAL (we call update() ourselves in _physics_process)
 	
 	# Ensure BTPlayer process mode is set correctly
 	bt_player.process_mode = Node.PROCESS_MODE_INHERIT

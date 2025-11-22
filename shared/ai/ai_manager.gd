@@ -39,7 +39,7 @@ func configure(game_instance: Node, grid_sampler, map_width: int, map_height: in
 	pathfinder = DangerAwareAStar.new()
 	pathfinder.region = Rect2i(0, 0, map_width, map_height)
 	pathfinder.cell_size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
-	pathfinder.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER  # 4-directional only
+	pathfinder.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER # 4-directional only
 	pathfinder.default_compute_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
 	pathfinder.default_estimate_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
 	
@@ -71,6 +71,17 @@ func refresh_threat_matrix(current_time_msec: float) -> void:
 	
 	# Build threat data from all active bombs
 	_build_threat_matrix_with_chains(current_time_msec)
+	
+	# Debug log every 60 frames
+	if Engine.get_physics_frames() % 60 == 0:
+		var active_bombs = 0
+		if _game_instance and _game_instance.bombs:
+			for b in _game_instance.bombs.values():
+				if is_instance_valid(b) and not b.has_exploded:
+					active_bombs += 1
+		print("[AIManager] Refreshed ThreatMatrix. Active Bombs: ", active_bombs, " Threat Tiles: ", threat_matrix.size())
+		if threat_matrix.size() > 0:
+			print("[AIManager] Threat Matrix Keys: ", threat_matrix.keys())
 
 ## Core Algorithm: Build ThreatMatrix with chain reaction simulation
 func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
@@ -152,10 +163,10 @@ func _get_blast_tiles(center: Vector2i, range_val: int) -> Array[Vector2i]:
 			# Check for hard walls (blast stops)
 			if not _grid_sampler.is_tile_walkable(tile):
 				var tile_type = _grid_sampler.get_tile_type(tile)
-				if tile_type == 1:  # Hard wall
+				if tile_type == 1: # Hard wall
 					print("[ThreatMatrix] Blast from ", center, " stopped by HARD WALL at ", tile, " direction ", dir)
 					break
-				elif tile_type == 2:  # Soft wall (destroys but stops)
+				elif tile_type == 2: # Soft wall (destroys but stops)
 					print("[ThreatMatrix] Blast from ", center, " stopped by SOFT BLOCK at ", tile, " direction ", dir)
 					tiles.append(tile)
 					break
@@ -212,13 +223,12 @@ func get_opponent_profile(player_id: int, player_name: String = "") -> OpponentP
 func update_opponent_intel(bot_positions: Dictionary, all_players: Dictionary, delta: float) -> void:
 	# bot_positions: bot_id -> Vector2i position
 	# all_players: player_id -> player_node
-	
 	for bot_id in bot_positions:
 		var bot_pos: Vector2i = bot_positions[bot_id]
 		
 		for player_id in all_players:
 			if player_id == bot_id:
-				continue  # Don't profile self
+				continue # Don't profile self
 			
 			var player = all_players[player_id]
 			if not is_instance_valid(player) or player.is_dead:
@@ -242,7 +252,7 @@ func update_opponent_intel(bot_positions: Dictionary, all_players: Dictionary, d
 			# Store distance for next frame
 			profile._previous_distances.append(dist_now)
 			if profile._previous_distances.size() > 10:
-				profile._previous_distances.pop_front()  # Keep last 10 samples
+				profile._previous_distances.pop_front() # Keep last 10 samples
 			
 			# Update quadrant tracking
 			var quadrant := _get_quadrant(player_pos)

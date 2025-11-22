@@ -18,11 +18,11 @@ var _decision_interval := 0.1
 var _decision_accumulator := 0.0
 
 # Limbo AI integration
-var _limbo_player  # BTPlayer instance
-var _limbo_blackboard  # Blackboard instance
-var _limbo_tree  # BehaviorTree resource
+var _limbo_player # BTPlayer instance
+var _limbo_blackboard # Blackboard instance
+var _limbo_tree # BehaviorTree resource
 
-var bomb_safety_checker  # Time-aware BFS suicide check
+var bomb_safety_checker # Time-aware BFS suicide check
 
 func configure(instance, player, personality_name: String,
 		sampler, predictor,
@@ -98,7 +98,7 @@ func _build_limbo_tree() -> void:
 	
 	# Set the agent node - this is what BTPlayer controls
 	if player_ref and is_instance_valid(player_ref):
-		_limbo_player.set("agent", player_ref)  # Direct node reference
+		_limbo_player.set("agent", player_ref) # Direct node reference
 	else:
 		_limbo_player.set("agent", self)
 	
@@ -106,12 +106,24 @@ func _build_limbo_tree() -> void:
 	
 	# OPTION A: Load pre-built tree resource (editable in LimboAI visual editor)
 	if ResourceLoader.exists("res://ai/trees/bot_default.tres"):
-		_limbo_tree = ResourceLoader.load("res://ai/trees/bot_default.tres")
 		_limbo_player.set_behavior_tree(_limbo_tree)
+		
+		# CRITICAL: Set update mode to PHYSICS_PROCESS so tree re-evaluates every frame
+		# Default is IDLE (0) which caches result after first evaluation
+		# PHYSICS_PROCESS (1) = re-evaluate tree every physics frame
+		_limbo_player.set("update_mode", 1) # BTPlayer.PHYSICS_PROCESS
+		_limbo_player.set("process_mode", Node.PROCESS_MODE_INHERIT) # Ensure not disabled
+		_limbo_player.set("active", true) # Explicitly activate
+		
 		print("[BotController] Loaded Limbo tree from resource for ", player_ref.player_name if player_ref else "bot")
+		print("[BotController] BTPlayer configured: update_mode=", _limbo_player.get("update_mode"), " process_mode=", _limbo_player.get("process_mode"), " active=", _limbo_player.get("active"))
 		
 		# CRITICAL: Populate blackboard after loading tree
 		_update_limbo_blackboard()
+		
+		# CRITICAL: Restart tree to ensure it starts fresh
+		_limbo_player.restart()
+		print("[BotController] BTPlayer restarted and ready")
 		return
 	
 	push_error("[BotController] Critical Error: res://ai/trees/bot_default.tres not found! Bot cannot function.")
@@ -219,7 +231,3 @@ func get_debug_payload() -> Dictionary:
 func _on_player_removed() -> void:
 	player_ref = null
 	queue_free()
-
-
-
-

@@ -26,7 +26,7 @@ func _tick(delta: float) -> int:
 	
 	var player_tile = player.get_tile_position()
 	
-	print("[BTWaitAmbush] _tick called. Tile: ", player_tile)
+	# print("[BTWaitAmbush] _tick called. Tile: ", player_tile)
 	
 	# Set anchor point if not yet established
 	if not _has_anchor:

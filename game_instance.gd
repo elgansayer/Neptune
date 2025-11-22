@@ -5,10 +5,6 @@ class_name GameInstance
 # Manages one game match with multiple players
 
 const Constants = preload("res://shared/constants.gd")
-const ServerPlayer = preload("res://shared/entities/server_player.gd")
-const ServerBomb = preload("res://shared/entities/server_bomb.gd")
-const ServerPowerUp = preload("res://shared/entities/server_powerup.gd")
-const AIManager = preload("res://shared/ai/ai_manager.gd")
 # AI System scaffolding (LimboAI-powered bot manager)
 const _BOT_MANAGER_PATHS := [
 	"res://ai/bot_manager.gd"
@@ -17,42 +13,43 @@ var ServerBotManagerScript: Script = _load_script_variant(_BOT_MANAGER_PATHS)
 # AI System removed - preparing for rebuild
 # const AIPlayerScript = preload("res://shared/entities/ai_player.gd")
 # const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
-const MapGenerator = preload("res://shared/maps/map_generator.gd")
-const MapPackLoader = preload("res://shared/maps/map_pack_loader.gd")
 
 var game_id: String = ""
-var players := {}  # peer_id -> ServerPlayer
+var players := {} # peer_id -> ServerPlayer
 # AI System removed - preparing for rebuild
 # var ai_bot_counter := 1000  # Start AI bot IDs from 1000
-var bombs := {}  # bomb_id -> ServerBomb
-var powerups := {}  # powerup_id -> ServerPowerUp
+var bombs := {} # bomb_id -> ServerBomb
+var powerups := {} # powerup_id -> ServerPowerUp
 var next_powerup_id := 0
-var explosions := []  # Array of {cells: Array, time: float} for visual effects
-var game_map := []  # 2D array representing the map
-var map_tiles := {}  # Dictionary of tile_key -> StaticBody2D for collision
+var explosions := [] # Array of {cells: Array, time: float} for visual effects
+var game_map := [] # 2D array representing the map
+var map_tiles := {} # Dictionary of tile_key -> StaticBody2D for collision
 var next_bomb_id := 0
-var map_manager: Node  # MapManager instance
-var spawn_points := []  # Available spawn points from map
-var next_spawn_index := 0  # Track which spawn point to use next
+var map_manager: Node # MapManager instance
+var spawn_points := [] # Available spawn points from map
+var next_spawn_index := 0 # Track which spawn point to use next
 var bot_manager: Node
-var ai_manager: AIManager  # Centralized AI brain with ThreatMatrix and pathfinding
+var ai_manager: AIManager # Centralized AI brain with ThreatMatrix and pathfinding
 
 # State sync
 var last_sync_time := 0.0
-var current_time_msec := 0.0  # Current physics frame time in milliseconds
+var current_time_msec := 0.0 # Current physics frame time in milliseconds
 const SYNC_INTERVAL = 1.0 / Constants.NETWORK_SEND_RATE
-const EXPLOSION_DISPLAY_TIME = 0.5  # How long to show explosions
+const EXPLOSION_DISPLAY_TIME = 0.5 # How long to show explosions
 
 # Match timer
-var match_duration := 180.0  # 3 minutes default
+var match_duration := 180.0 # 3 minutes default
 var match_time_remaining := match_duration
-var match_active := false  # Start false, set true after countdown
-var countdown_time := 1.0  # 1 second countdown before match starts
+var match_active := false # Start false, set true after countdown
+var countdown_time := 1.0 # 1 second countdown before match starts
 var winner_id := ""
 
 signal game_ended(winner_id: String)
 
 func _ready():
+	# Set process priority to run AFTER physics/bombs (0) but BEFORE bots (200)
+	process_priority = 100
+	
 	# Initialize map manager
 	map_manager = load("res://shared/maps/map_manager.gd").new()
 	add_child(map_manager)
@@ -73,8 +70,8 @@ func _ready():
 			var pattern = map_data.metadata.get("soft_block_pattern", "RANDOM_70")
 			var density = map_data.metadata.get("soft_block_density", 0.7)
 			var active_soft_blocks = MapPackLoader.choose_soft_block_pattern(
-				map_data.soft_slots, 
-				pattern, 
+				map_data.soft_slots,
+				pattern,
 				density
 			)
 			
@@ -87,7 +84,7 @@ func _ready():
 			for slot in active_soft_blocks:
 				map_data.grid[slot.y][slot.x] = 2
 			
-			print("[GameInstance] Using PCK map with ", active_soft_blocks.size(), "/", 
+			print("[GameInstance] Using PCK map with ", active_soft_blocks.size(), "/",
 				  map_data.soft_slots.size(), " soft blocks")
 	
 	# Fallback to procedural generation if PCK not found
@@ -106,7 +103,7 @@ func _ready():
 	# Load map configuration into GameConfig singleton
 	GameConfig.load_map_config(map_data)
 	
-	print("[GameInstance] Loaded map '", map_data.get("name", "Unknown"), 
+	print("[GameInstance] Loaded map '", map_data.get("name", "Unknown"),
 		  "' with ", spawn_points.size(), " spawn points")
 	
 	# Create physics collision bodies for walls and blocks
@@ -128,7 +125,7 @@ func _ready():
 		push_error("[GameInstance] Bot manager script missing; bots disabled")
 	else:
 		bot_manager = ServerBotManagerScript.new()
-		bot_manager.auto_spawn_count = 1  # Only spawn 1 bot for easier testing
+		bot_manager.auto_spawn_count = 1 # Only spawn 1 bot for easier testing
 		bot_manager.configure(self)
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
@@ -170,19 +167,19 @@ func create_map_collision():
 		for x in range(game_map[y].size()):
 			var tile_type = game_map[y][x]
 			
-			if tile_type == 1 or tile_type == 2:  # Wall or destructible block
+			if tile_type == 1 or tile_type == 2: # Wall or destructible block
 				var tile_body = StaticBody2D.new()
 				tile_body.name = "Tile_%d_%d" % [x, y]
 				
 				# Set collision layers: walls are on layer 1, don't detect anything
 				tile_body.collision_layer = Constants.COLLISION_LAYER_WALLS
-				tile_body.collision_mask = 0  # Walls don't need to detect collisions
+				tile_body.collision_mask = 0 # Walls don't need to detect collisions
 				
 				# Create collision shape - USE CIRCLE to match player's circular hitbox!
 				# This prevents getting stuck on corners
 				var collision_shape = CollisionShape2D.new()
 				var shape = CircleShape2D.new()
-				shape.radius = GameConfig.TILE_SIZE / 2.0  # Circle fits inside tile
+				shape.radius = GameConfig.TILE_SIZE / 2.0 # Circle fits inside tile
 				collision_shape.shape = shape
 				tile_body.add_child(collision_shape)
 				
@@ -279,7 +276,7 @@ func remove_player(peer_id: int):
 func end_match():
 	"""End the match and determine winner"""
 	if not match_active:
-		return  # Already ended
+		return # Already ended
 	
 	match_active = false
 	winner_id = find_winner()
@@ -367,12 +364,12 @@ func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
 			# Attempt pickup
 			if player.try_pickup_bomb(bomb):
 				print("[Game] Player ", player.username, " picked up bomb ", bomb_id)
-				return true  # Bomb picked up
+				return true # Bomb picked up
 			else:
 				print("[DEBUG] Pickup failed for bomb ", bomb_id)
 	
 	print("[DEBUG] No bomb found at player position")
-	return false  # No bomb picked up
+	return false # No bomb picked up
 
 func place_bomb(player: ServerPlayer):
 	# Prevent bomb placement during countdown
@@ -386,7 +383,7 @@ func place_bomb(player: ServerPlayer):
 	bomb.explosion_range = player.bomb_range
 	bomb.position = player.position
 	bomb.name = "Bomb_" + bomb.bomb_id
-	bomb.game_instance = self  # Give bomb reference for collision checking
+	bomb.game_instance = self # Give bomb reference for collision checking
 	# Start fuse from zero on placement (count-up logic)
 	bomb.explosion_timer = 0.0
 	
@@ -417,7 +414,7 @@ func place_bomb(player: ServerPlayer):
 		bot_manager.refresh_perception()
 
 	# Broadcast AI debug data (throttled)
-	if bot_manager and Engine.get_physics_frames() % 6 == 0:  # Every 6 frames (10Hz at 60fps)
+	if bot_manager and Engine.get_physics_frames() % 6 == 0: # Every 6 frames (10Hz at 60fps)
 		for child in bot_manager.get_children():
 			if child.has_method("get_debug_payload"):
 				var payload = child.get_debug_payload()
@@ -535,16 +532,16 @@ func destroy_block(cell: Vector2i):
 func get_tile_type(grid_pos: Vector2i) -> int:
 	"""Get tile type at grid position (0=empty, 1=wall, 2=destructible)"""
 	if grid_pos.y < 0 or grid_pos.y >= game_map.size():
-		return 1  # Treat out of bounds as wall
+		return 1 # Treat out of bounds as wall
 	if grid_pos.x < 0 or grid_pos.x >= game_map[0].size():
-		return 1  # Treat out of bounds as wall
+		return 1 # Treat out of bounds as wall
 	
 	return game_map[grid_pos.y][grid_pos.x]
 
 func sync_state_to_clients():
 	# Clean up old explosions (keep for progressive display duration)
 	var current_time = Time.get_ticks_msec() / 1000.0
-	var explosion_duration = 0.02 * 20  # ~20 expansion steps max
+	var explosion_duration = 0.02 * 20 # ~20 expansion steps max
 	explosions = explosions.filter(func(explosion): return current_time - explosion["start_time"] < explosion_duration)
 	
 	# Build game state
@@ -591,7 +588,7 @@ func sync_state_to_clients():
 		if threat_data.size() > 0:
 			print("[Server] Sending threat matrix with ", threat_data.size(), " tiles")
 		state["threat_matrix"] = threat_data
-		state["current_time_msec"] = current_time_msec  # Use the SAME timestamp used for threat calculation
+		state["current_time_msec"] = current_time_msec # Use the SAME timestamp used for threat calculation
 	
 	# Send to all players in this game via ClientMain autoload
 	for peer_id in players:
@@ -609,17 +606,17 @@ func spawn_powerup(tile_pos: Vector2i):
 	# TODO: Make drop rates configurable via Constants
 	var rand_val = randf()
 	if rand_val < 0.35:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE  # 35%
+		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE # 35%
 	elif rand_val < 0.65:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.RANGE_INCREASE  # 30%
+		powerup.powerup_type = ServerPowerUp.PowerUpType.RANGE_INCREASE # 30%
 	elif rand_val < 0.85:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE  # 20%
+		powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE # 20%
 	elif rand_val < 0.92:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_KICKER  # 7%
+		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_KICKER # 7%
 	elif rand_val < 0.97:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.POWER_GLOVE  # 5%
+		powerup.powerup_type = ServerPowerUp.PowerUpType.POWER_GLOVE # 5%
 	else:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.VIRUS  # 3%
+		powerup.powerup_type = ServerPowerUp.PowerUpType.VIRUS # 3%
 	
 	powerup.position = Vector2(
 		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,

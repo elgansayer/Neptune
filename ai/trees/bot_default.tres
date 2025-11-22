@@ -88,7 +88,7 @@ _enabled = false
 [sub_resource type="BTAction" id="BTAction_find_farming"]
 custom_name = "Find Farming Spot"
 script = ExtResource("9_tn3ky")
-search_radius = 8
+search_radius = 20
 
 [sub_resource type="BTAction" id="BTAction_move_farming"]
 custom_name = "Move To Farming Spot"
@@ -111,6 +111,7 @@ custom_name = "Move To Safety"
 script = ExtResource("3_move")
 cell_var = &"escape_cell"
 avoid_threats = false
+clear_on_success = true
 
 [sub_resource type="BTCondition" id="BTCondition_farming_safe"]
 custom_name = "Check Safe (Not In Danger)"
@@ -134,7 +135,11 @@ prefer_center = false
 [sub_resource type="BTSelector" id="BTSelector_root"]
 children = [SubResource("BTSequence_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_farming"), SubResource("BTAction_ambush")]
 
+[sub_resource type="BTRepeatUntilFailure" id="BTRepeatUntilFailure_loop"]
+custom_name = "Continuous Loop"
+children = [SubResource("BTSelector_root")]
+
 [resource]
-description = "Complete LimboAI bot behavior tree: Escape > Chase+Attack > Collect > Farming > Ambush"
+description = "Complete LimboAI bot behavior tree: Escape > Chase+Attack > Collect > Farming > Ambush (loops forever)"
 blackboard_plan = SubResource("BlackboardPlan_bot")
-root_task = SubResource("BTSelector_root")
+root_task = SubResource("BTRepeatUntilFailure_loop")

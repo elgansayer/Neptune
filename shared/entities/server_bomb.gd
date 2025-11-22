@@ -10,11 +10,11 @@ const GridHelpers = preload("res://shared/game_logic/grid_helpers.gd")
 
 # Bomb states for Power Glove system and kicking
 enum BombState {
-	PLANTED,    # Normal bomb on ground
-	CARRIED,    # Being carried by player (Power Glove)
-	THROWN,     # In mid-air flight (Power Glove)
-	KICKED,     # Being kicked along ground
-	LANDED      # Just landed after throw
+	PLANTED, # Normal bomb on ground
+	CARRIED, # Being carried by player (Power Glove)
+	THROWN, # In mid-air flight (Power Glove)
+	KICKED, # Being kicked along ground
+	LANDED # Just landed after throw
 }
 
 var bomb_id: String = ""
@@ -22,41 +22,41 @@ var owner_id: String = ""
 var explosion_range: int = 2
 var explosion_timer: float = Constants.BOMB_TIMER
 var has_exploded := false
-var game_instance: Node = null  # Reference to GameInstance for collision checking
+var game_instance: Node = null # Reference to GameInstance for collision checking
 
 # Power Glove throwing state
 var bomb_state: BombState = BombState.PLANTED
-var carrying_player: Node = null  # Reference to player carrying this bomb
+var carrying_player: Node = null # Reference to player carrying this bomb
 var carrier_id: String = ""
 
 # Throw physics (pseudo-3D arc simulation)
-const THROW_RANGE: int = 2  # Grid tiles
-const THROW_DURATION: float = 0.3375  # Seconds per arc segment (fast throw)
-const THROW_HEIGHT: float = 8.0  # Visual height in pixels for arc
-const BOUNCE_HEIGHT_REDUCTION: float = 0.6  # Height reduction per bounce
+const THROW_RANGE: int = 2 # Grid tiles
+const THROW_DURATION: float = 0.3375 # Seconds per arc segment (fast throw)
+const THROW_HEIGHT: float = 8.0 # Visual height in pixels for arc
+const BOUNCE_HEIGHT_REDUCTION: float = 0.6 # Height reduction per bounce
 var throw_start_pos: Vector2 = Vector2.ZERO
 var throw_target_pos: Vector2 = Vector2.ZERO
 var throw_direction: Vector2 = Vector2.ZERO
-var throw_progress: float = 0.0  # 0.0 to 1.0 within current segment
+var throw_progress: float = 0.0 # 0.0 to 1.0 within current segment
 var throw_distance_remaining: int = THROW_RANGE
-var current_z_height: float = 0.0  # Pseudo-3D height for shadow positioning
-var bounce_waypoints: Array[Vector2] = []  # List of bounce positions
+var current_z_height: float = 0.0 # Pseudo-3D height for shadow positioning
+var bounce_waypoints: Array[Vector2] = [] # List of bounce positions
 var current_waypoint_index: int = 0
 var current_arc_start: Vector2 = Vector2.ZERO
 var current_arc_target: Vector2 = Vector2.ZERO
 var current_arc_height: float = THROW_HEIGHT
-var is_out_of_bounds: bool = false  # Track if bomb is currently outside map boundaries
+var is_out_of_bounds: bool = false # Track if bomb is currently outside map boundaries
 
 # Bomb kick state
 var kick_direction := Vector2.ZERO
-var kick_speed := 200.0  # Speed when kicked (pixels per second)
+var kick_speed := 200.0 # Speed when kicked (pixels per second)
 
 # Progressive explosion state
-const EXPLOSION_GROWTH_INTERVAL = 0.02  # 50 tiles/second
+const EXPLOSION_GROWTH_INTERVAL = 0.02 # 50 tiles/second
 var explosion_started := false
 var explosion_growth_timer := 0.0
 var current_explosion_length := 1
-var explosion_pattern: Array[Dictionary] = []  # Full explosion pattern calculated at start
+var explosion_pattern: Array[Dictionary] = [] # Full explosion pattern calculated at start
 
 # Direction data for explosion expansion (up, down, left, right)
 var explosion_directions := [
@@ -83,7 +83,7 @@ func _ready():
 	# Set up collision shape
 	var collision_shape = CollisionShape2D.new()
 	var shape = RectangleShape2D.new()
-	shape.size = Vector2(GameConfig.TILE_SIZE * 0.7, GameConfig.TILE_SIZE * 0.7)  # Slightly smaller than tile
+	shape.size = Vector2(GameConfig.TILE_SIZE * 0.7, GameConfig.TILE_SIZE * 0.7) # Slightly smaller than tile
 	collision_shape.shape = shape
 	add_child(collision_shape)
 	
@@ -101,7 +101,7 @@ func _physics_process(delta):
 			# Attach to carrier with animated offset based on pickup animation
 			var bomb_offset = carrying_player.get_carried_bomb_offset()
 			position = carrying_player.position + bomb_offset
-			current_z_height = 0.0  # visual z handled client-side if needed
+			current_z_height = 0.0 # visual z handled client-side if needed
 			# Timer paused while carried
 		else:
 			# Carrier invalid - drop bomb
@@ -128,9 +128,14 @@ func _physics_process(delta):
 			print("[Bomb] Kicked bomb stopped - hit ", collision.get_collider())
 	
 	# In planted/landed/kicked state (not carried/thrown/exploded), timer counts up
-	if bomb_state == BombState.PLANTED or bomb_state == BombState.LANDED or bomb_state == BombState.KICKED:
+	if (bomb_state == BombState.PLANTED or bomb_state == BombState.LANDED or bomb_state == BombState.KICKED) and not has_exploded:
 		explosion_timer += delta
+		# Debug log every second
+		if int(explosion_timer * 10) % 10 == 0 and Engine.get_physics_frames() % 10 == 0:
+			print("[ServerBomb] Timer: ", explosion_timer, " State: ", bomb_state, " ID: ", bomb_id)
+			
 		if explosion_timer >= Constants.BOMB_TIMER:
+			print("[ServerBomb] Timer reached limit! Calling explode(). ID: ", bomb_id)
 			explode()
 
 	if has_exploded:
@@ -217,9 +222,9 @@ func check_tile_collision(grid_pos: Vector2i) -> Dictionary:
 	# Check game map if game_instance is available
 	if game_instance and game_instance.has_method("get_tile_type"):
 		var tile_type = game_instance.get_tile_type(grid_pos)
-		if tile_type == 1:  # Solid wall
+		if tile_type == 1: # Solid wall
 			return {"blocked": true, "destructible": false}
-		elif tile_type == 2:  # Destructible block
+		elif tile_type == 2: # Destructible block
 			return {"blocked": true, "destructible": true}
 	
 	return {"blocked": false, "destructible": false}
@@ -360,7 +365,7 @@ func throw_bomb(direction: Vector2) -> bool:
 	# Calculate initial z_height to match where bomb is currently held
 	# This creates smooth transition from carried position to arc
 	var carry_offset = throw_start_pos - start_tile_center
-	current_z_height = -carry_offset.y  # Convert Y offset to z_height
+	current_z_height = - carry_offset.y # Convert Y offset to z_height
 	current_arc_height = THROW_HEIGHT
 	print("[ServerBomb] throw_bomb() - Starting z_height: ", current_z_height, ", arc height: ", current_arc_height)
 	
@@ -565,7 +570,7 @@ func _add_edge_transition_waypoints(waypoints: Array[Vector2], from_tile: Vector
 		exit_tile = Vector2i(from_tile.x, GameConfig.map_height - 1)
 		entry_tile = Vector2i(from_tile.x, 0)
 	else:
-		return  # No boundary crossing
+		return # No boundary crossing
 	
 	# Add exit waypoint (last tile before leaving map)
 	var exit_pos = Vector2(
@@ -591,7 +596,7 @@ func _check_tile_has_collision(grid_pos: Vector2i) -> bool:
 	# Check static map (0 = empty, anything else = collision)
 	if game_instance and game_instance.has_method("get_tile_type"):
 		if game_instance.get_tile_type(grid_pos) != 0:
-			return true  # Wall or destructible block
+			return true # Wall or destructible block
 	
 	# Check dynamic occupancy: players and other bombs
 	if game_instance:
@@ -600,15 +605,15 @@ func _check_tile_has_collision(grid_pos: Vector2i) -> bool:
 			var player = game_instance.players[peer_id]
 			if is_instance_valid(player) and not player.is_dead:
 				if player.get_tile_position() == grid_pos:
-					return true  # Player collision - bounce
+					return true # Player collision - bounce
 		# Bombs
 		for other_id in game_instance.bombs:
 			var other_bomb = game_instance.bombs[other_id]
 			if is_instance_valid(other_bomb) and not other_bomb.has_exploded:
 				if other_bomb.bomb_id != bomb_id and other_bomb.get_tile_position() == grid_pos:
-					return true  # Bomb collision - bounce
+					return true # Bomb collision - bounce
 	
-	return false  # Tile is free
+	return false # Tile is free
 
 func _is_tile_free_for_landing(grid_pos: Vector2i) -> bool:
 	"""Check if a tile is suitable for landing: empty map cell and no players/bombs.
@@ -666,7 +671,7 @@ func _update_throw_physics(delta: float):
 			# If start and target are far apart but both in bounds, it's a teleport
 			var distance = current_arc_start.distance_to(current_arc_target)
 			var diagonal_distance = sqrt(
-				pow(GameConfig.map_width * GameConfig.TILE_SIZE, 2) + 
+				pow(GameConfig.map_width * GameConfig.TILE_SIZE, 2) +
 				pow(GameConfig.map_height * GameConfig.TILE_SIZE, 2)
 			)
 			
@@ -677,7 +682,7 @@ func _update_throw_physics(delta: float):
 			
 			# Reset to standard arc height for bounces (no initial carry offset)
 			current_arc_height = THROW_HEIGHT
-			current_z_height = 0.0  # Bounces start from ground
+			current_z_height = 0.0 # Bounces start from ground
 	
 	# Calculate current X/Y position along arc segment (ground-level trajectory)
 	position = current_arc_start.lerp(current_arc_target, throw_progress)
@@ -702,7 +707,7 @@ func _update_throw_physics(delta: float):
 	# For first segment (index 0), we need to transition from initial carry z_height
 	if current_waypoint_index == 0:
 		# Blend from initial z_height (carry offset) to parabolic arc
-		var initial_z = -((throw_start_pos - current_arc_start).y)  # Initial height from carry
+		var initial_z = - ((throw_start_pos - current_arc_start).y) # Initial height from carry
 		var peak_z = current_arc_height
 		
 		# Create arc that starts at initial_z, peaks at peak_z, and ends at 0
@@ -712,7 +717,7 @@ func _update_throw_physics(delta: float):
 		current_z_height = arc_z
 	else:
 		# Standard parabolic arc for bounces (starts and ends at ground)
-		var height_progress = 1.0 - abs(throw_progress * 2.0 - 1.0)  # Peak at 0.5
+		var height_progress = 1.0 - abs(throw_progress * 2.0 - 1.0) # Peak at 0.5
 		current_z_height = current_arc_height * height_progress
 
 func _land_bomb():

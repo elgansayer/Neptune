@@ -438,6 +438,13 @@ func _physics_process(_delta):
 	var pos_before = position
 	move_and_slide()
 	var pos_after = position
+	
+	# Debug collisions
+	if is_bot and get_slide_collision_count() > 0:
+		for i in range(get_slide_collision_count()):
+			var collision = get_slide_collision(i)
+			var collider = collision.get_collider()
+			print("[ServerPlayer] Bot ", username, " collided with ", collider.name if collider else "null", " at ", collision.get_position())
 
 	# Clear collision exceptions when player is no longer overlapping bomb
 	for i in range(collision_exceptions.size() - 1, -1, -1):

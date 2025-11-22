@@ -43,6 +43,10 @@ func _tick(_delta: float) -> int:
 			var ai_manager = blackboard.get_var("ai_manager")
 			_do_full_search_and_broadcast(current_tile, bomb_range, current_time_msec, player, game_instance, grid_sampler, bomb_safety_checker, ai_manager)
 		return SUCCESS
+	elif existing_target != INVALID_TILE:
+		# Cache exists but is no longer valid - clear it and search for a new spot
+		print("[BTFindFarmingSpot] ⚠ Cached target ", existing_target, " is now INVALID - clearing cache and searching for new spot")
+		blackboard.set_var(target_cell_var, null)
 	
 	# Search nearby tiles for soft blocks
 	var best_spot: Vector2i = INVALID_TILE
@@ -95,7 +99,7 @@ func _tick(_delta: float) -> int:
 			# Check if we can reach this tile - adjacent tiles are always reachable if walkable
 			var manhattan_dist = abs(dx) + abs(dy)
 			if manhattan_dist > 1:
-				var path = grid_sampler.find_path(current_tile, check_tile, 15, player)
+				var path = grid_sampler.find_path(current_tile, check_tile, 100, player, true)
 				if path.is_empty():
 					rejected_no_path += 1
 					if broadcast_safety:
@@ -183,9 +187,9 @@ func _tick(_delta: float) -> int:
 			# Mark as safe or marginal for visualization based on safety margin
 			if broadcast_safety:
 				tile_key = "%d,%d" % [check_tile.x, check_tile.y]
-				var status = 2 if margin > 800.0 else 1 # Safe (cyan) if >800ms margin, marginal (orange) otherwise
+				var safety_status = 2 if margin > 800.0 else 1 # Safe (cyan) if >800ms margin, marginal (orange) otherwise
 				var eval_data = {
-					"status": status,
+					"status": safety_status,
 					"soft_blocks": soft_blocks_hit,
 					"explored_tiles": safety_result.get("explored_tiles", 0),
 					"margin_ms": margin,
@@ -219,6 +223,11 @@ func _tick(_delta: float) -> int:
 		" no_path=", rejected_no_path,
 		" no_nearby_safe=", rejected_no_nearby_safe,
 		" no_escape=", rejected_no_escape, ")")
+	
+	# Clear visualization if nothing found
+	if broadcast_safety:
+		_broadcast_safety_data({})
+		
 	return FAILURE
 
 func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler) -> int:
@@ -273,7 +282,7 @@ func _has_safe_tile_nearby(position: Vector2i, grid_sampler, current_time_msec: 
 		return false
 	return _has_safe_tile_nearby_static(position, grid_sampler, current_time_msec, ai_manager)
 
-func _has_safe_tile_nearby_static(position: Vector2i, grid_sampler, current_time_msec: float, ai_manager) -> bool:
+func _has_safe_tile_nearby_static(position: Vector2i, grid_sampler, _current_time_msec: float, ai_manager) -> bool:
 	"""Static version that accepts ai_manager as parameter"""
 	if not ai_manager:
 		return false
@@ -360,9 +369,20 @@ func _is_valid_target(tile: Vector2i, grid_sampler, bomb_range: int) -> bool:
 		return false
 	if _count_soft_blocks_in_range(tile, bomb_range, grid_sampler) == 0:
 		return false
+	
+	# CRITICAL: Check if the cached target is threatened by an active bomb
+	# If there's a bomb on or near this tile, we need to invalidate the cache and find a new spot
+	var ai_manager = blackboard.get_var("ai_manager")
+	if ai_manager:
+		var threat_matrix = ai_manager.get_current_threat_matrix()
+		var t_key := "%d,%d" % [tile.x, tile.y]
+		if threat_matrix.has(t_key):
+			print("[BTFindFarmingSpot] ⚠ Cached target ", tile, " is now THREATENED - invalidating cache")
+			return false
+	
 	return true
 
-func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, current_time_msec: int, player, game_instance, grid_sampler, bomb_safety_checker, ai_manager) -> void:
+func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, current_time_msec: int, player, _game_instance, grid_sampler, bomb_safety_checker, ai_manager) -> void:
 	"""Perform full search and broadcast for continuous visualization"""
 	var safety_eval := {}
 	
@@ -372,7 +392,7 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 	
 	print("[BTFindFarmingSpot] Broadcasting from ", current_tile, " (search_radius=", search_radius, ")")
 	
-	var total_tiles = 0
+	var _total_tiles = 0
 	var rejected_path = 0
 	var rejected_safety = 0
 	var rejected_escape = 0
@@ -381,7 +401,7 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 	for dx in range(-search_radius, search_radius + 1):
 		for dy in range(-search_radius, search_radius + 1):
 			var check_tile = current_tile + Vector2i(dx, dy)
-			total_tiles += 1
+			_total_tiles += 1
 			
 			if not grid_sampler.is_tile_walkable(check_tile):
 				continue
@@ -404,7 +424,7 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 			# Check path - adjacent tiles are always reachable if walkable
 			var manhattan_dist = abs(dx) + abs(dy)
 			if manhattan_dist > 1:
-				var path = grid_sampler.find_path(current_tile, check_tile, 15, player)
+				var path = grid_sampler.find_path(current_tile, check_tile, 100, player, true)
 				if path.is_empty():
 					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": 0, "reason": "no_path"}
 					rejected_path += 1
@@ -461,9 +481,9 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 			var distance = abs(dx) + abs(dy)
 			score -= distance * 0.3
 			
-			var status = 2 if margin > 800.0 else 1
+			var safety_status = 2 if margin > 800.0 else 1
 			var eval_data = {
-				"status": status,
+				"status": safety_status,
 				"soft_blocks": soft_blocks_hit,
 				"explored_tiles": safety_result.get("explored_tiles", 0),
 				"margin_ms": margin,
