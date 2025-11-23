@@ -106,6 +106,7 @@ func _build_limbo_tree() -> void:
 	
 	# OPTION A: Load pre-built tree resource (editable in LimboAI visual editor)
 	if ResourceLoader.exists("res://ai/trees/bot_default.tres"):
+		_limbo_tree = load("res://ai/trees/bot_default.tres")
 		_limbo_player.set_behavior_tree(_limbo_tree)
 		
 		# CRITICAL: Set update mode to PHYSICS_PROCESS so tree re-evaluates every frame

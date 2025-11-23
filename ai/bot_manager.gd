@@ -26,17 +26,17 @@ var auto_spawned := false
 var bot_behavior_tree # BehaviorTree resource
 
 const DEFAULT_PERSONALITY := "BALANCED"
-var auto_spawn_count := 3  # Spawn 3 bots for testing competitive play
+var auto_spawn_count := 3 # Spawn 3 bots for testing competitive play
 
 # Personality configuration for competitive AI behaviors
 const PERSONALITY_CONFIGS = {
 	"BALANCED": {
 		"reaction_time_ms": 50,
-		"trap_aggression": 0.7,  # Increased from 0.5
+		"trap_aggression": 0.7, # Increased from 0.5
 		"prediction_lookahead": 3,
-		"corner_preference": 0.6,  # Increased from 0.5
+		"corner_preference": 0.6, # Increased from 0.5
 		"ambush_patience": 5.0,
-		"bomb_placement_aggression": 0.6  # Increased from 0.4
+		"bomb_placement_aggression": 0.6 # Increased from 0.4
 	},
 	"AGGRESSIVE": {
 		"reaction_time_ms": 20,
@@ -64,7 +64,7 @@ const PERSONALITY_CONFIGS = {
 	},
 	"TRAPPER": {
 		"reaction_time_ms": 60,
-		"trap_aggression": 1.0,  # Maximum trap focus
+		"trap_aggression": 1.0, # Maximum trap focus
 		"prediction_lookahead": 4,
 		"corner_preference": 0.9,
 		"ambush_patience": 10.0,
@@ -73,15 +73,15 @@ const PERSONALITY_CONFIGS = {
 	"KAMIKAZE": {
 		"reaction_time_ms": 5,
 		"trap_aggression": 0.8,
-		"prediction_lookahead": 2,  # Short-term thinking
-		"corner_preference": 1.0,  # Always corners
+		"prediction_lookahead": 2, # Short-term thinking
+		"corner_preference": 1.0, # Always corners
 		"ambush_patience": 1.0,
 		"bomb_placement_aggression": 0.95
 	},
 	"CHAOS": {
 		"reaction_time_ms": 10,
 		"trap_aggression": 0.6,
-		"prediction_lookahead": 1,  # Unpredictable
+		"prediction_lookahead": 1, # Unpredictable
 		"corner_preference": 0.5,
 		"ambush_patience": 2.0,
 		"bomb_placement_aggression": 0.8
@@ -113,15 +113,12 @@ func _ready() -> void:
 func configure(instance) -> void:
 	game_instance = instance
 	
-	# Load LimboAI behavior tree - use competitive tree with enhanced AI
-	bot_behavior_tree = ResourceLoader.load("res://ai/trees/bot_competitive.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
+	# Load LimboAI behavior tree - use merged tree with enhanced AI
+	bot_behavior_tree = ResourceLoader.load("res://ai/trees/bot_default.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
 	if not bot_behavior_tree:
-		push_error("[BotManager] Failed to load bot_competitive.tres! Falling back to bot_default.tres")
-		bot_behavior_tree = ResourceLoader.load("res://ai/trees/bot_default.tres", "", ResourceLoader.CACHE_MODE_IGNORE)
-		if not bot_behavior_tree:
-			push_error("[BotManager] Failed to load any behavior tree!")
-			return
-	print("[BotManager] Loaded competitive behavior tree (cache ignored)")
+		push_error("[BotManager] Failed to load behavior tree!")
+		return
+	print("[BotManager] Loaded behavior tree (cache ignored)")
 	
 	grid_sampler = GridSamplerScript.new()
 	grid_sampler.configure(game_instance, null, GameConfig.TILE_SIZE)
