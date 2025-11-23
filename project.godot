@@ -39,6 +39,20 @@ load_once=PackedStringArray("res://addons/limboai/bin/limboai.gdextension")
 
 enable=true
 
+[display]
+
+# Base viewport resolution the UI/game scales from
+window/size/viewport_width=1280
+window/size/viewport_height=720
+
+# Allow window resize while keeping aspect via stretch
+window/size/resizable=true
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+# HiDPI handling (let Godot scale appropriately on high-DPI screens)
+window/dpi/allow_hidpi=true
+
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
