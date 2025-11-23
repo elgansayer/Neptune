@@ -6,15 +6,15 @@ class_name AIManager
 ## All bots query this singleton for danger awareness and navigation
 
 const Constants = preload("res://shared/constants.gd")
-const DangerAwareAStar = preload("res://shared/ai/pathfinding/danger_aware_astar.gd")
-const OpponentProfile = preload("res://shared/ai/intel/opponent_profile.gd")
+const DangerAwareAStarScript = preload("res://shared/ai/pathfinding/danger_aware_astar.gd")
+const OpponentProfileScript = preload("res://shared/ai/intel/opponent_profile.gd")
 
 # Global threat data: Vector2i -> time in milliseconds when tile becomes lethal
 # If tile not in dictionary, it's safe (threat time = INF)
 var threat_matrix: Dictionary = {}
 
 # Time-aware pathfinder (configured once at setup)
-var pathfinder: DangerAwareAStar = null
+var pathfinder: DangerAwareAStarScript = null
 
 # Opponent intelligence profiles: player_id -> OpponentProfile
 var opponent_profiles: Dictionary = {}
@@ -36,7 +36,7 @@ func configure(game_instance: Node, grid_sampler, map_width: int, map_height: in
 	_map_height = map_height
 	
 	# Initialize pathfinder
-	pathfinder = DangerAwareAStar.new()
+	pathfinder = DangerAwareAStarScript.new()
 	pathfinder.region = Rect2i(0, 0, map_width, map_height)
 	pathfinder.cell_size = Vector2(Constants.TILE_SIZE, Constants.TILE_SIZE)
 	pathfinder.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER # 4-directional only
@@ -214,9 +214,9 @@ func on_wall_destroyed(tile: Vector2i) -> void:
 		pathfinder.update()
 
 ## Get or create opponent profile for player
-func get_opponent_profile(player_id: int, player_name: String = "") -> OpponentProfile:
+func get_opponent_profile(player_id: int, player_name: String = "") -> OpponentProfileScript:
 	if not opponent_profiles.has(player_id):
-		opponent_profiles[player_id] = OpponentProfile.new(player_id, player_name)
+		opponent_profiles[player_id] = OpponentProfileScript.new(player_id, player_name)
 	return opponent_profiles[player_id]
 
 ## Update opponent profiles based on current game state
@@ -244,15 +244,9 @@ func update_opponent_intel(bot_positions: Dictionary, all_players: Dictionary, d
 			# Calculate distance for aggression scoring
 			var dist_now := float(abs(bot_pos.x - player_pos.x) + abs(bot_pos.y - player_pos.y))
 			
-			# Update aggression if we have previous distance
-			if profile._previous_distances.size() > 0:
-				var dist_prev: float = profile._previous_distances[-1]
-				profile.update_aggression(dist_now, dist_prev, 0.05)
-			
-			# Store distance for next frame
-			profile._previous_distances.append(dist_now)
-			if profile._previous_distances.size() > 10:
-				profile._previous_distances.pop_front() # Keep last 10 samples
+			# Update aggression based on distance change from last seen
+			var last_dist := float(abs(bot_pos.x - profile.last_seen_pos.x) + abs(bot_pos.y - profile.last_seen_pos.y))
+			profile.update_aggression(dist_now, last_dist, 0.05)
 			
 			# Update quadrant tracking
 			var quadrant := _get_quadrant(player_pos)
@@ -260,17 +254,17 @@ func update_opponent_intel(bot_positions: Dictionary, all_players: Dictionary, d
 
 ## Determine which map quadrant a position is in
 func _get_quadrant(pos: Vector2i) -> int:
-	var mid_x := _map_width / 2
-	var mid_y := _map_height / 2
+	var mid_x := _map_width / 2.0
+	var mid_y := _map_height / 2.0
 	
 	if pos.x < mid_x and pos.y < mid_y:
-		return OpponentProfile.Quadrant.Q1
+		return OpponentProfileScript.Quadrant.Q1
 	elif pos.x >= mid_x and pos.y < mid_y:
-		return OpponentProfile.Quadrant.Q2
+		return OpponentProfileScript.Quadrant.Q2
 	elif pos.x < mid_x and pos.y >= mid_y:
-		return OpponentProfile.Quadrant.Q3
+		return OpponentProfileScript.Quadrant.Q3
 	else:
-		return OpponentProfile.Quadrant.Q4
+		return OpponentProfileScript.Quadrant.Q4
 
 ## Tile key helper
 func _tile_key(tile: Vector2i) -> String:

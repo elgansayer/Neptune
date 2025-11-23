@@ -4,7 +4,7 @@ extends Node
 # Runs headless, manages all game instances, authentication, and lobbies
 
 const Constants = preload("res://shared/constants.gd")
-const GameInstance = preload("res://game_instance.gd")
+const GameInstanceScript = preload("res://game_instance.gd")
 
 var peer: ENetMultiplayerPeer
 var auth_service  # Will be LocalBackend or PlayFabBackend
@@ -204,12 +204,12 @@ func quick_start_game(peer_id: int, username: String):
 	if not active_games.has(shared_game_id):
 		print("[Server] Creating new shared game instance")
 		# Use load() instead of preload const to avoid compile-time issues
-		var GameInstanceScript = load("res://game_instance.gd")
-		var game = GameInstanceScript.new()
-		game.game_id = shared_game_id
-		game.name = shared_game_id
-		add_child(game)
-		active_games[shared_game_id] = game
+		var GameInstanceClass = load("res://game_instance.gd")
+		var new_game = GameInstanceClass.new()
+		new_game.game_id = shared_game_id
+		new_game.name = shared_game_id
+		add_child(new_game)
+		active_games[shared_game_id] = new_game
 		
 		# AI System removed - preparing for rebuild
 		# Auto-spawn AI bots for testing (3 bots with different personalities)

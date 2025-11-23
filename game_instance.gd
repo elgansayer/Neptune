@@ -674,7 +674,7 @@ func stop_nearby_kicked_bombs(player: ServerPlayer):
 
 # RPC: Forward bomb safety data to a specific client
 @rpc("any_peer", "call_remote", "unreliable")
-func bomb_safety_update(safety_data: Dictionary) -> void:
+func bomb_safety_update(_safety_data: Dictionary) -> void:
 	# This is called on game_instance but we need to forward to clients via their game_view
 	# The bot_controller will call this directly on clients via rpc_id
 	pass

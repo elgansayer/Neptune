@@ -459,7 +459,7 @@ func _calculate_bounce_waypoints(start_tile: Vector2i) -> Array[Vector2]:
 	
 	var waypoints: Array[Vector2] = []
 	var landing_tile: Vector2i = start_tile + dir_i * 2
-	var previous_tile: Vector2i = start_tile
+	var _previous_tile: Vector2i = start_tile
 	
 	# Build waypoints by checking each potential landing spot
 	var safety: int = 20
@@ -482,12 +482,12 @@ func _calculate_bounce_waypoints(start_tile: Vector2i) -> Array[Vector2]:
 			if _crosses_map_boundary(landing_tile, next_tile):
 				# Don't add this tile as bounce - instead add edge transition waypoints
 				_add_edge_transition_waypoints(waypoints, landing_tile, next_tile, dir_i)
-				previous_tile = next_tile
+				_previous_tile = next_tile
 				landing_tile = next_tile + dir_i
 			else:
 				# Normal bounce - add waypoint and continue
 				waypoints.append(tile_world_pos)
-				previous_tile = landing_tile
+				_previous_tile = landing_tile
 				landing_tile += dir_i
 		else:
 			# Found free tile - this is final landing
@@ -544,7 +544,7 @@ func _crosses_map_boundary(from_tile: Vector2i, to_tile: Vector2i) -> bool:
 	
 	return false
 
-func _add_edge_transition_waypoints(waypoints: Array[Vector2], from_tile: Vector2i, to_tile: Vector2i, direction: Vector2i):
+func _add_edge_transition_waypoints(waypoints: Array[Vector2], from_tile: Vector2i, to_tile: Vector2i, _direction: Vector2i):
 	"""Add intermediate waypoints for smooth edge transitions.
 	
 	Adds only exit and entry waypoints - bomb will teleport between them.

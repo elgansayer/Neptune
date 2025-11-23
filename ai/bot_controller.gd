@@ -1,7 +1,7 @@
 extends Node
 class_name ServerBotController
 
-const AIPersonalitiesConfig = preload("res://shared/ai/config/personalities.gd")
+const AIPersonalitiesScript = preload("res://shared/ai/config/personalities.gd")
 
 ## LimboAI-powered bot controller that simulates authoritative inputs for AI players.
 
@@ -39,7 +39,7 @@ func configure(instance, player, personality_name: String,
 	# (needed before _build_limbo_tree is called)
 	
 	personality = personality_name
-	_personality_profile = AIPersonalitiesConfig.get_profile(personality_name)
+	_personality_profile = AIPersonalitiesScript.get_profile(personality_name)
 	_decision_interval = _personality_profile.get("decision_interval", 0.1)
 	
 	# LimboAI is now the only BT system

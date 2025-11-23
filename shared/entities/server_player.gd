@@ -863,7 +863,7 @@ func _setup_debug_target_line():
 	debug_target_line = Line2D.new()
 	debug_target_line.width = 3.0
 	debug_target_line.default_color = Color(1, 0, 0, 0.9)
-	debug_target_line.z_index = 4100
+	debug_target_line.z_index = 4096
 	debug_target_line.joint_mode = Line2D.LINE_JOINT_ROUND
 	debug_target_line.antialiased = true
 	add_child(debug_target_line)
