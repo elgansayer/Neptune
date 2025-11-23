@@ -139,7 +139,6 @@ avoid_threats = true
 
 [sub_resource type="BTAction" id="BTAction_place_farming"]
 custom_name = "Place Bomb (Farming)"
-_enabled = false
 script = ExtResource("4_bomb")
 
 [sub_resource type="BTAction" id="BTAction_farming_escape_plan"]
@@ -168,7 +167,6 @@ prefer_center = false
 
 [sub_resource type="BTSelector" id="BTSelector_root"]
 children = [SubResource("BTSelector_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_farming"), SubResource("BTAction_ambush")]
-_enabled = false
 
 [sub_resource type="BTRepeatUntilFailure" id="BTRepeatUntilFailure_loop"]
 custom_name = "Continuous Loop"

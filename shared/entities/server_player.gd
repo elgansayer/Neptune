@@ -379,8 +379,9 @@ func _physics_process(_delta):
 		if inside_target_hint and offset_to_target.length() > 1.0:
 			print("[ServerPlayer] WARNING: target offset %s but no input for %s (raw_input=%s)" % [offset_to_target, username, input_direction])
 		velocity = Vector2.ZERO
-		if ENABLE_GRID_SNAPPING and is_bot:
-			_snap_bot_to_tile_center()
+		# Disabled: Aggressive snapping causes visible jerky movement when bots hide
+		# if ENABLE_GRID_SNAPPING and is_bot:
+		# 	_snap_bot_to_tile_center()
 		move_and_slide()
 		return
 

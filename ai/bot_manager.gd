@@ -119,11 +119,6 @@ func configure(instance) -> void:
 		push_error("[BotManager] Failed to load behavior tree!")
 		return
 	
-	# CRITICAL FIX: Enable the root task and all children that are disabled
-	var root_task = bot_behavior_tree.get("root_task")
-	if root_task:
-		_enable_tree_recursive(root_task)
-	
 	print("[BotManager] Loaded behavior tree (cache ignored)")
 	
 	grid_sampler = GridSamplerScript.new()
@@ -333,23 +328,6 @@ func _exit_tree() -> void:
 			bt_player.active = false
 			bt_player.queue_free()
 	_bot_players.clear()
-
-func _enable_tree_recursive(task) -> void:
-	"""Recursively enable all tasks in the behavior tree"""
-	if not is_instance_valid(task):
-		return
-	
-	# Enable this task
-	if task.has_method("set"):
-		task.set("_enabled", true)
-	
-	# Recursively enable children
-	if task.has_method("get_child_count"):
-		var child_count = task.call("get_child_count")
-		for i in range(child_count):
-			var child = task.call("get_child", i)
-			if child:
-				_enable_tree_recursive(child)
 
 func refresh_perception() -> void:
 	"""Force immediate refresh of perception modules (e.g. after bomb placement)"""

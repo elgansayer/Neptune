@@ -260,7 +260,13 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	# TESTING: Disable bomb kicker for now, enable Power Glove for testing
 	player.has_bomb_kicker = false
 	player.has_power_glove = true
-	print("[Game] Player spawned with Power Glove (bomb kicker disabled for testing)")
+	
+	# Bots start with only 1 bomb
+	if is_bot:
+		player.max_bombs = 1
+		print("[Game] Bot spawned with 1 bomb")
+	else:
+		print("[Game] Player spawned with Power Glove (bomb kicker disabled for testing)")
 	
 	players[peer_id] = player
 	add_child(player)

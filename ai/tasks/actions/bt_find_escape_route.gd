@@ -39,6 +39,7 @@ func _tick(_delta: float) -> int:
 	var head := 0
 	
 	var best_safe_tile: Vector2i = Vector2i(-1, -1)
+	var best_distance: int = 999999  # Closest safe tile (lower is better)
 	var best_safety_margin: float = -1.0  # How long until this tile explodes (higher is better)
 	
 	while head < queue.size():
@@ -47,6 +48,7 @@ func _tick(_delta: float) -> int:
 		
 		var current_key := _tile_key(current_pos)
 		var arrival_time: float = visited[current_key]
+		var distance_from_start: int = abs(current_pos.x - player_tile.x) + abs(current_pos.y - player_tile.y)
 		
 		# CRITICAL: Never consider current tile as escape destination - bot MUST move
 		if current_pos == player_tile:
@@ -58,24 +60,28 @@ func _tick(_delta: float) -> int:
 			var safety_margin: float = 0.0
 			
 			if is_permanently_safe:
-				# This tile never explodes - best possible safety
-				blackboard.set_var(target_cell_var, current_pos)
-				blackboard.set_var("escape_route_found", true)
-				print("[BTFindEscapeRoute] Found permanently safe tile at ", current_pos)
-				return SUCCESS
+				# This tile never explodes - check if it's closer than our current best
+				if distance_from_start < best_distance or (distance_from_start == best_distance and best_safety_margin < 999999.0):
+					best_safe_tile = current_pos
+					best_distance = distance_from_start
+					best_safety_margin = 999999.0  # Permanently safe = infinite margin
+					print("[BTFindEscapeRoute] Found permanently safe tile at ", current_pos, " (distance: ", distance_from_start, ")")
+					# Don't return immediately - keep searching for closer safe tiles
 			else:
 				# Tile will explode at some point - check if we have time
 				var explosion_time: float = threat_matrix[current_key]
 				safety_margin = explosion_time - arrival_time
 				
-				# Need at least 1000ms safety margin (increased from 500ms) to consider it "safe enough"
-				# This discourages stopping on tiles that will explode, even if fuse is long
+				# Need at least 1000ms safety margin to consider it "safe enough"
 				if safety_margin > 1000.0:
-					if safety_margin > best_safety_margin:
-						best_safety_margin = safety_margin
+					# Prefer closer tiles, but if same distance prefer longer safety margin
+					if distance_from_start < best_distance or (distance_from_start == best_distance and safety_margin > best_safety_margin):
 						best_safe_tile = current_pos
+						best_distance = distance_from_start
+						best_safety_margin = safety_margin
 		
-		# Continue searching - explore neighbors if we can pass through safely
+		# Continue searching - explore neighbors only if we can pass through safely
+		# AND we haven't already found a closer safe tile
 		var can_pass_through = false
 		if threat_matrix.has(current_key):
 			var explosion_time = threat_matrix[current_key]
@@ -83,15 +89,20 @@ func _tick(_delta: float) -> int:
 		else:
 			can_pass_through = true  # Safe tile, definitely can pass
 		
-		if can_pass_through and head < escape_radius * 4:  # Limit search depth
+		# Optimization: Stop exploring if we've found a safe tile closer than current search depth
+		if best_safe_tile != Vector2i(-1, -1) and distance_from_start >= best_distance:
+			continue  # No point exploring further from here
+		
+		if can_pass_through and distance_from_start < escape_radius:  # Use actual distance instead of queue size
 			for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 				var next_pos := current_pos + dir
+				
+				# OPTIMIZATION: Check walkability FIRST before any other computation
+				if not grid_sampler.is_tile_walkable(next_pos):
+					continue  # Wall/block - don't explore this direction further
+				
 				var next_key := _tile_key(next_pos)
 				var next_arrival_time: float = arrival_time + msec_per_tile
-				
-				# Must be walkable (walls block movement AND explosions)
-				if not grid_sampler.is_tile_walkable(next_pos):
-					continue
 				
 				# Skip if already visited with better time
 				if visited.has(next_key) and visited[next_key] <= next_arrival_time:
