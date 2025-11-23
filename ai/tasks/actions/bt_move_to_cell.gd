@@ -81,9 +81,9 @@ func _tick(_delta: float) -> int:
 	if inside_target_tile:
 		# CRITICAL: Must be centered on BOTH axes, not just overall distance!
 		# Check each axis independently to prevent stopping when only one axis is aligned
-		var x_centered = abs_offset_x < 1.0
-		var y_centered = abs_offset_y < 1.0
-		var both_centered = x_centered and y_centered
+		var target_x_centered = abs_offset_x < 1.0
+		var target_y_centered = abs_offset_y < 1.0
+		var both_centered = target_x_centered and target_y_centered
 		
 		if both_centered:
 			# Snap to exact center now that we've naturally moved there
@@ -112,8 +112,8 @@ func _tick(_delta: float) -> int:
 			if Engine.get_physics_frames() % 10 == 0:
 				print("[BTMoveToCell] In target tile %s but NOT fully centered: x=%.1fpx %s, y=%.1fpx %s | Pos: %s, Center: %s" % [
 					target_cell,
-					abs_offset_x, "✓" if x_centered else "✗",
-					abs_offset_y, "✓" if y_centered else "✗",
+					abs_offset_x, "✓" if target_x_centered else "✗",
+					abs_offset_y, "✓" if target_y_centered else "✗",
 					player.position, target_center
 				])
 			# CRITICAL: Set input toward center and return RUNNING to avoid waypoint logic interfering
@@ -239,12 +239,12 @@ func _tick(_delta: float) -> int:
 		])
 	elif Engine.get_physics_frames() % 10 == 0:
 		# Debug: Show which axis still needs centering (more frequent logging)
-		var status = "x_off=%.1fpx %s, y_off=%.1fpx %s" % [
+		var centering_status = "x_off=%.1fpx %s, y_off=%.1fpx %s" % [
 			abs(offset.x), "✓" if x_centered else "✗",
 			abs(offset.y), "✓" if y_centered else "✗"
 		]
 		print("[BTMoveToCell] Centering waypoint %d/%d: %s | Pos: %s, Target: %s" % [
-			_current_waypoint_index, _cached_path.size(), status, player.position, waypoint_center
+			_current_waypoint_index, _cached_path.size(), centering_status, player.position, waypoint_center
 		])
 	
 	return RUNNING

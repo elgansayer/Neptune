@@ -21,9 +21,9 @@ func _tick(delta: float) -> int:
 		# Behave like standard BTSelector (try children in order)
 		for i in get_child_count():
 			var child = get_child(i)
-			var status = child.execute(delta)
-			if status != FAILURE:
-				return status
+			var child_status = child.execute(delta)
+			if child_status != FAILURE:
+				return child_status
 		return FAILURE
 	
 	# Score all children
@@ -40,7 +40,7 @@ func _tick(delta: float) -> int:
 	
 	# Execute highest-scoring child
 	if best_child:
-		var status = best_child.execute(delta)
-		return status
+		var child_status = best_child.execute(delta)
+		return child_status
 	
 	return FAILURE

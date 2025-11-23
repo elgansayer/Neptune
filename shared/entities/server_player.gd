@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name ServerPlayer
 
-const ServerBomb = preload("res://shared/entities/server_bomb.gd")
+const ServerBombScript = preload("res://shared/entities/server_bomb.gd")
 
 # Server-authoritative player character
 # Handles movement, collision, bomb placement, and power-ups
@@ -351,7 +351,7 @@ func _physics_process(_delta):
 
 		if kick_detector.is_colliding():
 			var collider = kick_detector.get_collider(0)
-			if collider is ServerBomb and not (collider in collision_exceptions):
+			if collider.get_script() == ServerBombScript and not (collider in collision_exceptions):
 				print("[Player] Kick Detector found bomb: ", collider.name)
 				collider.kick(input_direction)
 
@@ -453,9 +453,9 @@ func _physics_process(_delta):
 	else:
 		velocity = Vector2.ZERO
 
-	var pos_before = position
+	var _pos_before = position
 	move_and_slide()
-	var pos_after = position
+	var _pos_after = position
 	if has_pending_target:
 		var post_move_offset = debug_target_center - position
 		var still_inside_tile = abs(post_move_offset.x) <= GameConfig.TILE_SIZE * 0.5 + 0.5 and abs(post_move_offset.y) <= GameConfig.TILE_SIZE * 0.5 + 0.5

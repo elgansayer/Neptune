@@ -11,7 +11,7 @@ class_name BTFindEscapeRoute
 func _generate_name() -> String:
 	return "FindEscapeRoute"
 
-func _tick(delta: float) -> int:
+func _tick(_delta: float) -> int:
 	var player = blackboard.get_var("player")
 	var game_instance = blackboard.get_var("game_instance")
 	var ai_manager = blackboard.get_var("ai_manager")
