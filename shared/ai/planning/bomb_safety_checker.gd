@@ -51,10 +51,17 @@ func can_safely_plant_bomb(
 	# SAFETY: Account for movement delay and safety margin
 	var effective_start_time := current_time_msec + movement_delay_msec
 	
+	# CRITICAL: Maximum time we can search (bomb explodes at this time)
+	var max_search_time := time_to_explode_msec - safety_buffer_msec
+	
 	# BFS queue and visited tracking
 	var queue: Array[Vector2i] = [bot_pos]
 	var visited: Dictionary = {_tile_key(bot_pos): effective_start_time} # tile_key -> arrival_time_msec (with delay)
 	var head := 0
+	
+	# CRITICAL: The bomb position will be blocked after placement
+	# We must move AWAY from it and cannot return through it
+	var bomb_tile_key := _tile_key(plant_pos)
 	
 	while head < queue.size():
 		var current_pos := queue[head]
@@ -63,11 +70,15 @@ func can_safely_plant_bomb(
 		var current_key := _tile_key(current_pos)
 		var current_arrival_time: float = visited[current_key]
 		
+		# CRITICAL: Stop exploring if we can't reach this tile before bomb explodes
+		if current_arrival_time >= max_search_time:
+			continue
+		
 		# 1. IS THIS TILE A SAFE HAVEN?
 		if not future_threat_matrix.has(current_key):
-			# SUCCESS! Found a tile that never explodes
+			# SUCCESS! Found a tile that never explodes AND we can reach it in time
 			if debug_logging:
-				print("  [BombSafetyChecker] ✓ Safe haven found at ", current_pos, " (arrival=", current_arrival_time, "ms)")
+				print("  [BombSafetyChecker] ✓ Safe haven found at ", current_pos, " (arrival=", current_arrival_time, "ms, bomb_explodes=", time_to_explode_msec, "ms)")
 			return true
 		
 		# 2. IF NOT, CAN WE PASS THROUGH SAFELY?
@@ -80,6 +91,10 @@ func can_safely_plant_bomb(
 				var next_pos := current_pos + dir
 				var next_key := _tile_key(next_pos)
 				var next_arrival_time := current_arrival_time + msec_per_tile
+				
+				# CRITICAL: Bomb blocks the tile - cannot move through bomb position
+				if next_key == bomb_tile_key:
+					continue
 				
 				# Check for walls (using grid sampler)
 				if not _grid_sampler.is_tile_walkable(next_pos):
@@ -130,12 +145,16 @@ func check_plant_safety_detailed(
 	
 	# SAFETY: Account for movement delay
 	var effective_start_time := current_time_msec + movement_delay_msec
+	var max_search_time := time_to_explode_msec - safety_buffer_msec
 	
 	var queue: Array[Vector2i] = [bot_pos]
 	var visited: Dictionary = {_tile_key(bot_pos): effective_start_time} # Start with movement delay
 	var head := 0
 	var best_escape: Vector2i = Vector2i(-1, -1)
 	var best_margin: float = - INF
+	
+	# CRITICAL: The bomb position will be blocked after placement
+	var bomb_tile_key := _tile_key(plant_pos)
 	
 	while head < queue.size():
 		var current_pos := queue[head]
@@ -144,13 +163,16 @@ func check_plant_safety_detailed(
 		var current_key := _tile_key(current_pos)
 		var current_arrival_time: float = visited[current_key]
 		
+		# Stop exploring if we can't reach this tile before bomb explodes
+		if current_arrival_time >= max_search_time:
+			continue
+		
 		# Check if this is a safe haven
 		if not future_threat_matrix.has(current_key):
-			var margin = INF # Perfectly safe - never explodes
 			return {
 				"safe": true,
 				"escape_tile": current_pos,
-				"margin_ms": margin,
+				"margin_ms": INF,
 				"explored_tiles": visited.size()
 			}
 		
@@ -167,6 +189,10 @@ func check_plant_safety_detailed(
 				var next_pos := current_pos + dir
 				var next_key := _tile_key(next_pos)
 				var next_arrival_time := current_arrival_time + msec_per_tile
+				
+				# CRITICAL: Bomb blocks the tile - cannot move through bomb position
+				if next_key == bomb_tile_key:
+					continue
 				
 				if not _grid_sampler.is_tile_walkable(next_pos):
 					continue
@@ -186,7 +212,7 @@ func check_plant_safety_detailed(
 	# No perfect safe haven found - return best marginal option
 	return {
 		"safe": false,
-		"escape_tile": best_escape if best_escape != Vector2i(-1, -1) else null,
+		"escape_tile": best_escape,
 		"margin_ms": best_margin if best_margin > -INF else 0.0,
 		"explored_tiles": visited.size()
 	}
