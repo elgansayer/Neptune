@@ -265,6 +265,15 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	players[peer_id] = player
 	add_child(player)
 	
+	# For bot players (negative peer_id), set multiplayer authority to server
+	# Bots are not real network peers, so RPC calls should go through the server
+	if is_bot and peer_id < 0:
+		player.set_multiplayer_authority(1)  # Server is always peer ID 1
+	
+	# Ensure the node is fully ready in the scene tree before anyone tries to access it
+	if is_inside_tree():
+		await get_tree().process_frame
+	
 	print("[Game] Player joined: ", username, " at ", spawn_position, " (Power Glove: ", player.has_power_glove, ")")
 
 func remove_player(peer_id: int):

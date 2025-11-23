@@ -898,8 +898,9 @@ func set_debug_path(points: PackedVector2Array):
 		local_points.append(to_local(p))
 	debug_path_line.points = local_points
 	
-	# Send to clients
-	client_update_debug_path.rpc(points)
+	# Send to clients (skip for bots - they don't exist on client)
+	if not is_bot:
+		client_update_debug_path.rpc(points)
 
 func set_debug_target_line(points: PackedVector2Array):
 	if not debug_target_line:
@@ -916,4 +917,6 @@ func set_debug_target_line(points: PackedVector2Array):
 		local_points.append(to_local(p))
 	debug_target_line.points = local_points
 
-	client_update_debug_target_line.rpc(points)
+	# Send to clients (skip for bots - they don't exist on client)
+	if not is_bot:
+		client_update_debug_target_line.rpc(points)
