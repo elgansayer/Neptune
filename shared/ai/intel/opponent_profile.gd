@@ -28,7 +28,6 @@ enum TacticalState { FARMING, HUNTING, EVADING, CONTESTING, UNKNOWN }
 var current_state: int = TacticalState.UNKNOWN
 
 # Historical tracking
-var _previous_distances: Array[float] = []
 var _panic_bomb_events: int = 0
 var _total_approaches: int = 0
 var _quadrant_time: Dictionary = {}  # Quadrant -> time_spent
