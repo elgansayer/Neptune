@@ -24,11 +24,7 @@ func add_server_state(position: Vector2, velocity: Vector2, timestamp: float = 0
 	if state_buffer.size() > 0:
 		var last_state = state_buffer[state_buffer.size() - 1]
 		if timestamp <= last_state.timestamp:
-			return  # Ignore old or duplicate states
-		
-		# If position hasn't changed significantly, don't add redundant state
-		if last_state.position.distance_to(position) < 0.1:
-			return
+			return  # Ignore out-of-order states
 	
 	state_buffer.append({
 		"position": position,

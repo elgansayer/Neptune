@@ -48,6 +48,8 @@ func _tick(_delta: float) -> int:
 		# print("[BTMoveToCell] FAILURE: target_cell is null") # Commented out to avoid spam if expected
 		if player.has_method("set_debug_path"):
 			player.set_debug_path(PackedVector2Array())
+		if player.has_method("set_debug_target_line"):
+			player.set_debug_target_line(PackedVector2Array())
 		_reset_state()
 		return FAILURE
 	
@@ -62,29 +64,66 @@ func _tick(_delta: float) -> int:
 			return FAILURE
 	
 	var current_tile = grid_sampler.world_to_tile(player.position)
+	var target_center = grid_sampler.tile_to_world_center(target_cell)
+	var offset_from_center = target_center - player.position
+	var abs_offset_x = abs(offset_from_center.x)
+	var abs_offset_y = abs(offset_from_center.y)
+	var tile_half_extent = GameConfig.TILE_SIZE * 0.5
+	var inside_target_tile = abs_offset_x <= tile_half_extent and abs_offset_y <= tile_half_extent
+	if player.has_method("set_debug_target_line"):
+		var target_line = PackedVector2Array()
+		target_line.append(player.position)
+		target_line.append(target_center)
+		player.set_debug_target_line(target_line)
 	
 	# Check if we've reached the destination tile AND are reasonably centered
 	# This is critical for safety - bot must be centered to avoid blast from adjacent tiles
-	if current_tile == target_cell:
-		var target_center = grid_sampler.tile_to_world_center(target_cell)
-		var distance_to_center = player.position.distance_to(target_center)
+	if inside_target_tile:
+		# CRITICAL: Must be centered on BOTH axes, not just overall distance!
+		# Check each axis independently to prevent stopping when only one axis is aligned
+		var x_centered = abs_offset_x < 1.0
+		var y_centered = abs_offset_y < 1.0
+		var both_centered = x_centered and y_centered
 		
-		# Allow 3 pixels tolerance (tiles are 16px, so this is well within safe zone)
-		# This is lenient enough to avoid getting stuck, but strict enough for safety
-		if distance_to_center < 3.0:
-			# Reached destination tile AND reasonably centered
-			print("[BTMoveToCell] Reached target cell: %s (centered within %.1fpx)" % [target_cell, distance_to_center])
+		if both_centered:
+			# Snap to exact center now that we've naturally moved there
+			player.position = target_center
+			# Reached destination tile AND fully centered on both axes
+			print("[BTMoveToCell] ✓✓✓ SUCCESS: Reached target %s - Pos: (%.2f, %.2f), Center: (%.2f, %.2f), Offset: (%.2fpx, %.2fpx)" % [
+				target_cell, player.position.x, player.position.y, target_center.x, target_center.y,
+				abs(offset_from_center.x), abs(offset_from_center.y)
+			])
 			if clear_on_success:
 				blackboard.set_var(cell_var, null)
 			
-			# Stop movement
-			player.set_input(0.0, 0.0)
+			# Stop movement - CRITICAL: set input to zero!
+			# player.set_input(0.0, 0.0)
+			print("[BTMoveToCell] Input set to (0.0, 0.0) - Bot should stop moving")
+			if player.has_method("set_debug_target_line"):
+				player.set_debug_target_line(PackedVector2Array())
+			
 			if player.has_method("set_debug_path"):
 				player.set_debug_path(PackedVector2Array())
 			_reset_state()
 			
 			return SUCCESS
-		# else: In target tile but not centered yet, keep moving
+		else:
+			# In target tile but not fully centered yet - log this frequently!
+			if Engine.get_physics_frames() % 10 == 0:
+				print("[BTMoveToCell] In target tile %s but NOT fully centered: x=%.1fpx %s, y=%.1fpx %s | Pos: %s, Center: %s" % [
+					target_cell,
+					abs_offset_x, "✓" if x_centered else "✗",
+					abs_offset_y, "✓" if y_centered else "✗",
+					player.position, target_center
+				])
+			# CRITICAL: Set input toward center and return RUNNING to avoid waypoint logic interfering
+			var center_direction: Vector2
+			if abs_offset_x > abs_offset_y:
+				center_direction = Vector2(sign(offset_from_center.x), 0.0)
+			else:
+				center_direction = Vector2(0.0, sign(offset_from_center.y))
+			player.set_input(center_direction.x, center_direction.y)
+			return RUNNING
 	
 	# Detect if stuck (not moving)
 	if player.position.distance_to(_last_position) < 0.5:
@@ -122,8 +161,8 @@ func _tick(_delta: float) -> int:
 		_cached_target = target_cell
 		_current_waypoint_index = 0
 		
-		# Special case: If we are already in the target tile, just move to center
-		if current_tile == target_cell:
+		# Special case: If we are already inside the target tile bounds, just move to center
+		if inside_target_tile:
 			_cached_path = [target_cell]
 		else:
 			_cached_path = grid_sampler.find_path(current_tile, target_cell, 40, player, avoid_threats)
@@ -141,8 +180,16 @@ func _tick(_delta: float) -> int:
 	
 	# Get current waypoint and its CENTER position
 	if _current_waypoint_index >= _cached_path.size():
-		# Reached end of path but not at target? Recalculate
-		_cached_path = []
+		# Completed the path - should be in target tile now, let top centering logic handle it
+		# Don't clear path yet, just continue to next frame where inside_target_tile will be true
+		# Set input toward target center to keep moving
+		var offset_to_target = target_center - player.position
+		var final_direction: Vector2
+		if abs(offset_to_target.x) > abs(offset_to_target.y):
+			final_direction = Vector2(sign(offset_to_target.x), 0.0)
+		else:
+			final_direction = Vector2(0.0, sign(offset_to_target.y))
+		player.set_input(final_direction.x, final_direction.y)
 		return RUNNING
 	
 	var waypoint = _cached_path[_current_waypoint_index]
@@ -150,7 +197,7 @@ func _tick(_delta: float) -> int:
 	
 	# Check PHYSICAL distance to waypoint center
 	var dist_to_waypoint_center = player.position.distance_to(waypoint_center)
-	var center_threshold = 3.0 # pixels - reasonable centering (tiles are 16px)
+	var center_threshold = 1.0 # pixels - tight centering (adaptive to tile size, strict for precision)
 	
 	# Log every 60 frames
 	if Engine.get_physics_frames() % 60 == 0:
@@ -159,21 +206,19 @@ func _tick(_delta: float) -> int:
 			target_cell, current_tile_pos, waypoint, dist_to_waypoint_center, _current_waypoint_index, _cached_path.size()
 		])
 	
-	# If we've reached the waypoint center (within tolerance), advance to next waypoint
-	if dist_to_waypoint_center < center_threshold:
-		_current_waypoint_index += 1
-		if _current_waypoint_index >= _cached_path.size():
-			# Path complete, let success check at top handle it
-			return RUNNING
-		# Get next waypoint
-		waypoint = _cached_path[_current_waypoint_index]
-		waypoint_center = grid_sampler.tile_to_world_center(waypoint)
-	
-	# Move toward waypoint CENTER (not grid position!)
-	# Use ONE AXIS AT A TIME for strict orthogonal movement
+	# ALWAYS calculate movement toward waypoint center FIRST
+	# This ensures we keep moving even when about to advance waypoint
 	var offset = waypoint_center - player.position
 	var direction: Vector2
 	
+	# CRITICAL: Check if we're centered on BOTH axes individually
+	# We must be within threshold on BOTH X and Y to consider the waypoint reached
+	var x_centered = abs(offset.x) < center_threshold
+	var y_centered = abs(offset.y) < center_threshold
+	var both_axes_centered = x_centered and y_centered
+	
+	# Use ONE AXIS AT A TIME for strict orthogonal movement
+	# Prioritize the axis that needs more correction
 	if abs(offset.x) > abs(offset.y):
 		# Move horizontally first
 		direction = Vector2(sign(offset.x), 0.0)
@@ -181,7 +226,26 @@ func _tick(_delta: float) -> int:
 		# Move vertically
 		direction = Vector2(0.0, sign(offset.y))
 	
+	# Set movement input toward waypoint
 	player.set_input(direction.x, direction.y)
+	
+	# AFTER setting input, check if we've reached the waypoint and should advance
+	# CRITICAL: Only advance if BOTH X and Y axes are centered!
+	# This ensures the bot fully centers on each tile before moving on
+	if both_axes_centered:
+		_current_waypoint_index += 1
+		print("[BTMoveToCell] Advanced to waypoint %d/%d - FULLY CENTERED (x=%.1fpx, y=%.1fpx)" % [
+			_current_waypoint_index, _cached_path.size(), abs(offset.x), abs(offset.y)
+		])
+	elif Engine.get_physics_frames() % 10 == 0:
+		# Debug: Show which axis still needs centering (more frequent logging)
+		var status = "x_off=%.1fpx %s, y_off=%.1fpx %s" % [
+			abs(offset.x), "✓" if x_centered else "✗",
+			abs(offset.y), "✓" if y_centered else "✗"
+		]
+		print("[BTMoveToCell] Centering waypoint %d/%d: %s | Pos: %s, Target: %s" % [
+			_current_waypoint_index, _cached_path.size(), status, player.position, waypoint_center
+		])
 	
 	return RUNNING
 

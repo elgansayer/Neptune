@@ -60,6 +60,9 @@ var debug_arrow: Polygon2D
 var debug_tiles: Dictionary = {} # Store debug tile overlays
 var debug_raycast_line: Line2D # Visualize the raycast
 var debug_path_line: Line2D # Visualize AI path (replicated)
+var debug_target_line: Line2D # Visualize bot-to-target center line
+var debug_target_center: Vector2 = Vector2.ZERO
+var debug_target_active: bool = false
 
 # Note: COLLISION_CHECK_DISTANCE moved to GameConfig for dynamic scaling
 const ENABLE_GRID_SNAPPING = true # Re-enabled with matching client prediction
@@ -89,6 +92,8 @@ func _ready():
 	
 	# Set up debug path line
 	_setup_debug_path_line()
+	# Set up debug target center line
+	_setup_debug_target_line()
 
 func _setup_debug_arrow():
 	"""Create a visual arrow to show facing direction"""
@@ -359,6 +364,11 @@ func _physics_process(_delta):
 
 	# Get the input direction (strict 4-way)
 	var input_dir = get_4way_input()
+	var has_pending_target = debug_target_active
+	var offset_to_target = Vector2.ZERO
+	if has_pending_target:
+		offset_to_target = debug_target_center - position
+	var inside_target_hint = has_pending_target and abs(offset_to_target.x) <= GameConfig.TILE_SIZE * 0.5 + 0.5 and abs(offset_to_target.y) <= GameConfig.TILE_SIZE * 0.5 + 0.5
 
 	# Debug: Print input state every frame for a few seconds
 	if Engine.get_process_frames() % 60 == 0: # Every 60 frames (~1 second)
@@ -366,7 +376,11 @@ func _physics_process(_delta):
 
 	if input_dir.length() < Constants.INPUT_DEADZONE:
 		# No input - stop moving but keep last_move_direction
+		if inside_target_hint and offset_to_target.length() > 1.0:
+			print("[ServerPlayer] WARNING: target offset %s but no input for %s (raw_input=%s)" % [offset_to_target, username, input_direction])
 		velocity = Vector2.ZERO
+		if ENABLE_GRID_SNAPPING and is_bot:
+			_snap_bot_to_tile_center()
 		move_and_slide()
 		return
 
@@ -389,6 +403,8 @@ func _physics_process(_delta):
 		# YES - Move in input direction and UPDATE last_move_direction
 		final_direction = input_dir
 	else:
+		if inside_target_hint and offset_to_target.length() > 1.0:
+			print("[ServerPlayer] WARNING: desired dir %s blocked while target offset %s remains for %s" % [input_dir, offset_to_target, username])
 		# Input direction blocked - try corner sliding
 		var slide_direction = _can_corner_slide(input_dir)
 
@@ -409,6 +425,8 @@ func _physics_process(_delta):
 
 	# Update debug arrow rotation
 	_update_debug_arrow()
+	if inside_target_hint and offset_to_target.length() > 1.0 and final_direction.length() < 0.1:
+		print("[ServerPlayer] WARNING: no movement direction while target offset %s persists for %s" % [offset_to_target, username])
 
 	if final_direction.length() > 0:
 		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
@@ -438,6 +456,11 @@ func _physics_process(_delta):
 	var pos_before = position
 	move_and_slide()
 	var pos_after = position
+	if has_pending_target:
+		var post_move_offset = debug_target_center - position
+		var still_inside_tile = abs(post_move_offset.x) <= GameConfig.TILE_SIZE * 0.5 + 0.5 and abs(post_move_offset.y) <= GameConfig.TILE_SIZE * 0.5 + 0.5
+		if still_inside_tile and post_move_offset.length() > 1.0 and velocity.length() < 1.0 and final_direction.length() > 0.1:
+			print("[ServerPlayer] WARNING: velocity stalled (|v|=%.2f) with desired %s while offset %s for %s" % [velocity.length(), final_direction, post_move_offset, username])
 	
 	# Debug collisions
 	if is_bot and get_slide_collision_count() > 0:
@@ -533,6 +556,14 @@ func get_current_tile_center() -> Vector2:
 		tile_x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
 		tile_y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
+
+func _snap_bot_to_tile_center():
+	var tile_center = get_current_tile_center()
+	var offset = tile_center - position
+	var snap_threshold = GameConfig.TILE_SIZE * 0.49
+	# Only snap if we're still inside the tile (offset limited)
+	if abs(offset.x) <= snap_threshold and abs(offset.y) <= snap_threshold:
+		position = tile_center
 
 func is_perpendicular(dir1: Vector2, dir2: Vector2) -> bool:
 	"""Check if two direction vectors are perpendicular (90 degrees apart)"""
@@ -809,7 +840,9 @@ func get_state() -> Dictionary:
 		"debug_check_tile": {"x": debug_check_tile.x, "y": debug_check_tile.y},
 		"debug_blocking_tile": {"x": debug_blocking_tile.x, "y": debug_blocking_tile.y},
 		"shape_cast_target": {"x": shape_cast_desired.target_position.x, "y": shape_cast_desired.target_position.y},
-		"shape_cast_colliding": shape_cast_desired.is_colliding()
+		"shape_cast_colliding": shape_cast_desired.is_colliding(),
+		"debug_target_center": {"x": debug_target_center.x, "y": debug_target_center.y},
+		"debug_has_target": debug_target_active
 	}
 
 func set_bot_metadata(personality: String) -> void:
@@ -826,6 +859,15 @@ func _setup_debug_path_line():
 	debug_path_line.joint_mode = Line2D.LINE_JOINT_BEVEL
 	add_child(debug_path_line)
 
+func _setup_debug_target_line():
+	debug_target_line = Line2D.new()
+	debug_target_line.width = 3.0
+	debug_target_line.default_color = Color(1, 0, 0, 0.9)
+	debug_target_line.z_index = 4100
+	debug_target_line.joint_mode = Line2D.LINE_JOINT_ROUND
+	debug_target_line.antialiased = true
+	add_child(debug_target_line)
+
 @rpc("authority", "call_remote", "unreliable")
 func client_update_debug_path(points: PackedVector2Array):
 	if not debug_path_line:
@@ -835,6 +877,16 @@ func client_update_debug_path(points: PackedVector2Array):
 	for p in points:
 		local_points.append(to_local(p))
 	debug_path_line.points = local_points
+
+@rpc("authority", "call_remote", "unreliable")
+func client_update_debug_target_line(points: PackedVector2Array):
+	if not debug_target_line:
+		_setup_debug_target_line()
+
+	var local_points = PackedVector2Array()
+	for p in points:
+		local_points.append(to_local(p))
+	debug_target_line.points = local_points
 
 func set_debug_path(points: PackedVector2Array):
 	# Update locally (server view)
@@ -848,3 +900,20 @@ func set_debug_path(points: PackedVector2Array):
 	
 	# Send to clients
 	client_update_debug_path.rpc(points)
+
+func set_debug_target_line(points: PackedVector2Array):
+	if not debug_target_line:
+		_setup_debug_target_line()
+
+	debug_target_active = points.size() >= 2
+	if debug_target_active:
+		debug_target_center = points[points.size() - 1]
+	else:
+		debug_target_center = Vector2.ZERO
+
+	var local_points = PackedVector2Array()
+	for p in points:
+		local_points.append(to_local(p))
+	debug_target_line.points = local_points
+
+	client_update_debug_target_line.rpc(points)

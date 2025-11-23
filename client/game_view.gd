@@ -422,6 +422,15 @@ func update_player(peer_id: String, data: Dictionary):
 		shapecast_visual.antialiased = true
 		shapecast_visual.name = "ShapeCastVisual"
 		player_node.add_child(shapecast_visual)
+
+		# Add target-centering debug line (player center to target tile center)
+		var target_debug_line = Line2D.new()
+		target_debug_line.width = 3.0
+		target_debug_line.default_color = Color(1, 0, 0, 0.9)
+		target_debug_line.antialiased = true
+		target_debug_line.z_index = 150
+		target_debug_line.name = "TargetDebugLine"
+		player_node.add_child(target_debug_line)
 		
 		players_container.add_child(player_node)
 		player_nodes[peer_id] = player_node
@@ -462,6 +471,12 @@ func update_player(peer_id: String, data: Dictionary):
 			else:
 				# Fallback: direct update
 				player_node.position = target_pos
+
+			# When the server says the bot is effectively stationary, snap to its exact position
+			if target_vel.length() < 0.5:
+				player_node.position = target_pos
+
+	_update_target_debug_line(player_node, data)
 	
 	# Update debug arrow rotation based on facing direction
 	var debug_arrow = player_node.get_node_or_null("DebugArrow")
@@ -681,6 +696,25 @@ func update_explosions(explosions_data: Array):
 		if not active_explosion_ids.has(explosion_id):
 			explosion_nodes[explosion_id].queue_free()
 			explosion_nodes.erase(explosion_id)
+
+func _update_target_debug_line(player_node: Node2D, data: Dictionary) -> void:
+	var target_line := player_node.get_node_or_null("TargetDebugLine")
+	if not target_line:
+		return
+
+	if not data.get("debug_has_target", false) or not data.has("debug_target_center"):
+		target_line.clear_points()
+		target_line.visible = false
+		return
+
+	var center_dict: Dictionary = data.debug_target_center
+	var target_center = Vector2(center_dict.get("x", 0.0), center_dict.get("y", 0.0))
+	var offset = target_center - player_node.position
+	
+	target_line.visible = true
+	target_line.clear_points()
+	target_line.add_point(Vector2.ZERO)
+	target_line.add_point(offset)
 
 func _physics_process(delta):
 	# Update input buffer based on which keys are pressed
