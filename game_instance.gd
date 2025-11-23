@@ -397,7 +397,12 @@ func place_bomb(player: ServerPlayer):
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
 	bomb.explosion_range = player.bomb_range
-	bomb.position = player.position
+	
+	# CRITICAL: Place bomb at tile center, not player position
+	# This prevents collision/snapping issues when player is slightly off-center
+	var player_tile = player.get_tile_position()
+	bomb.position = Vector2(player_tile.x * GameConfig.TILE_SIZE, player_tile.y * GameConfig.TILE_SIZE)
+	
 	bomb.name = "Bomb_" + bomb.bomb_id
 	bomb.game_instance = self # Give bomb reference for collision checking
 	# Start fuse from zero on placement (count-up logic)
