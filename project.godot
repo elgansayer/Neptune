@@ -22,6 +22,15 @@ ClientMain="*res://client/main_client.gd"
 ServerMain="*res://main_server.gd"
 Constants="*res://shared/constants.gd"
 GameConfig="*res://shared/game_config.gd"
+LimboConsole="*res://addons/limbo_console/limbo_console.gd"
+
+[display]
+
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+#BaseviewportresolutiontheUI/gamescalesfromwindow/size/viewport_width=1280
+#Allowwindowresizewhilekeepingaspectviastretchwindow/size/resizable=true
+#HiDPIhandling(letGodotscaleappropriatelyonhigh-DPIscreens)window/dpi/allow_hidpi=true
 
 [dotnet]
 
@@ -39,21 +48,15 @@ load_once=PackedStringArray("res://addons/limboai/bin/limboai.gdextension")
 
 enable=true
 
-[display]
-
-# Base viewport resolution the UI/game scales from
-window/size/viewport_width=1280
-window/size/viewport_height=720
-
-# Allow window resize while keeping aspect via stretch
-window/size/resizable=true
-window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
-
-# HiDPI handling (let Godot scale appropriately on high-DPI screens)
-window/dpi/allow_hidpi=true
-
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[input]
+
+limbo_console_toggle={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":96,"key_label":0,"unicode":96,"echo":false,"script":null)
+]
+}
