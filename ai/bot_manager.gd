@@ -2,8 +2,8 @@ extends Node
 class_name ServerBotManager
 
 # CRITICAL: Process BEFORE player entities to set input before their _physics_process
-# Negative priority means this runs first
-const PROCESS_PRIORITY = 200
+# Negative priority means this runs first (lower values run earlier)
+const PROCESS_PRIORITY = -100
 
 # LimboAI components - ONLY system used for AI
 # Note: BehaviorTree and BTPlayer are native classes, accessed via ClassDB
@@ -194,9 +194,10 @@ func _physics_process(delta: float) -> void:
 					# Call update() to tick the tree once
 					bt_player.call("update", delta)
 					
-					# CRITICAL: Unconditionally restart tree to force re-evaluation
-					# This makes BTRepeatUntilFailure work even with manual updates
-					bt_player.call("restart")
+					# DO NOT call restart() here! It interrupts all running tasks including escape movement.
+					# BTRepeatUntilFailure at the tree root already handles continuous re-evaluation.
+					# The previous restart() was causing escape sequences to abort mid-movement.
+					# bt_player.call("restart")  # REMOVED - caused suicide by interrupting escape
 	
 	# Update opponent intelligence profiles
 	if game_instance.ai_manager != null:
@@ -287,6 +288,7 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
 	blackboard.set_var("target_cell", null)
 	blackboard.set_var("in_danger", false)
+	blackboard.set_var("escape_route_found", false)
 	
 	print("[BotManager] Blackboard populated for ", player.player_name)
 	print("[BotManager] BehaviorTree set: ", bot_behavior_tree, " root_task: ", bot_behavior_tree.get("root_task") if bot_behavior_tree else "null")

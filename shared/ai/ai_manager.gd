@@ -49,7 +49,7 @@ func configure(game_instance: Node, grid_sampler, map_width: int, map_height: in
 	# Mark solid tiles
 	_initialize_pathfinder_walls()
 	
-	print("[AIManager] Configured with ", map_width, "x", map_height, " grid")
+	# print("[AIManager] Configured with ", map_width, "x", map_height, " grid")
 
 func _initialize_pathfinder_walls() -> void:
 	if _grid_sampler == null:
@@ -79,10 +79,9 @@ func refresh_threat_matrix(current_time_msec: float) -> void:
 			for b in _game_instance.bombs.values():
 				if is_instance_valid(b) and not b.has_exploded:
 					active_bombs += 1
-		print("[AIManager] Refreshed ThreatMatrix. Active Bombs: ", active_bombs, " Threat Tiles: ", threat_matrix.size())
+		# print("[AIManager] Refreshed ThreatMatrix. Active Bombs: ", active_bombs, " Threat Tiles: ", threat_matrix.size())
 		if threat_matrix.size() > 0:
-			print("[AIManager] Threat Matrix Keys: ", threat_matrix.keys())
-
+			pass # print("[AIManager] Threat Matrix Keys: ", threat_matrix.keys())
 ## Core Algorithm: Build ThreatMatrix with chain reaction simulation
 func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
 	if _game_instance == null or _grid_sampler == null:
@@ -100,6 +99,10 @@ func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
 		var fuse_remaining: float = max(Constants.BOMB_TIMER - bomb.explosion_timer, 0.0)
 		var detonation_time: float = current_time_msec + (fuse_remaining * 1000.0)
 		bomb_queue.append([bomb_id, detonation_time])
+		
+		# DEBUG: Log bomb details
+		if Engine.get_physics_frames() % 120 == 0:
+			print("[AIManager] Bomb ", bomb_id, " at ", bomb.get_tile_position(), " range=", bomb.explosion_range, " fuse=", fuse_remaining, "s det_time=", detonation_time, "ms")
 	
 	# Sort by detonation time (earliest first)
 	bomb_queue.sort_custom(func(a, b): return a[1] < b[1])
@@ -124,8 +127,14 @@ func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
 		var bomb_pos: Vector2i = bomb.get_tile_position()
 		var bomb_range: int = bomb.explosion_range
 		
+		# DEBUG: Enable verbose logging for first bomb or every 120 frames
+		var debug_this_bomb: bool = true  # DEBUG ALWAYS ON
+		
 		# Mark blast tiles with lethal time
-		var blast_tiles := _get_blast_tiles(bomb_pos, bomb_range)
+		var blast_tiles := _get_blast_tiles(bomb_pos, bomb_range, debug_this_bomb)
+		
+		if debug_this_bomb and blast_tiles.size() < 10:  # Only log small sets
+			print("[AIManager] Bomb ", bomb_id, " blast tiles: ", blast_tiles)
 		
 		for tile: Vector2i in blast_tiles:
 			var key := _tile_key(tile)
@@ -145,34 +154,44 @@ func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
 				bomb_queue.sort_custom(func(a, b): return a[1] < b[1])
 
 ## Get all tiles affected by bomb blast
-func _get_blast_tiles(center: Vector2i, range_val: int) -> Array[Vector2i]:
+func _get_blast_tiles(center: Vector2i, range_val: int, debug_log: bool = false) -> Array[Vector2i]:
 	var tiles: Array[Vector2i] = []
 	tiles.append(center)
 	
 	# Check four cardinal directions
 	var directions := [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.UP, Vector2i.DOWN]
+	var dir_names := ["RIGHT", "LEFT", "UP", "DOWN"]
 	
-	for dir: Vector2i in directions:
+	for i in range(directions.size()):
+		var dir: Vector2i = directions[i]
 		for dist in range(1, range_val + 1):
 			var tile: Vector2i = center + (dir * dist)
 			
 			# Check bounds
 			if tile.x < 0 or tile.x >= _map_width or tile.y < 0 or tile.y >= _map_height:
+				if debug_log:
+					print("[_get_blast_tiles] ", dir_names[i], " dist=", dist, " tile=", tile, " OUT OF BOUNDS")
 				break
 			
 			# Check for hard walls (blast stops)
 			if not _grid_sampler.is_tile_walkable(tile):
 				var tile_type = _grid_sampler.get_tile_type(tile)
 				if tile_type == 1: # Hard wall
-					print("[ThreatMatrix] Blast from ", center, " stopped by HARD WALL at ", tile, " direction ", dir)
+					if debug_log:
+						print("[_get_blast_tiles] ", dir_names[i], " dist=", dist, " tile=", tile, " HARD_WALL (stop)")
 					break
 				elif tile_type == 2: # Soft wall (destroys but stops)
-					print("[ThreatMatrix] Blast from ", center, " stopped by SOFT BLOCK at ", tile, " direction ", dir)
+					if debug_log:
+						print("[_get_blast_tiles] ", dir_names[i], " dist=", dist, " tile=", tile, " SOFT_BLOCK (add+stop)")
 					tiles.append(tile)
 					break
 			
+			if debug_log:
+				print("[_get_blast_tiles] ", dir_names[i], " dist=", dist, " tile=", tile, " WALKABLE (add)")
 			tiles.append(tile)
 	
+	if debug_log:
+		print("[_get_blast_tiles] center=", center, " range=", range_val, " result=", tiles)
 	return tiles
 
 ## Find bomb at specific tile

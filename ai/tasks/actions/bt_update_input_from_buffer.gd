@@ -6,7 +6,7 @@ class_name BTUpdateInputFromBuffer
 ## This allows the BT to process client inputs frame-by-frame
 ## Essential for player-controlled entities in authoritative server architecture
 
-@export var peek_only: bool = true  ## If true, don't consume input (just read it)
+@export var peek_only: bool = true ## If true, don't consume input (just read it)
 
 func _generate_name() -> String:
 	return "UpdateInputFromBuffer" if peek_only else "ConsumeInputFromBuffer"
@@ -22,6 +22,10 @@ func _tick(delta: float) -> int:
 	if not player:
 		push_warning("[BTUpdateInputFromBuffer] Missing player in blackboard")
 		return FAILURE
+	
+	# Skip for AI bots - they control input directly, not via buffer
+	if player.is_bot:
+		return SUCCESS
 	
 	# Get input (peek or consume based on setting)
 	var input_data: Dictionary

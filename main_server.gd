@@ -7,11 +7,11 @@ const Constants = preload("res://shared/constants.gd")
 const GameInstanceScript = preload("res://game_instance.gd")
 
 var peer: ENetMultiplayerPeer
-var auth_service  # Will be LocalBackend or PlayFabBackend
+var auth_service # Will be LocalBackend or PlayFabBackend
 var lobby_manager
-var active_games = {}  # game_id -> GameInstance
-var player_to_game = {}  # peer_id -> game_id
-var _initialized = false  # Prevent duplicate initialization
+var active_games = {} # game_id -> GameInstance
+var player_to_game = {} # peer_id -> game_id
+var _initialized = false # Prevent duplicate initialization
 
 func _ready():
 	# Only initialize once
@@ -85,7 +85,7 @@ func _on_player_disconnected(peer_id: int):
 @rpc("any_peer", "call_remote", "reliable")
 func set_debug_timescale(timescale: float) -> void:
 	# Clamp to sane range for debugging
-	var clamped = clamp(timescale, 0.1, 1.0)
+	var clamped = clamp(timescale, 0.1, 10.0)
 	Engine.time_scale = clamped
 	print("[Server] Debug time_scale set to ", Engine.time_scale)
 

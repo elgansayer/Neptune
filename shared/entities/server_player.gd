@@ -20,8 +20,8 @@ var input_direction := Vector2.ZERO
 var last_move_direction := Vector2.ZERO # The last direction we successfully moved (persists when stationary)
 var place_bomb_requested := false
 var bombs_placed := 0
-var max_bombs := 10  # Increased for testing competitive AI
-var bomb_range := 2
+var max_bombs := 10 # Increased for testing competitive AI
+var bomb_range := 1 # CLASSIC: Start with range 1 to allow escape from spawn corners
 var speed_multiplier := 1.0 # Power-up speed multiplier
 var is_dead := false
 var is_bot := false
@@ -162,6 +162,10 @@ func _check_direction_clear(direction: Vector2) -> bool:
 
 	# Use ShapeCast2D for collision detection
 	var motion = direction.normalized() * GameConfig.COLLISION_CHECK_DISTANCE
+	
+	# DEBUG: Log direction checking
+	if is_bot and Engine.get_physics_frames() % 60 == 0:
+		print("[_check_direction_clear] Bot at ", position, " checking direction ", direction, " motion=", motion)
 
 	# Add collision exceptions (bombs)
 	for bomb in collision_exceptions:
@@ -181,7 +185,7 @@ func _check_direction_clear(direction: Vector2) -> bool:
 		var collision_normal = shape_cast_desired.get_collision_normal(0)
 		var collider = shape_cast_desired.get_collider(0)
 
-		print("COLLISION DETECTED! Collider: ", collider, " Type: ", collider.get_class() if collider else "null", " Name: ", collider.name if collider else "null")
+		print("COLLISION DETECTED! Player at ", position, " Collider: ", collider, " at point: ", collision_point, " Name: ", collider.name if collider else "null")
 
 		# Sample slightly inside the collider to get the blocking tile
 		var sample_point = collision_point - collision_normal * 0.5
@@ -336,7 +340,7 @@ func _vector_to_facing(direction: Vector2) -> String:
 
 func _physics_process(_delta):
 	if Engine.get_physics_frames() % 300 == 0: # Log every 5 seconds
-		print("[ServerPlayer] _physics_process running. Version: DEBUG-DIAGNOSE-1")
+		print("[ServerPlayer] _physics_process running. Version: DEBUG-DIAGNOSE-5")
 	
 	if is_dead:
 		velocity = Vector2.ZERO
@@ -372,8 +376,7 @@ func _physics_process(_delta):
 
 	# Debug: Print input state every frame for a few seconds
 	if Engine.get_process_frames() % 60 == 0: # Every 60 frames (~1 second)
-		print("[ServerPlayer DEBUG] ", username, " has_bomb_kicker=", has_bomb_kicker, " input_dir=", input_dir, " input_direction=", input_direction)
-
+		pass # print("[ServerPlayer DEBUG] ", username, " has_bomb_kicker=", has_bomb_kicker, " input_dir=", input_dir, " input_direction=", input_direction)
 	if input_dir.length() < Constants.INPUT_DEADZONE:
 		# No input - stop moving but keep last_move_direction
 		if inside_target_hint and offset_to_target.length() > 1.0:
@@ -455,8 +458,23 @@ func _physics_process(_delta):
 		velocity = Vector2.ZERO
 
 	var _pos_before = position
+	var pre_vel = velocity
+	
+	# DEBUG: Log velocity for bots
+	if is_bot and Engine.get_physics_frames() % 60 == 0:
+		print("[ServerPlayer DEBUG] ", username, " velocity=", velocity, " speed=", velocity.length(), " expected=", GameConfig.BASE_SPEED)
+	
 	move_and_slide()
 	var _pos_after = position
+	
+	# DEBUG: Log bot position after move_and_slide
+	if is_bot and input_direction.length() > 0.1:
+		var delta_pos = _pos_after - _pos_before
+		if pre_vel.length() > 1.0 and delta_pos.length() < 0.01:
+			print("[POS DEBUG] frame=", Engine.get_physics_frames(), " ", username, " BLOCKED! pre_vel=", pre_vel, " delta=", delta_pos, " pos=", position, " input=", input_direction)
+		else:
+			print("[POS DEBUG] frame=", Engine.get_physics_frames(), " ", username, " pos=", position, " vel=", pre_vel, " delta=", delta_pos, " input=", input_direction)
+	
 	if has_pending_target:
 		var post_move_offset = debug_target_center - position
 		var still_inside_tile = abs(post_move_offset.x) <= GameConfig.TILE_SIZE * 0.5 + 0.5 and abs(post_move_offset.y) <= GameConfig.TILE_SIZE * 0.5 + 0.5
@@ -818,11 +836,11 @@ func collect_powerup(powerup):
 			print("[Player] ", username, " collected VIRUS! (Phase 2 - no effect yet)")
 
 func get_state() -> Dictionary:
-	return {
+	# Core state for network sync - minimal data to reduce packet size
+	var state = {
 		"player_id": player_id,
 		"username": username,
 		"is_bot": is_bot,
-		"bot_personality": bot_personality,
 		"position": {"x": position.x, "y": position.y},
 		"velocity": {"x": velocity.x, "y": velocity.y},
 		"facing": _vector_to_facing(last_move_direction),
@@ -835,16 +853,14 @@ func get_state() -> Dictionary:
 		"has_power_glove": has_power_glove,
 		"is_carrying_bomb": is_carrying_bomb(),
 		"carried_bomb_id": carried_bomb.bomb_id if is_carrying_bomb() else "",
-		"is_picking_up_bomb": is_picking_up_bomb,
-		"pickup_animation_direction": {"x": pickup_animation_direction.x, "y": pickup_animation_direction.y},
-		"last_move_direction": {"x": last_move_direction.x, "y": last_move_direction.y},
-		"debug_check_tile": {"x": debug_check_tile.x, "y": debug_check_tile.y},
-		"debug_blocking_tile": {"x": debug_blocking_tile.x, "y": debug_blocking_tile.y},
-		"shape_cast_target": {"x": shape_cast_desired.target_position.x, "y": shape_cast_desired.target_position.y},
-		"shape_cast_colliding": shape_cast_desired.is_colliding(),
-		"debug_target_center": {"x": debug_target_center.x, "y": debug_target_center.y},
-		"debug_has_target": debug_target_active
 	}
+	# Only include optional data if non-default
+	if is_picking_up_bomb:
+		state["is_picking_up_bomb"] = true
+		state["pickup_animation_direction"] = {"x": pickup_animation_direction.x, "y": pickup_animation_direction.y}
+	if bot_personality != "":
+		state["bot_personality"] = bot_personality
+	return state
 
 func set_bot_metadata(personality: String) -> void:
 	is_bot = true

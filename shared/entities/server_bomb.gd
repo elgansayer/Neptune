@@ -231,6 +231,26 @@ func check_tile_collision(grid_pos: Vector2i) -> Dictionary:
 
 func expand_explosion():
 	"""Expand explosion by one tile in all directions"""
+	# Get tiles at current expansion length BEFORE incrementing
+	var tile_pos = get_tile_position()
+	var tiles_this_frame: Array[Vector2i] = []
+	
+	# Handle center tile (length 0) on first expansion
+	if current_explosion_length == 0:
+		tiles_this_frame.append(tile_pos)
+	else:
+		# Handle directional expansion
+		for dir_data in explosion_directions:
+			if current_explosion_length <= dir_data["max_length"]:
+				var offset = dir_data["offset"]
+				var fire_pos = tile_pos + offset * current_explosion_length
+				tiles_this_frame.append(fire_pos)
+	
+	# Emit signal for GameInstance to handle damage/destruction
+	if tiles_this_frame.size() > 0:
+		emit_signal("explosion_expanded", tiles_this_frame)
+	
+	# Increment for next frame
 	current_explosion_length += 1
 	
 	if current_explosion_length > explosion_range:
@@ -238,21 +258,6 @@ func expand_explosion():
 		await get_tree().create_timer(0.5).timeout
 		queue_free()
 		return
-	
-	# Get tiles at current expansion length for collision detection
-	var tile_pos = get_tile_position()
-	var tiles_this_frame: Array[Vector2i] = []
-	
-	for dir_data in explosion_directions:
-		if current_explosion_length <= dir_data["max_length"]:
-			var offset = dir_data["offset"]
-			var fire_pos = tile_pos + offset * current_explosion_length
-			tiles_this_frame.append(fire_pos)
-	
-	# Emit signal for GameInstance to handle damage/destruction
-	# (Will be connected by GameInstance)
-	if has_signal("explosion_expanded"):
-		emit_signal("explosion_expanded", tiles_this_frame)
 
 func get_state() -> Dictionary:
 	var state_dict = {

@@ -8,7 +8,9 @@ class_name BTIsInDanger
 @export var danger_buffer: float = 1.0 ## Safety margin (seconds) before danger becomes lethal
 @export var check_immediate: bool = true ## Check only immediate danger (no buffer)
 @export var evaluate_all_threats: bool = true ## If true, returns SUCCESS if ANY threat exists on tile (regardless of time)
-@export var debug_logging: bool = true
+@export var debug_logging: bool = false
+
+static var _tick_count: int = 0
 
 func _generate_name() -> String:
 	return "IsInDanger"
@@ -23,7 +25,7 @@ func _tick(delta: float) -> int:
 		return FAILURE
 	
 	# DEBUG: Unconditional log to verify execution
-	print("[BTIsInDanger] _tick called. Tile: ", player.get_tile_position())
+	# print("[BTIsInDanger] _tick called. Tile: ", player.get_tile_position())
 	
 	# if Engine.get_physics_frames() % 60 == 0:
 	# 	print("[BTIsInDanger] TICK - player_tile=%s" % player.get_tile_position())
@@ -31,27 +33,100 @@ func _tick(delta: float) -> int:
 	var player_tile = player.get_tile_position()
 	var current_time = Time.get_ticks_msec() / 1000.0
 	
+	# CRITICAL: Check if bot is standing on a bomb - IMMEDIATE DANGER!
+	var game_instance = blackboard.get_var("game_instance")
+	if game_instance and "bombs" in game_instance:
+		for bomb_id in game_instance.bombs:
+			var bomb = game_instance.bombs[bomb_id]
+			if is_instance_valid(bomb) and not bomb.has_exploded:
+				if bomb.get_tile_position() == player_tile:
+					# Standing on a bomb! Immediate danger!
+					blackboard.set_var("in_danger", true)
+					blackboard.set_var("was_in_danger", true)
+					blackboard.set_var("danger_tile", player_tile)
+					print("[BTIsInDanger] ⚠️ CRITICAL: Bot standing on bomb at ", player_tile, "!")
+					return SUCCESS
+	
 	# is_tile_safe returns true if safe, so we need to invert for danger check
 	var is_safe: bool
+	var is_dangerous: bool # Declare here to ensure scope for print and subsequent checks
 	
 	if evaluate_all_threats:
 		# Strict mode: Any threat is dangerous
-		is_safe = not hazard_predictor.is_tile_threatened(player_tile)
+		# Assuming 'bomb_safety_checker' is meant to be 'hazard_predictor'
+		# and 'is_tile_dangerous' is the inverse of 'is_tile_threatened'
+		is_dangerous = hazard_predictor.is_tile_threatened(player_tile)
 	elif check_immediate:
 		is_safe = hazard_predictor.is_tile_safe(player_tile, current_time, 0.0)
+		is_dangerous = not is_safe
 	else:
 		is_safe = hazard_predictor.is_tile_safe(player_tile, current_time, danger_buffer)
+		is_dangerous = not is_safe
 	
-	var is_dangerous = not is_safe
+	# print("[BTIsInDanger] is_dangerous=", is_dangerous, " at ", player_tile)
+	
+	# The original code had `var is_dangerous = not is_safe` here.
+	# With the new logic for `evaluate_all_threats`, `is_dangerous` is already set.
+	# We need to ensure `is_dangerous` is always set before the print statement.
+	# The previous block now correctly sets `is_dangerous` based on the conditions.
+	
+	# Hysteresis: Once in danger, require lower threshold (50%) to exit danger state
+	# This prevents flickering between danger/safe that causes behavior tree restarts
+	var was_in_danger = false
+	if blackboard.has_var("was_in_danger"):
+		was_in_danger = blackboard.get_var("was_in_danger")
+	
+	if was_in_danger and not is_dangerous:
+		# We were in danger, check if we're SIGNIFICANTLY safer now
+		# Re-check with reduced buffer (50% of original)
+		var reduced_buffer = danger_buffer * 0.5
+		var still_risky = not hazard_predictor.is_tile_safe(player_tile, current_time, reduced_buffer)
+		if still_risky:
+			is_dangerous = true # Stay in danger state
+	
+	# ESCAPE COMMITMENT:
+	# If we are in the middle of an escape (was_in_danger + escape_route_found),
+	# we MUST NOT exit danger state until we reach the safe target.
+	# This prevents the bot from stepping onto a "temporarily safe" tile, thinking it's safe,
+	# switching to farming, and then turning back into danger.
+	if not is_dangerous and was_in_danger:
+		var escape_route_found = blackboard.get_var("escape_route_found", false)
+		if escape_route_found:
+			# CRITICAL FIX: Use "escape_cell" as primary, fallback to "target_cell"
+			# The behavior tree uses "escape_cell" for the escape action!
+			var target_cell = blackboard.get_var("escape_cell") if blackboard.has_var("escape_cell") else null
+			if target_cell == null:
+				target_cell = blackboard.get_var("target_cell") if blackboard.has_var("target_cell") else null
+				
+			if target_cell != null and target_cell is Vector2i:
+				# We have an active escape target. Are we there yet?
+				if player_tile != target_cell:
+					is_dangerous = true
+					_debug("maintaining danger state for ESCAPE COMMITMENT (target=%s)" % target_cell)
 	
 	if is_dangerous:
 		# Store danger info in blackboard for potential use by other nodes
 		blackboard.set_var("in_danger", true)
+		blackboard.set_var("was_in_danger", true) # Update hysteresis state
 		blackboard.set_var("danger_tile", player_tile)
 		_debug("Danger detected at %s (buffer=%s)" % [player_tile, danger_buffer if not check_immediate else 0.0])
 		return SUCCESS
 	else:
 		blackboard.set_var("in_danger", false)
+		blackboard.set_var("was_in_danger", false) # Update hysteresis state
+		
+		# CRITICAL: Clear escape route flag when we're safe
+		# Otherwise bots stay in danger mode forever!
+		if blackboard.get_var("escape_route_found", false):
+			blackboard.set_var("escape_route_found", false)
+			blackboard.set_var("escape_cell", null)
+		
+		# Debug why it thinks it's safe
+		if debug_logging:
+			print("[BTIsInDanger] FAILURE: Tile %s considered SAFE. evaluate_all_threats=%s, is_tile_threatened=%s" % [
+				player_tile, evaluate_all_threats, hazard_predictor.is_tile_threatened(player_tile)
+			])
+		
 		_debug("Tile %s safe" % player_tile)
 		return FAILURE
 

@@ -6,9 +6,9 @@ class_name BTEvadeRubberBomb
 ## Tracks bomb trajectory and moves perpendicular to avoid getting hit
 ## More urgent than normal bomb threats since kicked bombs move fast
 
-@export var target_tile_var: StringName = &"evade_cell"  ## Blackboard variable to store evasion target
-@export var detection_radius: int = 8  ## How far to detect kicked bombs (tiles)
-@export var urgency_threshold: float = 2.0  ## Consider urgent if bomb within this many seconds
+@export var target_tile_var: StringName = &"evade_cell" ## Blackboard variable to store evasion target
+@export var detection_radius: int = 8 ## How far to detect kicked bombs (tiles)
+@export var urgency_threshold: float = 2.0 ## Consider urgent if bomb within this many seconds
 
 func _generate_name() -> String:
 	return "EvadeRubberBomb → %s" % target_tile_var
@@ -20,6 +20,15 @@ func _tick(_delta: float) -> int:
 	var ai_manager = blackboard.get_var("ai_manager")
 	
 	if not player or not game_instance or not grid_sampler or not ai_manager:
+		return FAILURE
+	
+	# CRITICAL: If we're already mid-normal-escape, don't interrupt it with rubber bomb check!
+	# This prevents the behavior tree from restarting the escape sequence every tick.
+	var escape_route_found = blackboard.get_var("escape_route_found", false)
+	var escape_cell = blackboard.get_var("escape_cell") if blackboard.has_var("escape_cell") else null
+	if escape_route_found and escape_cell != null:
+		# Already escaping - let normal escape sequence continue
+		# Return FAILURE so BTSelector moves to normal escape branch
 		return FAILURE
 	
 	var player_tile = player.get_tile_position()
@@ -35,7 +44,7 @@ func _tick(_delta: float) -> int:
 			continue
 		
 		# Check if bomb is kicked (moving)
-		if bomb.get("bomb_state") != 3:  # BombState.KICKED = 3
+		if bomb.get("bomb_state") != 3: # BombState.KICKED = 3
 			continue
 		
 		var bomb_tile = bomb.get_tile_position()
@@ -47,6 +56,7 @@ func _tick(_delta: float) -> int:
 	
 	# No kicked bombs nearby
 	if nearest_kicked_bomb == null:
+		# print("[BTEvadeRubberBomb] No kicked bombs nearby")
 		return FAILURE
 	
 	var bomb_pos = nearest_kicked_bomb.position
@@ -170,7 +180,7 @@ func _find_safe_distance(
 	var current = bomb_tile
 	var direction = bomb_velocity.normalized()
 	
-	for i in range(6):  # Project 6 tiles ahead
+	for i in range(6): # Project 6 tiles ahead
 		var next: Vector2i
 		if abs(direction.x) > abs(direction.y):
 			next = current + Vector2i(sign(direction.x), 0)

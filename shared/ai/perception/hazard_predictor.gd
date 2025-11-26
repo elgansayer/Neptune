@@ -7,10 +7,10 @@ const Constants = preload("res://shared/constants.gd")
 
 var _game_instance: Node
 var _grid_sampler
-var _default_buffer := 0.1  # 0.1s doctrine standard
+var _default_buffer := 0.1 # 0.1s doctrine standard
 var _danger_cache := {}
-var _threat_matrix := {}  # Full ThreatMatrix: tile_key -> time_to_lethal
-var _safety_map := {}  # SafetyMap: tile_key -> time_to_reach_safety
+var _threat_matrix := {} # Full ThreatMatrix: tile_key -> time_to_lethal
+var _safety_map := {} # SafetyMap: tile_key -> time_to_reach_safety
 var _current_time := 0.0
 
 func configure(instance: Node, sampler, default_buffer: float = 0.1) -> void:
@@ -109,10 +109,9 @@ func _tile_key(tile: Vector2i) -> String:
 func _build_threat_matrix_with_chains(current_time: float) -> void:
 	# 1. Initialize ThreatMatrix with Infinity
 	# (Using sparse dict - only store dangerous tiles)
-	
 	# 2. Create bomb queue sorted by explosion time
 	var bomb_queue := []
-	var bomb_times := {}  # bomb_id -> explosion_time (for chain updates)
+	var bomb_times := {} # bomb_id -> explosion_time (for chain updates)
 	
 	for bomb_id in _game_instance.bombs:
 		var bomb = _game_instance.bombs[bomb_id]
@@ -131,7 +130,7 @@ func _build_threat_matrix_with_chains(current_time: float) -> void:
 	for bomb_data in bomb_queue:
 		var bomb = bomb_data.bomb
 		var bomb_id = bomb_data.id
-		var t_explode = bomb_times.get(bomb_id, bomb_data.time)  # Use updated time if chained
+		var t_explode = bomb_times.get(bomb_id, bomb_data.time) # Use updated time if chained
 		
 		if processed.has(bomb_id):
 			continue
@@ -160,10 +159,12 @@ func _build_threat_matrix_with_chains(current_time: float) -> void:
 				if tile_type == 1:
 					break
 				
-				# Check if already threatened sooner (stops blast)
-				var existing_threat = _threat_matrix.get(_tile_key(tile), INF)
-				if existing_threat <= t_explode:
-					break
+				# CRITICAL FIX: Do NOT stop blast just because there's an earlier threat!
+				# Explosions pass through empty space even if another explosion happened there earlier.
+				# Only walls and blocks stop blasts.
+				# var existing_threat = _threat_matrix.get(_tile_key(tile), INF)
+				# if existing_threat <= t_explode:
+				# 	break
 				
 				# Mark this tile as dangerous
 				_set_threat(tile, t_explode)
@@ -221,7 +222,7 @@ func _build_safety_map() -> void:
 				queue.append(tile)
 	
 	# Propagate safety values via BFS
-	var base_speed = 2.5  # tiles per second (default player speed)
+	var base_speed = 2.5 # tiles per second (default player speed)
 	var time_per_tile = 1.0 / base_speed
 	
 	while head < queue.size():

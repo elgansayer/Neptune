@@ -165,15 +165,17 @@ func _update_limbo_blackboard() -> void:
 	_limbo_blackboard.set_var("danger_buffer", _personality_profile.get("danger_buffer", 0.1))
 	_limbo_blackboard.set_var("escape_radius", _personality_profile.get("escape_radius", 8))
 	
-	# Optional state variables (initialized to prevent C++ errors when reading before writing)
-	if not _limbo_blackboard.has_var("in_danger"):
-		_limbo_blackboard.set_var("in_danger", false)
-	if not _limbo_blackboard.has_var("danger_tile"):
-		_limbo_blackboard.set_var("danger_tile", null)
-	if not _limbo_blackboard.has_var("target_cell"):
-		_limbo_blackboard.set_var("target_cell", null)
-	if not _limbo_blackboard.has_var("escape_route_found"):
-		_limbo_blackboard.set_var("escape_route_found", false)
+	# Optional state variables (ALWAYS initialize to prevent C++ errors when reading before writing)
+	# These must be set unconditionally because the C++ LimboAI code reads them on first tick
+	_limbo_blackboard.set_var("in_danger", _limbo_blackboard.get_var("in_danger", false))
+	_limbo_blackboard.set_var("danger_tile", _limbo_blackboard.get_var("danger_tile", null))
+	_limbo_blackboard.set_var("target_cell", _limbo_blackboard.get_var("target_cell", null))
+	_limbo_blackboard.set_var("escape_cell", _limbo_blackboard.get_var("escape_cell", null))
+	_limbo_blackboard.set_var("evade_cell", _limbo_blackboard.get_var("evade_cell", null))
+	_limbo_blackboard.set_var("tactic_target_cell", _limbo_blackboard.get_var("tactic_target_cell", null))
+	_limbo_blackboard.set_var("escape_route_found", _limbo_blackboard.get_var("escape_route_found", false))
+	_limbo_blackboard.set_var("was_in_danger", _limbo_blackboard.get_var("was_in_danger", false))
+	_limbo_blackboard.set_var("tactical_plan", _limbo_blackboard.get_var("tactical_plan", "NONE"))
 	
 	# Opponent tracking
 	var nearest = opponent_tracker.get_nearest_opponent(player_ref.position) if player_ref else null

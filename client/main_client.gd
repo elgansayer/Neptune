@@ -10,6 +10,7 @@ var server_address = "127.0.0.1"  # localhost for testing
 var connected = false
 var authenticated = false
 var username = ""
+var pending_initial_map: Dictionary = {} # Cache initial map until GameView is ready
 
 signal connection_succeeded
 signal connection_failed
@@ -140,6 +141,24 @@ func receive_state(state: Dictionary):
 	var game_view = get_tree().current_scene
 	if game_view and game_view.has_method("update_game_state"):
 		game_view.update_game_state(state)
+
+@rpc("any_peer", "call_remote", "reliable")
+func receive_initial_map(map_data: Dictionary):
+	# Initial map data sent reliably (TCP) to handle larger payload
+	print("[ClientMain] Received initial map data with keys: ", map_data.keys())
+	var game_view = get_tree().current_scene
+	if game_view and game_view.has_method("update_game_state"):
+		game_view.update_game_state(map_data)
+	else:
+		# Cache the map data until GameView is ready
+		pending_initial_map = map_data
+		print("[ClientMain] Cached initial map data (GameView not ready yet)")
+
+func get_pending_initial_map() -> Dictionary:
+	"""Get and clear pending initial map data (called by GameView when ready)"""
+	var data = pending_initial_map
+	pending_initial_map = {}
+	return data
 
 @rpc("any_peer", "call_remote", "unreliable")
 func bomb_safety_update(safety_data: Dictionary):

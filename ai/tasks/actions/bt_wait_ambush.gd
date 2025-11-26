@@ -4,12 +4,15 @@ class_name BTWaitAmbush
 
 ## Idle/patrol behavior for territorial control
 ## Bot stays near strategic positions (center, powerups, soft blocks)
+## NOTE: Returns FAILURE every ~1 second to allow BT to reconsider other branches
 
 @export var patrol_radius: int = 3 ## How far to wander from anchor point
 @export var wait_time: float = 1.5 ## Seconds between patrol moves
 @export var prefer_center: bool = true ## Gravitate toward map center
+@export var reevaluate_interval: float = 0.5 ## How often to let BT reconsider (seconds)
 
 var _wait_accumulator: float = 0.0
+var _reevaluate_accumulator: float = 0.0
 var _anchor_point: Vector2i = Vector2i.ZERO
 var _has_anchor: bool = false
 
@@ -27,6 +30,13 @@ func _tick(delta: float) -> int:
 	var player_tile = player.get_tile_position()
 	
 	# print("[BTWaitAmbush] _tick called. Tile: ", player_tile)
+	
+	# Periodically return FAILURE to allow the BT to reconsider higher-priority branches
+	# This is CRITICAL - without this, bots get stuck in ambush forever
+	_reevaluate_accumulator += delta
+	if _reevaluate_accumulator >= reevaluate_interval:
+		_reevaluate_accumulator = 0.0
+		return FAILURE
 	
 	# Set anchor point if not yet established
 	if not _has_anchor:

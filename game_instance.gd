@@ -37,6 +37,11 @@ var current_time_msec := 0.0 # Current physics frame time in milliseconds
 const SYNC_INTERVAL = 1.0 / Constants.NETWORK_SEND_RATE
 const EXPLOSION_DISPLAY_TIME = 0.5 # How long to show explosions
 
+# Delta compression for map state
+var last_sent_map := [] # Track last sent map state per client
+var clients_received_full_map := {} # peer_id -> bool (have they received full map?)
+var map_changes := [] # Array of {x: int, y: int, value: int} changes since last sync
+
 # Match timer
 var match_duration := 180.0 # 3 minutes default
 var match_time_remaining := match_duration
@@ -125,7 +130,7 @@ func _ready():
 		push_error("[GameInstance] Bot manager script missing; bots disabled")
 	else:
 		bot_manager = ServerBotManagerScript.new()
-		bot_manager.auto_spawn_count = 3 # Spawn 3 bots for competitive testing
+		bot_manager.auto_spawn_count = 3 # Auto-spawn 3 bots for testing
 		bot_manager.configure(self)
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
@@ -244,7 +249,7 @@ func get_next_spawn_point() -> Vector2:
 
 func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO, is_bot: bool = false, personality: String = ""):
 	var player = ServerPlayer.new()
-	player.peer_id = peer_id  # CRITICAL: Set actual peer_id (-1, -2, -3 for bots)
+	player.peer_id = peer_id # CRITICAL: Set actual peer_id (-1, -2, -3 for bots)
 	player.player_id = str(peer_id)
 	player.username = username
 	if is_bot:
@@ -274,7 +279,7 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	# For bot players (negative peer_id), set multiplayer authority to server
 	# Bots are not real network peers, so RPC calls should go through the server
 	if is_bot and peer_id < 0:
-		player.set_multiplayer_authority(1)  # Server is always peer ID 1
+		player.set_multiplayer_authority(1) # Server is always peer ID 1
 	
 	# Ensure the node is fully ready in the scene tree before anyone tries to access it
 	if is_inside_tree():
@@ -390,6 +395,7 @@ func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
 func place_bomb(player: ServerPlayer):
 	# Prevent bomb placement during countdown
 	if not match_active:
+		print("[Game] place_bomb failed: match_active is false")
 		return
 	
 	var bomb = ServerBomb.new()
@@ -398,21 +404,27 @@ func place_bomb(player: ServerPlayer):
 	bomb.owner_id = player.player_id
 	bomb.explosion_range = player.bomb_range
 	
-	# CRITICAL: Place bomb at tile center, not player position
+	print("[Game] Creating bomb ", bomb.bomb_id, " for ", player.username)
+	
+	# CRITICAL: Place bomb at tile CENTER, not top-left corner
 	# This prevents collision/snapping issues when player is slightly off-center
 	var player_tile = player.get_tile_position()
-	bomb.position = Vector2(player_tile.x * GameConfig.TILE_SIZE, player_tile.y * GameConfig.TILE_SIZE)
+	bomb.position = Vector2(
+		player_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		player_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
 	
 	bomb.name = "Bomb_" + bomb.bomb_id
 	bomb.game_instance = self # Give bomb reference for collision checking
 	# Start fuse from zero on placement (count-up logic)
 	bomb.explosion_timer = 0.0
 	
-	# Add collision exception so player can walk out
-	player.add_bomb_collision_exception(bomb)
-	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)
+	
+	# CRITICAL: Add collision exception AFTER bomb is in tree to avoid race condition
+	# If added before, the deferred call might not complete before the next physics frame
+	player.add_bomb_collision_exception(bomb)
 	
 	player.bombs_placed += 1
 	bomb.exploded.connect(_on_bomb_exploded)
@@ -481,6 +493,11 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 		# Check for player hits
 		for peer_id in players:
 			var player = players[peer_id]
+			
+			# Skip dead players - they cannot be killed again
+			if player.is_dead:
+				continue
+			
 			var player_tile = player.get_tile_position()
 			
 			if player_tile == tile_pos:
@@ -542,6 +559,9 @@ func destroy_block(cell: Vector2i):
 	# Clear from map data
 	game_map[cell.y][cell.x] = 0
 	
+	# Track map change for delta compression
+	map_changes.append({"x": cell.x, "y": cell.y, "value": 0})
+	
 	# Update AI pathfinder (soft wall destroyed = new path opened)
 	if ai_manager != null:
 		ai_manager.on_wall_destroyed(cell)
@@ -565,19 +585,12 @@ func sync_state_to_clients():
 	var explosion_duration = 0.02 * 20 # ~20 expansion steps max
 	explosions = explosions.filter(func(explosion): return current_time - explosion["start_time"] < explosion_duration)
 	
-	# Build game state
+	# Build game state (without full map - use delta compression)
 	var state = {
 		"players": {},
 		"bombs": {},
 		"powerups": {},
 		"explosions": [],
-		"map": game_map,
-		"map_config": {
-			"tile_size": GameConfig.TILE_SIZE,
-			"width": GameConfig.map_width,
-			"height": GameConfig.map_height,
-			"name": GameConfig.map_name
-		},
 		"match_timer": match_time_remaining,
 		"match_active": match_active,
 		"countdown_time": countdown_time,
@@ -603,19 +616,52 @@ func sync_state_to_clients():
 			"owner_id": explosion["owner_id"]
 		})
 	
-	# Send threat matrix for debug visualization (if enabled)
+	# Send threat matrix for debug visualization (if enabled and not too large)
+	# Only send when there are active threats to avoid unnecessary overhead
 	if ai_manager != null:
 		var threat_data = ai_manager.get_current_threat_matrix()
-		if threat_data.size() > 0:
-			print("[Server] Sending threat matrix with ", threat_data.size(), " tiles")
-		state["threat_matrix"] = threat_data
-		state["current_time_msec"] = current_time_msec # Use the SAME timestamp used for threat calculation
+		if threat_data.size() > 0 and threat_data.size() <= 20: # Limit to prevent bloat
+			state["threat_matrix"] = threat_data
+			state["current_time_msec"] = current_time_msec
 	
 	# Send to all players in this game via ClientMain autoload
+	# Use delta compression for map - only send full map to new clients
+	var changes_to_send = map_changes.duplicate()
+	map_changes.clear() # Clear changes after capturing them
+	
 	for peer_id in players:
 		var player = players[peer_id]
 		if player.has_method("is_ai_bot") and player.is_ai_bot():
 			continue
+		
+		# Check if this client needs the full map
+		if not clients_received_full_map.get(peer_id, false):
+			# First sync for this client - send map data via RELIABLE channel
+			# This handles the larger payload without MTU issues
+			var packed_map := PackedByteArray()
+			for row in game_map:
+				for cell in row:
+					packed_map.append(cell)
+			var map_data = {
+				"map_packed": packed_map,
+				"map_width": game_map[0].size() if game_map.size() > 0 else 0,
+				"map_height": game_map.size(),
+				"map_config": {
+					"tile_size": GameConfig.TILE_SIZE,
+					"width": GameConfig.map_width,
+					"height": GameConfig.map_height,
+					"name": GameConfig.map_name
+				}
+			}
+			# Send map reliably (TCP) to avoid MTU issues on first sync
+			get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_initial_map", map_data)
+			clients_received_full_map[peer_id] = true
+		elif changes_to_send.size() > 0:
+			# Send only map changes (delta compression)
+			state["map_changes"] = changes_to_send
+		# else: No changes - don't include map data (already not in base state)
+		
+		# Send regular state update (without map) via unreliable channel
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position"""

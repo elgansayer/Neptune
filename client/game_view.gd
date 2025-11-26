@@ -28,6 +28,7 @@ var map_scene_instance = null # Hold reference to loaded PCK map scene
 var removed_dead_players = {} # peer_id -> bool when death animation has finished and node was removed
 var hud: CanvasLayer # Reference to HUD
 var ai_debug_targets := {} # peer_id -> {"tile": Vector2i, "player_name": String}
+var local_map := [] # Client-side copy of map state (updated via delta compression)
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -41,6 +42,10 @@ var bomb_safety_visualizer: Node2D = null
 # Input buffering: track order of pressed keys
 var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
 var debug_label: Label = null
+
+# Timescale cycling
+var current_timescale_index = 0
+var timescale_options = [3.0, 5.0, 0.1, 0.25, 0.5, 1.0, 2.0]
 
 func _ready():
 	# Set up FIXED camera to show entire arena (like classic Bomberman)
@@ -59,7 +64,7 @@ func _ready():
 	
 	# Initialize threat matrix visualizer (debug - toggle with F3)
 	threat_visualizer = ThreatMatrixVisualizerScene.instantiate()
-	threat_visualizer.position = Vector2.ZERO  # Explicitly set to (0, 0)
+	threat_visualizer.position = Vector2.ZERO # Explicitly set to (0, 0)
 	add_child(threat_visualizer)
 	print("[GameView] ThreatVisualizer created successfully at position: ", threat_visualizer.position)
 	# Start with threat matrix hidden
@@ -76,11 +81,14 @@ func _ready():
 	
 	# Request current safety data from server (in case we missed initial broadcasts)
 	call_deferred("_request_farming_spot_update")
+	
+	# Check for cached initial map data (might have arrived before we were ready)
+	call_deferred("_check_pending_initial_map")
 
-	# Start in slow motion for debugging and inform server
-	Engine.time_scale = 0.25
+	# Start at normal speed
+	Engine.time_scale = 1.0
 	if has_node("/root/ServerMain"):
-		get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", 0.25)
+		get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", 1.0)
 	
 	# Initialize HUD
 	hud = GameHUDScene.instantiate()
@@ -103,13 +111,45 @@ func _ready():
 	hud.add_child(debug_label)
 	update_debug_banner()
 
+
 func update_game_state(state: Dictionary):
-	# Load map configuration if present (first time only)
+	# Load map_config first if present (must happen before rendering)
 	if state.has("map_config") and not map_rendered:
 		GameConfig.load_map_config(state.map_config)
+		print("[GameView] Loaded map config: TILE_SIZE=", GameConfig.TILE_SIZE)
 	
-	# Render map once (walls only)
+	# Handle packed map (compressed format for first sync)
+	if not map_rendered and state.has("map_packed"):
+		var packed = state.map_packed as PackedByteArray
+		var width = state.get("map_width", 21)
+		var height = state.get("map_height", 14)
+		# Unpack into 2D array
+		local_map = []
+		var idx = 0
+		for y in range(height):
+			var row = []
+			for x in range(width):
+				if idx < packed.size():
+					row.append(packed[idx])
+					idx += 1
+				else:
+					row.append(0)
+			local_map.append(row)
+		render_map(local_map)
+		map_rendered = true
+		
+		print("[GameView] Map rendered from packed data, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
+		
+		# Set map size for visualizers
+		if threat_visualizer and threat_visualizer.has_method("set_map_size"):
+			threat_visualizer.set_map_size(width, height)
+		if bomb_safety_visualizer:
+			bomb_safety_visualizer.set_map_size(width, height)
+			bomb_safety_visualizer.update_tile_size(GameConfig.TILE_SIZE)
+	
+	# Handle full map (legacy format - fallback)
 	if not map_rendered and state.has("map"):
+		local_map = state.map.duplicate(true) # Deep copy
 		render_map(state.map)
 		map_rendered = true
 		
@@ -128,8 +168,20 @@ func update_game_state(state: Dictionary):
 			bomb_safety_visualizer.set_map_size(map_width, map_height)
 			bomb_safety_visualizer.update_tile_size(GameConfig.TILE_SIZE)
 	
-	# Update destructible blocks based on current map state
+	# Handle delta map changes (incremental updates)
+	if state.has("map_changes") and map_rendered:
+		for change in state.map_changes:
+			var x = change.x
+			var y = change.y
+			var value = change.value
+			if y >= 0 and y < local_map.size() and x >= 0 and x < local_map[y].size():
+				local_map[y][x] = value
+		# Apply changes to block visuals
+		update_blocks(local_map)
+	
+	# Update destructible blocks based on full map state (if sent)
 	if state.has("map"):
+		local_map = state.map.duplicate(true) # Keep local copy in sync
 		update_blocks(state.map)
 	
 	# Update threat matrix visualization (debug)
@@ -173,12 +225,13 @@ func update_game_state(state: Dictionary):
 		hud.update_players_alive(alive_count, state.players.size())
 
 	# Update players
-	for peer_id_str in state.players:
-		var player_data = state.players[peer_id_str]
-		update_player(peer_id_str, player_data)
+	if state.has("players"):
+		for peer_id_str in state.players:
+			var player_data = state.players[peer_id_str]
+			update_player(peer_id_str, player_data)
 
 	# Update local player stats in HUD
-	if state.players.has(str(multiplayer.get_unique_id())) and hud:
+	if state.has("players") and state.players.has(str(multiplayer.get_unique_id())) and hud:
 		var my_data = state.players[str(multiplayer.get_unique_id())]
 		hud.update_player_stats(
 			my_data.get("bombs_placed", 0),
@@ -191,26 +244,29 @@ func update_game_state(state: Dictionary):
 	if state.has("match_active") and not state.match_active and hud:
 		var winner_name = ""
 		if state.has("winner_id") and state.winner_id:
-			if state.players.has(state.winner_id):
+			if state.has("players") and state.players.has(state.winner_id):
 				winner_name = state.players[state.winner_id].get("username", "Unknown")
 		hud.show_game_over(winner_name)
 
 	# Remove players no longer in state
-	for peer_id in player_nodes.keys():
-		if not state.players.has(peer_id):
-			player_nodes[peer_id].queue_free()
-			player_nodes.erase(peer_id)
+	if state.has("players"):
+		for peer_id in player_nodes.keys():
+			if not state.players.has(peer_id):
+				player_nodes[peer_id].queue_free()
+				player_nodes.erase(peer_id)
 
 	# Update bombs
-	for bomb_id in state.bombs:
-		var bomb_data = state.bombs[bomb_id]
-		update_bomb(bomb_id, bomb_data)
+	if state.has("bombs"):
+		for bomb_id in state.bombs:
+			var bomb_data = state.bombs[bomb_id]
+			update_bomb(bomb_id, bomb_data)
 
 	# Remove bombs no longer in state
-	for bomb_id in bomb_nodes.keys():
-		if not state.bombs.has(bomb_id):
-			bomb_nodes[bomb_id].queue_free()
-			bomb_nodes.erase(bomb_id)
+	if state.has("bombs"):
+		for bomb_id in bomb_nodes.keys():
+			if not state.bombs.has(bomb_id):
+				bomb_nodes[bomb_id].queue_free()
+				bomb_nodes.erase(bomb_id)
 
 	# Update power-ups
 	if state.has("powerups"):
@@ -357,7 +413,7 @@ func update_player(peer_id: String, data: Dictionary):
 		else:
 			# Fallback to colored rectangle if PCK not loaded
 			var sprite = ColorRect.new()
-			var sprite_size = GameConfig.TILE_SIZE / 2.0  # Half tile size
+			var sprite_size = GameConfig.TILE_SIZE / 2.0 # Half tile size
 			sprite.size = Vector2(sprite_size, sprite_size)
 			sprite.position = Vector2(-sprite_size / 2, -sprite_size / 2)
 			var is_local = str(peer_id) == str(multiplayer.get_unique_id())
@@ -366,7 +422,7 @@ func update_player(peer_id: String, data: Dictionary):
 		
 		# Add debug arrow to show facing direction
 		var arrow = Polygon2D.new()
-		var arrow_scale = GameConfig.TILE_SIZE / 32.0  # Scale based on tile size
+		var arrow_scale = GameConfig.TILE_SIZE / 32.0 # Scale based on tile size
 		var arrow_points = PackedVector2Array([
 			Vector2(0, -15 * arrow_scale), # Top left
 			Vector2(40 * arrow_scale, 0), # Tip (pointing right)
@@ -550,7 +606,7 @@ func update_player(peer_id: String, data: Dictionary):
 		# Priority 3: Picking up bomb (animation)
 		elif data.has("is_picking_up_bomb") and data.is_picking_up_bomb:
 			# Get pickup animation direction
-			var pickup_dir = "south"  # Default
+			var pickup_dir = "south" # Default
 			if data.has("pickup_animation_direction"):
 				var pickup_vec = Vector2(data.pickup_animation_direction.x, data.pickup_animation_direction.y)
 				if abs(pickup_vec.y) > abs(pickup_vec.x):
@@ -589,7 +645,6 @@ func update_player(peer_id: String, data: Dictionary):
 # DEBUG_DISABLED: 	if raycast_line and data.has("last_move_direction"):
 # DEBUG_DISABLED: 		var last_move = Vector2(data.last_move_direction.x, data.last_move_direction.y)
 # DEBUG_DISABLED: 		if last_move.length() > 0.1:
-# DEBUG_DISABLED: 			var motion = last_move.normalized() * 32.0  # Make it longer so it's visible
 # DEBUG_DISABLED: 			raycast_line.clear_points()
 # DEBUG_DISABLED: 			raycast_line.add_point(Vector2.ZERO)
 # DEBUG_DISABLED: 			raycast_line.add_point(motion)
@@ -626,7 +681,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		bomb_node = BombScene.instantiate()
 		bomb_node.bomb_id = bomb_id
 		bomb_node.name = "Bomb_" + bomb_id
-		bomb_node.z_index = 10  # Render bombs above explosions
+		bomb_node.z_index = 10 # Render bombs above explosions
 		
 		bombs_container.add_child(bomb_node)
 		bomb_nodes[bomb_id] = bomb_node
@@ -644,7 +699,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 	if data.has("is_visible"):
 		bomb_node.visible = data.is_visible
 	else:
-		bomb_node.visible = true  # Default to visible
+		bomb_node.visible = true # Default to visible
 	
 	# Handle Power Glove states
 	if data.has("state"):
@@ -655,7 +710,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		if bomb_state == BombRenderer.BombState.THROWN and data.has("z_height"):
 			bomb_node.update_z_height(data.z_height)
 		else:
-			bomb_node.update_z_height(0.0)  # Reset Z height for other states
+			bomb_node.update_z_height(0.0) # Reset Z height for other states
 
 func update_explosions(explosions_data: Array):
 	"""Update progressive explosions with SBomberman sprites"""
@@ -671,7 +726,7 @@ func update_explosions(explosions_data: Array):
 			var explosion_node = ExplosionRenderer.new()
 			explosion_node.explosion_id = explosion_id
 			explosion_node.name = "Explosion_" + explosion_id
-			explosion_node.z_index = 5  # Render explosions below bombs (z_index 10)
+			explosion_node.z_index = 5 # Render explosions below bombs (z_index 10)
 			
 			# Initialize with pattern from server
 			explosion_node.initialize(
@@ -688,7 +743,7 @@ func update_explosions(explosions_data: Array):
 			explosions_container.add_child(explosion_node)
 			explosion_nodes[explosion_id] = explosion_node
 			
-			print("[GameView] Created explosion renderer: ", explosion_id, 
+			print("[GameView] Created explosion renderer: ", explosion_id,
 				  " with ", explosion_data["pattern"].size(), " tiles")
 	
 	# Remove explosions no longer in server state
@@ -802,19 +857,14 @@ func _input(event):
 				print("[GameView] Bomb safety visualizer: ", "ON" if bomb_safety_visualizer.visible else "OFF")
 			update_debug_banner()
 		elif event.keycode == Key.KEY_F5:
-			# Toggle grid coordinates on threat visualizer
-			if threat_visualizer and threat_visualizer.has_method("toggle_grid_coords"):
-				threat_visualizer.show_grid_coords = not threat_visualizer.show_grid_coords
-				print("[GameView] Threat grid coords: ", "ON" if threat_visualizer.show_grid_coords else "OFF")
-		elif event.keycode == Key.KEY_F6:
-			# Toggle slow motion for debugging
-			var new_scale := 1.0 if Engine.time_scale < 0.99 else 0.25
-			Engine.time_scale = new_scale
-			print("[GameView] Debug time_scale set to ", Engine.time_scale)
-			# Ask server to match time scale for consistent debug
+			current_timescale_index = (current_timescale_index + 1) % timescale_options.size()
+			var new_timescale = timescale_options[current_timescale_index]
+			Engine.time_scale = new_timescale
 			if has_node("/root/ServerMain"):
-				get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", float(Engine.time_scale))
+				get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", new_timescale)
+			print("[GameView] Timescale set to: ", new_timescale)
 			update_debug_banner()
+
 		elif event.keycode == Key.KEY_F7:
 			# Toggle timing display on threat visualizer
 			if threat_visualizer and threat_visualizer.has_method("toggle_timing"):
@@ -829,6 +879,15 @@ func _request_farming_spot_update() -> void:
 	"""Request the server to broadcast current farming spot evaluation"""
 	if multiplayer.has_multiplayer_peer():
 		ServerMain.rpc_id(1, "test_farming_spot_broadcast")
+
+func _check_pending_initial_map() -> void:
+	"""Check if ClientMain has cached initial map data that arrived before we were ready"""
+	var client_main = get_tree().root.get_node_or_null("ClientMain")
+	if client_main and client_main.has_method("get_pending_initial_map"):
+		var pending_map = client_main.get_pending_initial_map()
+		if not pending_map.is_empty():
+			print("[GameView] Applying cached initial map data")
+			update_game_state(pending_map)
 
 func update_debug_banner() -> void:
 	if not debug_label:
@@ -875,19 +934,19 @@ func render_map(map_data):
 					# WallAndFloorBlockMap stays HIDDEN - we use physics collision, not visual tiles
 					# Floor and hard walls are handled by server physics
 					if wall_floor_map:
-						wall_floor_map.visible = false  # Keep hidden
+						wall_floor_map.visible = false # Keep hidden
 						# wall_floor_map.scale = Vector2(4.0, 4.0)
 					
 					# SpawnAndSoftBlockMap: Show ONLY soft blocks (source 0), hide spawn markers (source 1)
 					if spawn_soft_map:
-						spawn_soft_map.visible = true  # Make visible for soft blocks
+						spawn_soft_map.visible = true # Make visible for soft blocks
 						# spawn_soft_map.scale = Vector2(4.0, 4.0)
 						
 						# Remove spawn marker tiles (source 1) - keep only soft blocks (source 0)
 						var cells_to_remove = []
 						for cell in spawn_soft_map.get_used_cells():
 							var source_id = spawn_soft_map.get_cell_source_id(cell)
-							if source_id == 1:  # Spawn markers
+							if source_id == 1: # Spawn markers
 								cells_to_remove.append(cell)
 						
 						# Erase spawn markers

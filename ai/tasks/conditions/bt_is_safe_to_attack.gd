@@ -4,9 +4,10 @@ class_name BTIsSafeToAttack
 
 ## Validates that attacking won't trap the bot
 ## Checks escape routes and safety margins before committing to offensive action
+## Includes HYSTERESIS to prevent flickering
 
-@export var min_escape_routes: int = 1  ## Minimum safe exits required
-@export var safety_time_margin: float = 1.5  ## Minimum seconds to reach safety
+@export var min_escape_routes: int = 1 ## Minimum safe exits required
+@export var safety_time_margin: float = 1.5 ## Minimum seconds to reach safety
 
 func _generate_name() -> String:
 	return "IsSafeToAttack (routes≥%d, margin≥%.1fs)" % [min_escape_routes, safety_time_margin]
@@ -24,25 +25,47 @@ func _tick(_delta: float) -> int:
 	var player_tile = player.get_tile_position()
 	var current_time_msec = Time.get_ticks_msec()
 	
+	# CRITICAL: If we are currently in danger (or latched), we CANNOT attack
+	# This prevents oscillation where we stop escaping to attack because IsSafeToAttack says "Safe"
+	if blackboard.get_var("in_danger", false):
+		# print("[IsSafeToAttack] ✗ UNSAFE: Currently in DANGER state (latched or immediate)")
+		blackboard.set_var("was_safe_to_attack", false)
+		return FAILURE
+	
 	# Adjust safety requirements based on personality
 	var personality = blackboard.get_var("personality", "BALANCED")
 	var adjusted_margin = safety_time_margin
 	
 	match personality:
 		"KAMIKAZE":
-			adjusted_margin = 0.3  # Very risky
+			adjusted_margin = 0.3 # Very risky
 		"AGGRESSIVE":
-			adjusted_margin = 0.8  # Risky
+			adjusted_margin = 0.8 # Risky
 		"BALANCED":
-			adjusted_margin = 1.5  # Standard
+			adjusted_margin = 1.5 # Standard
 		"STRATEGIC":
-			adjusted_margin = 1.8  # Cautious
+			adjusted_margin = 1.8 # Cautious
 		"DEFENSIVE", "TIMID":
-			adjusted_margin = 2.5  # Very cautious
+			adjusted_margin = 2.5 # Very cautious
+	
+	# Hysteresis: If we were safe to attack previously, be more lenient to stay in that state
+	# This prevents flickering when on the edge of safety
+	var was_safe = false
+	if blackboard.has_var("was_safe_to_attack"):
+		was_safe = blackboard.get_var("was_safe_to_attack")
+	
+	var effective_margin = adjusted_margin
+	var effective_routes = min_escape_routes
+	
+	if was_safe:
+		# SIGNIFICANTLY more lenient if we are already committed
+		# This is the "Latch" logic
+		effective_margin *= 0.6 # 40% reduction in required margin
+		effective_routes = max(1, min_escape_routes - 1) # Allow 1 fewer route (but at least 1)
 	
 	# Check if we can safely place a bomb here
 	var bomb_range = player.bomb_range if player else 2
-	var bot_speed = 5.0  # tiles per second
+	var bot_speed = 5.0 # tiles per second
 	
 	var safety_check = bomb_safety_checker.check_plant_safety_detailed(
 		player_tile,
@@ -56,15 +79,17 @@ func _tick(_delta: float) -> int:
 		var margin_ms = safety_check.get("margin_ms", 0.0)
 		var margin_sec = margin_ms / 1000.0
 		
-		if margin_sec < adjusted_margin * 1000.0:
-			print("[IsSafeToAttack] ✗ UNSAFE: Escape margin too small (", margin_sec, "s < ", adjusted_margin, "s)")
+		if margin_sec < effective_margin * 1000.0:
+			# print("[IsSafeToAttack] ✗ UNSAFE: Escape margin too small (", margin_sec, "s < ", effective_margin, "s)")
+			blackboard.set_var("was_safe_to_attack", false)
 			return FAILURE
 	
 	# Count current escape routes
 	var escape_routes = _count_escape_routes(player_tile, grid_sampler, ai_manager)
 	
-	if escape_routes < min_escape_routes:
-		print("[IsSafeToAttack] ✗ UNSAFE: Not enough escape routes (", escape_routes, " < ", min_escape_routes, ")")
+	if escape_routes < effective_routes:
+		# print("[IsSafeToAttack] ✗ UNSAFE: Not enough escape routes (", escape_routes, " < ", effective_routes, ")")
+		blackboard.set_var("was_safe_to_attack", false)
 		return FAILURE
 	
 	# Check if we're already in a dangerous situation
@@ -72,10 +97,12 @@ func _tick(_delta: float) -> int:
 	var key = "%d,%d" % [player_tile.x, player_tile.y]
 	
 	if threat_matrix.has(key):
-		print("[IsSafeToAttack] ✗ UNSAFE: Currently in danger zone")
+		# print("[IsSafeToAttack] ✗ UNSAFE: Currently in danger zone")
+		blackboard.set_var("was_safe_to_attack", false)
 		return FAILURE
 	
-	print("[IsSafeToAttack] ✓ SAFE: ", escape_routes, " exits, margin OK")
+	# print("[IsSafeToAttack] ✓ SAFE: ", escape_routes, " exits, margin OK")
+	blackboard.set_var("was_safe_to_attack", true)
 	return SUCCESS
 
 func _count_escape_routes(tile: Vector2i, grid_sampler, ai_manager) -> int:

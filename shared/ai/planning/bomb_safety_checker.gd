@@ -12,8 +12,8 @@ var _grid_sampler = null
 var debug_logging: bool = false
 
 # Safety tuning parameters
-var safety_buffer_msec: float = 300.0 # Conservative buffer (increased from implicit 0)
-var movement_delay_msec: float = 150.0 # Time before bot actually starts moving after decision
+var safety_buffer_msec: float = 500.0 # INCREASED: Conservative buffer for escape (was 300)
+var movement_delay_msec: float = 200.0 # INCREASED: Time before bot starts moving (was 150)
 
 func configure(ai_manager, grid_sampler) -> void:
 	_ai_manager = ai_manager
@@ -76,10 +76,22 @@ func can_safely_plant_bomb(
 		
 		# 1. IS THIS TILE A SAFE HAVEN?
 		if not future_threat_matrix.has(current_key):
-			# SUCCESS! Found a tile that never explodes AND we can reach it in time
-			if debug_logging:
-				print("  [BombSafetyChecker] ✓ Safe haven found at ", current_pos, " (arrival=", current_arrival_time, "ms, bomb_explodes=", time_to_explode_msec, "ms)")
-			return true
+			# CRITICAL FIX: Verify escape tile is NOT a dead end!
+			# A tile is a dead end if all neighbors are blocked (walls/bombs/threats)
+			# The bot would get trapped there and die to subsequent bombs
+			var has_further_exit = _tile_has_further_exit(current_pos, future_threat_matrix, plant_pos)
+			
+			if has_further_exit:
+				# SUCCESS! Found a tile that never explodes AND we can reach it AND we can escape later
+				if debug_logging:
+					print("  [BombSafetyChecker] ✓ Safe haven found at ", current_pos, " (arrival=", current_arrival_time, "ms, bomb_explodes=", time_to_explode_msec, "ms)")
+				return true
+			else:
+				# This tile is safe from THIS bomb but is a dead end - REJECT IT
+				if debug_logging:
+					print("  [BombSafetyChecker] ⚠ Tile ", current_pos, " is safe but is a DEAD END - skipping")
+				# Continue BFS to find a better escape tile
+				# Note: We don't return false, we just skip this tile as a safe haven
 		
 		# 2. IF NOT, CAN WE PASS THROUGH SAFELY?
 		var tile_lethal_time: float = future_threat_matrix[current_key]
@@ -169,12 +181,37 @@ func check_plant_safety_detailed(
 		
 		# Check if this is a safe haven
 		if not future_threat_matrix.has(current_key):
-			return {
-				"safe": true,
-				"escape_tile": current_pos,
-				"margin_ms": INF,
-				"explored_tiles": visited.size()
-			}
+			# CRITICAL FIX: Verify escape tile is NOT a dead end!
+			var has_further_exit = _tile_has_further_exit(current_pos, future_threat_matrix, plant_pos)
+			
+			if has_further_exit:
+				return {
+					"safe": true,
+					"escape_tile": current_pos,
+					"margin_ms": INF,
+					"explored_tiles": visited.size()
+				}
+			else:
+				# Dead end - continue searching for better escape
+				if debug_logging:
+					print("  [BombSafetyChecker] ⚠ Detailed: Tile ", current_pos, " is safe but is a DEAD END - continuing search")
+				# Continue BFS from this dead-end tile since it's still safe to traverse through
+				# But first add neighbors to explore further
+				for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+					var next_pos := current_pos + dir
+					var next_key := _tile_key(next_pos)
+					var next_arrival_time := current_arrival_time + msec_per_tile
+					
+					if next_key == bomb_tile_key:
+						continue
+					if not _grid_sampler.is_tile_walkable(next_pos):
+						continue
+					if visited.has(next_key) and visited[next_key] <= next_arrival_time:
+						continue
+					
+					visited[next_key] = next_arrival_time
+					queue.append(next_pos)
+				continue  # Skip the rest of the loop for this tile
 		
 		# Track best marginal option even if not perfectly safe
 		var tile_lethal_time: float = future_threat_matrix[current_key]
@@ -220,3 +257,33 @@ func check_plant_safety_detailed(
 ## Tile key helper
 func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]
+
+## Check if a tile has at least one further exit (not a dead end)
+## A dead end is a tile where all neighbors are blocked by walls, bombs, or threats
+func _tile_has_further_exit(tile: Vector2i, threat_matrix: Dictionary, bomb_pos: Vector2i) -> bool:
+	var bomb_key := _tile_key(bomb_pos)
+	var safe_exits := 0
+	
+	for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+		var neighbor := tile + dir
+		var neighbor_key := _tile_key(neighbor)
+		
+		# Skip if it's the bomb position (will be blocked)
+		if neighbor_key == bomb_key:
+			continue
+		
+		# Skip if not walkable (wall/block)
+		if not _grid_sampler.is_tile_walkable(neighbor):
+			continue
+		
+		# Skip if it's in the threat matrix (will explode)
+		if threat_matrix.has(neighbor_key):
+			continue
+		
+		# This is a valid safe exit
+		safe_exits += 1
+	
+	if debug_logging and safe_exits == 0:
+		print("  [BombSafetyChecker] Tile ", tile, " has NO further exits - dead end detected!")
+	
+	return safe_exits > 0

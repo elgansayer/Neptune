@@ -5,29 +5,75 @@ class_name BTFindEscapeRoute
 ## Finds a safe escape route from danger using the AI pathfinder
 ## Sets target_cell in blackboard if a safe path is found
 
-@export var escape_radius: int = 8  ## How far to search for safety
-@export var target_cell_var: StringName = &"target_cell"  ## Where to store the escape destination
+@export var escape_radius: int = 8 ## How far to search for safety
+@export var target_cell_var: StringName = &"target_cell" ## Where to store the escape destination
+@export var debug_logging: bool = true
+
+static var _tick_count: int = 0
 
 func _generate_name() -> String:
 	return "FindEscapeRoute"
 
 func _tick(_delta: float) -> int:
 	var player = blackboard.get_var("player")
+	
+	# Early exit if player is dead
+	if player and player.is_dead:
+		return FAILURE
+	
 	var game_instance = blackboard.get_var("game_instance")
 	var ai_manager = blackboard.get_var("ai_manager")
 	var grid_sampler = blackboard.get_var("grid_sampler")
+	var threat_matrix = ai_manager.threat_matrix if ai_manager else {}
+	var current_time_msec = Time.get_ticks_msec()
+	# Calculate msec_per_tile based on bot speed (tiles per second = speed / tile_size)
+	# Default: BASE_SPEED=45 px/s, TILE_SIZE=16px → 45/16 = 2.8125 tiles/s → 355ms/tile
+	var bot_speed_tiles_per_sec = GameConfig.BASE_SPEED / GameConfig.TILE_SIZE
+	var msec_per_tile = (1.0 / bot_speed_tiles_per_sec) * 1000.0
+	var hazard_predictor = blackboard.get_var("hazard_predictor")
 	
-	print("[BTFindEscapeRoute] STARTING escape route search for bot at ", player.get_tile_position() if player else "unknown")
+	# DEBUG: Log threat matrix state at start
+	if threat_matrix.size() > 0 and debug_logging:
+		print("[BTFindEscapeRoute] THREAT_MATRIX_SIZE=", threat_matrix.size(), " KEYS=", threat_matrix.keys())
 	
-	if not player or not game_instance or not ai_manager or not grid_sampler:
+	# print("[BTFindEscapeRoute] STARTING escape route search for bot at ", player.get_tile_position() if player else "unknown")
+	
+	if not player or not game_instance or not ai_manager or not grid_sampler or not hazard_predictor:
 		push_warning("[BTFindEscapeRoute] Missing required blackboard variables")
 		return FAILURE
-	
+		
 	var player_tile = player.get_tile_position()
-	var threat_matrix = ai_manager.get_current_threat_matrix()
-	var current_time_msec = Time.get_ticks_msec()
-	var bot_speed_tiles_per_sec = 5.0
-	var msec_per_tile = (1.0 / bot_speed_tiles_per_sec) * 1000.0
+	
+	# --- COMMITMENT LOGIC ---
+	# Check if we already have a valid escape route that is still safe
+	# This prevents the bot from jittering between multiple safe spots
+	var current_escape_target = blackboard.get_var(target_cell_var, null)
+	var escape_route_found = blackboard.get_var("escape_route_found", false)
+	
+	if escape_route_found and current_escape_target != null:
+		# We have a route. Is it still valid?
+		if current_escape_target is Vector2:
+			current_escape_target = Vector2i(int(current_escape_target.x), int(current_escape_target.y))
+			
+		if current_escape_target is Vector2i:
+			# Check if the target is still safe
+			# We use a slightly larger buffer for the target to ensure it remains safe
+			var current_time = Time.get_ticks_msec() / 1000.0
+			var is_target_safe = hazard_predictor.is_tile_safe(current_escape_target, current_time, 0.5)
+			
+			# Also check if the path to it is roughly safe (simplified check)
+			# For now, just check the target. If target is safe, we stick to it.
+			# Unless we are standing on it? No, if we are standing on it, we are safe (handled by BTIsInDanger)
+			
+			# Also check if the target has a bomb on it (which would be bad)
+			var has_bomb = false
+			if game_instance.game_map[current_escape_target.y][current_escape_target.x] == 3: # Bomb
+				has_bomb = true
+				
+			if is_target_safe and not has_bomb:
+				if debug_logging:
+					print("[BTFindEscapeRoute] Keeping existing valid escape target: ", current_escape_target)
+				return SUCCESS
 	
 	# BFS to find safe tiles considering TIMING and WALLS
 	# A tile is safe if either:
@@ -35,12 +81,15 @@ func _tick(_delta: float) -> int:
 	# 2. We can reach it and stay there safely before it explodes
 	
 	var queue: Array[Vector2i] = [player_tile]
-	var visited: Dictionary = {_tile_key(player_tile): current_time_msec}  # tile_key -> arrival_time_msec
+	var visited: Dictionary = {_tile_key(player_tile): current_time_msec} # tile_key -> arrival_time_msec
 	var head := 0
 	
 	var best_safe_tile: Vector2i = Vector2i(-1, -1)
-	var best_distance: int = 999999  # Closest safe tile (lower is better)
-	var best_safety_margin: float = -1.0  # How long until this tile explodes (higher is better)
+	var best_distance: int = 999999
+	var best_safety_margin: float = -1.0
+	var found_permanent_safe: bool = false
+	var best_panic_tile: Vector2i = Vector2i(-1, -1)
+	var best_panic_margin: float = -1.0
 	
 	while head < queue.size():
 		var current_pos := queue[head]
@@ -52,92 +101,212 @@ func _tick(_delta: float) -> int:
 		
 		# CRITICAL: Never consider current tile as escape destination - bot MUST move
 		if current_pos == player_tile:
-			# Skip evaluation, just explore neighbors
 			pass
 		else:
 			# Check if this tile is safe (using threat matrix)
 			var is_permanently_safe = not threat_matrix.has(current_key)
 			var safety_margin: float = 0.0
 			
+			# DEBUG: Log check for first few tiles
+			if distance_from_start <= 2 and debug_logging:
+				print("[BTFindEscapeRoute] CHECK tile=", current_pos, " key=", current_key, " in_threat=", threat_matrix.has(current_key), " perm_safe=", is_permanently_safe)
+			
 			if is_permanently_safe:
-				# This tile never explodes - check if it's closer than our current best
-				if distance_from_start < best_distance or (distance_from_start == best_distance and best_safety_margin < 999999.0):
+				# CRITICAL FIX: For ESCAPE routes, a permanently safe dead end is ACCEPTABLE!
+				# The bot can survive there even if trapped - they just wait for bombs to explode.
+				# Dead ends are only dangerous when we're PLANNING to place a bomb after arriving.
+				var has_further_exit = _tile_has_further_exit(current_pos, threat_matrix, player_tile, grid_sampler)
+				
+				if not has_further_exit:
+					# This is a DEAD END but permanently safe - still use it for escape!
+					if debug_logging:
+						print("[BTFindEscapeRoute] ✓ Tile ", current_pos, " is DEAD END but PERMANENTLY SAFE - acceptable for escape!")
+					# Accept this as a valid escape destination (lower priority than tiles with exits)
+					if not found_permanent_safe or distance_from_start < best_distance:
+						# Only use dead end if we haven't found a better option with exits
+						if best_safe_tile == Vector2i(-1, -1) or distance_from_start < best_distance:
+							best_safe_tile = current_pos
+							best_distance = distance_from_start
+							best_safety_margin = 999999.0
+							print("[BTFindEscapeRoute] Using SAFE DEAD END at ", current_pos, " (distance: ", distance_from_start, ")")
+				elif not found_permanent_safe:
+					# This tile never explodes AND has further exits - PRIORITIZE IT
+					found_permanent_safe = true
 					best_safe_tile = current_pos
 					best_distance = distance_from_start
-					best_safety_margin = 999999.0  # Permanently safe = infinite margin
+					best_safety_margin = 999999.0
 					print("[BTFindEscapeRoute] Found permanently safe tile at ", current_pos, " (distance: ", distance_from_start, ")")
-					# Don't return immediately - keep searching for closer safe tiles
+				elif distance_from_start < best_distance:
+					best_safe_tile = current_pos
+					best_distance = distance_from_start
+					best_safety_margin = 999999.0
+					print("[BTFindEscapeRoute] Found CLOSER permanently safe tile at ", current_pos, " (distance: ", distance_from_start, ")")
 			else:
-				# Tile will explode at some point - check if we have time
-				var explosion_time: float = threat_matrix[current_key]
-				safety_margin = explosion_time - arrival_time
-				
-				# Need at least 1000ms safety margin to consider it "safe enough"
-				if safety_margin > 1000.0:
-					# Prefer closer tiles, but if same distance prefer longer safety margin
-					if distance_from_start < best_distance or (distance_from_start == best_distance and safety_margin > best_safety_margin):
-						best_safe_tile = current_pos
-						best_distance = distance_from_start
-						best_safety_margin = safety_margin
+				# Tile will explode at some point
+				if not found_permanent_safe:
+					var explosion_time: float = threat_matrix[current_key]
+					safety_margin = explosion_time - arrival_time
+					
+					# CRITICAL: Check for dead ends even on tiles that will explode!
+					# A dead end is dangerous because there's nowhere to go after
+					var has_further_exit = _tile_has_further_exit(current_pos, threat_matrix, player_tile, grid_sampler)
+					
+					if not has_further_exit:
+						# This is a DEAD END - only use as panic option, never as safe tile
+						if safety_margin > best_panic_margin:
+							best_panic_margin = safety_margin
+							best_panic_tile = current_pos
+						if debug_logging:
+							print("[BTFindEscapeRoute] ⚠ Tile ", current_pos, " has margin ", safety_margin, "ms but is DEAD END - only for panic")
+					else:
+						# Track best panic option (any tile we can reach before explosion)
+						# Prefer larger margins
+						if safety_margin > best_panic_margin:
+							best_panic_margin = safety_margin
+							best_panic_tile = current_pos
+						
+						# Need at least 1500ms safety margin to consider it "safe enough"
+						if safety_margin > 1500.0:
+							if distance_from_start < best_distance or (distance_from_start == best_distance and safety_margin > best_safety_margin):
+								best_safe_tile = current_pos
+								best_distance = distance_from_start
+								best_safety_margin = safety_margin
 		
-		# Continue searching - explore neighbors only if we can pass through safely
-		# AND we haven't already found a closer safe tile
+		# Continue searching...
+		# CRITICAL FIX: Always explore neighbors from the STARTING tile, even if it's threatened!
+		# The bot is already there, so it doesn't matter if it's threatened.
+		# Only check can_pass_through for INTERMEDIATE tiles.
 		var can_pass_through = false
-		if threat_matrix.has(current_key):
+		if current_pos == player_tile:
+			can_pass_through = true # Always explore from starting position
+		elif threat_matrix.has(current_key):
 			var explosion_time = threat_matrix[current_key]
-			can_pass_through = arrival_time < explosion_time  # Can we pass before explosion?
+			can_pass_through = arrival_time < explosion_time # Can we pass before explosion?
 		else:
-			can_pass_through = true  # Safe tile, definitely can pass
+			can_pass_through = true
 		
-		# Optimization: Stop exploring if we've found a safe tile closer than current search depth
 		if best_safe_tile != Vector2i(-1, -1) and distance_from_start >= best_distance:
-			continue  # No point exploring further from here
+			if found_permanent_safe:
+				continue
 		
-		if can_pass_through and distance_from_start < escape_radius:  # Use actual distance instead of queue size
+		if can_pass_through and distance_from_start < escape_radius:
+			var neighbors_checked = 0
+			var neighbors_added = 0
 			for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
 				var next_pos := current_pos + dir
+				neighbors_checked += 1
 				
-				# OPTIMIZATION: Check walkability FIRST before any other computation
 				if not grid_sampler.is_tile_walkable(next_pos):
-					continue  # Wall/block - don't explore this direction further
+					if debug_logging and current_pos == player_tile:
+						print("[BTFindEscapeRoute] DEBUG: Neighbor ", next_pos, " not walkable (wall/block)")
+					continue
 				
 				var next_key := _tile_key(next_pos)
 				var next_arrival_time: float = arrival_time + msec_per_tile
 				
-				# Skip if already visited with better time
 				if visited.has(next_key) and visited[next_key] <= next_arrival_time:
+					if debug_logging and current_pos == player_tile:
+						print("[BTFindEscapeRoute] DEBUG: Neighbor ", next_pos, " already visited")
 					continue
 				
+				# CRITICAL: DO NOT check stuck penalties during escape!
+				# Survival trumps movement history. If a tile was stuck due to
+				# collision/pathfinding issues, that's still better than dying.
+				# The bot MUST try every possible escape route.
+				# Skip if penalized (stuck) - DISABLED FOR ESCAPE
+				# var stuck_targets = {}
+				# if blackboard.has_var("stuck_targets"):
+				# 	stuck_targets = blackboard.get_var("stuck_targets")
+				# if stuck_targets.has(next_key):
+				# 	if Time.get_ticks_msec() < stuck_targets[next_key]:
+				# 		if debug_logging and current_pos == player_tile:
+				# 			print("[BTFindEscapeRoute] DEBUG: Neighbor ", next_pos, " penalized (stuck)")
+				# 		continue
+				# 	else:
+				# 		stuck_targets.erase(next_key)
+				
+				# Skip if tile has a bomb
+				var has_bomb = false
+				for bomb_id in game_instance.bombs:
+					var bomb = game_instance.bombs[bomb_id]
+					if is_instance_valid(bomb) and not bomb.has_exploded:
+						if bomb.get_tile_position() == next_pos:
+							has_bomb = true
+							break
+				if has_bomb:
+					if debug_logging and current_pos == player_tile:
+						print("[BTFindEscapeRoute] DEBUG: Neighbor ", next_pos, " has bomb")
+					continue
+
 				visited[next_key] = next_arrival_time
 				queue.append(next_pos)
+				neighbors_added += 1
+			
+			if debug_logging and current_pos == player_tile:
+				print("[BTFindEscapeRoute] DEBUG: From starting tile: checked ", neighbors_checked, " neighbors, added ", neighbors_added, " to queue")
 	
-	# Use best tile found (even if temporary safety)
+	# Use best tile found
+	var final_target = Vector2i(-1, -1)
+	var is_panic = false
+	
 	if best_safe_tile != Vector2i(-1, -1):
+		final_target = best_safe_tile
+	elif best_panic_tile != Vector2i(-1, -1):
+		final_target = best_panic_tile
+		is_panic = true
+		
+	if final_target != Vector2i(-1, -1):
 		# CRITICAL: Verify escape tile is not the current tile or a bomb location
-		if best_safe_tile == player_tile:
+		if final_target == player_tile:
 			print("[BTFindEscapeRoute] ERROR: Escape tile is current tile! This should never happen.")
 			return FAILURE
 		
-		# Check if escape tile has a bomb
+		# Check if escape tile has a bomb (double check)
 		for bomb_id in game_instance.bombs:
 			var bomb = game_instance.bombs[bomb_id]
 			if is_instance_valid(bomb) and not bomb.has_exploded:
-				if bomb.get_tile_position() == best_safe_tile:
-					print("[BTFindEscapeRoute] ERROR: Escape tile ", best_safe_tile, " has a bomb! Rejecting.")
+				if bomb.get_tile_position() == final_target:
+					if debug_logging:
+						print("[BTFindEscapeRoute] ⚠ Escape tile ", final_target, " has a bomb! Rejecting.")
 					return FAILURE
 		
-		blackboard.set_var(target_cell_var, best_safe_tile)
+		blackboard.set_var(target_cell_var, final_target)
 		blackboard.set_var("escape_route_found", true)
-		print("[BTFindEscapeRoute] ✓ Found escape tile at ", best_safe_tile, " (safety margin: ", best_safety_margin, "ms) from current ", player_tile)
+		if is_panic:
+			print("[BTFindEscapeRoute] ⚠ PANIC: No safe route found. Moving to best available option: ", final_target, " (margin: ", best_panic_margin, "ms)")
+		else:
+			print("[BTFindEscapeRoute] ✓ Found escape tile at ", final_target, " (safety margin: ", best_safety_margin, "ms)")
 		return SUCCESS
 	
 	# No escape route found
 	blackboard.set_var("escape_route_found", false)
-	print("[BTFindEscapeRoute] No escape route found!")
+	blackboard.set_var(target_cell_var, null)
+	print("[BTFindEscapeRoute] ❌ No escape route found!")
+	print("[BTFindEscapeRoute] DEBUG: Explored ", queue.size(), " tiles, visited ", visited.size(), " unique tiles")
+	print("[BTFindEscapeRoute] DEBUG: best_safe_tile=", best_safe_tile, " best_panic_tile=", best_panic_tile)
+	print("[BTFindEscapeRoute] DEBUG: best_panic_margin=", best_panic_margin, "ms")
+	print("[BTFindEscapeRoute] DEBUG: Current position=", player_tile, " escape_radius=", escape_radius)
+	print("[BTFindEscapeRoute] DEBUG: Threat matrix size=", threat_matrix.size())
 	return FAILURE
 
 func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]
+
+func _tile_has_further_exit(tile: Vector2i, threat_matrix: Dictionary, player_tile: Vector2i, grid_sampler) -> bool:
+	"""Check if tile has at least one walkable neighbor that is NOT in the threat matrix.
+	This prevents bots from escaping to dead-end tiles where they'll be trapped."""
+	var directions := [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]
+	for dir in directions:
+		var neighbor = tile + dir
+		# Skip the direction we came from (player's current tile)
+		if neighbor == player_tile:
+			continue
+		if grid_sampler.is_tile_walkable(neighbor):
+			var neighbor_key = _tile_key(neighbor)
+			# A safe neighbor exists - this is not a dead end
+			if not threat_matrix.has(neighbor_key):
+				return true
+	return false
 
 func _get_blast_tiles(center: Vector2i, range_val: int, grid_sampler) -> Array[Vector2i]:
 	"""Calculate which tiles will be hit by bomb explosion (respecting walls)"""
@@ -153,9 +322,9 @@ func _get_blast_tiles(center: Vector2i, range_val: int, grid_sampler) -> Array[V
 			# Check if walkable (walls block explosions)
 			if not grid_sampler.is_tile_walkable(tile):
 				var tile_type = grid_sampler.get_tile_type(tile)
-				if tile_type == 1:  # Hard wall - stop blast
+				if tile_type == 1: # Hard wall - stop blast
 					break
-				elif tile_type == 2:  # Soft block - blast hits it but stops
+				elif tile_type == 2: # Soft block - blast hits it but stops
 					tiles.append(tile)
 					break
 			else:

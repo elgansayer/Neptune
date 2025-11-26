@@ -57,6 +57,21 @@ func is_tile_walkable(tile_position: Vector2i, allow_soft_block: bool = false) -
 		return true
 	return false
 
+func is_tile_safe_for_target(tile_position: Vector2i) -> bool:
+	"""Check if tile is safe to use as a movement/farming target (no bombs)"""
+	if not is_tile_walkable(tile_position):
+		return false
+	
+	# Check for bombs at this position
+	if "bombs" in _game_instance:
+		for bomb_id in _game_instance.bombs:
+			var bomb = _game_instance.bombs[bomb_id]
+			if is_instance_valid(bomb) and not bomb.has_exploded:
+				if bomb.get_tile_position() == tile_position:
+					return false  # Bomb present - not safe for targeting!
+	
+	return true
+
 func is_tile_occupied(tile_position: Vector2i, ignore_player: Node = null) -> bool:
 	if _game_instance == null:
 		return false
@@ -93,7 +108,16 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 	if _astar == null or _map_size == Vector2i.ZERO:
 		_update_map_size()
 		if _astar == null: # Should be initialized by _update_map_size
+			print("[GridSampler] ERROR: _astar is null after _update_map_size!")
 			return []
+	
+	# DEBUG: Check if tiles are in bounds
+	if not is_in_bounds(start_tile):
+		print("[GridSampler] ERROR: start_tile ", start_tile, " out of bounds! map_size=", _map_size)
+		return []
+	if not is_in_bounds(goal_tile):
+		print("[GridSampler] ERROR: goal_tile ", goal_tile, " out of bounds! map_size=", _map_size)
+		return []
 			
 	# 1. Reset grid solids based on static map (walls/soft blocks)
 	# We iterate the map to ensure dynamic soft block changes are reflected
@@ -142,6 +166,14 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 	
 	# 4. Get the path
 	var path = _astar.get_id_path(start_tile, goal_tile)
+	
+	# DEBUG: If path is empty, check why
+	if path.is_empty() and start_tile != goal_tile:
+		var start_solid = _astar.is_point_solid(start_tile)
+		var goal_solid = _astar.is_point_solid(goal_tile)
+		if start_solid or goal_solid:
+			print("[GridSampler] Path FAILED: start_solid=", start_solid, " goal_solid=", goal_solid, " start=", start_tile, " goal=", goal_tile)
+	
 	print("[GridSampler] Path from ", start_tile, " to ", goal_tile, ": ", path)
 	
 	# AStarGrid2D returns path including start point.
