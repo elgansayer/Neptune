@@ -262,6 +262,33 @@ func _tick(_delta: float) -> int:
 				else:
 					stuck_targets.erase(t_key) # Expired
 	
+	# CRITICAL SAFETY CHECK: Is the target tile currently threatened by an explosion?
+	# This must be checked BEFORE the commitment logic to prevent walking into explosions!
+	var hazard_predictor = blackboard.get_var("hazard_predictor")
+	if hazard_predictor and target_cell != null:
+		var is_target_threatened = hazard_predictor.is_tile_threatened(target_cell)
+		if is_target_threatened:
+			# Target is in a blast zone! Abort immediately unless we're escaping.
+			var is_escape = (cell_var == "escape_cell")
+			if not is_escape:
+				print("[BTMoveToCell] 🛑 ABORT: Target %s is THREATENED by explosion!" % target_cell)
+				blackboard.set_var(cell_var, null)
+				player.set_input(0.0, 0.0)
+				_reset_state()
+				return FAILURE
+	
+	# CRITICAL SAFETY CHECK: Does the target tile have a bomb on it?
+	# Don't walk INTO bombs!
+	if target_cell != null and grid_sampler.has_method("is_tile_safe_for_target"):
+		if not grid_sampler.is_tile_safe_for_target(target_cell):
+			var is_escape = (cell_var == "escape_cell")
+			if not is_escape:
+				print("[BTMoveToCell] 🛑 ABORT: Target %s has a BOMB on it!" % target_cell)
+				blackboard.set_var(cell_var, null)
+				player.set_input(0.0, 0.0)
+				_reset_state()
+				return FAILURE
+	
 	# Recalculate path if target changed or no path exists
 	# COMMITMENT LOGIC:
 	# If we are already moving to a committed target, do NOT recalculate unless:
@@ -345,6 +372,17 @@ func _tick(_delta: float) -> int:
 		return RUNNING
 	
 	var waypoint = _cached_path[_current_waypoint_index]
+	
+	# SAFETY: Check if our current waypoint is threatened - if so, abort!
+	if hazard_predictor and hazard_predictor.is_tile_threatened(waypoint):
+		var is_escape = (cell_var == "escape_cell")
+		if not is_escape:
+			print("[BTMoveToCell] 🛑 ABORT: Waypoint %s (index %d) is THREATENED by explosion!" % [waypoint, _current_waypoint_index])
+			blackboard.set_var(cell_var, null)
+			player.set_input(0.0, 0.0)
+			_reset_state()
+			return FAILURE
+	
 	var waypoint_center = grid_sampler.tile_to_world_center(waypoint)
 	
 	# Check PHYSICAL distance to waypoint center

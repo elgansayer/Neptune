@@ -37,6 +37,8 @@ func _tick(_delta: float) -> int:
 	var adjusted_margin = safety_time_margin
 	
 	match personality:
+		"COMPETITIVE":
+			adjusted_margin = 0.4 # Highly aggressive - take risks!
 		"KAMIKAZE":
 			adjusted_margin = 0.3 # Very risky
 		"AGGRESSIVE":

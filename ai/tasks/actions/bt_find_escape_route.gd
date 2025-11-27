@@ -57,28 +57,40 @@ func _tick(_delta: float) -> int:
 			
 		if current_escape_target is Vector2i:
 			# Check if the target is still safe
-			# We use a slightly larger buffer for the target to ensure it remains safe
 			var current_time = Time.get_ticks_msec() / 1000.0
 			var is_target_safe = hazard_predictor.is_tile_safe(current_escape_target, current_time, 0.5)
 			
-			# Also check if the path to it is roughly safe (simplified check)
-			# For now, just check the target. If target is safe, we stick to it.
-			# Unless we are standing on it? No, if we are standing on it, we are safe (handled by BTIsInDanger)
+			# CRITICAL: Also verify the PATH to the target is still valid!
+			# This prevents the bot from being trapped when another bomb blocks the path.
+			var path_valid = true
+			var path_to_target = grid_sampler.get_path(player_tile, current_escape_target)
+			if path_to_target.is_empty() and player_tile != current_escape_target:
+				path_valid = false
+				if debug_logging:
+					print("[BTFindEscapeRoute] ⚠ Path to escape target blocked! Recalculating...")
 			
-			# Also check if the target has a bomb on it (which would be bad)
+			# Check if the target has a bomb on it (which would be bad)
 			var has_bomb = false
 			if game_instance.game_map[current_escape_target.y][current_escape_target.x] == 3: # Bomb
 				has_bomb = true
 				
-			if is_target_safe and not has_bomb:
+			if is_target_safe and not has_bomb and path_valid:
 				if debug_logging:
 					print("[BTFindEscapeRoute] Keeping existing valid escape target: ", current_escape_target)
 				return SUCCESS
+			elif not path_valid:
+				# Path is blocked - need to find new escape route
+				blackboard.set_var("escape_route_found", false)
 	
 	# BFS to find safe tiles considering TIMING and WALLS
 	# A tile is safe if either:
 	# 1. It's not in threat matrix at all (never explodes)
 	# 2. We can reach it and stay there safely before it explodes
+	
+	# Get personality config for escape aggression
+	var personality_config = blackboard.get_var("personality_config", {})
+	# COMPETITIVE bots cut closer margins (750ms) vs cautious bots (1500ms)
+	var min_safety_margin_ms = 750.0 if personality_config.get("trap_aggression", 0.5) >= 0.8 else 1500.0
 	
 	var queue: Array[Vector2i] = [player_tile]
 	var visited: Dictionary = {_tile_key(player_tile): current_time_msec} # tile_key -> arrival_time_msec
@@ -165,8 +177,9 @@ func _tick(_delta: float) -> int:
 							best_panic_margin = safety_margin
 							best_panic_tile = current_pos
 						
-						# Need at least 1500ms safety margin to consider it "safe enough"
-						if safety_margin > 1500.0:
+						# Need at least min_safety_margin_ms safety margin to consider it "safe enough"
+						# COMPETITIVE bots use 750ms, cautious bots use 1500ms
+						if safety_margin > min_safety_margin_ms:
 							if distance_from_start < best_distance or (distance_from_start == best_distance and safety_margin > best_safety_margin):
 								best_safe_tile = current_pos
 								best_distance = distance_from_start
@@ -278,7 +291,48 @@ func _tick(_delta: float) -> int:
 			print("[BTFindEscapeRoute] ✓ Found escape tile at ", final_target, " (safety margin: ", best_safety_margin, "ms)")
 		return SUCCESS
 	
-	# No escape route found
+	# LAST RESORT: No safe escape found - try to move to ANY walkable adjacent tile
+	# This gives the bot a chance to survive if the situation changes (bomb moves, explodes early, etc.)
+	# Better to try something than stand still and die for sure
+	var last_resort_tile = Vector2i(-1, -1)
+	var last_resort_margin: float = -1.0
+	
+	for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+		var adjacent = player_tile + dir
+		if not grid_sampler.is_tile_walkable(adjacent):
+			continue
+		
+		# Check if has bomb
+		var has_bomb = false
+		for bomb_id in game_instance.bombs:
+			var bomb = game_instance.bombs[bomb_id]
+			if is_instance_valid(bomb) and not bomb.has_exploded:
+				if bomb.get_tile_position() == adjacent:
+					has_bomb = true
+					break
+		if has_bomb:
+			continue
+		
+		# Calculate how much time we have on this tile
+		var adj_key = _tile_key(adjacent)
+		var margin: float = 0.0
+		if threat_matrix.has(adj_key):
+			var explosion_time = threat_matrix[adj_key]
+			margin = explosion_time - (current_time_msec + msec_per_tile)
+		else:
+			margin = 999999.0 # Not in threat at all
+		
+		if margin > last_resort_margin:
+			last_resort_margin = margin
+			last_resort_tile = adjacent
+	
+	if last_resort_tile != Vector2i(-1, -1):
+		blackboard.set_var(target_cell_var, last_resort_tile)
+		blackboard.set_var("escape_route_found", true)
+		print("[BTFindEscapeRoute] 🆘 LAST RESORT: Moving to ", last_resort_tile, " (margin: ", last_resort_margin, "ms)")
+		return SUCCESS
+	
+	# Truly no escape - print debug and fail
 	blackboard.set_var("escape_route_found", false)
 	blackboard.set_var(target_cell_var, null)
 	print("[BTFindEscapeRoute] ❌ No escape route found!")

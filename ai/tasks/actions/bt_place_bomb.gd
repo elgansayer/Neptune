@@ -59,23 +59,63 @@ func _tick(delta: float) -> int:
 			# Already a bomb here
 			return FAILURE
 	
+	# CRITICAL: Validate bomb has PURPOSE (soft blocks to destroy OR opponent in range)
+	# This prevents useless bombs in open areas
+	var grid_sampler = blackboard.get_var("grid_sampler")
+	var bomb_range = player.bomb_range if player else 2
+	var has_purpose = false
+	
+	# Check for soft blocks in blast range
+	var soft_blocks = _count_soft_blocks_in_range(player_tile, bomb_range, grid_sampler, game_instance)
+	if soft_blocks > 0:
+		has_purpose = true
+	
+	# Check for opponents in blast range (this is a tactical bomb)
+	if not has_purpose:
+		var opponent_tracker = blackboard.get_var("opponent_tracker")
+		if opponent_tracker:
+			var nearest = opponent_tracker.get_nearest_opponent(player.position, player.peer_id)
+			if nearest and not nearest.is_empty():
+				var opp_tile = nearest.get("tile", Vector2i(-99, -99))
+				var distance = abs(opp_tile.x - player_tile.x) + abs(opp_tile.y - player_tile.y)
+				# Opponent is close enough that this bomb is tactical
+				if distance <= bomb_range + 3:
+					has_purpose = true
+	
+	if not has_purpose:
+		print("[BTPlaceBomb] REJECTED: No purpose (no soft blocks or opponents in range)")
+		return FAILURE
+	
 	
 	# CONTEXT-AWARE SAFETY: Be STRICT if enemies nearby, RELAXED if farming alone
-	# Check for nearby opponents
+	# Check for nearby opponents (reuse opponent_tracker from above if set)
 	var has_nearby_enemies = false
-	var opponent_tracker = blackboard.get_var("opponent_tracker", null)
-	if opponent_tracker and opponent_tracker.has_method("get_closest_opponent"):
-		var closest = opponent_tracker.get_closest_opponent(player_tile)
+	var opp_tracker = blackboard.get_var("opponent_tracker", null)
+	if opp_tracker and opp_tracker.has_method("get_closest_opponent"):
+		var closest = opp_tracker.get_closest_opponent(player_tile)
 		if closest and closest.has("distance"):
 			# Enemy within 8 tiles = combat situation, be STRICT
 			has_nearby_enemies = closest["distance"] <= 8.0
+	
+	# CRITICAL: DEAD-END POSITION CHECK
+	# If bot is already in a dead end (only 1 walkable neighbor), do NOT place more bombs!
+	# This prevents suicide when bot escapes to dead end then tries to chain-bomb
+	var exit_count = _count_walkable_exits(player_tile, grid_sampler, game_instance)
+	if exit_count <= 1:
+		# Dead end or corner - if we already have a bomb active, don't place another
+		var active_bomb_count = _count_active_player_bombs(player, game_instance)
+		if active_bomb_count > 0:
+			print("[BTPlaceBomb] ⚠ DEAD-END ABORT: Already in dead end (exits=%d) with %d active bombs!" % [exit_count, active_bomb_count])
+			return FAILURE
+		# Allow first bomb to break out of dead end
+		print("[BTPlaceBomb] ⚠ Dead end (exits=%d), but allowing first bomb to break out" % exit_count)
 	
 	# CRITICAL PRE-FLIGHT SAFETY CHECK: Verify escape route one final time
 	# This prevents suicide if situation changed since planning
 	var bomb_safety_checker = blackboard.get_var("bomb_safety_checker")
 	if bomb_safety_checker:
 		var current_time_msec = Time.get_ticks_msec()
-		var bomb_range = player.bomb_range if player else 2
+		# bomb_range already declared above
 		var bot_speed = 5.0 # tiles per second
 		
 		# STRICT MODE (enemies nearby): MUST have safe escape
@@ -115,16 +155,27 @@ func _tick(delta: float) -> int:
 			var margin_ms = safety_result.get("margin_ms", 0)
 			var escape_tile = safety_result.get("escape_tile", Vector2i(-1, -1))
 			
+			# CRITICAL: If escape_tile is invalid (-1, -1), there is NO escape at all!
+			# This is a DEATH TRAP - do not place bomb!
+			if escape_tile == Vector2i(-1, -1):
+				print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: NO ESCAPE TILE FOUND - DEATH TRAP!")
+				return FAILURE
+			
 			if not is_safe:
-				# No safe tile with further exits found, but check margin
-				# If margin is VERY high (>1500ms), the escape tile is technically safe
-				# even if it's a "dead end" - bot can wait there until bomb clears
-				# This allows farming in corner areas surrounded by soft blocks
-				if margin_ms >= 1500.0:
-					print("[BTPlaceBomb] ⚠ MARGINAL SAFE: escape=%s margin=%.0fms (dead end but survivable)" % [escape_tile, margin_ms])
-					# Continue to place bomb - it's survivable even if not ideal
+				# No safe tile with further exits found
+				# COMPETITIVE bots are more aggressive - lower margin requirement
+				var personality = blackboard.get_var("personality", "BALANCED")
+				var required_margin = 3000.0  # Default conservative
+				if personality == "COMPETITIVE":
+					required_margin = 1500.0  # Competitive bots take risks
+				elif personality == "AGGRESSIVE":
+					required_margin = 2000.0
+				
+				if margin_ms >= required_margin:
+					print("[BTPlaceBomb] ⚠ MARGINAL SAFE: escape=%s margin=%.0fms (personality=%s allows %.0fms)" % [escape_tile, margin_ms, personality, required_margin])
+					# Continue to place bomb - margin is acceptable for this personality
 				else:
-					print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: No escape tile outside blast zone. Margin was: %.0fms (need 1500+)" % margin_ms)
+					print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: Dead end margin %.0fms < required %.0fms" % [margin_ms, required_margin])
 					return FAILURE
 	
 	# Place the bomb
@@ -153,6 +204,25 @@ func _bomb_at_position(tile: Vector2i, game_instance) -> bool:
 			return true
 	return false
 
+func _count_soft_blocks_in_range(center: Vector2i, bomb_range: int, grid_sampler, game_instance) -> int:
+	"""Count soft blocks that would be destroyed by a bomb at this position"""
+	if not grid_sampler:
+		return 0
+	
+	var count = 0
+	var directions = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+	
+	for dir in directions:
+		for dist in range(1, bomb_range + 1):
+			var check_tile = center + (dir * dist)
+			var tile_type = game_instance.get_tile_type(check_tile) if game_instance.has_method("get_tile_type") else grid_sampler.get_tile_type(check_tile)
+			if tile_type == 1:  # Hard block - stops blast
+				break
+			elif tile_type == 2:  # Soft block - counts and stops blast
+				count += 1
+				break
+	return count
+
 func _coerce_to_tile(value) -> Vector2i:
 	"""Convert various types to Vector2i tile position"""
 	if value is Vector2i:
@@ -160,3 +230,35 @@ func _coerce_to_tile(value) -> Vector2i:
 	if value is Vector2:
 		return Vector2i(int(value.x), int(value.y))
 	return Vector2i(-1, -1)
+
+func _count_walkable_exits(tile: Vector2i, grid_sampler, game_instance) -> int:
+	"""Count the number of walkable exits from a position (ignoring bombs for static geometry check)"""
+	var count = 0
+	var directions = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+	
+	for dir in directions:
+		var neighbor = tile + dir
+		# Check if neighbor is walkable (floor tile, not wall or soft block)
+		var tile_type = -1
+		if game_instance and game_instance.has_method("get_tile_type"):
+			tile_type = game_instance.get_tile_type(neighbor)
+		elif grid_sampler and grid_sampler.has_method("get_tile_type"):
+			tile_type = grid_sampler.get_tile_type(neighbor)
+		
+		if tile_type == 0:  # Floor tile = walkable exit
+			count += 1
+	
+	return count
+
+func _count_active_player_bombs(player, game_instance) -> int:
+	"""Count how many active (unexploded) bombs this player has placed"""
+	if not game_instance or not "bombs" in game_instance:
+		return 0
+	
+	var count = 0
+	for bomb_id in game_instance.bombs:
+		var bomb = game_instance.bombs[bomb_id]
+		if is_instance_valid(bomb) and not bomb.has_exploded:
+			if bomb.owner_peer_id == player.peer_id:
+				count += 1
+	return count

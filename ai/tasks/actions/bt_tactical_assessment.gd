@@ -7,8 +7,8 @@ class_name BTTacticalAssessment
 ## Includes HYSTERESIS to prevent rapid switching between tactics
 
 @export var assessment_var: StringName = &"tactical_plan" ## Stores chosen tactic in blackboard
-@export var min_safety_margin: float = 1.5 ## Minimum time (seconds) to maintain safety
-@export var lock_duration_ms: int = 1000 ## Minimum time to stick to a tactic (unless critical)
+@export var min_safety_margin: float = 1.0 ## Minimum time (seconds) to maintain safety (reduced for aggression)
+@export var lock_duration_ms: int = 600 ## Minimum time to stick to a tactic (reduced for faster reactions)
 
 # Hysteresis state
 var _current_tactic: String = "NONE"
@@ -48,6 +48,7 @@ func _tick(_delta: float) -> int:
 	var bomb_count = player.bombs_placed if player else 0
 	var max_bombs = player.max_bombs if player else 10
 	var trap_aggression = personality_config.get("trap_aggression", 0.5)
+	var has_path_to_opponent = blackboard.get_var("path_to_opponent", true)
 	
 	# Assess threat matrix
 	var threat_matrix = ai_manager.get_current_threat_matrix()
@@ -62,47 +63,93 @@ func _tick(_delta: float) -> int:
 	var new_tactic = "NONE"
 	var new_priority = 0
 	
+	# Check if opponent is near a corner (prime trap opportunity)
+	var opponent_near_corner = _is_near_corner(opponent_tile, grid_sampler)
+	var opponent_in_corridor = _is_in_corridor(opponent_tile, grid_sampler)
+	var opponent_velocity: Vector2 = nearest.get("velocity", Vector2.ZERO)
+	var opponent_moving = opponent_velocity.length() > 10.0
+	
+	# PRIORITY 0: CORNER TRAP - opponent backed into corner (LETHAL)
+	if opponent_escape_routes == 1 and opponent_near_corner and we_have_bombs and distance <= 5:
+		new_tactic = "CORNER_TRAP"
+		new_priority = 12
+	
+	# PRIORITY 0.5: BODY BLOCK - we're adjacent to opponent's only escape, block with body then bomb!
+	elif opponent_escape_routes == 1 and distance <= 2 and we_are_safe:
+		var escape_tile = _get_opponent_escape(opponent_tile, grid_sampler, threat_matrix)
+		if escape_tile != Vector2i.ZERO:
+			var dist_to_escape = grid_sampler.get_manhattan_distance(player_tile, escape_tile)
+			if dist_to_escape <= 1: # We're on or adjacent to their escape
+				new_tactic = "BODY_BLOCK"
+				new_priority = 11
+	
 	# PRIORITY 1: One-Tile Trap (The Kiss) - opponent has 1 escape route
-	if opponent_escape_routes == 1 and we_have_bombs and distance <= 4:
+	elif opponent_escape_routes == 1 and we_have_bombs and distance <= 5:
 		new_tactic = "ONE_TILE_TRAP"
+		new_priority = 11
+	
+	# PRIORITY 2: DOUBLE BOMB PRESSURE - we have 2+ bombs, opponent in corridor
+	elif opponent_in_corridor and (max_bombs - bomb_count) >= 2 and distance <= 4 and we_are_safe:
+		new_tactic = "DOUBLE_BOMB"
 		new_priority = 10
 	
-	# PRIORITY 2: Choke Point Trap - opponent has 2 escape routes, we can block one
-	elif opponent_escape_routes == 2 and we_have_bombs and distance <= 5 and trap_aggression > 0.5:
+	# PRIORITY 3: Choke Point Trap - opponent has 2 escape routes, we can block one
+	elif opponent_escape_routes == 2 and we_have_bombs and distance <= 6:
 		new_tactic = "CHOKE_POINT"
 		new_priority = 9
 	
-	# PRIORITY 2.5: Setup Trap - opponent has 3 escape routes, proactively block one to create choke
-	# This is the KEY to strategic Bomberman - start limiting options BEFORE they're cornered
-	elif opponent_escape_routes == 3 and we_have_bombs and distance <= 6 and trap_aggression > 0.4:
-		new_tactic = "CHOKE_POINT" # Use same execution, but start earlier
+	# PRIORITY 4: TUNNEL PRESSURE - opponent in corridor, cut them off
+	elif opponent_in_corridor and we_have_bombs and distance <= 5 and we_are_safe:
+		new_tactic = "TUNNEL_PRESSURE"
 		new_priority = 8
 	
-	# PRIORITY 3: Space Denial - opponent moving toward us or we're close, cut off movement
-	elif distance <= our_range + 2 and we_have_bombs and we_are_safe:
-		new_tactic = "SPACE_DENIAL"
+	# PRIORITY 5: Setup Trap - opponent has 3 escape routes, proactively block one
+	elif opponent_escape_routes == 3 and we_have_bombs and distance <= 7:
+		new_tactic = "CHOKE_POINT"
 		new_priority = 7
 	
-	# PRIORITY 4: Aggressive Chase - we have bomb advantage
-	elif (max_bombs - bomb_count) >= 2 and distance <= 8 and we_are_safe:
-		new_tactic = "AGGRESSIVE_CHASE"
+	# PRIORITY 6: Space Denial - opponent moving toward us or we're close
+	elif distance <= our_range + 2 and we_have_bombs and we_are_safe:
+		new_tactic = "SPACE_DENIAL"
 		new_priority = 6
 	
-	# PRIORITY 5: Defensive Positioning - we're in danger, need to escape first
-	# NOTE: Usually handled by higher level "Escape" node, but good as fallback
-	elif not we_are_safe:
-		new_tactic = "DEFENSIVE_RETREAT"
-		new_priority = 100 # CRITICAL priority - override everything
+	# PRIORITY 6.5: STUTTER TRAP - fake approach to bait opponent, then cut off retreat
+	elif distance >= 3 and distance <= 6 and we_have_bombs and we_are_safe and opponent_moving:
+		# Check if we can predict their path
+		var predicted_pos = _predict_position(opponent_tile, opponent_velocity, 3)
+		if predicted_pos != opponent_tile and _is_near_corner(predicted_pos, grid_sampler):
+			new_tactic = "STUTTER_TRAP"
+			new_priority = 6
 	
-	# PRIORITY 6: Patient Ambush - opponent is in danger, let them die
-	elif not opponent_is_safe and distance > 2:
-		new_tactic = "WAIT_FOR_DEATH"
+	# PRIORITY 7: ITEM HUNTER TRAP - predict where opponent will go for powerups
+	elif opponent_moving and distance <= 8 and we_have_bombs:
+		new_tactic = "ITEM_HUNTER_TRAP"
 		new_priority = 5
 	
-	# PRIORITY 7: Predictive Intercept - standard chase
-	elif distance <= 12 and we_have_bombs:
-		new_tactic = "PREDICTIVE_INTERCEPT"
+	# PRIORITY 8: Defensive Positioning - we're in danger
+	elif not we_are_safe:
+		new_tactic = "DEFENSIVE_RETREAT"
+		new_priority = 100
+	
+	# PRIORITY 9: Patient Ambush - opponent is in danger, let them die
+	elif not opponent_is_safe and distance > 2:
+		new_tactic = "WAIT_FOR_DEATH"
 		new_priority = 4
+	
+	# PRIORITY 10: Aggressive Chase - we have bomb advantage
+	elif (max_bombs - bomb_count) >= 1 and distance <= 10 and we_are_safe:
+		new_tactic = "AGGRESSIVE_CHASE"
+		new_priority = 3
+	
+	# PRIORITY 11: Predictive Intercept - standard chase
+	elif distance <= 15 and we_have_bombs:
+		new_tactic = "PREDICTIVE_INTERCEPT"
+		new_priority = 2
+	
+	# PRIORITY 12: FARM TOWARD OPPONENT - blocked by soft blocks, destroy them to reach enemy
+	elif not has_path_to_opponent and distance <= 20 and we_have_bombs and we_are_safe:
+		new_tactic = "FARM_TOWARD_OPPONENT"
+		new_priority = 2
 	
 	# DEFAULT: No good tactic available
 	else:
@@ -162,12 +209,19 @@ func _set_tactic(tactic: String, time: int) -> void:
 func _get_priority(tactic: String) -> int:
 	match tactic:
 		"DEFENSIVE_RETREAT": return 100
-		"ONE_TILE_TRAP": return 10
+		"CORNER_TRAP": return 12
+		"BODY_BLOCK": return 11
+		"ONE_TILE_TRAP": return 11
+		"DOUBLE_BOMB": return 10
 		"CHOKE_POINT": return 9
-		"SPACE_DENIAL": return 7
-		"AGGRESSIVE_CHASE": return 6
-		"WAIT_FOR_DEATH": return 5
-		"PREDICTIVE_INTERCEPT": return 4
+		"TUNNEL_PRESSURE": return 8
+		"STUTTER_TRAP": return 6
+		"SPACE_DENIAL": return 6
+		"ITEM_HUNTER_TRAP": return 5
+		"WAIT_FOR_DEATH": return 4
+		"AGGRESSIVE_CHASE": return 3
+		"PREDICTIVE_INTERCEPT": return 2
+		"FARM_TOWARD_OPPONENT": return 2
 		_: return 0
 
 func _is_in_danger(tile: Vector2i, threat_matrix: Dictionary) -> bool:
@@ -194,3 +248,50 @@ func _count_escape_routes(tile: Vector2i, grid_sampler, ai_manager) -> int:
 		safe_routes += 1
 	
 	return safe_routes
+
+func _is_near_corner(tile: Vector2i, grid_sampler) -> bool:
+	"""Check if tile is near a corner (2+ adjacent walls)"""
+	var wall_count = 0
+	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		var check = tile + dir
+		if not grid_sampler.is_tile_walkable(check):
+			wall_count += 1
+	return wall_count >= 2
+
+func _is_in_corridor(tile: Vector2i, grid_sampler) -> bool:
+	"""Check if tile is in a corridor (walls on opposite sides)"""
+	var horizontal_blocked = (not grid_sampler.is_tile_walkable(tile + Vector2i.LEFT) and 
+							  not grid_sampler.is_tile_walkable(tile + Vector2i.RIGHT))
+	var vertical_blocked = (not grid_sampler.is_tile_walkable(tile + Vector2i.UP) and 
+							not grid_sampler.is_tile_walkable(tile + Vector2i.DOWN))
+	return horizontal_blocked or vertical_blocked
+
+func _get_opponent_escape(tile: Vector2i, grid_sampler, threat_matrix: Dictionary) -> Vector2i:
+	"""Get the opponent's single escape route tile. Returns ZERO if multiple or none."""
+	var escapes: Array[Vector2i] = []
+	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		var check = tile + dir
+		if not grid_sampler.is_tile_walkable(check):
+			continue
+		var key = "%d,%d" % [check.x, check.y]
+		if threat_matrix.has(key):
+			continue
+		escapes.append(check)
+	
+	return escapes[0] if escapes.size() == 1 else Vector2i.ZERO
+
+func _predict_position(tile: Vector2i, velocity: Vector2, tiles_ahead: int) -> Vector2i:
+	"""Predict where opponent will be based on velocity."""
+	if velocity.length() < 10.0:
+		return tile
+	
+	var direction = velocity.normalized()
+	var predicted = tile
+	
+	for i in range(tiles_ahead):
+		if abs(direction.x) > abs(direction.y):
+			predicted += Vector2i(sign(direction.x), 0)
+		else:
+			predicted += Vector2i(0, sign(direction.y))
+	
+	return predicted

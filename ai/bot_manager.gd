@@ -25,7 +25,7 @@ var next_bot_peer_id := -1
 var auto_spawned := false
 var bot_behavior_tree # BehaviorTree resource
 
-const DEFAULT_PERSONALITY := "BALANCED"
+const DEFAULT_PERSONALITY := "COMPETITIVE" # Maximum aggression for testing
 var auto_spawn_count := 3 # Spawn 3 bots for testing competitive play
 
 # Personality configuration for competitive AI behaviors
@@ -101,6 +101,18 @@ const PERSONALITY_CONFIGS = {
 		"corner_preference": 0.1,
 		"ambush_patience": 15.0,
 		"bomb_placement_aggression": 0.2
+	},
+	"COMPETITIVE": {
+		"reaction_time_ms": 10, # Near-instant reactions
+		"trap_aggression": 1.0, # Maximum trap focus
+		"prediction_lookahead": 6, # Deep prediction
+		"corner_preference": 1.0, # Always exploit corners
+		"ambush_patience": 2.0, # Quick ambush execution
+		"bomb_placement_aggression": 0.85, # High bomb placement
+		"double_bomb_threshold": 0.9, # Use double bomb often
+		"stutter_trap_enabled": true, # Use stutter trap
+		"corridor_awareness": 1.0, # Maximum corridor awareness
+		"diagonal_escape_preference": 0.8 # Prefer diagonal safety
 	}
 }
 

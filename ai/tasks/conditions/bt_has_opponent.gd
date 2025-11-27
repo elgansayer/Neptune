@@ -51,16 +51,19 @@ func _tick(_delta: float) -> int:
 			# print("[BTHasOpponent] Opponent too far away")
 			return FAILURE
 	
-	# CRITICAL: Check if we can actually reach the opponent (path exists)
-	# This prevents wasting cycles on tactical planning when we're blocked by soft blocks
+	# NOTE: We DO NOT check path here anymore!
+	# Bots should ALWAYS know about opponents, even if blocked by soft blocks.
+	# This allows tactical assessment to decide whether to:
+	# 1. Attack directly if path exists
+	# 2. Farm TOWARD the opponent if blocked
+	# The tactical system handles this, not the opponent detection.
+	
+	# Store path availability in blackboard for tactical decisions
+	var has_path = false
 	if grid_sampler:
 		var path_to_opponent = grid_sampler.find_path(player_tile, opponent_tile, 40, player, false)
-		if path_to_opponent.is_empty():
-			# No path to opponent - we're blocked, should farm instead!
-			blackboard.set_var("nearest_opponent", null)
-			blackboard.set_var("opponent_tile", null)
-			# print("[BTHasOpponent] FAILURE: No path to opponent (blocked by soft blocks)")
-			return FAILURE
+		has_path = not path_to_opponent.is_empty()
+	blackboard.set_var("path_to_opponent", has_path)
 	
 	# Store opponent data in blackboard for subsequent nodes
 	if store_in_blackboard:

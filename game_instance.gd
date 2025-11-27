@@ -266,10 +266,10 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	player.has_bomb_kicker = false
 	player.has_power_glove = true
 	
-	# Bots start with only 1 bomb
+	# Bots start with multiple bombs for aggressive chain-bombing
 	if is_bot:
-		player.max_bombs = 1
-		print("[Game] Bot spawned with 1 bomb")
+		player.max_bombs = 3
+		print("[Game] Bot spawned with 3 bombs")
 	else:
 		print("[Game] Player spawned with Power Glove (bomb kicker disabled for testing)")
 	
