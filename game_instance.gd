@@ -268,10 +268,10 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	# Bots start with multiple bombs and bomb kicker for aggressive tactics
 	if is_bot:
 		player.max_bombs = 3
-		player.has_bomb_kicker = true  # Bots can kick bombs!
+		player.has_bomb_kicker = true # Bots can kick bombs!
 		print("[Game] Bot spawned with 3 bombs + bomb kicker")
 	else:
-		player.has_bomb_kicker = false  # Human player can pick up bomb kicker powerup
+		player.has_bomb_kicker = false # Human player can pick up bomb kicker powerup
 		print("[Game] Player spawned with Power Glove")
 	
 	players[peer_id] = player
@@ -424,8 +424,17 @@ func place_bomb(player: ServerPlayer):
 	add_child(bomb)
 	
 	# CRITICAL: Add collision exception AFTER bomb is in tree to avoid race condition
-	# If added before, the deferred call might not complete before the next physics frame
-	player.add_bomb_collision_exception(bomb)
+	# Check ALL players (not just owner) to see if they are standing on the bomb
+	# If so, disable collision until they walk off
+	var bomb_tile = bomb.get_tile_position()
+	for peer_id in players:
+		var p = players[peer_id]
+		if not is_instance_valid(p) or p.is_dead:
+			continue
+			
+		if p.get_tile_position() == bomb_tile:
+			p.add_bomb_collision_exception(bomb)
+			print("[Game] Added collision exception for player ", p.username, " on bomb ", bomb.bomb_id)
 	
 	player.bombs_placed += 1
 	bomb.exploded.connect(_on_bomb_exploded)
