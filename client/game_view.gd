@@ -1032,12 +1032,6 @@ func render_map(map_data):
 					)
 					add_child(hitbox)
 	
-	# Position camera to show ENTIRE map (fixed, no following)
-	# Center camera on the map
-	var map_center_x = map_width * GameConfig.TILE_SIZE / 2.0
-	var map_center_y = map_height * GameConfig.TILE_SIZE / 2.0
-	camera.position = Vector2(map_center_x, map_center_y)
-	
 	# Calculate zoom to fit entire map in viewport
 	# Assuming 1152x648 viewport (standard HD)
 	var viewport_size = get_viewport().get_visible_rect().size
@@ -1050,6 +1044,18 @@ func render_map(map_data):
 	var zoom_level = min(zoom_x, zoom_y) # Use smaller zoom to fit both dimensions
 	
 	camera.zoom = Vector2(zoom_level, zoom_level)
+	
+	# Position camera to show ENTIRE map
+	# Center X on the map
+	var map_center_x = map_width * GameConfig.TILE_SIZE / 2.0
+	
+	# Align Y so map is flush against BOTTOM of screen
+	# Camera Y = Map Bottom Y - (Viewport Height / Zoom) / 2
+	var map_bottom_y = map_height * GameConfig.TILE_SIZE
+	var viewport_height_in_world = viewport_size.y / zoom_level
+	var camera_y = map_bottom_y - (viewport_height_in_world / 2.0)
+	
+	camera.position = Vector2(map_center_x, camera_y)
 	
 	print("[GameView] Camera positioned at ", camera.position, " with zoom ", camera.zoom)
 

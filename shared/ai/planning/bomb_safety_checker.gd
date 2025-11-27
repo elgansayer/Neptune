@@ -91,9 +91,10 @@ func can_safely_plant_bomb(
 				if debug_logging:
 					print("  [BombSafetyChecker] ⚠ Tile ", current_pos, " is safe but is a DEAD END - skipping")
 				# Continue BFS to find a better escape tile
-				# Note: We don't return false, we just skip this tile as a safe haven
+				# IMPORTANT: Don't fall through to the threat check - this tile isn't in the matrix!
+				continue
 		
-		# 2. IF NOT, CAN WE PASS THROUGH SAFELY?
+		# 2. IF TILE IS IN THREAT MATRIX, CAN WE PASS THROUGH SAFELY?
 		var tile_lethal_time: float = future_threat_matrix[current_key]
 		
 		# Only explore further if we're still alive on this tile
