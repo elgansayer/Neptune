@@ -74,22 +74,26 @@ func _tick(_delta: float) -> int:
 	var has_kickable_bomb = player.has_bomb_kicker and _has_kickable_bomb_toward(player_tile, opponent_tile, game_instance, grid_sampler)
 	
 	# Check for throw opportunity (for POWER_THROW tactic)
-	var can_throw = player.has_power_glove and _has_throw_opportunity(player_tile, opponent_tile, game_instance, grid_sampler, player)
+	# Throw range is 2 tiles + bomb_range explosion = effective range of 3-5 tiles
+	var bomb_range = player.bomb_range if player else 1
+	var max_throw_hit_range = 2 + bomb_range  # 2 tile throw + explosion range
+	var can_throw = player.has_power_glove and distance <= max_throw_hit_range and _has_throw_opportunity(player_tile, opponent_tile, game_instance, grid_sampler, player)
 	
-	# Debug POWER_THROW detection
-	if distance >= 3 and we_are_safe and not has_kickable_bomb:
-		print("[TacticalDebug] POWER_THROW check: can_throw=%s distance=%d safe=%s glove=%s" % [can_throw, distance, we_are_safe, player.has_power_glove])
+	# Debug POWER_THROW detection (only for potential throw range)
+	if distance <= max_throw_hit_range + 2 and we_are_safe and not has_kickable_bomb and player.has_power_glove:
+		print("[TacticalDebug] POWER_THROW check: can_throw=%s distance=%d max_range=%d safe=%s" % [can_throw, distance, max_throw_hit_range, we_are_safe])
 	
 	# PRIORITY 0: KICK SNIPE - kick a bomb toward opponent (instant attack!)
 	if has_kickable_bomb and distance <= 8 and we_are_safe:
 		new_tactic = "KICK_SNIPE"
 		new_priority = 13  # Highest priority - immediate kill opportunity!
 	
-	# PRIORITY 0.3: POWER THROW - lob a bomb at opponent in clear corridor!
-	elif can_throw and distance >= 3 and we_are_safe:
+	# PRIORITY 0.3: POWER THROW - lob a bomb at opponent in throw range!
+	# Only throw if opponent is within effective range (2 tile throw + explosion)
+	elif can_throw and distance >= 2 and distance <= max_throw_hit_range and we_are_safe:
 		new_tactic = "POWER_THROW"
 		new_priority = 12  # Very high - ranged attack!
-		print("[TacticalAssessment] 🎯 POWER_THROW selected! can_throw=%s dist=%d safe=%s" % [can_throw, distance, we_are_safe])
+		print("[TacticalAssessment] 🎯 POWER_THROW selected! dist=%d max_range=%d bomb_range=%d" % [distance, max_throw_hit_range, bomb_range])
 	
 	# PRIORITY 0.5: CORNER TRAP - opponent backed into corner (LETHAL)
 	# Changed from 'if' to 'elif' to not override POWER_THROW
@@ -362,62 +366,115 @@ func _has_kickable_bomb_toward(player_tile: Vector2i, target_tile: Vector2i, gam
 	return false
 
 func _has_throw_opportunity(player_tile: Vector2i, target_tile: Vector2i, game_instance, grid_sampler, player) -> bool:
-	"""Check if player can throw a bomb toward target (can place bomb or has bomb at feet or is carrying)"""
+	"""Check if player can throw a bomb and actually hit the target.
+	
+	Throw mechanics:
+	- Bombs travel exactly 2 tiles in throw direction
+	- Bombs bounce off obstacles (land on last free tile before obstacle)
+	- Then explode with player's bomb_range in cross pattern
+	- Only return true if opponent is actually in the blast zone
+	"""
 	if player == null or not player.has_power_glove:
 		return false
 	
-	var can_throw = false
-	var reason = "unknown"
-	
-	# Check if already carrying a bomb - best case!
-	if player.is_carrying_bomb():
-		can_throw = _check_throw_path_clear(player_tile, target_tile, game_instance, grid_sampler)
-		reason = "carrying_bomb" if can_throw else "no_clear_path_while_carrying"
-	else:
-		# Check if there's a bomb at player's position to pick up
+	# Must be able to throw (carrying, bomb at feet, or can place)
+	var can_throw_bomb = player.is_carrying_bomb()
+	if not can_throw_bomb:
+		# Check for bomb at feet
 		var has_bomb_at_feet = false
 		if game_instance != null and "bombs" in game_instance:
 			for bomb_id in game_instance.bombs:
 				var bomb = game_instance.bombs[bomb_id]
 				if is_instance_valid(bomb) and not bomb.has_exploded:
-					if bomb.get_tile_position() == player_tile and bomb.bomb_state == 0:  # PLANTED
+					if bomb.get_tile_position() == player_tile and bomb.bomb_state == 0:
 						has_bomb_at_feet = true
 						break
 		
 		if has_bomb_at_feet:
-			can_throw = _check_throw_path_clear(player_tile, target_tile, game_instance, grid_sampler)
-			reason = "bomb_at_feet" if can_throw else "no_clear_path_bomb_at_feet"
-		# NEW: Can we place a bomb to throw?
+			can_throw_bomb = true
 		elif player.can_place_bomb():
-			can_throw = _check_throw_path_clear(player_tile, target_tile, game_instance, grid_sampler)
-			reason = "can_place_bomb" if can_throw else "no_clear_path_can_place"
-		else:
-			reason = "no_bombs_available"
+			can_throw_bomb = true
 	
-	# Debug log occasionally
-	if can_throw:
-		print("[ThrowCheck] tile=%s target=%s result=%s reason=%s" % [player_tile, target_tile, can_throw, reason])
+	if not can_throw_bomb:
+		return false
 	
-	return can_throw
-
-func _check_throw_path_clear(player_tile: Vector2i, target_tile: Vector2i, game_instance, grid_sampler) -> bool:
-	"""Check if there's a clear corridor for throwing toward target"""
+	# Determine throw direction toward target
 	var delta = target_tile - player_tile
-	
-	# Determine primary throw direction
 	var throw_dir: Vector2i
 	if abs(delta.x) > abs(delta.y):
 		throw_dir = Vector2i(1 if delta.x > 0 else -1, 0)
 	else:
 		throw_dir = Vector2i(0, 1 if delta.y > 0 else -1)
 	
-	# Check if path is clear for at least 3 tiles
-	for i in range(1, 4):
-		var check_tile = player_tile + throw_dir * i
-		var tile_type = game_instance.get_tile_type(check_tile) if game_instance.has_method("get_tile_type") else -1
-		if tile_type != 0:  # Not empty floor
-			if i < 2:  # Need at least 2 tiles of travel
-				return false
-			break
+	# Simulate where bomb will land (2 tile throw range, bounce on obstacles)
+	var landing_tile = _simulate_throw_landing_tile(player_tile, throw_dir, game_instance)
 	
-	return true
+	# Check if landing tile equals player tile (would self-damage)
+	if landing_tile == player_tile:
+		return false
+	
+	# Check if target is in blast range of landing position
+	var bomb_range = player.bomb_range if player else 2
+	var hit_distance = _get_blast_distance(landing_tile, target_tile, bomb_range, game_instance)
+	
+	var can_hit = hit_distance >= 0
+	
+	if can_hit:
+		print("[ThrowCheck] tile=%s dir=%s land=%s target=%s hit_dist=%d ✓" % [player_tile, throw_dir, landing_tile, target_tile, hit_distance])
+	
+	return can_hit
+
+func _simulate_throw_landing_tile(start_tile: Vector2i, direction: Vector2i, game_instance) -> Vector2i:
+	"""Simulate where a thrown bomb will land (2 tile range, bounces on obstacles)."""
+	const THROW_RANGE = 2
+	var last_free_tile = start_tile
+	
+	for i in range(1, THROW_RANGE + 1):
+		var check_tile = start_tile + direction * i
+		
+		# Check if blocked (wall, block, bomb, player)
+		var tile_type = game_instance.get_tile_type(check_tile) if game_instance and game_instance.has_method("get_tile_type") else -1
+		if tile_type != 0:  # Not empty floor
+			break  # Bounce - bomb lands on last free tile
+		
+		# Check for bombs
+		var has_bomb = false
+		if game_instance and "bombs" in game_instance:
+			for bomb_id in game_instance.bombs:
+				var bomb = game_instance.bombs[bomb_id]
+				if is_instance_valid(bomb) and not bomb.has_exploded:
+					if bomb.get_tile_position() == check_tile:
+						has_bomb = true
+						break
+		if has_bomb:
+			break
+		
+		last_free_tile = check_tile
+	
+	return last_free_tile
+
+func _get_blast_distance(bomb_tile: Vector2i, target_tile: Vector2i, bomb_range: int, game_instance) -> int:
+	"""Check if target is hit by explosion at bomb_tile. Returns distance or -1 if no hit."""
+	# Direct hit
+	if bomb_tile == target_tile:
+		return 0
+	
+	# Must be cardinal direction
+	var delta = target_tile - bomb_tile
+	if delta.x != 0 and delta.y != 0:
+		return -1  # Diagonal
+	
+	var distance = abs(delta.x) + abs(delta.y)
+	if distance > bomb_range:
+		return -1  # Too far
+	
+	# Check for blocking walls
+	var dir = Vector2i(sign(delta.x), sign(delta.y))
+	for i in range(1, distance + 1):
+		var check_tile = bomb_tile + dir * i
+		if game_instance and game_instance.has_method("get_tile_type"):
+			var tile_type = game_instance.get_tile_type(check_tile)
+			if tile_type == 1:  # Hard wall
+				return -1
+	
+	return distance
