@@ -103,6 +103,13 @@ func _tick(_delta: float) -> int:
 		"FARM_TOWARD_OPPONENT":
 			target_tile = _execute_farm_toward_opponent(player_tile, opponent_tile, grid_sampler, ai_manager)
 	
+	# If the specific tactic failed to find a valid position, fall back to AGGRESSIVE_CHASE
+	# This prevents the tree from cycling through alternatives and causing oscillation
+	if target_tile == Vector2i.ZERO or target_tile == Vector2i(-1, -1):
+		print("[ExecuteTactic] ⚠ Tactic %s failed to find position, falling back to AGGRESSIVE_CHASE" % tactic)
+		target_tile = _execute_aggressive_chase(player_tile, opponent_tile, grid_sampler)
+	
+	# If even AGGRESSIVE_CHASE failed, we truly have no valid target
 	if target_tile == Vector2i.ZERO or target_tile == Vector2i(-1, -1):
 		return FAILURE
 	
