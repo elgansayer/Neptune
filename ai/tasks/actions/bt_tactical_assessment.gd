@@ -28,6 +28,7 @@ func _tick(_delta: float) -> int:
 	var grid_sampler = blackboard.get_var("grid_sampler")
 	var ai_manager = blackboard.get_var("ai_manager")
 	var personality_config = blackboard.get_var("personality_config")
+	var game_instance = blackboard.get_var("game_instance")
 	
 	if not player or not opponent_tracker or not grid_sampler or not ai_manager:
 		return FAILURE
@@ -69,12 +70,34 @@ func _tick(_delta: float) -> int:
 	var opponent_velocity: Vector2 = nearest.get("velocity", Vector2.ZERO)
 	var opponent_moving = opponent_velocity.length() > 10.0
 	
-	# PRIORITY 0: CORNER TRAP - opponent backed into corner (LETHAL)
-	if opponent_escape_routes == 1 and opponent_near_corner and we_have_bombs and distance <= 5:
+	# Check for kickable bombs (for KICK_SNIPE tactic)
+	var has_kickable_bomb = player.has_bomb_kicker and _has_kickable_bomb_toward(player_tile, opponent_tile, game_instance, grid_sampler)
+	
+	# Check for throw opportunity (for POWER_THROW tactic)
+	var can_throw = player.has_power_glove and _has_throw_opportunity(player_tile, opponent_tile, game_instance, grid_sampler, player)
+	
+	# Debug POWER_THROW detection
+	if distance >= 3 and we_are_safe and not has_kickable_bomb:
+		print("[TacticalDebug] POWER_THROW check: can_throw=%s distance=%d safe=%s glove=%s" % [can_throw, distance, we_are_safe, player.has_power_glove])
+	
+	# PRIORITY 0: KICK SNIPE - kick a bomb toward opponent (instant attack!)
+	if has_kickable_bomb and distance <= 8 and we_are_safe:
+		new_tactic = "KICK_SNIPE"
+		new_priority = 13  # Highest priority - immediate kill opportunity!
+	
+	# PRIORITY 0.3: POWER THROW - lob a bomb at opponent in clear corridor!
+	elif can_throw and distance >= 3 and we_are_safe:
+		new_tactic = "POWER_THROW"
+		new_priority = 12  # Very high - ranged attack!
+		print("[TacticalAssessment] 🎯 POWER_THROW selected! can_throw=%s dist=%d safe=%s" % [can_throw, distance, we_are_safe])
+	
+	# PRIORITY 0.5: CORNER TRAP - opponent backed into corner (LETHAL)
+	# Changed from 'if' to 'elif' to not override POWER_THROW
+	elif opponent_escape_routes == 1 and opponent_near_corner and we_have_bombs and distance <= 5:
 		new_tactic = "CORNER_TRAP"
 		new_priority = 12
 	
-	# PRIORITY 0.5: BODY BLOCK - we're adjacent to opponent's only escape, block with body then bomb!
+	# PRIORITY 1: BODY BLOCK - we're adjacent to opponent's only escape, block with body then bomb!
 	elif opponent_escape_routes == 1 and distance <= 2 and we_are_safe:
 		var escape_tile = _get_opponent_escape(opponent_tile, grid_sampler, threat_matrix)
 		if escape_tile != Vector2i.ZERO:
@@ -83,7 +106,7 @@ func _tick(_delta: float) -> int:
 				new_tactic = "BODY_BLOCK"
 				new_priority = 11
 	
-	# PRIORITY 1: One-Tile Trap (The Kiss) - opponent has 1 escape route
+	# PRIORITY 1.5: One-Tile Trap (The Kiss) - opponent has 1 escape route
 	elif opponent_escape_routes == 1 and we_have_bombs and distance <= 5:
 		new_tactic = "ONE_TILE_TRAP"
 		new_priority = 11
@@ -295,3 +318,106 @@ func _predict_position(tile: Vector2i, velocity: Vector2, tiles_ahead: int) -> V
 			predicted += Vector2i(0, sign(direction.y))
 	
 	return predicted
+
+func _has_kickable_bomb_toward(player_tile: Vector2i, target_tile: Vector2i, game_instance, grid_sampler) -> bool:
+	"""Check if there's a bomb adjacent to player that can be kicked toward target"""
+	if game_instance == null or not "bombs" in game_instance:
+		return false
+	
+	var directions = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+	
+	for dir in directions:
+		var bomb_tile = player_tile + dir
+		
+		# Check for bomb at this tile
+		var found_bomb = false
+		for bomb_id in game_instance.bombs:
+			var bomb = game_instance.bombs[bomb_id]
+			# Check bomb_state instead of is_kicked (BombState.KICKED = 3)
+			var is_kickable = bomb.bomb_state == 0  # PLANTED state
+			if is_instance_valid(bomb) and not bomb.has_exploded and is_kickable:
+				if bomb.get_tile_position() == bomb_tile:
+					found_bomb = true
+					break
+		
+		if not found_bomb:
+			continue
+		
+		# Check if kicking this direction would move toward target
+		var to_target = Vector2(target_tile - bomb_tile)
+		if to_target.length() < 0.1:
+			continue  # Already at target
+		
+		var kick_dir = Vector2(dir)
+		var alignment = kick_dir.normalized().dot(to_target.normalized())
+		
+		if alignment > 0.5:
+			# This bomb could be kicked toward the target
+			# Verify path is clear
+			var check_tile = bomb_tile + dir
+			var tile_type = game_instance.get_tile_type(check_tile) if game_instance.has_method("get_tile_type") else -1
+			if tile_type == 0:  # Clear path
+				return true
+	
+	return false
+
+func _has_throw_opportunity(player_tile: Vector2i, target_tile: Vector2i, game_instance, grid_sampler, player) -> bool:
+	"""Check if player can throw a bomb toward target (can place bomb or has bomb at feet or is carrying)"""
+	if player == null or not player.has_power_glove:
+		return false
+	
+	var can_throw = false
+	var reason = "unknown"
+	
+	# Check if already carrying a bomb - best case!
+	if player.is_carrying_bomb():
+		can_throw = _check_throw_path_clear(player_tile, target_tile, game_instance, grid_sampler)
+		reason = "carrying_bomb" if can_throw else "no_clear_path_while_carrying"
+	else:
+		# Check if there's a bomb at player's position to pick up
+		var has_bomb_at_feet = false
+		if game_instance != null and "bombs" in game_instance:
+			for bomb_id in game_instance.bombs:
+				var bomb = game_instance.bombs[bomb_id]
+				if is_instance_valid(bomb) and not bomb.has_exploded:
+					if bomb.get_tile_position() == player_tile and bomb.bomb_state == 0:  # PLANTED
+						has_bomb_at_feet = true
+						break
+		
+		if has_bomb_at_feet:
+			can_throw = _check_throw_path_clear(player_tile, target_tile, game_instance, grid_sampler)
+			reason = "bomb_at_feet" if can_throw else "no_clear_path_bomb_at_feet"
+		# NEW: Can we place a bomb to throw?
+		elif player.can_place_bomb():
+			can_throw = _check_throw_path_clear(player_tile, target_tile, game_instance, grid_sampler)
+			reason = "can_place_bomb" if can_throw else "no_clear_path_can_place"
+		else:
+			reason = "no_bombs_available"
+	
+	# Debug log occasionally
+	if can_throw:
+		print("[ThrowCheck] tile=%s target=%s result=%s reason=%s" % [player_tile, target_tile, can_throw, reason])
+	
+	return can_throw
+
+func _check_throw_path_clear(player_tile: Vector2i, target_tile: Vector2i, game_instance, grid_sampler) -> bool:
+	"""Check if there's a clear corridor for throwing toward target"""
+	var delta = target_tile - player_tile
+	
+	# Determine primary throw direction
+	var throw_dir: Vector2i
+	if abs(delta.x) > abs(delta.y):
+		throw_dir = Vector2i(1 if delta.x > 0 else -1, 0)
+	else:
+		throw_dir = Vector2i(0, 1 if delta.y > 0 else -1)
+	
+	# Check if path is clear for at least 3 tiles
+	for i in range(1, 4):
+		var check_tile = player_tile + throw_dir * i
+		var tile_type = game_instance.get_tile_type(check_tile) if game_instance.has_method("get_tile_type") else -1
+		if tile_type != 0:  # Not empty floor
+			if i < 2:  # Need at least 2 tiles of travel
+				return false
+			break
+	
+	return true

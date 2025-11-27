@@ -32,9 +32,34 @@ func _tick(_delta: float) -> int:
 	
 	var opponent_tile: Vector2i = nearest.get("tile")
 	var target_tile: Vector2i = player_tile
+	var game_instance = blackboard.get_var("game_instance")
 	
 	# Execute the chosen tactic
 	match tactic:
+		"KICK_SNIPE":
+			# Special tactic: kick a bomb toward opponent!
+			var kick_result = _execute_kick_snipe(player_tile, opponent_tile, grid_sampler, game_instance, player)
+			if kick_result.has("kick_direction"):
+				# Store kick info for BTKickBomb to use
+				blackboard.set_var("kick_target", opponent_tile)
+				blackboard.set_var("kick_direction", kick_result.kick_direction)
+				print("[ExecuteTactic] ⚽ KICK_SNIPE: Kicking toward %s" % opponent_tile)
+				return SUCCESS  # BTKickBomb will handle the actual kick
+			return FAILURE
+		
+		"POWER_THROW":
+			# Special tactic: throw a bomb at opponent!
+			var throw_result = _execute_power_throw(player_tile, opponent_tile, grid_sampler, game_instance, player)
+			if throw_result.has("throw_direction"):
+				# Store throw info for BTThrowBomb to use
+				blackboard.set_var("throw_target", opponent_tile)
+				blackboard.set_var("throw_direction", throw_result.throw_direction)
+				# Set target to current position - no movement needed for throw
+				blackboard.set_var(target_var, player_tile)
+				print("[ExecuteTactic] 💣 POWER_THROW: Throwing toward %s from %s" % [opponent_tile, player_tile])
+				return SUCCESS  # BTThrowBomb will handle the actual throw
+			return FAILURE
+		
 		"CORNER_TRAP":
 			target_tile = _execute_corner_trap(player_tile, opponent_tile, grid_sampler, ai_manager, player)
 		
@@ -583,3 +608,176 @@ func _execute_farm_toward_opponent(player_tile: Vector2i, opponent_tile: Vector2
 	
 	# Fallback - just move toward opponent as much as possible
 	return player_tile
+
+## KICK SNIPE - Kick a bomb toward the opponent
+## Returns dictionary with kick_direction if valid kick found, empty dict otherwise
+func _execute_kick_snipe(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler, game_instance, player) -> Dictionary:
+	if game_instance == null or not "bombs" in game_instance:
+		return {}
+	
+	if not player.has_bomb_kicker:
+		return {}
+	
+	var directions = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
+	var best_kick: Dictionary = {}
+	var best_score = 0.0
+	
+	for dir in directions:
+		var bomb_tile = player_tile + dir
+		
+		# Check for bomb at this tile
+		var found_bomb = null
+		for bomb_id in game_instance.bombs:
+			var bomb = game_instance.bombs[bomb_id]
+			# Check bomb_state instead of is_kicked (BombState.PLANTED = 0)
+			if is_instance_valid(bomb) and not bomb.has_exploded and bomb.bomb_state == 0:
+				if bomb.get_tile_position() == bomb_tile:
+					found_bomb = bomb
+					break
+		
+		if found_bomb == null:
+			continue
+		
+		# Check if kicking in this direction moves toward opponent
+		var to_target = Vector2(opponent_tile - bomb_tile)
+		if to_target.length() < 0.1:
+			continue  # Already at target
+		
+		var kick_dir = Vector2(dir)
+		var alignment = kick_dir.normalized().dot(to_target.normalized())
+		
+		if alignment < 0.5:
+			continue  # Kicking away from target
+		
+		# Check how far bomb would travel
+		var travel_distance = 0
+		var final_tile = bomb_tile
+		var bomb_range = found_bomb.bomb_range if found_bomb.has_method("get") else 2
+		
+		for i in range(1, 10):
+			var check_tile = bomb_tile + Vector2i(kick_dir * float(i))
+			var tile_type = game_instance.get_tile_type(check_tile) if game_instance.has_method("get_tile_type") else -1
+			
+			if tile_type != 0:  # Not empty floor
+				break
+			
+			# Check for other bombs that would stop it
+			var blocked = false
+			for bomb_id in game_instance.bombs:
+				var other_bomb = game_instance.bombs[bomb_id]
+				if is_instance_valid(other_bomb) and other_bomb != found_bomb:
+					if other_bomb.get_tile_position() == check_tile:
+						blocked = true
+						break
+			
+			if blocked:
+				break
+			
+			travel_distance = i
+			final_tile = check_tile
+		
+		if travel_distance == 0:
+			continue  # Bomb can't move
+		
+		# Score: would the kicked bomb hit the opponent?
+		var dist_to_opponent = abs(final_tile.x - opponent_tile.x) + abs(final_tile.y - opponent_tile.y)
+		var score = alignment * 0.5
+		
+		if dist_to_opponent <= bomb_range:
+			score += 1.0  # Direct hit potential!
+		elif dist_to_opponent <= bomb_range + 2:
+			score += 0.5  # Close hit
+		
+		if score > best_score:
+			best_score = score
+			best_kick = {
+				"kick_direction": kick_dir,
+				"bomb_tile": bomb_tile,
+				"final_tile": final_tile,
+				"score": score
+			}
+	
+	if best_score > 0.5:
+		print("[KickSnipe] ⚽ Found kick: %s → %s (score=%.2f)" % [
+			best_kick.bomb_tile, best_kick.final_tile, best_kick.score
+		])
+		return best_kick
+	
+	return {}
+
+func _execute_power_throw(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler, game_instance, player) -> Dictionary:
+	"""Find the best direction to throw a bomb toward opponent"""
+	if not player.has_power_glove:
+		return {}
+	
+	var directions = [
+		Vector2(1, 0),   # Right
+		Vector2(-1, 0),  # Left
+		Vector2(0, 1),   # Down
+		Vector2(0, -1)   # Up
+	]
+	
+	var best_throw: Dictionary = {}
+	var best_score = -1.0
+	var bomb_range = player.bomb_range if player else 2
+	
+	for dir in directions:
+		var dir_i = Vector2i(int(dir.x), int(dir.y))
+		
+		# Check if throw direction aligns with opponent
+		var to_opponent = Vector2(opponent_tile - player_tile)
+		if to_opponent.length() < 0.1:
+			continue
+		
+		var alignment = dir.normalized().dot(to_opponent.normalized())
+		if alignment < 0.5:
+			continue  # Throwing away from opponent
+		
+		# Calculate throw trajectory
+		var travel_distance = 0
+		var landing_tile = player_tile
+		
+		for i in range(1, 10):
+			var check_tile = player_tile + dir_i * i
+			var tile_type = game_instance.get_tile_type(check_tile) if game_instance.has_method("get_tile_type") else -1
+			
+			if tile_type != 0:  # Not empty floor - bomb lands at previous tile
+				break
+			
+			travel_distance = i
+			landing_tile = check_tile
+		
+		if travel_distance < 3:
+			continue  # Need decent throw distance
+		
+		# Score based on how close bomb lands to opponent
+		var dist_to_opponent = abs(landing_tile.x - opponent_tile.x) + abs(landing_tile.y - opponent_tile.y)
+		var score = alignment * 0.3
+		
+		if dist_to_opponent == 0:
+			score += 1.5  # Direct hit!
+		elif dist_to_opponent <= bomb_range:
+			score += 1.0  # In blast radius
+		elif dist_to_opponent <= bomb_range + 2:
+			score += 0.5  # Near miss
+		
+		# Bonus for longer throws (harder to dodge)
+		if travel_distance >= 5:
+			score += 0.2
+		
+		if score > best_score:
+			best_score = score
+			best_throw = {
+				"throw_direction": dir,
+				"landing_tile": landing_tile,
+				"distance": travel_distance,
+				"score": score
+			}
+	
+	if best_score > 0.5:
+		print("[PowerThrow] 💣 Found throw: toward %s landing at %s (score=%.2f)" % [
+			opponent_tile, best_throw.landing_tile, best_throw.score
+		])
+		return best_throw
+	
+	return {}

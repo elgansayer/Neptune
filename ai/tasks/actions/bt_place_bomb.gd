@@ -256,9 +256,11 @@ func _count_active_player_bombs(player, game_instance) -> int:
 		return 0
 	
 	var count = 0
+	var player_id_str = str(player.peer_id)  # Convert peer_id to string for comparison
 	for bomb_id in game_instance.bombs:
 		var bomb = game_instance.bombs[bomb_id]
 		if is_instance_valid(bomb) and not bomb.has_exploded:
-			if bomb.owner_peer_id == player.peer_id:
+			# Compare owner_id (string) to player's peer_id as string
+			if bomb.owner_id == player_id_str:
 				count += 1
 	return count

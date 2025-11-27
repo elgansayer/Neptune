@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=50 format=3 uid="uid://chqxceh757yg0"]
+[gd_resource type="BehaviorTree" load_steps=55 format=3 uid="uid://chqxceh757yg0"]
 
 [ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://ai/tasks/conditions/bt_is_in_danger.gd" id="1_danger"]
 [ext_resource type="Script" uid="uid://3btukveudf74" path="res://ai/tasks/actions/bt_find_escape_route.gd" id="2_escape"]
@@ -14,6 +14,8 @@
 [ext_resource type="Script" uid="uid://0shefe34fc6i" path="res://ai/tasks/actions/bt_execute_tactic.gd" id="14_tac_exec"]
 [ext_resource type="Script" uid="uid://d2g2ls8huxbm3" path="res://ai/tasks/conditions/bt_is_safe_to_attack.gd" id="15_safe_attack"]
 [ext_resource type="Script" path="res://ai/tasks/conditions/bt_can_place_bomb.gd" id="16_can_bomb"]
+[ext_resource type="Script" path="res://ai/tasks/actions/bt_defensive_kick.gd" id="17_def_kick"]
+[ext_resource type="Script" path="res://ai/tasks/actions/bt_throw_bomb.gd" id="18_throw_bomb"]
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bot"]
 var/target_cell/name = &"target_cell"
@@ -54,6 +56,21 @@ cell_var = &"evade_cell"
 custom_name = "Rubber Bomb Evasion"
 children = [SubResource("BTAction_evade_rubber"), SubResource("BTAction_evade_move")]
 
+[sub_resource type="BTCondition" id="BTCondition_danger_for_kick"]
+custom_name = "Check Danger For Kick"
+script = ExtResource("1_danger")
+check_immediate = false
+
+[sub_resource type="BTAction" id="BTAction_defensive_kick"]
+custom_name = "Defensive Kick"
+script = ExtResource("17_def_kick")
+threat_check_radius = 3
+min_kick_distance = 2
+
+[sub_resource type="BTSequence" id="BTSequence_defensive_kick"]
+custom_name = "Defensive Kick Escape"
+children = [SubResource("BTCondition_danger_for_kick"), SubResource("BTAction_defensive_kick")]
+
 [sub_resource type="BTCondition" id="BTCondition_escape_check"]
 custom_name = "Check Danger"
 script = ExtResource("1_danger")
@@ -76,7 +93,7 @@ children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escap
 
 [sub_resource type="BTSelector" id="BTSelector_escape"]
 custom_name = "Escape Strategy Selector"
-children = [SubResource("BTSequence_rubber_escape"), SubResource("BTSequence_normal_escape")]
+children = [SubResource("BTSequence_rubber_escape"), SubResource("BTSequence_defensive_kick"), SubResource("BTSequence_normal_escape")]
 
 [sub_resource type="BTCondition" id="BTCondition_has_opponent"]
 custom_name = "Has Opponent?"
@@ -106,9 +123,17 @@ custom_name = "Place Tactical Bomb"
 script = ExtResource("4_bomb")
 target_cell_var = &"tactic_target_cell"
 
+[sub_resource type="BTAction" id="BTAction_throw_bomb"]
+custom_name = "Throw Bomb At Opponent"
+script = ExtResource("18_throw_bomb")
+
+[sub_resource type="BTSelector" id="BTSelector_tactic_action"]
+custom_name = "Execute Tactic Action"
+children = [SubResource("BTAction_throw_bomb"), SubResource("BTAction_place_tactical_bomb")]
+
 [sub_resource type="BTSequence" id="BTSequence_tactical_execution"]
 custom_name = "Tactical Execution Sequence"
-children = [SubResource("BTAction_execute_tactic"), SubResource("BTAction_move_to_tactic_target"), SubResource("BTAction_place_tactical_bomb")]
+children = [SubResource("BTAction_execute_tactic"), SubResource("BTAction_move_to_tactic_target"), SubResource("BTSelector_tactic_action")]
 
 [sub_resource type="BTAction" id="BTAction_attack_plan_retreat"]
 custom_name = "Plan Retreat"
