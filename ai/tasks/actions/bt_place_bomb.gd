@@ -59,16 +59,25 @@ func _tick(delta: float) -> int:
 			# Already a bomb here
 			return FAILURE
 	
-	# CRITICAL: Validate bomb has PURPOSE (soft blocks to destroy OR opponent in range)
-	# This prevents useless bombs in open areas
+	# CRITICAL: Validate bomb has PURPOSE (soft blocks to destroy OR opponent in range OR tactical attack)
+	# This prevents useless bombs in open areas UNLESS we're executing an attack tactic
 	var grid_sampler = blackboard.get_var("grid_sampler")
 	var bomb_range = player.bomb_range if player else 2
 	var has_purpose = false
 	
-	# Check for soft blocks in blast range
-	var soft_blocks = _count_soft_blocks_in_range(player_tile, bomb_range, grid_sampler, game_instance)
-	if soft_blocks > 0:
-		has_purpose = true
+	# Check if we're executing a tactical attack - if so, bomb has purpose!
+	var current_tactic = blackboard.get_var("tactical_plan", "NONE")
+	var attack_tactics = ["CORNER_TRAP", "BODY_BLOCK", "ONE_TILE_TRAP", "DOUBLE_BOMB", 
+						  "CHOKE_POINT", "TUNNEL_PRESSURE", "SPACE_DENIAL", "STUTTER_TRAP",
+						  "ITEM_HUNTER_TRAP", "AGGRESSIVE_CHASE", "PREDICTIVE_INTERCEPT"]
+	if current_tactic in attack_tactics:
+		has_purpose = true  # Tactical attack bombs always have purpose!
+	
+	# Check for soft blocks in blast range (farming bombs)
+	if not has_purpose:
+		var soft_blocks = _count_soft_blocks_in_range(player_tile, bomb_range, grid_sampler, game_instance)
+		if soft_blocks > 0:
+			has_purpose = true
 	
 	# Check for opponents in blast range (this is a tactical bomb)
 	if not has_purpose:
@@ -78,24 +87,29 @@ func _tick(delta: float) -> int:
 			if nearest and not nearest.is_empty():
 				var opp_tile = nearest.get("tile", Vector2i(-99, -99))
 				var distance = abs(opp_tile.x - player_tile.x) + abs(opp_tile.y - player_tile.y)
-				# Opponent is close enough that this bomb is tactical
-				if distance <= bomb_range + 3:
+				# Opponent is close enough that this bomb is tactical (increased range for aggression)
+				if distance <= bomb_range + 5:
 					has_purpose = true
 	
 	if not has_purpose:
-		print("[BTPlaceBomb] REJECTED: No purpose (no soft blocks or opponents in range)")
+		print("[BTPlaceBomb] REJECTED: No purpose (no soft blocks or opponents in range, tactic=%s)" % current_tactic)
 		return FAILURE
 	
 	
-	# CONTEXT-AWARE SAFETY: Be STRICT if enemies nearby, RELAXED if farming alone
+	# CONTEXT-AWARE SAFETY: Be STRICT if enemies nearby OR attacking, RELAXED if farming alone
 	# Check for nearby opponents (reuse opponent_tracker from above if set)
 	var has_nearby_enemies = false
-	var opp_tracker = blackboard.get_var("opponent_tracker", null)
-	if opp_tracker and opp_tracker.has_method("get_closest_opponent"):
-		var closest = opp_tracker.get_closest_opponent(player_tile)
-		if closest and closest.has("distance"):
-			# Enemy within 8 tiles = combat situation, be STRICT
-			has_nearby_enemies = closest["distance"] <= 8.0
+	
+	# CRITICAL: If executing attack tactic, ALWAYS use strict safety!
+	if current_tactic in attack_tactics:
+		has_nearby_enemies = true  # Force strict mode for attack tactics
+	else:
+		var opp_tracker = blackboard.get_var("opponent_tracker", null)
+		if opp_tracker and opp_tracker.has_method("get_closest_opponent"):
+			var closest = opp_tracker.get_closest_opponent(player_tile)
+			if closest and closest.has("distance"):
+				# Enemy within 8 tiles = combat situation, be STRICT
+				has_nearby_enemies = closest["distance"] <= 8.0
 	
 	# CRITICAL: DEAD-END POSITION CHECK
 	# If bot is already in a dead end (only 1 walkable neighbor), do NOT place more bombs!

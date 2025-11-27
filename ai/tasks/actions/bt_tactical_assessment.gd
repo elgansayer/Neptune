@@ -194,18 +194,34 @@ func _tick(_delta: float) -> int:
 	if new_priority >= 100:
 		should_switch = true
 		
-	# 2. Current tactic became invalid (NONE)
-	elif _current_tactic == "NONE" or new_tactic == "NONE":
-		should_switch = true # Always allow switching to/from NONE to avoid getting stuck doing nothing
+	# 2. We have NO tactic - MUST switch to something (or stay NONE if nothing available)
+	elif _current_tactic == "NONE":
+		if new_tactic != "NONE":
+			should_switch = true  # We're idle, switch to new tactic
+		# else: stay NONE (no valid tactic found)
 		
-	# 3. Lock expired AND new tactic is better or different
+	# 3. New tactic is NONE but we have a current tactic
+	# DON'T switch to NONE immediately - give grace period
+	elif new_tactic == "NONE" and _current_tactic != "NONE":
+		# Only switch to NONE if lock expired AND still no valid tactic
+		if time_since_switch > lock_duration_ms * 2:  # Double grace period for going IDLE
+			should_switch = true
+			#print("[TacticalAssessment] ⏳ Grace period expired, going NONE")
+		# else: maintain current tactic even if conditions temporarily invalid
+		
+	# 4. Lock expired AND new tactic is better or different
 	elif time_since_switch > lock_duration_ms:
 		if new_tactic != _current_tactic:
-			# Only switch if priority is higher or equal (prevent downgrading unless necessary)
-			# Or if the old tactic is no longer applicable (logic above handles that implicitly via if/else chain)
-			should_switch = true
+			var current_priority = _get_priority(_current_tactic)
+			# For close-priority switches, require longer lock (prevent WAIT_FOR_DEATH <-> AGGRESSIVE_CHASE oscillation)
+			if abs(new_priority - current_priority) <= 1:
+				# Close priority - require 2x lock time to switch
+				if time_since_switch > lock_duration_ms * 2:
+					should_switch = true
+			else:
+				should_switch = true
 			
-	# 4. New tactic is SIGNIFICANTLY better (Priority Jump)
+	# 5. New tactic is SIGNIFICANTLY better (Priority Jump)
 	# e.g. We were chasing (5), but now we can Trap (10) -> Switch immediately
 	elif new_priority > (_get_priority(_current_tactic) + 2):
 		should_switch = true
