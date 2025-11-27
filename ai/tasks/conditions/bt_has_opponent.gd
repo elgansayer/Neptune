@@ -33,23 +33,34 @@ func _tick(_delta: float) -> int:
 		# print("[BTHasOpponent] No opponents found (peer_id=", player.peer_id, ")")
 		return FAILURE
 	
+	# Get grid_sampler and player_tile for distance and reachability checks
+	var grid_sampler = blackboard.get_var("grid_sampler")
+	var player_tile = player.get_tile_position()
+	var opponent_tile = nearest.get("tile", null)
+	
+	if opponent_tile == null:
+		return FAILURE
+	
 	# Check distance if max_distance is set
-	if max_distance > 0:
-		var opponent_tile = nearest.get("tile", null)
-		if opponent_tile == null:
+	if max_distance > 0 and grid_sampler:
+		var distance = grid_sampler.get_manhattan_distance(player_tile, opponent_tile)
+		# print("[BTHasOpponent] Found opponent at distance ", distance, " (max=", max_distance, ")")
+		if distance > max_distance:
+			blackboard.set_var("nearest_opponent", null)
+			blackboard.set_var("opponent_tile", null)
+			# print("[BTHasOpponent] Opponent too far away")
 			return FAILURE
-		
-		var player_tile = player.get_tile_position()
-		var grid_sampler = blackboard.get_var("grid_sampler")
-		
-		if grid_sampler:
-			var distance = grid_sampler.get_manhattan_distance(player_tile, opponent_tile)
-			# print("[BTHasOpponent] Found opponent at distance ", distance, " (max=", max_distance, ")")
-			if distance > max_distance:
-				blackboard.set_var("nearest_opponent", null)
-				blackboard.set_var("opponent_tile", null)
-				# print("[BTHasOpponent] Opponent too far away")
-				return FAILURE
+	
+	# CRITICAL: Check if we can actually reach the opponent (path exists)
+	# This prevents wasting cycles on tactical planning when we're blocked by soft blocks
+	if grid_sampler:
+		var path_to_opponent = grid_sampler.find_path(player_tile, opponent_tile, 40, player, false)
+		if path_to_opponent.is_empty():
+			# No path to opponent - we're blocked, should farm instead!
+			blackboard.set_var("nearest_opponent", null)
+			blackboard.set_var("opponent_tile", null)
+			# print("[BTHasOpponent] FAILURE: No path to opponent (blocked by soft blocks)")
+			return FAILURE
 	
 	# Store opponent data in blackboard for subsequent nodes
 	if store_in_blackboard:

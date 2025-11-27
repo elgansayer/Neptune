@@ -70,11 +70,17 @@ func _execute_one_tile_trap(player_tile: Vector2i, opponent_tile: Vector2i, grid
 	# Find the opponent's only escape route
 	var escape_tile = _find_only_escape(opponent_tile, grid_sampler, ai_manager)
 	if escape_tile == Vector2i.ZERO:
-		return opponent_tile  # Fallback to opponent position
+		# No single escape found - try to block ANY escape route
+		var routes = _find_escape_routes(opponent_tile, grid_sampler, ai_manager)
+		if routes.size() > 0:
+			escape_tile = routes[0]
+		else:
+			# Opponent has no escapes - they're trapped! Place bomb near them
+			return _get_bomb_placement_for_target(opponent_tile, player_tile, grid_sampler)
 	
-	# Position ourselves to bomb the escape route
+	# CRITICAL FIX: Position ourselves to bomb the escape route, not the opponent!
 	var intercept_tile = _get_bomb_placement_for_target(escape_tile, player_tile, grid_sampler)
-	print("[OneTileTrap] 💋 Targeting escape route: ", escape_tile)
+	print("[OneTileTrap] 💋 Blocking escape route: %s (bomb pos: %s)" % [escape_tile, intercept_tile])
 	return intercept_tile
 
 ## Block one of two escape routes, forcing opponent into trap
@@ -140,19 +146,21 @@ func _execute_wait_safe(player_tile: Vector2i, opponent_tile: Vector2i, grid_sam
 				var check_tile = player_tile + Vector2i(offset_x, offset_y)
 				var key = "%d,%d" % [check_tile.x, check_tile.y]
 				
-				if grid_sampler.is_tile_walkable(check_tile) and not threat_matrix.has(key):
+				# CRITICAL FIX: Use is_tile_safe_for_target which checks for bombs!
+				if grid_sampler.is_tile_safe_for_target(check_tile) and not threat_matrix.has(key):
 					var dist_to_opponent = grid_sampler.get_manhattan_distance(check_tile, opponent_tile)
 					if dist_to_opponent >= 4:  # Stay away from danger
 						return check_tile
 	
 	return player_tile
 
-## Standard predictive chase
+## Standard predictive chase - intercept where opponent is GOING, not where they ARE
 func _execute_predictive_intercept(player_tile: Vector2i, opponent_tile: Vector2i, opponent_data: Dictionary, grid_sampler) -> Vector2i:
 	# Use velocity to predict 2-3 tiles ahead
 	var velocity: Vector2 = opponent_data.get("velocity", Vector2.ZERO)
 	if velocity.length() < 10.0:
-		return opponent_tile  # Opponent stationary
+		# Opponent stationary - find best blocking position around them
+		return _find_best_blocking_position(player_tile, opponent_tile, grid_sampler)
 	
 	var prediction_distance = 2
 	var direction = velocity.normalized()
@@ -169,7 +177,43 @@ func _execute_predictive_intercept(player_tile: Vector2i, opponent_tile: Vector2
 			break
 		predicted = next
 	
-	return predicted
+	# Instead of moving to predicted position, find a blocking position AHEAD of it
+	var blocking_pos = _find_best_blocking_position(player_tile, predicted, grid_sampler)
+	print("[PredictiveIntercept] Opponent heading to %s, blocking at %s" % [predicted, blocking_pos])
+	return blocking_pos
+
+## Find the best position to place a bomb that blocks opponent's movement
+func _find_best_blocking_position(player_tile: Vector2i, target_tile: Vector2i, grid_sampler) -> Vector2i:
+	# Check tiles adjacent to target that we can reach
+	var best_pos = target_tile  # Fallback
+	var best_score = -1000
+	
+	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		var check_tile = target_tile + dir
+		# CRITICAL: Use is_tile_safe_for_target to avoid bombs!
+		if not grid_sampler.is_tile_safe_for_target(check_tile):
+			continue
+		
+		# Score based on distance from us (closer = better) and blocking potential
+		var dist_from_us = grid_sampler.get_manhattan_distance(player_tile, check_tile)
+		var dist_from_target = 1  # Adjacent
+		
+		# Prefer positions that are closer to us
+		var score = 10 - dist_from_us
+		
+		# Bonus for positions that create corridor (more adjacent walls)
+		var walls_nearby = 0
+		for wall_dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var wall_check = check_tile + wall_dir
+			if not grid_sampler.is_tile_walkable(wall_check):
+				walls_nearby += 1
+		score += walls_nearby  # More walls = better trap position
+		
+		if score > best_score:
+			best_score = score
+			best_pos = check_tile
+	
+	return best_pos
 
 ## Helper: Find opponent's only escape route
 func _find_only_escape(tile: Vector2i, grid_sampler, ai_manager) -> Vector2i:
