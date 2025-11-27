@@ -187,8 +187,8 @@ func show_spectator_mode():
 	if spectator_overlay:
 		spectator_overlay.visible = true
 		spectator_overlay.modulate = Color(1, 1, 1, 0)
-		var tween = create_tween()
-		tween.tween_property(spectator_overlay, "modulate", Color(1, 1, 1, 1), 0.5)
+		# Tween is automatically cleaned up when complete or when node is freed
+		create_tween().tween_property(spectator_overlay, "modulate", Color(1, 1, 1, 1), 0.5)
 	
 	print("[HUD] Entered spectator mode")
 
@@ -199,11 +199,30 @@ func hide_spectator_mode():
 	if spectator_overlay:
 		spectator_overlay.visible = false
 
+# Game over state tracking
+var game_over_shown := false
+
 func show_game_over(winner_name: String):
 	"""Display game over screen with winner"""
+	# Prevent duplicate game over screens
+	if game_over_shown:
+		return
+	game_over_shown = true
+	
 	# Hide spectator overlay if showing
 	if spectator_overlay:
 		spectator_overlay.visible = false
+	
+	# Remove any existing game over elements
+	var existing_bg = get_node_or_null("GameOverBackground")
+	if existing_bg:
+		existing_bg.queue_free()
+	var existing_label = get_node_or_null("GameOverLabel")
+	if existing_label:
+		existing_label.queue_free()
+	var existing_winner = get_node_or_null("WinnerLabel")
+	if existing_winner:
+		existing_winner.queue_free()
 	
 	# Create game over overlay
 	var game_over_bg = ColorRect.new()
@@ -259,6 +278,7 @@ func show_game_over(winner_name: String):
 	add_child(winner_label)
 	
 	# Animate the game over screen
+	# Tweens are automatically cleaned up when complete or when node is freed
 	game_over_bg.modulate = Color(1, 1, 1, 0)
 	game_over_label.modulate = Color(1, 1, 1, 0)
 	winner_label.modulate = Color(1, 1, 1, 0)
