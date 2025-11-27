@@ -132,65 +132,44 @@ func _tick(delta: float) -> int:
 		# bomb_range already declared above
 		var bot_speed = 5.0 # tiles per second
 		
-		# STRICT MODE (enemies nearby): MUST have safe escape
-		# RELAXED MODE (farming alone): Allow if there's ANY path, even risky
-		if has_nearby_enemies:
-			# STRICT: Use standard safety check
-			var is_safe = bomb_safety_checker.can_safely_plant_bomb(
-				player_tile,
-				player_tile,
-				bomb_range,
-				bot_speed,
-				current_time_msec
-			)
-			
-			if not is_safe:
-				print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: Enemies nearby, no safe escape!")
+		# Use detailed check for all cases - it gives better info and allows marginal escapes
+		var safety_result = bomb_safety_checker.check_plant_safety_detailed(
+			player_tile,
+			player_tile,
+			bomb_range,
+			bot_speed,
+			current_time_msec
+		)
+		
+		var is_safe = safety_result.get("safe", false)
+		var margin_ms = safety_result.get("margin_ms", 0)
+		var escape_tile = safety_result.get("escape_tile", Vector2i(-1, -1))
+		var explored = safety_result.get("explored_tiles", 0)
+		
+		# CRITICAL: If escape_tile is invalid, there is NO escape at all - DEATH TRAP!
+		if escape_tile == Vector2i(-1, -1):
+			print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: NO ESCAPE TILE FOUND - DEATH TRAP!")
+			return FAILURE
+		
+		# If perfectly safe, always allow
+		if is_safe:
+			pass # Continue to place bomb
+		elif has_nearby_enemies:
+			# COMBAT MODE: Allow marginal escapes for attack tactics (take risks!)
+			var min_margin = 1000.0  # Require at least 1 second margin
+			if margin_ms >= min_margin:
+				print("[BTPlaceBomb] ⚠ COMBAT RISK: escape=%s margin=%.0fms (>%.0fms) - allowing attack!" % [escape_tile, margin_ms, min_margin])
+			else:
+				print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: Combat margin %.0fms < required %.0fms" % [margin_ms, min_margin])
 				return FAILURE
 		else:
-			# RELAXED: Check if there's ANY reachable tile (even if tight)
-			# Use detailed check to see best option
-			var safety_result = bomb_safety_checker.check_plant_safety_detailed(
-				player_tile,
-				player_tile,
-				bomb_range,
-				bot_speed,
-				current_time_msec
-			)
-			
-			# If we explored 0 tiles, we're completely blocked (shouldn't happen)
-			# If we explored >0 tiles, there's SOME path (trust the farming escape logic)
-			if safety_result.get("explored_tiles", 0) == 0:
-				print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: Completely blocked, cannot move!")
+			# FARMING MODE: Be more conservative
+			var min_margin = 2000.0  # Require at least 2 seconds margin
+			if margin_ms >= min_margin:
+				print("[BTPlaceBomb] ⚠ MARGINAL SAFE: escape=%s margin=%.0fms (farming)" % [escape_tile, margin_ms])
+			else:
+				print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: Farming margin %.0fms < required %.0fms" % [margin_ms, min_margin])
 				return FAILURE
-			
-			# Check if there's a safe escape route
-			var is_safe = safety_result.get("safe", false)
-			var margin_ms = safety_result.get("margin_ms", 0)
-			var escape_tile = safety_result.get("escape_tile", Vector2i(-1, -1))
-			
-			# CRITICAL: If escape_tile is invalid (-1, -1), there is NO escape at all!
-			# This is a DEATH TRAP - do not place bomb!
-			if escape_tile == Vector2i(-1, -1):
-				print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: NO ESCAPE TILE FOUND - DEATH TRAP!")
-				return FAILURE
-			
-			if not is_safe:
-				# No safe tile with further exits found
-				# COMPETITIVE bots are more aggressive - lower margin requirement
-				var personality = blackboard.get_var("personality", "BALANCED")
-				var required_margin = 3000.0  # Default conservative
-				if personality == "COMPETITIVE":
-					required_margin = 1500.0  # Competitive bots take risks
-				elif personality == "AGGRESSIVE":
-					required_margin = 2000.0
-				
-				if margin_ms >= required_margin:
-					print("[BTPlaceBomb] ⚠ MARGINAL SAFE: escape=%s margin=%.0fms (personality=%s allows %.0fms)" % [escape_tile, margin_ms, personality, required_margin])
-					# Continue to place bomb - margin is acceptable for this personality
-				else:
-					print("[BTPlaceBomb] ⚠ PRE-FLIGHT ABORT: Dead end margin %.0fms < required %.0fms" % [margin_ms, required_margin])
-					return FAILURE
 	
 	# Place the bomb
 	game_instance.place_bomb(player)
