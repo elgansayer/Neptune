@@ -263,29 +263,17 @@ func _tick(_delta: float) -> int:
 	#	" no_escape=", rejected_no_escape, ")")
 	
 	# FALLBACK: If completely trapped (all paths blocked), try to bomb current position
-	# to break out if there's an adjacent soft block
+	# or find nearest tile with adjacent soft blocks to break out
 	var valid_candidates = candidates_checked - rejected_unwalkable - rejected_no_blocks
-	print("[BTFindFarmingSpot] SEARCH FAILED: checked=%d unwalkable=%d no_blocks=%d no_path=%d valid_candidates=%d" % [candidates_checked, rejected_unwalkable, rejected_no_blocks, rejected_no_path, valid_candidates])
 	if rejected_no_path > 0 and rejected_no_path >= valid_candidates - rejected_no_nearby_safe - rejected_no_escape:
-		# Most paths were blocked - we might be trapped
-		var adjacent_soft_blocks = _count_soft_blocks_in_range(current_tile, bomb_range, grid_sampler)
-		print("[BTFindFarmingSpot] CHECKING BREAKOUT: adjacent_soft_blocks=%d at tile %s" % [adjacent_soft_blocks, current_tile])
-		if adjacent_soft_blocks > 0:
-			# Check if we can escape after bombing our current position
-			var safety_result = bomb_safety_checker.check_plant_safety_detailed(
-				current_tile, current_tile, bomb_range, 5.0, current_time_msec
-			)
-			if safety_result.get("safe", false):
-				# We can break out by bombing here!
-				print("[BTFindFarmingSpot] BREAKOUT: Trapped! Bombing current tile %s to break free (will hit %d soft blocks)" % [current_tile, adjacent_soft_blocks])
-				blackboard.set_var(target_cell_var, current_tile)
-				if broadcast_safety:
-					_broadcast_safety_data({})
-				return SUCCESS
-			else:
-				print("[BTFindFarmingSpot] BREAKOUT FAILED: No safe escape from current tile %s" % [current_tile])
-	elif rejected_no_path == 0:
-		print("[BTFindFarmingSpot] SKIP BREAKOUT: No path rejections")
+		# Most paths were blocked - we might be trapped. Look for breakout position.
+		var breakout_tile = _find_breakout_position(current_tile, bomb_range, grid_sampler, bomb_safety_checker, current_time_msec, player)
+		if breakout_tile != INVALID_TILE:
+			print("[BTFindFarmingSpot] BREAKOUT: %s → %s" % [current_tile, breakout_tile])
+			blackboard.set_var(target_cell_var, breakout_tile)
+			if broadcast_safety:
+				_broadcast_safety_data({})
+			return SUCCESS
 	
 	# Clear visualization if nothing found
 	if broadcast_safety:
@@ -590,3 +578,58 @@ func _count_walkable_neighbors(tile: Vector2i, grid_sampler) -> int:
 		if grid_sampler.is_tile_walkable(neighbor):
 			count += 1
 	return count
+
+## Find a nearby tile with adjacent soft blocks that can be safely bombed
+## Uses BFS to search outward from current position
+func _find_breakout_position(current_tile: Vector2i, bomb_range: int, grid_sampler, 
+		bomb_safety_checker, current_time_msec: int, player) -> Vector2i:
+	# BFS to find nearest tile with adjacent soft blocks
+	var visited := {}
+	var queue := [current_tile]
+	visited["%d,%d" % [current_tile.x, current_tile.y]] = true
+	var max_depth := 5 # Don't search too far
+	var current_depth := 0
+	var depth_marker := Vector2i(-9999, -9999) # Marker to track depth
+	queue.append(depth_marker)
+	
+	while not queue.is_empty() and current_depth < max_depth:
+		var tile = queue.pop_front()
+		
+		# Depth marker
+		if tile == depth_marker:
+			current_depth += 1
+			if not queue.is_empty():
+				queue.append(depth_marker)
+			continue
+		
+		# Check if this tile has soft blocks in bomb range
+		var soft_blocks = _count_soft_blocks_in_range(tile, bomb_range, grid_sampler)
+		if soft_blocks > 0:
+			# Check if we can safely bomb here and escape
+			# For BREAKOUT, allow dead-end escapes since the bomb will create a new path
+			var safety_result = bomb_safety_checker.check_plant_safety_detailed(
+				tile, tile, bomb_range, 5.0, current_time_msec, true # allow_dead_end_escape=true
+			)
+			if safety_result.get("safe", false):
+				return tile
+		
+		# Add walkable neighbors to queue
+		for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var neighbor = tile + dir
+			var key = "%d,%d" % [neighbor.x, neighbor.y]
+			if visited.has(key):
+				continue
+			visited[key] = true
+			
+			# Must be walkable and not have a bomb
+			if grid_sampler.is_tile_safe_for_target(neighbor):
+				# Check path is valid (we might need to walk to this tile)
+				if tile == current_tile or _has_clear_path_to_neighbor(tile, neighbor, grid_sampler, player):
+					queue.append(neighbor)
+	
+	return INVALID_TILE
+
+func _has_clear_path_to_neighbor(from: Vector2i, to: Vector2i, grid_sampler, player) -> bool:
+	# For adjacent tiles, check if path exists
+	var path = grid_sampler.find_path(from, to, 10, player, false)
+	return not path.is_empty()

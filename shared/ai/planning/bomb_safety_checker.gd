@@ -134,12 +134,14 @@ func can_safely_plant_bomb(
 	return false
 
 ## Detailed safety check that returns escape info and margin
+## allow_dead_end_escape: If true, allows escaping to dead ends (useful for breakout scenarios)
 func check_plant_safety_detailed(
 	bot_pos: Vector2i,
 	plant_pos: Vector2i,
 	bomb_range: int,
 	bot_speed_tiles_per_sec: float = 5.0,
-	current_time_msec: float = 0.0
+	current_time_msec: float = 0.0,
+	allow_dead_end_escape: bool = false
 ) -> Dictionary:
 	"""Returns {safe: bool, escape_tile: Vector2i, margin_ms: float, explored_tiles: int}"""
 	
@@ -183,9 +185,12 @@ func check_plant_safety_detailed(
 		# Check if this is a safe haven
 		if not future_threat_matrix.has(current_key):
 			# CRITICAL FIX: Verify escape tile is NOT a dead end!
+			# (unless allow_dead_end_escape is true for breakout scenarios)
 			var has_further_exit = _tile_has_further_exit(current_pos, future_threat_matrix, plant_pos)
 			
-			if has_further_exit:
+			if has_further_exit or allow_dead_end_escape:
+				if not has_further_exit and debug_logging:
+					print("  [BombSafetyChecker] ⚠ Accepting dead-end escape for BREAKOUT at ", current_pos)
 				return {
 					"safe": true,
 					"escape_tile": current_pos,
