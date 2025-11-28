@@ -95,7 +95,7 @@ func _project_bomb_tiles(bomb) -> Array[Vector2i]:
 			if not _grid_sampler.is_in_bounds(tile):
 				break
 			var tile_type = _game_instance.get_tile_type(tile)
-			if tile_type == 1:
+			if tile_type == 1 or tile_type == 3:  # Hard wall or hurry block
 				break
 			tiles.append(tile)
 			if tile_type == 2:
@@ -155,8 +155,8 @@ func _build_threat_matrix_with_chains(current_time: float) -> void:
 				
 				var tile_type = _game_instance.get_tile_type(tile)
 				
-				# Indestructible wall stops blast
-				if tile_type == 1:
+				# Indestructible wall or hurry block stops blast
+				if tile_type == 1 or tile_type == 3:
 					break
 				
 				# CRITICAL FIX: Do NOT stop blast just because there's an earlier threat!

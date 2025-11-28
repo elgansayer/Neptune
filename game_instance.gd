@@ -49,7 +49,18 @@ var match_active := false # Start false, set true after countdown
 var countdown_time := 1.0 # 1 second countdown before match starts
 var winner_id := ""
 
+# Hurry Up (Sudden Death) system
+var hurry_mode_active := false
+var hurry_trigger_time := 60.0  # Trigger hurry when this much time remains
+var hurry_spawn_interval := 0.15  # Time between block spawns (faster = more pressure)
+var hurry_spawn_timer := 0.0
+var hurry_blocks: Array[Vector2i] = []  # Positions of spawned hurry blocks
+var hurry_spawn_pattern: Array[Vector2i] = []  # Pre-calculated spiral pattern
+var hurry_spawn_index := 0  # Current position in spawn pattern
+var hurry_just_activated := false  # Flag for client notification
+
 signal game_ended(winner_id: String)
+signal hurry_mode_started()
 
 func _ready():
 	# Set process priority to run AFTER physics/bombs (0) but BEFORE bots (200)
@@ -218,6 +229,15 @@ func _physics_process(delta):
 	# Update match timer if active
 	if match_active:
 		match_time_remaining -= delta
+		
+		# Check for Hurry Up trigger
+		if not hurry_mode_active and match_time_remaining <= hurry_trigger_time:
+			_activate_hurry_mode()
+		
+		# Process Hurry Up block spawning
+		if hurry_mode_active:
+			_process_hurry_mode(delta)
+		
 		if match_time_remaining <= 0:
 			match_time_remaining = 0
 			end_match()
@@ -321,6 +341,176 @@ func find_winner() -> String:
 	if alive_players.size() == 1:
 		return alive_players[0]
 	return ""
+
+# ============================================================================
+# HURRY UP (SUDDEN DEATH) SYSTEM
+# ============================================================================
+
+func _activate_hurry_mode():
+	"""Activate hurry mode - walls start closing in!"""
+	hurry_mode_active = true
+	hurry_just_activated = true
+	hurry_spawn_timer = 0.0
+	hurry_spawn_index = 0
+	
+	# Generate the spiral spawn pattern
+	hurry_spawn_pattern = _generate_hurry_spiral_pattern()
+	
+	print("[GameInstance] ⚠️ HURRY UP! %d blocks will spawn from edges!" % hurry_spawn_pattern.size())
+	hurry_mode_started.emit()
+
+func _generate_hurry_spiral_pattern() -> Array[Vector2i]:
+	"""Generate a clockwise spiral pattern from edges inward.
+	This creates the classic Bomberman 'closing walls' effect."""
+	var pattern: Array[Vector2i] = []
+	
+	if game_map.is_empty():
+		return pattern
+	
+	var map_height = game_map.size()
+	var map_width = game_map[0].size()
+	
+	# Define bounds (start from inside the outer wall)
+	var top = 1
+	var bottom = map_height - 2
+	var left = 1
+	var right = map_width - 2
+	
+	# Spiral inward: top row -> right column -> bottom row -> left column -> repeat
+	while top <= bottom and left <= right:
+		# Top row (left to right)
+		for x in range(left, right + 1):
+			if _can_place_hurry_block(x, top):
+				pattern.append(Vector2i(x, top))
+		top += 1
+		
+		# Right column (top to bottom)
+		for y in range(top, bottom + 1):
+			if _can_place_hurry_block(right, y):
+				pattern.append(Vector2i(right, y))
+		right -= 1
+		
+		# Bottom row (right to left)
+		if top <= bottom:
+			for x in range(right, left - 1, -1):
+				if _can_place_hurry_block(x, bottom):
+					pattern.append(Vector2i(x, bottom))
+			bottom -= 1
+		
+		# Left column (bottom to top)
+		if left <= right:
+			for y in range(bottom, top - 1, -1):
+				if _can_place_hurry_block(left, y):
+					pattern.append(Vector2i(left, y))
+			left += 1
+	
+	return pattern
+
+func _can_place_hurry_block(x: int, y: int) -> bool:
+	"""Check if a hurry block can be placed at this position.
+	Can't place on existing hard walls."""
+	if y < 0 or y >= game_map.size():
+		return false
+	if x < 0 or x >= game_map[0].size():
+		return false
+	
+	# Don't place on existing hard walls (type 1)
+	var current_type = game_map[y][x]
+	if current_type == 1:
+		return false
+	
+	return true
+
+func _process_hurry_mode(delta: float):
+	"""Process hurry mode - spawn blocks at intervals"""
+	if hurry_spawn_index >= hurry_spawn_pattern.size():
+		return  # All blocks spawned
+	
+	hurry_spawn_timer += delta
+	
+	# Spawn blocks at regular intervals
+	while hurry_spawn_timer >= hurry_spawn_interval and hurry_spawn_index < hurry_spawn_pattern.size():
+		hurry_spawn_timer -= hurry_spawn_interval
+		_spawn_hurry_block(hurry_spawn_pattern[hurry_spawn_index])
+		hurry_spawn_index += 1
+
+func _spawn_hurry_block(pos: Vector2i):
+	"""Spawn a hurry block at the given position.
+	Kills any player standing there, destroys bombs, and becomes impassable."""
+	
+	# First check for players at this position and kill them
+	var world_pos = Vector2(pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+							pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0)
+	
+	for peer_id in players:
+		var player = players[peer_id]
+		if player.is_dead:
+			continue
+		
+		var player_tile = player.get_tile_position()
+		if player_tile == pos:
+			print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
+			player.die("Crushed by hurry block")
+			
+			# Check for match end
+			_check_alive_players()
+	
+	# Destroy any bomb at this position
+	var bombs_to_remove = []
+	for bomb_id in bombs:
+		var bomb = bombs[bomb_id]
+		if is_instance_valid(bomb):
+			var bomb_tile = bomb.get_tile_position()
+			if bomb_tile == pos:
+				bombs_to_remove.append(bomb_id)
+	
+	for bomb_id in bombs_to_remove:
+		var bomb = bombs[bomb_id]
+		if is_instance_valid(bomb):
+			# Trigger explosion before removing
+			bomb.explode()
+	
+	# Destroy any soft block at this position
+	var tile_key = "%d,%d" % [pos.x, pos.y]
+	if map_tiles.has(tile_key):
+		var old_body = map_tiles[tile_key]
+		if is_instance_valid(old_body):
+			old_body.queue_free()
+		map_tiles.erase(tile_key)
+	
+	# Update game_map to hurry block (type 3 = hurry block, visually distinct from wall)
+	if pos.y >= 0 and pos.y < game_map.size() and pos.x >= 0 and pos.x < game_map[0].size():
+		game_map[pos.y][pos.x] = 3  # 3 = hurry block (new type)
+	
+	# Create collision body for the hurry block
+	var tile_body = StaticBody2D.new()
+	tile_body.position = world_pos
+	tile_body.name = "HurryBlock_%d_%d" % [pos.x, pos.y]
+	
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
+	collision.shape = shape
+	tile_body.add_child(collision)
+	
+	add_child(tile_body)
+	map_tiles[tile_key] = tile_body
+	
+	# Track hurry blocks for state sync
+	hurry_blocks.append(pos)
+	
+	# Add to map changes for delta compression
+	map_changes.append({"x": pos.x, "y": pos.y, "value": 3})
+
+func _check_alive_players():
+	"""Check if match should end after a player death"""
+	var alive_count = 0
+	for peer_id in players:
+		if not players[peer_id].is_dead:
+			alive_count += 1
+	
+	if alive_count <= 1:
+		end_match()
 
 func handle_player_input(peer_id: int, input_data: Dictionary):
 	if not players.has(peer_id):
@@ -604,7 +794,9 @@ func sync_state_to_clients():
 		"match_timer": match_time_remaining,
 		"match_active": match_active,
 		"countdown_time": countdown_time,
-		"winner_id": winner_id
+		"winner_id": winner_id,
+		"hurry_mode_active": hurry_mode_active,
+		"hurry_blocks": hurry_blocks.duplicate()
 	}
 	
 	for peer_id in players:

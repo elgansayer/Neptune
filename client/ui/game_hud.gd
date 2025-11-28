@@ -21,6 +21,11 @@ var spectator_overlay: ColorRect = null
 var spectator_label: Label = null
 var is_spectating := false
 
+# Hurry mode UI elements
+var hurry_overlay: ColorRect = null
+var hurry_label: Label = null
+var hurry_mode_shown := false
+
 func _ready():
 	# Ensure HUD is always on top
 	layer = 100
@@ -82,6 +87,33 @@ func _ready():
 	spectator_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))  # Gold color
 	spectator_label.text = "💀 YOU HAVE BEEN ELIMINATED - SPECTATING 💀"
 	spectator_overlay.add_child(spectator_label)
+	
+	# Create hurry mode overlay (flashing warning at top)
+	hurry_overlay = ColorRect.new()
+	hurry_overlay.name = "HurryOverlay"
+	hurry_overlay.color = Color(1.0, 0.0, 0.0, 0.8)
+	hurry_overlay.anchor_left = 0.0
+	hurry_overlay.anchor_top = 0.0
+	hurry_overlay.anchor_right = 1.0
+	hurry_overlay.anchor_bottom = 0.0
+	hurry_overlay.offset_bottom = 80
+	hurry_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hurry_overlay.visible = false
+	add_child(hurry_overlay)
+	
+	# Create hurry label
+	hurry_label = Label.new()
+	hurry_label.name = "HurryLabel"
+	hurry_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hurry_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	hurry_label.anchor_left = 0.0
+	hurry_label.anchor_top = 0.0
+	hurry_label.anchor_right = 1.0
+	hurry_label.anchor_bottom = 1.0
+	hurry_label.add_theme_font_size_override("font_size", 48)
+	hurry_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0))  # Yellow
+	hurry_label.text = "⚠️ HURRY UP! ⚠️"
+	hurry_overlay.add_child(hurry_label)
 
 func show_countdown(time_remaining: float):
 	"""Display animated countdown before match starts"""
@@ -140,6 +172,58 @@ func show_countdown(time_remaining: float):
 		tween.chain()
 		# Then slightly shrink
 		tween.tween_property(countdown_label, "scale", Vector2(1.0, 1.0), 0.1)
+
+func show_hurry_mode():
+	"""Display HURRY UP warning when hurry mode is triggered"""
+	if hurry_mode_shown:
+		return  # Already shown
+	hurry_mode_shown = true
+	
+	if not hurry_overlay:
+		return
+	
+	# Show with dramatic animation
+	hurry_overlay.visible = true
+	hurry_overlay.modulate = Color(1, 1, 1, 0)
+	hurry_label.scale = Vector2(0.5, 0.5)
+	hurry_label.pivot_offset = hurry_label.size / 2
+	
+	# Flash animation
+	var tween = create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(hurry_overlay, "modulate", Color(1, 1, 1, 1), 0.2)
+	tween.tween_property(hurry_label, "scale", Vector2(1.2, 1.2), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
+	tween.chain()
+	tween.tween_property(hurry_label, "scale", Vector2(1.0, 1.0), 0.1)
+	
+	# Start flashing loop
+	_start_hurry_flash()
+	
+	# Update timer display text
+	match_timer.text = "HURRY!"
+	match_timer.add_theme_color_override("font_color", Color(1.0, 0.0, 0.0))  # Red
+	
+	print("[HUD] HURRY UP mode activated!")
+
+var hurry_flash_tween: Tween = null
+
+func _start_hurry_flash():
+	"""Create looping flash animation for hurry mode"""
+	if hurry_flash_tween and hurry_flash_tween.is_valid():
+		hurry_flash_tween.kill()
+	
+	hurry_flash_tween = create_tween()
+	hurry_flash_tween.set_loops()  # Loop forever
+	hurry_flash_tween.tween_property(hurry_overlay, "color", Color(1.0, 0.0, 0.0, 0.9), 0.3)
+	hurry_flash_tween.tween_property(hurry_overlay, "color", Color(0.8, 0.0, 0.0, 0.6), 0.3)
+
+func hide_hurry_mode():
+	"""Hide hurry mode warning"""
+	hurry_mode_shown = false
+	if hurry_flash_tween and hurry_flash_tween.is_valid():
+		hurry_flash_tween.kill()
+	if hurry_overlay:
+		hurry_overlay.visible = false
 
 func update_timer(time_remaining: float):
 	"""Update match timer display with minutes:seconds format"""

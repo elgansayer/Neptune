@@ -21,6 +21,7 @@ var powerup_nodes = {} # powerup_id -> Node2D
 var explosion_nodes = {} # explosion_id -> ExplosionRenderer
 var block_nodes = {} # tile_key -> Node2D (for destructible blocks)
 var wall_nodes = {} # tile_key -> Node2D (for solid walls)
+var hurry_block_nodes = {} # tile_key -> Node2D (for hurry mode blocks)
 var debug_tiles = {} # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
@@ -212,6 +213,15 @@ func update_game_state(state: Dictionary):
 	# Update HUD timer and countdown
 	if state.has("match_timer") and hud:
 		hud.update_timer(state.match_timer)
+	
+	# Handle hurry mode
+	if state.has("hurry_mode_active") and state.hurry_mode_active and hud:
+		if hud.has_method("show_hurry_mode"):
+			hud.show_hurry_mode()
+	
+	# Render hurry blocks
+	if state.has("hurry_blocks"):
+		_update_hurry_blocks(state.hurry_blocks)
 	
 	if state.has("countdown_time") and state.countdown_time > 0.0 and hud:
 		hud.show_countdown(state.countdown_time)
@@ -1125,3 +1135,46 @@ func update_powerup(powerup_id: String, data: Dictionary):
 		powerup_node = powerup_nodes[powerup_id]
 		# Update position (shouldn't change, but just in case)
 		powerup_node.position = Vector2(data.position.x, data.position.y)
+
+func _update_hurry_blocks(hurry_blocks_data: Array):
+	"""Update hurry mode blocks on the client side"""
+	# Track which blocks currently exist to detect new ones
+	var new_blocks := {}
+	
+	for block_data in hurry_blocks_data:
+		var tile_x: int = block_data.x if block_data is Dictionary else block_data["x"]
+		var tile_y: int = block_data.y if block_data is Dictionary else block_data["y"]
+		var tile_key = "%d,%d" % [tile_x, tile_y]
+		new_blocks[tile_key] = true
+		
+		# Only create if doesn't exist yet
+		if not hurry_block_nodes.has(tile_key):
+			_create_hurry_block_visual(tile_x, tile_y, tile_key)
+	
+	# No need to remove hurry blocks - they stay until game ends
+
+func _create_hurry_block_visual(tile_x: int, tile_y: int, tile_key: String):
+	"""Create visual representation for a hurry block"""
+	var hurry_block = ColorRect.new()
+	hurry_block.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
+	hurry_block.color = Color(0.4, 0.4, 0.4, 1.0)  # Dark gray - like hard blocks
+	hurry_block.position = Vector2(
+		tile_x * GameConfig.TILE_SIZE,
+		tile_y * GameConfig.TILE_SIZE
+	)
+	hurry_block.z_index = 15  # Render above most things
+	
+	# Add to scene
+	add_child(hurry_block)
+	hurry_block_nodes[tile_key] = hurry_block
+	
+	# Entry animation - scale up from center
+	hurry_block.pivot_offset = hurry_block.size / 2
+	hurry_block.scale = Vector2(0.0, 0.0)
+	
+	var tween = create_tween()
+	tween.set_trans(Tween.TRANS_ELASTIC)
+	tween.set_ease(Tween.EASE_OUT)
+	tween.tween_property(hurry_block, "scale", Vector2(1.0, 1.0), 0.3)
+	
+	print("[GameView] Hurry block spawned at (%d, %d)" % [tile_x, tile_y])

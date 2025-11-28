@@ -176,9 +176,9 @@ func _get_blast_tiles(center: Vector2i, range_val: int, debug_log: bool = false)
 			# Check for hard walls (blast stops)
 			if not _grid_sampler.is_tile_walkable(tile):
 				var tile_type = _grid_sampler.get_tile_type(tile)
-				if tile_type == 1: # Hard wall
+				if tile_type == 1 or tile_type == 3: # Hard wall or hurry block
 					if debug_log:
-						print("[_get_blast_tiles] ", dir_names[i], " dist=", dist, " tile=", tile, " HARD_WALL (stop)")
+						print("[_get_blast_tiles] ", dir_names[i], " dist=", dist, " tile=", tile, " HARD_WALL/HURRY (stop)")
 					break
 				elif tile_type == 2: # Soft wall (destroys but stops)
 					if debug_log:

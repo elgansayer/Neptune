@@ -222,7 +222,7 @@ func check_tile_collision(grid_pos: Vector2i) -> Dictionary:
 	# Check game map if game_instance is available
 	if game_instance and game_instance.has_method("get_tile_type"):
 		var tile_type = game_instance.get_tile_type(grid_pos)
-		if tile_type == 1: # Solid wall
+		if tile_type == 1 or tile_type == 3: # Solid wall or hurry block
 			return {"blocked": true, "destructible": false}
 		elif tile_type == 2: # Destructible block
 			return {"blocked": true, "destructible": true}

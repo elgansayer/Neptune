@@ -110,8 +110,8 @@ func _get_blast_tiles(center: Vector2i, range_val: int) -> Array[Vector2i]:
 			
 			var tile_type: int = _grid_sampler.get_tile_type(tile)
 			
-			# Hard wall stops blast completely
-			if tile_type == 1:
+			# Hard wall or hurry block stops blast completely
+			if tile_type == 1 or tile_type == 3:
 				break
 			
 			tiles.append(tile)
@@ -199,7 +199,7 @@ func _get_blast_tiles_simulated(center: Vector2i, range_val: int, cleared: Array
 			
 			var tile_type: int = _grid_sampler.get_tile_type(tile)
 			
-			if tile_type == 1:  # Hard wall
+			if tile_type == 1 or tile_type == 3:  # Hard wall or hurry block
 				break
 			
 			tiles.append(tile)
