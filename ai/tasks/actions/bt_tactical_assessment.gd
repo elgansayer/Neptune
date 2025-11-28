@@ -159,19 +159,22 @@ func _tick(_delta: float) -> int:
 		new_priority = 100
 	
 	# PRIORITY 9: Patient Ambush - opponent is in danger, let them die
-	elif not opponent_is_safe and distance > 2:
+	# REDUCED PRIORITY: Only wait if opponent is VERY close to death (distance <= 3)
+	# Otherwise, keep chasing to apply pressure!
+	elif not opponent_is_safe and distance <= 3:
 		new_tactic = "WAIT_FOR_DEATH"
 		new_priority = 4
 	
 	# PRIORITY 10: Aggressive Chase - we have bomb advantage
-	elif (max_bombs - bomb_count) >= 1 and distance <= 10 and we_are_safe:
+	# INCREASED PRIORITY & RANGE: Chase aggressively whenever we can!
+	elif (max_bombs - bomb_count) >= 1 and distance <= 15 and we_are_safe:
 		new_tactic = "AGGRESSIVE_CHASE"
-		new_priority = 3
+		new_priority = 5  # INCREASED from 3 - prioritize aggression over waiting!
 	
 	# PRIORITY 11: Predictive Intercept - standard chase
 	elif distance <= 15 and we_have_bombs:
 		new_tactic = "PREDICTIVE_INTERCEPT"
-		new_priority = 2
+		new_priority = 3  # Adjusted to be below AGGRESSIVE_CHASE
 	
 	# PRIORITY 12: FARM TOWARD OPPONENT - blocked by soft blocks, destroy them to reach enemy
 	elif not has_path_to_opponent and distance <= 20 and we_have_bombs and we_are_safe:

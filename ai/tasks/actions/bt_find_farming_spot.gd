@@ -153,6 +153,30 @@ func _tick(_delta: float) -> int:
 					safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": safety_result.get("explored_tiles", 0), "reason": "no_escape"}
 				if debug_logging:
 					pass # print("  [REJECT] ", check_tile, " - no escape route (blocks=", soft_blocks_hit, ")")
+				continue
+			
+			# CRITICAL: Check if the escape tile is a dead end!
+			# If we escape to a dead end, we'll be stuck there until bomb explodes.
+			# This causes DEAD-END ABORT spam when the tree loops.
+			var escape_tile_raw = safety_result.get("escape_tile", Vector2i(-1, -1))
+			var escape_tile_v2i: Vector2i
+			if escape_tile_raw is Vector2i:
+				escape_tile_v2i = escape_tile_raw
+			elif escape_tile_raw is Dictionary:
+				escape_tile_v2i = Vector2i(int(escape_tile_raw.x), int(escape_tile_raw.y))
+			else:
+				escape_tile_v2i = Vector2i(-1, -1)
+			
+			if escape_tile_v2i != Vector2i(-1, -1):
+				var escape_exits = _count_walkable_neighbors(escape_tile_v2i, grid_sampler)
+				if escape_exits <= 1:
+					# Escape tile is a dead end - reject this farming spot!
+					rejected_no_escape += 1
+					if broadcast_safety:
+						safety_eval[tile_key] = {"status": 0, "soft_blocks": soft_blocks_hit, "explored_tiles": safety_result.get("explored_tiles", 0), "reason": "escape_is_dead_end"}
+					if debug_logging:
+						print("  [REJECT] ", check_tile, " - escape tile ", escape_tile_v2i, " is a dead end (exits=", escape_exits, ")")
+					continue
 			
 			# CORRECTED SCORING: Safety-First Algorithm
 			# Score = Damage_Potential * Safety_Multiplier (NOT additive!)
@@ -237,6 +261,31 @@ func _tick(_delta: float) -> int:
 	#	" no_path=", rejected_no_path,
 	#	" no_nearby_safe=", rejected_no_nearby_safe,
 	#	" no_escape=", rejected_no_escape, ")")
+	
+	# FALLBACK: If completely trapped (all paths blocked), try to bomb current position
+	# to break out if there's an adjacent soft block
+	var valid_candidates = candidates_checked - rejected_unwalkable - rejected_no_blocks
+	print("[BTFindFarmingSpot] SEARCH FAILED: checked=%d unwalkable=%d no_blocks=%d no_path=%d valid_candidates=%d" % [candidates_checked, rejected_unwalkable, rejected_no_blocks, rejected_no_path, valid_candidates])
+	if rejected_no_path > 0 and rejected_no_path >= valid_candidates - rejected_no_nearby_safe - rejected_no_escape:
+		# Most paths were blocked - we might be trapped
+		var adjacent_soft_blocks = _count_soft_blocks_in_range(current_tile, bomb_range, grid_sampler)
+		print("[BTFindFarmingSpot] CHECKING BREAKOUT: adjacent_soft_blocks=%d at tile %s" % [adjacent_soft_blocks, current_tile])
+		if adjacent_soft_blocks > 0:
+			# Check if we can escape after bombing our current position
+			var safety_result = bomb_safety_checker.check_plant_safety_detailed(
+				current_tile, current_tile, bomb_range, 5.0, current_time_msec
+			)
+			if safety_result.get("safe", false):
+				# We can break out by bombing here!
+				print("[BTFindFarmingSpot] BREAKOUT: Trapped! Bombing current tile %s to break free (will hit %d soft blocks)" % [current_tile, adjacent_soft_blocks])
+				blackboard.set_var(target_cell_var, current_tile)
+				if broadcast_safety:
+					_broadcast_safety_data({})
+				return SUCCESS
+			else:
+				print("[BTFindFarmingSpot] BREAKOUT FAILED: No safe escape from current tile %s" % [current_tile])
+	elif rejected_no_path == 0:
+		print("[BTFindFarmingSpot] SKIP BREAKOUT: No path rejections")
 	
 	# Clear visualization if nothing found
 	if broadcast_safety:
@@ -532,3 +581,12 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 		_broadcast_safety_data(safety_eval)
 	else:
 		print("[BTFindFarmingSpot] *** WARNING: safety_eval is EMPTY in _do_full_search_and_broadcast")
+
+## Count walkable neighbor tiles (used to detect dead ends)
+func _count_walkable_neighbors(tile: Vector2i, grid_sampler) -> int:
+	var count = 0
+	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		var neighbor = tile + dir
+		if grid_sampler.is_tile_walkable(neighbor):
+			count += 1
+	return count

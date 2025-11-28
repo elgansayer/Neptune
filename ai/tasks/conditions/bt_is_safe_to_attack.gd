@@ -89,6 +89,17 @@ func _tick(_delta: float) -> int:
 	# Count current escape routes
 	var escape_routes = _count_escape_routes(player_tile, grid_sampler, ai_manager)
 	
+	# CRITICAL: If in a dead end (1 or fewer exits), we CANNOT attack!
+	# We must move out first before attempting any offensive action.
+	# This prevents the DEAD-END ABORT spam in bt_place_bomb.
+	if escape_routes <= 1:
+		# print("[IsSafeToAttack] ✗ UNSAFE: Dead end position (only %d exits) - move out first!" % escape_routes)
+		blackboard.set_var("was_safe_to_attack", false)
+		blackboard.set_var("in_dead_end", true)  # Signal to other tasks
+		return FAILURE
+	else:
+		blackboard.set_var("in_dead_end", false)
+	
 	if escape_routes < effective_routes:
 		# print("[IsSafeToAttack] ✗ UNSAFE: Not enough escape routes (", escape_routes, " < ", effective_routes, ")")
 		blackboard.set_var("was_safe_to_attack", false)

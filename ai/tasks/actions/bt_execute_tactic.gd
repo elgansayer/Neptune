@@ -429,18 +429,37 @@ func _execute_stutter_trap(player_tile: Vector2i, opponent_tile: Vector2i, oppon
 
 ## Chase aggressively with multiple bombs
 func _execute_aggressive_chase(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler) -> Vector2i:
-	# Move directly toward opponent
+	# Move directly toward opponent - try primary direction first
 	var direction = opponent_tile - player_tile
 	var next_tile = player_tile
 	
-	if abs(direction.x) > abs(direction.y):
-		next_tile += Vector2i(sign(direction.x), 0)
-	else:
-		next_tile += Vector2i(0, sign(direction.y))
+	# Primary direction: the axis with the larger gap
+	var primary_dir: Vector2i
+	var secondary_dir: Vector2i
 	
-	# Use is_tile_safe_for_target to avoid walking INTO bombs!
+	if abs(direction.x) > abs(direction.y):
+		primary_dir = Vector2i(sign(direction.x), 0)
+		secondary_dir = Vector2i(0, sign(direction.y)) if direction.y != 0 else Vector2i(0, 1)
+	else:
+		primary_dir = Vector2i(0, sign(direction.y))
+		secondary_dir = Vector2i(sign(direction.x), 0) if direction.x != 0 else Vector2i(1, 0)
+	
+	# Try primary direction
+	next_tile = player_tile + primary_dir
 	if grid_sampler.is_tile_safe_for_target(next_tile):
 		return next_tile
+	
+	# Try secondary direction (flanking approach)
+	next_tile = player_tile + secondary_dir
+	if grid_sampler.is_tile_safe_for_target(next_tile):
+		return next_tile
+	
+	# Try opposite of secondary (other flank)
+	next_tile = player_tile - secondary_dir
+	if grid_sampler.is_tile_safe_for_target(next_tile):
+		return next_tile
+	
+	# All directions blocked - stay in place
 	return player_tile
 
 ## Stay safe while opponent dies
