@@ -1154,13 +1154,27 @@ func _update_hurry_blocks(hurry_blocks_data: Array):
 	# No need to remove hurry blocks - they stay until game ends
 
 func _create_hurry_block_visual(tile_x: int, tile_y: int, tile_key: String):
-	"""Create visual representation for a hurry block"""
-	var hurry_block = ColorRect.new()
-	hurry_block.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
-	hurry_block.color = Color(0.4, 0.4, 0.4, 1.0)  # Dark gray - like hard blocks
+	"""Create visual representation for a hurry block using Hard-block.tscn from map PCK"""
+	var hurry_block: Node2D = null
+	
+	# Try to load Hard-block.tscn from the mounted map PCK
+	var hard_block_scene_path = "res://Hard-block.tscn"
+	if ResourceLoader.exists(hard_block_scene_path):
+		var hard_block_scene = load(hard_block_scene_path)
+		if hard_block_scene:
+			hurry_block = hard_block_scene.instantiate()
+	
+	# Fallback to ColorRect if scene not available
+	if hurry_block == null:
+		var fallback = ColorRect.new()
+		fallback.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
+		fallback.color = Color(0.4, 0.4, 0.4, 1.0)  # Dark gray
+		hurry_block = fallback
+	
+	# Position at tile center (sprites are centered, ColorRect is top-left)
 	hurry_block.position = Vector2(
-		tile_x * GameConfig.TILE_SIZE,
-		tile_y * GameConfig.TILE_SIZE
+		tile_x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
 	hurry_block.z_index = 15  # Render above most things
 	
@@ -1168,8 +1182,7 @@ func _create_hurry_block_visual(tile_x: int, tile_y: int, tile_key: String):
 	add_child(hurry_block)
 	hurry_block_nodes[tile_key] = hurry_block
 	
-	# Entry animation - scale up from center
-	hurry_block.pivot_offset = hurry_block.size / 2
+	# Entry animation - scale up from center with elastic bounce
 	hurry_block.scale = Vector2(0.0, 0.0)
 	
 	var tween = create_tween()
