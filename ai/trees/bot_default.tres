@@ -98,7 +98,7 @@ children = [SubResource("BTSequence_rubber_escape"), SubResource("BTSequence_def
 [sub_resource type="BTCondition" id="BTCondition_has_opponent"]
 custom_name = "Has Opponent?"
 script = ExtResource("5_has_opp")
-max_distance = 15.0
+max_distance = 30.0
 
 [sub_resource type="BTCondition" id="BTCondition_safe_to_attack"]
 custom_name = "Safe To Attack?"

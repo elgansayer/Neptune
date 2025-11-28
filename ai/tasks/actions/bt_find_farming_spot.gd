@@ -275,6 +275,16 @@ func _tick(_delta: float) -> int:
 				_broadcast_safety_data({})
 			return SUCCESS
 	
+	# FINAL FALLBACK: If completely stuck with no farming or breakout options,
+	# try to move toward map center or opponents to find more options
+	var fallback_tile = _find_movement_fallback(current_tile, grid_sampler, player)
+	if fallback_tile != INVALID_TILE:
+		print("[BTFindFarmingSpot] FALLBACK MOVE: %s → %s (toward center/opponent)" % [current_tile, fallback_tile])
+		blackboard.set_var(target_cell_var, fallback_tile)
+		if broadcast_safety:
+			_broadcast_safety_data({})
+		return SUCCESS
+	
 	# Clear visualization if nothing found
 	if broadcast_safety:
 		_broadcast_safety_data({})
@@ -633,3 +643,98 @@ func _has_clear_path_to_neighbor(from: Vector2i, to: Vector2i, grid_sampler, pla
 	# For adjacent tiles, check if path exists
 	var path = grid_sampler.find_path(from, to, 10, player, false)
 	return not path.is_empty()
+
+## Fallback: When stuck with no farming spots, move toward center or nearest opponent
+## to get out of corners and find more options
+func _find_movement_fallback(current_tile: Vector2i, grid_sampler, player) -> Vector2i:
+	var opponent_tracker = blackboard.get_var("opponent_tracker")
+	var game_instance = blackboard.get_var("game_instance")
+	
+	# Try to find a path toward the map center first
+	var map_bounds = grid_sampler.get_map_bounds()
+	var center_tile = Vector2i(map_bounds.x / 2, map_bounds.y / 2)
+	
+	# BFS to find the closest reachable tile toward center
+	var best_tile = INVALID_TILE
+	var best_dist_to_center = 999999
+	var checked := {}
+	var queue := [current_tile]
+	checked["%d,%d" % [current_tile.x, current_tile.y]] = true
+	var max_search := 30  # Search up to 30 tiles
+	var search_count := 0
+	
+	while not queue.is_empty() and search_count < max_search:
+		var tile = queue.pop_front()
+		search_count += 1
+		
+		# Skip current tile as target
+		if tile != current_tile:
+			var dist_to_center = abs(tile.x - center_tile.x) + abs(tile.y - center_tile.y)
+			
+			# Check if this tile is closer to center than current position
+			var current_dist = abs(current_tile.x - center_tile.x) + abs(current_tile.y - center_tile.y)
+			if dist_to_center < current_dist and dist_to_center < best_dist_to_center:
+				# Check if we can actually path there
+				var path = grid_sampler.find_path(current_tile, tile, 40, player, false)
+				if not path.is_empty():
+					best_dist_to_center = dist_to_center
+					best_tile = tile
+					break  # Found a good spot, use it
+		
+		# Add walkable neighbors
+		for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var neighbor = tile + dir
+			var key = "%d,%d" % [neighbor.x, neighbor.y]
+			if checked.has(key):
+				continue
+			checked[key] = true
+			
+			if grid_sampler.is_tile_safe_for_target(neighbor):
+				queue.append(neighbor)
+	
+	if best_tile != INVALID_TILE:
+		return best_tile
+	
+	# If no path toward center, try to move toward nearest opponent
+	if opponent_tracker and player:
+		var nearest = opponent_tracker.get_nearest_opponent(player.position, player.peer_id)
+		if nearest and not nearest.is_empty():
+			var opponent_tile: Vector2i = nearest.get("tile")
+			
+			# Find reachable tile closest to opponent
+			checked.clear()
+			queue = [current_tile]
+			checked["%d,%d" % [current_tile.x, current_tile.y]] = true
+			search_count = 0
+			var best_dist_to_opp = 999999
+			best_tile = INVALID_TILE
+			
+			while not queue.is_empty() and search_count < max_search:
+				var tile = queue.pop_front()
+				search_count += 1
+				
+				if tile != current_tile:
+					var dist_to_opp = abs(tile.x - opponent_tile.x) + abs(tile.y - opponent_tile.y)
+					var current_dist = abs(current_tile.x - opponent_tile.x) + abs(current_tile.y - opponent_tile.y)
+					
+					if dist_to_opp < current_dist and dist_to_opp < best_dist_to_opp:
+						var path = grid_sampler.find_path(current_tile, tile, 40, player, false)
+						if not path.is_empty():
+							best_dist_to_opp = dist_to_opp
+							best_tile = tile
+							break
+				
+				for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+					var neighbor = tile + dir
+					var key = "%d,%d" % [neighbor.x, neighbor.y]
+					if checked.has(key):
+						continue
+					checked[key] = true
+					
+					if grid_sampler.is_tile_safe_for_target(neighbor):
+						queue.append(neighbor)
+			
+			if best_tile != INVALID_TILE:
+				return best_tile
+	
+	return INVALID_TILE

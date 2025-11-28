@@ -428,9 +428,28 @@ func _execute_stutter_trap(player_tile: Vector2i, opponent_tile: Vector2i, oppon
 	return _get_bomb_placement_for_target(retreat_target, player_tile, grid_sampler)
 
 ## Chase aggressively with multiple bombs
+## This is an ATTACK tactic - we want to find a position where we can BOMB the opponent!
 func _execute_aggressive_chase(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler) -> Vector2i:
-	# Move directly toward opponent - try primary direction first
 	var direction = opponent_tile - player_tile
+	var manhattan_dist = abs(direction.x) + abs(direction.y)
+	
+	# Get player's bomb range from blackboard
+	var player = blackboard.get_var("player")
+	var bomb_range = player.bomb_range if player else 2
+	
+	# If we're ALREADY in bombing range, find the best attack position!
+	# We need a tile where our bomb explosion would hit the opponent
+	if manhattan_dist <= bomb_range + 2:
+		# We're close! Find a tile where:
+		# 1. We can place a bomb that threatens the opponent
+		# 2. We have an escape route
+		var best_attack_pos = _find_attack_position(player_tile, opponent_tile, bomb_range, grid_sampler)
+		if best_attack_pos != Vector2i.ZERO and best_attack_pos != Vector2i(-1, -1):
+			print("[AggressiveChase] 🎯 Attack position found: %s (range to target: %d)" % [best_attack_pos, manhattan_dist])
+			return best_attack_pos
+	
+	# Not in bombing range yet - chase toward opponent
+	# Find the best path tile toward the opponent
 	var next_tile = player_tile
 	
 	# Primary direction: the axis with the larger gap
@@ -461,6 +480,67 @@ func _execute_aggressive_chase(player_tile: Vector2i, opponent_tile: Vector2i, g
 	
 	# All directions blocked - stay in place
 	return player_tile
+
+## Find the best position to attack opponent from
+## Returns a tile where a bomb would threaten the opponent AND we can escape
+func _find_attack_position(player_tile: Vector2i, opponent_tile: Vector2i, bomb_range: int, grid_sampler) -> Vector2i:
+	var ai_manager = blackboard.get_var("ai_manager")
+	var threat_matrix = ai_manager.get_current_threat_matrix() if ai_manager else {}
+	
+	# Check tiles along each cardinal direction from opponent
+	# These are positions where our bomb would hit them
+	var attack_positions: Array[Dictionary] = []
+	
+	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+		for dist in range(1, bomb_range + 1):
+			var attack_tile = opponent_tile + (dir * dist)
+			
+			# Must be walkable and safe (no current threats)
+			if not grid_sampler.is_tile_safe_for_target(attack_tile):
+				break  # Can't pass through walls/blocks
+			
+			var key = "%d,%d" % [attack_tile.x, attack_tile.y]
+			if threat_matrix.has(key):
+				continue  # Don't stand in danger
+			
+			# Check if we can reach this position
+			var path = grid_sampler.find_path(player_tile, attack_tile, 20, null, false)
+			if path.is_empty():
+				continue  # Can't reach
+			
+			# Count escape routes from this position (excluding the direction toward opponent)
+			var escapes = 0
+			for escape_dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+				if escape_dir == -dir:
+					continue  # Don't count going back toward explosion
+				var escape_tile = attack_tile + escape_dir
+				if grid_sampler.is_tile_safe_for_target(escape_tile):
+					var escape_key = "%d,%d" % [escape_tile.x, escape_tile.y]
+					if not threat_matrix.has(escape_key):
+						escapes += 1
+			
+			if escapes >= 1:
+				var path_len = path.size()
+				attack_positions.append({
+					"tile": attack_tile,
+					"dist_from_opp": dist,
+					"path_len": path_len,
+					"escapes": escapes
+				})
+	
+	if attack_positions.is_empty():
+		return Vector2i.ZERO
+	
+	# Sort by: closest to us (shortest path), then by escape options
+	attack_positions.sort_custom(func(a, b):
+		# First, shorter path is better
+		if a.path_len != b.path_len:
+			return a.path_len < b.path_len
+		# Then, more escapes is better
+		return a.escapes > b.escapes
+	)
+	
+	return attack_positions[0].tile
 
 ## Stay safe while opponent dies
 func _execute_wait_safe(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler, ai_manager) -> Vector2i:

@@ -245,7 +245,11 @@ func update_game_state(state: Dictionary):
 			hud.show_spectator_mode()
 
 	# Check for game over
-	if state.has("match_active") and not state.match_active and hud:
+	# IMPORTANT: match_active=false during countdown AND after game ends
+	# Only show game over if countdown is complete (countdown_time <= 0)
+	var countdown_complete = not state.has("countdown_time") or state.countdown_time <= 0.0
+	var match_ended = state.has("match_active") and not state.match_active and countdown_complete
+	if match_ended and hud:
 		var winner_name = ""
 		if state.has("winner_id") and state.winner_id:
 			if state.has("players") and state.players.has(state.winner_id):
