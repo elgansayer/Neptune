@@ -24,6 +24,7 @@ var max_bombs := 10 # Increased for testing competitive AI
 var bomb_range := 1 # CLASSIC: Start with range 1 to allow escape from spawn corners
 var speed_multiplier := 1.0 # Power-up speed multiplier
 var is_dead := false
+var is_spectator := false # Player is eliminated and watching the match
 var is_bot := false
 var bot_personality := ""
 var debug_check_tile := Vector2i.ZERO # Tile being checked for diagonal (for client debug)
@@ -807,11 +808,12 @@ func _apply_bomb_collision_exception(bomb):
 
 func die():
 	is_dead = true
+	is_spectator = true # Player becomes a spectator upon death
 	place_bomb_requested = false
 	input_direction = Vector2.ZERO
 	velocity = Vector2.ZERO
 	# TODO: Play death animation
-	# TODO: Respawn logic
+	# Note: No respawn in Last Man Standing mode
 
 func collect_powerup(powerup):
 	"""Called when player collects a power-up"""
@@ -845,6 +847,7 @@ func get_state() -> Dictionary:
 		"velocity": {"x": velocity.x, "y": velocity.y},
 		"facing": _vector_to_facing(last_move_direction),
 		"is_dead": is_dead,
+		"is_spectator": is_spectator,
 		"bombs_placed": bombs_placed,
 		"max_bombs": max_bombs,
 		"bomb_range": bomb_range,

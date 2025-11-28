@@ -239,6 +239,10 @@ func update_game_state(state: Dictionary):
 			my_data.get("bomb_range", 2),
 			my_data.get("speed_multiplier", 1.0)
 		)
+		
+		# Check if local player became a spectator (eliminated)
+		if my_data.get("is_spectator", false) and hud.has_method("show_spectator_mode"):
+			hud.show_spectator_mode()
 
 	# Check for game over
 	if state.has("match_active") and not state.match_active and hud:
