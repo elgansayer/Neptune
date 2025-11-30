@@ -72,6 +72,43 @@ func _ready():
 	
 	# Seed randomness with current time for unique maps each game
 	randomize()
+
+	# FAST_HURRY test hook (accelerated sudden death for automated bot testing)
+	var fast_hurry_env = OS.get_environment("FAST_HURRY")
+	if fast_hurry_env != "":
+		var enabled = fast_hurry_env == "1" or fast_hurry_env.to_lower() in ["true", "yes", "on"]
+		if enabled:
+			# Allow overriding individual parameters via environment variables
+			var dur_env = OS.get_environment("FAST_HURRY_DURATION")
+			var trig_env = OS.get_environment("FAST_HURRY_TRIGGER")
+			var interval_env = OS.get_environment("FAST_HURRY_INTERVAL")
+
+			if dur_env != "":
+				match_duration = float(dur_env)
+			if trig_env != "":
+				# Trigger time is time remaining when hurry activates
+				hurry_trigger_time = float(trig_env)
+			if interval_env != "":
+				hurry_spawn_interval = float(interval_env)
+
+			# If user did not supply overrides, use a fast default profile
+			if dur_env == "" and trig_env == "" and interval_env == "":
+				match_duration = 30.0
+				hurry_trigger_time = 25.0
+				hurry_spawn_interval = 0.05
+
+			# Reset remaining time to new duration
+			match_time_remaining = match_duration
+			print('[FAST_HURRY] Enabled: duration=%.2f trigger=%.2f interval=%.2f' % [match_duration, hurry_trigger_time, hurry_spawn_interval])
+		else:
+			# If FAST_HURRY specified but false-ish, log for clarity
+			print('[FAST_HURRY] Present but disabled (value="%s")' % fast_hurry_env)
+	elif FileAccess.file_exists('res://FAST_HURRY.flag'):
+		match_duration = 30.0
+		hurry_trigger_time = 25.0
+		hurry_spawn_interval = 0.05
+		match_time_remaining = match_duration
+		print('[FAST_HURRY] Enabled via flag file: duration=%.2f trigger=%.2f interval=%.2f' % [match_duration, hurry_trigger_time, hurry_spawn_interval])
 	
 	# Load map from PCK file
 	var map_data: Dictionary

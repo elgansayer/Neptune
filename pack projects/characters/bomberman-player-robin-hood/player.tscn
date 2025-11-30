@@ -152,6 +152,22 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": ExtResource("71")
+}],
+"loop": false,
+"name": &"hud_panic",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("70")
+}],
+"loop": false,
+"name": &"hud_win",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": ExtResource("19")
 }, {
 "duration": 1.0,
@@ -474,5 +490,5 @@ animations = [{
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_q13i1")
-animation = &"state_defeat"
+animation = &"hud_win"
 offset = Vector2(0, -8)

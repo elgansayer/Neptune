@@ -226,12 +226,34 @@ func update_game_state(state: Dictionary):
 	if state.has("countdown_time") and state.countdown_time > 0.0 and hud:
 		hud.show_countdown(state.countdown_time)
 
-	# Count alive players and update HUD
+	# Update player faces in HUD and count alive players
 	if state.has("players") and hud:
 		var alive_count = 0
-		for peer_id in state.players:
-			if not state.players[peer_id].get("is_dead", false):
-				alive_count += 1
+		for peer_id_str in state.players:
+			var pdata = state.players[peer_id_str]
+			var is_dead = pdata.get("is_dead", false)
+			var username = pdata.get("username", "Player")
+			var score = pdata.get("wins", 0)
+			
+			# Add face if not exists
+			if hud.has_method("add_player_face"):
+				hud.add_player_face(peer_id_str, username, score)
+			
+			# Update face state based on player status
+			if hud.has_method("update_player_face_state"):
+				if is_dead:
+					hud.update_player_face_state(peer_id_str, "lose")
+				else:
+					hud.update_player_face_state(peer_id_str, "idle")
+					alive_count += 1
+			else:
+				if not is_dead:
+					alive_count += 1
+			
+			# Update score
+			if hud.has_method("update_player_score"):
+				hud.update_player_score(peer_id_str, score)
+		
 		hud.update_players_alive(alive_count, state.players.size())
 
 	# Update players
@@ -1064,8 +1086,9 @@ func render_map(map_data):
 	camera.zoom = Vector2(zoom_level, zoom_level)
 	
 	# Position camera to show ENTIRE map
-	# Center X on the map
-	var map_center_x = map_width * GameConfig.TILE_SIZE / 2.0
+	# Center X on the map, with temporary -4px offset for 21-tile wide map on 320px viewport
+	# (Map is 336px wide, viewport is 320px - offset centers the overflow)
+	var map_center_x = (map_width * GameConfig.TILE_SIZE / 2.0) - 4.0
 	
 	# Align Y so map is flush against BOTTOM of screen
 	# Camera Y = Map Bottom Y - (Viewport Height / Zoom) / 2

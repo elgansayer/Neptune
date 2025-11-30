@@ -6,11 +6,17 @@ class_name GameHUD
 # Also handles spectator mode when local player is eliminated
 
 @onready var match_timer: Label = $TopBar/MatchTimer
-@onready var players_alive: Label = $TopBar/PlayersAlive
+@onready var player_faces_container: HBoxContainer = $TopBar/PlayerFaces
 @onready var player_name: Label = $BottomLeft/PlayerName
 @onready var bomb_label: Label = $BottomLeft/BombCount/BombLabel
 @onready var range_label: Label = $BottomLeft/RangeIndicator/RangeLabel
 @onready var speed_label: Label = $BottomLeft/SpeedIndicator/SpeedLabel
+
+# Player face tracking - uses placeholder slots from scene
+var player_face_slots: Array = []  # Array of placeholder slot nodes (Player1-4)
+var player_face_mapping := {}  # peer_id -> slot_index
+var player_face_sprites := {}  # peer_id -> AnimatedSprite2D
+var player_scene: PackedScene = null  # Cached player scene for extracting sprite frames
 
 var countdown_label: Label = null
 var countdown_bg: ColorRect = null
@@ -114,6 +120,165 @@ func _ready():
 	hurry_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0))  # Yellow
 	hurry_label.text = "⚠️ HURRY UP! ⚠️"
 	hurry_overlay.add_child(hurry_label)
+	
+	# Cache player scene for HUD faces
+	player_scene = load("res://player.tscn")
+	
+	# Get placeholder face slots from scene
+	player_face_slots = [
+		$TopBar/PlayerFaces/Player1,
+		$TopBar/PlayerFaces/Player2,
+		$TopBar/PlayerFaces/Player3,
+		$TopBar/PlayerFaces/Player4,
+	]
+
+# ============================================================================
+# PLAYER FACE MANAGEMENT
+# ============================================================================
+
+func add_player_face(peer_id: String, _username: String, score: int = 0):
+	"""Add a player face to the HUD top bar using placeholder slots"""
+	if player_face_mapping.has(peer_id):
+		return  # Already assigned a slot
+	
+	# Find first available slot
+	var slot_index := -1
+	for i in range(player_face_slots.size()):
+		if not player_face_slots[i].visible:
+			slot_index = i
+			break
+	
+	if slot_index == -1:
+		push_warning("[HUD] No available player face slots!")
+		return
+	
+	var slot = player_face_slots[slot_index]
+	var viewport = slot.get_node("FaceViewport/SubViewport")
+	var score_label = slot.get_node("Score")
+	
+	# Create AnimatedSprite2D from player scene and add to viewport
+	var anim_sprite: AnimatedSprite2D = null
+	if player_scene:
+		var sprite_instance = player_scene.instantiate()
+		anim_sprite = sprite_instance.get_node_or_null("AnimatedSprite2D")
+		if anim_sprite:
+			# Reparent the AnimatedSprite2D to our viewport
+			anim_sprite.get_parent().remove_child(anim_sprite)
+			anim_sprite.owner = null  # Clear owner to avoid warning
+			sprite_instance.queue_free()
+			# Position sprite centered in viewport
+			anim_sprite.centered = true
+			anim_sprite.position = Vector2(9, 9)  # Center of 18x18 viewport
+			anim_sprite.play("hud_idle")
+			viewport.add_child(anim_sprite)
+		else:
+			sprite_instance.queue_free()
+	
+	# Update score label
+	score_label.text = str(score)
+	
+	# Show the slot
+	slot.visible = true
+	
+	# Store mapping
+	player_face_mapping[peer_id] = slot_index
+	if anim_sprite:
+		player_face_sprites[peer_id] = anim_sprite
+	
+	# Update spacing for even distribution
+	_update_face_spacing()
+
+func remove_player_face(peer_id: String):
+	"""Remove a player face from the HUD (hide slot and clear sprite)"""
+	if not player_face_mapping.has(peer_id):
+		return
+	
+	var slot_index = player_face_mapping[peer_id]
+	var slot = player_face_slots[slot_index]
+	var viewport = slot.get_node("FaceViewport/SubViewport")
+	
+	# Remove sprite from viewport
+	if player_face_sprites.has(peer_id):
+		var sprite = player_face_sprites[peer_id]
+		if is_instance_valid(sprite):
+			sprite.queue_free()
+		player_face_sprites.erase(peer_id)
+	
+	# Hide the slot
+	slot.visible = false
+	player_face_mapping.erase(peer_id)
+	
+	# Update spacing for even distribution
+	_update_face_spacing()
+
+func update_player_face_state(peer_id: String, state: String):
+	"""Update player face animation based on state: 'idle', 'panic', 'lose', 'win'"""
+	if not player_face_sprites.has(peer_id):
+		return
+	
+	var sprite = player_face_sprites[peer_id] as AnimatedSprite2D
+	if not sprite or not is_instance_valid(sprite):
+		return
+	
+	var anim_name = "hud_" + state
+	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim_name):
+		sprite.play(anim_name)
+
+func update_player_score(peer_id: String, score: int):
+	"""Update player's win score"""
+	if not player_face_mapping.has(peer_id):
+		return
+	
+	var slot_index = player_face_mapping[peer_id]
+	var slot = player_face_slots[slot_index]
+	var label = slot.get_node("Score") as Label
+	if label and is_instance_valid(label):
+		label.text = str(score)
+
+func clear_all_player_faces():
+	"""Remove all player faces (for new match)"""
+	for peer_id in player_face_mapping.keys():
+		remove_player_face(peer_id)
+	player_face_mapping.clear()
+	player_face_sprites.clear()
+	
+	# Hide all slots
+	for slot in player_face_slots:
+		slot.visible = false
+	_update_face_spacing()
+
+func _update_face_spacing():
+	"""Dynamically adjust spacing to evenly distribute player faces"""
+	var visible_count := 0
+	var total_slot_width := 0.0
+	
+	# Count visible slots and calculate total width
+	for slot in player_face_slots:
+		if slot.visible:
+			visible_count += 1
+			# Each slot is FaceViewport (18px) + Score label (~8px) + internal spacing (1px)
+			total_slot_width += 27.0  # Approximate width per slot
+	
+	if visible_count <= 1:
+		# With 0-1 players, use default spacing
+		player_faces_container.add_theme_constant_override("separation", 4)
+		return
+	
+	# Calculate available space and required separation
+	# PlayerFaces container is ~246px wide (296 - 50)
+	var container_width := player_faces_container.size.x
+	if container_width <= 0:
+		container_width = 246.0  # Fallback based on scene offsets
+	
+	# Space to distribute = container width - total slot widths
+	# Gaps = visible_count - 1 (between items)
+	var available_space := container_width - total_slot_width
+	var gap_count := visible_count - 1
+	var separation := int(available_space / gap_count) if gap_count > 0 else 4
+	
+	# Clamp to reasonable values
+	separation = clampi(separation, 2, 60)
+	player_faces_container.add_theme_constant_override("separation", separation)
 
 func show_countdown(time_remaining: float):
 	"""Display animated countdown before match starts"""
@@ -242,9 +407,10 @@ func update_timer(time_remaining: float):
 	else:
 		match_timer.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))  # White
 
-func update_players_alive(alive: int, total: int):
-	"""Update alive player count"""
-	players_alive.text = "%d / %d Players" % [alive, total]
+func update_players_alive(_alive: int, _total: int):
+	"""Update alive player count - now handled by player faces"""
+	# Players alive is now shown visually via face states (idle vs lose)
+	pass
 
 func update_player_stats(bombs_current: int, bombs_max: int, bomb_range: int, speed_mult: float):
 	"""Update local player's stats display"""
@@ -373,9 +539,5 @@ func show_game_over(winner_name: String):
 	tween.tween_property(game_over_label, "modulate", Color(1, 1, 1, 1), 0.5).set_delay(0.2)
 	tween.tween_property(winner_label, "modulate", Color(1, 1, 1, 1), 0.5).set_delay(0.5)
 	
-	# Also update the top bar
-	match_timer.text = "GAME OVER"
-	if winner_name:
-		players_alive.text = "Winner: %s" % winner_name
-	else:
-		players_alive.text = "Draw!"
+	# Update top bar timer text
+	match_timer.text = "END"
