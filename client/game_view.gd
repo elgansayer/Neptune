@@ -9,6 +9,8 @@ const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
 const ThreatMatrixVisualizerScene = preload("res://client/ui/threat_matrix_visualizer.tscn")
 const BombSafetyVisualizerScript = preload("res://client/ui/bomb_safety_visualizer.gd")
+const HurryBlockShadowScript = preload("res://client/effects/hurry_block_shadow.gd")
+const FallingHurryBlockScript = preload("res://client/effects/falling_hurry_block.gd")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -21,7 +23,9 @@ var powerup_nodes = {} # powerup_id -> Node2D
 var explosion_nodes = {} # explosion_id -> ExplosionRenderer
 var block_nodes = {} # tile_key -> Node2D (for destructible blocks)
 var wall_nodes = {} # tile_key -> Node2D (for solid walls)
-var hurry_block_nodes = {} # tile_key -> Node2D (for hurry mode blocks)
+var hurry_block_nodes = {} # tile_key -> Node2D (for hurry mode blocks - landed)
+var hurry_pending_shadows = {} # tile_key -> HurryBlockShadow (shadows before drop)
+var hurry_falling_blocks = {} # tile_key -> FallingHurryBlock (blocks currently falling)
 var debug_tiles = {} # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
@@ -1170,47 +1174,84 @@ func _update_hurry_blocks(hurry_blocks_data: Array):
 		var tile_key = "%d,%d" % [tile_x, tile_y]
 		new_blocks[tile_key] = true
 		
-		# Only create if doesn't exist yet
-		if not hurry_block_nodes.has(tile_key):
-			_create_hurry_block_visual(tile_x, tile_y, tile_key)
+		# Only create if doesn't exist yet (and not already pending/falling)
+		if not hurry_block_nodes.has(tile_key) and not hurry_pending_shadows.has(tile_key) and not hurry_falling_blocks.has(tile_key):
+			_spawn_hurry_block_with_warning(tile_x, tile_y, tile_key)
 	
 	# No need to remove hurry blocks - they stay until game ends
 
-func _create_hurry_block_visual(tile_x: int, tile_y: int, tile_key: String):
-	"""Create visual representation for a hurry block using Hard-block.tscn from map PCK"""
-	var hurry_block: Node2D = null
+func _spawn_hurry_block_with_warning(tile_x: int, tile_y: int, tile_key: String):
+	"""SNES Super Bomberman 2 authentic hurry block spawn:
+	   1. Shadow appears for 60 frames (1 second) with pulse animation
+	   2. Block spawns 256 pixels above target and falls at 12 px/frame
+	   3. Block snaps to grid on impact, camera shakes, z-index changes"""
 	
-	# Try to load Hard-block.tscn from the mounted map PCK
-	var hard_block_scene_path = "res://Hard-block.tscn"
-	if ResourceLoader.exists(hard_block_scene_path):
-		var hard_block_scene = load(hard_block_scene_path)
-		if hard_block_scene:
-			hurry_block = hard_block_scene.instantiate()
+	var target_tile = Vector2i(tile_x, tile_y)
 	
-	# Fallback to ColorRect if scene not available
-	if hurry_block == null:
-		var fallback = ColorRect.new()
-		fallback.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
-		fallback.color = Color(0.4, 0.4, 0.4, 1.0)  # Dark gray
-		hurry_block = fallback
+	# Step 1: Create the shadow
+	var shadow = HurryBlockShadowScript.new()
+	shadow.set_target_tile(target_tile)
+	add_child(shadow)
+	hurry_pending_shadows[tile_key] = shadow
 	
-	# Position at tile center (sprites are centered, ColorRect is top-left)
-	hurry_block.position = Vector2(
-		tile_x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-		tile_y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	# Step 2: When shadow warning completes, spawn the falling block
+	shadow.shadow_warning_complete.connect(func():
+		_spawn_falling_hurry_block(tile_x, tile_y, tile_key, shadow)
 	)
-	hurry_block.z_index = 15  # Render above most things
+
+func _spawn_falling_hurry_block(tile_x: int, tile_y: int, tile_key: String, shadow: Node2D):
+	"""Spawn the falling block after shadow warning completes"""
+	var target_tile = Vector2i(tile_x, tile_y)
 	
-	# Add to scene
-	add_child(hurry_block)
-	hurry_block_nodes[tile_key] = hurry_block
+	# Create the falling block
+	var falling_block = FallingHurryBlockScript.new()
+	falling_block.setup(target_tile, shadow)
+	add_child(falling_block)
+	hurry_falling_blocks[tile_key] = falling_block
 	
-	# Entry animation - scale up from center with elastic bounce
-	hurry_block.scale = Vector2(0.0, 0.0)
+	# Connect to landing signal
+	falling_block.block_landed.connect(func(tile: Vector2i):
+		_on_hurry_block_landed(tile_key, tile, falling_block, shadow)
+	)
+	
+	# Start the fall
+	falling_block.start_falling()
+
+func _on_hurry_block_landed(tile_key: String, tile: Vector2i, falling_block: Node2D, shadow: Node2D):
+	"""Handle hurry block landing - screen shake, cleanup, add to landed blocks"""
+	
+	# Camera shake effect (SNES-authentic "thud")
+	_shake_camera_on_impact()
+	
+	# Move falling block reference to landed blocks
+	hurry_block_nodes[tile_key] = falling_block
+	hurry_falling_blocks.erase(tile_key)
+	
+	# Clean up shadow
+	if shadow and is_instance_valid(shadow):
+		hurry_pending_shadows.erase(tile_key)
+		shadow.cleanup()
+	
+	print("[GameView] Hurry block LANDED at (%d, %d)" % [tile.x, tile.y])
+
+func _shake_camera_on_impact():
+	"""Screen shake effect when hurry block lands - SNES-authentic feel"""
+	if not camera:
+		return
+	
+	var original_offset = camera.offset
+	var shake_intensity = 4.0 * GameConfig.scale_factor  # Scale with tile size
+	var shake_duration = 0.15  # Quick shake
 	
 	var tween = create_tween()
-	tween.set_trans(Tween.TRANS_ELASTIC)
-	tween.set_ease(Tween.EASE_OUT)
-	tween.tween_property(hurry_block, "scale", Vector2(1.0, 1.0), 0.3)
-	
-	print("[GameView] Hurry block spawned at (%d, %d)" % [tile_x, tile_y])
+	# Rapid oscillation
+	tween.tween_property(camera, "offset", original_offset + Vector2(shake_intensity, 0), 0.02)
+	tween.tween_property(camera, "offset", original_offset + Vector2(-shake_intensity, shake_intensity * 0.5), 0.02)
+	tween.tween_property(camera, "offset", original_offset + Vector2(shake_intensity * 0.5, -shake_intensity * 0.5), 0.02)
+	tween.tween_property(camera, "offset", original_offset + Vector2(-shake_intensity * 0.3, shake_intensity * 0.3), 0.02)
+	tween.tween_property(camera, "offset", original_offset, 0.07)
+
+# Legacy function kept for compatibility - redirects to new system
+func _create_hurry_block_visual(tile_x: int, tile_y: int, tile_key: String):
+	"""Legacy wrapper - now uses SNES-authentic shadow + falling block system"""
+	_spawn_hurry_block_with_warning(tile_x, tile_y, tile_key)
