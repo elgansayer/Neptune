@@ -3,6 +3,7 @@ class_name ClientPlayerController
 
 # Client-Side Prediction & Server Reconciliation
 # Implements lag mitigation for smooth, responsive player movement
+# Uses Saturn Bomberman accumulator model for deterministic movement
 
 const Constants = preload("res://shared/constants.gd")
 
@@ -14,6 +15,10 @@ var next_input_sequence := 0
 var predicted_position := Vector2.ZERO
 var predicted_velocity := Vector2.ZERO
 var predicted_last_move_direction := Vector2.ZERO
+
+# Saturn Bomberman accumulator state (mirrors server)
+var predicted_skate_count: int = 0
+var predicted_sub_pixel_accumulator: int = 0
 
 # Server state (for reconciliation)
 var server_position := Vector2.ZERO
@@ -62,11 +67,21 @@ func predict_movement(input_dir: Vector2, delta: float, _game_map: Array) -> Dic
 	# Predict movement (simplified - mirrors server logic)
 	if input_dir.length() < Constants.INPUT_DEADZONE:
 		predicted_velocity = Vector2.ZERO
+		# Reset accumulator when not moving (Saturn behavior)
+		predicted_sub_pixel_accumulator = 0
 	else:
-		# Match server speed calculation exactly
-		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER
+		# === SATURN BOMBERMAN MOVEMENT SYSTEM ===
+		# Calculate pixels to move this frame using accumulator model
+		var saturn_result = GameConfig.calculate_saturn_movement(predicted_skate_count, predicted_sub_pixel_accumulator)
+		var pixels_to_move: int = saturn_result[0]
+		predicted_sub_pixel_accumulator = saturn_result[1]
+		
+		# Scale pixels by tile size ratio and convert to velocity
+		var scaled_pixels_per_frame: float = float(pixels_to_move) * GameConfig.scale_factor
+		var base_velocity_magnitude: float = scaled_pixels_per_frame * 60.0
+		
 		var normalized_input = input_dir.normalized()
-		predicted_velocity = normalized_input * speed
+		predicted_velocity = normalized_input * base_velocity_magnitude
 		
 		# IMPORTANT: Match server's grid snapping logic EXACTLY
 		var tile_center = get_current_tile_center()
@@ -169,5 +184,11 @@ func reset_prediction(initial_position: Vector2):
 	predicted_position = initial_position
 	predicted_velocity = Vector2.ZERO
 	predicted_last_move_direction = Vector2.ZERO
+	predicted_skate_count = 0
+	predicted_sub_pixel_accumulator = 0
 	input_history.clear()
 	next_input_sequence = 0
+
+func set_skate_count(count: int):
+	"""Update predicted skate count from server state"""
+	predicted_skate_count = count

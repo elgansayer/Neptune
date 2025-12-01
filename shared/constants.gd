@@ -2,8 +2,8 @@ extends Node
 
 # === Game Constants ===
 const TILE_SIZE = 64
-const BASE_SPEED = 180.0
-const PLAYER_HALF_WIDTH = 28.0  # 56x56 collision box
+const BASE_SPEED = 240.0  # Saturn Bomberman: 1 px/frame @ 16px tiles = 4 px/frame @ 64px = 240 px/s
+const PLAYER_HALF_WIDTH = 24.0  # 48x48 collision box (75% of 64px tile for corridor clearance)
 
 # Collision Layers (physics layer bit positions)
 const COLLISION_LAYER_WALLS = 1      # Layer 1 (bit 0): Solid/destructible walls

@@ -22,13 +22,18 @@ var place_bomb_requested := false
 var bombs_placed := 0
 var max_bombs := 10 # Increased for testing competitive AI
 var bomb_range := 1 # CLASSIC: Start with range 1 to allow escape from spawn corners
-var speed_multiplier := 1.0 # Power-up speed multiplier
+var speed_multiplier := 1.0 # Power-up speed multiplier (display/sync only - actual speed uses accumulator)
 var is_dead := false
 var is_spectator := false # Player is eliminated and watching the match
 var is_bot := false
 var bot_personality := ""
 var debug_check_tile := Vector2i.ZERO # Tile being checked for diagonal (for client debug)
 var debug_blocking_tile := Vector2i.ZERO # The blocking tile (for debug visualization)
+
+# === SATURN BOMBERMAN MOVEMENT SYSTEM ===
+# Sub-pixel accumulator for deterministic, integer-based movement
+var skate_count: int = 0 # Number of roller skate power-ups collected
+var sub_pixel_accumulator: int = 0 # Range: 0 to 255, overflows at 256
 
 # Advanced abilities (Phase 2)
 var has_bomb_kicker := false # Can kick bombs
@@ -240,9 +245,9 @@ func _can_corner_slide(blocked_direction: Vector2) -> Vector2:
 	var current_tile_center = get_current_tile_center()
 	var offset_from_current = position - current_tile_center
 
-	# Edge threshold: within 0.5 of tile edge means we can slide
-	# For a 64px tile, half is 32px, so edge_threshold should be around 24-28px
-	var edge_threshold = GameConfig.TILE_SIZE / 4.0 # Within 8px of edge
+	# Saturn Bomberman corner correction tolerance: ~5px at 16px tile size
+	# This allows players to slide around corners when within this distance of an edge
+	var edge_threshold = GameConfig.CORNER_ASSIST_THRESHOLD
 
 	print("Blocked dir: ", blocked_direction)
 	print("Blocking tile: ", debug_blocking_tile, " center: ", blocking_tile_center)
@@ -434,8 +439,19 @@ func _physics_process(_delta):
 		print("[ServerPlayer] WARNING: no movement direction while target offset %s persists for %s" % [offset_to_target, username])
 
 	if final_direction.length() > 0:
-		var speed = GameConfig.BASE_SPEED * Constants.RUN_MULTIPLIER * speed_multiplier
-		velocity = final_direction * speed
+		# === SATURN BOMBERMAN MOVEMENT SYSTEM ===
+		# Calculate pixels to move this frame using accumulator model
+		var saturn_result = GameConfig.calculate_saturn_movement(skate_count, sub_pixel_accumulator)
+		var pixels_to_move: int = saturn_result[0]
+		sub_pixel_accumulator = saturn_result[1]
+		
+		# Scale pixels by tile size ratio and convert to velocity (pixels per second)
+		# At 64px tiles (scale 4x): 1 Saturn pixel = 4 actual pixels
+		# Velocity = pixels_per_frame * scale_factor * 60 fps
+		var scaled_pixels_per_frame: float = float(pixels_to_move) * GameConfig.scale_factor
+		var base_velocity_magnitude: float = scaled_pixels_per_frame * 60.0
+		
+		velocity = final_direction * base_velocity_magnitude
 
 		# Auto-align to grid: Add correction to movement vector
 		# When moving horizontally, gradually align vertically
@@ -457,6 +473,8 @@ func _physics_process(_delta):
 					velocity.x += correction_x
 	else:
 		velocity = Vector2.ZERO
+		# Reset accumulator when not moving (Saturn behavior)
+		sub_pixel_accumulator = 0
 
 	var _pos_before = position
 	var pre_vel = velocity
@@ -825,8 +843,11 @@ func collect_powerup(powerup):
 			bomb_range += 1
 			print("[Player] ", username, " collected RANGE power-up! Range: ", bomb_range)
 		ServerPowerUpScript.PowerUpType.SPEED_INCREASE:
-			speed_multiplier += 0.2
-			print("[Player] ", username, " collected SPEED power-up! Speed: ", speed_multiplier)
+			# Saturn Bomberman: Each roller skate adds to the accumulator system
+			skate_count += 1
+			# Update speed_multiplier for display/sync (not used for actual movement)
+			speed_multiplier = GameConfig.get_skate_speed_multiplier(skate_count)
+			print("[Player] ", username, " collected SPEED power-up! Skates: ", skate_count, "/", GameConfig.SATURN_MAX_SKATES, " (", speed_multiplier, "x)")
 		ServerPowerUpScript.PowerUpType.BOMB_KICKER:
 			has_bomb_kicker = true
 			print("[Player] ", username, " collected BOMB KICKER!")
@@ -851,6 +872,7 @@ func get_state() -> Dictionary:
 		"bombs_placed": bombs_placed,
 		"max_bombs": max_bombs,
 		"bomb_range": bomb_range,
+		"skate_count": skate_count,
 		"speed_multiplier": speed_multiplier,
 		"has_bomb_kicker": has_bomb_kicker,
 		"has_power_glove": has_power_glove,
