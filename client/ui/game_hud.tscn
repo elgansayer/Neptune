@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cky7xvw3qr8mo"]
+[gd_scene load_steps=5 format=3 uid="uid://cky7xvw3qr8mo"]
 
 [ext_resource type="Script" uid="uid://mrxay0m1gppe" path="res://client/ui/game_hud.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://bkn38dayxtrxr" path="res://client/ui/saturnBomberman.webp" id="2_tn76c"]
 [ext_resource type="Texture2D" uid="uid://bnk8ufyd13bvf" path="res://client/ui/background1.png" id="2_ya510"]
 [ext_resource type="Texture2D" uid="uid://cri38smy3u1hs" path="res://client/ui/banner-336.png" id="3_tn76c"]
-[ext_resource type="Texture2D" uid="uid://bet0vq8orptpb" path="res://client/ui/frame29.png" id="5_2w6n3"]
 
 [node name="GameHUD" type="CanvasLayer"]
 layer = 100
@@ -55,6 +54,7 @@ theme_override_constants/separation = 4
 alignment = 1
 
 [node name="Player1" type="HBoxContainer" parent="TopBar/PlayerFaces"]
+visible = false
 layout_mode = 2
 theme_override_constants/separation = 1
 
@@ -67,12 +67,7 @@ stretch = true
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(18, 18)
-render_target_update_mode = 4
-
-[node name="Frame29" type="Sprite2D" parent="TopBar/PlayerFaces/Player1/FaceViewport/SubViewport"]
-visible = false
-texture = ExtResource("5_2w6n3")
-centered = false
+render_target_update_mode = 0
 
 [node name="Score" type="Label" parent="TopBar/PlayerFaces/Player1"]
 layout_mode = 2
