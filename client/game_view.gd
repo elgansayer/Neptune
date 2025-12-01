@@ -1240,7 +1240,7 @@ func _shake_camera_on_impact():
 		return
 	
 	var original_offset = camera.offset
-	var shake_intensity = 4.0 * GameConfig.scale_factor  # Scale with tile size
+	var shake_intensity = 1.0 * GameConfig.scale_factor  # Subtle shake
 	var shake_duration = 0.15  # Quick shake
 	
 	var tween = create_tween()
