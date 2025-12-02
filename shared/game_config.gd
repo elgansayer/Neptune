@@ -26,7 +26,7 @@ extends Node
 ## | 8      | 256             | 2.000                |
 
 # === MAP-DEPENDENT VALUES (loaded from map metadata) ===
-var TILE_SIZE: int = 64 # Default, overridden by map metadata
+var TILE_SIZE: int = 16 # Default 16px for 320x240 viewport (Saturn Bomberman native)
 var map_width: int = 17
 var map_height: int = 11
 var map_name: String = "Unknown"
@@ -35,7 +35,7 @@ var spawn_points: Array = []
 # === DYNAMIC SCALING (computed from TILE_SIZE) ===
 # Reference tile size: 16px (Saturn Bomberman native)
 const REFERENCE_TILE_SIZE = 16.0
-var scale_factor: float = 4.0 # TILE_SIZE / REFERENCE_TILE_SIZE (default 64/16)
+var scale_factor: float = 1.0 # TILE_SIZE / REFERENCE_TILE_SIZE (default 16/16)
 
 # === SATURN BOMBERMAN SPEED SYSTEM ===
 # These are the core constants from Saturn Bomberman's accumulator model
@@ -47,8 +47,7 @@ const SATURN_MAX_PIXELS_PER_FRAME: int = 2 # Hard cap to prevent collision tunne
 
 # Scaled base speed (pixels per second at current tile size)
 # At 16px tiles: 1 pixel/frame * 60 fps = 60 px/sec
-# At 64px tiles: 4 pixels/frame * 60 fps = 240 px/sec
-var BASE_SPEED: float = 240.0 # Computed in load_map_config()
+var BASE_SPEED: float = 60.0 # Saturn Bomberman native (1 px/frame * 60 fps)
 
 # Reference values for other mechanics (at 16px tile size)
 const SNAP_TO_CENTER_SPEED_REFERENCE = 30.0 # Snap speed at 16px tile size
@@ -57,13 +56,13 @@ const COLLISION_CHECK_DISTANCE_REFERENCE = 2.0 # Collision check distance at 16p
 
 # PLAYER_HALF_WIDTH: Player hitbox is 12x12 at 16px tiles (75% of tile)
 # This provides 2px buffer on each side for easier corridor navigation
-var PLAYER_HALF_WIDTH: float = 24.0 # Default for 64px tiles (75% of 64 / 2 = 24)
+var PLAYER_HALF_WIDTH: float = 6.0 # Saturn native: 12x12 hitbox / 2 = 6
 
 # Scaled values (computed in load_map_config)
-var SNAP_TO_CENTER_SPEED: float = 120.0 # SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
-var CORNER_ASSIST_THRESHOLD: float = 20.0 # CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
-var COLLISION_CHECK_DISTANCE: float = 8.0 # COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
-var SNAP_THRESHOLD: float = 2.0 # Scaled proportionally
+var SNAP_TO_CENTER_SPEED: float = 30.0 # SNAP_TO_CENTER_SPEED_REFERENCE * scale_factor
+var CORNER_ASSIST_THRESHOLD: float = 5.0 # CORNER_ASSIST_THRESHOLD_REFERENCE * scale_factor
+var COLLISION_CHECK_DISTANCE: float = 2.0 # COLLISION_CHECK_DISTANCE_REFERENCE * scale_factor
+var SNAP_THRESHOLD: float = 0.5 # Scaled proportionally
 
 # Collision Layers (physics layer bit positions)
 const COLLISION_LAYER_WALLS = 1 # Layer 1 (bit 0): Solid/destructible walls
@@ -147,7 +146,7 @@ func load_map_config(map_data: Dictionary):
 
 func reset_to_defaults():
 	"""Reset to default values"""
-	TILE_SIZE = 64
+	TILE_SIZE = 16  # 16px for 320x240 viewport
 	scale_factor = float(TILE_SIZE) / REFERENCE_TILE_SIZE
 	PLAYER_HALF_WIDTH = (TILE_SIZE * 0.75) / 2.0
 	BASE_SPEED = float(SATURN_BASE_PIXELS_PER_FRAME) * scale_factor * 60.0

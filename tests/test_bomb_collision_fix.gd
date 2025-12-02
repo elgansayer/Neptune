@@ -29,7 +29,7 @@ func _ready():
 	add_child(game_instance)
 	
 	# Use Constants.TILE_SIZE if GameConfig is not available, or hardcode 64
-	var tile_size = 64
+	var tile_size = 16  # Saturn Bomberman native
 	if has_node("/root/GameConfig"):
 		tile_size = get_node("/root/GameConfig").TILE_SIZE
 	

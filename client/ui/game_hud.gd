@@ -32,6 +32,12 @@ var hurry_overlay: ColorRect = null
 var hurry_label: Label = null
 var hurry_mode_shown := false
 
+# Virus status UI elements
+var virus_overlay: ColorRect = null
+var virus_label: Label = null
+var current_virus_type := 0
+var virus_flash_tween: Tween = null
+
 func _ready():
 	# Ensure HUD is always on top
 	layer = 100
@@ -120,6 +126,34 @@ func _ready():
 	hurry_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0))  # Yellow
 	hurry_label.text = "⚠️ HURRY UP! ⚠️"
 	hurry_overlay.add_child(hurry_label)
+	
+	# Create virus status overlay (top center, flashing when infected)
+	# Use absolute positioning for 320x240 viewport
+	virus_overlay = ColorRect.new()
+	virus_overlay.name = "VirusOverlay"
+	virus_overlay.color = Color(0.6, 0.0, 0.6, 0.95)  # Bright purple
+	# Position in center top (viewport is 320x240)
+	virus_overlay.position = Vector2(60, 2)  # Centered horizontally, at top
+	virus_overlay.size = Vector2(200, 20)  # Compact banner for low res
+	virus_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	virus_overlay.visible = false
+	add_child(virus_overlay)
+	
+	# Create virus label
+	virus_label = Label.new()
+	virus_label.name = "VirusLabel"
+	virus_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	virus_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	virus_label.position = Vector2(0, 0)
+	virus_label.size = Vector2(200, 20)  # Fill parent
+	virus_label.add_theme_font_size_override("font_size", 10)
+	virus_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0))  # Yellow
+	virus_label.add_theme_color_override("font_outline_color", Color.BLACK)
+	virus_label.add_theme_constant_override("outline_size", 1)
+	virus_label.text = "☠ INFECTED ☠"
+	virus_overlay.add_child(virus_label)
+	
+	print("[HUD] Virus overlay created and ready")
 	
 	# Cache player scene for HUD faces
 	player_scene = load("res://player.tscn")
@@ -448,6 +482,71 @@ func hide_spectator_mode():
 	$BottomLeft.visible = true
 	if spectator_overlay:
 		spectator_overlay.visible = false
+
+# ============================================================================
+# VIRUS STATUS DISPLAY
+# ============================================================================
+
+# Virus type names matching server VirusType enum
+const VIRUS_NAMES = {
+	0: "",  # NONE
+	1: "SPEEDSTER",      # 2x speed
+	2: "SLOWPOKE",       # 0.5x speed
+	3: "DIARRHOEA",      # Auto-drops bombs
+	4: "CONSTIPATION",   # Can't place bombs
+	5: "SMALL_FLAME",    # Range = 1
+	6: "UNSTOPPABLE",    # Can't stop moving
+	7: "REVERSE",        # Inverted controls
+	8: "HASTY_FUSE",     # 1 second fuse
+	9: "LEISURELY_FUSE"  # 5-6 second fuse
+}
+
+func update_virus_status(virus_type: int, time_remaining: float) -> void:
+	"""Update virus status display - shows flashing banner when infected"""
+	if not virus_overlay:
+		print("[HUD] ERROR: virus_overlay is null!")
+		return
+	
+	var was_infected = current_virus_type != 0
+	var is_infected = virus_type != 0
+	
+	if is_infected:
+		# Show virus overlay
+		if not virus_overlay.visible or current_virus_type != virus_type:
+			# New infection or type changed
+			var virus_name = VIRUS_NAMES.get(virus_type, "UNKNOWN")
+			virus_label.text = "☠ %s ☠\n%.1fs" % [virus_name, time_remaining]
+			virus_overlay.visible = true
+			_start_virus_flash()
+			print("[HUD] *** SHOWING VIRUS OVERLAY: %s ***" % virus_name)
+		else:
+			# Update timer
+			var virus_name = VIRUS_NAMES.get(virus_type, "UNKNOWN")
+			virus_label.text = "☠ %s ☠\n%.1fs" % [virus_name, time_remaining]
+	else:
+		# Hide virus overlay
+		if virus_overlay.visible:
+			virus_overlay.visible = false
+			_stop_virus_flash()
+			if was_infected:
+				print("[HUD] Virus CURED!")
+	
+	current_virus_type = virus_type
+
+func _start_virus_flash() -> void:
+	"""Create looping flash animation for virus status"""
+	_stop_virus_flash()
+	
+	virus_flash_tween = create_tween()
+	virus_flash_tween.set_loops()  # Loop forever
+	virus_flash_tween.tween_property(virus_overlay, "color", Color(0.7, 0.0, 0.7, 0.95), 0.2)
+	virus_flash_tween.tween_property(virus_overlay, "color", Color(0.3, 0.0, 0.3, 0.8), 0.2)
+
+func _stop_virus_flash() -> void:
+	"""Stop virus flash animation"""
+	if virus_flash_tween and virus_flash_tween.is_valid():
+		virus_flash_tween.kill()
+		virus_flash_tween = null
 
 # Game over state tracking
 var game_over_shown := false

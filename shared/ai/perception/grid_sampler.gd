@@ -4,7 +4,7 @@ class_name GridSampler
 ## Provides tile/world conversions plus walkability + occupancy info from the live GameInstance.
 
 var navigation_region: NavigationRegion2D
-var tile_size := 64.0
+var tile_size := 16.0  # Saturn Bomberman native
 
 var _game_instance: Node
 var _map_size := Vector2i.ZERO

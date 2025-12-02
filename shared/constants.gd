@@ -1,9 +1,9 @@
 extends Node
 
 # === Game Constants ===
-const TILE_SIZE = 64
-const BASE_SPEED = 240.0  # Saturn Bomberman: 1 px/frame @ 16px tiles = 4 px/frame @ 64px = 240 px/s
-const PLAYER_HALF_WIDTH = 24.0  # 48x48 collision box (75% of 64px tile for corridor clearance)
+const TILE_SIZE = 16  # 16px tiles for 320x240 viewport (Saturn Bomberman native)
+const BASE_SPEED = 60.0  # Saturn Bomberman: 1 px/frame @ 16px tiles = 60 px/s
+const PLAYER_HALF_WIDTH = 6.0  # 12x12 collision box (75% of 16px tile for corridor clearance)
 
 # Collision Layers (physics layer bit positions)
 const COLLISION_LAYER_WALLS = 1      # Layer 1 (bit 0): Solid/destructible walls
@@ -100,24 +100,8 @@ const POWERUP_DROP_CHANCE: float = 0.30  # 30% base chance
 # These weights determine which type spawns WHEN a drop occurs
 # Saturn Bomberman distribution - common items are more frequent
 const POWERUP_WEIGHTS = {
-	# Common items (70% total)
-	"BOMB_INCREASE": 0.25,   # +1 max bombs (up to 10)
-	"RANGE_INCREASE": 0.25,  # +1 explosion range (up to 8)
-	"SPEED_INCREASE": 0.15,  # +1 speed level (up to 8)
-	"GETA": 0.05,            # -1 speed level (min 1) - wooden sandals
-	# Rare items (20% total)
-	"BOMB_KICKER": 0.05,     # Kick bombs
-	"POWER_GLOVE": 0.04,     # Lift/throw bombs
-	"LINE_BOMB": 0.03,       # Place all bombs in a row
-	"FULL_FIRE": 0.02,       # Max fire range (16 tiles)
-	"HEART": 0.02,           # Extra life
-	# Special bombs (3.5% total)
-	"REMOTE_BOMB": 0.015,    # Detonate on command
-	"POWER_BOMB": 0.01,      # Penetrates soft blocks
-	"RUBBER_BOMB": 0.005,    # Bounces off walls
-	"PIERCE_BOMB": 0.005,    # Pierces through players
-	# Virus/Skull item (6.5% total)
-	"SKULL": 0.065           # Random virus effect (Saturn Bomberman)
+	# TESTING: 100% SKULL for virus testing
+	"SKULL": 1.0
 }
 
 # Network

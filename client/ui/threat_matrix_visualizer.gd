@@ -11,7 +11,7 @@ class_name ThreatMatrixVisualizer
 
 var threat_matrix: Dictionary = {}
 var current_time_msec: float = 0.0
-var tile_size: float = 64.0  # Will be updated when map loads
+var tile_size: float = 16.0  # Saturn Bomberman native, updated when map loads
 var map_width: int = 0
 var map_height: int = 0
 var bot_targets: Dictionary = {}  # peer_id -> {"tile": Vector2i, "player_name": String}

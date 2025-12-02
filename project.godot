@@ -26,11 +26,14 @@ LimboConsole="*res://addons/limbo_console/limbo_console.gd"
 
 [display]
 
-window/size/viewport_height=720
+window/size/viewport_width=320
+window/size/viewport_height=224
+window/size/window_width_override=1280
+window/size/window_height_override=896
+window/size/resizable=true
 window/stretch/mode="canvas_items"
-#BaseviewportresolutiontheUI/gamescalesfromwindow/size/viewport_width=1280
-#Allowwindowresizewhilekeepingaspectviastretchwindow/size/resizable=true
-#HiDPIhandling(letGodotscaleappropriatelyonhigh-DPIscreens)window/dpi/allow_hidpi=true
+window/stretch/aspect="keep"
+window/dpi/allow_hidpi=true
 
 [dotnet]
 

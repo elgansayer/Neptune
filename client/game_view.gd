@@ -276,6 +276,18 @@ func update_game_state(state: Dictionary):
 			my_data.get("speed_multiplier", 1.0)
 		)
 		
+		# Update virus status in HUD
+		if hud.has_method("update_virus_status"):
+			var virus_type = my_data.get("active_virus", 0)
+			var virus_end_time = my_data.get("virus_end_time", 0.0)
+			var server_time = state.get("server_time", 0.0)
+			var time_remaining = max(0.0, (virus_end_time - server_time) / 1000.0)
+			if virus_type != 0:
+				print("[GameView] Updating virus HUD: type=%d time=%.1f" % [virus_type, time_remaining])
+			hud.update_virus_status(virus_type, time_remaining)
+		else:
+			print("[GameView] WARNING: hud.update_virus_status not found!")
+		
 		# Check if local player became a spectator (eliminated)
 		if my_data.get("is_spectator", false) and hud.has_method("show_spectator_mode"):
 			hud.show_spectator_mode()
@@ -1081,32 +1093,25 @@ func render_map(map_data):
 					)
 					add_child(hitbox)
 	
-	# Calculate zoom to fit entire map in viewport
-	# Assuming 1152x648 viewport (standard HD)
+	# Calculate camera position for 320x224 viewport
+	# Map may be larger than viewport - center it
 	var viewport_size = get_viewport().get_visible_rect().size
+	if viewport_size.x <= 0 or viewport_size.y <= 0:
+		viewport_size = Vector2(320, 224)  # Fallback to expected size
+	
 	var map_pixel_width = map_width * GameConfig.TILE_SIZE
 	var map_pixel_height = map_height * GameConfig.TILE_SIZE
 	
-	# Calculate zoom to fit map with some padding
-	var zoom_x = viewport_size.x / (map_pixel_width * 1.1) # 1.1 for 10% padding
-	var zoom_y = viewport_size.y / (map_pixel_height * 1.1)
-	var zoom_level = min(zoom_x, zoom_y) # Use smaller zoom to fit both dimensions
+	# No zoom - 1:1 pixel mapping
+	camera.zoom = Vector2(1.0, 1.0)
 	
-	camera.zoom = Vector2(zoom_level, zoom_level)
+	# Center camera on map center (map fills/exceeds viewport)
+	var map_center_x = map_pixel_width / 2.0
+	var map_center_y = map_pixel_height / 2.0
 	
-	# Position camera to show ENTIRE map
-	# Center X on the map, with temporary -4px offset for 21-tile wide map on 320px viewport
-	# (Map is 336px wide, viewport is 320px - offset centers the overflow)
-	var map_center_x = (map_width * GameConfig.TILE_SIZE / 2.0) - 4.0
+	camera.position = Vector2(map_center_x, map_center_y)
 	
-	# Align Y so map is flush against BOTTOM of screen
-	# Camera Y = Map Bottom Y - (Viewport Height / Zoom) / 2
-	var map_bottom_y = map_height * GameConfig.TILE_SIZE
-	var viewport_height_in_world = viewport_size.y / zoom_level
-	var camera_y = map_bottom_y - (viewport_height_in_world / 2.0)
-	
-	camera.position = Vector2(map_center_x, camera_y)
-	
+	print("[GameView] Viewport: ", viewport_size, " Map: ", map_pixel_width, "x", map_pixel_height)
 	print("[GameView] Camera positioned at ", camera.position, " with zoom ", camera.zoom)
 
 func show_debug_tile(tile_pos: Vector2i, color: Color):

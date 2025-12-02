@@ -102,7 +102,7 @@ func execute() -> void:
 				var nearby_bots = 0
 				for other_bot in bots:
 					if other_bot != bot and is_instance_valid(other_bot):
-						if other_bot.position.distance_to(bot.position) < 64.0:
+						if other_bot.position.distance_to(bot.position) < GameConfig.TILE_SIZE * 4.0:
 							nearby_bots += 1
 				
 				if nearby_bots == 0:
