@@ -13,16 +13,63 @@ class_name ServerPowerUp
 ## This model ensures a player must commit to entering the tile to 
 ## trigger the pickup. A player moving perpendicularly along the edge 
 ## (grazing the outer 2 pixels) will NOT trigger collection.
+##
+## === Saturn Bomberman Item Types ===
+## Common Items (always drop):
+##   Bomb Up:    +1 bomb capacity (max 10)
+##   Fire Up:    +1 fire range (max 8, or 16 with Full Fire)
+##   Speed Up:   +1 speed level (max 8)
+##
+## Rare Items (uncommon drops):
+##   Geta:       -1 speed level (negative item!)
+##   Full Fire:  Fire range set to max (16 tiles)
+##   Heart:      Extra life (competitive mode)
+##
+## Special Abilities (rare drops):
+##   Bomb Kick:  Can kick bombs by walking into them
+##   Power Glove: Can pick up and throw bombs
+##   Line Bomb:  Place all bombs in a line
+##
+## Bomb Type Items (change bomb behavior):
+##   Remote Bomb: Manual detonation
+##   Power Bomb:  Pierces through soft blocks
+##   Rubber Bomb: Bounces off walls
+##   Pierce Bomb: (alias for Power Bomb in some versions)
+##
+## Negative Items:
+##   Skull:      Apply random curse effect
 
 const Constants = preload("res://shared/constants.gd")
 
+## Power-up types matching Saturn Bomberman item set
+## NOTE: Enum values are used for network sync and must remain stable
 enum PowerUpType {
-	BOMB_INCREASE,    # +1 max bombs (Max: 10)
-	RANGE_INCREASE,   # +1 explosion range (Max: 16 full screen)
-	SPEED_INCREASE,   # Advances SpeedIndex through lookup table (Max: 8)
-	BOMB_KICKER,      # Boolean: enables bomb displacement
-	POWER_GLOVE,      # Boolean: enables bomb lifting/throwing
-	VIRUS             # Curse: negative effects
+	# Common stat items (0-2)
+	BOMB_INCREASE = 0,    # +1 max bombs (Max: 10)
+	RANGE_INCREASE = 1,   # +1 explosion range (Max: 8 or 16 with Full Fire)
+	SPEED_INCREASE = 2,   # +1 speed level (Max: 8)
+	
+	# Ability items (3-5)
+	BOMB_KICKER = 3,      # Boolean: enables bomb displacement
+	POWER_GLOVE = 4,      # Boolean: enables bomb lifting/throwing
+	LINE_BOMB = 5,        # Boolean: place all bombs in a line
+	
+	# Special items (6-8)
+	FULL_FIRE = 6,        # Set fire range to max (16)
+	HEART = 7,            # Extra life
+	GETA = 8,             # Slow shoes: -1 speed (negative item!)
+	
+	# Bomb type changers (9-12)
+	REMOTE_BOMB = 9,      # Manual detonation bombs
+	POWER_BOMB = 10,      # Piercing bombs (through soft blocks)
+	RUBBER_BOMB = 11,     # Bouncing bombs
+	PIERCE_BOMB = 12,     # Alias for Power Bomb (some versions)
+	
+	# Negative items (13+)
+	SKULL = 13,           # Random curse effect (was VIRUS)
+	
+	# Legacy alias
+	VIRUS = 13            # Deprecated: use SKULL instead
 }
 
 var powerup_id: String = ""
@@ -84,3 +131,80 @@ func get_state() -> Dictionary:
 	}
 
 signal powerup_collected(powerup)
+
+## Get the animation name for this powerup type (used by renderer)
+static func get_animation_name(type: PowerUpType) -> String:
+	match type:
+		PowerUpType.BOMB_INCREASE:
+			return "bomb"
+		PowerUpType.RANGE_INCREASE:
+			return "fire"
+		PowerUpType.SPEED_INCREASE:
+			return "skate"
+		PowerUpType.BOMB_KICKER:
+			return "kickbomb"
+		PowerUpType.POWER_GLOVE:
+			return "pglove"
+		PowerUpType.LINE_BOMB:
+			return "line_bomb"
+		PowerUpType.FULL_FIRE:
+			return "full_fire"
+		PowerUpType.HEART:
+			return "heart"
+		PowerUpType.GETA:
+			return "geta"
+		PowerUpType.REMOTE_BOMB:
+			return "remote_bomb"
+		PowerUpType.POWER_BOMB, PowerUpType.PIERCE_BOMB:
+			return "power_bomb"
+		PowerUpType.RUBBER_BOMB:
+			return "rubber_bomb"
+		PowerUpType.SKULL, PowerUpType.VIRUS:
+			return "skull"
+		_:
+			return "bomb"
+
+## Check if this powerup type is a negative item
+static func is_negative_item(type: PowerUpType) -> bool:
+	return type in [PowerUpType.SKULL, PowerUpType.VIRUS, PowerUpType.GETA]
+
+## Check if this powerup type changes bomb behavior
+static func is_bomb_type_changer(type: PowerUpType) -> bool:
+	return type in [
+		PowerUpType.REMOTE_BOMB,
+		PowerUpType.POWER_BOMB,
+		PowerUpType.RUBBER_BOMB,
+		PowerUpType.PIERCE_BOMB
+	]
+
+## Get a human-readable name for the powerup type
+static func get_display_name(type: PowerUpType) -> String:
+	match type:
+		PowerUpType.BOMB_INCREASE:
+			return "Bomb Up"
+		PowerUpType.RANGE_INCREASE:
+			return "Fire Up"
+		PowerUpType.SPEED_INCREASE:
+			return "Speed Up"
+		PowerUpType.BOMB_KICKER:
+			return "Bomb Kick"
+		PowerUpType.POWER_GLOVE:
+			return "Power Glove"
+		PowerUpType.LINE_BOMB:
+			return "Line Bomb"
+		PowerUpType.FULL_FIRE:
+			return "Full Fire"
+		PowerUpType.HEART:
+			return "Heart"
+		PowerUpType.GETA:
+			return "Slow Shoes"
+		PowerUpType.REMOTE_BOMB:
+			return "Remote Bomb"
+		PowerUpType.POWER_BOMB, PowerUpType.PIERCE_BOMB:
+			return "Power Bomb"
+		PowerUpType.RUBBER_BOMB:
+			return "Rubber Bomb"
+		PowerUpType.SKULL, PowerUpType.VIRUS:
+			return "Skull"
+		_:
+			return "Unknown"

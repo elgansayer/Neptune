@@ -2,6 +2,7 @@ extends CharacterBody2D
 class_name ServerPlayer
 
 const ServerBombScript = preload("res://shared/entities/server_bomb.gd")
+const PlayerStatsScript = preload("res://shared/resources/player_stats.gd")
 
 # Server-authoritative player character
 # Handles movement, collision, bomb placement, and power-ups
@@ -771,29 +772,90 @@ func die():
 	# Note: No respawn in Last Man Standing mode
 
 func collect_powerup(powerup):
-	"""Called when player collects a power-up"""
-	match powerup.powerup_type:
+	"""Called when player collects a power-up (server-authoritative)
+	
+	Applies Saturn Bomberman stat limits and logs collection.
+	Stats are clamped automatically by the setter functions.
+	"""
+	var type = powerup.powerup_type
+	var type_name = ServerPowerUpScript.get_display_name(type)
+	
+	match type:
+		# === STAT INCREASE ITEMS ===
 		ServerPowerUpScript.PowerUpType.BOMB_INCREASE:
-			max_bombs += 1
-			print("[Player] ", username, " collected BOMB power-up! Max bombs: ", max_bombs)
+			var old_val = max_bombs
+			max_bombs = mini(max_bombs + 1, Constants.BOMB_MAX)
+			var changed = max_bombs != old_val
+			print("[Player] ", username, " collected BOMB power-up! ", old_val, " -> ", max_bombs, 
+				" (max: ", Constants.BOMB_MAX, ")", " changed=" if changed else " (already max)")
+		
 		ServerPowerUpScript.PowerUpType.RANGE_INCREASE:
-			bomb_range += 1
-			print("[Player] ", username, " collected RANGE power-up! Range: ", bomb_range)
+			var old_val = bomb_range
+			var max_range = Constants.FIRE_MAX  # TODO: Use FIRE_MAX_FULL if has_full_fire
+			bomb_range = mini(bomb_range + 1, max_range)
+			var changed = bomb_range != old_val
+			print("[Player] ", username, " collected FIRE power-up! ", old_val, " -> ", bomb_range,
+				" (max: ", max_range, ")", " changed=" if changed else " (already max)")
+		
 		ServerPowerUpScript.PowerUpType.SPEED_INCREASE:
-			# Saturn Bomberman: Each roller skate adds to the accumulator system
-			skate_count += 1
-			# Update speed_multiplier for display/sync (not used for actual movement)
+			var old_val = skate_count
+			skate_count = mini(skate_count + 1, GameConfig.SATURN_MAX_SKATES)
 			speed_multiplier = GameConfig.get_skate_speed_multiplier(skate_count)
-			print("[Player] ", username, " collected SPEED power-up! Skates: ", skate_count, "/", GameConfig.SATURN_MAX_SKATES, " (", speed_multiplier, "x)")
+			var changed = skate_count != old_val
+			print("[Player] ", username, " collected SPEED power-up! ", old_val, " -> ", skate_count,
+				" skates (", speed_multiplier, "x)", " changed=" if changed else " (already max)")
+		
+		# === ABILITY ITEMS ===
 		ServerPowerUpScript.PowerUpType.BOMB_KICKER:
+			var was_enabled = has_bomb_kicker
 			has_bomb_kicker = true
-			print("[Player] ", username, " collected BOMB KICKER!")
+			print("[Player] ", username, " collected BOMB KICKER!", "" if not was_enabled else " (already had)")
+		
 		ServerPowerUpScript.PowerUpType.POWER_GLOVE:
+			var was_enabled = has_power_glove
 			has_power_glove = true
-			print("[Player] ", username, " collected POWER GLOVE! (Phase 2 feature)")
-		ServerPowerUpScript.PowerUpType.VIRUS:
-			# TODO: Implement virus debuffs in Phase 2
-			print("[Player] ", username, " collected VIRUS! (Phase 2 - no effect yet)")
+			print("[Player] ", username, " collected POWER GLOVE!", "" if not was_enabled else " (already had)")
+		
+		ServerPowerUpScript.PowerUpType.LINE_BOMB:
+			# TODO: Implement line bomb ability
+			print("[Player] ", username, " collected LINE BOMB! (not implemented yet)")
+		
+		# === SPECIAL ITEMS ===
+		ServerPowerUpScript.PowerUpType.FULL_FIRE:
+			bomb_range = Constants.FIRE_MAX_FULL  # Set to max (16)
+			print("[Player] ", username, " collected FULL FIRE! Range -> ", bomb_range)
+		
+		ServerPowerUpScript.PowerUpType.HEART:
+			# TODO: Implement extra life
+			print("[Player] ", username, " collected HEART! (not implemented yet)")
+		
+		ServerPowerUpScript.PowerUpType.GETA:
+			# Negative item: reduce speed
+			var old_val = skate_count
+			skate_count = maxi(skate_count - 1, 0)
+			speed_multiplier = GameConfig.get_skate_speed_multiplier(skate_count)
+			print("[Player] ", username, " collected GETA (slow shoes)! ", old_val, " -> ", skate_count, " skates")
+		
+		# === BOMB TYPE CHANGERS ===
+		ServerPowerUpScript.PowerUpType.REMOTE_BOMB:
+			# TODO: Implement bomb type system
+			print("[Player] ", username, " collected REMOTE BOMB! (not implemented yet)")
+		
+		ServerPowerUpScript.PowerUpType.POWER_BOMB, ServerPowerUpScript.PowerUpType.PIERCE_BOMB:
+			# TODO: Implement bomb type system
+			print("[Player] ", username, " collected POWER BOMB! (not implemented yet)")
+		
+		ServerPowerUpScript.PowerUpType.RUBBER_BOMB:
+			# TODO: Implement bomb type system
+			print("[Player] ", username, " collected RUBBER BOMB! (not implemented yet)")
+		
+		# === NEGATIVE ITEMS ===
+		ServerPowerUpScript.PowerUpType.SKULL, ServerPowerUpScript.PowerUpType.VIRUS:
+			# TODO: Implement curse system
+			print("[Player] ", username, " collected SKULL! (curse not implemented yet)")
+		
+		_:
+			print("[Player] ", username, " collected unknown powerup type: ", type)
 
 func get_state() -> Dictionary:
 	# Core state for network sync - minimal data to reduce packet size

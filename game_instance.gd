@@ -267,7 +267,7 @@ func _physics_process(delta):
 		if countdown_time <= 0.0:
 			countdown_time = 0.0
 			match_active = true
-			print("[GameInstance] Match started! Countdown complete.")
+			print("[GameInstance] Match started! Countdown complete. Powerups in game: ", powerups.size())
 			# Spawn test powerups if TEST_POWERUPS environment variable is set
 			if OS.get_environment("TEST_POWERUPS") != "":
 				spawn_test_powerups()
@@ -814,8 +814,9 @@ func destroy_block(cell: Vector2i):
 	
 	# Server-side random powerup spawn (synced to clients via state updates)
 	# Uses configurable drop rate from Constants
+	# IMPORTANT: Defer to next frame so the powerup doesn't get destroyed by the same explosion
 	if randf() < Constants.POWERUP_DROP_CHANCE:
-		spawn_powerup(cell)
+		call_deferred("spawn_powerup", cell)
 
 func get_tile_type(grid_pos: Vector2i) -> int:
 	"""Get tile type at grid position (0=empty, 1=wall, 2=destructible)"""
@@ -923,28 +924,35 @@ func spawn_powerup(tile_pos: Vector2i):
 	var cumulative = 0.0
 	var weights = Constants.POWERUP_WEIGHTS
 	
+	# Mapping from weight key names to PowerUpType enum values
+	var type_mapping = {
+		"BOMB_INCREASE": ServerPowerUp.PowerUpType.BOMB_INCREASE,
+		"RANGE_INCREASE": ServerPowerUp.PowerUpType.RANGE_INCREASE,
+		"SPEED_INCREASE": ServerPowerUp.PowerUpType.SPEED_INCREASE,
+		"BOMB_KICKER": ServerPowerUp.PowerUpType.BOMB_KICKER,
+		"POWER_GLOVE": ServerPowerUp.PowerUpType.POWER_GLOVE,
+		"LINE_BOMB": ServerPowerUp.PowerUpType.LINE_BOMB,
+		"FULL_FIRE": ServerPowerUp.PowerUpType.FULL_FIRE,
+		"HEART": ServerPowerUp.PowerUpType.HEART,
+		"GETA": ServerPowerUp.PowerUpType.GETA,
+		"REMOTE_BOMB": ServerPowerUp.PowerUpType.REMOTE_BOMB,
+		"POWER_BOMB": ServerPowerUp.PowerUpType.POWER_BOMB,
+		"RUBBER_BOMB": ServerPowerUp.PowerUpType.RUBBER_BOMB,
+		"PIERCE_BOMB": ServerPowerUp.PowerUpType.PIERCE_BOMB,
+		"SKULL": ServerPowerUp.PowerUpType.SKULL,
+		"VIRUS": ServerPowerUp.PowerUpType.SKULL  # Alias
+	}
+	
 	# Use cumulative probability to select type based on weights
-	cumulative += weights.get("BOMB_INCREASE", 0.35)
-	if rand_val < cumulative:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE
-	else:
-		cumulative += weights.get("RANGE_INCREASE", 0.30)
+	var selected_type = ServerPowerUp.PowerUpType.BOMB_INCREASE  # Default fallback
+	for type_name in weights:
+		cumulative += weights[type_name]
 		if rand_val < cumulative:
-			powerup.powerup_type = ServerPowerUp.PowerUpType.RANGE_INCREASE
-		else:
-			cumulative += weights.get("SPEED_INCREASE", 0.20)
-			if rand_val < cumulative:
-				powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE
-			else:
-				cumulative += weights.get("BOMB_KICKER", 0.07)
-				if rand_val < cumulative:
-					powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_KICKER
-				else:
-					cumulative += weights.get("POWER_GLOVE", 0.05)
-					if rand_val < cumulative:
-						powerup.powerup_type = ServerPowerUp.PowerUpType.POWER_GLOVE
-					else:
-						powerup.powerup_type = ServerPowerUp.PowerUpType.VIRUS
+			if type_mapping.has(type_name):
+				selected_type = type_mapping[type_name]
+			break
+	
+	powerup.powerup_type = selected_type
 	
 	powerup.position = Vector2(
 		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
@@ -1000,9 +1008,8 @@ func spawn_test_powerups():
 				# Destroy the soft block first
 				game_map[y][x] = 0
 				
-				# Spawn a random powerup type (0-5)
-				var powerup_type = randi() % 6
-				spawn_powerup_of_type(Vector2i(x, y), powerup_type)
+				# Spawn a random powerup type using weighted distribution
+				spawn_powerup(Vector2i(x, y))
 				spawned_count += 1
 	
 	print("[Game] Spawned %d test power-ups" % spawned_count)

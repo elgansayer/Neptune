@@ -31,6 +31,25 @@ const Z_LAYERS = {
 	"UI": 1000
 }
 
+# === Saturn Bomberman Stat Limits (from competitive spec) ===
+# These define the min/max values for player stats
+
+# Bomb Count: How many bombs player can have deployed at once
+const BOMB_MIN: int = 1
+const BOMB_MAX: int = 10
+const BOMB_DEFAULT: int = 1
+
+# Fire Range: Explosion radius in tiles
+const FIRE_MIN: int = 1
+const FIRE_MAX: int = 8       # Normal maximum (with Fire Up items)
+const FIRE_MAX_FULL: int = 16 # With Full Fire item (covers entire arena)
+const FIRE_DEFAULT: int = 2
+
+# Speed Level: Index into speed lookup table
+const SPEED_MIN: int = 1
+const SPEED_MAX: int = 8
+const SPEED_DEFAULT: int = 1
+
 # === Saturn Bomberman Pickup Mechanics (from spec) ===
 # Trigger zone is 12x12 pixels centered in 16x16 tile
 # Scaled to current TILE_SIZE
@@ -79,13 +98,26 @@ const POWERUP_DROP_CHANCE: float = 0.30  # 30% base chance
 
 # Weighted distribution of powerup types (must sum to 1.0)
 # These weights determine which type spawns WHEN a drop occurs
+# Saturn Bomberman distribution - common items are more frequent
 const POWERUP_WEIGHTS = {
-	"BOMB_INCREASE": 0.35,   # +1 max bombs
-	"RANGE_INCREASE": 0.30,  # +1 explosion range
-	"SPEED_INCREASE": 0.20,  # Faster movement
-	"BOMB_KICKER": 0.07,     # Kick bombs
+	# Common items (70% total)
+	"BOMB_INCREASE": 0.25,   # +1 max bombs (up to 10)
+	"RANGE_INCREASE": 0.25,  # +1 explosion range (up to 8)
+	"SPEED_INCREASE": 0.15,  # +1 speed level (up to 8)
+	"GETA": 0.05,            # -1 speed level (min 1) - wooden sandals
+	# Rare items (25% total)
+	"BOMB_KICKER": 0.06,     # Kick bombs
 	"POWER_GLOVE": 0.05,     # Lift/throw bombs
-	"VIRUS": 0.03            # Curse effect
+	"LINE_BOMB": 0.04,       # Place all bombs in a row
+	"FULL_FIRE": 0.03,       # Max fire range (16 tiles)
+	"HEART": 0.03,           # Extra life
+	# Special bombs (4% total)
+	"REMOTE_BOMB": 0.015,    # Detonate on command
+	"POWER_BOMB": 0.01,      # Penetrates soft blocks
+	"RUBBER_BOMB": 0.01,     # Bounces off walls
+	"PIERCE_BOMB": 0.005,    # Pierces through players
+	# Negative item (1% total)
+	"SKULL": 0.01            # Random curse effect
 }
 
 # Network

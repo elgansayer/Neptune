@@ -80,7 +80,15 @@ func set_powerup_type(type_value: int):
 			item_sprite.play(animation_name)
 
 func get_animation_name_for_type(type_value: int) -> String:
-	"""Map powerup type enum to animation name"""
+	"""Map powerup type enum to animation name
+	
+	Enum values from ServerPowerUp.PowerUpType:
+	0: BOMB_INCREASE, 1: RANGE_INCREASE, 2: SPEED_INCREASE,
+	3: BOMB_KICKER, 4: POWER_GLOVE, 5: LINE_BOMB,
+	6: FULL_FIRE, 7: HEART, 8: GETA,
+	9: REMOTE_BOMB, 10: POWER_BOMB, 11: RUBBER_BOMB, 12: PIERCE_BOMB,
+	13: SKULL (VIRUS)
+	"""
 	match type_value:
 		0:  # BOMB_INCREASE
 			return "bomb"
@@ -92,7 +100,23 @@ func get_animation_name_for_type(type_value: int) -> String:
 			return "kickbomb"
 		4:  # POWER_GLOVE
 			return "pglove"
-		5:  # VIRUS
+		5:  # LINE_BOMB
+			return "bomb"  # Fallback to bomb animation until we have line_bomb sprites
+		6:  # FULL_FIRE
+			return "fire"  # Fallback to fire animation until we have full_fire sprites
+		7:  # HEART
+			return "bomb"  # Fallback until we have heart sprites
+		8:  # GETA
+			return "skate" # Fallback until we have geta sprites (maybe recolor?)
+		9:  # REMOTE_BOMB
+			return "bomb"  # Fallback until we have remote_bomb sprites
+		10: # POWER_BOMB
+			return "bomb"  # Fallback until we have power_bomb sprites
+		11: # RUBBER_BOMB
+			return "bomb"  # Fallback until we have rubber_bomb sprites
+		12: # PIERCE_BOMB
+			return "bomb"  # Fallback until we have pierce_bomb sprites
+		13: # SKULL (VIRUS)
 			return "skull"
 		_:
 			return "bomb"
