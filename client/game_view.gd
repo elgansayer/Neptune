@@ -993,6 +993,8 @@ func render_map(map_data):
 							if source_id == 1: # Spawn markers
 								cells_to_remove.append(cell)
 						
+						print("[GameView] Removing ", cells_to_remove.size(), " spawn markers from SpawnAndSoftBlockMap")
+						
 						# Erase spawn markers
 						for cell in cells_to_remove:
 							spawn_soft_map.erase_cell(cell)
@@ -1148,6 +1150,7 @@ func update_powerup(powerup_id: String, data: Dictionary):
 	
 	if not powerup_nodes.has(powerup_id):
 		# Create new power-up visual with SBomberman animations
+		print("[GameView] Creating powerup visual: ", powerup_id, " at ", data.position, " type=", data.type)
 		powerup_node = PowerUpScene.instantiate()
 		powerup_node.powerup_id = powerup_id
 		powerup_node.name = "PowerUp_" + powerup_id
