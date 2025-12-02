@@ -790,7 +790,7 @@ func check_match_end_condition():
 		end_match()
 
 func destroy_block(cell: Vector2i):
-	"""Destroy a destructible block and optionally spawn powerup"""
+	"""Destroy a destructible block and optionally spawn powerup (server-side only)"""
 	var tile_key = "%d,%d" % [cell.x, cell.y]
 	print("[Game] Destroying block at ", cell, " (tile_key: ", tile_key, ")")
 	
@@ -812,8 +812,9 @@ func destroy_block(cell: Vector2i):
 	if ai_manager != null:
 		ai_manager.on_wall_destroyed(cell)
 	
-	# Spawn power-up (30% chance - TODO: make configurable)
-	if randf() < 0.3:
+	# Server-side random powerup spawn (synced to clients via state updates)
+	# Uses configurable drop rate from Constants
+	if randf() < Constants.POWERUP_DROP_CHANCE:
 		spawn_powerup(cell)
 
 func get_tile_type(grid_pos: Vector2i) -> int:
@@ -912,26 +913,38 @@ func sync_state_to_clients():
 		# Send regular state update (without map) via unreliable channel
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
 func spawn_powerup(tile_pos: Vector2i):
-	"""Spawn a power-up at the given tile position"""
+	"""Spawn a power-up at the given tile position (server-side, synced to clients)"""
 	var powerup = ServerPowerUpScene.instantiate()
 	powerup.powerup_id = str(next_powerup_id)
 	next_powerup_id += 1
 	
-	# Random power-up type (weighted distribution)
-	# TODO: Make drop rates configurable via Constants
+	# Random power-up type using weighted distribution from Constants
 	var rand_val = randf()
-	if rand_val < 0.35:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE # 35%
-	elif rand_val < 0.65:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.RANGE_INCREASE # 30%
-	elif rand_val < 0.85:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE # 20%
-	elif rand_val < 0.92:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_KICKER # 7%
-	elif rand_val < 0.97:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.POWER_GLOVE # 5%
+	var cumulative = 0.0
+	var weights = Constants.POWERUP_WEIGHTS
+	
+	# Use cumulative probability to select type based on weights
+	cumulative += weights.get("BOMB_INCREASE", 0.35)
+	if rand_val < cumulative:
+		powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_INCREASE
 	else:
-		powerup.powerup_type = ServerPowerUp.PowerUpType.VIRUS # 3%
+		cumulative += weights.get("RANGE_INCREASE", 0.30)
+		if rand_val < cumulative:
+			powerup.powerup_type = ServerPowerUp.PowerUpType.RANGE_INCREASE
+		else:
+			cumulative += weights.get("SPEED_INCREASE", 0.20)
+			if rand_val < cumulative:
+				powerup.powerup_type = ServerPowerUp.PowerUpType.SPEED_INCREASE
+			else:
+				cumulative += weights.get("BOMB_KICKER", 0.07)
+				if rand_val < cumulative:
+					powerup.powerup_type = ServerPowerUp.PowerUpType.BOMB_KICKER
+				else:
+					cumulative += weights.get("POWER_GLOVE", 0.05)
+					if rand_val < cumulative:
+						powerup.powerup_type = ServerPowerUp.PowerUpType.POWER_GLOVE
+					else:
+						powerup.powerup_type = ServerPowerUp.PowerUpType.VIRUS
 	
 	powerup.position = Vector2(
 		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,

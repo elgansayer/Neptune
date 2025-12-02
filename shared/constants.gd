@@ -73,6 +73,21 @@ const BOMB_TIMER = 3.0
 const EXPLOSION_DURATION = 1.0
 const DEFAULT_BOMB_RANGE = 2
 
+# Power-up Drop Rates (from soft block destruction)
+# Chance that a soft block drops ANY powerup when destroyed
+const POWERUP_DROP_CHANCE: float = 0.30  # 30% base chance
+
+# Weighted distribution of powerup types (must sum to 1.0)
+# These weights determine which type spawns WHEN a drop occurs
+const POWERUP_WEIGHTS = {
+	"BOMB_INCREASE": 0.35,   # +1 max bombs
+	"RANGE_INCREASE": 0.30,  # +1 explosion range
+	"SPEED_INCREASE": 0.20,  # Faster movement
+	"BOMB_KICKER": 0.07,     # Kick bombs
+	"POWER_GLOVE": 0.05,     # Lift/throw bombs
+	"VIRUS": 0.03            # Curse effect
+}
+
 # Network
 const SERVER_PORT = 7777
 const MAX_PLAYERS = 8
