@@ -276,19 +276,22 @@ func _physics_process(delta):
 	if match_active:
 		match_time_remaining -= delta
 		
-		# === PLAYER CURSE UPDATES ===
+		# === PLAYER VIRUS UPDATES ===
 		var current_time_msec = Time.get_ticks_msec()
 		for peer_id in players:
 			var player = players[peer_id]
 			if not is_instance_valid(player) or player.is_dead:
 				continue
 			
-			# Check curse expiration
-			player.update_curse(current_time_msec)
+			# Check virus expiration
+			player.update_virus(current_time_msec)
 			
-			# DIARRHEA curse: auto-place bombs constantly
+			# DIARRHOEA virus: auto-place bombs constantly
 			if player.should_auto_place_bomb() and player.can_place_bomb():
 				place_bomb(player)
+		
+		# === VIRUS TRANSFER ON PLAYER COLLISION ===
+		_process_virus_transfers()
 		
 		# Check for Hurry Up trigger
 		if not hurry_mode_active and match_time_remaining <= hurry_trigger_time:
@@ -760,7 +763,7 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i):
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
-	bomb.explosion_range = player.bomb_range
+	bomb.explosion_range = player.get_effective_bomb_range()  # SMALL_FLAME virus forces range to 1
 	bomb.bomb_type = player.bomb_type
 	
 	bomb.position = Vector2(
@@ -805,7 +808,7 @@ func _place_single_bomb(player: ServerPlayer):
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
-	bomb.explosion_range = player.bomb_range
+	bomb.explosion_range = player.get_effective_bomb_range()  # SMALL_FLAME virus forces range to 1
 	bomb.bomb_type = player.bomb_type  # Copy player's current bomb type
 	
 	print("[Game] Creating bomb ", bomb.bomb_id, " for ", player.username, " type=", player.bomb_type)
@@ -1227,3 +1230,44 @@ func bomb_safety_update(_safety_data: Dictionary) -> void:
 	# This is called on game_instance but we need to forward to clients via their game_view
 	# The bot_controller will call this directly on clients via rpc_id
 	pass
+
+# === SATURN BOMBERMAN VIRUS TRANSFER SYSTEM ===
+# Players can transfer their virus to other players by touching them (tag mechanic)
+func _process_virus_transfers() -> void:
+	"""Check for player collisions and transfer viruses between them"""
+	var player_list = players.values()
+	var transfer_distance = GameConfig.TILE_SIZE * 0.6  # Players must be close to transfer
+	
+	for i in range(player_list.size()):
+		var player_a = player_list[i]
+		if not is_instance_valid(player_a) or player_a.is_dead:
+			continue
+		if player_a.active_virus == player_a.VirusType.NONE:
+			continue  # No virus to transfer
+		
+		for j in range(i + 1, player_list.size()):
+			var player_b = player_list[j]
+			if not is_instance_valid(player_b) or player_b.is_dead:
+				continue
+			if player_b.active_virus != player_b.VirusType.NONE:
+				continue  # Already has a virus
+			
+			# Check distance
+			var distance = player_a.position.distance_to(player_b.position)
+			if distance < transfer_distance:
+				# Transfer virus from A to B
+				player_a.transfer_virus_to(player_b)
+				# Notify clients about the transfer
+				_notify_virus_transfer(player_a.peer_id, player_b.peer_id)
+				break  # Only transfer once per frame
+
+func _notify_virus_transfer(from_peer_id: int, to_peer_id: int) -> void:
+	"""Notify all clients about a virus transfer for visual/audio effects"""
+	# RPC to all clients
+	rpc_virus_transfer.rpc(from_peer_id, to_peer_id)
+
+@rpc("authority", "call_remote", "reliable")
+func rpc_virus_transfer(from_peer_id: int, to_peer_id: int) -> void:
+	"""Client receives notification of virus transfer"""
+	# This is called on clients - they handle visuals/audio locally
+	print("[Client] Virus transferred from player ", from_peer_id, " to ", to_peer_id)

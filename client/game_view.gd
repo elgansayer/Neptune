@@ -681,6 +681,9 @@ func update_player(peer_id: String, data: Dictionary):
 				if animated_sprite.sprite_frames.has_animation("state_idle"):
 					animated_sprite.play("state_idle")
 	
+	# === VIRUS VISUAL EFFECTS (Saturn Bomberman) ===
+	_update_virus_visual_effects(player_node, data)
+	
 	# Debug visualization removed - only direction arrow remains
 	# (debug_blocking_tile, debug_check_tile, raycast lines removed for clean gameplay)
 	
@@ -1258,3 +1261,60 @@ func _shake_camera_on_impact():
 func _create_hurry_block_visual(tile_x: int, tile_y: int, tile_key: String):
 	"""Legacy wrapper - now uses SNES-authentic shadow + falling block system"""
 	_spawn_hurry_block_with_warning(tile_x, tile_y, tile_key)
+
+# === SATURN BOMBERMAN VIRUS VISUAL EFFECTS ===
+# Infected players flash black and have a skull icon floating above them
+
+func _update_virus_visual_effects(player_node: Node2D, data: Dictionary) -> void:
+	"""Update virus visual effects (flashing + skull icon) based on server state"""
+	var has_virus = data.has("active_virus") and data.active_virus != 0
+	var virus_end_time = data.get("virus_end_time", 0.0)
+	
+	# Get or create skull icon
+	var skull_icon = player_node.get_node_or_null("VirusSkullIcon")
+	if has_virus:
+		if not skull_icon:
+			skull_icon = _create_skull_icon()
+			skull_icon.name = "VirusSkullIcon"
+			player_node.add_child(skull_icon)
+		
+		# Animate skull bobbing
+		var time = Time.get_ticks_msec() / 1000.0
+		skull_icon.position.y = -GameConfig.TILE_SIZE * 1.2 + sin(time * 6.0) * 3.0
+		skull_icon.visible = true
+	elif skull_icon:
+		skull_icon.visible = false
+	
+	# Get the animated sprite for flashing effect
+	var animated_sprite = player_node.get_meta("animated_sprite", null)
+	if animated_sprite:
+		if has_virus:
+			# Flash black at 5Hz (Saturn Bomberman style)
+			var time_ms = Time.get_ticks_msec()
+			var flash_cycle = int(time_ms / 100) % 2  # Toggle every 100ms (5Hz)
+			if flash_cycle == 0:
+				animated_sprite.modulate = Color(0.1, 0.1, 0.1)  # Nearly black
+			else:
+				animated_sprite.modulate = Color.WHITE  # Normal
+		else:
+			# Ensure modulate is reset when virus clears
+			if animated_sprite.modulate != Color.WHITE:
+				animated_sprite.modulate = Color.WHITE
+
+func _create_skull_icon() -> Node2D:
+	"""Create a floating skull icon for infected players"""
+	var skull_container = Node2D.new()
+	skull_container.z_index = 200  # Above player
+	
+	# Create skull using simple shapes (or load texture if available)
+	var skull = Label.new()
+	skull.text = "☠"  # Unicode skull emoji
+	skull.add_theme_font_size_override("font_size", int(GameConfig.TILE_SIZE * 0.5))
+	skull.add_theme_color_override("font_color", Color(0.8, 0.1, 0.8))  # Purple
+	skull.add_theme_color_override("font_outline_color", Color.BLACK)
+	skull.add_theme_constant_override("outline_size", 2)
+	skull.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	skull.position = Vector2(-skull.size.x / 2, 0)
+	
+	skull_container.add_child(skull)
+	return skull_container

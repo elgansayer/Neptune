@@ -36,17 +36,19 @@ enum BombType {
     PIERCE
 }
 
-# Curse type enum for skull effects
-enum CurseType {
+# Virus type enum for skull effects (Saturn Bomberman)
+enum VirusType {
     NONE,
-    SLOW,           # Move at minimum speed
-    FAST,           # Move at maximum speed (hard to control)
-    DIARRHEA,       # Constantly drop bombs
-    CONSTIPATION,   # Cannot place bombs
-    SHORT_FUSE,     # Bombs explode very quickly
-    LOW_POWER,      # Fire range reduced to 1
-    REVERSE,        # Controls are reversed
-    RANDOM          # Random effect each time cursed
+    SPEEDSTER,        # Move at maximum speed (hard to control)
+    SLOWPOKE,         # Move at minimum speed
+    DIARRHOEA,        # Constantly drop bombs
+    CONSTIPATION,     # Cannot place bombs
+    SMALL_FLAME,      # Fire range reduced to 1
+    UNSTOPPABLE,      # Player can't stop moving
+    REVERSE,          # Controls are reversed
+    HASTY_FUSE,       # Bombs explode very quickly (~1s)
+    LEISURELY_FUSE,   # Bombs have long fuse (5-6s)
+    RANDOM            # Random effect each time infected
 }
 
 # === Core Stats ===
@@ -77,23 +79,23 @@ var _has_full_fire: bool = false  # Unlocks fire_range cap to 16
 # === Bomb Type ===
 var bomb_type: BombType = BombType.NORMAL
 
-# === Curse State ===
-var is_cursed: bool = false
-var curse_type: CurseType = CurseType.NONE
-var curse_duration: float = 0.0
-const CURSE_DURATION_DEFAULT: float = 10.0  # 10 seconds per curse
+# === Virus State (Saturn Bomberman) ===
+var is_infected: bool = false
+var virus_type: VirusType = VirusType.NONE
+var virus_duration: float = 0.0
+const VIRUS_DURATION_DEFAULT: float = 12.0  # 12 seconds per virus (Saturn spec)
 
 # === Speed Calculation (Saturn Bomberman Sub-Pixel System) ===
 # Saturn uses a sub-pixel accumulator for smooth speed transitions
 var _speed_accumulator: int = 0
 
 func get_speed_multiplier() -> float:
-    """Get the effective speed multiplier based on speed_level and curse state"""
-    if is_cursed:
-        match curse_type:
-            CurseType.SLOW:
+    """Get the effective speed multiplier based on speed_level and virus state"""
+    if is_infected:
+        match virus_type:
+            VirusType.SLOWPOKE:
                 return GameConfig.get_skate_speed_multiplier(0)  # Minimum speed
-            CurseType.FAST:
+            VirusType.SPEEDSTER:
                 return GameConfig.get_skate_speed_multiplier(Constants.SPEED_MAX)  # Max speed
     
     # Convert speed_level (1-8) to skate_count (0-7) for Saturn system
@@ -176,49 +178,51 @@ func apply_geta() -> void:
     """Apply Geta (slow shoes) - reduces speed level by 1"""
     speed_level = max(1, speed_level - 1)
 
-func apply_curse(type: CurseType = CurseType.RANDOM) -> void:
-    """Apply curse effect from skull pickup"""
-    is_cursed = true
-    curse_duration = CURSE_DURATION_DEFAULT
+func apply_virus(type: VirusType = VirusType.RANDOM) -> void:
+    """Apply virus effect from skull pickup"""
+    is_infected = true
+    virus_duration = VIRUS_DURATION_DEFAULT
     
-    if type == CurseType.RANDOM:
-        # Random curse (excluding NONE and RANDOM itself)
-        var curse_options = [
-            CurseType.SLOW,
-            CurseType.FAST,
-            CurseType.DIARRHEA,
-            CurseType.CONSTIPATION,
-            CurseType.SHORT_FUSE,
-            CurseType.LOW_POWER,
-            CurseType.REVERSE
+    if type == VirusType.RANDOM:
+        # Random virus (excluding NONE and RANDOM itself)
+        var virus_options = [
+            VirusType.SPEEDSTER,
+            VirusType.SLOWPOKE,
+            VirusType.DIARRHOEA,
+            VirusType.CONSTIPATION,
+            VirusType.SMALL_FLAME,
+            VirusType.UNSTOPPABLE,
+            VirusType.REVERSE,
+            VirusType.HASTY_FUSE,
+            VirusType.LEISURELY_FUSE
         ]
-        curse_type = curse_options[randi() % curse_options.size()]
+        virus_type = virus_options[randi() % virus_options.size()]
     else:
-        curse_type = type
+        virus_type = type
 
-func update_curse(delta: float) -> void:
-    """Update curse timer. Call every frame."""
-    if is_cursed:
-        curse_duration -= delta
-        if curse_duration <= 0.0:
-            clear_curse()
+func update_virus(delta: float) -> void:
+    """Update virus timer. Call every frame."""
+    if is_infected:
+        virus_duration -= delta
+        if virus_duration <= 0.0:
+            clear_virus()
 
-func clear_curse() -> void:
-    """Clear curse effect"""
-    is_cursed = false
-    curse_type = CurseType.NONE
-    curse_duration = 0.0
+func clear_virus() -> void:
+    """Clear virus effect"""
+    is_infected = false
+    virus_type = VirusType.NONE
+    virus_duration = 0.0
 
-func transfer_curse_to(other: PlayerStats) -> void:
-    """Transfer curse to another player (touching while cursed)"""
-    if not is_cursed:
+func transfer_virus_to(other: PlayerStats) -> void:
+    """Transfer virus to another player (touching while infected)"""
+    if not is_infected:
         return
     
-    other.is_cursed = true
-    other.curse_type = curse_type
-    other.curse_duration = curse_duration
+    other.is_infected = true
+    other.virus_type = virus_type
+    other.virus_duration = virus_duration
     
-    clear_curse()
+    clear_virus()
 
 # === Serialization (for network sync) ===
 
@@ -235,9 +239,9 @@ func to_dict() -> Dictionary:
         "has_heart": has_heart,
         "has_full_fire": _has_full_fire,
         "bomb_type": bomb_type,
-        "is_cursed": is_cursed,
-        "curse_type": curse_type,
-        "curse_duration": curse_duration
+        "is_infected": is_infected,
+        "virus_type": virus_type,
+        "virus_duration": virus_duration
     }
 
 func from_dict(data: Dictionary) -> void:
@@ -252,9 +256,9 @@ func from_dict(data: Dictionary) -> void:
     has_heart = data.get("has_heart", false)
     _has_full_fire = data.get("has_full_fire", false)
     bomb_type = data.get("bomb_type", BombType.NORMAL)
-    is_cursed = data.get("is_cursed", false)
-    curse_type = data.get("curse_type", CurseType.NONE)
-    curse_duration = data.get("curse_duration", 0.0)
+    is_infected = data.get("is_infected", false)
+    virus_type = data.get("virus_type", VirusType.NONE)
+    virus_duration = data.get("virus_duration", 0.0)
 
 # === Debugging ===
 
@@ -279,4 +283,4 @@ func reset_to_default() -> void:
     has_heart = false
     _has_full_fire = false
     bomb_type = BombType.NORMAL
-    clear_curse()
+    clear_virus()

@@ -49,21 +49,24 @@ const BOMB_TYPE_REMOTE := 1
 const BOMB_TYPE_POWER := 2
 const BOMB_TYPE_RUBBER := 3
 
-# === SKULL CURSE SYSTEM ===
-# Curse effects from collecting skull/virus items
-enum CurseType {
+# === SATURN BOMBERMAN VIRUS (SKULL) SYSTEM ===
+# Virus effects from collecting skull items - can be transferred between players!
+enum VirusType {
 	NONE = 0,
-	SLOW = 1,           # Speed reduced to minimum
-	FAST = 2,           # Speed maxed (can be good or bad!)
-	CONSTIPATION = 3,   # Cannot place bombs
-	DIARRHEA = 4,       # Bombs auto-place constantly
-	SHORT_FUSE = 5,     # Bombs explode in 1 second
-	REVERSE = 6,        # Controls reversed
-	NO_BOMBS = 7        # Bombs disappear (can't place)
+	SPEEDSTER = 1,        # Speed maxed out (can be good or dangerous!)
+	SLOWPOKE = 2,         # Speed reduced to minimum
+	DIARRHOEA = 3,        # Bombs auto-place constantly
+	CONSTIPATION = 4,     # Cannot place bombs
+	SMALL_FLAME = 5,      # Bomb range forced to 1
+	UNSTOPPABLE = 6,      # Player can't stop moving (uses last direction if no input)
+	REVERSE = 7,          # Controls reversed
+	HASTY_FUSE = 8,       # Bombs explode in ~1 second
+	LEISURELY_FUSE = 9,   # Bombs have 5-6 second fuse
 }
-var active_curse: CurseType = CurseType.NONE
-var curse_end_time: float = 0.0  # When curse expires (Time.get_ticks_msec())
-const CURSE_DURATION_MS: float = 10000.0  # 10 seconds
+var active_virus: VirusType = VirusType.NONE
+var virus_end_time: float = 0.0  # When virus expires (Time.get_ticks_msec())
+const VIRUS_DURATION_MS: float = 12000.0  # 12 seconds (Saturn Bomberman spec)
+var last_nonzero_direction: Vector2 = Vector2.DOWN  # For UNSTOPPABLE virus
 
 # Power Glove state
 var carried_bomb: Node = null # Reference to bomb being carried
@@ -336,9 +339,9 @@ func _physics_process(_delta):
 			pickup_animation_time = 0.0
 
 	# Get the input direction (strict 4-way)
-	# Apply REVERSE curse to input direction if active
+	# Apply virus effects to input direction
 	var raw_input = get_4way_input()
-	var input_dir = get_input_direction_cursed(raw_input)
+	var input_dir = get_input_direction_with_virus(raw_input)
 	var has_pending_target = debug_target_active
 	var offset_to_target = Vector2.ZERO
 	if has_pending_target:
@@ -416,8 +419,8 @@ func _physics_process(_delta):
 		var scaled_pixels_per_frame: float = float(pixels_to_move) * GameConfig.scale_factor
 		var base_velocity_magnitude: float = scaled_pixels_per_frame * 60.0
 		
-		# Apply curse speed modifier (SLOW = 0.5x, FAST = 2.0x)
-		base_velocity_magnitude *= get_curse_speed_modifier()
+		# Apply virus speed modifier (SLOWPOKE = 0.3x, SPEEDSTER = 2.0x)
+		base_velocity_magnitude *= get_virus_speed_modifier()
 		
 		velocity = final_direction * base_velocity_magnitude
 
@@ -657,69 +660,112 @@ func request_action_release():
 func can_place_bomb() -> bool:
 	if is_dead:
 		return false
-	# CONSTIPATION curse prevents placing bombs
-	if active_curse == CurseType.CONSTIPATION:
-		return false
-	# NO_BOMBS curse also prevents bomb placement
-	if active_curse == CurseType.NO_BOMBS:
+	# CONSTIPATION virus prevents placing bombs
+	if active_virus == VirusType.CONSTIPATION:
 		return false
 	return bombs_placed < max_bombs
 
-func update_curse(current_time_msec: float) -> void:
-	"""Check if curse has expired and clear it"""
-	if active_curse != CurseType.NONE and current_time_msec >= curse_end_time:
-		print("[Player] ", username, " curse EXPIRED (was ", CurseType.keys()[active_curse], ")")
-		clear_curse()
+func update_virus(current_time_msec: float) -> void:
+	"""Check if virus has expired and clear it"""
+	if active_virus != VirusType.NONE and current_time_msec >= virus_end_time:
+		print("[Player] ", username, " virus EXPIRED (was ", VirusType.keys()[active_virus], ")")
+		clear_virus()
 
-func apply_curse(curse_type: CurseType) -> void:
-	"""Apply a curse effect from skull pickup"""
-	active_curse = curse_type
-	curse_end_time = Time.get_ticks_msec() + CURSE_DURATION_MS
-	print("[Player] ", username, " CURSED with ", CurseType.keys()[curse_type], " for ", CURSE_DURATION_MS/1000.0, "s")
+func apply_virus(virus_type: VirusType) -> void:
+	"""Apply a virus effect from skull pickup or transfer"""
+	active_virus = virus_type
+	virus_end_time = Time.get_ticks_msec() + VIRUS_DURATION_MS
+	print("[Player] ", username, " INFECTED with ", VirusType.keys()[virus_type], " for ", VIRUS_DURATION_MS/1000.0, "s")
 	
 	# Apply immediate effects
-	match curse_type:
-		CurseType.SLOW:
+	match virus_type:
+		VirusType.SLOWPOKE:
 			# Speed is handled in movement calculation
 			pass
-		CurseType.FAST:
+		VirusType.SPEEDSTER:
 			# Speed is handled in movement calculation
 			pass
-		CurseType.REVERSE:
+		VirusType.REVERSE:
 			# Input reversal handled in input processing
 			pass
-		# Other curses handled in their respective systems
+		VirusType.UNSTOPPABLE:
+			# Uses last_nonzero_direction when input is zero
+			pass
+		VirusType.SMALL_FLAME:
+			# Range is forced to 1 in get_effective_bomb_range()
+			pass
+		# Other viruses handled in their respective systems
 
-func clear_curse() -> void:
-	"""Remove active curse"""
-	active_curse = CurseType.NONE
-	curse_end_time = 0.0
+func clear_virus() -> void:
+	"""Remove active virus"""
+	active_virus = VirusType.NONE
+	virus_end_time = 0.0
 
-func get_curse_speed_modifier() -> float:
-	"""Get speed modifier based on active curse"""
-	match active_curse:
-		CurseType.SLOW:
+func transfer_virus_to(other_player: ServerPlayer) -> bool:
+	"""Transfer virus to another player on collision (tag mechanic)
+	Returns true if virus was successfully transferred"""
+	if active_virus == VirusType.NONE:
+		return false
+	if other_player.is_dead:
+		return false
+	
+	# Transfer the virus
+	var transferred_virus = active_virus
+	clear_virus()
+	other_player.apply_virus(transferred_virus)
+	print("[Virus] ", username, " transferred ", VirusType.keys()[transferred_virus], " to ", other_player.username)
+	return true
+
+func get_virus_speed_modifier() -> float:
+	"""Get speed modifier based on active virus"""
+	match active_virus:
+		VirusType.SLOWPOKE:
 			return 0.3  # 30% speed
-		CurseType.FAST:
+		VirusType.SPEEDSTER:
 			return 2.0  # 200% speed (dangerous!)
 		_:
 			return 1.0
 
 func should_auto_place_bomb() -> bool:
-	"""DIARRHEA curse causes automatic bomb placement"""
-	return active_curse == CurseType.DIARRHEA
+	"""DIARRHOEA virus causes automatic bomb placement"""
+	return active_virus == VirusType.DIARRHOEA
 
 func get_bomb_fuse_time() -> float:
-	"""Get bomb timer based on curse status"""
-	if active_curse == CurseType.SHORT_FUSE:
-		return 1.0  # 1 second fuse!
-	return 3.0  # Normal 3 second fuse
+	"""Get bomb timer based on virus status"""
+	match active_virus:
+		VirusType.HASTY_FUSE:
+			return 1.0  # ~1 second fuse!
+		VirusType.LEISURELY_FUSE:
+			return randf_range(5.0, 6.0)  # 5-6 second fuse
+		_:
+			return 3.0  # Normal 3 second fuse
 
-func get_input_direction_cursed(raw_direction: Vector2) -> Vector2:
-	"""Apply REVERSE curse to input direction"""
-	if active_curse == CurseType.REVERSE:
-		return -raw_direction
-	return raw_direction
+func get_effective_bomb_range() -> int:
+	"""Get effective bomb range (affected by SMALL_FLAME virus)"""
+	if active_virus == VirusType.SMALL_FLAME:
+		return 1  # Forced to minimum range
+	return bomb_range
+
+func get_input_direction_with_virus(raw_direction: Vector2) -> Vector2:
+	"""Apply virus effects to input direction:
+	- REVERSE: inverts controls
+	- UNSTOPPABLE: uses last non-zero direction if input is zero
+	"""
+	var direction = raw_direction
+	
+	# Track last non-zero direction for UNSTOPPABLE
+	if raw_direction.length() > 0.1:
+		last_nonzero_direction = raw_direction.normalized()
+	
+	# REVERSE: invert controls
+	if active_virus == VirusType.REVERSE:
+		direction = -direction
+	
+	# UNSTOPPABLE: can't stop moving - use last direction if no input
+	if active_virus == VirusType.UNSTOPPABLE and direction.length() < 0.1:
+		direction = last_nonzero_direction
+	
+	return direction
 
 # ============ POWER GLOVE SYSTEM ============
 
@@ -948,18 +994,21 @@ func collect_powerup(powerup):
 		
 		# === NEGATIVE ITEMS ===
 		ServerPowerUpScript.PowerUpType.SKULL, ServerPowerUpScript.PowerUpType.VIRUS:
-			# Apply random curse effect
-			var curse_options = [
-				CurseType.SLOW,
-				CurseType.FAST,
-				CurseType.CONSTIPATION,
-				CurseType.DIARRHEA,
-				CurseType.SHORT_FUSE,
-				CurseType.REVERSE,
+			# Apply random virus effect (Saturn Bomberman spec)
+			var virus_options = [
+				VirusType.SPEEDSTER,
+				VirusType.SLOWPOKE,
+				VirusType.DIARRHOEA,
+				VirusType.CONSTIPATION,
+				VirusType.SMALL_FLAME,
+				VirusType.UNSTOPPABLE,
+				VirusType.REVERSE,
+				VirusType.HASTY_FUSE,
+				VirusType.LEISURELY_FUSE,
 			]
-			var random_curse = curse_options[randi() % curse_options.size()]
-			apply_curse(random_curse)
-			print("[Player] ", username, " collected SKULL! Cursed with: ", CurseType.keys()[random_curse])
+			var random_virus = virus_options[randi() % virus_options.size()]
+			apply_virus(random_virus)
+			print("[Player] ", username, " collected SKULL! Infected with: ", VirusType.keys()[random_virus])
 		
 		_:
 			print("[Player] ", username, " collected unknown powerup type: ", type)
@@ -984,7 +1033,8 @@ func get_state() -> Dictionary:
 		"has_power_glove": has_power_glove,
 		"has_line_bomb": has_line_bomb,
 		"bomb_type": bomb_type,
-		"active_curse": active_curse,
+		"active_virus": active_virus,
+		"virus_end_time": virus_end_time,
 		"is_carrying_bomb": is_carrying_bomb(),
 		"carried_bomb_id": carried_bomb.bomb_id if is_carrying_bomb() else "",
 	}
