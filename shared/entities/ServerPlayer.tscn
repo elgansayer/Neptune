@@ -1,0 +1,58 @@
+[gd_scene load_steps=3 format=3 uid="uid://c02k7yrlgb8d5"]
+
+[ext_resource type="Script" path="res://shared/entities/server_player.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(48, 48)
+
+[node name="ServerPlayer" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 21
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_player")
+
+[node name="ShapeCastDesired" type="ShapeCast2D" parent="."]
+shape = SubResource("RectangleShape2D_player")
+target_position = Vector2(0, 0)
+collision_mask = 5
+exclude_parent = true
+
+[node name="ShapeCastPerp1" type="ShapeCast2D" parent="."]
+shape = SubResource("RectangleShape2D_player")
+target_position = Vector2(0, 0)
+collision_mask = 5
+enabled = false
+exclude_parent = true
+
+[node name="ShapeCastPerp2" type="ShapeCast2D" parent="."]
+shape = SubResource("RectangleShape2D_player")
+target_position = Vector2(0, 0)
+collision_mask = 5
+enabled = false
+exclude_parent = true
+
+[node name="KickDetector" type="ShapeCast2D" parent="."]
+shape = SubResource("RectangleShape2D_player")
+target_position = Vector2(0, 0)
+collision_mask = 4
+
+[node name="DebugArrow" type="Polygon2D" parent="."]
+z_index = 100
+position = Vector2(0, -35)
+color = Color(1, 0.5, 0, 0.8)
+polygon = PackedVector2Array(0, -8, 25, 0, 0, 8, 6, 0)
+
+[node name="DebugPathLine" type="Line2D" parent="."]
+z_index = 4096
+width = 5.0
+default_color = Color(0, 0, 0.8, 1)
+joint_mode = 1
+
+[node name="DebugTargetLine" type="Line2D" parent="."]
+z_index = 4096
+width = 3.0
+antialiased = true
+default_color = Color(1, 0, 0, 0.9)
+joint_mode = 2

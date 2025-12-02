@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://churryblkshad1"]
+
+[ext_resource type="Script" path="res://client/effects/hurry_block_shadow.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c1vjh06j8m8bv" path="res://res/items/sbomberman/shadow.png" id="2_shadow"]
+
+[node name="HurryBlockShadow" type="Node2D"]
+z_index = 5
+script = ExtResource("1_script")
+
+[node name="ShadowSprite" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0)
+texture = ExtResource("2_shadow")

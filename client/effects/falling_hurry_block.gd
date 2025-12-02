@@ -29,7 +29,8 @@ var has_landed := false
 var drop_height: float
 var fall_speed_per_frame: float
 
-# Visual components
+# Visual components - BlockVisual is defined in FallingHurryBlock.tscn
+@onready var block_visual: Node2D = $BlockVisual
 var block_sprite: Node2D
 var shadow_ref: Node2D  # Reference to the shadow (to hide on landing)
 
@@ -39,7 +40,7 @@ func _ready():
 	drop_height = REFERENCE_DROP_HEIGHT * scale_factor
 	fall_speed_per_frame = REFERENCE_FALL_SPEED * scale_factor
 	
-	z_index = Z_INDEX_FALLING
+	# z_index is already set in FallingHurryBlock.tscn
 	set_physics_process(false)  # Don't start falling until explicitly told
 
 func setup(tile: Vector2i, shadow: Node2D = null):
@@ -56,18 +57,18 @@ func setup(tile: Vector2i, shadow: Node2D = null):
 		target_y - drop_height
 	)
 	
-	# Create the block visual
-	_create_block_visual()
+	# Set up the block visual inside the BlockVisual container
+	_setup_block_visual()
 
-func _create_block_visual():
-	"""Create the falling block visual using Hard-block.tscn from map PCK"""
+func _setup_block_visual():
+	"""Set up the falling block visual inside the BlockVisual container"""
 	# Try to load the hard block scene from the mounted map PCK
 	var hard_block_path = "res://Hard-block.tscn"
 	if ResourceLoader.exists(hard_block_path):
 		var scene = load(hard_block_path)
 		if scene:
 			block_sprite = scene.instantiate()
-			add_child(block_sprite)
+			block_visual.add_child(block_sprite)
 			# Reset position since we handle that at parent level
 			block_sprite.position = Vector2.ZERO
 			return
@@ -78,7 +79,7 @@ func _create_block_visual():
 	fallback.position = -Vector2(GameConfig.TILE_SIZE / 2.0, GameConfig.TILE_SIZE / 2.0)  # Center it
 	fallback.color = Color(0.5, 0.5, 0.5, 1.0)  # Gray block
 	block_sprite = fallback
-	add_child(block_sprite)
+	block_visual.add_child(block_sprite)
 
 func start_falling():
 	"""Begin the fall animation. Called by game_view after shadow warning completes."""

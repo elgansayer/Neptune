@@ -55,18 +55,19 @@ var collision_exceptions := []
 var input_buffer: InputBufferScript = null # Input buffering for BT-based player control
 var bt_player = null # Optional: LimboAI BT player for input processing
 
-# ShapeCast2D nodes for checking directions
-var shape_cast_desired: ShapeCast2D
-var shape_cast_perp1: ShapeCast2D
-var shape_cast_perp2: ShapeCast2D
-var kick_detector: ShapeCast2D
+# ShapeCast2D nodes for checking directions (defined in ServerPlayer.tscn)
+@onready var shape_cast_desired: ShapeCast2D = $ShapeCastDesired
+@onready var shape_cast_perp1: ShapeCast2D = $ShapeCastPerp1
+@onready var shape_cast_perp2: ShapeCast2D = $ShapeCastPerp2
+@onready var kick_detector: ShapeCast2D = $KickDetector
 
-# Debug visualization
-var debug_arrow: Polygon2D
+# Debug visualization (defined in ServerPlayer.tscn)
+@onready var debug_arrow: Polygon2D = $DebugArrow
+@onready var debug_path_line: Line2D = $DebugPathLine
+@onready var debug_target_line: Line2D = $DebugTargetLine
+
 var debug_tiles: Dictionary = {} # Store debug tile overlays
-var debug_raycast_line: Line2D # Visualize the raycast
-var debug_path_line: Line2D # Visualize AI path (replicated)
-var debug_target_line: Line2D # Visualize bot-to-target center line
+var debug_raycast_line: Line2D # Kept for compatibility
 var debug_target_center: Vector2 = Vector2.ZERO
 var debug_target_active: bool = false
 
@@ -75,91 +76,27 @@ const ENABLE_GRID_SNAPPING = true # Re-enabled with matching client prediction
 const ENABLE_CORNER_SLIDING = true # Toggle manual corner sliding logic
 
 func _ready():
-	# Set collision layers: players on layer 2, collide with walls (1), bombs (4), and powerups (16)
-	collision_layer = Constants.COLLISION_LAYER_PLAYERS
-	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS | Constants.COLLISION_LAYER_POWERUPS
-
-	# Set up collision shape - USE RECTANGLE for precise collision
-	var collision_shape = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2) # Dynamic size based on tile
-	collision_shape.shape = shape
-	add_child(collision_shape)
-
-	# Set up ShapeCast2D nodes for collision checking
-	_setup_shape_casts()
-
-	# Set up debug arrow
-	_setup_debug_arrow()
-
-	# Set up debug raycast line
-	# Set up debug raycast line
-	_setup_debug_raycast()
+	# Collision layers and shapes are already set in ServerPlayer.tscn
+	# Update shapes to use dynamic GameConfig values at runtime
+	_update_collision_shape_sizes()
 	
-	# Set up debug path line
-	_setup_debug_path_line()
-	# Set up debug target center line
-	_setup_debug_target_line()
+	# Add self-exception to shape casts
+	if shape_cast_desired:
+		shape_cast_desired.add_exception(self)
 
-func _setup_debug_arrow():
-	"""Create a visual arrow to show facing direction"""
-	debug_arrow = Polygon2D.new()
-
-	# Smaller arrow shape pointing right
-	var arrow_points = PackedVector2Array([
-		Vector2(0, -8), # Top left
-		Vector2(25, 0), # Tip (pointing right)
-		Vector2(0, 8), # Bottom left
-		Vector2(6, 0) # Inner notch
-	])
-
-	debug_arrow.polygon = arrow_points
-	debug_arrow.color = Color(1, 0.5, 0, 0.8) # Orange, semi-transparent
-	debug_arrow.z_index = 100
-	debug_arrow.z_as_relative = false
-	debug_arrow.position = Vector2(0, -35)
-	add_child(debug_arrow)
-
-func _setup_debug_raycast():
-	"""ShapeCast2D will handle visualization - this is kept for compatibility"""
-	pass # Visualization now done by ShapeCast2D
-
-func _setup_shape_casts():
-	"""Create ShapeCast2D nodes for checking collisions in different directions"""
-	# Create shape for casting
-	var cast_shape = RectangleShape2D.new()
-	cast_shape.size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2) # Dynamic size
-
-	# ShapeCast for desired direction (check walls and bombs, not other players)
-	shape_cast_desired = ShapeCast2D.new()
-	shape_cast_desired.shape = cast_shape
-	shape_cast_desired.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
-	shape_cast_desired.enabled = true # Keep enabled for debugging
-	shape_cast_desired.exclude_parent = true # Don't collide with self!
-	add_child(shape_cast_desired)
-	# Explicitly exclude this player's physics body
-	shape_cast_desired.add_exception(self)
-
-	# ShapeCast for kick detection
-	kick_detector = ShapeCast2D.new()
-	kick_detector.shape = cast_shape
-	kick_detector.collision_mask = Constants.COLLISION_LAYER_BOMBS
-	kick_detector.enabled = true
-	add_child(kick_detector)
-
-	# ShapeCast for perpendicular direction 1
-	shape_cast_perp1 = ShapeCast2D.new()
-	shape_cast_perp1.shape = cast_shape
-	shape_cast_perp1.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
-	shape_cast_perp1.enabled = false
-	add_child(shape_cast_perp1)
-
-	# ShapeCast for perpendicular direction 2
-	shape_cast_perp2 = ShapeCast2D.new()
-	shape_cast_perp2.shape = cast_shape
-	shape_cast_perp2.collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_BOMBS
-	shape_cast_perp2.enabled = false
-	add_child(shape_cast_perp2)
+func _update_collision_shape_sizes():
+	"""Update collision shapes to match current GameConfig values"""
+	var size = Vector2(GameConfig.PLAYER_HALF_WIDTH * 2, GameConfig.PLAYER_HALF_WIDTH * 2)
+	
+	# Update collision shape
+	var collision_shape = $CollisionShape2D
+	if collision_shape and collision_shape.shape:
+		collision_shape.shape.size = size
+	
+	# Update shape cast shapes
+	for cast in [shape_cast_desired, shape_cast_perp1, shape_cast_perp2, kick_detector]:
+		if cast and cast.shape:
+			cast.shape.size = size
 
 func _check_direction_clear(direction: Vector2) -> bool:
 	"""Check if movement in a given direction is clear using ShapeCast2D"""
@@ -893,27 +830,13 @@ func set_bot_metadata(personality: String) -> void:
 
 func is_ai_bot() -> bool:
 	return is_bot
-func _setup_debug_path_line():
-	debug_path_line = Line2D.new()
-	debug_path_line.width = 5.0
-	debug_path_line.default_color = Color(0, 0, 0.8, 1)
-	debug_path_line.z_index = 4096
-	debug_path_line.joint_mode = Line2D.LINE_JOINT_BEVEL
-	add_child(debug_path_line)
 
-func _setup_debug_target_line():
-	debug_target_line = Line2D.new()
-	debug_target_line.width = 3.0
-	debug_target_line.default_color = Color(1, 0, 0, 0.9)
-	debug_target_line.z_index = 4096
-	debug_target_line.joint_mode = Line2D.LINE_JOINT_ROUND
-	debug_target_line.antialiased = true
-	add_child(debug_target_line)
+# Debug line setup functions removed - now using scene nodes from ServerPlayer.tscn
 
 @rpc("authority", "call_remote", "unreliable")
 func client_update_debug_path(points: PackedVector2Array):
 	if not debug_path_line:
-		_setup_debug_path_line()
+		return
 	
 	var local_points = PackedVector2Array()
 	for p in points:
@@ -923,7 +846,7 @@ func client_update_debug_path(points: PackedVector2Array):
 @rpc("authority", "call_remote", "unreliable")
 func client_update_debug_target_line(points: PackedVector2Array):
 	if not debug_target_line:
-		_setup_debug_target_line()
+		return
 
 	var local_points = PackedVector2Array()
 	for p in points:
@@ -933,7 +856,7 @@ func client_update_debug_target_line(points: PackedVector2Array):
 func set_debug_path(points: PackedVector2Array):
 	# Update locally (server view)
 	if not debug_path_line:
-		_setup_debug_path_line()
+		return
 	
 	var local_points = PackedVector2Array()
 	for p in points:
@@ -946,7 +869,7 @@ func set_debug_path(points: PackedVector2Array):
 
 func set_debug_target_line(points: PackedVector2Array):
 	if not debug_target_line:
-		_setup_debug_target_line()
+		return
 
 	debug_target_active = points.size() >= 2
 	if debug_target_active:

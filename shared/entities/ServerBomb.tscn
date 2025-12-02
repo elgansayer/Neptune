@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://bdsqfi246urc7"]
+
+[ext_resource type="Script" path="res://shared/entities/server_bomb.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bomb"]
+size = Vector2(44.8, 44.8)
+
+[node name="ServerBomb" type="CharacterBody2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_script")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_bomb")

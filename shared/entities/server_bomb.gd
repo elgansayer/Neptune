@@ -75,17 +75,9 @@ signal landed(bomb, final_pos)
 signal kicked(bomb, direction)
 
 func _ready():
-	# Set collision layers: bombs on layer 3, collide with walls and players
-	# Players need to collide with bombs to detect them for kicking/picking up
-	collision_layer = Constants.COLLISION_LAYER_BOMBS
-	collision_mask = Constants.COLLISION_LAYER_WALLS | Constants.COLLISION_LAYER_PLAYERS
-	
-	# Set up collision shape
-	var collision_shape = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(GameConfig.TILE_SIZE * 0.7, GameConfig.TILE_SIZE * 0.7) # Slightly smaller than tile
-	collision_shape.shape = shape
-	add_child(collision_shape)
+	# Collision layers and shapes are already set in ServerBomb.tscn
+	# Update collision shape to match current GameConfig values at runtime
+	_update_collision_shape_size()
 	
 	# Center on tile
 	var tile_pos = get_tile_position()
@@ -93,6 +85,12 @@ func _ready():
 		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
 		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
+
+func _update_collision_shape_size():
+	"""Update collision shape to match current GameConfig values"""
+	var collision_shape = $CollisionShape2D
+	if collision_shape and collision_shape.shape:
+		collision_shape.shape.size = Vector2(GameConfig.TILE_SIZE * 0.7, GameConfig.TILE_SIZE * 0.7)
 
 func _physics_process(delta):
 	# Handle carried state - follow player position

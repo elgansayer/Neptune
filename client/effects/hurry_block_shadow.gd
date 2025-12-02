@@ -23,45 +23,28 @@ const PULSE_SCALE_FINAL := 1.0
 var target_tile: Vector2i
 var is_warning_complete := false
 
-var shadow_sprite: Sprite2D
+# ShadowSprite is defined in HurryBlockShadow.tscn
+@onready var shadow_sprite: Sprite2D = $ShadowSprite
 
 func _ready():
-	z_index = 5  # Below players and blocks, above floor
-	_create_shadow_visual()
+	# z_index is already set in HurryBlockShadow.tscn
+	_setup_shadow_visual()
 	_start_warning_animation()
 
-func _create_shadow_visual():
-	"""Create shadow sprite using the sbomberman shadow asset"""
-	shadow_sprite = Sprite2D.new()
-	shadow_sprite.name = "ShadowSprite"
-	
-	# Try to load the shadow texture from assets
-	var shadow_texture: Texture2D = null
-	var shadow_paths = [
-		"res://res/items/sbomberman/shadow.png",
-		"res://demo/assets/shadow.png"
-	]
-	
-	for path in shadow_paths:
-		if ResourceLoader.exists(path):
-			shadow_texture = load(path)
-			break
-	
-	if shadow_texture:
-		shadow_sprite.texture = shadow_texture
+func _setup_shadow_visual():
+	"""Set up shadow sprite from scene - scale to match tile size"""
+	if shadow_sprite and shadow_sprite.texture:
 		# Scale to match tile size
-		var tex_size = shadow_texture.get_size()
+		var tex_size = shadow_sprite.texture.get_size()
 		var tile_size = GameConfig.TILE_SIZE
 		shadow_sprite.scale = Vector2(tile_size / tex_size.x, tile_size / tex_size.y) * 0.9
 	else:
-		# Fallback: create procedural shadow
+		# Fallback: create procedural shadow if texture missing
 		_create_procedural_shadow()
 	
 	# Start invisible and small
 	shadow_sprite.modulate = Color(1, 1, 1, 0)
 	shadow_sprite.scale *= PULSE_SCALE_START
-	
-	add_child(shadow_sprite)
 
 func _create_procedural_shadow():
 	"""Create a procedural elliptical shadow if texture not found"""

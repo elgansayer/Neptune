@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://cbotcontroller01"]
+
+[ext_resource type="Script" path="res://ai/bot_controller.gd" id="1_script"]
+[ext_resource type="BehaviorTree" path="res://ai/trees/bot_default.tres" id="2_tree"]
+
+[node name="BotController" type="Node"]
+script = ExtResource("1_script")
+
+[node name="BTPlayer" type="BTPlayer" parent="."]
+behavior_tree = ExtResource("2_tree")
+update_mode = 1
+active = true

@@ -9,8 +9,8 @@ const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
 const ThreatMatrixVisualizerScene = preload("res://client/ui/threat_matrix_visualizer.tscn")
 const BombSafetyVisualizerScript = preload("res://client/ui/bomb_safety_visualizer.gd")
-const HurryBlockShadowScript = preload("res://client/effects/hurry_block_shadow.gd")
-const FallingHurryBlockScript = preload("res://client/effects/falling_hurry_block.gd")
+const HurryBlockShadowScene = preload("res://client/effects/HurryBlockShadow.tscn")
+const FallingHurryBlockScene = preload("res://client/effects/FallingHurryBlock.tscn")
 
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
@@ -1188,8 +1188,8 @@ func _spawn_hurry_block_with_warning(tile_x: int, tile_y: int, tile_key: String)
 	
 	var target_tile = Vector2i(tile_x, tile_y)
 	
-	# Step 1: Create the shadow
-	var shadow = HurryBlockShadowScript.new()
+	# Step 1: Create the shadow from scene
+	var shadow = HurryBlockShadowScene.instantiate()
 	shadow.set_target_tile(target_tile)
 	add_child(shadow)
 	hurry_pending_shadows[tile_key] = shadow
@@ -1203,8 +1203,8 @@ func _spawn_falling_hurry_block(tile_x: int, tile_y: int, tile_key: String, shad
 	"""Spawn the falling block after shadow warning completes"""
 	var target_tile = Vector2i(tile_x, tile_y)
 	
-	# Create the falling block
-	var falling_block = FallingHurryBlockScript.new()
+	# Create the falling block from scene
+	var falling_block = FallingHurryBlockScene.instantiate()
 	falling_block.setup(target_tile, shadow)
 	add_child(falling_block)
 	hurry_falling_blocks[tile_key] = falling_block

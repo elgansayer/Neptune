@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfallinghurryb1"]
+
+[ext_resource type="Script" path="res://client/effects/falling_hurry_block.gd" id="1_script"]
+
+[node name="FallingHurryBlock" type="Node2D"]
+z_index = 100
+script = ExtResource("1_script")
+
+[node name="BlockVisual" type="Node2D" parent="."]

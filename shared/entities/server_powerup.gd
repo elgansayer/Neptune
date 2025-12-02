@@ -30,23 +30,22 @@ var powerup_type: PowerUpType = PowerUpType.BOMB_INCREASE
 var collected: bool = false
 var destroyed: bool = false  # Destroyed by explosion
 
+# Collision shape is defined in ServerPowerUp.tscn
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
+
 func _ready():
-	# Set up collision detection
-	collision_layer = Constants.COLLISION_LAYER_POWERUPS  # Layer 5 (bit 4)
-	collision_mask = Constants.COLLISION_LAYER_PLAYERS    # Detect players
-	
-	# Create trigger zone collision shape
-	# Per Saturn spec: 12x12 pixels centered in 16x16 tile = 75% of tile size
-	var collision_shape = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	# Use rectangular shape for precise corner detection (not circle)
-	var trigger_size = GameConfig.TILE_SIZE * Constants.POWERUP_TRIGGER_RATIO
-	shape.size = Vector2(trigger_size, trigger_size)
-	collision_shape.shape = shape
-	add_child(collision_shape)
+	# Collision layers are already set in ServerPowerUp.tscn
+	# Update collision shape size to match current GameConfig values
+	_update_collision_shape_size()
 	
 	# Connect collision signal
 	body_entered.connect(_on_body_entered)
+
+func _update_collision_shape_size():
+	"""Update collision shape to match current GameConfig values"""
+	if collision_shape and collision_shape.shape:
+		var trigger_size = GameConfig.TILE_SIZE * Constants.POWERUP_TRIGGER_RATIO
+		collision_shape.shape.size = Vector2(trigger_size, trigger_size)
 
 func _on_body_entered(body):
 	if collected or destroyed:

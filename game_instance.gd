@@ -5,6 +5,12 @@ class_name GameInstance
 # Manages one game match with multiple players
 
 const Constants = preload("res://shared/constants.gd")
+
+# Entity scene files for instantiation
+const ServerPlayerScene = preload("res://shared/entities/ServerPlayer.tscn")
+const ServerBombScene = preload("res://shared/entities/ServerBomb.tscn")
+const ServerPowerUpScene = preload("res://shared/entities/ServerPowerUp.tscn")
+
 # AI System scaffolding (LimboAI-powered bot manager)
 const _BOT_MANAGER_PATHS := [
 	"res://ai/bot_manager.gd"
@@ -308,7 +314,7 @@ func get_next_spawn_point() -> Vector2:
 	return spawn_pos
 
 func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO, is_bot: bool = false, personality: String = ""):
-	var player = ServerPlayer.new()
+	var player = ServerPlayerScene.instantiate()
 	player.peer_id = peer_id # CRITICAL: Set actual peer_id (-1, -2, -3 for bots)
 	player.player_id = str(peer_id)
 	player.username = username
@@ -629,7 +635,7 @@ func place_bomb(player: ServerPlayer):
 		print("[Game] place_bomb failed: match_active is false")
 		return
 	
-	var bomb = ServerBomb.new()
+	var bomb = ServerBombScene.instantiate()
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
@@ -907,7 +913,7 @@ func sync_state_to_clients():
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position"""
-	var powerup = ServerPowerUp.new()
+	var powerup = ServerPowerUpScene.instantiate()
 	powerup.powerup_id = str(next_powerup_id)
 	next_powerup_id += 1
 	
@@ -944,7 +950,7 @@ func spawn_powerup(tile_pos: Vector2i):
 
 func spawn_powerup_of_type(tile_pos: Vector2i, type: int):
 	"""Spawn a specific power-up type at the given tile position"""
-	var powerup = ServerPowerUp.new()
+	var powerup = ServerPowerUpScene.instantiate()
 	powerup.powerup_id = str(next_powerup_id)
 	next_powerup_id += 1
 	powerup.powerup_type = type
