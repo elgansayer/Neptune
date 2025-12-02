@@ -13,17 +13,46 @@ const COLLISION_LAYER_EXPLOSIONS = 8 # Layer 4 (bit 3): Explosion damage areas
 const COLLISION_LAYER_POWERUPS = 16  # Layer 5 (bit 4): Power-up items
 
 # Canvas layering for consistent draw order (higher values render above lower ones)
+# Per Saturn Bomberman spec:
+# - Layer 0: Background (arena floor)
+# - Layer 1: Shadows (flat on ground, unifies depth)
+# - Layer 2: Items (NOT Y-sorted with players - "flat" on ground)
+# - Layer 3: Dynamic entities (players, bombs, tirras) with Y-sort enabled
 const Z_LAYERS = {
 	"FLOOR": -100,
+	"SHADOW": -50,           # Shadows render on floor below items
 	"SOFT_BLOCK": -40,
-	"SOFT_BLOCK_EFFECT": 5,
+	"POWERUP": -20,          # Items are "flat" on the ground (below players)
 	"BOMB": -10,
-	"POWERUP": 0,
+	"SOFT_BLOCK_EFFECT": 5,
 	"EXPLOSION": 10,
-	"PLAYER_BASE": 100,
+	"PLAYER_BASE": 100,      # Players always above floor items
 	"PLAYER_STEP": 1,
 	"UI": 1000
 }
+
+# === Saturn Bomberman Pickup Mechanics (from spec) ===
+# Trigger zone is 12x12 pixels centered in 16x16 tile
+# Scaled to current TILE_SIZE
+const POWERUP_TRIGGER_RATIO: float = 0.75  # 12/16 = 0.75
+
+# Player Anchor: Single pixel at center-bottom of player sprite
+# Used for point-in-rect pickup detection (not AABB collision)
+# This prevents "corner snagging" during movement
+
+# Speed Lookup Table (from spec section 4.1)
+# Speed Up item advances player through this table (not linear float)
+const SPEED_LEVELS = [
+	0.5,   # Level 0 (Curse): Sluggish
+	1.0,   # Level 1 (Default)
+	1.5,   # Level 2
+	2.0,   # Level 3
+	2.5,   # Level 4
+	3.0,   # Level 5
+	3.5,   # Level 6
+	4.0,   # Level 7
+	4.0    # Level 8 (Max): Hyper-speed
+]
 
 # Movement
 const WALK_MULTIPLIER = 0.6
