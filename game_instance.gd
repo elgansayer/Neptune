@@ -276,6 +276,20 @@ func _physics_process(delta):
 	if match_active:
 		match_time_remaining -= delta
 		
+		# === PLAYER CURSE UPDATES ===
+		var current_time_msec = Time.get_ticks_msec()
+		for peer_id in players:
+			var player = players[peer_id]
+			if not is_instance_valid(player) or player.is_dead:
+				continue
+			
+			# Check curse expiration
+			player.update_curse(current_time_msec)
+			
+			# DIARRHEA curse: auto-place bombs constantly
+			if player.should_auto_place_bomb() and player.can_place_bomb():
+				place_bomb(player)
+		
 		# Check for Hurry Up trigger
 		if not hurry_mode_active and match_time_remaining <= hurry_trigger_time:
 			_activate_hurry_mode()
@@ -596,6 +610,13 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 		elif action_released:
 			# Maintain state for completeness; no throw on release now
 			player.request_action_release()
+	elif player.bomb_type == ServerBomb.BOMB_TYPE_REMOTE:
+		# REMOTE BOMB Logic: Action detonates oldest remote bomb
+		if action_pressed:
+			_detonate_oldest_remote_bomb(player)
+		# Standard bomb placement still works
+		if input_data.get("place_bomb", false) and player.can_place_bomb():
+			place_bomb(player)
 	else:
 		# Standard Logic: Place bomb
 		if input_data.get("place_bomb", false) and player.can_place_bomb():
@@ -629,7 +650,152 @@ func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
 	print("[DEBUG] No bomb found at player position")
 	return false # No bomb picked up
 
+
+func _detonate_oldest_remote_bomb(player: ServerPlayer):
+	"""Detonate the oldest REMOTE bomb placed by this player"""
+	var oldest_bomb: ServerBomb = null
+	var oldest_time: float = INF
+	
+	for bomb_id in bombs:
+		var bomb = bombs[bomb_id]
+		if not is_instance_valid(bomb):
+			continue
+		if bomb.owner_id != player.player_id:
+			continue
+		if bomb.bomb_type != ServerBomb.BOMB_TYPE_REMOTE:
+			continue
+		if bomb.bomb_state != ServerBomb.BombState.PLANTED:
+			continue
+		
+		# Find the oldest bomb by checking timer (lower timer = older)
+		# Note: explosion_timer counts UP from 0
+		# Actually we need to track placement order, but for simplicity
+		# we'll just detonate ALL remote bombs at once or use bomb_id as proxy for age
+		if int(bomb.bomb_id) < oldest_time:
+			oldest_time = int(bomb.bomb_id)
+			oldest_bomb = bomb
+	
+	if oldest_bomb:
+		print("[Game] Remote detonation by ", player.username, " - exploding bomb ", oldest_bomb.bomb_id)
+		oldest_bomb.explode()
+
+
 func place_bomb(player: ServerPlayer):
+	# Prevent bomb placement during countdown
+	if not match_active:
+		print("[Game] place_bomb failed: match_active is false")
+		return
+	
+	# LINE_BOMB: Place multiple bombs in facing direction
+	if player.has_line_bomb:
+		_place_line_bombs(player)
+		return
+	
+	_place_single_bomb(player)
+
+
+func _place_line_bombs(player: ServerPlayer):
+	"""Place a line of bombs in the player's facing direction (LINE_BOMB ability)"""
+	var facing = player.last_move_direction
+	if facing.length() < 0.1:
+		facing = Vector2.DOWN  # Default to down if no movement direction
+	
+	# Normalize to cardinal direction
+	if abs(facing.x) > abs(facing.y):
+		facing = Vector2(sign(facing.x), 0)
+	else:
+		facing = Vector2(0, sign(facing.y))
+	
+	var facing_v = Vector2i(int(facing.x), int(facing.y))
+	var start_tile = player.get_tile_position()
+	var bombs_placed_count = 0
+	var max_to_place = player.max_bombs - player.bombs_placed
+	
+	print("[Game] LINE_BOMB: ", player.username, " placing up to ", max_to_place, " bombs in direction ", facing)
+	
+	# Place bombs from player position outward in facing direction
+	for i in range(max_to_place):
+		var tile_pos = start_tile + facing_v * i
+		
+		# Check if tile is valid and empty (no wall, no block, no existing bomb)
+		if not _is_tile_valid_for_bomb(tile_pos):
+			print("[Game] LINE_BOMB: Stopped at tile ", tile_pos, " (blocked)")
+			break
+		
+		# Check if there's already a bomb at this position
+		if _has_bomb_at_tile(tile_pos):
+			print("[Game] LINE_BOMB: Stopped at tile ", tile_pos, " (bomb exists)")
+			break
+		
+		_place_single_bomb_at_tile(player, tile_pos)
+		bombs_placed_count += 1
+	
+	print("[Game] LINE_BOMB: Placed ", bombs_placed_count, " bombs")
+
+
+func _is_tile_valid_for_bomb(tile_pos: Vector2i) -> bool:
+	"""Check if a tile can have a bomb placed on it"""
+	if tile_pos.x < 0 or tile_pos.y < 0:
+		return false
+	if tile_pos.y >= game_map.size() or tile_pos.x >= game_map[0].size():
+		return false
+	
+	var tile_value = game_map[tile_pos.y][tile_pos.x]
+	# 0 = empty, 1 = wall, 2 = block, 3+ = powerups
+	return tile_value == 0 or tile_value >= 3  # Can place on empty or powerup tiles
+
+
+func _has_bomb_at_tile(tile_pos: Vector2i) -> bool:
+	"""Check if there's already a bomb at this tile position"""
+	for bomb_id in bombs:
+		var bomb = bombs[bomb_id]
+		if is_instance_valid(bomb) and bomb.get_tile_position() == tile_pos:
+			return true
+	return false
+
+
+func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i):
+	"""Place a single bomb at a specific tile position"""
+	var bomb = ServerBombScene.instantiate()
+	bomb.bomb_id = str(next_bomb_id)
+	next_bomb_id += 1
+	bomb.owner_id = player.player_id
+	bomb.explosion_range = player.bomb_range
+	bomb.bomb_type = player.bomb_type
+	
+	bomb.position = Vector2(
+		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
+	
+	bomb.name = "Bomb_" + bomb.bomb_id
+	bomb.game_instance = self
+	bomb.explosion_timer = 0.0
+	bomb.fuse_time = player.get_bomb_fuse_time()
+	
+	bombs[bomb.bomb_id] = bomb
+	add_child(bomb)
+	
+	# Add collision exception for ALL players standing on this bomb tile
+	for peer_id in players:
+		var p = players[peer_id]
+		if not is_instance_valid(p) or p.is_dead:
+			continue
+		if p.get_tile_position() == tile_pos:
+			p.add_bomb_collision_exception(bomb)
+	
+	player.bombs_placed += 1
+	bomb.exploded.connect(_on_bomb_exploded)
+	bomb.explosion_expanded.connect(func(tiles): _on_explosion_expanded(bomb, tiles))
+	var cleanup_callable := func():
+		if bombs.has(bomb.bomb_id):
+			bombs.erase(bomb.bomb_id)
+	bomb.tree_exited.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
+	
+	print("[Game] Bomb placed at tile ", tile_pos, " fuse=", bomb.fuse_time, "s")
+
+
+func _place_single_bomb(player: ServerPlayer):
 	# Prevent bomb placement during countdown
 	if not match_active:
 		print("[Game] place_bomb failed: match_active is false")
@@ -640,8 +806,9 @@ func place_bomb(player: ServerPlayer):
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
 	bomb.explosion_range = player.bomb_range
+	bomb.bomb_type = player.bomb_type  # Copy player's current bomb type
 	
-	print("[Game] Creating bomb ", bomb.bomb_id, " for ", player.username)
+	print("[Game] Creating bomb ", bomb.bomb_id, " for ", player.username, " type=", player.bomb_type)
 	
 	# CRITICAL: Place bomb at tile CENTER, not top-left corner
 	# This prevents collision/snapping issues when player is slightly off-center
@@ -654,7 +821,9 @@ func place_bomb(player: ServerPlayer):
 	bomb.name = "Bomb_" + bomb.bomb_id
 	bomb.game_instance = self # Give bomb reference for collision checking
 	# Start fuse from zero on placement (count-up logic)
+	# Apply SHORT_FUSE curse if active
 	bomb.explosion_timer = 0.0
+	bomb.fuse_time = player.get_bomb_fuse_time()  # 1s if cursed, 3s otherwise
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)
@@ -681,7 +850,7 @@ func place_bomb(player: ServerPlayer):
 			bombs.erase(bomb.bomb_id)
 	bomb.tree_exited.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
 	
-	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position())
+	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position(), " fuse=", bomb.fuse_time, "s")
 	
 	# CRITICAL: Immediately update threat matrix so AI can react to newly placed bomb
 	if ai_manager:

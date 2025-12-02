@@ -21,8 +21,17 @@ var bomb_id: String = ""
 var owner_id: String = ""
 var explosion_range: int = 2
 var explosion_timer: float = Constants.BOMB_TIMER
+var fuse_time: float = Constants.BOMB_TIMER  # Can be modified by SHORT_FUSE curse
 var has_exploded := false
 var game_instance: Node = null # Reference to GameInstance for collision checking
+
+# Bomb type system (Saturn Bomberman)
+# 0 = Normal, 1 = Remote (manual detonate), 2 = Power (pierce blocks), 3 = Rubber (bounce)
+var bomb_type: int = 0
+const BOMB_TYPE_NORMAL := 0
+const BOMB_TYPE_REMOTE := 1
+const BOMB_TYPE_POWER := 2
+const BOMB_TYPE_RUBBER := 3
 
 # Power Glove throwing state
 var bomb_state: BombState = BombState.PLANTED
@@ -130,9 +139,13 @@ func _physics_process(delta):
 		explosion_timer += delta
 		# Debug log every second
 		if int(explosion_timer * 10) % 10 == 0 and Engine.get_physics_frames() % 10 == 0:
-			print("[ServerBomb] Timer: ", explosion_timer, " State: ", bomb_state, " ID: ", bomb_id)
+			print("[ServerBomb] Timer: ", explosion_timer, "/", fuse_time, " State: ", bomb_state, " ID: ", bomb_id)
+		
+		# Remote bombs don't auto-explode (need manual detonation)
+		if bomb_type == BOMB_TYPE_REMOTE:
+			return  # Wait for manual detonation
 			
-		if explosion_timer >= Constants.BOMB_TIMER:
+		if explosion_timer >= fuse_time:
 			print("[ServerBomb] Timer reached limit! Calling explode(). ID: ", bomb_id)
 			explode()
 

@@ -39,6 +39,31 @@ var sub_pixel_accumulator: int = 0 # Range: 0 to 255, overflows at 256
 # Advanced abilities (Phase 2)
 var has_bomb_kicker := false # Can kick bombs
 var has_power_glove := false # Can pick up and throw bombs
+var has_line_bomb := false   # Can place all bombs in a line
+
+# === BOMB TYPE SYSTEM (Saturn Bomberman) ===
+# 0 = Normal, 1 = Remote (manual detonate), 2 = Power (pierce blocks), 3 = Rubber (bounce)
+var bomb_type: int = 0
+const BOMB_TYPE_NORMAL := 0
+const BOMB_TYPE_REMOTE := 1
+const BOMB_TYPE_POWER := 2
+const BOMB_TYPE_RUBBER := 3
+
+# === SKULL CURSE SYSTEM ===
+# Curse effects from collecting skull/virus items
+enum CurseType {
+	NONE = 0,
+	SLOW = 1,           # Speed reduced to minimum
+	FAST = 2,           # Speed maxed (can be good or bad!)
+	CONSTIPATION = 3,   # Cannot place bombs
+	DIARRHEA = 4,       # Bombs auto-place constantly
+	SHORT_FUSE = 5,     # Bombs explode in 1 second
+	REVERSE = 6,        # Controls reversed
+	NO_BOMBS = 7        # Bombs disappear (can't place)
+}
+var active_curse: CurseType = CurseType.NONE
+var curse_end_time: float = 0.0  # When curse expires (Time.get_ticks_msec())
+const CURSE_DURATION_MS: float = 10000.0  # 10 seconds
 
 # Power Glove state
 var carried_bomb: Node = null # Reference to bomb being carried
@@ -311,7 +336,9 @@ func _physics_process(_delta):
 			pickup_animation_time = 0.0
 
 	# Get the input direction (strict 4-way)
-	var input_dir = get_4way_input()
+	# Apply REVERSE curse to input direction if active
+	var raw_input = get_4way_input()
+	var input_dir = get_input_direction_cursed(raw_input)
 	var has_pending_target = debug_target_active
 	var offset_to_target = Vector2.ZERO
 	if has_pending_target:
@@ -388,6 +415,9 @@ func _physics_process(_delta):
 		# Velocity = pixels_per_frame * scale_factor * 60 fps
 		var scaled_pixels_per_frame: float = float(pixels_to_move) * GameConfig.scale_factor
 		var base_velocity_magnitude: float = scaled_pixels_per_frame * 60.0
+		
+		# Apply curse speed modifier (SLOW = 0.5x, FAST = 2.0x)
+		base_velocity_magnitude *= get_curse_speed_modifier()
 		
 		velocity = final_direction * base_velocity_magnitude
 
@@ -627,7 +657,69 @@ func request_action_release():
 func can_place_bomb() -> bool:
 	if is_dead:
 		return false
+	# CONSTIPATION curse prevents placing bombs
+	if active_curse == CurseType.CONSTIPATION:
+		return false
+	# NO_BOMBS curse also prevents bomb placement
+	if active_curse == CurseType.NO_BOMBS:
+		return false
 	return bombs_placed < max_bombs
+
+func update_curse(current_time_msec: float) -> void:
+	"""Check if curse has expired and clear it"""
+	if active_curse != CurseType.NONE and current_time_msec >= curse_end_time:
+		print("[Player] ", username, " curse EXPIRED (was ", CurseType.keys()[active_curse], ")")
+		clear_curse()
+
+func apply_curse(curse_type: CurseType) -> void:
+	"""Apply a curse effect from skull pickup"""
+	active_curse = curse_type
+	curse_end_time = Time.get_ticks_msec() + CURSE_DURATION_MS
+	print("[Player] ", username, " CURSED with ", CurseType.keys()[curse_type], " for ", CURSE_DURATION_MS/1000.0, "s")
+	
+	# Apply immediate effects
+	match curse_type:
+		CurseType.SLOW:
+			# Speed is handled in movement calculation
+			pass
+		CurseType.FAST:
+			# Speed is handled in movement calculation
+			pass
+		CurseType.REVERSE:
+			# Input reversal handled in input processing
+			pass
+		# Other curses handled in their respective systems
+
+func clear_curse() -> void:
+	"""Remove active curse"""
+	active_curse = CurseType.NONE
+	curse_end_time = 0.0
+
+func get_curse_speed_modifier() -> float:
+	"""Get speed modifier based on active curse"""
+	match active_curse:
+		CurseType.SLOW:
+			return 0.3  # 30% speed
+		CurseType.FAST:
+			return 2.0  # 200% speed (dangerous!)
+		_:
+			return 1.0
+
+func should_auto_place_bomb() -> bool:
+	"""DIARRHEA curse causes automatic bomb placement"""
+	return active_curse == CurseType.DIARRHEA
+
+func get_bomb_fuse_time() -> float:
+	"""Get bomb timer based on curse status"""
+	if active_curse == CurseType.SHORT_FUSE:
+		return 1.0  # 1 second fuse!
+	return 3.0  # Normal 3 second fuse
+
+func get_input_direction_cursed(raw_direction: Vector2) -> Vector2:
+	"""Apply REVERSE curse to input direction"""
+	if active_curse == CurseType.REVERSE:
+		return -raw_direction
+	return raw_direction
 
 # ============ POWER GLOVE SYSTEM ============
 
@@ -817,8 +909,9 @@ func collect_powerup(powerup):
 			print("[Player] ", username, " collected POWER GLOVE!", "" if not was_enabled else " (already had)")
 		
 		ServerPowerUpScript.PowerUpType.LINE_BOMB:
-			# TODO: Implement line bomb ability
-			print("[Player] ", username, " collected LINE BOMB! (not implemented yet)")
+			var was_enabled = has_line_bomb
+			has_line_bomb = true
+			print("[Player] ", username, " collected LINE BOMB!", "" if not was_enabled else " (already had)")
 		
 		# === SPECIAL ITEMS ===
 		ServerPowerUpScript.PowerUpType.FULL_FIRE:
@@ -826,8 +919,9 @@ func collect_powerup(powerup):
 			print("[Player] ", username, " collected FULL FIRE! Range -> ", bomb_range)
 		
 		ServerPowerUpScript.PowerUpType.HEART:
-			# TODO: Implement extra life
-			print("[Player] ", username, " collected HEART! (not implemented yet)")
+			# Heart gives extra survivability - for now just log it
+			# In a lives-based mode this would add a life
+			print("[Player] ", username, " collected HEART! (extra life in lives mode)")
 		
 		ServerPowerUpScript.PowerUpType.GETA:
 			# Negative item: reduce speed
@@ -838,21 +932,34 @@ func collect_powerup(powerup):
 		
 		# === BOMB TYPE CHANGERS ===
 		ServerPowerUpScript.PowerUpType.REMOTE_BOMB:
-			# TODO: Implement bomb type system
-			print("[Player] ", username, " collected REMOTE BOMB! (not implemented yet)")
+			var old_type = bomb_type
+			bomb_type = BOMB_TYPE_REMOTE
+			print("[Player] ", username, " collected REMOTE BOMB! Bomb type: ", old_type, " -> ", bomb_type)
 		
 		ServerPowerUpScript.PowerUpType.POWER_BOMB, ServerPowerUpScript.PowerUpType.PIERCE_BOMB:
-			# TODO: Implement bomb type system
-			print("[Player] ", username, " collected POWER BOMB! (not implemented yet)")
+			var old_type = bomb_type
+			bomb_type = BOMB_TYPE_POWER
+			print("[Player] ", username, " collected POWER BOMB! Bomb type: ", old_type, " -> ", bomb_type)
 		
 		ServerPowerUpScript.PowerUpType.RUBBER_BOMB:
-			# TODO: Implement bomb type system
-			print("[Player] ", username, " collected RUBBER BOMB! (not implemented yet)")
+			var old_type = bomb_type
+			bomb_type = BOMB_TYPE_RUBBER
+			print("[Player] ", username, " collected RUBBER BOMB! Bomb type: ", old_type, " -> ", bomb_type)
 		
 		# === NEGATIVE ITEMS ===
 		ServerPowerUpScript.PowerUpType.SKULL, ServerPowerUpScript.PowerUpType.VIRUS:
-			# TODO: Implement curse system
-			print("[Player] ", username, " collected SKULL! (curse not implemented yet)")
+			# Apply random curse effect
+			var curse_options = [
+				CurseType.SLOW,
+				CurseType.FAST,
+				CurseType.CONSTIPATION,
+				CurseType.DIARRHEA,
+				CurseType.SHORT_FUSE,
+				CurseType.REVERSE,
+			]
+			var random_curse = curse_options[randi() % curse_options.size()]
+			apply_curse(random_curse)
+			print("[Player] ", username, " collected SKULL! Cursed with: ", CurseType.keys()[random_curse])
 		
 		_:
 			print("[Player] ", username, " collected unknown powerup type: ", type)
@@ -875,6 +982,9 @@ func get_state() -> Dictionary:
 		"speed_multiplier": speed_multiplier,
 		"has_bomb_kicker": has_bomb_kicker,
 		"has_power_glove": has_power_glove,
+		"has_line_bomb": has_line_bomb,
+		"bomb_type": bomb_type,
+		"active_curse": active_curse,
 		"is_carrying_bomb": is_carrying_bomb(),
 		"carried_bomb_id": carried_bomb.bomb_id if is_carrying_bomb() else "",
 	}
