@@ -262,6 +262,9 @@ func _physics_process(delta):
 			countdown_time = 0.0
 			match_active = true
 			print("[GameInstance] Match started! Countdown complete.")
+			# Spawn test powerups if TEST_POWERUPS environment variable is set
+			if OS.get_environment("TEST_POWERUPS") != "":
+				spawn_test_powerups()
 	
 	# Update match timer if active
 	if match_active:
@@ -938,6 +941,52 @@ func spawn_powerup(tile_pos: Vector2i):
 	add_child(powerup)
 	
 	print("[Game] Spawned power-up ", powerup.powerup_type, " at ", tile_pos)
+
+func spawn_powerup_of_type(tile_pos: Vector2i, type: int):
+	"""Spawn a specific power-up type at the given tile position"""
+	var powerup = ServerPowerUp.new()
+	powerup.powerup_id = str(next_powerup_id)
+	next_powerup_id += 1
+	powerup.powerup_type = type
+	
+	powerup.position = Vector2(
+		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
+	powerup.name = "PowerUp_" + powerup.powerup_id
+	
+	# Connect signals
+	powerup.powerup_collected.connect(_on_powerup_collected)
+	powerup.powerup_destroyed.connect(_on_powerup_destroyed)
+	
+	powerups[powerup.powerup_id] = powerup
+	add_child(powerup)
+	
+	var type_names = ["BOMB", "FIRE", "SKATE", "KICK", "GLOVE", "VIRUS"]
+	var type_name = type_names[type] if type < type_names.size() else str(type)
+	print("[Game] Spawned %s power-up at %s" % [type_name, tile_pos])
+
+func spawn_test_powerups():
+	"""Spawn a power-up for every soft block for testing"""
+	print("[Game] Spawning test power-ups for ALL soft blocks...")
+	
+	var spawned_count := 0
+	var map_height = game_map.size()
+	
+	for y in range(map_height):
+		var map_width = game_map[y].size()
+		for x in range(map_width):
+			# Check if this is a soft block (type 2)
+			if game_map[y][x] == 2:
+				# Destroy the soft block first
+				game_map[y][x] = 0
+				
+				# Spawn a random powerup type (0-5)
+				var powerup_type = randi() % 6
+				spawn_powerup_of_type(Vector2i(x, y), powerup_type)
+				spawned_count += 1
+	
+	print("[Game] Spawned %d test power-ups" % spawned_count)
 
 func _on_powerup_collected(powerup: ServerPowerUp):
 	"""Called when a power-up is collected"""

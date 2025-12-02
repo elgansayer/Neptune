@@ -3,9 +3,20 @@ class_name PowerUpRenderer
 
 ## Client-side powerup visual with animations from SBomberman
 ## Handles spawn/idle/pickup/explode animations with shadows
+## Scale is calculated dynamically based on GameConfig.TILE_SIZE
 
 var powerup_id: String = ""
 var powerup_type: int = 0  # ServerPowerUp.PowerUpType enum value
+
+# Sprite base size (Saturn Bomberman native)
+const SPRITE_SIZE: float = 16.0
+# Shadow base size
+const SHADOW_WIDTH: float = 40.0
+const SHADOW_HEIGHT: float = 20.0
+
+# Calculated scale values (set in _ready based on tile size)
+var item_scale: float = 1.0
+var shadow_scale: float = 1.0
 
 const SOUND_MAP = {
 	"pickup": preload("res://res/sounds/items/pickup.ogg"),
@@ -23,6 +34,21 @@ const SOUND_MAP = {
 var is_spawned := false
 
 func _ready():
+	# Calculate scale based on tile size from map
+	# Items should be about 75% of tile size
+	var tile_size: float = GameConfig.TILE_SIZE
+	item_scale = (tile_size * 0.75) / SPRITE_SIZE
+	# Shadow should be about 90% of tile width
+	shadow_scale = (tile_size * 0.9) / SHADOW_WIDTH
+	
+	# Apply scales
+	item_sprite.scale = Vector2(item_scale, item_scale)
+	shadow_sprite.scale = Vector2(shadow_scale, shadow_scale)
+	
+	# Position shadow at bottom of tile, item floats above
+	shadow_sprite.position = Vector2(0, tile_size * 0.3)
+	item_sprite.position = Vector2(0, -tile_size * 0.1)
+	
 	var timeout_callable := Callable(self, "_on_spawn_timer_timeout")
 	if spawn_timer and not spawn_timer.timeout.is_connected(timeout_callable):
 		spawn_timer.timeout.connect(timeout_callable)
@@ -63,20 +89,28 @@ func play_spawn_animation():
 	tween.set_ease(Tween.EASE_OUT)
 	tween.set_trans(Tween.TRANS_BOUNCE)
 	
-	# Start below and bounce up
-	position.y += 20
-	tween.tween_property(self, "position:y", position.y - 20, 0.5)
+	# Start below and bounce up - scale with tile size
+	var bounce_distance = GameConfig.TILE_SIZE * 0.3
+	position.y += bounce_distance
+	tween.tween_property(self, "position:y", position.y - bounce_distance, 0.5)
 	
 	# Start timer for spin animation
 	spawn_timer.start()
 	is_spawned = true
 
 func _on_spawn_timer_timeout():
-	"""After 5 seconds, start spin animation"""
-	# Add rotation tween for "spin" effect
+	"""After 5 seconds, start Y-axis spin animation (scale flip effect)"""
+	_start_y_spin()
+
+func _start_y_spin():
+	"""Create a Y-axis rotation effect using scale.x oscillation"""
 	var tween = create_tween()
 	tween.set_loops()
-	tween.tween_property(item_sprite, "rotation", TAU, 2.0)
+	# Scale X from item_scale -> 0 -> -item_scale -> 0 -> item_scale to simulate Y-axis rotation
+	tween.tween_property(item_sprite, "scale:x", 0.0, 0.15).set_ease(Tween.EASE_IN)
+	tween.tween_property(item_sprite, "scale:x", -item_scale, 0.15).set_ease(Tween.EASE_OUT)
+	tween.tween_property(item_sprite, "scale:x", 0.0, 0.15).set_ease(Tween.EASE_IN)
+	tween.tween_property(item_sprite, "scale:x", item_scale, 0.15).set_ease(Tween.EASE_OUT)
 
 func play_pickup_animation():
 	"""Play pickup animation and sound"""
@@ -100,7 +134,8 @@ func play_pickup_animation():
 	var tween = create_tween()
 	tween.set_parallel(true)
 	tween.tween_property(self, "modulate:a", 0.0, 0.3)
-	tween.tween_property(self, "position:y", position.y - 30, 0.3)
+	var float_distance = GameConfig.TILE_SIZE * 0.4
+	tween.tween_property(self, "position:y", position.y - float_distance, 0.3)
 	tween.finished.connect(Callable(self, "queue_free"))
 
 func play_explode_animation():

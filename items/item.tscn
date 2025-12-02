@@ -1,0 +1,510 @@
+[gd_scene load_steps=52 format=3 uid="uid://legacy_item_scene"]
+
+[ext_resource type="Texture2D" path="res://items/power/itm-fire-04.png" id="1_fire4"]
+[ext_resource type="Texture2D" path="res://items/power/itm-fire-06.png" id="2_fire6"]
+[ext_resource type="Texture2D" path="res://items/power/itm-fire-03.png" id="3_fire3"]
+[ext_resource type="Texture2D" path="res://items/power/itm-fire-02.png" id="4_fire2"]
+[ext_resource type="Texture2D" path="res://items/power/itm-fire-05.png" id="5_fire5"]
+[ext_resource type="Texture2D" path="res://items/power/itm-fire-01.png" id="6_fire1"]
+[ext_resource type="Texture2D" path="res://items/shadow.png" id="7_shadow"]
+[ext_resource type="Script" path="res://items/item.gd" id="8_script"]
+[ext_resource type="AudioStream" path="res://res/sounds/items/pickup.ogg" id="9_sound"]
+[ext_resource type="Texture2D" path="res://items/explode/itemsmoke-04.png" id="10_smoke4"]
+[ext_resource type="Texture2D" path="res://items/explode/itemsmoke-01.png" id="11_smoke1"]
+[ext_resource type="Texture2D" path="res://items/explode/itemsmoke-02.png" id="12_smoke2"]
+[ext_resource type="Texture2D" path="res://items/explode/itemsmoke-03.png" id="13_smoke3"]
+[ext_resource type="Texture2D" path="res://items/explode/itemsmoke-05.png" id="14_smoke5"]
+[ext_resource type="Texture2D" path="res://items/powerglove/itm-pglove-05.png" id="15_glove5"]
+[ext_resource type="Texture2D" path="res://items/powerglove/itm-pglove-02.png" id="16_glove2"]
+[ext_resource type="Texture2D" path="res://items/powerglove/itm-pglove-06.png" id="17_glove6"]
+[ext_resource type="Texture2D" path="res://items/powerglove/itm-pglove-03.png" id="18_glove3"]
+[ext_resource type="Texture2D" path="res://items/powerglove/itm-pglove-01.png" id="19_glove1"]
+[ext_resource type="Texture2D" path="res://items/powerglove/itm-pglove-04.png" id="20_glove4"]
+[ext_resource type="Texture2D" path="res://items/bomb/itm-bomb-06.png" id="21_bomb6"]
+[ext_resource type="Texture2D" path="res://items/bomb/itm-bomb-01.png" id="22_bomb1"]
+[ext_resource type="Texture2D" path="res://items/bomb/itm-bomb-02.png" id="23_bomb2"]
+[ext_resource type="Texture2D" path="res://items/bomb/itm-bomb-04.png" id="24_bomb4"]
+[ext_resource type="Texture2D" path="res://items/bomb/itm-bomb-03.png" id="25_bomb3"]
+[ext_resource type="Texture2D" path="res://items/bomb/itm-bomb-05.png" id="26_bomb5"]
+[ext_resource type="Texture2D" path="res://items/kickbomb/itm-kickbomb-06.png" id="27_kick6"]
+[ext_resource type="Texture2D" path="res://items/kickbomb/itm-kickbomb-05.png" id="28_kick5"]
+[ext_resource type="Texture2D" path="res://items/kickbomb/itm-kickbomb-04.png" id="29_kick4"]
+[ext_resource type="Texture2D" path="res://items/kickbomb/itm-kickbomb-01.png" id="30_kick1"]
+[ext_resource type="Texture2D" path="res://items/kickbomb/itm-kickbomb-02.png" id="31_kick2"]
+[ext_resource type="Texture2D" path="res://items/kickbomb/itm-kickbomb-03.png" id="32_kick3"]
+[ext_resource type="Texture2D" path="res://items/skate/itm-skate-06.png" id="33_skate6"]
+[ext_resource type="Texture2D" path="res://items/skate/itm-skate-04.png" id="34_skate4"]
+[ext_resource type="Texture2D" path="res://items/skate/itm-skate-03.png" id="35_skate3"]
+[ext_resource type="Texture2D" path="res://items/skate/itm-skate-02.png" id="36_skate2"]
+[ext_resource type="Texture2D" path="res://items/skate/itm-skate-01.png" id="37_skate1"]
+[ext_resource type="Texture2D" path="res://items/skate/itm-skate-05.png" id="38_skate5"]
+[ext_resource type="Texture2D" path="res://items/skull/itm-skull-05.png" id="39_skull5"]
+[ext_resource type="Texture2D" path="res://items/skull/itm-skull-01.png" id="40_skull1"]
+[ext_resource type="Texture2D" path="res://items/skull/itm-skull-02.png" id="41_skull2"]
+[ext_resource type="Texture2D" path="res://items/skull/itm-skull-03.png" id="42_skull3"]
+[ext_resource type="Texture2D" path="res://items/skull/itm-skull-06.png" id="43_skull6"]
+[ext_resource type="Texture2D" path="res://items/skull/itm-skull-04.png" id="44_skull4"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_items"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("19_glove1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16_glove2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18_glove3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("20_glove4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15_glove5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17_glove6")
+}],
+"loop": true,
+"name": &"power_glove",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("6_fire1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_fire2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_fire3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_fire4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_fire5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_fire6")
+}],
+"loop": true,
+"name": &"power",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("22_bomb1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23_bomb2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25_bomb3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24_bomb4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26_bomb5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21_bomb6")
+}],
+"loop": true,
+"name": &"bomb",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("30_kick1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31_kick2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32_kick3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("29_kick4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28_kick5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27_kick6")
+}],
+"loop": true,
+"name": &"bomb_kicker",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("40_skull1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("41_skull2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42_skull3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44_skull4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39_skull5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43_skull6")
+}],
+"loop": true,
+"name": &"virus",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"egg",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("37_skate1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36_skate2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("35_skate3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34_skate4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38_skate5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33_skate6")
+}],
+"loop": true,
+"name": &"rollerskate",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_coll"]
+size = Vector2(32, 32)
+
+[sub_resource type="Animation" id="Animation_explode"]
+resource_name = "explode"
+length = 1.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ExplodeSmoke:visible")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("ExplodeSmoke:frame")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("ExplodeSmoke:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, -20), Vector2(0, -20), Vector2(0, -30)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatedSprite2D:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0.9),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/4/type = "method"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath(".")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(1.1),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": "queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_picked_up"]
+resource_name = "picked_up"
+tracks/0/type = "method"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.557113),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": "queue_free"
+}]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("CollisionShape2D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_spawn"]
+resource_name = "spawn"
+length = 2.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatedSprite2D:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(2, 2), Vector2(3, 1.5), Vector2(1, 2.5), Vector2(3, 1.5), Vector2(1.7, 2), Vector2(2, 2)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatedSprite2D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.4, 0.5, 0.6, 0.7),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 4), Vector2(0, 4), Vector2(0, -4), Vector2(0, -25), Vector2(0, -22), Vector2(0, -20)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Shadow:scale")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(0, 0), Vector2(1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatedSprite2D:visible")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Shadow:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("ExplodeSmoke:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("CollisionShape2D:disabled")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_spin"]
+resource_name = "spin"
+length = 1.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(0, 1), Vector2(-1, 1), Vector2(0, 1), Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_RESET"]
+resource_name = "RESET"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_main"]
+_data = {
+"RESET": SubResource("Animation_RESET"),
+"explode": SubResource("Animation_explode"),
+"picked_up": SubResource("Animation_picked_up"),
+"spawn": SubResource("Animation_spawn"),
+"spin": SubResource("Animation_spin")
+}
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_smoke"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11_smoke1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_smoke2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_smoke3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_smoke4")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14_smoke5")
+}],
+"loop": false,
+"name": &"default",
+"speed": 3.0
+}]
+
+[node name="Item" type="Area2D"]
+collision_layer = 16
+collision_mask = 44
+script = ExtResource("8_script")
+pickup_sound = "pickup"
+
+[node name="Shadow" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, 9)
+scale = Vector2(0.00001, 0.00001)
+texture = ExtResource("7_shadow")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_items")
+animation = &"power"
+autoplay = "power"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_coll")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("9_sound")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "spawn"
+libraries = {
+"": SubResource("AnimationLibrary_main")
+}
+
+[node name="ExplodeSmoke" type="AnimatedSprite2D" parent="."]
+visible = false
+position = Vector2(0, -20)
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_smoke")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
+[connection signal="body_entered" from="." to="." method="_on_Node2D_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
