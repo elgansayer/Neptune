@@ -105,19 +105,19 @@ const POWERUP_WEIGHTS = {
 	"RANGE_INCREASE": 0.25,  # +1 explosion range (up to 8)
 	"SPEED_INCREASE": 0.15,  # +1 speed level (up to 8)
 	"GETA": 0.05,            # -1 speed level (min 1) - wooden sandals
-	# Rare items (25% total)
-	"BOMB_KICKER": 0.06,     # Kick bombs
-	"POWER_GLOVE": 0.05,     # Lift/throw bombs
-	"LINE_BOMB": 0.04,       # Place all bombs in a row
-	"FULL_FIRE": 0.03,       # Max fire range (16 tiles)
-	"HEART": 0.03,           # Extra life
-	# Special bombs (4% total)
+	# Rare items (20% total)
+	"BOMB_KICKER": 0.05,     # Kick bombs
+	"POWER_GLOVE": 0.04,     # Lift/throw bombs
+	"LINE_BOMB": 0.03,       # Place all bombs in a row
+	"FULL_FIRE": 0.02,       # Max fire range (16 tiles)
+	"HEART": 0.02,           # Extra life
+	# Special bombs (3.5% total)
 	"REMOTE_BOMB": 0.015,    # Detonate on command
 	"POWER_BOMB": 0.01,      # Penetrates soft blocks
-	"RUBBER_BOMB": 0.01,     # Bounces off walls
+	"RUBBER_BOMB": 0.005,    # Bounces off walls
 	"PIERCE_BOMB": 0.005,    # Pierces through players
-	# Negative item (1% total)
-	"SKULL": 0.01            # Random curse effect
+	# Virus/Skull item (6.5% total)
+	"SKULL": 0.065           # Random virus effect (Saturn Bomberman)
 }
 
 # Network
