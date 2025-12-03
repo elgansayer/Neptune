@@ -31,6 +31,7 @@ var fall_speed_per_frame: float
 
 # Visual components - BlockVisual is defined in FallingHurryBlock.tscn
 @onready var block_visual: Node2D = $BlockVisual
+@onready var anim_player: AnimationPlayer = $AnimationPlayer
 var block_sprite: Node2D
 var shadow_ref: Node2D  # Reference to the shadow (to hide on landing)
 
@@ -134,11 +135,8 @@ func _on_impact():
 
 func _play_impact_effect():
 	"""Quick scale pulse on landing for visual feedback"""
-	if block_sprite:
-		var original_scale = block_sprite.scale
-		var tween = create_tween()
-		tween.tween_property(block_sprite, "scale", original_scale * 1.1, 0.05)
-		tween.tween_property(block_sprite, "scale", original_scale, 0.1)
+	if anim_player and anim_player.has_animation("impact"):
+		anim_player.play("impact")
 
 func get_target_tile() -> Vector2i:
 	return target_tile
