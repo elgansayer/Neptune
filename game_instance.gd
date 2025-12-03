@@ -47,6 +47,7 @@ const EXPLOSION_DISPLAY_TIME = 0.5 # How long to show explosions
 var last_sent_map := [] # Track last sent map state per client
 var clients_received_full_map := {} # peer_id -> bool (have they received full map?)
 var map_changes := [] # Array of {x: int, y: int, value: int} changes since last sync
+var last_sent_hurry_block_count := {} # peer_id -> int (number of hurry blocks sent to this client)
 
 # Match timer
 var match_duration := 180.0 # 3 minutes default
@@ -1004,46 +1005,48 @@ func sync_state_to_clients():
 	var explosion_duration = 0.02 * 20 # ~20 expansion steps max
 	explosions = explosions.filter(func(explosion): return current_time - explosion["start_time"] < explosion_duration)
 	
-	# Build game state (without full map - use delta compression)
+	# Build compact game state for unreliable updates (uses short keys to reduce size)
+	# Full player/bomb data is sent via reliable channel when stats change
 	var state = {
-		"players": {},
-		"bombs": {},
-		"powerups": {},
-		"explosions": [],
-		"match_timer": match_time_remaining,
-		"match_active": match_active,
-		"countdown_time": countdown_time,
-		"winner_id": winner_id,
-		"hurry_mode_active": hurry_mode_active,
-		"hurry_blocks": hurry_blocks.duplicate()
+		"p": {},  # players (minimal movement state)
+		"b": {},  # bombs (minimal state)
+		"t": int(match_time_remaining),  # match timer (seconds as int)
+		"a": match_active,  # active
+		"c": countdown_time if countdown_time > 0 else null,  # countdown (only when active)
+		"w": winner_id if winner_id != "" else null,  # winner (only when set)
+		"h": hurry_mode_active,  # hurry mode
 	}
 	
+	# Use minimal player state (position, velocity, facing, dead, carried_bomb)
 	for peer_id in players:
-		state.players[str(peer_id)] = players[peer_id].get_state()
+		state.p[str(peer_id)] = players[peer_id].get_state_minimal()
 	
+	# Use minimal bomb state (id, position, timer, state)
 	for bomb_id in bombs:
-		state.bombs[bomb_id] = bombs[bomb_id].get_state()
+		state.b[bomb_id] = bombs[bomb_id].get_state_minimal()
 	
-	for powerup_id in powerups:
-		state.powerups[powerup_id] = powerups[powerup_id].get_state()
+	# Powerups rarely change - only include count, client can request full data
+	if powerups.size() > 0:
+		state["pu"] = powerups.size()
 	
-	# Send progressive explosion data to clients
-	for explosion in explosions:
-		state.explosions.append({
-			"bomb_id": explosion["bomb_id"],
-			"center": {"x": explosion["center"].x, "y": explosion["center"].y},
-			"pattern": explosion["pattern"],
-			"start_time": explosion["start_time"],
-			"owner_id": explosion["owner_id"]
-		})
+	# Compact explosion data - essential for rendering
+	# Format: [center_x, center_y, pattern, owner_id, bomb_id, start_time]
+	if explosions.size() > 0:
+		var exp_data := []
+		for explosion in explosions:
+			exp_data.append([
+				int(explosion["center"].x),  # [0] center x
+				int(explosion["center"].y),  # [1] center y  
+				explosion["pattern"],        # [2] pattern dict
+				explosion["owner_id"],       # [3] owner for kill attribution
+				explosion["bomb_id"],        # [4] bomb_id for linking to bomb node
+				explosion["start_time"]      # [5] start_time for animation timing
+			])
+		state["e"] = exp_data
 	
-	# Send threat matrix for debug visualization (if enabled and not too large)
-	# Only send when there are active threats to avoid unnecessary overhead
-	if ai_manager != null:
-		var threat_data = ai_manager.get_current_threat_matrix()
-		if threat_data.size() > 0 and threat_data.size() <= 20: # Limit to prevent bloat
-			state["threat_matrix"] = threat_data
-			state["current_time_msec"] = current_time_msec
+	# NOTE: Threat matrix removed from regular state sync to reduce packet size
+	# It was causing MTU exceeded warnings (3320 > 1392 bytes)
+	# If debug visualization is needed, send via separate reliable RPC at lower frequency
 	
 	# Send to all players in this game via ClientMain autoload
 	# Use delta compression for map - only send full map to new clients
@@ -1054,6 +1057,20 @@ func sync_state_to_clients():
 		var player = players[peer_id]
 		if player.has_method("is_ai_bot") and player.is_ai_bot():
 			continue
+		
+		# Create per-client state copy for delta compression
+		var client_state = state.duplicate()
+		
+		# Delta compression for hurry_blocks - only send new blocks
+		var last_sent_count = last_sent_hurry_block_count.get(peer_id, 0)
+		if hurry_blocks.size() > last_sent_count:
+			# Only send new blocks since last sync
+			var new_blocks: Array = []
+			for i in range(last_sent_count, hurry_blocks.size()):
+				new_blocks.append(hurry_blocks[i])
+			client_state["hb"] = new_blocks  # hurry blocks (short key)
+			last_sent_hurry_block_count[peer_id] = hurry_blocks.size()
+		# else: No new hurry blocks - don't include key (saves bytes)
 		
 		# Check if this client needs the full map
 		if not clients_received_full_map.get(peer_id, false):
@@ -1077,13 +1094,15 @@ func sync_state_to_clients():
 			# Send map reliably (TCP) to avoid MTU issues on first sync
 			get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_initial_map", map_data)
 			clients_received_full_map[peer_id] = true
+			# Also reset hurry block count for new clients (they'll get full map changes via initial_map)
+			last_sent_hurry_block_count[peer_id] = hurry_blocks.size()
 		elif changes_to_send.size() > 0:
 			# Send only map changes (delta compression)
-			state["map_changes"] = changes_to_send
+			client_state["map_changes"] = changes_to_send
 		# else: No changes - don't include map data (already not in base state)
 		
 		# Send regular state update (without map) via unreliable channel
-		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", state)
+		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", client_state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position (server-side, synced to clients)"""
 	var powerup = ServerPowerUpScene.instantiate()

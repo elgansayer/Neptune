@@ -270,6 +270,21 @@ func expand_explosion():
 		queue_free()
 		return
 
+func get_state_minimal() -> Dictionary:
+	# Minimal state for frequent updates - position, timer, state
+	var state_dict = {
+		"i": bomb_id,  # id
+		"p": [int(position.x), int(position.y)],  # position
+		"t": int(explosion_timer * 100),  # timer (centiseconds for compact int)
+		"s": bomb_state,  # state enum
+	}
+	# Only add movement data if moving
+	if bomb_state == BombState.KICKED:
+		state_dict["k"] = [int(kick_direction.x), int(kick_direction.y)]
+	elif bomb_state == BombState.THROWN:
+		state_dict["z"] = int(current_z_height)
+	return state_dict
+
 func get_state() -> Dictionary:
 	var state_dict = {
 		"bomb_id": bomb_id,

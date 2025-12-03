@@ -26,7 +26,7 @@ extends Node
 ## | 8      | 256             | 2.000                |
 
 # === MAP-DEPENDENT VALUES (loaded from map metadata) ===
-var TILE_SIZE: int = 16 # Default 16px for 320x240 viewport (Saturn Bomberman native)
+var TILE_SIZE: int = 16 # Default 16px for 320x224 viewport (Saturn Bomberman native)
 var map_width: int = 17
 var map_height: int = 11
 var map_name: String = "Unknown"
@@ -146,7 +146,7 @@ func load_map_config(map_data: Dictionary):
 
 func reset_to_defaults():
 	"""Reset to default values"""
-	TILE_SIZE = 16  # 16px for 320x240 viewport
+	TILE_SIZE = 16  # 16px for 320x224 viewport
 	scale_factor = float(TILE_SIZE) / REFERENCE_TILE_SIZE
 	PLAYER_HALF_WIDTH = (TILE_SIZE * 0.75) / 2.0
 	BASE_SPEED = float(SATURN_BASE_PIXELS_PER_FRAME) * scale_factor * 60.0

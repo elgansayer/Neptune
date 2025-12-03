@@ -54,7 +54,7 @@ func _ready():
 	countdown_bg.visible = false
 	add_child(countdown_bg)
 	
-	# Create countdown label (centered, large text)
+	# Create countdown label (centered, large text for 320x224)
 	countdown_label = Label.new()
 	countdown_label.name = "CountdownLabel"
 	countdown_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -63,16 +63,16 @@ func _ready():
 	countdown_label.anchor_top = 0.5
 	countdown_label.anchor_right = 0.5
 	countdown_label.anchor_bottom = 0.5
-	countdown_label.offset_left = -300
-	countdown_label.offset_top = -150
-	countdown_label.offset_right = 300
-	countdown_label.offset_bottom = 150
-	countdown_label.add_theme_font_size_override("font_size", 120)
-	countdown_label.pivot_offset = Vector2(300, 150)
+	countdown_label.offset_left = -80
+	countdown_label.offset_top = -40
+	countdown_label.offset_right = 80
+	countdown_label.offset_bottom = 40
+	countdown_label.add_theme_font_size_override("font_size", 32)
+	countdown_label.pivot_offset = Vector2(80, 40)
 	countdown_label.visible = false
 	add_child(countdown_label)
 	
-	# Create spectator mode overlay (semi-transparent top bar)
+	# Create spectator mode overlay (semi-transparent bar)
 	spectator_overlay = ColorRect.new()
 	spectator_overlay.name = "SpectatorOverlay"
 	spectator_overlay.color = Color(0.0, 0.0, 0.0, 0.7)
@@ -80,8 +80,8 @@ func _ready():
 	spectator_overlay.anchor_top = 0.0
 	spectator_overlay.anchor_right = 1.0
 	spectator_overlay.anchor_bottom = 0.0
-	spectator_overlay.offset_top = 60  # Below TopBar
-	spectator_overlay.offset_bottom = 120
+	spectator_overlay.offset_top = 16  # Below TopBar
+	spectator_overlay.offset_bottom = 32
 	spectator_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	spectator_overlay.visible = false
 	add_child(spectator_overlay)
@@ -95,9 +95,9 @@ func _ready():
 	spectator_label.anchor_top = 0.0
 	spectator_label.anchor_right = 1.0
 	spectator_label.anchor_bottom = 1.0
-	spectator_label.add_theme_font_size_override("font_size", 28)
+	spectator_label.add_theme_font_size_override("font_size", 8)
 	spectator_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))  # Gold color
-	spectator_label.text = "💀 YOU HAVE BEEN ELIMINATED - SPECTATING 💀"
+	spectator_label.text = "ELIMINATED - SPECTATING"
 	spectator_overlay.add_child(spectator_label)
 	
 	# Create hurry mode overlay (flashing warning at top)
@@ -108,7 +108,7 @@ func _ready():
 	hurry_overlay.anchor_top = 0.0
 	hurry_overlay.anchor_right = 1.0
 	hurry_overlay.anchor_bottom = 0.0
-	hurry_overlay.offset_bottom = 80
+	hurry_overlay.offset_bottom = 20
 	hurry_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	hurry_overlay.visible = false
 	add_child(hurry_overlay)
@@ -122,17 +122,17 @@ func _ready():
 	hurry_label.anchor_top = 0.0
 	hurry_label.anchor_right = 1.0
 	hurry_label.anchor_bottom = 1.0
-	hurry_label.add_theme_font_size_override("font_size", 48)
+	hurry_label.add_theme_font_size_override("font_size", 12)
 	hurry_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0))  # Yellow
-	hurry_label.text = "⚠️ HURRY UP! ⚠️"
+	hurry_label.text = "HURRY UP!"
 	hurry_overlay.add_child(hurry_label)
 	
 	# Create virus status overlay (top center, flashing when infected)
-	# Use absolute positioning for 320x240 viewport
+	# Use absolute positioning for 320x224 viewport
 	virus_overlay = ColorRect.new()
 	virus_overlay.name = "VirusOverlay"
 	virus_overlay.color = Color(0.6, 0.0, 0.6, 0.95)  # Bright purple
-	# Position in center top (viewport is 320x240)
+	# Position in center top (viewport is 320x224)
 	virus_overlay.position = Vector2(60, 2)  # Centered horizontally, at top
 	virus_overlay.size = Vector2(200, 20)  # Compact banner for low res
 	virus_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -584,7 +584,7 @@ func show_game_over(winner_name: String):
 	game_over_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(game_over_bg)
 	
-	# Create game over label
+	# Create game over label (scaled for 320x224)
 	var game_over_label = Label.new()
 	game_over_label.name = "GameOverLabel"
 	game_over_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -593,16 +593,16 @@ func show_game_over(winner_name: String):
 	game_over_label.anchor_top = 0.3
 	game_over_label.anchor_right = 0.5
 	game_over_label.anchor_bottom = 0.3
-	game_over_label.offset_left = -300
-	game_over_label.offset_top = -50
-	game_over_label.offset_right = 300
-	game_over_label.offset_bottom = 50
-	game_over_label.add_theme_font_size_override("font_size", 72)
+	game_over_label.offset_left = -80
+	game_over_label.offset_top = -15
+	game_over_label.offset_right = 80
+	game_over_label.offset_bottom = 15
+	game_over_label.add_theme_font_size_override("font_size", 18)
 	game_over_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.0))  # Gold
 	game_over_label.text = "GAME OVER"
 	add_child(game_over_label)
 	
-	# Create winner label
+	# Create winner label (scaled for 320x224)
 	var winner_label = Label.new()
 	winner_label.name = "WinnerLabel"
 	winner_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -611,11 +611,11 @@ func show_game_over(winner_name: String):
 	winner_label.anchor_top = 0.5
 	winner_label.anchor_right = 0.5
 	winner_label.anchor_bottom = 0.5
-	winner_label.offset_left = -400
-	winner_label.offset_top = -30
-	winner_label.offset_right = 400
-	winner_label.offset_bottom = 30
-	winner_label.add_theme_font_size_override("font_size", 48)
+	winner_label.offset_left = -100
+	winner_label.offset_top = -10
+	winner_label.offset_right = 100
+	winner_label.offset_bottom = 10
+	winner_label.add_theme_font_size_override("font_size", 12)
 	
 	if winner_name:
 		winner_label.text = "🏆 Winner: %s 🏆" % winner_name

@@ -1013,8 +1013,19 @@ func collect_powerup(powerup):
 		_:
 			print("[Player] ", username, " collected unknown powerup type: ", type)
 
+func get_state_minimal() -> Dictionary:
+	# Minimal movement state - sent every tick for interpolation
+	# Only includes data that changes frequently (position, velocity)
+	return {
+		"p": [int(position.x), int(position.y)],  # position as array (shorter keys)
+		"v": [int(velocity.x), int(velocity.y)],  # velocity as array
+		"f": _vector_to_facing(last_move_direction),  # facing direction
+		"d": is_dead,  # dead state (important for gameplay)
+		"c": carried_bomb.bomb_id if is_carrying_bomb() else "",  # carried bomb
+	}
+
 func get_state() -> Dictionary:
-	# Core state for network sync - minimal data to reduce packet size
+	# Full state for network sync - sent on initial sync and when stats change
 	var state = {
 		"player_id": player_id,
 		"username": username,

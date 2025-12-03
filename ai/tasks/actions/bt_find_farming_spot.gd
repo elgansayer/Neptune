@@ -376,7 +376,14 @@ func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]
 
 func _broadcast_safety_data(data: Dictionary) -> void:
-	"""Send safety evaluation to all clients for visualization"""
+	"""Send safety evaluation to all clients for visualization (DEBUG ONLY)"""
+	# Skip broadcast in production - this is only for debug visualization
+	# and causes MTU exceeded warnings due to large data size (5000+ bytes)
+	# To enable debug visualization, set this to true
+	const ENABLE_SAFETY_BROADCAST := false
+	if not ENABLE_SAFETY_BROADCAST:
+		return
+	
 	print("[BTFindFarmingSpot] >>> _broadcast_safety_data called with %d tiles" % data.size())
 	
 	# Get the bot player node from blackboard

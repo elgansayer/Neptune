@@ -1,7 +1,7 @@
 extends Node
 
 # === Game Constants ===
-const TILE_SIZE = 16  # 16px tiles for 320x240 viewport (Saturn Bomberman native)
+const TILE_SIZE = 16  # 16px tiles for 320x224 viewport (Saturn Bomberman native)
 const BASE_SPEED = 60.0  # Saturn Bomberman: 1 px/frame @ 16px tiles = 60 px/s
 const PLAYER_HALF_WIDTH = 6.0  # 12x12 collision box (75% of 16px tile for corridor clearance)
 
@@ -100,8 +100,20 @@ const POWERUP_DROP_CHANCE: float = 0.30  # 30% base chance
 # These weights determine which type spawns WHEN a drop occurs
 # Saturn Bomberman distribution - common items are more frequent
 const POWERUP_WEIGHTS = {
-	# TESTING: 100% SKULL for virus testing
-	"SKULL": 1.0
+	"BOMB_UP": 0.18,       # Extra bomb capacity
+	"FIRE_UP": 0.18,       # Increased explosion range  
+	"SPEED_UP": 0.15,      # Movement speed boost
+	"FULL_FIRE": 0.04,     # Max explosion range (rare)
+	"BOMB_KICK": 0.08,     # Kick bombs ability
+	"POWER_GLOVE": 0.08,   # Pick up/throw bombs
+	"RUBBER_BOMB": 0.06,   # Bouncing bombs
+	"PENETRATION_BOMB": 0.04, # Explosions pass through soft blocks
+	"LINE_BOMB": 0.00,     # Place all bombs in a line (disabled)
+	"SKULL": 0.065,        # Virus/curse effect
+	"HEART": 0.065,        # Extra life (battle mode)
+	"1UP": 0.02,           # Extra continue
+	"CLOCK": 0.03,         # Time bonus
+	"EGG": 0.02            # Louie mount (rare)
 }
 
 # Network

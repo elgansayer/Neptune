@@ -46,7 +46,6 @@ var bomb_safety_visualizer: Node2D = null
 
 # Input buffering: track order of pressed keys
 var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
-var debug_label: Label = null
 
 # Timescale cycling
 var current_timescale_index = 0
@@ -103,21 +102,71 @@ func _ready():
 	if ClientMain.username:
 		hud.set_player_name(ClientMain.username)
 
-	# Add minimal debug banner label to HUD
-	debug_label = Label.new()
-	debug_label.name = "DebugBanner"
-	debug_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	debug_label.set_anchors_preset(Control.PRESET_TOP_LEFT)
-	debug_label.offset_left = 8
-	debug_label.offset_top = 8
-	debug_label.add_theme_color_override("font_color", Color(1, 1, 1, 0.95))
-	debug_label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
-	debug_label.add_theme_constant_override("outline_size", 2)
-	hud.add_child(debug_label)
-	update_debug_banner()
-
 
 func update_game_state(state: Dictionary):
+	# === COMPACT FORMAT CONVERSION ===
+	# Server now sends compact keys to reduce packet size
+	# Convert to legacy format for existing code compatibility
+	if state.has("p") and not state.has("players"):
+		# Compact player format - expand to legacy format
+		state["players"] = {}
+		for peer_id_str in state.p:
+			var pmin = state.p[peer_id_str]
+			# Expand minimal player state to full format for existing code
+			# Keys: p=position, v=velocity, f=facing, d=dead, c=carried_bomb
+			state.players[peer_id_str] = {
+				"position": {"x": pmin.p[0], "y": pmin.p[1]},
+				"velocity": {"x": pmin.v[0], "y": pmin.v[1]},
+				"facing": pmin.f,
+				"is_dead": pmin.d,
+				"carried_bomb_id": pmin.c if pmin.c != "" else null,
+			}
+	
+	if state.has("b") and not state.has("bombs"):
+		# Compact bomb format - expand to legacy format
+		state["bombs"] = {}
+		for bomb_id in state.b:
+			var bmin = state.b[bomb_id]
+			# Keys: i=id, p=position, t=timer, s=state, k=kick_direction, z=z_height
+			var bomb_state = {
+				"bomb_id": bmin.i,
+				"position": {"x": bmin.p[0], "y": bmin.p[1]},
+				"timer": bmin.t / 100.0,  # Convert centiseconds back to seconds
+				"state": bmin.s,
+			}
+			if bmin.has("k"):
+				bomb_state["kick_direction"] = {"x": bmin.k[0], "y": bmin.k[1]}
+			if bmin.has("z"):
+				bomb_state["z_height"] = bmin.z
+			state.bombs[bomb_id] = bomb_state
+	
+	if state.has("e") and not state.has("explosions"):
+		# Compact explosion format - expand to legacy format
+		# Format: [center_x, center_y, pattern, owner_id, bomb_id, start_time]
+		state["explosions"] = []
+		for exp_arr in state.e:
+			state.explosions.append({
+				"center": {"x": exp_arr[0], "y": exp_arr[1]},
+				"pattern": exp_arr[2],
+				"owner_id": exp_arr[3],
+				"bomb_id": exp_arr[4],
+				"start_time": exp_arr[5]
+			})
+	
+	if state.has("t") and not state.has("match_timer"):
+		state["match_timer"] = state.t
+	if state.has("a") and not state.has("match_active"):
+		state["match_active"] = state.a
+	if state.has("c") and state.c != null and not state.has("countdown_time"):
+		state["countdown_time"] = state.c
+	if state.has("w") and state.w != null and not state.has("winner_id"):
+		state["winner_id"] = state.w
+	if state.has("h") and not state.has("hurry_mode_active"):
+		state["hurry_mode_active"] = state.h
+	if state.has("hb") and not state.has("hurry_blocks"):
+		state["hurry_blocks"] = state.hb
+	# === END COMPACT FORMAT CONVERSION ===
+	
 	# Load map_config first if present (must happen before rendering)
 	if state.has("map_config") and not map_rendered:
 		GameConfig.load_map_config(state.map_config)
@@ -806,9 +855,16 @@ func update_explosions(explosions_data: Array):
 				  " with ", explosion_data["pattern"].size(), " tiles")
 	
 	# Remove explosions no longer in server state
+	var explosions_to_remove: Array = []
 	for explosion_id in explosion_nodes.keys():
 		if not active_explosion_ids.has(explosion_id):
-			explosion_nodes[explosion_id].queue_free()
+			explosions_to_remove.append(explosion_id)
+	
+	for explosion_id in explosions_to_remove:
+		if explosion_nodes.has(explosion_id):
+			var node = explosion_nodes[explosion_id]
+			if is_instance_valid(node):
+				node.queue_free()
 			explosion_nodes.erase(explosion_id)
 
 func _update_target_debug_line(player_node: Node2D, data: Dictionary) -> void:
@@ -909,12 +965,10 @@ func _input(event):
 			if threat_visualizer:
 				threat_visualizer.visible = not threat_visualizer.visible
 				print("[GameView] Threat visualizer: ", "ON" if threat_visualizer.visible else "OFF")
-			update_debug_banner()
 		elif event.keycode == Key.KEY_F4:
 			if bomb_safety_visualizer:
 				bomb_safety_visualizer.visible = not bomb_safety_visualizer.visible
 				print("[GameView] Bomb safety visualizer: ", "ON" if bomb_safety_visualizer.visible else "OFF")
-			update_debug_banner()
 		elif event.keycode == Key.KEY_F5:
 			current_timescale_index = (current_timescale_index + 1) % timescale_options.size()
 			var new_timescale = timescale_options[current_timescale_index]
@@ -922,7 +976,6 @@ func _input(event):
 			if has_node("/root/ServerMain"):
 				get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", new_timescale)
 			print("[GameView] Timescale set to: ", new_timescale)
-			update_debug_banner()
 
 		elif event.keycode == Key.KEY_F7:
 			# Toggle timing display on threat visualizer
@@ -947,18 +1000,6 @@ func _check_pending_initial_map() -> void:
 		if not pending_map.is_empty():
 			print("[GameView] Applying cached initial map data")
 			update_game_state(pending_map)
-
-func update_debug_banner() -> void:
-	if not debug_label:
-		return
-	var safety_on = bomb_safety_visualizer and bomb_safety_visualizer.visible
-	var threat_on = threat_visualizer and threat_visualizer.visible
-	var ts = "%.2f" % Engine.time_scale
-	debug_label.text = "Safety: %s  |  Threat: %s  |  TimeScale: %s" % [
-		("ON" if safety_on else "OFF"),
-		("ON" if threat_on else "OFF"),
-		ts
-	]
 
 func render_map(map_data):
 	# Get map dimensions

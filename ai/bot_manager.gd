@@ -317,7 +317,7 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	# TESTING: Try explicitly calling restart() to initialize the behavior tree
 	bt_player.call("restart")
 	
-	print("[BotManager] Bot %s BTPlayer setup complete: active=", bt_player.get("active"), " update_mode=", bt_player.get("update_mode"), " process_mode=", bt_player.process_mode)
+	print("[BotManager] Bot %s BTPlayer setup complete: active=%s update_mode=%s process_mode=%s" % [player.player_name, bt_player.get("active"), bt_player.get("update_mode"), bt_player.process_mode])
 	
 	# Clean up when player is removed
 	player.tree_exited.connect(func():
