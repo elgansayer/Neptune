@@ -663,6 +663,10 @@ func update_player(peer_id: String, data: Dictionary):
 			if not player_node.get_meta("death_anim_started", false):
 				player_node.set_meta("death_anim_started", true)
 				print("[GameView] Player ", peer_id, " killed - playing death animation")
+				
+				# Flash red when hit by bomb
+				_play_death_flash(animated_sprite)
+				
 				if animated_sprite.sprite_frames.has_animation("state_defeat"):
 					animated_sprite.play("state_defeat")
 				else:
@@ -944,6 +948,14 @@ func _physics_process(delta):
 		"action_pressed": place_bomb,
 		"action_released": action_released
 	})
+
+func _play_death_flash(sprite: Node2D):
+	"""Turn the player red when hit by a bomb explosion"""
+	if not is_instance_valid(sprite):
+		return
+	
+	# Turn red and stay red during death animation
+	sprite.modulate = Color(1.0, 0.2, 0.2, 1.0)
 
 func _remove_dead_player(peer_id: String):
 	if player_nodes.has(peer_id):
