@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://cdqwdvomqy433"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vnvit"]
+
+[node name="tirra" type="Node2D"]
+
+[node name="baby" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_vnvit")
+
+[node name="teen" type="AnimatedSprite2D" parent="."]
+
+[node name="adult" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -1)

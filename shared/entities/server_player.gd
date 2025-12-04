@@ -617,13 +617,7 @@ func get_tile_position() -> Vector2i:
 func set_input(input_x: float, input_y: float):
 	"""Set movement input direction.
 	Can be called directly or via input buffer for BT-based control."""
-	var new_input = Vector2(input_x, input_y)
-	
-	# DEBUG: Log ALL input changes for bots
-	if is_bot and new_input != input_direction:
-		print("[ServerPlayer.set_input] Bot %s input changing: %s -> %s" % [username, input_direction, new_input])
-	
-	input_direction = new_input
+	input_direction = Vector2(input_x, input_y)
 
 
 func queue_input(input_data: Dictionary) -> void:
