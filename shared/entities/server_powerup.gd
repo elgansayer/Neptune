@@ -85,6 +85,10 @@ func _ready():
 	# Update collision shape size to match current GameConfig values
 	_update_collision_shape_size()
 	
+	# Ensure monitoring is enabled (required for body_entered signal)
+	monitoring = true
+	monitorable = false  # We don't need other areas to detect us
+	
 	# Connect collision signal
 	body_entered.connect(_on_body_entered)
 

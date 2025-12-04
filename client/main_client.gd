@@ -131,23 +131,23 @@ func register_response(data: Dictionary):
 @rpc("any_peer", "call_remote", "unreliable")
 func ai_debug_update(debug_data: Dictionary):
 	"""Receive AI debug data from server"""
-	var game_view = get_tree().current_scene
+	var game_view = _find_game_view()
 	if game_view and game_view.has_method("update_ai_debug"):
 		game_view.update_ai_debug(debug_data)
 
 @rpc("any_peer", "call_remote", "unreliable")
 func receive_state(state: Dictionary):
-	# Forward to active game view scene
-	var game_view = get_tree().current_scene
-	if game_view and game_view.has_method("update_game_state"):
+	# Forward to active game view scene - find GameView node in tree
+	var game_view = _find_game_view()
+	if game_view:
 		game_view.update_game_state(state)
 
 @rpc("any_peer", "call_remote", "reliable")
 func receive_initial_map(map_data: Dictionary):
 	# Initial map data sent reliably (TCP) to handle larger payload
 	print("[ClientMain] Received initial map data with keys: ", map_data.keys())
-	var game_view = get_tree().current_scene
-	if game_view and game_view.has_method("update_game_state"):
+	var game_view = _find_game_view()
+	if game_view:
 		game_view.update_game_state(map_data)
 	else:
 		# Cache the map data until GameView is ready
@@ -160,16 +160,32 @@ func get_pending_initial_map() -> Dictionary:
 	pending_initial_map = {}
 	return data
 
+func _find_game_view() -> Node:
+	"""Find GameView node in scene tree - handles both direct scene and nested cases"""
+	var current = get_tree().current_scene
+	if current and current.has_method("update_game_state"):
+		return current
+	# Search for GameView by name in current scene's children
+	if current:
+		var game_view = current.find_child("GameView", true, false)
+		if game_view and game_view.has_method("update_game_state"):
+			return game_view
+	# Also check direct children of root
+	for child in get_tree().root.get_children():
+		if child.name == "GameView" and child.has_method("update_game_state"):
+			return child
+	return null
+
 @rpc("any_peer", "call_remote", "unreliable")
 func bomb_safety_update(safety_data: Dictionary):
 	# Forward bomb safety data to current GameView
 	print("[ClientMain] RPC bomb_safety_update received with %d tiles" % safety_data.size())
-	var game_view = get_tree().current_scene
-	if game_view and game_view.has_method("bomb_safety_update"):
+	var game_view = _find_game_view()
+	if game_view:
 		print("[ClientMain] Forwarding to GameView")
 		game_view.bomb_safety_update(safety_data)
 	else:
-		print("[ClientMain] GameView not ready yet, scene: ", game_view.name if game_view else "null")
+		print("[ClientMain] GameView not ready yet")
 
 # === AI Bot Commands ===
 

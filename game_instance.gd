@@ -46,8 +46,9 @@ const EXPLOSION_DISPLAY_TIME = 0.5 # How long to show explosions
 # Delta compression for map state
 var last_sent_map := [] # Track last sent map state per client
 var clients_received_full_map := {} # peer_id -> bool (have they received full map?)
-var map_changes := [] # Array of {x: int, y: int, value: int} changes since last sync
+var map_changes := [] # Array of [x, y, value] changes since last sync - packed as arrays for smaller serialization
 var last_sent_hurry_block_count := {} # peer_id -> int (number of hurry blocks sent to this client)
+var sent_explosions := {} # bomb_id -> bool (has this explosion been sent to clients?)
 
 # Match timer
 var match_duration := 180.0 # 3 minutes default
@@ -58,13 +59,13 @@ var winner_id := ""
 
 # Hurry Up (Sudden Death) system
 var hurry_mode_active := false
-var hurry_trigger_time := 60.0  # Trigger hurry when this much time remains
-var hurry_spawn_interval := 0.15  # Time between block spawns (faster = more pressure)
+var hurry_trigger_time := 60.0 # Trigger hurry when this much time remains
+var hurry_spawn_interval := 0.15 # Time between block spawns (faster = more pressure)
 var hurry_spawn_timer := 0.0
-var hurry_blocks: Array[Vector2i] = []  # Positions of spawned hurry blocks
-var hurry_spawn_pattern: Array[Vector2i] = []  # Pre-calculated spiral pattern
-var hurry_spawn_index := 0  # Current position in spawn pattern
-var hurry_just_activated := false  # Flag for client notification
+var hurry_blocks: Array[Vector2i] = [] # Positions of spawned hurry blocks
+var hurry_spawn_pattern: Array[Vector2i] = [] # Pre-calculated spiral pattern
+var hurry_spawn_index := 0 # Current position in spawn pattern
+var hurry_just_activated := false # Flag for client notification
 
 signal game_ended(winner_id: String)
 signal hurry_mode_started()
@@ -487,7 +488,7 @@ func _can_place_hurry_block(x: int, y: int) -> bool:
 func _process_hurry_mode(delta: float):
 	"""Process hurry mode - spawn blocks at intervals"""
 	if hurry_spawn_index >= hurry_spawn_pattern.size():
-		return  # All blocks spawned
+		return # All blocks spawned
 	
 	hurry_spawn_timer += delta
 	
@@ -543,7 +544,7 @@ func _spawn_hurry_block(pos: Vector2i):
 	
 	# Update game_map to hurry block (type 3 = hurry block, visually distinct from wall)
 	if pos.y >= 0 and pos.y < game_map.size() and pos.x >= 0 and pos.x < game_map[0].size():
-		game_map[pos.y][pos.x] = 3  # 3 = hurry block (new type)
+		game_map[pos.y][pos.x] = 3 # 3 = hurry block (new type)
 	
 	# Create collision body for the hurry block
 	var tile_body = StaticBody2D.new()
@@ -563,7 +564,7 @@ func _spawn_hurry_block(pos: Vector2i):
 	hurry_blocks.append(pos)
 	
 	# Add to map changes for delta compression
-	map_changes.append({"x": pos.x, "y": pos.y, "value": 3})
+	map_changes.append([pos.x, pos.y, 3])
 
 func _check_alive_players():
 	"""Check if match should end after a player death"""
@@ -701,7 +702,7 @@ func _place_line_bombs(player: ServerPlayer):
 	"""Place a line of bombs in the player's facing direction (LINE_BOMB ability)"""
 	var facing = player.last_move_direction
 	if facing.length() < 0.1:
-		facing = Vector2.DOWN  # Default to down if no movement direction
+		facing = Vector2.DOWN # Default to down if no movement direction
 	
 	# Normalize to cardinal direction
 	if abs(facing.x) > abs(facing.y):
@@ -745,7 +746,7 @@ func _is_tile_valid_for_bomb(tile_pos: Vector2i) -> bool:
 	
 	var tile_value = game_map[tile_pos.y][tile_pos.x]
 	# 0 = empty, 1 = wall, 2 = block, 3+ = powerups
-	return tile_value == 0 or tile_value >= 3  # Can place on empty or powerup tiles
+	return tile_value == 0 or tile_value >= 3 # Can place on empty or powerup tiles
 
 
 func _has_bomb_at_tile(tile_pos: Vector2i) -> bool:
@@ -763,7 +764,7 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i):
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
-	bomb.explosion_range = player.get_effective_bomb_range()  # SMALL_FLAME virus forces range to 1
+	bomb.explosion_range = player.get_effective_bomb_range() # SMALL_FLAME virus forces range to 1
 	bomb.bomb_type = player.bomb_type
 	
 	bomb.position = Vector2(
@@ -808,8 +809,8 @@ func _place_single_bomb(player: ServerPlayer):
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
-	bomb.explosion_range = player.get_effective_bomb_range()  # SMALL_FLAME virus forces range to 1
-	bomb.bomb_type = player.bomb_type  # Copy player's current bomb type
+	bomb.explosion_range = player.get_effective_bomb_range() # SMALL_FLAME virus forces range to 1
+	bomb.bomb_type = player.bomb_type # Copy player's current bomb type
 	
 	print("[Game] Creating bomb ", bomb.bomb_id, " for ", player.username, " type=", player.bomb_type)
 	
@@ -826,7 +827,7 @@ func _place_single_bomb(player: ServerPlayer):
 	# Start fuse from zero on placement (count-up logic)
 	# Apply SHORT_FUSE curse if active
 	bomb.explosion_timer = 0.0
-	bomb.fuse_time = player.get_bomb_fuse_time()  # 1s if cursed, 3s otherwise
+	bomb.fuse_time = player.get_bomb_fuse_time() # 1s if cursed, 3s otherwise
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)
@@ -978,7 +979,7 @@ func destroy_block(cell: Vector2i):
 	game_map[cell.y][cell.x] = 0
 	
 	# Track map change for delta compression
-	map_changes.append({"x": cell.x, "y": cell.y, "value": 0})
+	map_changes.append([cell.x, cell.y, 0])
 	
 	# Update AI pathfinder (soft wall destroyed = new path opened)
 	if ai_manager != null:
@@ -999,50 +1000,112 @@ func get_tile_type(grid_pos: Vector2i) -> int:
 	
 	return game_map[grid_pos.y][grid_pos.x]
 
+func _pack_explosion_tiles(tiles: Array) -> Array:
+	"""Pack explosion tiles into ultra-compact format using bit packing.
+	Input: [{grid_pos: {x, y}, direction: str, length: int, is_end: bool}, ...]
+	Output: [[pos_packed, data_packed], ...] 
+	  pos_packed = (x << 8) | y (supports 256x256 grid)
+	  data_packed = (dir << 8) | (length << 1) | is_end (dir:3 bits, length:7 bits, is_end:1 bit)"""
+	var packed := []
+	var dir_codes = {"middle": 0, "up": 1, "down": 2, "left": 3, "right": 4, "vertical": 5, "horizontal": 6}
+	for tile in tiles:
+		var gp = tile["grid_pos"]
+		var x = gp["x"] if gp is Dictionary else gp.x
+		var y = gp["y"] if gp is Dictionary else gp.y
+		var dir = tile.get("direction", "middle")
+		var dir_code = dir_codes.get(dir, 0)
+		var length = tile.get("length", 0)
+		var is_end = 1 if tile.get("is_end", false) else 0
+		# Pack: pos = (x<<8)|y, data = (dir<<8)|(length<<1)|is_end
+		var pos_packed = (x << 8) | y
+		var data_packed = (dir_code << 8) | (length << 1) | is_end
+		packed.append([pos_packed, data_packed])
+	return packed
+
 func sync_state_to_clients():
 	# Clean up old explosions (keep for progressive display duration)
 	var current_time = Time.get_ticks_msec() / 1000.0
 	var explosion_duration = 0.02 * 20 # ~20 expansion steps max
-	explosions = explosions.filter(func(explosion): return current_time - explosion["start_time"] < explosion_duration)
+	var remaining_explosions := []
+	for e in explosions:
+		if current_time - e["start_time"] < explosion_duration:
+			remaining_explosions.append(e)
+		else:
+			sent_explosions.erase(e["bomb_id"]) # Clean up tracking
+	explosions = remaining_explosions
 	
 	# Build compact game state for unreliable updates (uses short keys to reduce size)
 	# Full player/bomb data is sent via reliable channel when stats change
 	var state = {
-		"p": {},  # players (minimal movement state)
-		"b": {},  # bombs (minimal state)
-		"t": int(match_time_remaining),  # match timer (seconds as int)
-		"a": match_active,  # active
-		"c": countdown_time if countdown_time > 0 else null,  # countdown (only when active)
-		"w": winner_id if winner_id != "" else null,  # winner (only when set)
-		"h": hurry_mode_active,  # hurry mode
+		"p": {}, # players (minimal movement state)
+		"b": {}, # bombs (minimal state)
+		"t": int(match_time_remaining), # match timer (seconds as int)
 	}
+	# Only add optional fields if they have values (avoid sending nulls)
+	if match_active:
+		state["a"] = true
+	if countdown_time > 0:
+		state["c"] = int(countdown_time)
+	if winner_id != "":
+		state["w"] = winner_id
+	if hurry_mode_active:
+		state["h"] = true
 	
-	# Use minimal player state (position, velocity, facing, dead, carried_bomb)
+	# Use minimal player state (position, velocity, facing, dead, carried_bomb, panicking)
+	# Get threat matrix once for panic detection
+	var threat_matrix: Dictionary = {}
+	if ai_manager != null:
+		threat_matrix = ai_manager.get_current_threat_matrix()
+	
 	for peer_id in players:
-		state.p[str(peer_id)] = players[peer_id].get_state_minimal()
+		var player = players[peer_id]
+		var player_state = player.get_state_minimal()
+		
+		# Check if player is in a threatened tile (for panic animation)
+		if not player.is_dead:
+			var tile_pos: Vector2i = player.get_tile_position()
+			var tile_key: String = str(tile_pos.x) + "," + str(tile_pos.y)
+			# Only panic if in danger AND physically trapped
+			if threat_matrix.has(tile_key) and _is_player_physically_trapped(tile_pos):
+				player_state["k"] = true # k = panicking (in danger AND trapped)
+		
+		state.p[str(peer_id)] = player_state
 	
 	# Use minimal bomb state (id, position, timer, state)
 	for bomb_id in bombs:
 		state.b[bomb_id] = bombs[bomb_id].get_state_minimal()
 	
-	# Powerups rarely change - only include count, client can request full data
+	# Powerups - compact format: [x, y, type] as array
 	if powerups.size() > 0:
-		state["pu"] = powerups.size()
+		var pu_data := {}
+		for pu_id in powerups:
+			var pu = powerups[pu_id]
+			# Use tile coords instead of pixel coords to save bytes
+			pu_data[pu_id] = [pu.get_tile_position().x, pu.get_tile_position().y, pu.powerup_type]
+		state["pu"] = pu_data
 	
 	# Compact explosion data - essential for rendering
-	# Format: [center_x, center_y, pattern, owner_id, bomb_id, start_time]
+	# Explosions only need to be sent once when created - client animates locally
+	# Send new explosions via reliable channel to avoid packet bloat
+	# Format: [center_x, center_y, packed_tiles, bomb_id, start_time]
+	# packed_tiles = [[pos_packed, data_packed], ...] bit-packed
+	# Limit to 1 explosion per packet to stay under MTU - will catch up over frames
 	if explosions.size() > 0:
-		var exp_data := []
 		for explosion in explosions:
-			exp_data.append([
-				int(explosion["center"].x),  # [0] center x
-				int(explosion["center"].y),  # [1] center y  
-				explosion["pattern"],        # [2] pattern dict
-				explosion["owner_id"],       # [3] owner for kill attribution
-				explosion["bomb_id"],        # [4] bomb_id for linking to bomb node
-				explosion["start_time"]      # [5] start_time for animation timing
-			])
-		state["e"] = exp_data
+			var bomb_id = explosion["bomb_id"]
+			# Only send explosions we haven't sent before
+			if not sent_explosions.has(bomb_id):
+				sent_explosions[bomb_id] = true
+				# Pack tiles into compact form
+				var packed_tiles = _pack_explosion_tiles(explosion["pattern"])
+				state["e"] = [[
+					int(explosion["center"].x), # [0] center x
+					int(explosion["center"].y), # [1] center y
+					packed_tiles, # [2] packed tiles
+					explosion["bomb_id"], # [3] bomb_id for linking
+					int(explosion["start_time"] * 100) # [4] start_time centiseconds
+				]]
+				break  # Only send 1 explosion per packet
 	
 	# NOTE: Threat matrix removed from regular state sync to reduce packet size
 	# It was causing MTU exceeded warnings (3320 > 1392 bytes)
@@ -1050,8 +1113,12 @@ func sync_state_to_clients():
 	
 	# Send to all players in this game via ClientMain autoload
 	# Use delta compression for map - only send full map to new clients
-	var changes_to_send = map_changes.duplicate()
-	map_changes.clear() # Clear changes after capturing them
+	# Limit map changes per packet to stay under MTU - will catch up over frames
+	var changes_to_send: Array = []
+	var max_changes_per_packet = 3
+	if map_changes.size() > 0:
+		changes_to_send = map_changes.slice(0, max_changes_per_packet)
+		map_changes = map_changes.slice(max_changes_per_packet)  # Keep remaining for next sync
 	
 	for peer_id in players:
 		var player = players[peer_id]
@@ -1064,11 +1131,12 @@ func sync_state_to_clients():
 		# Delta compression for hurry_blocks - only send new blocks
 		var last_sent_count = last_sent_hurry_block_count.get(peer_id, 0)
 		if hurry_blocks.size() > last_sent_count:
-			# Only send new blocks since last sync
+			# Only send new blocks since last sync - pack as [x, y] arrays
 			var new_blocks: Array = []
 			for i in range(last_sent_count, hurry_blocks.size()):
-				new_blocks.append(hurry_blocks[i])
-			client_state["hb"] = new_blocks  # hurry blocks (short key)
+				var hb = hurry_blocks[i]
+				new_blocks.append([hb.x, hb.y])  # Pack as array for smaller serialization
+			client_state["hb"] = new_blocks # hurry blocks (short key)
 			last_sent_hurry_block_count[peer_id] = hurry_blocks.size()
 		# else: No new hurry blocks - don't include key (saves bytes)
 		
@@ -1114,27 +1182,27 @@ func spawn_powerup(tile_pos: Vector2i):
 	var cumulative = 0.0
 	var weights = Constants.POWERUP_WEIGHTS
 	
-	# Mapping from weight key names to PowerUpType enum values
+	# Mapping from Constants weight key names to PowerUpType enum values
+	# NOTE: These keys must match exactly what's in Constants.POWERUP_WEIGHTS
 	var type_mapping = {
-		"BOMB_INCREASE": ServerPowerUp.PowerUpType.BOMB_INCREASE,
-		"RANGE_INCREASE": ServerPowerUp.PowerUpType.RANGE_INCREASE,
-		"SPEED_INCREASE": ServerPowerUp.PowerUpType.SPEED_INCREASE,
-		"BOMB_KICKER": ServerPowerUp.PowerUpType.BOMB_KICKER,
+		"BOMB_UP": ServerPowerUp.PowerUpType.BOMB_INCREASE,
+		"FIRE_UP": ServerPowerUp.PowerUpType.RANGE_INCREASE,
+		"SPEED_UP": ServerPowerUp.PowerUpType.SPEED_INCREASE,
+		"BOMB_KICK": ServerPowerUp.PowerUpType.BOMB_KICKER,
 		"POWER_GLOVE": ServerPowerUp.PowerUpType.POWER_GLOVE,
 		"LINE_BOMB": ServerPowerUp.PowerUpType.LINE_BOMB,
 		"FULL_FIRE": ServerPowerUp.PowerUpType.FULL_FIRE,
 		"HEART": ServerPowerUp.PowerUpType.HEART,
-		"GETA": ServerPowerUp.PowerUpType.GETA,
-		"REMOTE_BOMB": ServerPowerUp.PowerUpType.REMOTE_BOMB,
-		"POWER_BOMB": ServerPowerUp.PowerUpType.POWER_BOMB,
-		"RUBBER_BOMB": ServerPowerUp.PowerUpType.RUBBER_BOMB,
-		"PIERCE_BOMB": ServerPowerUp.PowerUpType.PIERCE_BOMB,
 		"SKULL": ServerPowerUp.PowerUpType.SKULL,
-		"VIRUS": ServerPowerUp.PowerUpType.SKULL  # Alias
+		"RUBBER_BOMB": ServerPowerUp.PowerUpType.RUBBER_BOMB,
+		"PENETRATION_BOMB": ServerPowerUp.PowerUpType.POWER_BOMB,
+		"1UP": ServerPowerUp.PowerUpType.HEART,  # Treat as extra life
+		"CLOCK": ServerPowerUp.PowerUpType.SPEED_INCREASE,  # Time bonus = speed
+		"EGG": ServerPowerUp.PowerUpType.FULL_FIRE  # Mount = rare power
 	}
 	
 	# Use cumulative probability to select type based on weights
-	var selected_type = ServerPowerUp.PowerUpType.BOMB_INCREASE  # Default fallback
+	var selected_type = ServerPowerUp.PowerUpType.BOMB_INCREASE # Default fallback
 	for type_name in weights:
 		cumulative += weights[type_name]
 		if rand_val < cumulative:
@@ -1254,21 +1322,21 @@ func bomb_safety_update(_safety_data: Dictionary) -> void:
 func _process_virus_transfers() -> void:
 	"""Check for player collisions and transfer viruses between them"""
 	var player_list = players.values()
-	var transfer_distance = GameConfig.TILE_SIZE * 0.6  # Players must be close to transfer
+	var transfer_distance = GameConfig.TILE_SIZE * 0.6 # Players must be close to transfer
 	
 	for i in range(player_list.size()):
 		var player_a = player_list[i]
 		if not is_instance_valid(player_a) or player_a.is_dead:
 			continue
 		if player_a.active_virus == player_a.VirusType.NONE:
-			continue  # No virus to transfer
+			continue # No virus to transfer
 		
 		for j in range(i + 1, player_list.size()):
 			var player_b = player_list[j]
 			if not is_instance_valid(player_b) or player_b.is_dead:
 				continue
 			if player_b.active_virus != player_b.VirusType.NONE:
-				continue  # Already has a virus
+				continue # Already has a virus
 			
 			# Check distance
 			var distance = player_a.position.distance_to(player_b.position)
@@ -1277,7 +1345,7 @@ func _process_virus_transfers() -> void:
 				player_a.transfer_virus_to(player_b)
 				# Notify clients about the transfer
 				_notify_virus_transfer(player_a.peer_id, player_b.peer_id)
-				break  # Only transfer once per frame
+				break # Only transfer once per frame
 
 func _notify_virus_transfer(from_peer_id: int, to_peer_id: int) -> void:
 	"""Notify all clients about a virus transfer for visual/audio effects"""
@@ -1289,3 +1357,40 @@ func rpc_virus_transfer(from_peer_id: int, to_peer_id: int) -> void:
 	"""Client receives notification of virus transfer"""
 	# This is called on clients - they handle visuals/audio locally
 	print("[Client] Virus transferred from player ", from_peer_id, " to ", to_peer_id)
+func _is_player_physically_trapped(center_tile: Vector2i) -> bool:
+	"""
+	Check if a player is physically trapped on all 4 sides.
+	Returns true if UP, DOWN, LEFT, and RIGHT are all impassable
+	(walls, blocks, hurry blocks, or bombs).
+	"""
+	var directions = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
+	
+	for dir in directions:
+		var check_pos = center_tile + dir
+		
+		# Check map bounds
+		if check_pos.y < 0 or check_pos.y >= game_map.size() or \
+		   check_pos.x < 0 or check_pos.x >= game_map[0].size():
+			continue # Out of bounds counts as blocked
+			
+		# Check for walls (1), soft blocks (2), or hurry blocks (3)
+		var tile_type = game_map[check_pos.y][check_pos.x]
+		if tile_type == 1 or tile_type == 2 or tile_type == 3:
+			continue # Blocked by static map element
+			
+		# Check for bombs
+		var has_bomb = false
+		for bomb_id in bombs:
+			var bomb = bombs[bomb_id]
+			if is_instance_valid(bomb) and bomb.get_tile_position() == check_pos:
+				has_bomb = true
+				break
+		
+		if has_bomb:
+			continue # Blocked by bomb
+			
+		# If we get here, this direction is open!
+		return false
+		
+	# If we checked all directions and didn't find an opening, we are trapped
+	return true

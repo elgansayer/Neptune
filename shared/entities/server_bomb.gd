@@ -272,8 +272,8 @@ func expand_explosion():
 
 func get_state_minimal() -> Dictionary:
 	# Minimal state for frequent updates - position, timer, state
+	# Note: bomb_id is already in the dictionary key, no need to repeat
 	var state_dict = {
-		"i": bomb_id,  # id
 		"p": [int(position.x), int(position.y)],  # position
 		"t": int(explosion_timer * 100),  # timer (centiseconds for compact int)
 		"s": bomb_state,  # state enum

@@ -1015,14 +1015,58 @@ func collect_powerup(powerup):
 
 func get_state_minimal() -> Dictionary:
 	# Minimal movement state - sent every tick for interpolation
-	# Only includes data that changes frequently (position, velocity)
-	return {
-		"p": [int(position.x), int(position.y)],  # position as array (shorter keys)
-		"v": [int(velocity.x), int(velocity.y)],  # velocity as array
-		"f": _vector_to_facing(last_move_direction),  # facing direction
-		"d": is_dead,  # dead state (important for gameplay)
-		"c": carried_bomb.bomb_id if is_carrying_bomb() else "",  # carried bomb
+	# Includes data that changes frequently (position, velocity)
+	# Also includes game-critical stats for HUD display
+	# Optimized for packet size - uses short keys and packed formats
+	
+	# Pack boolean flags into single integer to save bytes
+	# Bit layout: [0]=kicker, [1]=glove, [2]=line_bomb, [3]=carrying, [4]=picking_up
+	var flags = 0
+	if has_bomb_kicker: flags |= 1
+	if has_power_glove: flags |= 2
+	if has_line_bomb: flags |= 4
+	if is_carrying_bomb(): flags |= 8
+	if is_picking_up_bomb: flags |= 16
+	
+	# Use single-char facing: U/D/L/R instead of UP/DOWN/LEFT/RIGHT
+	var facing_char = "D"  # default down
+	var f = _vector_to_facing(last_move_direction)
+	if f == "UP": facing_char = "U"
+	elif f == "DOWN": facing_char = "D"
+	elif f == "LEFT": facing_char = "L"
+	elif f == "RIGHT": facing_char = "R"
+	
+	# Dead players only need minimal state (position for death animation, dead flag)
+	if is_dead:
+		return {
+			"p": [int(position.x), int(position.y)],
+			"d": true,
+		}
+	
+	# Pack stats into 2 integers for ultra-compact transmission:
+	# s1: (max_bombs<<12) | (bomb_range<<8) | (bombs_placed<<4) | skate_count
+	# s2: (bomb_type<<16) | (active_virus<<8) | flags
+	var s1 = (max_bombs << 12) | (bomb_range << 8) | (bombs_placed << 4) | skate_count
+	var s2 = (bomb_type << 16) | (active_virus << 8) | flags
+	
+	var state = {
+		"p": [int(position.x), int(position.y)],  # position as array
+		"f": facing_char,  # facing: U/D/L/R
+		# Note: omit "d" for alive players - absence means alive (saves bytes)
+		# Stats packed into 2 integers
+		"s": [s1, s2],
 	}
+	# Only send velocity if non-zero (most players are stationary most of the time)
+	if velocity.x != 0 or velocity.y != 0:
+		state["v"] = [int(velocity.x), int(velocity.y)]
+	# Only include optional fields if needed (to save bytes)
+	if carried_bomb != null and is_instance_valid(carried_bomb):
+		state["c"] = carried_bomb.bomb_id  # carried bomb id
+	if active_virus != VirusType.NONE:
+		state["ve"] = int(virus_end_time)  # virus end time
+	if is_picking_up_bomb:
+		state["pad"] = [int(pickup_animation_direction.x), int(pickup_animation_direction.y)]
+	return state
 
 func get_state() -> Dictionary:
 	# Full state for network sync - sent on initial sync and when stats change

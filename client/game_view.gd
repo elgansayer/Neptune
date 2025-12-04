@@ -35,6 +35,10 @@ var hud: CanvasLayer # Reference to HUD
 var ai_debug_targets := {} # peer_id -> {"tile": Vector2i, "player_name": String}
 var local_map := [] # Client-side copy of map state (updated via delta compression)
 
+# Match state for win/lose animations
+var match_winner_id := "" # ID of the winner (empty during gameplay, set when match ends)
+var match_ended := false # True when match has ended
+
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
 var remote_player_interpolators = {} # peer_id -> EntityInterpolator for remote players
@@ -104,6 +108,7 @@ func _ready():
 
 
 func update_game_state(state: Dictionary):
+	print("[GameView] update_game_state called with keys: ", state.keys())
 	# === COMPACT FORMAT CONVERSION ===
 	# Server now sends compact keys to reduce packet size
 	# Convert to legacy format for existing code compatibility
@@ -113,23 +118,72 @@ func update_game_state(state: Dictionary):
 		for peer_id_str in state.p:
 			var pmin = state.p[peer_id_str]
 			# Expand minimal player state to full format for existing code
-			# Keys: p=position, v=velocity, f=facing, d=dead, c=carried_bomb
-			state.players[peer_id_str] = {
+			# Keys: p=position, v=velocity, f=facing (U/D/L/R), d=dead, c=carried_bomb (optional)
+			# Stats packed into 2 integers: s=[s1, s2]
+			# s1: (max_bombs<<12) | (bomb_range<<8) | (bombs_placed<<4) | skate_count
+			# s2: (bomb_type<<16) | (active_virus<<8) | flags
+			# flags = packed booleans (bit 0=kicker, 1=glove, 2=line_bomb, 3=carrying, 4=picking)
+			
+			var stats_packed = pmin.get("s", [0x1200, 0])  # Default: max_bombs=1, range=2
+			var s1 = stats_packed[0] if stats_packed.size() > 0 else 0x1200
+			var s2 = stats_packed[1] if stats_packed.size() > 1 else 0
+			
+			# Unpack stats
+			var max_bombs = (s1 >> 12) & 0xF
+			var bomb_range = (s1 >> 8) & 0xF
+			var bombs_placed = (s1 >> 4) & 0xF
+			var skate_count = s1 & 0xF
+			var bomb_type = (s2 >> 16) & 0xFF
+			var active_virus = (s2 >> 8) & 0xFF
+			var flags = s2 & 0xFF
+			
+			# Expand single-char facing back to full name
+			var facing = "DOWN"
+			var f = pmin.get("f", "D")
+			if f == "U": facing = "UP"
+			elif f == "D": facing = "DOWN"
+			elif f == "L": facing = "LEFT"
+			elif f == "R": facing = "RIGHT"
+			else: facing = f  # fallback to original if already full name
+			
+			var player_data = {
 				"position": {"x": pmin.p[0], "y": pmin.p[1]},
-				"velocity": {"x": pmin.v[0], "y": pmin.v[1]},
-				"facing": pmin.f,
-				"is_dead": pmin.d,
-				"carried_bomb_id": pmin.c if pmin.c != "" else null,
+				"velocity": {"x": pmin.v[0] if pmin.has("v") else 0, "y": pmin.v[1] if pmin.has("v") else 0},
+				"facing": facing,
+				"is_dead": pmin.get("d", false),  # absent means alive
+				"carried_bomb_id": pmin.get("c", null),  # Optional - only present when carrying
+				"is_panicking": pmin.get("k", false),  # k = panicking (in danger)
+				# Player stats from packed integers
+				"max_bombs": max_bombs,
+				"bomb_range": bomb_range,
+				"bombs_placed": bombs_placed,
+				"skate_count": skate_count,
+				"speed_multiplier": 1.0 + (skate_count * 0.125),  # Calculate from skate_count
+				# Abilities from packed flags
+				"has_bomb_kicker": (flags & 1) != 0,
+				"has_power_glove": (flags & 2) != 0,
+				"has_line_bomb": (flags & 4) != 0,
+				"is_carrying_bomb": (flags & 8) != 0,
+				"is_picking_up_bomb": (flags & 16) != 0,
+				# Bomb type and virus
+				"bomb_type": bomb_type,
+				"active_virus": active_virus,
+				"virus_end_time": pmin.get("ve", 0.0),
 			}
+			# Optional pickup animation direction
+			if pmin.has("pad"):
+				player_data["pickup_animation_direction"] = {"x": pmin.pad[0], "y": pmin.pad[1]}
+			state.players[peer_id_str] = player_data
 	
 	if state.has("b") and not state.has("bombs"):
 		# Compact bomb format - expand to legacy format
 		state["bombs"] = {}
 		for bomb_id in state.b:
 			var bmin = state.b[bomb_id]
-			# Keys: i=id, p=position, t=timer, s=state, k=kick_direction, z=z_height
+			# Keys: p=position, t=timer, s=state, k=kick_direction (optional), z=z_height (optional)
+			# Note: bomb_id is the dictionary key, not repeated inside
 			var bomb_state = {
-				"bomb_id": bmin.i,
+				"bomb_id": bomb_id,  # Use the key as bomb_id
 				"position": {"x": bmin.p[0], "y": bmin.p[1]},
 				"timer": bmin.t / 100.0,  # Convert centiseconds back to seconds
 				"state": bmin.s,
@@ -142,16 +196,54 @@ func update_game_state(state: Dictionary):
 	
 	if state.has("e") and not state.has("explosions"):
 		# Compact explosion format - expand to legacy format
-		# Format: [center_x, center_y, pattern, owner_id, bomb_id, start_time]
+		# Format: [center_x, center_y, packed_tiles, bomb_id, start_time]
+		# packed_tiles = [[pos_packed, data_packed], ...] using bit packing:
+		#   pos_packed = (x << 8) | y
+		#   data_packed = (dir << 8) | (length << 1) | is_end
+		# dir_code: 0=middle, 1=up, 2=down, 3=left, 4=right, 5=vertical, 6=horizontal
 		state["explosions"] = []
+		var dir_names = ["middle", "up", "down", "left", "right", "vertical", "horizontal"]
 		for exp_arr in state.e:
+			# Unpack tiles from [[pos_packed, data_packed], ...] to enriched format
+			var packed_tiles = exp_arr[2]
+			var unpacked_pattern := []
+			for tile_data in packed_tiles:
+				if tile_data.size() >= 2:
+					var pos_packed = tile_data[0]
+					var data_packed = tile_data[1]
+					var x = (pos_packed >> 8) & 0xFF
+					var y = pos_packed & 0xFF
+					var dir_code = (data_packed >> 8) & 0x07
+					var length = (data_packed >> 1) & 0x7F
+					var is_end = data_packed & 0x01
+					var dir_name = dir_names[dir_code] if dir_code < dir_names.size() else "middle"
+					unpacked_pattern.append({
+						"grid_pos": {"x": x, "y": y},
+						"direction": dir_name,
+						"length": length,
+						"is_end": is_end == 1
+					})
 			state.explosions.append({
 				"center": {"x": exp_arr[0], "y": exp_arr[1]},
-				"pattern": exp_arr[2],
-				"owner_id": exp_arr[3],
-				"bomb_id": exp_arr[4],
-				"start_time": exp_arr[5]
+				"pattern": unpacked_pattern,
+				"bomb_id": exp_arr[3],
+				"start_time": float(exp_arr[4]) / 100.0  # Convert from centiseconds
 			})
+	
+	if state.has("pu") and not state.has("powerups"):
+		# Compact powerup format - expand to legacy format
+		# Server sends: pu_id -> [tile_x, tile_y, type]
+		state["powerups"] = {}
+		if state.pu is Dictionary:
+			for pu_id in state.pu:
+				var pu = state.pu[pu_id]
+				# Convert tile coords to pixel coords (center of tile)
+				var tile_size = GameConfig.TILE_SIZE
+				state.powerups[pu_id] = {
+					"powerup_id": pu_id,
+					"position": {"x": pu[0] * tile_size + tile_size/2, "y": pu[1] * tile_size + tile_size/2},
+					"type": pu[2]
+				}
 	
 	if state.has("t") and not state.has("match_timer"):
 		state["match_timer"] = state.t
@@ -164,7 +256,14 @@ func update_game_state(state: Dictionary):
 	if state.has("h") and not state.has("hurry_mode_active"):
 		state["hurry_mode_active"] = state.h
 	if state.has("hb") and not state.has("hurry_blocks"):
-		state["hurry_blocks"] = state.hb
+		# Convert compact array format [x, y] to dict format {x, y}
+		var expanded_blocks := []
+		for hb in state.hb:
+			if hb is Array and hb.size() >= 2:
+				expanded_blocks.append({"x": hb[0], "y": hb[1]})
+			else:
+				expanded_blocks.append(hb)  # Fallback for dict format
+		state["hurry_blocks"] = expanded_blocks
 	# === END COMPACT FORMAT CONVERSION ===
 	
 	# Load map_config first if present (must happen before rendering)
@@ -190,6 +289,7 @@ func update_game_state(state: Dictionary):
 					row.append(0)
 			local_map.append(row)
 		render_map(local_map)
+		update_blocks(local_map)  # Populate soft blocks from server map data
 		map_rendered = true
 		
 		print("[GameView] Map rendered from packed data, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
@@ -205,6 +305,7 @@ func update_game_state(state: Dictionary):
 	if not map_rendered and state.has("map"):
 		local_map = state.map.duplicate(true) # Deep copy
 		render_map(state.map)
+		update_blocks(local_map)  # Populate soft blocks from server map data
 		map_rendered = true
 		
 		print("[GameView] Map rendered, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
@@ -222,12 +323,12 @@ func update_game_state(state: Dictionary):
 			bomb_safety_visualizer.set_map_size(map_width, map_height)
 			bomb_safety_visualizer.update_tile_size(GameConfig.TILE_SIZE)
 	
-	# Handle delta map changes (incremental updates)
+	# Handle delta map changes (incremental updates) - now packed as [x, y, value] arrays
 	if state.has("map_changes") and map_rendered:
 		for change in state.map_changes:
-			var x = change.x
-			var y = change.y
-			var value = change.value
+			var x = change[0]
+			var y = change[1]
+			var value = change[2]
 			if y >= 0 and y < local_map.size() and x >= 0 and x < local_map[y].size():
 				local_map[y][x] = value
 		# Apply changes to block visuals
@@ -345,8 +446,15 @@ func update_game_state(state: Dictionary):
 	# IMPORTANT: match_active=false during countdown AND after game ends
 	# Only show game over if countdown is complete (countdown_time <= 0)
 	var countdown_complete = not state.has("countdown_time") or state.countdown_time <= 0.0
-	var match_ended = state.has("match_active") and not state.match_active and countdown_complete
-	if match_ended and hud:
+	var has_match_ended = state.has("match_active") and not state.match_active and countdown_complete
+	
+	# Update class-level match state for animations
+	if has_match_ended:
+		match_ended = true
+		if state.has("winner_id") and state.winner_id:
+			match_winner_id = state.winner_id
+	
+	if has_match_ended and hud:
 		var winner_name = ""
 		if state.has("winner_id") and state.winner_id:
 			if state.has("players") and state.players.has(state.winner_id):
@@ -706,8 +814,17 @@ func update_player(peer_id: String, data: Dictionary):
 		var velocity = Vector2(data.velocity.x, data.velocity.y)
 		var is_moving = velocity.length() >= 10.0
 		
+		# Priority 0: Match ended - Winner/Loser animations (highest priority after death)
+		if match_ended:
+			if match_winner_id == peer_id:
+				# This player won - play celebration!
+				anim_name = "state_win"
+			elif match_winner_id != "":
+				# Match has a winner but it's not this player - play lose animation
+				anim_name = "state_lose"
+			# If winner_id is empty, it's a draw - keep normal animations
 		# Priority 1: Stunned state
-		if data.has("is_stunned") and data.is_stunned:
+		elif data.has("is_stunned") and data.is_stunned:
 			anim_name = "state_stunned"
 		# Priority 2: Panic state (near explosion)
 		elif data.has("is_panicking") and data.is_panicking:
@@ -737,7 +854,13 @@ func update_player(peer_id: String, data: Dictionary):
 			anim_name = direction_prefix + "_stopped"
 		
 		# Play animation if it changed (with safety check)
-		if animated_sprite.animation != anim_name:
+		# Also restart non-looping state animations if they've finished
+		var should_play: bool = animated_sprite.animation != anim_name
+		if not should_play and anim_name.begins_with("state_") and not animated_sprite.is_playing():
+			# State animations may not loop - restart them if they've stopped
+			should_play = true
+		
+		if should_play:
 			if animated_sprite.sprite_frames.has_animation(anim_name):
 				animated_sprite.play(anim_name)
 			else:
@@ -840,9 +963,12 @@ func update_explosions(explosions_data: Array):
 			explosion_node.name = "Explosion_" + explosion_id
 			explosion_node.z_index = 5 # Render explosions below bombs (z_index 10)
 			
+			# Pattern already in enriched format from compact expansion
+			var enriched_pattern = explosion_data["pattern"]
+			
 			# Initialize with pattern from server
 			explosion_node.initialize(
-				explosion_data["pattern"],
+				enriched_pattern,
 				explosion_data["start_time"]
 			)
 			
@@ -870,6 +996,52 @@ func update_explosions(explosions_data: Array):
 			if is_instance_valid(node):
 				node.queue_free()
 			explosion_nodes.erase(explosion_id)
+
+func _expand_explosion_pattern(explosion_data: Dictionary) -> Array:
+	"""Convert direction counts pattern to enriched tile data for ExplosionRenderer
+	Input: {center: {x, y}, pattern: {up: n, down: n, left: n, right: n}}
+	Output: [{grid_pos: {x, y}, length: n, direction: str, is_end: bool}, ...]"""
+	var tiles := []
+	var center_x = explosion_data["center"]["x"]
+	var center_y = explosion_data["center"]["y"]
+	var pattern = explosion_data["pattern"]
+	
+	# Center tile
+	tiles.append({
+		"grid_pos": {"x": center_x, "y": center_y},
+		"length": 0,
+		"direction": "middle",
+		"is_end": false
+	})
+	
+	# Direction vectors and names
+	var directions = {
+		"up": Vector2i(0, -1),
+		"down": Vector2i(0, 1),
+		"left": Vector2i(-1, 0),
+		"right": Vector2i(1, 0)
+	}
+	
+	for dir_name in directions:
+		var dir_vec = directions[dir_name]
+		var count = pattern.get(dir_name, 0)
+		
+		for i in range(1, count + 1):
+			var pos_x = center_x + dir_vec.x * i
+			var pos_y = center_y + dir_vec.y * i
+			var is_end = (i == count)
+			
+			# Determine sprite direction (horizontal or vertical)
+			var sprite_dir = "horizontal" if dir_name in ["left", "right"] else "vertical"
+			
+			tiles.append({
+				"grid_pos": {"x": pos_x, "y": pos_y},
+				"length": i,
+				"direction": sprite_dir,
+				"is_end": is_end
+			})
+	
+	return tiles
 
 func _update_target_debug_line(player_node: Node2D, data: Dictionary) -> void:
 	var target_line := player_node.get_node_or_null("TargetDebugLine")
@@ -1049,22 +1221,16 @@ func render_map(map_data):
 						wall_floor_map.visible = false # Keep hidden
 						# wall_floor_map.scale = Vector2(4.0, 4.0)
 					
-					# SpawnAndSoftBlockMap: Show ONLY soft blocks (source 0), hide spawn markers (source 1)
+					# SpawnAndSoftBlockMap: Initially hide all soft blocks - server will sync actual positions
 					if spawn_soft_map:
-						spawn_soft_map.visible = true # Make visible for soft blocks
-						# spawn_soft_map.scale = Vector2(4.0, 4.0)
+						spawn_soft_map.visible = true # Make visible (we'll control individual tiles)
 						
-						# Remove spawn marker tiles (source 1) - keep only soft blocks (source 0)
-						var cells_to_remove = []
-						for cell in spawn_soft_map.get_used_cells():
-							var source_id = spawn_soft_map.get_cell_source_id(cell)
-							if source_id == 1: # Spawn markers
-								cells_to_remove.append(cell)
-						
-						print("[GameView] Removing ", cells_to_remove.size(), " spawn markers from SpawnAndSoftBlockMap")
-						
-						# Erase spawn markers
-						for cell in cells_to_remove:
+						# Remove ALL tiles from SpawnAndSoftBlockMap
+						# The server will tell us which soft blocks actually exist via map data
+						# This prevents showing the pre-designed pattern before server sync
+						var all_cells = spawn_soft_map.get_used_cells()
+						print("[GameView] Clearing ", all_cells.size(), " tiles from SpawnAndSoftBlockMap (waiting for server)")
+						for cell in all_cells:
 							spawn_soft_map.erase_cell(cell)
 					
 					# Add map scene to game view
@@ -1211,7 +1377,6 @@ func update_powerup(powerup_id: String, data: Dictionary):
 	
 	if not powerup_nodes.has(powerup_id):
 		# Create new power-up visual with SBomberman animations
-		print("[GameView] Creating powerup visual: ", powerup_id, " at ", data.position, " type=", data.type)
 		powerup_node = PowerUpScene.instantiate()
 		powerup_node.powerup_id = powerup_id
 		powerup_node.name = "PowerUp_" + powerup_id
