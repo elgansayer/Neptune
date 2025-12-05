@@ -105,6 +105,10 @@ func _ready():
 	# Set player name in HUD once we know it
 	if ClientMain.username:
 		hud.set_player_name(ClientMain.username)
+		
+	# Connect latency signal
+	if ClientMain.has_signal("latency_updated"):
+		ClientMain.latency_updated.connect(_on_latency_updated)
 
 
 func update_game_state(state: Dictionary):
@@ -124,7 +128,7 @@ func update_game_state(state: Dictionary):
 			# s2: (bomb_type<<16) | (active_virus<<8) | flags
 			# flags = packed booleans (bit 0=kicker, 1=glove, 2=line_bomb, 3=carrying, 4=picking)
 			
-			var stats_packed = pmin.get("s", [0x1200, 0])  # Default: max_bombs=1, range=2
+			var stats_packed = pmin.get("s", [0x1200, 0]) # Default: max_bombs=1, range=2
 			var s1 = stats_packed[0] if stats_packed.size() > 0 else 0x1200
 			var s2 = stats_packed[1] if stats_packed.size() > 1 else 0
 			
@@ -144,21 +148,21 @@ func update_game_state(state: Dictionary):
 			elif f == "D": facing = "DOWN"
 			elif f == "L": facing = "LEFT"
 			elif f == "R": facing = "RIGHT"
-			else: facing = f  # fallback to original if already full name
+			else: facing = f # fallback to original if already full name
 			
 			var player_data = {
 				"position": {"x": pmin.p[0], "y": pmin.p[1]},
 				"velocity": {"x": pmin.v[0] if pmin.has("v") else 0, "y": pmin.v[1] if pmin.has("v") else 0},
 				"facing": facing,
-				"is_dead": pmin.get("d", false),  # absent means alive
-				"carried_bomb_id": pmin.get("c", null),  # Optional - only present when carrying
-				"is_panicking": pmin.get("k", false),  # k = panicking (in danger)
+				"is_dead": pmin.get("d", false), # absent means alive
+				"carried_bomb_id": pmin.get("c", null), # Optional - only present when carrying
+				"is_panicking": pmin.get("k", false), # k = panicking (in danger)
 				# Player stats from packed integers
 				"max_bombs": max_bombs,
 				"bomb_range": bomb_range,
 				"bombs_placed": bombs_placed,
 				"skate_count": skate_count,
-				"speed_multiplier": 1.0 + (skate_count * 0.125),  # Calculate from skate_count
+				"speed_multiplier": 1.0 + (skate_count * 0.125), # Calculate from skate_count
 				# Abilities from packed flags
 				"has_bomb_kicker": (flags & 1) != 0,
 				"has_power_glove": (flags & 2) != 0,
@@ -183,9 +187,9 @@ func update_game_state(state: Dictionary):
 			# Keys: p=position, t=timer, s=state, k=kick_direction (optional), z=z_height (optional)
 			# Note: bomb_id is the dictionary key, not repeated inside
 			var bomb_state = {
-				"bomb_id": bomb_id,  # Use the key as bomb_id
+				"bomb_id": bomb_id, # Use the key as bomb_id
 				"position": {"x": bmin.p[0], "y": bmin.p[1]},
-				"timer": bmin.t / 100.0,  # Convert centiseconds back to seconds
+				"timer": bmin.t / 100.0, # Convert centiseconds back to seconds
 				"state": bmin.s,
 			}
 			if bmin.has("k"):
@@ -227,7 +231,7 @@ func update_game_state(state: Dictionary):
 				"center": {"x": exp_arr[0], "y": exp_arr[1]},
 				"pattern": unpacked_pattern,
 				"bomb_id": exp_arr[3],
-				"start_time": float(exp_arr[4]) / 100.0  # Convert from centiseconds
+				"start_time": float(exp_arr[4]) / 100.0 # Convert from centiseconds
 			})
 	
 	if state.has("pu") and not state.has("powerups"):
@@ -241,7 +245,7 @@ func update_game_state(state: Dictionary):
 				var tile_size = GameConfig.TILE_SIZE
 				state.powerups[pu_id] = {
 					"powerup_id": pu_id,
-					"position": {"x": pu[0] * tile_size + tile_size/2, "y": pu[1] * tile_size + tile_size/2},
+					"position": {"x": pu[0] * tile_size + tile_size / 2, "y": pu[1] * tile_size + tile_size / 2},
 					"type": pu[2]
 				}
 	
@@ -262,7 +266,7 @@ func update_game_state(state: Dictionary):
 			if hb is Array and hb.size() >= 2:
 				expanded_blocks.append({"x": hb[0], "y": hb[1]})
 			else:
-				expanded_blocks.append(hb)  # Fallback for dict format
+				expanded_blocks.append(hb) # Fallback for dict format
 		state["hurry_blocks"] = expanded_blocks
 	# === END COMPACT FORMAT CONVERSION ===
 	
@@ -289,7 +293,7 @@ func update_game_state(state: Dictionary):
 					row.append(0)
 			local_map.append(row)
 		render_map(local_map)
-		update_blocks(local_map)  # Populate soft blocks from server map data
+		update_blocks(local_map) # Populate soft blocks from server map data
 		map_rendered = true
 		
 		print("[GameView] Map rendered from packed data, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
@@ -305,7 +309,7 @@ func update_game_state(state: Dictionary):
 	if not map_rendered and state.has("map"):
 		local_map = state.map.duplicate(true) # Deep copy
 		render_map(state.map)
-		update_blocks(local_map)  # Populate soft blocks from server map data
+		update_blocks(local_map) # Populate soft blocks from server map data
 		map_rendered = true
 		
 		print("[GameView] Map rendered, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
@@ -497,6 +501,10 @@ func update_game_state(state: Dictionary):
 	# Update explosions
 	if state.has("explosions"):
 		update_explosions(state.explosions)
+
+func _on_latency_updated(latency_ms: int):
+	if hud and hud.has_method("update_latency"):
+		hud.update_latency(latency_ms)
 
 func update_ai_debug(debug_data: Dictionary) -> void:
 	# Extract target cell from AI debug payload and forward to visualizer
@@ -1316,7 +1324,7 @@ func render_map(map_data):
 	# Map may be larger than viewport - center it
 	var viewport_size = get_viewport().get_visible_rect().size
 	if viewport_size.x <= 0 or viewport_size.y <= 0:
-		viewport_size = Vector2(320, 224)  # Fallback to expected size
+		viewport_size = Vector2(320, 224) # Fallback to expected size
 	
 	var map_pixel_width = map_width * GameConfig.TILE_SIZE
 	var map_pixel_height = map_height * GameConfig.TILE_SIZE
@@ -1469,8 +1477,8 @@ func _shake_camera_on_impact():
 		return
 	
 	var original_offset = camera.offset
-	var shake_intensity = 1.0 * GameConfig.scale_factor  # Subtle shake
-	var shake_duration = 0.15  # Quick shake
+	var shake_intensity = 1.0 * GameConfig.scale_factor # Subtle shake
+	var shake_duration = 0.15 # Quick shake
 	
 	var tween = create_tween()
 	# Rapid oscillation
@@ -1503,7 +1511,7 @@ func _update_virus_visual_effects(player_node: Node2D, data: Dictionary) -> void
 		
 		# Animate skull bobbing
 		var time = Time.get_ticks_msec() / 1000.0
-		skull_icon.position.y = -GameConfig.TILE_SIZE * 1.2 + sin(time * 6.0) * 3.0
+		skull_icon.position.y = - GameConfig.TILE_SIZE * 1.2 + sin(time * 6.0) * 3.0
 		skull_icon.visible = true
 	elif skull_icon:
 		skull_icon.visible = false
@@ -1514,11 +1522,11 @@ func _update_virus_visual_effects(player_node: Node2D, data: Dictionary) -> void
 		if has_virus:
 			# Flash black at 5Hz (Saturn Bomberman style)
 			var time_ms = Time.get_ticks_msec()
-			var flash_cycle = int(time_ms / 100) % 2  # Toggle every 100ms (5Hz)
+			var flash_cycle = int(time_ms / 100) % 2 # Toggle every 100ms (5Hz)
 			if flash_cycle == 0:
-				animated_sprite.modulate = Color(0.1, 0.1, 0.1)  # Nearly black
+				animated_sprite.modulate = Color(0.1, 0.1, 0.1) # Nearly black
 			else:
-				animated_sprite.modulate = Color.WHITE  # Normal
+				animated_sprite.modulate = Color.WHITE # Normal
 		else:
 			# Ensure modulate is reset when virus clears
 			if animated_sprite.modulate != Color.WHITE:
@@ -1527,13 +1535,13 @@ func _update_virus_visual_effects(player_node: Node2D, data: Dictionary) -> void
 func _create_skull_icon() -> Node2D:
 	"""Create a floating skull icon for infected players"""
 	var skull_container = Node2D.new()
-	skull_container.z_index = 200  # Above player
+	skull_container.z_index = 200 # Above player
 	
 	# Create skull using simple shapes (or load texture if available)
 	var skull = Label.new()
-	skull.text = "☠"  # Unicode skull emoji
+	skull.text = "☠" # Unicode skull emoji
 	skull.add_theme_font_size_override("font_size", int(GameConfig.TILE_SIZE * 0.5))
-	skull.add_theme_color_override("font_color", Color(0.8, 0.1, 0.8))  # Purple
+	skull.add_theme_color_override("font_color", Color(0.8, 0.1, 0.8)) # Purple
 	skull.add_theme_color_override("font_outline_color", Color.BLACK)
 	skull.add_theme_constant_override("outline_size", 2)
 	skull.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

@@ -6,7 +6,7 @@ extends Node
 const Constants = preload("res://shared/constants.gd")
 
 var peer: ENetMultiplayerPeer
-var server_address = "127.0.0.1"  # localhost for testing
+var server_address = "127.0.0.1" # localhost for testing
 var connected = false
 var authenticated = false
 var username = ""
@@ -16,6 +16,11 @@ signal connection_succeeded
 signal connection_failed
 signal authentication_succeeded
 signal authentication_failed(error: String)
+signal latency_updated(latency_ms: int)
+
+var _ping_timer: Timer = null
+var _last_ping_timestamp: int = 0
+var current_latency_ms: int = 0
 
 func _ready():
 	# Don't initialize client if running headless (server mode)
@@ -31,6 +36,14 @@ func _ready():
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	print("[Client] RPC config:", get_script().get_rpc_config())
+	
+	# Setup ping timer
+	_ping_timer = Timer.new()
+	_ping_timer.name = "PingTimer"
+	_ping_timer.wait_time = 1.0 # Ping every second
+	_ping_timer.one_shot = false
+	_ping_timer.timeout.connect(_send_ping)
+	add_child(_ping_timer)
 
 func connect_to_server(address: String = "127.0.0.1"):
 	# Safety check: Never connect as client if we are the headless server
@@ -57,6 +70,10 @@ func _on_connected_to_server():
 	print("[Client] Multiplayer unique ID: ", multiplayer.get_unique_id())
 	connected = true
 	connection_succeeded.emit()
+	
+	# Start pinging
+	if _ping_timer:
+		_ping_timer.start()
 
 func _on_connection_failed():
 	print("[Client] Connection failed!")
@@ -67,6 +84,8 @@ func _on_server_disconnected():
 	print("[Client] Disconnected from server")
 	connected = false
 	authenticated = false
+	if _ping_timer:
+		_ping_timer.stop()
 
 # === Authentication ===
 
@@ -106,6 +125,10 @@ func send_player_input(_input_data: Dictionary):
 
 @rpc("any_peer", "call_remote", "reliable")
 func set_debug_timescale(_timescale: float):
+	pass # Stub - actual implementation on server
+
+@rpc("any_peer", "call_remote", "unreliable")
+func ping(_timestamp: int):
 	pass # Stub - actual implementation on server
 
 # Client receives these from server authority
@@ -186,6 +209,24 @@ func bomb_safety_update(safety_data: Dictionary):
 		game_view.bomb_safety_update(safety_data)
 	else:
 		print("[ClientMain] GameView not ready yet")
+
+@rpc("authority", "call_remote", "unreliable")
+func pong(timestamp: int):
+	var now = Time.get_ticks_msec()
+	var rtt = now - timestamp
+	# Latency is half of RTT
+	current_latency_ms = int(rtt / 2.0)
+	latency_updated.emit(current_latency_ms)
+	# print("[Client] Latency: %d ms" % current_latency_ms)
+
+func _send_ping():
+	if not connected:
+		return
+	
+	var now = Time.get_ticks_msec()
+	_last_ping_timestamp = now
+	# Call ping on server (ID 1)
+	get_node("/root/ServerMain").rpc_id(1, "ping", now)
 
 # === AI Bot Commands ===
 

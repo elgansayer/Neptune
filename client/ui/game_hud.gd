@@ -13,10 +13,10 @@ class_name GameHUD
 @onready var speed_label: Label = $BottomLeft/SpeedIndicator/SpeedLabel
 
 # Player face tracking - uses placeholder slots from scene
-var player_face_slots: Array = []  # Array of placeholder slot nodes (Player1-4)
-var player_face_mapping := {}  # peer_id -> slot_index
-var player_face_sprites := {}  # peer_id -> AnimatedSprite2D
-var player_scene: PackedScene = null  # Cached player scene for extracting sprite frames
+var player_face_slots: Array = [] # Array of placeholder slot nodes (Player1-4)
+var player_face_mapping := {} # peer_id -> slot_index
+var player_face_sprites := {} # peer_id -> AnimatedSprite2D
+var player_scene: PackedScene = null # Cached player scene for extracting sprite frames
 
 var countdown_label: Label = null
 var countdown_bg: ColorRect = null
@@ -38,6 +38,10 @@ var virus_label: Label = null
 var current_virus_type := 0
 var virus_flash_tween: Tween = null
 
+# Lag indicator UI elements
+var latency_label: Label = null
+var latency_icon: ColorRect = null
+
 func _ready():
 	# Ensure HUD is always on top
 	layer = 100
@@ -45,7 +49,7 @@ func _ready():
 	# Create semi-transparent background for countdown
 	countdown_bg = ColorRect.new()
 	countdown_bg.name = "CountdownBackground"
-	countdown_bg.color = Color(0.0, 0.0, 0.0, 0.0)  # Start transparent
+	countdown_bg.color = Color(0.0, 0.0, 0.0, 0.0) # Start transparent
 	countdown_bg.anchor_left = 0.0
 	countdown_bg.anchor_top = 0.0
 	countdown_bg.anchor_right = 1.0
@@ -80,7 +84,7 @@ func _ready():
 	spectator_overlay.anchor_top = 0.0
 	spectator_overlay.anchor_right = 1.0
 	spectator_overlay.anchor_bottom = 0.0
-	spectator_overlay.offset_top = 16  # Below TopBar
+	spectator_overlay.offset_top = 16 # Below TopBar
 	spectator_overlay.offset_bottom = 32
 	spectator_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	spectator_overlay.visible = false
@@ -96,7 +100,7 @@ func _ready():
 	spectator_label.anchor_right = 1.0
 	spectator_label.anchor_bottom = 1.0
 	spectator_label.add_theme_font_size_override("font_size", 8)
-	spectator_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2))  # Gold color
+	spectator_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.2)) # Gold color
 	spectator_label.text = "ELIMINATED - SPECTATING"
 	spectator_overlay.add_child(spectator_label)
 	
@@ -123,7 +127,7 @@ func _ready():
 	hurry_label.anchor_right = 1.0
 	hurry_label.anchor_bottom = 1.0
 	hurry_label.add_theme_font_size_override("font_size", 12)
-	hurry_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0))  # Yellow
+	hurry_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0)) # Yellow
 	hurry_label.text = "HURRY UP!"
 	hurry_overlay.add_child(hurry_label)
 	
@@ -131,10 +135,10 @@ func _ready():
 	# Use absolute positioning for 320x224 viewport
 	virus_overlay = ColorRect.new()
 	virus_overlay.name = "VirusOverlay"
-	virus_overlay.color = Color(0.6, 0.0, 0.6, 0.95)  # Bright purple
+	virus_overlay.color = Color(0.6, 0.0, 0.6, 0.95) # Bright purple
 	# Position in center top (viewport is 320x224)
-	virus_overlay.position = Vector2(60, 2)  # Centered horizontally, at top
-	virus_overlay.size = Vector2(200, 20)  # Compact banner for low res
+	virus_overlay.position = Vector2(60, 2) # Centered horizontally, at top
+	virus_overlay.size = Vector2(200, 20) # Compact banner for low res
 	virus_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	virus_overlay.visible = false
 	add_child(virus_overlay)
@@ -145,9 +149,9 @@ func _ready():
 	virus_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	virus_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	virus_label.position = Vector2(0, 0)
-	virus_label.size = Vector2(200, 20)  # Fill parent
+	virus_label.size = Vector2(200, 20) # Fill parent
 	virus_label.add_theme_font_size_override("font_size", 10)
-	virus_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0))  # Yellow
+	virus_label.add_theme_color_override("font_color", Color(1.0, 1.0, 0.0)) # Yellow
 	virus_label.add_theme_color_override("font_outline_color", Color.BLACK)
 	virus_label.add_theme_constant_override("outline_size", 1)
 	virus_label.text = "☠ INFECTED ☠"
@@ -166,6 +170,32 @@ func _ready():
 		$TopBar/PlayerFaces/Player4,
 	]
 
+	
+	# Create Lag Indicator (Top Right)
+	var latency_container = HBoxContainer.new()
+	latency_container.name = "LatencyContainer"
+	latency_container.anchor_left = 1.0
+	latency_container.anchor_top = 0.0
+	latency_container.anchor_right = 1.0
+	latency_container.anchor_bottom = 0.0
+	latency_container.offset_left = -60
+	latency_container.offset_top = 4
+	latency_container.offset_right = -4
+	latency_container.offset_bottom = 20
+	latency_container.alignment = BoxContainer.ALIGNMENT_END
+	add_child(latency_container)
+	
+	latency_icon = ColorRect.new()
+	latency_icon.custom_minimum_size = Vector2(8, 8)
+	latency_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	latency_icon.color = Color.GREEN
+	latency_container.add_child(latency_icon)
+	
+	latency_label = Label.new()
+	latency_label.text = "0ms"
+	latency_label.add_theme_font_size_override("font_size", 10)
+	latency_label.add_theme_color_override("font_color", Color.WHITE)
+	latency_container.add_child(latency_label)
 # ============================================================================
 # PLAYER FACE MANAGEMENT
 # ============================================================================
@@ -173,7 +203,7 @@ func _ready():
 func add_player_face(peer_id: String, _username: String, score: int = 0):
 	"""Add a player face to the HUD top bar using placeholder slots"""
 	if player_face_mapping.has(peer_id):
-		return  # Already assigned a slot
+		return # Already assigned a slot
 	
 	# Find first available slot
 	var slot_index := -1
@@ -198,11 +228,11 @@ func add_player_face(peer_id: String, _username: String, score: int = 0):
 		if anim_sprite:
 			# Reparent the AnimatedSprite2D to our viewport
 			anim_sprite.get_parent().remove_child(anim_sprite)
-			anim_sprite.owner = null  # Clear owner to avoid warning
+			anim_sprite.owner = null # Clear owner to avoid warning
 			sprite_instance.queue_free()
 			# Position sprite centered in viewport
 			anim_sprite.centered = true
-			anim_sprite.position = Vector2(9, 9)  # Center of 18x18 viewport
+			anim_sprite.position = Vector2(9, 9) # Center of 18x18 viewport
 			anim_sprite.play("hud_idle")
 			viewport.add_child(anim_sprite)
 		else:
@@ -291,7 +321,7 @@ func _update_face_spacing():
 		if slot.visible:
 			visible_count += 1
 			# Each slot is FaceViewport (18px) + Score label (~8px) + internal spacing (1px)
-			total_slot_width += 27.0  # Approximate width per slot
+			total_slot_width += 27.0 # Approximate width per slot
 	
 	if visible_count <= 1:
 		# With 0-1 players, use default spacing
@@ -302,7 +332,7 @@ func _update_face_spacing():
 	# PlayerFaces container is ~246px wide (296 - 50)
 	var container_width := player_faces_container.size.x
 	if container_width <= 0:
-		container_width = 246.0  # Fallback based on scene offsets
+		container_width = 246.0 # Fallback based on scene offsets
 	
 	# Space to distribute = container width - total slot widths
 	# Gaps = visible_count - 1 (between items)
@@ -323,13 +353,13 @@ func show_countdown(time_remaining: float):
 	
 	# Trigger "GO!" when countdown is nearly done (below 0.3s) but hasn't shown GO yet
 	if time_remaining <= 0.3 and last_countdown_value != -999:
-		last_countdown_value = -999  # Special value to mark "GO!" as shown
+		last_countdown_value = -999 # Special value to mark "GO!" as shown
 		
 		# Show "GO!" with green color and bigger animation
 		countdown_label.visible = true
 		countdown_label.text = "GO!"
 		countdown_label.scale = Vector2(0.3, 0.3)
-		countdown_label.modulate = Color(0.2, 1.0, 0.2, 0.0)  # Start transparent green
+		countdown_label.modulate = Color(0.2, 1.0, 0.2, 0.0) # Start transparent green
 		
 		# Explosive animation
 		var tween = create_tween()
@@ -361,7 +391,7 @@ func show_countdown(time_remaining: float):
 		countdown_label.visible = true
 		countdown_label.text = str(int(seconds))
 		countdown_label.scale = Vector2(0.5, 0.5)
-		countdown_label.modulate = Color(1.0, 1.0, 0.2, 0.0)  # Start transparent yellow
+		countdown_label.modulate = Color(1.0, 1.0, 0.2, 0.0) # Start transparent yellow
 		
 		# Animate: scale up and fade in
 		var tween = create_tween()
@@ -375,7 +405,7 @@ func show_countdown(time_remaining: float):
 func show_hurry_mode():
 	"""Display HURRY UP warning when hurry mode is triggered"""
 	if hurry_mode_shown:
-		return  # Already shown
+		return # Already shown
 	hurry_mode_shown = true
 	
 	if not hurry_overlay:
@@ -400,7 +430,7 @@ func show_hurry_mode():
 	
 	# Update timer display text
 	match_timer.text = "HURRY!"
-	match_timer.add_theme_color_override("font_color", Color(1.0, 0.0, 0.0))  # Red
+	match_timer.add_theme_color_override("font_color", Color(1.0, 0.0, 0.0)) # Red
 	
 	print("[HUD] HURRY UP mode activated!")
 
@@ -412,7 +442,7 @@ func _start_hurry_flash():
 		hurry_flash_tween.kill()
 	
 	hurry_flash_tween = create_tween()
-	hurry_flash_tween.set_loops()  # Loop forever
+	hurry_flash_tween.set_loops() # Loop forever
 	hurry_flash_tween.tween_property(hurry_overlay, "color", Color(1.0, 0.0, 0.0, 0.9), 0.3)
 	hurry_flash_tween.tween_property(hurry_overlay, "color", Color(0.8, 0.0, 0.0, 0.6), 0.3)
 
@@ -435,11 +465,11 @@ func update_timer(time_remaining: float):
 	
 	# Warning color when time is running out
 	if time_remaining <= 30:
-		match_timer.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3))  # Red
+		match_timer.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3)) # Red
 	elif time_remaining <= 60:
-		match_timer.add_theme_color_override("font_color", Color(1.0, 0.8, 0.0))  # Yellow
+		match_timer.add_theme_color_override("font_color", Color(1.0, 0.8, 0.0)) # Yellow
 	else:
-		match_timer.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))  # White
+		match_timer.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0)) # White
 
 func update_players_alive(_alive: int, _total: int):
 	"""Update alive player count - now handled by player faces"""
@@ -460,7 +490,7 @@ func set_player_name(player_name_text: String):
 func show_spectator_mode():
 	"""Show spectator mode overlay when local player is eliminated"""
 	if is_spectating:
-		return  # Already spectating
+		return # Already spectating
 	
 	is_spectating = true
 	
@@ -489,16 +519,16 @@ func hide_spectator_mode():
 
 # Virus type names matching server VirusType enum
 const VIRUS_NAMES = {
-	0: "",  # NONE
-	1: "SPEEDSTER",      # 2x speed
-	2: "SLOWPOKE",       # 0.5x speed
-	3: "DIARRHOEA",      # Auto-drops bombs
-	4: "CONSTIPATION",   # Can't place bombs
-	5: "SMALL_FLAME",    # Range = 1
-	6: "UNSTOPPABLE",    # Can't stop moving
-	7: "REVERSE",        # Inverted controls
-	8: "HASTY_FUSE",     # 1 second fuse
-	9: "LEISURELY_FUSE"  # 5-6 second fuse
+	0: "", # NONE
+	1: "SPEEDSTER", # 2x speed
+	2: "SLOWPOKE", # 0.5x speed
+	3: "DIARRHOEA", # Auto-drops bombs
+	4: "CONSTIPATION", # Can't place bombs
+	5: "SMALL_FLAME", # Range = 1
+	6: "UNSTOPPABLE", # Can't stop moving
+	7: "REVERSE", # Inverted controls
+	8: "HASTY_FUSE", # 1 second fuse
+	9: "LEISURELY_FUSE" # 5-6 second fuse
 }
 
 func update_virus_status(virus_type: int, time_remaining: float) -> void:
@@ -538,7 +568,7 @@ func _start_virus_flash() -> void:
 	_stop_virus_flash()
 	
 	virus_flash_tween = create_tween()
-	virus_flash_tween.set_loops()  # Loop forever
+	virus_flash_tween.set_loops() # Loop forever
 	virus_flash_tween.tween_property(virus_overlay, "color", Color(0.7, 0.0, 0.7, 0.95), 0.2)
 	virus_flash_tween.tween_property(virus_overlay, "color", Color(0.3, 0.0, 0.3, 0.8), 0.2)
 
@@ -598,7 +628,7 @@ func show_game_over(winner_name: String):
 	game_over_label.offset_right = 80
 	game_over_label.offset_bottom = 15
 	game_over_label.add_theme_font_size_override("font_size", 18)
-	game_over_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.0))  # Gold
+	game_over_label.add_theme_color_override("font_color", Color(1.0, 0.8, 0.0)) # Gold
 	game_over_label.text = "GAME OVER"
 	add_child(game_over_label)
 	
@@ -619,10 +649,10 @@ func show_game_over(winner_name: String):
 	
 	if winner_name:
 		winner_label.text = "🏆 Winner: %s 🏆" % winner_name
-		winner_label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2))  # Green
+		winner_label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2)) # Green
 	else:
 		winner_label.text = "💀 DRAW - No Survivors! 💀"
-		winner_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3))  # Red
+		winner_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3)) # Red
 	
 	add_child(winner_label)
 	
@@ -640,3 +670,23 @@ func show_game_over(winner_name: String):
 	
 	# Update top bar timer text
 	match_timer.text = "END"
+
+func update_latency(latency_ms: int):
+	"""Update latency indicator color and text"""
+	if not latency_label or not latency_icon:
+		return
+		
+	latency_label.text = "%dms" % latency_ms
+	
+	if latency_ms < 100:
+		# Good - Green
+		latency_icon.color = Color.GREEN
+		latency_label.add_theme_color_override("font_color", Color.WHITE)
+	elif latency_ms < 250:
+		# Warning - Yellow
+		latency_icon.color = Color.YELLOW
+		latency_label.add_theme_color_override("font_color", Color.YELLOW)
+	else:
+		# Bad - Red
+		latency_icon.color = Color.RED
+		latency_label.add_theme_color_override("font_color", Color.RED)

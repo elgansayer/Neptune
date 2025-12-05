@@ -195,6 +195,13 @@ func test_farming_spot_broadcast():
 	else:
 		print("[Server] TEST: GameInstance missing test method")
 
+@rpc("any_peer", "call_remote", "unreliable")
+func ping(timestamp: int):
+	var peer_id = multiplayer.get_remote_sender_id()
+	# Respond immediately with pong, echoing the timestamp
+	# Use unreliable for ping/pong as we don't want retransmissions affecting latency measurement
+	get_node("/root/ClientMain").rpc_id(peer_id, "pong", timestamp)
+
 # Quick-start game system (no lobby for now)
 func quick_start_game(peer_id: int, username: String):
 	# For now, all players join the SAME shared game
