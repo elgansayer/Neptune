@@ -1,0 +1,8 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://cfpqvl55ml2yr"]
+
+[ext_resource type="Texture2D" uid="uid://dl6nn8qhxyr7b" path="res://blue-tirra.png" id="1_ukfgp"]
+
+[resource]
+atlas = ExtResource("1_ukfgp")
+region = Rect2(105, 358, 21, 20)
+margin = Rect2(0, 4, 3, 4)
