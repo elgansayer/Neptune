@@ -596,8 +596,12 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 	var action_pressed = input_data.get("action_pressed", false)
 	var action_released = input_data.get("action_released", false)
 
+	# TIRRA MOUNT TAKES PRIORITY: Action button triggers Tirra ability when mounted
+	if player.is_mounted and action_pressed:
+		player.trigger_tirra_action()
+		# Note: Don't return here - still allow bomb placement on separate button
 	# Branch logic based on whether player has Power Glove
-	if player.has_power_glove:
+	elif player.has_power_glove:
 		# Power Glove Logic: Place -> Pickup -> Throw, all on press
 		if action_pressed:
 			player.request_action_press()
