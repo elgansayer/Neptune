@@ -169,10 +169,13 @@ func update_game_state(state: Dictionary):
 				"has_line_bomb": (flags & 4) != 0,
 				"is_carrying_bomb": (flags & 8) != 0,
 				"is_picking_up_bomb": (flags & 16) != 0,
+				"is_mounted": (flags & 32) != 0,  # Bit 5 = mounted on Tirra
 				# Bomb type and virus
 				"bomb_type": bomb_type,
 				"active_virus": active_virus,
 				"virus_end_time": pmin.get("ve", 0.0),
+				# Tirra mount data
+				"tirra_growth_level": pmin.get("tl", 0),  # 0=BABY, 1=TEEN, 2=ADULT
 			}
 			# Optional pickup animation direction
 			if pmin.has("pad"):
@@ -821,6 +824,7 @@ func update_player(peer_id: String, data: Dictionary):
 		var anim_name = ""
 		var velocity = Vector2(data.velocity.x, data.velocity.y)
 		var is_moving = velocity.length() >= 10.0
+		var is_mounted = data.get("is_mounted", false)
 		
 		# Priority 0: Match ended - Winner/Loser animations (highest priority after death)
 		if match_ended:
@@ -854,12 +858,20 @@ func update_player(peer_id: String, data: Dictionary):
 				anim_name = direction_prefix + "_carry"
 			else:
 				anim_name = direction_prefix + "_hold"
-		# Priority 5: Walking
+		# Priority 5: Mounted on Tirra - player shows ride animation
+		elif is_mounted:
+			anim_name = direction_prefix + "_ride"
+			# Update Tirra visual if it exists
+			_update_tirra_visual(player_node, data, direction_prefix, is_moving)
+		# Priority 6: Walking
 		elif is_moving:
 			anim_name = direction_prefix + "_walk"
-		# Priority 6: Stopped (directional idle)
+		# Priority 7: Stopped (directional idle)
 		else:
 			anim_name = direction_prefix + "_stopped"
+		
+		# Handle Tirra visual (create/remove as needed)
+		_manage_tirra_visual(player_node, is_mounted, data)
 		
 		# Play animation if it changed (with safety check)
 		# Also restart non-looping state animations if they've finished
@@ -915,6 +927,134 @@ func update_player(peer_id: String, data: Dictionary):
 	# Commented out: camera should show entire arena at all times
 	# if peer_id == my_player_id:
 	# 	camera.position = player_node.position
+
+
+## Tirra Visual Management Functions
+## These manage the visual representation of Tirra mounts on the client side
+
+func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionary) -> void:
+	"""Create or remove Tirra visual based on mounted state."""
+	var tirra_visual = player_node.get_node_or_null("TirraVisual")
+	var player_sprite = player_node.get_node_or_null("AnimatedSprite2D")
+	
+	if is_mounted:
+		if not tirra_visual:
+			# Create Tirra visual - use AnimatedSprite2D
+			tirra_visual = AnimatedSprite2D.new()
+			tirra_visual.name = "TirraVisual"
+			tirra_visual.z_index = -1  # Render below player
+			
+			# Try to load Tirra sprite frames from PCK
+			var tirra_frames = _get_tirra_sprite_frames(data.get("tirra_growth_level", 0))
+			if tirra_frames:
+				tirra_visual.sprite_frames = tirra_frames
+			
+			player_node.add_child(tirra_visual)
+	else:
+		# Remove Tirra visual when dismounted
+		if tirra_visual:
+			tirra_visual.queue_free()
+		
+		# Reset player sprite position when not mounted
+		if player_sprite:
+			player_sprite.position = Vector2.ZERO
+
+
+func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_direction: String, is_moving: bool) -> void:
+	"""Update Tirra animation and apply rider offset."""
+	var tirra_visual = player_node.get_node_or_null("TirraVisual") as AnimatedSprite2D
+	if not tirra_visual:
+		return
+	
+	# Convert player direction to Tirra direction format
+	# Player uses: north, south, east, west
+	# Tirra uses: up, down, left, right
+	var tirra_direction = _player_dir_to_tirra_dir(player_direction)
+	
+	# Determine Tirra animation
+	var tirra_anim = ""
+	if is_moving:
+		tirra_anim = tirra_direction + "_walk"
+	else:
+		tirra_anim = tirra_direction + "_stopped"
+	
+	# Play animation if valid
+	if tirra_visual.sprite_frames and tirra_visual.sprite_frames.has_animation(tirra_anim):
+		if tirra_visual.animation != tirra_anim:
+			tirra_visual.play(tirra_anim)
+	
+	# Apply rider offset - player is lifted onto Tirra's back
+	var growth_level = data.get("tirra_growth_level", 0)
+	var rider_offset = _get_tirra_rider_offset(growth_level)
+	
+	# The player sprite needs to be offset upward when mounted
+	var player_sprite = player_node.get_node_or_null("AnimatedSprite2D")
+	if player_sprite:
+		player_sprite.position = rider_offset
+
+
+func _player_dir_to_tirra_dir(player_dir: String) -> String:
+	"""Convert player direction names to Tirra direction names."""
+	match player_dir:
+		"north":
+			return "up"
+		"south":
+			return "down"
+		"east":
+			return "right"
+		"west":
+			return "left"
+		_:
+			return "down"
+
+
+func _get_tirra_rider_offset(growth_level: int) -> Vector2:
+	"""Get the rider offset for a Tirra based on growth level."""
+	# Player sits on top of Tirra - offset upward
+	match growth_level:
+		0:  # BABY
+			return Vector2(0, -8)
+		1:  # TEEN
+			return Vector2(0, -12)
+		2:  # ADULT
+			return Vector2(0, -16)
+		_:
+			return Vector2(0, -12)
+
+
+func _get_tirra_sprite_frames(growth_level: int) -> SpriteFrames:
+	"""Load Tirra sprite frames from PCK based on growth level."""
+	# Tirra PCK structure: res://tirra_animations.tres or similar
+	# Try several common paths where Tirra resources might be
+	var possible_paths = [
+		"res://tirra_animations.tres",
+		"res://tirra/animations.tres",
+		"res://tirra_sprite_frames.tres",
+		"res://characters/tirra_animations.tres"
+	]
+	
+	for path in possible_paths:
+		if ResourceLoader.exists(path):
+			var frames = ResourceLoader.load(path) as SpriteFrames
+			if frames:
+				return frames
+	
+	# Fallback: Try to create basic sprite frames from texture
+	var texture_paths = [
+		"res://tirra_sheet.png",
+		"res://tirra/tirra.png",
+		"res://characters/tirra.png"
+	]
+	
+	for path in texture_paths:
+		if ResourceLoader.exists(path):
+			# Found texture, but we'd need proper SpriteFrames setup
+			# For now return null and handle gracefully
+			push_warning("Found Tirra texture at %s but no SpriteFrames. Need proper animation setup." % path)
+			break
+	
+	return null
+
 
 func update_bomb(bomb_id: String, data: Dictionary):
 	var bomb_node

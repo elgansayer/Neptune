@@ -3,10 +3,19 @@ extends Node
 
 func _ready():
 	# Mount the player PCK file
-	var pck_path = "res://characters/player-robin-hood.pck"
-	var success = ProjectSettings.load_resource_pack(pck_path)
+	var player_pck = "res://characters/player-robin-hood.pck"
+	var player_success = ProjectSettings.load_resource_pack(player_pck)
 	
-	if success:
-		print("[PCKLoader] Successfully mounted: ", pck_path)
+	if player_success:
+		print("[PCKLoader] Successfully mounted: ", player_pck)
 	else:
-		push_error("[PCKLoader] Failed to mount PCK: ", pck_path)
+		push_error("[PCKLoader] Failed to mount PCK: ", player_pck)
+	
+	# Mount the Tirra (mount creature) PCK file
+	var tirra_pck = "res://characters/blue-tirra.pck"
+	var tirra_success = ProjectSettings.load_resource_pack(tirra_pck)
+	
+	if tirra_success:
+		print("[PCKLoader] Successfully mounted: ", tirra_pck)
+	else:
+		push_warning("[PCKLoader] Tirra PCK not found (optional): ", tirra_pck)

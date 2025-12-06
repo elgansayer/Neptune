@@ -1342,6 +1342,17 @@ func get_bomb_at_tile(tile_pos: Vector2i):
 			return bomb
 	return null
 
+func is_tile_hard_blocked(tile_pos: Vector2i) -> bool:
+	"""Check if a tile is blocked by a hard wall (indestructible).
+	Used by Tirra High Kick to determine valid landing spots."""
+	var tile_type = get_tile_type(tile_pos)
+	return tile_type == 1  # 1 = hard wall
+
+func is_tile_walkable(tile_pos: Vector2i) -> bool:
+	"""Check if a tile is walkable (empty space)."""
+	var tile_type = get_tile_type(tile_pos)
+	return tile_type == 0  # 0 = empty/walkable
+
 func stop_nearby_kicked_bombs(player: ServerPlayer):
 	"""Stop any kicked bombs near the player"""
 	var player_tile = player.get_tile_position()

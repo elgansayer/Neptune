@@ -412,6 +412,114 @@ func throw_bomb(direction: Vector2) -> bool:
 
 # ============ END POWER GLOVE SYSTEM ============
 
+# ============ TIRRA HIGH KICK / BOMB LAUNCH SYSTEM ============
+
+func launch_bomb(direction: Vector2, distance_tiles: int) -> bool:
+	"""Launch a bomb over obstacles to land at a target tile.
+	
+	Used by Tirra High Kick ability. Unlike regular kick, the bomb flies
+	OVER all obstacles (soft blocks, hard blocks, walls, players) and
+	lands at the target tile. 
+	
+	Args:
+		direction: Direction to launch (will be cardinalized)
+		distance_tiles: Maximum distance in tiles (2/4/6 based on Tirra level)
+	
+	Returns:
+		true if launch successful, false otherwise
+	"""
+	print("[Bomb] launch_bomb() called - direction: ", direction, " distance: ", distance_tiles, " state: ", bomb_state)
+	
+	# Can only launch PLANTED bombs (not carried, kicked, or thrown)
+	if bomb_state != BombState.PLANTED or has_exploded:
+		print("[Bomb] Cannot launch - wrong state or exploded")
+		return false
+	
+	# Cardinalize direction
+	var dir_normalized := direction.normalized()
+	var dir_i := Vector2i(0, 0)
+	if abs(dir_normalized.x) > abs(dir_normalized.y):
+		dir_i.x = int(sign(dir_normalized.x))
+	else:
+		dir_i.y = int(sign(dir_normalized.y))
+	if dir_i == Vector2i.ZERO:
+		dir_i = Vector2i(0, 1)  # Default down
+	
+	# Get current tile
+	var start_tile := get_tile_position()
+	
+	# Find the landing tile - check from max distance backwards
+	var landing_tile := start_tile
+	var found_landing := false
+	
+	for dist in range(distance_tiles, 0, -1):
+		var check_tile := start_tile + dir_i * dist
+		var wrapped_tile := _wrap_tile_position(check_tile)
+		
+		# Check if tile is a valid landing spot (not a hard wall)
+		if not _check_tile_is_hard_wall(wrapped_tile):
+			landing_tile = wrapped_tile
+			found_landing = true
+			break
+	
+	if not found_landing:
+		print("[Bomb] No valid landing tile found - cannot launch")
+		return false
+	
+	# Calculate landing position (tile center)
+	var landing_pos := Vector2(
+		landing_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		landing_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
+	
+	# Set up throw state - reuse THROWN state and physics
+	bomb_state = BombState.THROWN
+	throw_start_pos = position
+	throw_direction = Vector2(dir_i.x, dir_i.y).normalized()
+	throw_progress = 0.0
+	throw_distance_remaining = position.distance_to(landing_pos)
+	
+	# Single waypoint for direct arc (no bouncing for Tirra kick)
+	bounce_waypoints = [landing_pos] as Array[Vector2]
+	throw_target_pos = landing_pos
+	
+	# Initialize arc
+	current_waypoint_index = 0
+	current_arc_start = position
+	current_arc_target = landing_pos
+	current_z_height = 0.0
+	current_arc_height = THROW_HEIGHT * 1.5  # Higher arc for Tirra kick
+	
+	print("[Bomb] Launched! From ", start_tile, " to ", landing_tile, " (", distance_tiles, " tiles max)")
+	
+	# Emit signals for network sync
+	thrown.emit(self, throw_start_pos, throw_target_pos, throw_direction)
+	state_changed.emit(self, bomb_state)
+	
+	return true
+
+func _check_tile_is_hard_wall(tile: Vector2i) -> bool:
+	"""Check if a tile is a hard wall (indestructible).
+	Used for Tirra High Kick landing validation."""
+	var game_instance = _get_game_instance()
+	if game_instance and game_instance.has_method("is_tile_hard_blocked"):
+		return game_instance.is_tile_hard_blocked(tile)
+	
+	# Fallback: check via get_tile_type
+	if game_instance and game_instance.has_method("get_tile_type"):
+		return game_instance.get_tile_type(tile) == 1  # 1 = hard wall
+	
+	return false
+
+func _get_game_instance():
+	"""Get reference to game instance for tile queries."""
+	var parent = get_parent()
+	if parent and parent.has_method("get_tile_type"):
+		return parent
+	return null
+
+# ============ END TIRRA HIGH KICK SYSTEM ============
+
 # ============ BOMB KICK SYSTEM METHODS ============
 
 func kick(direction: Vector2) -> bool:

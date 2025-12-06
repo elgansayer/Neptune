@@ -77,6 +77,17 @@ var pickup_animation_direction := Vector2.DOWN # Direction player is facing duri
 
 const PICKUP_ANIMATION_DURATION = 0.3 # Duration of pickup animation in seconds (fast like SBomberman)
 
+# === TIRRA MOUNT SYSTEM (Saturn Bomberman) ===
+# Tirras are rideable creatures that protect the player from one hit
+var mounted_tirra: Node2D = null  # Reference to current Tirra mount
+var is_mounted: bool = false      # True when riding a Tirra
+var tirra_growth_level: int = 0   # Current Tirra growth: 0=BABY, 1=TEEN, 2=ADULT
+var tirra_action_cooldown: float = 0.0  # Cooldown timer for Tirra actions
+
+signal tirra_mounted(tirra_node)
+signal tirra_dismounted()
+signal tirra_action_triggered(action_name, action_type)
+
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
@@ -337,6 +348,9 @@ func _physics_process(_delta):
 		if pickup_animation_time >= PICKUP_ANIMATION_DURATION:
 			is_picking_up_bomb = false
 			pickup_animation_time = 0.0
+	
+	# Update Tirra action cooldown
+	update_tirra_action_cooldown(_delta)
 
 	# Get the input direction (strict 4-way)
 	# Apply virus effects to input direction
@@ -872,6 +886,265 @@ func get_carried_bomb_offset() -> Vector2:
 
 # ============ END POWER GLOVE SYSTEM ============
 
+# ============ TIRRA MOUNT SYSTEM ============
+
+func mount_tirra(tirra: Node2D) -> bool:
+	"""Mount a Tirra. Called when player walks over a spawned Tirra.
+	Returns true if successfully mounted."""
+	if is_mounted:
+		print("[ServerPlayer] ", username, " already mounted, cannot mount another Tirra")
+		return false
+	
+	if is_dead:
+		return false
+	
+	if not is_instance_valid(tirra):
+		return false
+	
+	print("[ServerPlayer] ", username, " mounting Tirra!")
+	
+	# Store reference
+	mounted_tirra = tirra
+	is_mounted = true
+	
+	# Get growth level from controller if available
+	if tirra.has_method("get") and tirra.get("current_level") != null:
+		tirra_growth_level = tirra.current_level
+	else:
+		tirra_growth_level = 0  # Default to BABY
+	
+	# Reparent Tirra to player so it moves with us
+	var tirra_parent = tirra.get_parent()
+	if tirra_parent:
+		tirra_parent.remove_child(tirra)
+	add_child(tirra)
+	tirra.position = Vector2.ZERO  # Center on player
+	
+	# Remove pickup area since we're now mounted
+	var pickup_area = tirra.get_node_or_null("PickupArea")
+	if pickup_area:
+		pickup_area.queue_free()
+	
+	# Connect Tirra signals for action handling
+	if tirra.has_signal("action_started"):
+		tirra.action_started.connect(_on_tirra_action_started)
+	if tirra.has_signal("action_stopped"):
+		tirra.action_stopped.connect(_on_tirra_action_stopped)
+	if tirra.has_signal("action_info"):
+		tirra.action_info.connect(_on_tirra_action_info)
+	
+	tirra_mounted.emit(tirra)
+	return true
+
+func dismount_tirra(kill_tirra: bool = false) -> void:
+	"""Dismount from current Tirra.
+	If kill_tirra is true, the Tirra dies (explosion hit).
+	Otherwise, the Tirra is dropped back into the world."""
+	if not is_mounted or not mounted_tirra:
+		return
+	
+	print("[ServerPlayer] ", username, " dismounting Tirra (kill=", kill_tirra, ")")
+	
+	# Disconnect signals
+	if mounted_tirra.has_signal("action_started") and mounted_tirra.action_started.is_connected(_on_tirra_action_started):
+		mounted_tirra.action_started.disconnect(_on_tirra_action_started)
+	if mounted_tirra.has_signal("action_stopped") and mounted_tirra.action_stopped.is_connected(_on_tirra_action_stopped):
+		mounted_tirra.action_stopped.disconnect(_on_tirra_action_stopped)
+	if mounted_tirra.has_signal("action_info") and mounted_tirra.action_info.is_connected(_on_tirra_action_info):
+		mounted_tirra.action_info.disconnect(_on_tirra_action_info)
+	
+	if kill_tirra:
+		# Tirra dies - play death animation if possible
+		if mounted_tirra.has_method("run_action"):
+			mounted_tirra.run_action("killed")
+		# Queue for deletion after a short delay for animation
+		var tirra_ref = mounted_tirra
+		get_tree().create_timer(1.0).timeout.connect(func():
+			if is_instance_valid(tirra_ref):
+				tirra_ref.queue_free()
+		)
+	else:
+		# Drop Tirra back into the world as a pickup
+		var world_pos = global_position
+		remove_child(mounted_tirra)
+		var game_parent = get_parent()
+		if game_parent:
+			game_parent.add_child(mounted_tirra)
+			mounted_tirra.global_position = world_pos
+			# Re-add pickup area
+			_readd_tirra_pickup_area(mounted_tirra)
+	
+	mounted_tirra = null
+	is_mounted = false
+	tirra_growth_level = 0
+	tirra_dismounted.emit()
+
+func _readd_tirra_pickup_area(tirra: Node2D) -> void:
+	"""Re-add the pickup area to a dropped Tirra"""
+	if tirra.get_node_or_null("PickupArea"):
+		return  # Already has one
+	
+	var pickup_area = Area2D.new()
+	pickup_area.name = "PickupArea"
+	pickup_area.collision_layer = 0
+	pickup_area.collision_mask = 2  # Players
+	
+	var collision = CollisionShape2D.new()
+	var shape = RectangleShape2D.new()
+	shape.size = Vector2(GameConfig.TILE_SIZE * 0.8, GameConfig.TILE_SIZE * 0.8)
+	collision.shape = shape
+	pickup_area.add_child(collision)
+	
+	# Connect to self for remounting
+	pickup_area.body_entered.connect(_on_dropped_tirra_touched.bind(tirra))
+	
+	tirra.add_child(pickup_area)
+
+func _on_dropped_tirra_touched(body: Node, tirra: Node2D) -> void:
+	"""Handle player touching a dropped Tirra to remount"""
+	if body == self and not is_mounted:
+		mount_tirra(tirra)
+
+func get_tirra_rider_offset() -> Vector2:
+	"""Get the current rider offset from the Tirra controller."""
+	if not is_mounted or not mounted_tirra:
+		return Vector2.ZERO
+	
+	if mounted_tirra.has_method("get_dynamic_offset"):
+		return mounted_tirra.get_dynamic_offset()
+	elif mounted_tirra.has_method("get_rider_offset"):
+		return mounted_tirra.get_rider_offset()
+	
+	# Fallback offsets based on growth level
+	match tirra_growth_level:
+		0: return Vector2(0, -10)  # BABY
+		1: return Vector2(0, -20)  # TEEN
+		2: return Vector2(0, -30)  # ADULT
+	return Vector2(0, -10)
+
+func trigger_tirra_action() -> void:
+	"""Called when player presses action button while mounted.
+	Triggers the Tirra's special ability (e.g., kick)."""
+	if not is_mounted or not mounted_tirra:
+		return
+	
+	if tirra_action_cooldown > 0.0:
+		return  # On cooldown
+	
+	if mounted_tirra.has_method("run_action"):
+		var info = mounted_tirra.run_action("kick")  # Default action for blue Tirra
+		if info.get("started", false):
+			tirra_action_cooldown = 0.5  # 0.5 second cooldown
+			tirra_action_triggered.emit(info["action"], info.get("type", "physical"))
+			
+			# Handle the action effect immediately
+			_handle_tirra_action(info["action"], info.get("type", "physical"))
+
+func _handle_tirra_action(action_name: String, action_type: String) -> void:
+	"""Execute the effect of a Tirra action"""
+	match action_type:
+		"physical":
+			if action_name == "kick":
+				# Kick any bomb in front of us
+				_tirra_kick_bomb()
+		"speed":
+			# Dash forward
+			pass
+		"defensive":
+			# Jump (would need more complex implementation)
+			pass
+
+func _tirra_kick_bomb() -> void:
+	"""Blue Tirra High Kick: Launch a bomb over obstacles.
+	
+	Based on Saturn Bomberman Blue Tirra ability:
+	- Level 1 (BABY):  2 tiles launch distance
+	- Level 2 (TEEN):  4 tiles launch distance  
+	- Level 3 (ADULT): 6 tiles launch distance
+	
+	The bomb flies OVER all obstacles (soft blocks, hard blocks, walls,
+	enemies, players) and lands at the target tile. Fuse resets on landing.
+	"""
+	# Tirra kick works even without bomb kicker powerup!
+	
+	# Determine kick distance based on growth level
+	var kick_distance: int = 2  # Default Level 1 (BABY)
+	match tirra_growth_level:
+		0:  # BABY - Level 1
+			kick_distance = 2
+		1:  # TEEN - Level 2
+			kick_distance = 4
+		2:  # ADULT - Level 3
+			kick_distance = 6
+	
+	# Use the kick detector to find bombs at our feet or nearby
+	if kick_detector:
+		kick_detector.target_position = last_move_direction.normalized() * (GameConfig.TILE_SIZE / 2.0)
+		kick_detector.force_shapecast_update()
+		
+		if kick_detector.is_colliding():
+			var collider = kick_detector.get_collider(0)
+			if collider and collider.get_script() == ServerBombScript:
+				print("[Tirra] High Kick bomb: ", collider.name, " distance=", kick_distance, " tiles")
+				_launch_bomb_high_kick(collider, last_move_direction, kick_distance)
+				return
+	
+	# Also check for bomb at our current tile
+	var our_tile = get_tile_position()
+	var game_instance = get_parent()
+	if game_instance and game_instance.has_method("get_bomb_at_tile"):
+		var bomb = game_instance.get_bomb_at_tile(our_tile)
+		if bomb:
+			print("[Tirra] High Kick bomb at feet: ", bomb.name, " distance=", kick_distance, " tiles")
+			_launch_bomb_high_kick(bomb, last_move_direction, kick_distance)
+
+func _launch_bomb_high_kick(bomb: Node, direction: Vector2, distance_tiles: int) -> void:
+	"""Launch a bomb using Tirra High Kick ability.
+	
+	Uses the bomb's launch_bomb() method which handles:
+	- Flying OVER all obstacles (soft blocks, hard blocks, walls, players)
+	- Landing at target tile with arc animation
+	- Proper network sync via thrown signal
+	
+	This is the same physics as Power Glove throw, but for planted bombs.
+	"""
+	if not is_instance_valid(bomb):
+		return
+	
+	# Use the bomb's launch_bomb method (shared with throw system)
+	if bomb.has_method("launch_bomb"):
+		if bomb.launch_bomb(direction, distance_tiles):
+			print("[Tirra] Successfully launched bomb via High Kick!")
+		else:
+			# Fallback to regular kick if launch fails
+			print("[Tirra] Launch failed, falling back to regular kick")
+			if bomb.has_method("kick"):
+				bomb.kick(direction)
+	elif bomb.has_method("kick"):
+		# Fallback for bombs without launch_bomb method
+		print("[Tirra] No launch_bomb method, using regular kick")
+		bomb.kick(direction)
+
+func _on_tirra_action_started(action_name: String, action_type: String) -> void:
+	"""Handle Tirra action start signal"""
+	print("[ServerPlayer] Tirra action started: ", action_name, " type: ", action_type)
+
+func _on_tirra_action_stopped(action_name: String, action_type: String) -> void:
+	"""Handle Tirra action stop signal"""
+	print("[ServerPlayer] Tirra action stopped: ", action_name, " type: ", action_type)
+
+func _on_tirra_action_info(info: Dictionary) -> void:
+	"""Handle Tirra frame info updates (for dynamic rider offset)"""
+	# Could update visual offset here if needed
+	pass
+
+func update_tirra_action_cooldown(delta: float) -> void:
+	"""Update Tirra action cooldown timer"""
+	if tirra_action_cooldown > 0.0:
+		tirra_action_cooldown -= delta
+
+# ============ END TIRRA MOUNT SYSTEM ============
+
 func add_bomb_collision_exception(bomb):
 	if bomb in collision_exceptions:
 		return
@@ -895,11 +1168,22 @@ func _apply_bomb_collision_exception(bomb):
 	add_collision_exception_with(bomb)
 
 func die():
+	"""Handle player death. If mounted on a Tirra, the Tirra dies instead."""
+	# TIRRA PROTECTION: If mounted, Tirra takes the hit instead!
+	if is_mounted and mounted_tirra:
+		print("[ServerPlayer] ", username, " hit by explosion but Tirra saved them!")
+		dismount_tirra(true)  # Kill the Tirra
+		# Grant brief invincibility (optional - could add invincibility frames)
+		return  # Player survives!
+	
 	is_dead = true
 	is_spectator = true # Player becomes a spectator upon death
 	place_bomb_requested = false
 	input_direction = Vector2.ZERO
 	velocity = Vector2.ZERO
+	# Dismount if somehow still mounted (shouldn't happen)
+	if is_mounted:
+		dismount_tirra(true)
 	# TODO: Play death animation
 	# Note: No respawn in Last Man Standing mode
 
@@ -1014,13 +1298,14 @@ func get_state_minimal() -> Dictionary:
 	# Optimized for packet size - uses short keys and packed formats
 	
 	# Pack boolean flags into single integer to save bytes
-	# Bit layout: [0]=kicker, [1]=glove, [2]=line_bomb, [3]=carrying, [4]=picking_up
+	# Bit layout: [0]=kicker, [1]=glove, [2]=line_bomb, [3]=carrying, [4]=picking_up, [5]=mounted
 	var flags = 0
 	if has_bomb_kicker: flags |= 1
 	if has_power_glove: flags |= 2
 	if has_line_bomb: flags |= 4
 	if is_carrying_bomb(): flags |= 8
 	if is_picking_up_bomb: flags |= 16
+	if is_mounted: flags |= 32  # Bit 5 = mounted on Tirra
 	
 	# Use single-char facing: U/D/L/R instead of UP/DOWN/LEFT/RIGHT
 	var facing_char = "D"  # default down
@@ -1060,6 +1345,9 @@ func get_state_minimal() -> Dictionary:
 		state["ve"] = int(virus_end_time)  # virus end time
 	if is_picking_up_bomb:
 		state["pad"] = [int(pickup_animation_direction.x), int(pickup_animation_direction.y)]
+	# Tirra mount data (only if mounted)
+	if is_mounted:
+		state["tl"] = tirra_growth_level  # Tirra level: 0=BABY, 1=TEEN, 2=ADULT
 	return state
 
 func get_state() -> Dictionary:
@@ -1086,6 +1374,9 @@ func get_state() -> Dictionary:
 		"virus_end_time": virus_end_time,
 		"is_carrying_bomb": is_carrying_bomb(),
 		"carried_bomb_id": carried_bomb.bomb_id if is_carrying_bomb() else "",
+		# Tirra mount state
+		"is_mounted": is_mounted,
+		"tirra_growth_level": tirra_growth_level,
 	}
 	# Only include optional data if non-default
 	if is_picking_up_bomb:
