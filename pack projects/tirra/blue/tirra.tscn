@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://cdqwdvomqy433"]
+[gd_scene load_steps=36 format=3 uid="uid://cdqwdvomqy433"]
 
 [ext_resource type="Texture2D" uid="uid://hpfxdqfou4qe" path="res://blue-tirra.sprites/baby/down/walk/walk-3.tres" id="1_0kv1x"]
 [ext_resource type="Texture2D" uid="uid://cm2dyojjiadtp" path="res://blue-tirra.sprites/baby/down/kick/1-kick-down-01.tres" id="1_abiuc"]
@@ -28,6 +28,19 @@
 [ext_resource type="Texture2D" uid="uid://dagksg4h7w88q" path="res://blue-tirra.sprites/baby/state/win/celobrate-01.tres" id="25_c2avf"]
 [ext_resource type="Texture2D" uid="uid://bbpe3i6xj72sw" path="res://blue-tirra.sprites/baby/state/win/celobrate-02.tres" id="26_oy67g"]
 [ext_resource type="Texture2D" uid="uid://b2k2pevn1clkj" path="res://blue-tirra.sprites/baby/state/win/celobrate-03.tres" id="27_1aaag"]
+[ext_resource type="Texture2D" uid="uid://k11q8ucccn53" path="res://blue-tirra.sprites/baby/effects/sparkle-0.tres" id="28_sparkle"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_sparkle"]
+emission_shape = 1
+emission_sphere_radius = 12.0
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = 30.0
+initial_velocity_max = 60.0
+gravity = Vector3(0, 20, 0)
+scale_min = 0.5
+scale_max = 1.5
+color = Color(1, 1, 0.8, 1)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_vnvit"]
 animations = [{
@@ -354,3 +367,13 @@ animation = &"win"
 [node name="adult" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_dwc5g")
 animation = &"right_kick"
+
+[node name="Particles" type="GPUParticles2D" parent="."]
+emitting = false
+amount = 12
+process_material = SubResource("ParticleProcessMaterial_sparkle")
+texture = ExtResource("28_sparkle")
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.9
+visibility_rect = Rect2(-32, -32, 64, 64)
