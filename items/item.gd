@@ -54,8 +54,12 @@ func picked_up(player):
 	play_sound()
 	call_deferred("award_player", player)
 	if has_node("AnimationPlayer"):
-		$AnimationPlayer.stop()
-		$AnimationPlayer.play("picked_up")
+		# Defer all animation operations to avoid physics callback issues
+		$AnimationPlayer.call_deferred("stop")
+		$AnimationPlayer.call_deferred("play", "picked_up")
+	# Also defer disabling the collision shape to prevent physics errors
+	if has_node("CollisionShape2D"):
+		$CollisionShape2D.set_deferred("disabled", true)
 
 
 func explode():

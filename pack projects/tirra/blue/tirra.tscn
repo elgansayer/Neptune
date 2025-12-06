@@ -343,7 +343,6 @@ animations = [{
 script = ExtResource("1_controller")
 
 [node name="baby" type="AnimatedSprite2D" parent="."]
-visible = false
 sprite_frames = SubResource("SpriteFrames_vnvit")
 animation = &"down_walk"
 

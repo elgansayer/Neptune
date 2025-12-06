@@ -20,6 +20,8 @@ const FallingHurryBlockScene = preload("res://client/effects/FallingHurryBlock.t
 var player_nodes = {} # peer_id -> Node2D
 var bomb_nodes = {} # bomb_id -> Node2D
 var powerup_nodes = {} # powerup_id -> Node2D
+var egg_nodes = {} # egg_id -> Node2D (Tirra eggs)
+var tirra_nodes = {} # tirra_id -> Node2D (hatched Tirra mounts)
 var explosion_nodes = {} # explosion_id -> ExplosionRenderer
 var block_nodes = {} # tile_key -> Node2D (for destructible blocks)
 var wall_nodes = {} # tile_key -> Node2D (for solid walls)
@@ -250,6 +252,31 @@ func update_game_state(state: Dictionary):
 					"powerup_id": pu_id,
 					"position": {"x": pu[0] * tile_size + tile_size / 2, "y": pu[1] * tile_size + tile_size / 2},
 					"type": pu[2]
+				}
+	
+	# Expand compact egg format to usable format
+	# Server sends: eg_id -> [tile_x, tile_y]
+	if state.has("eg") and not state.has("eggs"):
+		state["eggs"] = {}
+		if state.eg is Dictionary:
+			for eg_id in state.eg:
+				var eg = state.eg[eg_id]
+				var tile_size = GameConfig.TILE_SIZE
+				state.eggs[eg_id] = {
+					"egg_id": eg_id,
+					"position": {"x": eg[0] * tile_size + tile_size / 2, "y": eg[1] * tile_size + tile_size / 2}
+				}
+	
+	# Expand compact tirra format to usable format
+	# Server sends: tr_id -> [pixel_x, pixel_y]
+	if state.has("tr") and not state.has("tirras"):
+		state["tirras"] = {}
+		if state.tr is Dictionary:
+			for tr_id in state.tr:
+				var tr = state.tr[tr_id]
+				state.tirras[tr_id] = {
+					"tirra_id": tr_id,
+					"position": {"x": tr[0], "y": tr[1]}
 				}
 	
 	if state.has("t") and not state.has("match_timer"):
@@ -500,6 +527,29 @@ func update_game_state(state: Dictionary):
 				powerup_nodes[powerup_id].queue_free()
 				powerup_nodes.erase(powerup_id)
 
+	# Update eggs (Tirra eggs)
+	if state.has("eggs"):
+		for egg_id in state.eggs:
+			var egg_data = state.eggs[egg_id]
+			update_egg(egg_id, egg_data)
+		
+		# Remove eggs no longer in state
+		for egg_id in egg_nodes.keys():
+			if not state.eggs.has(egg_id):
+				egg_nodes[egg_id].queue_free()
+				egg_nodes.erase(egg_id)
+
+	# Update tirras (hatched mounts waiting to be picked up)
+	if state.has("tirras"):
+		for tirra_id in state.tirras:
+			var tirra_data = state.tirras[tirra_id]
+			update_tirra(tirra_id, tirra_data)
+		
+		# Remove tirras no longer in state
+		for tirra_id in tirra_nodes.keys():
+			if not state.tirras.has(tirra_id):
+				tirra_nodes[tirra_id].queue_free()
+				tirra_nodes.erase(tirra_id)
 
 	# Update explosions
 	if state.has("explosions"):
@@ -939,17 +989,36 @@ func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionar
 	
 	if is_mounted:
 		if not tirra_visual:
-			# Create Tirra visual - use AnimatedSprite2D
-			tirra_visual = AnimatedSprite2D.new()
-			tirra_visual.name = "TirraVisual"
-			tirra_visual.z_index = -1  # Render below player
-			
-			# Try to load Tirra sprite frames from PCK
-			var tirra_frames = _get_tirra_sprite_frames(data.get("tirra_growth_level", 0))
-			if tirra_frames:
-				tirra_visual.sprite_frames = tirra_frames
-			
-			player_node.add_child(tirra_visual)
+			# Load the actual Tirra scene from PCK
+			var tirra_scene = load("res://tirra.tscn")
+			if tirra_scene:
+				tirra_visual = tirra_scene.instantiate()
+				tirra_visual.name = "TirraVisual"
+				tirra_visual.z_index = -1  # Render below player
+				tirra_visual.position = Vector2.ZERO  # Center on player
+				
+				# Set growth level if the Tirra controller supports it
+				var growth_level = data.get("tirra_growth_level", 0)
+				if tirra_visual.has_method("set_growth_level"):
+					tirra_visual.set_growth_level(growth_level)
+				elif "current_level" in tirra_visual:
+					tirra_visual.current_level = growth_level
+				
+				player_node.add_child(tirra_visual)
+				print("[GameView] Created Tirra visual for mounted player")
+			else:
+				# Fallback: Create a simple placeholder
+				tirra_visual = Sprite2D.new()
+				tirra_visual.name = "TirraVisual"
+				tirra_visual.z_index = -1
+				# Create a placeholder colored rect
+				var placeholder = ColorRect.new()
+				placeholder.color = Color(0.3, 0.6, 1.0, 0.8)  # Blue
+				placeholder.size = Vector2(14, 14)
+				placeholder.position = Vector2(-7, -7)
+				tirra_visual.add_child(placeholder)
+				player_node.add_child(tirra_visual)
+				push_warning("[GameView] Could not load tirra.tscn, using placeholder")
 	else:
 		# Remove Tirra visual when dismounted
 		if tirra_visual:
@@ -962,13 +1031,11 @@ func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionar
 
 func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_direction: String, is_moving: bool) -> void:
 	"""Update Tirra animation and apply rider offset."""
-	var tirra_visual = player_node.get_node_or_null("TirraVisual") as AnimatedSprite2D
+	var tirra_visual = player_node.get_node_or_null("TirraVisual")
 	if not tirra_visual:
 		return
 	
 	# Convert player direction to Tirra direction format
-	# Player uses: north, south, east, west
-	# Tirra uses: up, down, left, right
 	var tirra_direction = _player_dir_to_tirra_dir(player_direction)
 	
 	# Determine Tirra animation
@@ -978,13 +1045,28 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 	else:
 		tirra_anim = tirra_direction + "_stopped"
 	
-	# Play animation if valid
-	if tirra_visual.sprite_frames and tirra_visual.sprite_frames.has_animation(tirra_anim):
-		if tirra_visual.animation != tirra_anim:
-			tirra_visual.play(tirra_anim)
+	# The Tirra scene has a controller script that manages child sprites (baby/teen/adult)
+	# We need to find the active sprite and play the animation on it
+	var growth_level = data.get("tirra_growth_level", 0)
+	var sprite_name = "baby"
+	match growth_level:
+		0: sprite_name = "baby"
+		1: sprite_name = "teen"
+		2: sprite_name = "adult"
+	
+	var tirra_sprite = tirra_visual.get_node_or_null(sprite_name) as AnimatedSprite2D
+	if tirra_sprite:
+		# Make sure this sprite is visible and others are hidden
+		for child in tirra_visual.get_children():
+			if child is AnimatedSprite2D:
+				child.visible = (child.name == sprite_name)
+		
+		# Play animation if valid
+		if tirra_sprite.sprite_frames and tirra_sprite.sprite_frames.has_animation(tirra_anim):
+			if tirra_sprite.animation != tirra_anim:
+				tirra_sprite.play(tirra_anim)
 	
 	# Apply rider offset - player is lifted onto Tirra's back
-	var growth_level = data.get("tirra_growth_level", 0)
 	var rider_offset = _get_tirra_rider_offset(growth_level)
 	
 	# The player sprite needs to be offset upward when mounted
@@ -1539,6 +1621,74 @@ func update_powerup(powerup_id: String, data: Dictionary):
 		powerup_node = powerup_nodes[powerup_id]
 		# Update position (shouldn't change, but just in case)
 		powerup_node.position = Vector2(data.position.x, data.position.y)
+
+func update_egg(egg_id: String, data: Dictionary):
+	"""Update or create a Tirra egg visual on the client side"""
+	var egg_node
+	
+	if not egg_nodes.has(egg_id):
+		# Try to load egg scene
+		var egg_scene = load("res://items/egg.tscn")
+		if not egg_scene:
+			# Fallback: create a simple placeholder sprite
+			egg_node = Sprite2D.new()
+			egg_node.texture = load("res://res/icons/egg.png") if FileAccess.file_exists("res://res/icons/egg.png") else null
+			if egg_node.texture == null:
+				# Create a simple colored rectangle as last resort
+				var placeholder = ColorRect.new()
+				placeholder.color = Color(1.0, 0.9, 0.7)  # Cream color for egg
+				placeholder.size = Vector2(12, 16)
+				placeholder.position = Vector2(-6, -8)  # Center it
+				egg_node = Node2D.new()
+				egg_node.add_child(placeholder)
+		else:
+			egg_node = egg_scene.instantiate()
+			# Disable server-side functionality (physics, pickup detection)
+			# The egg is just a visual on the client - the server handles pickup
+			var pickup_area = egg_node.get_node_or_null("PickupArea")
+			if pickup_area:
+				pickup_area.set_deferred("monitoring", false)
+		
+		egg_node.name = "Egg_" + egg_id
+		egg_node.position = Vector2(data.position.x, data.position.y)
+		add_child(egg_node)
+		egg_nodes[egg_id] = egg_node
+	else:
+		egg_node = egg_nodes[egg_id]
+		# Update position (shouldn't change, but just in case)
+		egg_node.position = Vector2(data.position.x, data.position.y)
+
+func update_tirra(tirra_id: String, data: Dictionary):
+	"""Update or create a Tirra mount visual on the client side"""
+	var tirra_node
+	
+	if not tirra_nodes.has(tirra_id):
+		# Try to load Tirra scene from PCK
+		var tirra_scene = load("res://tirra.tscn")
+		if not tirra_scene:
+			# Fallback: create a simple placeholder sprite
+			var placeholder = ColorRect.new()
+			placeholder.color = Color(0.3, 0.6, 1.0)  # Blue color for Tirra
+			placeholder.size = Vector2(14, 14)
+			placeholder.position = Vector2(-7, -7)  # Center it
+			tirra_node = Node2D.new()
+			tirra_node.add_child(placeholder)
+		else:
+			tirra_node = tirra_scene.instantiate()
+			# Disable server-side functionality (physics, pickup detection)
+			# The tirra is just a visual on the client - the server handles pickup
+			var pickup_area = tirra_node.get_node_or_null("PickupArea")
+			if pickup_area:
+				pickup_area.set_deferred("monitoring", false)
+		
+		tirra_node.name = "Tirra_" + tirra_id
+		tirra_node.position = Vector2(data.position.x, data.position.y)
+		add_child(tirra_node)
+		tirra_nodes[tirra_id] = tirra_node
+	else:
+		tirra_node = tirra_nodes[tirra_id]
+		# Update position (tirra might move or bounce)
+		tirra_node.position = Vector2(data.position.x, data.position.y)
 
 func _update_hurry_blocks(hurry_blocks_data: Array):
 	"""Update hurry mode blocks on the client side"""

@@ -211,7 +211,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array( 0, 0.2, 0.4, 0.5, 0.6, 0.7 ),
 "transitions": PackedFloat32Array( 1, 1, 1, 1, 1, 1 ),
 "update": 0,
-"values": [ Vector2( 2, 2 ), Vector2( 3, 1.5 ), Vector2( 1, 2.5 ), Vector2( 3, 1.5 ), Vector2( 1.7, 2 ), Vector2( 2, 2 ) ]
+"values": [ Vector2( 0.67, 0.67 ), Vector2( 1.0, 0.5 ), Vector2( 0.33, 0.83 ), Vector2( 1.0, 0.5 ), Vector2( 0.57, 0.67 ), Vector2( 0.67, 0.67 ) ]
 }
 tracks/1/type = "value"
 tracks/1/path = NodePath("AnimatedSprite2D:position")
@@ -308,7 +308,7 @@ pickup_sound = "pickup_egg"
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 visible = false
 position = Vector2( 0, -6 )
-scale = Vector2( 2, 2 )
+scale = Vector2( 0.67, 0.67 )
 frames = SubResource( 1 )
 animation = "explode"
 
@@ -327,8 +327,8 @@ anims/spawn = SubResource( 3 )
 anims/spin = SubResource( 7 )
 
 [node name="ExplodeSmoke" type="AnimatedSprite2D" parent="."]
-position = Vector2( 0, -20 )
-scale = Vector2( 2, 2 )
+position = Vector2( 0, -10 )
+scale = Vector2( 0.67, 0.67 )
 frames = SubResource( 5 )
 
 [node name="Timer" type="Timer" parent="."]

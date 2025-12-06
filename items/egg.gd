@@ -42,6 +42,11 @@ func award_player(player):
 	if parent:
 		parent.add_child(tirra)
 		print("[Egg] Tirra spawned at position: ", tirra.global_position)
+		
+		# Register with game_instance for network sync
+		var game_instance = parent
+		if game_instance.has_method("register_tirra"):
+			game_instance.register_tirra(tirra)
 	else:
 		push_warning("[Egg] No parent to add Tirra to")
 		tirra.queue_free()
@@ -65,19 +70,31 @@ func _add_tirra_pickup_area(tirra: Node2D) -> void:
 	collision.shape = shape
 	pickup_area.add_child(collision)
 	
-	# Connect signal for player detection
-	pickup_area.body_entered.connect(_on_tirra_pickup.bind(tirra))
+	# Store tirra reference in pickup_area metadata so we can access it in the callback
+	pickup_area.set_meta("tirra_ref", tirra)
+	
+	# Connect signal using a lambda that captures the tirra reference
+	# This avoids relying on the egg script which gets destroyed
+	pickup_area.body_entered.connect(func(body: Node):
+		_handle_tirra_pickup(body, tirra)
+	)
 	
 	tirra.add_child(pickup_area)
 	
 	# Enable monitoring after adding to scene tree (deferred to avoid physics issues)
 	pickup_area.set_deferred("monitoring", true)
 
-func _on_tirra_pickup(body: Node, tirra: Node2D) -> void:
-	"""Called when a player walks over the Tirra"""
+func _handle_tirra_pickup(body: Node, tirra: Node2D) -> void:
+	"""Static-like handler for Tirra pickup - called when player walks over Tirra"""
+	# Validate tirra still exists
+	if not is_instance_valid(tirra):
+		return
+	
 	# Check if it's a player
 	if not body.is_in_group("players") and not body.name.begins_with("Player"):
 		return
+	
+	print("[Egg] Player ", body.name, " walking over Tirra at ", tirra.position)
 	
 	# Check if player can mount (has the method and isn't already mounted)
 	if body.has_method("mount_tirra"):

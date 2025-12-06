@@ -26,7 +26,11 @@ var players := {} # peer_id -> ServerPlayer
 # var ai_bot_counter := 1000  # Start AI bot IDs from 1000
 var bombs := {} # bomb_id -> ServerBomb
 var powerups := {} # powerup_id -> ServerPowerUp
+var eggs := {} # egg_id -> egg node (Tirra eggs)
+var tirras := {} # tirra_id -> Tirra node (spawned Tirra mounts)
 var next_powerup_id := 0
+var next_egg_id := 0
+var next_tirra_id := 0
 var explosions := [] # Array of {cells: Array, time: float} for visual effects
 var active_explosion_tiles := {} # tile_key -> expiration_time_msec - tracks tiles currently on fire
 var game_map := [] # 2D array representing the map
@@ -1034,8 +1038,8 @@ func destroy_block(cell: Vector2i):
 	# Server-side random powerup spawn (synced to clients via state updates)
 	# Uses configurable drop rate from Constants
 	# IMPORTANT: Defer to next frame so the powerup doesn't get destroyed by the same explosion
-	if randf() < Constants.POWERUP_DROP_CHANCE:
-		call_deferred("spawn_powerup", cell)
+	# TESTING: 100% drop rate for Tirra testing
+	call_deferred("spawn_powerup", cell)
 
 func get_tile_type(grid_pos: Vector2i) -> int:
 	"""Get tile type at grid position (0=empty, 1=wall, 2=destructible)"""
@@ -1130,6 +1134,32 @@ func sync_state_to_clients():
 			pu_data[pu_id] = [pu.get_tile_position().x, pu.get_tile_position().y, pu.powerup_type]
 		state["pu"] = pu_data
 	
+	# Eggs (Tirra eggs) - compact format: [x, y] as array
+	if eggs.size() > 0:
+		var egg_data := {}
+		for egg_id in eggs:
+			var egg = eggs[egg_id]
+			if is_instance_valid(egg):
+				# Use tile coords for compact sync
+				var tile_pos = Vector2i(
+					int(egg.position.x / GameConfig.TILE_SIZE),
+					int(egg.position.y / GameConfig.TILE_SIZE)
+				)
+				egg_data[egg_id] = [tile_pos.x, tile_pos.y]
+		if egg_data.size() > 0:
+			state["eg"] = egg_data
+	
+	# Tirras (hatched mounts waiting to be picked up) - compact format: [x, y] as array
+	if tirras.size() > 0:
+		var tirra_data := {}
+		for tirra_id in tirras:
+			var tirra = tirras[tirra_id]
+			if is_instance_valid(tirra):
+				# Use pixel coords for precise positioning
+				tirra_data[tirra_id] = [int(tirra.position.x), int(tirra.position.y)]
+		if tirra_data.size() > 0:
+			state["tr"] = tirra_data
+	
 	# Compact explosion data - essential for rendering
 	# Explosions only need to be sent once when created - client animates locally
 	# Send new explosions via reliable channel to avoid packet bloat
@@ -1221,7 +1251,7 @@ func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position (server-side, synced to clients)"""
 	# TESTING: 90% chance to spawn a Tirra egg instead of regular powerup
 	# TODO: Remove or reduce this after Tirra testing is complete
-	var egg_spawn_chance := 0.9  # 90% egg spawn rate for testing
+	var egg_spawn_chance := 1.0  # 100% egg spawn rate for Tirra testing
 	if randf() < egg_spawn_chance:
 		spawn_egg(tile_pos)
 		return
@@ -1307,15 +1337,24 @@ func spawn_egg(tile_pos: Vector2i):
 		push_warning("[Game] Failed to load egg.tscn")
 		return
 	
+	var egg_id = str(next_egg_id)
+	next_egg_id += 1
+	
 	var egg = egg_scene.instantiate()
 	egg.position = Vector2(
 		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
 		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
 	)
-	egg.name = "Egg_" + str(randi())
+	egg.name = "Egg_" + egg_id
+	
+	# Track egg for network sync
+	eggs[egg_id] = egg
+	
+	# Connect to tree_exiting to clean up when egg is picked up/destroyed
+	egg.tree_exiting.connect(_on_egg_removed.bind(egg_id))
 	
 	add_child(egg)
-	print("[Game] Spawned Tirra egg at ", tile_pos)
+	print("[Game] Spawned Tirra egg at ", tile_pos, " (id: ", egg_id, ")")
 
 func spawn_test_powerups():
 	"""Spawn a power-up for every soft block for testing"""
@@ -1353,6 +1392,30 @@ func _on_powerup_destroyed(powerup: ServerPowerUp):
 	if powerups.has(powerup.powerup_id):
 		powerups.erase(powerup.powerup_id)
 		powerup.queue_free()
+
+func _on_egg_removed(egg_id: String):
+	"""Called when an egg is removed from the scene (picked up or destroyed)"""
+	if eggs.has(egg_id):
+		eggs.erase(egg_id)
+		print("[Game] Egg removed from tracking: ", egg_id)
+
+func register_tirra(tirra: Node2D) -> String:
+	"""Register a Tirra mount with the game for network sync. Returns the tirra_id."""
+	var tirra_id = str(next_tirra_id)
+	next_tirra_id += 1
+	tirras[tirra_id] = tirra
+	
+	# Connect to tree_exiting to clean up when Tirra is mounted/destroyed
+	tirra.tree_exiting.connect(_on_tirra_removed.bind(tirra_id))
+	
+	print("[Game] Registered Tirra (id: ", tirra_id, ") at position: ", tirra.position)
+	return tirra_id
+
+func _on_tirra_removed(tirra_id: String):
+	"""Called when a Tirra is removed from the scene (mounted or destroyed)"""
+	if tirras.has(tirra_id):
+		tirras.erase(tirra_id)
+		print("[Game] Tirra removed from tracking: ", tirra_id)
 
 func get_bomb_at_tile(tile_pos: Vector2i):
 	"""Get the bomb at a specific tile position, or null if none exists"""
