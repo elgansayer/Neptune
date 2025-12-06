@@ -4,5 +4,5 @@
 server/.godot/*
 !server/.godot/extension_list.cfg
 /android/
-
+SBomberman-main/
 *.log

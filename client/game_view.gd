@@ -994,7 +994,7 @@ func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionar
 			if tirra_scene:
 				tirra_visual = tirra_scene.instantiate()
 				tirra_visual.name = "TirraVisual"
-				tirra_visual.z_index = -1  # Render below player
+				tirra_visual.z_index = 0  # Render at same level (below player sprite which gets z_index 1)
 				tirra_visual.position = Vector2.ZERO  # Center on player
 				
 				# Set growth level if the Tirra controller supports it
@@ -1005,12 +1005,17 @@ func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionar
 					tirra_visual.current_level = growth_level
 				
 				player_node.add_child(tirra_visual)
-				print("[GameView] Created Tirra visual for mounted player")
+				
+				# Ensure player sprite renders above Tirra
+				if player_sprite:
+					player_sprite.z_index = 1
+				
+				print("[GameView] Created Tirra visual for mounted player, tirra z=0, player sprite z=1")
 			else:
 				# Fallback: Create a simple placeholder
 				tirra_visual = Sprite2D.new()
 				tirra_visual.name = "TirraVisual"
-				tirra_visual.z_index = -1
+				tirra_visual.z_index = 0
 				# Create a placeholder colored rect
 				var placeholder = ColorRect.new()
 				placeholder.color = Color(0.3, 0.6, 1.0, 0.8)  # Blue
@@ -1024,9 +1029,10 @@ func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionar
 		if tirra_visual:
 			tirra_visual.queue_free()
 		
-		# Reset player sprite position when not mounted
+		# Reset player sprite position and z_index when not mounted
 		if player_sprite:
 			player_sprite.position = Vector2.ZERO
+			player_sprite.z_index = 0
 
 
 func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_direction: String, is_moving: bool) -> void:
@@ -1061,10 +1067,15 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 			if child is AnimatedSprite2D:
 				child.visible = (child.name == sprite_name)
 		
+		# Ensure the sprite is visible
+		tirra_sprite.visible = true
+		
 		# Play animation if valid
 		if tirra_sprite.sprite_frames and tirra_sprite.sprite_frames.has_animation(tirra_anim):
 			if tirra_sprite.animation != tirra_anim:
 				tirra_sprite.play(tirra_anim)
+	else:
+		push_warning("[GameView] Tirra sprite not found: " + sprite_name)
 	
 	# Apply rider offset - player is lifted onto Tirra's back
 	var rider_offset = _get_tirra_rider_offset(growth_level)
@@ -1326,12 +1337,13 @@ func _physics_process(delta):
 			"ui_up":
 				input_y = -1.0
 	
-	var place_bomb = Input.is_action_just_pressed("ui_accept")
-	var action_released = Input.is_action_just_released("ui_accept")
+	var place_bomb = Input.is_action_just_pressed("place_bomb")
+	var action_pressed = Input.is_action_just_pressed("player_action")
+	var action_released = Input.is_action_just_released("player_action")
 	
-	# Note: For now, ui_accept serves dual purpose:
-	# - Normal: place bomb
-	# - With Power Glove: pickup on press, throw on release
+	# Separate controls:
+	# - Space (place_bomb): Place bombs, pickup/throw with Power Glove
+	# - Shift/E (player_action): Kick action (Tirra kick, etc.)
 	# The server will determine the appropriate action based on player state
 	
 	# SIMPLIFIED APPROACH: Just use server state with smooth interpolation
@@ -1347,7 +1359,7 @@ func _physics_process(delta):
 		"input_x": input_x,
 		"input_y": input_y,
 		"place_bomb": place_bomb,
-		"action_pressed": place_bomb,
+		"action_pressed": action_pressed,
 		"action_released": action_released
 	})
 
