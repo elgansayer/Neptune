@@ -300,7 +300,7 @@ animations = [ {
 
 [node name="Egg" type="Area2D"]
 collision_layer = 16
-collision_mask = 44
+collision_mask = 46
 script = ExtResource( 8 )
 item_type = "egg"
 pickup_sound = "pickup_egg"

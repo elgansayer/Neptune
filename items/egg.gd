@@ -56,6 +56,7 @@ func _add_tirra_pickup_area(tirra: Node2D) -> void:
 	pickup_area.name = "PickupArea"
 	pickup_area.collision_layer = 0  # Don't collide with anything
 	pickup_area.collision_mask = 2   # Detect players (layer 2)
+	pickup_area.monitoring = false   # Start disabled to avoid physics callback errors
 	
 	# Create collision shape matching tile size
 	var collision = CollisionShape2D.new()
@@ -68,6 +69,9 @@ func _add_tirra_pickup_area(tirra: Node2D) -> void:
 	pickup_area.body_entered.connect(_on_tirra_pickup.bind(tirra))
 	
 	tirra.add_child(pickup_area)
+	
+	# Enable monitoring after adding to scene tree (deferred to avoid physics issues)
+	pickup_area.set_deferred("monitoring", true)
 
 func _on_tirra_pickup(body: Node, tirra: Node2D) -> void:
 	"""Called when a player walks over the Tirra"""
@@ -77,8 +81,7 @@ func _on_tirra_pickup(body: Node, tirra: Node2D) -> void:
 	
 	# Check if player can mount (has the method and isn't already mounted)
 	if body.has_method("mount_tirra"):
-		var success = body.mount_tirra(tirra)
-		if success:
-			print("[Egg] Player mounted Tirra!")
+		# Defer the mount call to avoid physics callback issues
+		body.call_deferred("mount_tirra", tirra)
 	else:
 		push_warning("[Egg] Player doesn't have mount_tirra method - ServerPlayer needs updating")

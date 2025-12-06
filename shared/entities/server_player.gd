@@ -913,17 +913,18 @@ func mount_tirra(tirra: Node2D) -> bool:
 	else:
 		tirra_growth_level = 0  # Default to BABY
 	
-	# Reparent Tirra to player so it moves with us
+	# Reparent Tirra to player so it moves with us (use deferred to avoid physics callback issues)
 	var tirra_parent = tirra.get_parent()
 	if tirra_parent:
-		tirra_parent.remove_child(tirra)
-	add_child(tirra)
-	tirra.position = Vector2.ZERO  # Center on player
+		tirra_parent.call_deferred("remove_child", tirra)
+	call_deferred("add_child", tirra)
+	tirra.set_deferred("position", Vector2.ZERO)  # Center on player
 	
-	# Remove pickup area since we're now mounted
+	# Remove pickup area since we're now mounted (deferred to avoid physics issues)
 	var pickup_area = tirra.get_node_or_null("PickupArea")
 	if pickup_area:
-		pickup_area.queue_free()
+		pickup_area.set_deferred("monitoring", false)
+		pickup_area.call_deferred("queue_free")
 	
 	# Connect Tirra signals for action handling
 	if tirra.has_signal("action_started"):

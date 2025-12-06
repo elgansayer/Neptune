@@ -1219,6 +1219,13 @@ func sync_state_to_clients():
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", client_state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position (server-side, synced to clients)"""
+	# TESTING: 90% chance to spawn a Tirra egg instead of regular powerup
+	# TODO: Remove or reduce this after Tirra testing is complete
+	var egg_spawn_chance := 0.9  # 90% egg spawn rate for testing
+	if randf() < egg_spawn_chance:
+		spawn_egg(tile_pos)
+		return
+	
 	var powerup = ServerPowerUpScene.instantiate()
 	powerup.powerup_id = str(next_powerup_id)
 	next_powerup_id += 1
@@ -1292,10 +1299,23 @@ func spawn_powerup_of_type(tile_pos: Vector2i, type: int):
 	
 	powerups[powerup.powerup_id] = powerup
 	add_child(powerup)
+
+func spawn_egg(tile_pos: Vector2i):
+	"""Spawn a Tirra egg at the given tile position"""
+	var egg_scene = load("res://items/egg.tscn")
+	if not egg_scene:
+		push_warning("[Game] Failed to load egg.tscn")
+		return
 	
-	var type_names = ["BOMB", "FIRE", "SKATE", "KICK", "GLOVE", "VIRUS"]
-	var type_name = type_names[type] if type < type_names.size() else str(type)
-	print("[Game] Spawned %s power-up at %s" % [type_name, tile_pos])
+	var egg = egg_scene.instantiate()
+	egg.position = Vector2(
+		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+	)
+	egg.name = "Egg_" + str(randi())
+	
+	add_child(egg)
+	print("[Game] Spawned Tirra egg at ", tile_pos)
 
 func spawn_test_powerups():
 	"""Spawn a power-up for every soft block for testing"""
