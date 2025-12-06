@@ -4,4 +4,5 @@
 
 [resource]
 atlas = ExtResource("1_vfusx")
-region = Rect2(1, 341, 24, 32)
+region = Rect2(175, 94, 20, 27)
+margin = Rect2(1, 4, 4, 5)

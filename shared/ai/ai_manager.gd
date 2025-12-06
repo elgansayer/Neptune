@@ -69,7 +69,17 @@ func refresh_threat_matrix(current_time_msec: float) -> void:
 	if _game_instance == null:
 		return
 	
-	# Build threat data from all active bombs
+	# CRITICAL: Include active explosion tiles (tiles currently on fire!)
+	# These are IMMEDIATELY lethal - bot will die if it walks into them.
+	# Mark them with current_time_msec so bots see them as "already exploding"
+	if "active_explosion_tiles" in _game_instance:
+		for tile_key in _game_instance.active_explosion_tiles:
+			# Active explosions are treated as immediately lethal
+			# The value is the expiration time, but for AI purposes, 
+			# we just need to know it's currently dangerous
+			threat_matrix[tile_key] = current_time_msec
+	
+	# Build threat data from all active bombs (future explosions)
 	_build_threat_matrix_with_chains(current_time_msec)
 	
 	# Debug log every 60 frames

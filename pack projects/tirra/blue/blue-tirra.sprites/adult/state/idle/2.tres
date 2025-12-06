@@ -4,5 +4,5 @@
 
 [resource]
 atlas = ExtResource("1_tccbk")
-region = Rect2(1, 409, 24, 31)
+region = Rect2(393, 1, 24, 31)
 margin = Rect2(0, 1, 0, 1)

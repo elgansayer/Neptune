@@ -4,4 +4,5 @@
 
 [resource]
 atlas = ExtResource("1_qojex")
-region = Rect2(27, 171, 24, 32)
+region = Rect2(91, 33, 23, 32)
+margin = Rect2(0, 0, 1, 0)

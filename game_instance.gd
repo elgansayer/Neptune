@@ -28,6 +28,7 @@ var bombs := {} # bomb_id -> ServerBomb
 var powerups := {} # powerup_id -> ServerPowerUp
 var next_powerup_id := 0
 var explosions := [] # Array of {cells: Array, time: float} for visual effects
+var active_explosion_tiles := {} # tile_key -> expiration_time_msec - tracks tiles currently on fire
 var game_map := [] # 2D array representing the map
 var map_tiles := {} # Dictionary of tile_key -> StaticBody2D for collision
 var next_bomb_id := 0
@@ -262,6 +263,9 @@ func _physics_process(delta):
 	if ai_manager != null:
 		current_time_msec = Time.get_ticks_msec()
 		ai_manager.refresh_threat_matrix(current_time_msec)
+	
+	# Check if any player is walking into an active explosion tile
+	_check_explosion_damage()
 	
 	# Handle countdown before match starts
 	if not match_active and countdown_time > 0.0:
@@ -908,13 +912,21 @@ func _on_bomb_exploded(bomb, explosion_pattern: Array) -> void:
 
 func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 	"""Handle damage/destruction for tiles as explosion expands progressively"""
+	# Calculate when this explosion tile expires (in milliseconds)
+	# Explosion lasts for EXPLOSION_DURATION (1.0 seconds by default)
+	var expiration_time = Time.get_ticks_msec() + int(GameConfig.EXPLOSION_DURATION * 1000)
+	
 	for tile_pos in tiles:
+		# Track this tile as actively burning for continuous damage detection
+		var tile_key = "%d,%d" % [tile_pos.x, tile_pos.y]
+		active_explosion_tiles[tile_key] = expiration_time
+		
 		# Check for player hits
 		for peer_id in players:
 			var player = players[peer_id]
 			
-			# Skip dead players - they cannot be killed again
-			if player.is_dead:
+			# Skip invalid or dead players - they cannot be killed again
+			if not is_instance_valid(player) or player.is_dead:
 				continue
 			
 			var player_tile = player.get_tile_position()
@@ -947,6 +959,40 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 				print("[Game] Powerup destroyed by explosion at ", tile_pos)
 				powerup.destroy()
 				break
+
+
+func _check_explosion_damage():
+	"""Check if any player is standing on an actively burning tile.
+	
+	This enables players to die when WALKING INTO an explosion, not just
+	when the explosion first reaches their tile.
+	"""
+	var current_time = Time.get_ticks_msec()
+	
+	# First, clean up expired explosion tiles
+	var expired_tiles: Array[String] = []
+	for tile_key in active_explosion_tiles:
+		if current_time > active_explosion_tiles[tile_key]:
+			expired_tiles.append(tile_key)
+	
+	for tile_key in expired_tiles:
+		active_explosion_tiles.erase(tile_key)
+	
+	# Now check if any alive player is standing on a burning tile
+	for peer_id in players:
+		var player = players[peer_id]
+		
+		# Skip invalid or dead players
+		if not is_instance_valid(player) or player.is_dead:
+			continue
+		
+		var player_tile = player.get_tile_position()
+		var tile_key = "%d,%d" % [player_tile.x, player_tile.y]
+		
+		if active_explosion_tiles.has(tile_key):
+			player.die()
+			print("[Game] Player ", player.username, " walked into explosion at ", player_tile)
+			check_match_end_condition()
 
 func check_match_end_condition():
 	"""Check if the match should end based on alive players"""

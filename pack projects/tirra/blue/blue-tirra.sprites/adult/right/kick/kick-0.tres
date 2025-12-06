@@ -4,4 +4,5 @@
 
 [resource]
 atlas = ExtResource("1_pxhbo")
-region = Rect2(69, 35, 32, 32)
+region = Rect2(145, 1, 32, 30)
+margin = Rect2(0, 2, 0, 2)

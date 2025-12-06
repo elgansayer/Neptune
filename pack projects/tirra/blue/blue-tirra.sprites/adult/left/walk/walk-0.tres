@@ -4,4 +4,5 @@
 
 [resource]
 atlas = ExtResource("1_hljsq")
-region = Rect2(84, 1, 32, 32)
+region = Rect2(77, 1, 32, 30)
+margin = Rect2(0, 2, 0, 2)

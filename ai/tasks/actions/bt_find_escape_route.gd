@@ -69,6 +69,21 @@ func _tick(_delta: float) -> int:
 				if debug_logging:
 					print("[BTFindEscapeRoute] ⚠ Path to escape target blocked! Recalculating...")
 			
+			# CRITICAL: Check if any tile along the path is in an active explosion!
+			# The threat_matrix now includes active_explosion_tiles (tiles currently on fire)
+			if path_valid and path_to_target.size() > 0:
+				for path_tile in path_to_target:
+					var tile_pos = Vector2i(int(path_tile.x / GameConfig.TILE_SIZE), int(path_tile.y / GameConfig.TILE_SIZE))
+					var tile_key = _tile_key(tile_pos)
+					if threat_matrix.has(tile_key):
+						# Check if this tile is IMMEDIATELY dangerous (current time or earlier = active explosion)
+						var threat_time = threat_matrix[tile_key]
+						if threat_time <= current_time_msec:
+							path_valid = false
+							if debug_logging:
+								print("[BTFindEscapeRoute] ⚠ Path passes through ACTIVE EXPLOSION at ", tile_pos, "! Recalculating...")
+							break
+			
 			# Check if the target has a bomb on it (which would be bad)
 			var has_bomb = false
 			if game_instance.game_map[current_escape_target.y][current_escape_target.x] == 3: # Bomb
@@ -79,7 +94,7 @@ func _tick(_delta: float) -> int:
 					print("[BTFindEscapeRoute] Keeping existing valid escape target: ", current_escape_target)
 				return SUCCESS
 			elif not path_valid:
-				# Path is blocked - need to find new escape route
+				# Path is blocked or dangerous - need to find new escape route
 				blackboard.set_var("escape_route_found", false)
 	
 	# BFS to find safe tiles considering TIMING and WALLS

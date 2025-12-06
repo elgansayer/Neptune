@@ -27,7 +27,15 @@ func refresh(current_time: float) -> void:
 	if _game_instance == null:
 		return
 	
-	# Build ThreatMatrix with chain reaction simulation
+	# CRITICAL: Include active explosion tiles (tiles currently on fire!)
+	# These are IMMEDIATELY lethal - bot will die if it walks into them.
+	if "active_explosion_tiles" in _game_instance:
+		for tile_key in _game_instance.active_explosion_tiles:
+			# Active explosions are treated as immediately lethal (current_time = now)
+			_threat_matrix[tile_key] = current_time
+			_danger_cache[tile_key] = current_time
+	
+	# Build ThreatMatrix with chain reaction simulation (future explosions)
 	_build_threat_matrix_with_chains(current_time)
 	
 	# Build SafetyMap for escape route analysis

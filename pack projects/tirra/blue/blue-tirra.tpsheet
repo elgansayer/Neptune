@@ -3,8 +3,8 @@
 		{
 			"image": "blue-tirra.png",
 			"size": {
-				"w": 128,
-				"h": 541
+				"w": 480,
+				"h": 126
 			},
 			"sprites": [
 				{
@@ -25,8 +25,8 @@
 				{
 					"filename": "adult/left/kick/kick-1.png",
 					"region": {
-						"x": 43,
-						"y": 1,
+						"x": 1,
+						"y": 35,
 						"w": 39,
 						"h": 32
 					},
@@ -38,970 +38,250 @@
 					}
 				},
 				{
-					"filename": "adult/left/kick/kick-0.png",
+					"filename": "adult/left/stopped/walk-2.png",
 					"region": {
-						"x": 84,
+						"x": 43,
 						"y": 1,
 						"w": 32,
-						"h": 32
+						"h": 31
 					},
 					"margin": {
 						"x": 0,
-						"y": 0,
+						"y": 1,
 						"w": 0,
-						"h": 0
+						"h": 1
+					}
+				},
+				{
+					"filename": "adult/right/stopped/walk-2.png",
+					"region": {
+						"x": 1,
+						"y": 69,
+						"w": 32,
+						"h": 31
+					},
+					"margin": {
+						"x": 0,
+						"y": 1,
+						"w": 0,
+						"h": 1
+					}
+				},
+				{
+					"filename": "teen/state/killed/killed-1.png",
+					"region": {
+						"x": 1,
+						"y": 102,
+						"w": 20,
+						"h": 23
+					},
+					"margin": {
+						"x": 1,
+						"y": 0,
+						"w": 4,
+						"h": 1
+					}
+				},
+				{
+					"filename": "adult/left/kick/kick-0.png",
+					"region": {
+						"x": 77,
+						"y": 1,
+						"w": 32,
+						"h": 30
+					},
+					"margin": {
+						"x": 0,
+						"y": 2,
+						"w": 0,
+						"h": 2
 					}
 				},
 				{
 					"filename": "adult/left/walk/walk-0.png",
 					"region": {
-						"x": 84,
+						"x": 77,
 						"y": 1,
 						"w": 32,
-						"h": 32
+						"h": 30
 					},
 					"margin": {
 						"x": 0,
-						"y": 0,
+						"y": 2,
 						"w": 0,
-						"h": 0
+						"h": 2
 					}
 				},
 				{
 					"filename": "adult/left/walk/walk-1.png",
 					"region": {
-						"x": 1,
-						"y": 35,
+						"x": 111,
+						"y": 1,
 						"w": 32,
-						"h": 32
+						"h": 30
 					},
 					"margin": {
 						"x": 0,
-						"y": 0,
+						"y": 2,
 						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/left/walk/walk-2.png",
-					"region": {
-						"x": 35,
-						"y": 35,
-						"w": 32,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
+						"h": 2
 					}
 				},
 				{
 					"filename": "adult/right/kick/kick-0.png",
 					"region": {
-						"x": 69,
-						"y": 35,
+						"x": 145,
+						"y": 1,
 						"w": 32,
-						"h": 32
+						"h": 30
 					},
 					"margin": {
 						"x": 0,
-						"y": 0,
+						"y": 2,
 						"w": 0,
-						"h": 0
+						"h": 2
 					}
 				},
 				{
 					"filename": "adult/right/walk/walk-0.png",
 					"region": {
-						"x": 69,
-						"y": 35,
+						"x": 145,
+						"y": 1,
 						"w": 32,
-						"h": 32
+						"h": 30
 					},
 					"margin": {
 						"x": 0,
-						"y": 0,
+						"y": 2,
 						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/down/kick/kick-0.png",
-					"region": {
-						"x": 103,
-						"y": 35,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/down/walk/walk-1.png",
-					"region": {
-						"x": 103,
-						"y": 35,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
+						"h": 2
 					}
 				},
 				{
 					"filename": "adult/right/walk/walk-1.png",
 					"region": {
-						"x": 1,
-						"y": 69,
+						"x": 179,
+						"y": 1,
 						"w": 32,
-						"h": 32
+						"h": 30
 					},
 					"margin": {
 						"x": 0,
-						"y": 0,
+						"y": 2,
 						"w": 0,
-						"h": 0
+						"h": 2
 					}
 				},
 				{
-					"filename": "adult/right/walk/walk-2.png",
+					"filename": "teen/left/stopped/walk-2.png",
 					"region": {
-						"x": 35,
-						"y": 69,
-						"w": 32,
-						"h": 32
+						"x": 213,
+						"y": 1,
+						"w": 28,
+						"h": 27
 					},
 					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
+						"x": 4,
+						"y": 5,
+						"w": 4,
+						"h": 5
 					}
 				},
 				{
-					"filename": "teen/left/walk/walk-0.png",
+					"filename": "teen/right/stopped/walk-2.png",
 					"region": {
-						"x": 69,
-						"y": 69,
-						"w": 32,
-						"h": 32
+						"x": 243,
+						"y": 1,
+						"w": 28,
+						"h": 27
 					},
 					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/down/walk/walk-0.png",
-					"region": {
-						"x": 103,
-						"y": 69,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/left/walk/walk-1.png",
-					"region": {
-						"x": 1,
-						"y": 103,
-						"w": 32,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/left/walk/walk-2.png",
-					"region": {
-						"x": 35,
-						"y": 103,
-						"w": 32,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
+						"x": 2,
+						"y": 5,
+						"w": 4,
+						"h": 5
 					}
 				},
 				{
 					"filename": "teen/right/walk/walk-0.png",
 					"region": {
-						"x": 69,
-						"y": 103,
-						"w": 32,
-						"h": 32
+						"x": 273,
+						"y": 1,
+						"w": 28,
+						"h": 27
 					},
 					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
+						"x": 3,
+						"y": 5,
+						"w": 4,
+						"h": 5
 					}
 				},
 				{
-					"filename": "adult/down/walk/walk-2.png",
+					"filename": "teen/left/walk/walk-0.png",
 					"region": {
-						"x": 103,
-						"y": 103,
-						"w": 24,
-						"h": 32
+						"x": 303,
+						"y": 1,
+						"w": 28,
+						"h": 26
 					},
 					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
+						"x": 3,
+						"y": 6,
+						"w": 4,
+						"h": 6
+					}
+				},
+				{
+					"filename": "teen/left/walk/walk-1.png",
+					"region": {
+						"x": 333,
+						"y": 1,
+						"w": 28,
+						"h": 26
+					},
+					"margin": {
+						"x": 3,
+						"y": 6,
+						"w": 4,
+						"h": 6
 					}
 				},
 				{
 					"filename": "teen/right/walk/walk-1.png",
 					"region": {
-						"x": 1,
-						"y": 137,
-						"w": 32,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/right/walk/walk-2.png",
-					"region": {
-						"x": 35,
-						"y": 137,
-						"w": 32,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/state/killed/defeat-0.png",
-					"region": {
-						"x": 69,
-						"y": 137,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/state/win/win-0.png",
-					"region": {
-						"x": 95,
-						"y": 137,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/state/win/win-1.png",
-					"region": {
-						"x": 1,
-						"y": 171,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/state/win/win-2.png",
-					"region": {
-						"x": 27,
-						"y": 171,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/up/kick/kick-0.png",
-					"region": {
-						"x": 53,
-						"y": 171,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/up/walk/walk-1.png",
-					"region": {
-						"x": 53,
-						"y": 171,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/up/kick/kick-1.png",
-					"region": {
-						"x": 79,
-						"y": 171,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/state/idle/1.png",
-					"region": {
-						"x": 105,
-						"y": 171,
-						"w": 22,
-						"h": 31
-					},
-					"margin": {
-						"x": 1,
+						"x": 363,
 						"y": 1,
-						"w": 2,
+						"w": 28,
+						"h": 26
+					},
+					"margin": {
+						"x": 3,
+						"y": 6,
+						"w": 4,
+						"h": 6
+					}
+				},
+				{
+					"filename": "baby/state/win/celobrate-03.png",
+					"region": {
+						"x": 23,
+						"y": 102,
+						"w": 16,
+						"h": 23
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
 						"h": 1
-					}
-				},
-				{
-					"filename": "baby/left/walk/1-stood-left-01.png",
-					"region": {
-						"x": 105,
-						"y": 204,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 2,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "adult/up/walk/walk-0.png",
-					"region": {
-						"x": 1,
-						"y": 205,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "adult/up/walk/walk-2.png",
-					"region": {
-						"x": 27,
-						"y": 205,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/down/kick/kick-0.png",
-					"region": {
-						"x": 53,
-						"y": 205,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/down/kick/kick-1.png",
-					"region": {
-						"x": 79,
-						"y": 205,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/left/walk/1-walk-left-01.png",
-					"region": {
-						"x": 105,
-						"y": 226,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 2,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "teen/down/walk/walk-0.png",
-					"region": {
-						"x": 1,
-						"y": 239,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/down/walk/walk-1.png",
-					"region": {
-						"x": 27,
-						"y": 239,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/down/walk/walk-2.png",
-					"region": {
-						"x": 53,
-						"y": 239,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/idle/idle-2.png",
-					"region": {
-						"x": 53,
-						"y": 239,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/left/kick/kick-0.png",
-					"region": {
-						"x": 79,
-						"y": 239,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/left/walk/1-walk-left-02.png",
-					"region": {
-						"x": 105,
-						"y": 248,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 2,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "baby/right/walk/1-stood-right-01.png",
-					"region": {
-						"x": 105,
-						"y": 270,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 2,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "teen/left/kick/kick-1.png",
-					"region": {
-						"x": 1,
-						"y": 273,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/right/kick/kick-0.png",
-					"region": {
-						"x": 27,
-						"y": 273,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/right/kick/kick-1.png",
-					"region": {
-						"x": 53,
-						"y": 273,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/idle/idle-0.png",
-					"region": {
-						"x": 79,
-						"y": 273,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/right/walk/1-walk-right-01.png",
-					"region": {
-						"x": 105,
-						"y": 292,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 2,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "teen/state/idle/idle-1.png",
-					"region": {
-						"x": 1,
-						"y": 307,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/idle/idle-3.png",
-					"region": {
-						"x": 27,
-						"y": 307,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/idle/idle-4.png",
-					"region": {
-						"x": 53,
-						"y": 307,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/killed/killed-0.png",
-					"region": {
-						"x": 79,
-						"y": 307,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/right/walk/1-walk-right-02.png",
-					"region": {
-						"x": 105,
-						"y": 314,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 2,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "baby/state/idle/idle-left-01.png",
-					"region": {
-						"x": 105,
-						"y": 336,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 0,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "teen/state/win/win-0.png",
-					"region": {
-						"x": 1,
-						"y": 341,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/win/win-1.png",
-					"region": {
-						"x": 27,
-						"y": 341,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/win/win-2.png",
-					"region": {
-						"x": 53,
-						"y": 341,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/state/win/win-3.png",
-					"region": {
-						"x": 79,
-						"y": 341,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/idle/idle-left-02.png",
-					"region": {
-						"x": 105,
-						"y": 358,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 0,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "teen/up/kick/kick-0.png",
-					"region": {
-						"x": 1,
-						"y": 375,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/up/walk/kick-0.png",
-					"region": {
-						"x": 27,
-						"y": 375,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/up/walk/walk-0.png",
-					"region": {
-						"x": 27,
-						"y": 375,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/up/walk/kick-1.png",
-					"region": {
-						"x": 53,
-						"y": 375,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/up/walk/walk-1.png",
-					"region": {
-						"x": 53,
-						"y": 375,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/up/walk/kick-2.png",
-					"region": {
-						"x": 79,
-						"y": 375,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "teen/up/walk/walk-2.png",
-					"region": {
-						"x": 79,
-						"y": 375,
-						"w": 24,
-						"h": 32
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/idle/idle-right-01.png",
-					"region": {
-						"x": 105,
-						"y": 380,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 3,
-						"y": 4,
-						"w": 3,
-						"h": 4
-					}
-				},
-				{
-					"filename": "baby/state/idle/idle-right-02.png",
-					"region": {
-						"x": 105,
-						"y": 402,
-						"w": 21,
-						"h": 20
-					},
-					"margin": {
-						"x": 3,
-						"y": 4,
-						"w": 3,
-						"h": 4
 					}
 				},
 				{
 					"filename": "adult/state/idle/2.png",
 					"region": {
-						"x": 1,
-						"y": 409,
+						"x": 393,
+						"y": 1,
 						"w": 24,
 						"h": 31
 					},
@@ -1015,8 +295,8 @@
 				{
 					"filename": "adult/state/idle/3.png",
 					"region": {
-						"x": 27,
-						"y": 409,
+						"x": 419,
+						"y": 1,
 						"w": 24,
 						"h": 31
 					},
@@ -1028,12 +308,12 @@
 					}
 				},
 				{
-					"filename": "adult/state/killed/defeat-1.png",
+					"filename": "adult/up/kick/kick-1.png",
 					"region": {
-						"x": 53,
-						"y": 409,
+						"x": 445,
+						"y": 1,
 						"w": 24,
-						"h": 24
+						"h": 32
 					},
 					"margin": {
 						"x": 0,
@@ -1043,40 +323,295 @@
 					}
 				},
 				{
-					"filename": "adult/state/killed/defeat-2.png",
+					"filename": "adult/down/stopped/walk-2.png",
 					"region": {
-						"x": 79,
-						"y": 409,
-						"w": 24,
-						"h": 24
+						"x": 35,
+						"y": 69,
+						"w": 22,
+						"h": 31
 					},
 					"margin": {
-						"x": 0,
+						"x": 1,
+						"y": 1,
+						"w": 2,
+						"h": 1
+					}
+				},
+				{
+					"filename": "adult/state/idle/1.png",
+					"region": {
+						"x": 35,
+						"y": 69,
+						"w": 22,
+						"h": 31
+					},
+					"margin": {
+						"x": 1,
+						"y": 1,
+						"w": 2,
+						"h": 1
+					}
+				},
+				{
+					"filename": "adult/state/win/win-0.png",
+					"region": {
+						"x": 42,
+						"y": 35,
+						"w": 23,
+						"h": 32
+					},
+					"margin": {
+						"x": 1,
 						"y": 0,
-						"w": 0,
+						"w": 1,
 						"h": 0
 					}
 				},
 				{
-					"filename": "baby/left/kick/1-kick-left-01.png",
+					"filename": "adult/state/win/win-1.png",
 					"region": {
-						"x": 105,
-						"y": 424,
+						"x": 67,
+						"y": 34,
+						"w": 22,
+						"h": 32
+					},
+					"margin": {
+						"x": 1,
+						"y": 0,
+						"w": 2,
+						"h": 0
+					}
+				},
+				{
+					"filename": "adult/state/win/win-2.png",
+					"region": {
+						"x": 91,
+						"y": 33,
+						"w": 23,
+						"h": 32
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 1,
+						"h": 0
+					}
+				},
+				{
+					"filename": "adult/state/killed/defeat-0.png",
+					"region": {
+						"x": 116,
+						"y": 33,
+						"w": 24,
+						"h": 30
+					},
+					"margin": {
+						"x": 0,
+						"y": 2,
+						"w": 0,
+						"h": 2
+					}
+				},
+				{
+					"filename": "adult/down/kick/kick-0.png",
+					"region": {
+						"x": 142,
+						"y": 33,
+						"w": 22,
+						"h": 30
+					},
+					"margin": {
+						"x": 1,
+						"y": 2,
+						"w": 2,
+						"h": 2
+					}
+				},
+				{
+					"filename": "adult/down/walk/walk-1.png",
+					"region": {
+						"x": 142,
+						"y": 33,
+						"w": 22,
+						"h": 30
+					},
+					"margin": {
+						"x": 1,
+						"y": 2,
+						"w": 2,
+						"h": 2
+					}
+				},
+				{
+					"filename": "adult/down/walk/walk-0.png",
+					"region": {
+						"x": 166,
+						"y": 33,
+						"w": 22,
+						"h": 30
+					},
+					"margin": {
+						"x": 1,
+						"y": 2,
+						"w": 2,
+						"h": 2
+					}
+				},
+				{
+					"filename": "adult/up/kick/kick-0.png",
+					"region": {
+						"x": 190,
+						"y": 33,
+						"w": 22,
+						"h": 30
+					},
+					"margin": {
+						"x": 1,
+						"y": 2,
+						"w": 2,
+						"h": 2
+					}
+				},
+				{
+					"filename": "adult/up/walk/walk-1.png",
+					"region": {
+						"x": 190,
+						"y": 33,
+						"w": 22,
+						"h": 30
+					},
+					"margin": {
+						"x": 1,
+						"y": 2,
+						"w": 2,
+						"h": 2
+					}
+				},
+				{
+					"filename": "adult/up/stopped/walk-2.png",
+					"region": {
+						"x": 214,
+						"y": 30,
+						"w": 22,
+						"h": 31
+					},
+					"margin": {
+						"x": 1,
+						"y": 1,
+						"w": 2,
+						"h": 1
+					}
+				},
+				{
+					"filename": "adult/up/walk/walk-0.png",
+					"region": {
+						"x": 238,
+						"y": 30,
+						"w": 22,
+						"h": 30
+					},
+					"margin": {
+						"x": 1,
+						"y": 2,
+						"w": 2,
+						"h": 2
+					}
+				},
+				{
+					"filename": "teen/state/win/win-2.png",
+					"region": {
+						"x": 262,
+						"y": 30,
+						"w": 22,
+						"h": 29
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 2,
+						"h": 3
+					}
+				},
+				{
+					"filename": "teen/state/win/win-1.png",
+					"region": {
+						"x": 286,
+						"y": 30,
 						"w": 20,
-						"h": 20
+						"h": 29
 					},
 					"margin": {
-						"x": 2,
-						"y": 4,
+						"x": 1,
+						"y": 3,
 						"w": 4,
-						"h": 4
+						"h": 3
+					}
+				},
+				{
+					"filename": "teen/state/win/win-3.png",
+					"region": {
+						"x": 308,
+						"y": 29,
+						"w": 22,
+						"h": 29
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 2,
+						"h": 3
+					}
+				},
+				{
+					"filename": "teen/down/kick/kick-0.png",
+					"region": {
+						"x": 332,
+						"y": 29,
+						"w": 23,
+						"h": 27
+					},
+					"margin": {
+						"x": 1,
+						"y": 5,
+						"w": 1,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/up/kick/kick-0.png",
+					"region": {
+						"x": 357,
+						"y": 29,
+						"w": 23,
+						"h": 27
+					},
+					"margin": {
+						"x": 0,
+						"y": 5,
+						"w": 1,
+						"h": 5
+					}
+				},
+				{
+					"filename": "baby/state/win/celobrate-02.png",
+					"region": {
+						"x": 41,
+						"y": 102,
+						"w": 16,
+						"h": 22
+					},
+					"margin": {
+						"x": 0,
+						"y": 2,
+						"w": 0,
+						"h": 2
 					}
 				},
 				{
 					"filename": "adult/state/killed/defeat-3.png",
 					"region": {
-						"x": 53,
-						"y": 435,
+						"x": 382,
+						"y": 34,
 						"w": 24,
 						"h": 24
 					},
@@ -1090,8 +625,8 @@
 				{
 					"filename": "adult/state/killed/defeat-4.png",
 					"region": {
-						"x": 79,
-						"y": 435,
+						"x": 408,
+						"y": 34,
 						"w": 24,
 						"h": 24
 					},
@@ -1103,25 +638,10 @@
 					}
 				},
 				{
-					"filename": "baby/right/kick/1-kick-right-01.png",
-					"region": {
-						"x": 105,
-						"y": 446,
-						"w": 20,
-						"h": 20
-					},
-					"margin": {
-						"x": 2,
-						"y": 4,
-						"w": 4,
-						"h": 4
-					}
-				},
-				{
 					"filename": "baby/state/killed/killed-3.png",
 					"region": {
-						"x": 1,
-						"y": 442,
+						"x": 434,
+						"y": 35,
 						"w": 24,
 						"h": 24
 					},
@@ -1135,8 +655,8 @@
 				{
 					"filename": "teen/state/killed/killed-3.png",
 					"region": {
-						"x": 1,
-						"y": 442,
+						"x": 434,
+						"y": 35,
 						"w": 24,
 						"h": 24
 					},
@@ -1148,190 +668,685 @@
 					}
 				},
 				{
-					"filename": "teen/state/killed/killed-1.png",
+					"filename": "teen/up/stopped/walk-2.png",
 					"region": {
-						"x": 27,
-						"y": 442,
-						"w": 24,
+						"x": 59,
+						"y": 69,
+						"w": 20,
+						"h": 28
+					},
+					"margin": {
+						"x": 3,
+						"y": 4,
+						"w": 4,
+						"h": 4
+					}
+				},
+				{
+					"filename": "teen/down/kick/kick-1.png",
+					"region": {
+						"x": 59,
+						"y": 99,
+						"w": 23,
+						"h": 26
+					},
+					"margin": {
+						"x": 1,
+						"y": 6,
+						"w": 1,
+						"h": 6
+					}
+				},
+				{
+					"filename": "teen/down/stopped/walk-2.png",
+					"region": {
+						"x": 81,
+						"y": 68,
+						"w": 20,
+						"h": 27
+					},
+					"margin": {
+						"x": 2,
+						"y": 5,
+						"w": 4,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/state/idle/idle-2.png",
+					"region": {
+						"x": 81,
+						"y": 68,
+						"w": 20,
+						"h": 27
+					},
+					"margin": {
+						"x": 2,
+						"y": 5,
+						"w": 4,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/left/kick/kick-0.png",
+					"region": {
+						"x": 84,
+						"y": 97,
+						"w": 21,
+						"h": 27
+					},
+					"margin": {
+						"x": 0,
+						"y": 5,
+						"w": 3,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/left/kick/kick-1.png",
+					"region": {
+						"x": 103,
+						"y": 67,
+						"w": 22,
+						"h": 27
+					},
+					"margin": {
+						"x": 0,
+						"y": 5,
+						"w": 2,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/right/kick/kick-0.png",
+					"region": {
+						"x": 127,
+						"y": 65,
+						"w": 22,
+						"h": 27
+					},
+					"margin": {
+						"x": 1,
+						"y": 5,
+						"w": 2,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/right/kick/kick-1.png",
+					"region": {
+						"x": 151,
+						"y": 65,
+						"w": 22,
+						"h": 27
+					},
+					"margin": {
+						"x": 0,
+						"y": 5,
+						"w": 2,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/state/idle/idle-0.png",
+					"region": {
+						"x": 175,
+						"y": 65,
+						"w": 21,
+						"h": 27
+					},
+					"margin": {
+						"x": 1,
+						"y": 5,
+						"w": 3,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/state/idle/idle-1.png",
+					"region": {
+						"x": 107,
+						"y": 96,
+						"w": 20,
+						"h": 27
+					},
+					"margin": {
+						"x": 2,
+						"y": 5,
+						"w": 4,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/state/idle/idle-3.png",
+					"region": {
+						"x": 129,
+						"y": 94,
+						"w": 21,
+						"h": 27
+					},
+					"margin": {
+						"x": 2,
+						"y": 5,
+						"w": 3,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/state/idle/idle-4.png",
+					"region": {
+						"x": 152,
+						"y": 94,
+						"w": 21,
+						"h": 27
+					},
+					"margin": {
+						"x": 2,
+						"y": 5,
+						"w": 3,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/state/win/win-0.png",
+					"region": {
+						"x": 175,
+						"y": 94,
+						"w": 20,
+						"h": 27
+					},
+					"margin": {
+						"x": 1,
+						"y": 4,
+						"w": 4,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/up/walk/walk-0.png",
+					"region": {
+						"x": 198,
+						"y": 65,
+						"w": 20,
+						"h": 27
+					},
+					"margin": {
+						"x": 3,
+						"y": 5,
+						"w": 4,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/up/walk/walk-1.png",
+					"region": {
+						"x": 197,
+						"y": 94,
+						"w": 20,
+						"h": 27
+					},
+					"margin": {
+						"x": 3,
+						"y": 5,
+						"w": 4,
+						"h": 5
+					}
+				},
+				{
+					"filename": "teen/down/walk/walk-0.png",
+					"region": {
+						"x": 220,
+						"y": 63,
+						"w": 20,
+						"h": 26
+					},
+					"margin": {
+						"x": 2,
+						"y": 6,
+						"w": 4,
+						"h": 6
+					}
+				},
+				{
+					"filename": "teen/down/walk/walk-1.png",
+					"region": {
+						"x": 242,
+						"y": 62,
+						"w": 20,
+						"h": 26
+					},
+					"margin": {
+						"x": 2,
+						"y": 6,
+						"w": 4,
+						"h": 6
+					}
+				},
+				{
+					"filename": "adult/state/killed/defeat-1.png",
+					"region": {
+						"x": 264,
+						"y": 61,
+						"w": 22,
 						"h": 24
+					},
+					"margin": {
+						"x": 1,
+						"y": 0,
+						"w": 2,
+						"h": 0
+					}
+				},
+				{
+					"filename": "teen/state/killed/killed-0.png",
+					"region": {
+						"x": 288,
+						"y": 61,
+						"w": 20,
+						"h": 26
+					},
+					"margin": {
+						"x": 1,
+						"y": 6,
+						"w": 4,
+						"h": 6
+					}
+				},
+				{
+					"filename": "adult/state/killed/defeat-2.png",
+					"region": {
+						"x": 310,
+						"y": 60,
+						"w": 20,
+						"h": 21
+					},
+					"margin": {
+						"x": 2,
+						"y": 1,
+						"w": 4,
+						"h": 3
+					}
+				},
+				{
+					"filename": "baby/left/stopped/1-stood-left-01.png",
+					"region": {
+						"x": 332,
+						"y": 58,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/left/walk/1-walk-left-01.png",
+					"region": {
+						"x": 355,
+						"y": 58,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/left/walk/1-walk-left-02.png",
+					"region": {
+						"x": 378,
+						"y": 60,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/right/stopped/1-walk-right-02.png",
+					"region": {
+						"x": 401,
+						"y": 60,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/right/walk/1-stood-right-01.png",
+					"region": {
+						"x": 424,
+						"y": 61,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/down/kick/1-kick-down-01.png",
+					"region": {
+						"x": 447,
+						"y": 61,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/down/stopped/walk-1.png",
+					"region": {
+						"x": 460,
+						"y": 35,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "adult/effects/sparkle-0.png",
+					"region": {
+						"x": 471,
+						"y": 1,
+						"w": 8,
+						"h": 8
 					},
 					"margin": {
 						"x": 0,
 						"y": 0,
 						"w": 0,
 						"h": 0
+					}
+				},
+				{
+					"filename": "baby/effects/sparkle-0.png",
+					"region": {
+						"x": 471,
+						"y": 1,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "teen/effects/sparkle-0.png",
+					"region": {
+						"x": 471,
+						"y": 1,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "adult/effects/sparkle-1.png",
+					"region": {
+						"x": 471,
+						"y": 11,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "baby/effects/sparkle-1.png",
+					"region": {
+						"x": 471,
+						"y": 11,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "teen/effects/sparkle-1.png",
+					"region": {
+						"x": 471,
+						"y": 11,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "adult/effects/sparkle-2.png",
+					"region": {
+						"x": 471,
+						"y": 21,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "baby/effects/sparkle-2.png",
+					"region": {
+						"x": 471,
+						"y": 21,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "teen/effects/sparkle-2.png",
+					"region": {
+						"x": 471,
+						"y": 21,
+						"w": 8,
+						"h": 8
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "baby/left/kick/1-kick-left-01.png",
+					"region": {
+						"x": 310,
+						"y": 83,
+						"w": 20,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 4,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/right/walk/1-walk-right-01.png",
+					"region": {
+						"x": 332,
+						"y": 80,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/state/idle/idle-left-01.png",
+					"region": {
+						"x": 355,
+						"y": 80,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/state/idle/idle-left-02.png",
+					"region": {
+						"x": 378,
+						"y": 82,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/state/idle/idle-right-01.png",
+					"region": {
+						"x": 401,
+						"y": 82,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 3,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/state/idle/idle-right-02.png",
+					"region": {
+						"x": 424,
+						"y": 83,
+						"w": 21,
+						"h": 20
+					},
+					"margin": {
+						"x": 3,
+						"y": 4,
+						"w": 3,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/down/walk/walk-2.png",
+					"region": {
+						"x": 447,
+						"y": 83,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/right/kick/1-kick-right-01.png",
+					"region": {
+						"x": 219,
+						"y": 105,
+						"w": 20,
+						"h": 20
+					},
+					"margin": {
+						"x": 2,
+						"y": 4,
+						"w": 4,
+						"h": 4
 					}
 				},
 				{
 					"filename": "teen/state/killed/killed-2.png",
 					"region": {
-						"x": 53,
-						"y": 461,
-						"w": 24,
-						"h": 24
+						"x": 241,
+						"y": 105,
+						"w": 20,
+						"h": 20
 					},
 					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/killed/killed-0.png",
-					"region": {
-						"x": 79,
-						"y": 461,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/killed/killed-1.png",
-					"region": {
-						"x": 97,
-						"y": 468,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/killed/killed-2.png",
-					"region": {
 						"x": 1,
-						"y": 468,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/win/win-0.png",
-					"region": {
-						"x": 19,
-						"y": 468,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/win/win-1.png",
-					"region": {
-						"x": 37,
-						"y": 487,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/win/win-2.png",
-					"region": {
-						"x": 1,
-						"y": 494,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/up/walk/walk-0.png",
-					"region": {
-						"x": 19,
-						"y": 494,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/up/walk/walk-1.png",
-					"region": {
-						"x": 55,
-						"y": 487,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/up/walk/walk-2.png",
-					"region": {
-						"x": 73,
-						"y": 487,
-						"w": 16,
-						"h": 24
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 0
-					}
-				},
-				{
-					"filename": "baby/state/celebrate/celobrate-03.png",
-					"region": {
-						"x": 91,
-						"y": 494,
-						"w": 16,
-						"h": 23
-					},
-					"margin": {
-						"x": 0,
-						"y": 0,
-						"w": 0,
-						"h": 1
+						"y": 2,
+						"w": 4,
+						"h": 4
 					}
 				},
 				{
 					"filename": "baby/state/idle/idle-stood.png",
 					"region": {
-						"x": 109,
-						"y": 494,
+						"x": 263,
+						"y": 105,
 						"w": 18,
 						"h": 20
 					},
@@ -1343,70 +1358,10 @@
 					}
 				},
 				{
-					"filename": "baby/state/celebrate/celobrate-02.png",
-					"region": {
-						"x": 109,
-						"y": 516,
-						"w": 16,
-						"h": 22
-					},
-					"margin": {
-						"x": 0,
-						"y": 2,
-						"w": 0,
-						"h": 2
-					}
-				},
-				{
-					"filename": "baby/down/kick/1-kick-down-01.png",
-					"region": {
-						"x": 37,
-						"y": 513,
-						"w": 16,
-						"h": 20
-					},
-					"margin": {
-						"x": 0,
-						"y": 4,
-						"w": 0,
-						"h": 4
-					}
-				},
-				{
-					"filename": "baby/down/walk/walk-1.png",
-					"region": {
-						"x": 1,
-						"y": 520,
-						"w": 16,
-						"h": 20
-					},
-					"margin": {
-						"x": 0,
-						"y": 4,
-						"w": 0,
-						"h": 4
-					}
-				},
-				{
-					"filename": "baby/down/walk/walk-2.png",
-					"region": {
-						"x": 19,
-						"y": 520,
-						"w": 16,
-						"h": 20
-					},
-					"margin": {
-						"x": 0,
-						"y": 4,
-						"w": 0,
-						"h": 4
-					}
-				},
-				{
 					"filename": "baby/down/walk/walk-3.png",
 					"region": {
-						"x": 55,
-						"y": 513,
+						"x": 283,
+						"y": 105,
 						"w": 16,
 						"h": 20
 					},
@@ -1418,10 +1373,40 @@
 					}
 				},
 				{
-					"filename": "baby/state/celebrate/celobrate-01.png",
+					"filename": "baby/state/killed/killed-0.png",
 					"region": {
-						"x": 73,
-						"y": 513,
+						"x": 301,
+						"y": 105,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/state/killed/killed-1.png",
+					"region": {
+						"x": 319,
+						"y": 105,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/state/win/celobrate-01.png",
+					"region": {
+						"x": 337,
+						"y": 105,
 						"w": 16,
 						"h": 20
 					},
@@ -1435,8 +1420,8 @@
 				{
 					"filename": "baby/up/kick/1-kick-up-01.png",
 					"region": {
-						"x": 91,
-						"y": 519,
+						"x": 355,
+						"y": 105,
 						"w": 16,
 						"h": 20
 					},
@@ -1446,6 +1431,111 @@
 						"w": 0,
 						"h": 4
 					}
+				},
+				{
+					"filename": "baby/up/stopped/walk-2.png",
+					"region": {
+						"x": 373,
+						"y": 105,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/up/walk/walk-0.png",
+					"region": {
+						"x": 391,
+						"y": 105,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "baby/up/walk/walk-1.png",
+					"region": {
+						"x": 409,
+						"y": 105,
+						"w": 16,
+						"h": 20
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 4
+					}
+				},
+				{
+					"filename": "adult/effects/hit.png",
+					"region": {
+						"x": 264,
+						"y": 87,
+						"w": 16,
+						"h": 16
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "baby/state/killed/killed-2.png",
+					"region": {
+						"x": 427,
+						"y": 105,
+						"w": 16,
+						"h": 19
+					},
+					"margin": {
+						"x": 0,
+						"y": 4,
+						"w": 0,
+						"h": 5
+					}
+				},
+				{
+					"filename": "baby/effects/hit.png",
+					"region": {
+						"x": 445,
+						"y": 105,
+						"w": 16,
+						"h": 16
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
+				},
+				{
+					"filename": "teen/effects/hit.png",
+					"region": {
+						"x": 463,
+						"y": 105,
+						"w": 16,
+						"h": 16
+					},
+					"margin": {
+						"x": 0,
+						"y": 0,
+						"w": 0,
+						"h": 0
+					}
 				}
 			]
 		}
@@ -1453,6 +1543,6 @@
 	"meta": {
 		"app": "https://www.codeandweb.com/texturepacker",
 		"version": "1.0",
-		"smartupdate": "$TexturePacker:SmartUpdate:687a86627b31fec4df1b33070728da8b:f975fdf9bf29278191f9ad26b682e58c:01bec337118bef86cd49828fa3f2250b$"
+		"smartupdate": "$TexturePacker:SmartUpdate:7754c875172b1d372b0e95d0378935cc:1a30dc2849db3dde0bcf26f3fd12c38e:01bec337118bef86cd49828fa3f2250b$"
 	}
 }
