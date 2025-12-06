@@ -88,6 +88,28 @@ signal tirra_mounted(tirra_node)
 signal tirra_dismounted()
 signal tirra_action_triggered(action_name, action_type)
 
+# === ARC JUMP SYSTEM (Saturn Bomberman) ===
+# Used for mounting/dismounting Tirras - player jumps in arc like throwable.gd
+var is_flying: bool = false                # True when in mid-air during jump
+var jump_target_position: Vector2 = Vector2.ZERO  # Target landing position
+var jump_velocity: Vector2 = Vector2.ZERO  # Current arc velocity
+var jump_gravity: float = 3000.0           # Gravity during jump (matches SBomberman)
+var frozen_movement: bool = false          # When true, input is ignored (during jump/stun)
+var og_collision_layer: int = 0            # Stored collision layer during flight
+var og_collision_mask: int = 0             # Stored collision mask during flight
+
+signal jump_started(target_position)
+signal jump_landed()
+
+# === IMMORTALITY/INVINCIBILITY SYSTEM (Saturn Bomberman) ===
+# After being hit while mounted, player becomes temporarily invincible
+var is_immortal: bool = false              # True during invincibility frames
+var immortal_end_time: float = 0.0         # Time.get_ticks_msec() when immortality expires
+var flash_white: bool = false              # Toggles each flash tick for white shader effect
+const IMMORTAL_DURATION_MS: float = 3000.0 # 3 seconds of invincibility after hit
+const FLASH_INTERVAL_SEC: float = 0.1      # Flash every 100ms
+var flash_timer: float = 0.0               # Time until next flash toggle
+
 # Collision exceptions for bombs we've placed
 var collision_exceptions := []
 
@@ -330,6 +352,17 @@ func _physics_process(_delta):
 		# last_move_direction = Vector2.ZERO
 		move_and_slide()
 		return
+	
+	# === ARC JUMP PHYSICS (Saturn Bomberman style) ===
+	# Process flying/jumping state before normal movement
+	if is_flying:
+		_process_arc_jump(_delta)
+		return  # Skip normal movement while flying
+	
+	# === IMMORTALITY TIMER UPDATE ===
+	if is_immortal:
+		_process_immortality(_delta)
+		# Note: Don't return - continue with normal movement while immortal
 
 	# --- NEW KICK DETECTION LOGIC ---
 	if has_bomb_kicker and input_direction.length() > 0.1:
@@ -886,11 +919,143 @@ func get_carried_bomb_offset() -> Vector2:
 
 # ============ END POWER GLOVE SYSTEM ============
 
+# ============ ARC JUMP SYSTEM (Saturn Bomberman) ============
+
+func calculate_arc_velocity(source: Vector2, dest: Vector2, arc_height: float, gravity: float) -> Vector2:
+	"""Calculate the velocity needed for an arc trajectory from source to dest.
+	Matches SBomberman throwable.gd logic."""
+	var displacement := dest - source
+	
+	# Time to reach peak of arc
+	var time_up := sqrt(-2.0 * arc_height / -gravity) if arc_height > 0 else 0.1
+	# Time to fall from peak to destination
+	var time_down := sqrt(2.0 * (displacement.y - arc_height) / gravity) if (displacement.y - arc_height) > 0 else time_up
+	
+	var total_time := time_up + time_down
+	if total_time <= 0:
+		total_time = 0.1  # Prevent division by zero
+	
+	var arc_velocity := Vector2.ZERO
+	arc_velocity.y = -sqrt(2.0 * gravity * arc_height) if arc_height > 0 else -100.0
+	arc_velocity.x = displacement.x / total_time
+	
+	return arc_velocity
+
+func launch_arc_jump(target: Vector2, arc_height: float = 48.0) -> void:
+	"""Launch player in an arc toward target position.
+	Used for mounting/dismounting Tirras."""
+	if is_flying:
+		return  # Already flying
+	
+	print("[ServerPlayer] ", username, " launching arc jump to ", target)
+	
+	# Store original collision settings
+	og_collision_layer = collision_layer
+	og_collision_mask = collision_mask
+	
+	# Disable collisions during flight
+	collision_layer = 0
+	collision_mask = 0
+	
+	# Calculate arc trajectory
+	jump_target_position = target
+	jump_velocity = calculate_arc_velocity(global_position, target, arc_height, jump_gravity)
+	
+	# Enter flying state
+	is_flying = true
+	frozen_movement = true
+	velocity = Vector2.ZERO  # Stop normal movement
+	
+	jump_started.emit(target)
+
+func _process_arc_jump(delta: float) -> void:
+	"""Process arc jump physics each frame. Called from _physics_process."""
+	if not is_flying:
+		return
+	
+	# Apply gravity
+	jump_velocity.y += jump_gravity * delta
+	
+	# Move
+	global_position += jump_velocity * delta
+	
+	# Check if we've landed (reached or passed target Y position going downward)
+	var past_target := jump_velocity.y > 0 and global_position.y >= jump_target_position.y
+	var close_to_target := global_position.distance_to(jump_target_position) < 4.0
+	
+	if past_target or close_to_target:
+		_land_from_arc_jump()
+
+func _land_from_arc_jump() -> void:
+	"""Called when arc jump lands. Restores collision and triggers callbacks."""
+	print("[ServerPlayer] ", username, " landed from arc jump")
+	
+	# Snap to target
+	global_position = jump_target_position
+	
+	# Restore collision
+	collision_layer = og_collision_layer
+	collision_mask = og_collision_mask
+	
+	# Exit flying state
+	is_flying = false
+	frozen_movement = false
+	jump_velocity = Vector2.ZERO
+	
+	# If we were jumping to mount a Tirra, complete the mount
+	if _pending_tirra_mount != null and is_instance_valid(_pending_tirra_mount):
+		_complete_tirra_mount(_pending_tirra_mount)
+		_pending_tirra_mount = null
+	
+	jump_landed.emit()
+
+# Pending Tirra for mount after jump lands
+var _pending_tirra_mount: Node2D = null
+
+# ============ IMMORTALITY SYSTEM (Saturn Bomberman) ============
+
+func set_immortal(value: bool) -> void:
+	"""Set immortality state. When true, player flashes white and is invincible."""
+	if value == is_immortal:
+		return
+	
+	is_immortal = value
+	
+	if value:
+		immortal_end_time = Time.get_ticks_msec() + IMMORTAL_DURATION_MS
+		flash_timer = 0.0
+		flash_white = true
+		print("[ServerPlayer] ", username, " is now IMMORTAL for ", IMMORTAL_DURATION_MS / 1000.0, " seconds")
+	else:
+		flash_white = false
+		print("[ServerPlayer] ", username, " immortality ended")
+
+func _process_immortality(delta: float) -> void:
+	"""Update immortality timer and flash state. Called from _physics_process."""
+	if not is_immortal:
+		return
+	
+	# Check if immortality has expired
+	if Time.get_ticks_msec() >= immortal_end_time:
+		set_immortal(false)
+		return
+	
+	# Update flash effect
+	flash_timer -= delta
+	if flash_timer <= 0:
+		flash_timer = FLASH_INTERVAL_SEC
+		flash_white = not flash_white
+
+func is_invincible() -> bool:
+	"""Returns true if player cannot be killed right now."""
+	return is_immortal
+
 # ============ TIRRA MOUNT SYSTEM ============
 
 func mount_tirra(tirra: Node2D) -> bool:
 	"""Mount a Tirra. Called when player walks over a spawned Tirra.
-	Returns true if successfully mounted."""
+	Player will jump in an arc onto the Tirra (Saturn Bomberman style).
+	Returns true if mounting process started."""
 	if is_mounted:
 		print("[ServerPlayer] ", username, " already mounted, cannot mount another Tirra")
 		return false
@@ -901,7 +1066,34 @@ func mount_tirra(tirra: Node2D) -> bool:
 	if not is_instance_valid(tirra):
 		return false
 	
-	print("[ServerPlayer] ", username, " mounting Tirra!")
+	if is_flying:
+		return false  # Already in a jump
+	
+	print("[ServerPlayer] ", username, " jumping onto Tirra!")
+	
+	# Store Tirra for when we land
+	_pending_tirra_mount = tirra
+	
+	# Launch arc jump to Tirra position
+	# Jump height based on Tirra growth level for visual effect
+	var tirra_level: int = 0
+	if tirra.has_method("get") and tirra.get("current_level") != null:
+		tirra_level = tirra.current_level
+	var jump_height: float = 32.0 + (tirra_level * 8.0)  # Taller jump for bigger Tirras
+	
+	launch_arc_jump(tirra.global_position, jump_height)
+	return true
+
+func _complete_tirra_mount(tirra: Node2D) -> void:
+	"""Actually mount the Tirra after arc jump completes."""
+	if not is_instance_valid(tirra):
+		print("[ServerPlayer] ", username, " Tirra no longer valid after jump!")
+		return
+	
+	if is_mounted:
+		return  # Already mounted somehow
+	
+	print("[ServerPlayer] ", username, " completing Tirra mount after landing!")
 	
 	# Store reference
 	mounted_tirra = tirra
@@ -935,16 +1127,16 @@ func mount_tirra(tirra: Node2D) -> bool:
 		tirra.action_info.connect(_on_tirra_action_info)
 	
 	tirra_mounted.emit(tirra)
-	return true
 
-func dismount_tirra(kill_tirra: bool = false) -> void:
-	"""Dismount from current Tirra.
-	If kill_tirra is true, the Tirra dies (explosion hit).
+func dismount_tirra(kill_tirra_flag: bool = false, grant_immortality: bool = false) -> void:
+	"""Dismount from current Tirra with arc jump off (Saturn Bomberman style).
+	If kill_tirra_flag is true, the Tirra dies (explosion hit).
+	If grant_immortality is true, player becomes temporarily invincible.
 	Otherwise, the Tirra is dropped back into the world."""
 	if not is_mounted or not mounted_tirra:
 		return
 	
-	print("[ServerPlayer] ", username, " dismounting Tirra (kill=", kill_tirra, ")")
+	print("[ServerPlayer] ", username, " dismounting Tirra (kill=", kill_tirra_flag, ", immortal=", grant_immortality, ")")
 	
 	# Disconnect signals
 	if mounted_tirra.has_signal("action_started") and mounted_tirra.action_started.is_connected(_on_tirra_action_started):
@@ -954,30 +1146,55 @@ func dismount_tirra(kill_tirra: bool = false) -> void:
 	if mounted_tirra.has_signal("action_info") and mounted_tirra.action_info.is_connected(_on_tirra_action_info):
 		mounted_tirra.action_info.disconnect(_on_tirra_action_info)
 	
-	if kill_tirra:
-		# Tirra dies - play death animation if possible
-		if mounted_tirra.has_method("run_action"):
-			mounted_tirra.run_action("killed")
-		# Queue for deletion after a short delay for animation
-		var tirra_ref = mounted_tirra
-		get_tree().create_timer(1.0).timeout.connect(func():
-			if is_instance_valid(tirra_ref):
-				tirra_ref.queue_free()
-		)
-	else:
-		# Drop Tirra back into the world as a pickup
-		var world_pos = global_position
-		remove_child(mounted_tirra)
-		var game_parent = get_parent()
-		if game_parent:
-			game_parent.add_child(mounted_tirra)
-			mounted_tirra.global_position = world_pos
-			# Re-add pickup area
-			_readd_tirra_pickup_area(mounted_tirra)
+	# Store Tirra ref and position before clearing mount state
+	var tirra_ref = mounted_tirra
+	var dismount_pos = global_position
 	
+	# Clear mount state first
 	mounted_tirra = null
 	is_mounted = false
 	tirra_growth_level = 0
+	
+	# Grant immortality if requested (hit by explosion)
+	if grant_immortality:
+		set_immortal(true)
+	
+	# Calculate jump-off target (jump backward from last direction, or random if no direction)
+	var jump_off_direction := -last_move_direction if last_move_direction.length() > 0.1 else Vector2(1, 0)
+	var jump_target := global_position + jump_off_direction.normalized() * GameConfig.TILE_SIZE
+	
+	# Remove Tirra from player before jumping
+	if is_instance_valid(tirra_ref):
+		remove_child(tirra_ref)
+		
+		if kill_tirra_flag:
+			# Tirra dies - reparent to world and play death animation
+			var game_parent = get_parent()
+			if game_parent:
+				game_parent.add_child(tirra_ref)
+				tirra_ref.global_position = dismount_pos
+			
+			# Play explode animation
+			if tirra_ref.has_method("run_action"):
+				tirra_ref.run_action("killed")
+			
+			# Queue for deletion after animation
+			get_tree().create_timer(1.0).timeout.connect(func():
+				if is_instance_valid(tirra_ref):
+					tirra_ref.queue_free()
+			)
+		else:
+			# Drop Tirra back into the world as a pickup
+			var game_parent = get_parent()
+			if game_parent:
+				game_parent.add_child(tirra_ref)
+				tirra_ref.global_position = dismount_pos
+				# Re-add pickup area
+				_readd_tirra_pickup_area(tirra_ref)
+	
+	# Launch arc jump off the Tirra
+	launch_arc_jump(jump_target, 40.0)  # Smaller jump when dismounting
+	
 	tirra_dismounted.emit()
 
 func _readd_tirra_pickup_area(tirra: Node2D) -> void:
@@ -1169,12 +1386,17 @@ func _apply_bomb_collision_exception(bomb):
 	add_collision_exception_with(bomb)
 
 func die():
-	"""Handle player death. If mounted on a Tirra, the Tirra dies instead."""
+	"""Handle player death. If immortal or mounted on a Tirra, player survives."""
+	# IMMORTALITY CHECK: Cannot die while invincible
+	if is_immortal:
+		print("[ServerPlayer] ", username, " hit by explosion but is IMMORTAL!")
+		return  # Player survives!
+	
 	# TIRRA PROTECTION: If mounted, Tirra takes the hit instead!
+	# Player jumps off with invincibility frames (Saturn Bomberman style)
 	if is_mounted and mounted_tirra:
 		print("[ServerPlayer] ", username, " hit by explosion but Tirra saved them!")
-		dismount_tirra(true)  # Kill the Tirra
-		# Grant brief invincibility (optional - could add invincibility frames)
+		dismount_tirra(true, true)  # Kill the Tirra, grant immortality
 		return  # Player survives!
 	
 	is_dead = true
@@ -1184,7 +1406,7 @@ func die():
 	velocity = Vector2.ZERO
 	# Dismount if somehow still mounted (shouldn't happen)
 	if is_mounted:
-		dismount_tirra(true)
+		dismount_tirra(true, false)  # Kill Tirra but no immortality (already dying)
 	# TODO: Play death animation
 	# Note: No respawn in Last Man Standing mode
 
@@ -1299,7 +1521,7 @@ func get_state_minimal() -> Dictionary:
 	# Optimized for packet size - uses short keys and packed formats
 	
 	# Pack boolean flags into single integer to save bytes
-	# Bit layout: [0]=kicker, [1]=glove, [2]=line_bomb, [3]=carrying, [4]=picking_up, [5]=mounted
+	# Bit layout: [0]=kicker, [1]=glove, [2]=line_bomb, [3]=carrying, [4]=picking_up, [5]=mounted, [6]=flying, [7]=immortal, [8]=flash_white
 	var flags = 0
 	if has_bomb_kicker: flags |= 1
 	if has_power_glove: flags |= 2
@@ -1307,6 +1529,9 @@ func get_state_minimal() -> Dictionary:
 	if is_carrying_bomb(): flags |= 8
 	if is_picking_up_bomb: flags |= 16
 	if is_mounted: flags |= 32  # Bit 5 = mounted on Tirra
+	if is_flying: flags |= 64   # Bit 6 = in arc jump
+	if is_immortal: flags |= 128  # Bit 7 = invincible
+	if flash_white: flags |= 256  # Bit 8 = white flash active
 	
 	# Use single-char facing: U/D/L/R instead of UP/DOWN/LEFT/RIGHT
 	var facing_char = "D"  # default down
@@ -1325,9 +1550,9 @@ func get_state_minimal() -> Dictionary:
 	
 	# Pack stats into 2 integers for ultra-compact transmission:
 	# s1: (max_bombs<<12) | (bomb_range<<8) | (bombs_placed<<4) | skate_count
-	# s2: (bomb_type<<16) | (active_virus<<8) | flags
+	# s2: (bomb_type<<16) | (active_virus<<8) | flags  (flags now uses bits 0-8)
 	var s1 = (max_bombs << 12) | (bomb_range << 8) | (bombs_placed << 4) | skate_count
-	var s2 = (bomb_type << 16) | (active_virus << 8) | flags
+	var s2 = (bomb_type << 16) | flags  # Flags now include immortality/flying
 	
 	var state = {
 		"p": [int(position.x), int(position.y)],  # position as array
@@ -1343,6 +1568,7 @@ func get_state_minimal() -> Dictionary:
 	if carried_bomb != null and is_instance_valid(carried_bomb):
 		state["c"] = carried_bomb.bomb_id  # carried bomb id
 	if active_virus != VirusType.NONE:
+		state["av"] = active_virus  # active virus type (was packed, now separate)
 		state["ve"] = int(virus_end_time)  # virus end time
 	if is_picking_up_bomb:
 		state["pad"] = [int(pickup_animation_direction.x), int(pickup_animation_direction.y)]
@@ -1378,6 +1604,11 @@ func get_state() -> Dictionary:
 		# Tirra mount state
 		"is_mounted": is_mounted,
 		"tirra_growth_level": tirra_growth_level,
+		# Arc jump state (Saturn Bomberman)
+		"is_flying": is_flying,
+		# Immortality state (Saturn Bomberman)
+		"is_immortal": is_immortal,
+		"flash_white": flash_white,
 	}
 	# Only include optional data if non-default
 	if is_picking_up_bomb:

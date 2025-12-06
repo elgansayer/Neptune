@@ -88,3 +88,42 @@ func show_death_animation():
 		animated_sprite.play("state_defeat")
 		return true
 	return false
+
+# === IMMORTALITY FLASH EFFECT (Saturn Bomberman style) ===
+# When is_immortal and flash_white is true, player flashes white
+
+var _last_flash_state: bool = false
+
+func set_immortal_flash(flash_white: bool, is_immortal: bool) -> void:
+	"""Set the immortality flash state for Saturn Bomberman style invincibility.
+	flash_white toggles every ~100ms while is_immortal is true."""
+	if not is_immortal:
+		# Restore normal appearance
+		if _last_flash_state:
+			_set_white_modulate(false)
+			_last_flash_state = false
+		return
+	
+	# Only update if flash state changed
+	if flash_white != _last_flash_state:
+		_set_white_modulate(flash_white)
+		_last_flash_state = flash_white
+
+func _set_white_modulate(white: bool) -> void:
+	"""Apply white flash to the player sprite."""
+	# Use modulate on the sprite container for the flash effect
+	# White = bright, colorless; Normal = Color.WHITE (no tint)
+	if white:
+		# Flash bright white by adding to the color (makes it look washed out/invincible)
+		sprite_container.modulate = Color(2.5, 2.5, 2.5, 1.0)  # Bright white flash
+	else:
+		sprite_container.modulate = Color.WHITE  # Normal appearance
+
+func set_flying_visual(is_flying: bool) -> void:
+	"""Visual indication of arc jump (flying through air)."""
+	# Could add shadow, height offset, or scale effect
+	if is_flying:
+		# Slight scale increase to indicate height
+		sprite_container.scale = Vector2(1.1, 1.1)
+	else:
+		sprite_container.scale = Vector2.ONE

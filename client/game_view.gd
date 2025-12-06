@@ -140,8 +140,8 @@ func update_game_state(state: Dictionary):
 			var bombs_placed = (s1 >> 4) & 0xF
 			var skate_count = s1 & 0xF
 			var bomb_type = (s2 >> 16) & 0xFF
-			var active_virus = (s2 >> 8) & 0xFF
-			var flags = s2 & 0xFF
+			# Flags now uses all lower 16 bits (was 8 bits) to include flying/immortal/flash
+			var flags = s2 & 0xFFFF
 			
 			# Expand single-char facing back to full name
 			var facing = "DOWN"
@@ -172,9 +172,12 @@ func update_game_state(state: Dictionary):
 				"is_carrying_bomb": (flags & 8) != 0,
 				"is_picking_up_bomb": (flags & 16) != 0,
 				"is_mounted": (flags & 32) != 0,  # Bit 5 = mounted on Tirra
+				"is_flying": (flags & 64) != 0,   # Bit 6 = in arc jump
+				"is_immortal": (flags & 128) != 0, # Bit 7 = invincible
+				"flash_white": (flags & 256) != 0, # Bit 8 = white flash active
 				# Bomb type and virus
 				"bomb_type": bomb_type,
-				"active_virus": active_virus,
+				"active_virus": pmin.get("av", 0),  # Active virus now separate field
 				"virus_end_time": pmin.get("ve", 0.0),
 				# Tirra mount data
 				"tirra_growth_level": pmin.get("tl", 0),  # 0=BABY, 1=TEEN, 2=ADULT
@@ -942,6 +945,14 @@ func update_player(peer_id: String, data: Dictionary):
 	# === VIRUS VISUAL EFFECTS (Saturn Bomberman) ===
 	_update_virus_visual_effects(player_node, data)
 	
+	# === IMMORTALITY FLASH EFFECT (Saturn Bomberman) ===
+	# When player is invincible (after Tirra hit), they flash white
+	_update_immortality_flash(player_node, data)
+	
+	# === FLYING/ARC JUMP VISUAL (Saturn Bomberman) ===
+	# Scale effect when player is in mid-air during arc jump
+	_update_flying_visual(player_node, data)
+	
 	# Debug visualization removed - only direction arrow remains
 	# (debug_blocking_tile, debug_check_tile, raycast lines removed for clean gameplay)
 	
@@ -1071,10 +1082,27 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 		# Ensure the sprite is visible
 		tirra_sprite.visible = true
 		
-		# Play animation if valid
-		if tirra_sprite.sprite_frames and tirra_sprite.sprite_frames.has_animation(tirra_anim):
-			if tirra_sprite.animation != tirra_anim:
-				tirra_sprite.play(tirra_anim)
+		# Play animation if valid - with fallback for missing/empty animations
+		# Some Tirra directions (up, left, right) may have empty frame lists
+		var anim_to_play = tirra_anim
+		if tirra_sprite.sprite_frames:
+			# Check if requested animation exists and has frames
+			var has_valid_anim = tirra_sprite.sprite_frames.has_animation(tirra_anim) and \
+				tirra_sprite.sprite_frames.get_frame_count(tirra_anim) > 0
+			
+			if not has_valid_anim:
+				# Fallback to down direction (which always has frames)
+				if is_moving:
+					anim_to_play = "down_walk"
+				else:
+					anim_to_play = "down_stopped"
+				# Final check - make sure fallback exists
+				if not tirra_sprite.sprite_frames.has_animation(anim_to_play) or \
+					tirra_sprite.sprite_frames.get_frame_count(anim_to_play) == 0:
+					anim_to_play = "idle"  # Last resort fallback
+			
+			if tirra_sprite.animation != anim_to_play:
+				tirra_sprite.play(anim_to_play)
 		
 		# Z-index changes based on direction for proper layering:
 		# - Looking up (away from camera): Player renders in front of Tirra
@@ -1898,3 +1926,59 @@ func _create_skull_icon() -> Node2D:
 	
 	skull_container.add_child(skull)
 	return skull_container
+
+# === SATURN BOMBERMAN IMMORTALITY FLASH EFFECT ===
+# When player is invincible (after Tirra dies), they flash bright white
+
+func _update_immortality_flash(player_node: Node2D, data: Dictionary) -> void:
+	"""Update immortality flash effect (Saturn Bomberman style invincibility frames)"""
+	var is_immortal = data.get("is_immortal", false)
+	var flash_white = data.get("flash_white", false)
+	
+	# Get the animated sprite for flashing effect
+	var animated_sprite = player_node.get_meta("animated_sprite", null)
+	if not animated_sprite:
+		return
+	
+	# Store last immortal state to detect transitions
+	var was_immortal = player_node.get_meta("was_immortal", false)
+	player_node.set_meta("was_immortal", is_immortal)
+	
+	if is_immortal:
+		# Flash between bright white and normal (Saturn Bomberman style)
+		# Note: This overrides virus flash when both active (immortal takes priority)
+		if flash_white:
+			# Bright white flash - make sprite glow
+			animated_sprite.modulate = Color(2.5, 2.5, 2.5, 1.0)
+		else:
+			animated_sprite.modulate = Color.WHITE
+	elif was_immortal and not is_immortal:
+		# Immortality just ended - ensure modulate is restored
+		# Only restore if no virus is active
+		var has_virus = data.has("active_virus") and data.active_virus != 0
+		if not has_virus:
+			animated_sprite.modulate = Color.WHITE
+
+# === SATURN BOMBERMAN ARC JUMP/FLYING VISUAL ===
+# When player is in mid-air during arc jump (mounting/dismounting Tirra)
+
+func _update_flying_visual(player_node: Node2D, data: Dictionary) -> void:
+	"""Update flying visual effect (arc jump during Tirra mount/dismount)"""
+	var is_flying = data.get("is_flying", false)
+	
+	# Get the sprite container for scale effect
+	var animated_sprite = player_node.get_meta("animated_sprite", null)
+	if not animated_sprite:
+		return
+	
+	# Store last flying state to detect transitions
+	var was_flying = player_node.get_meta("was_flying", false)
+	player_node.set_meta("was_flying", is_flying)
+	
+	if is_flying:
+		# Slight scale increase to indicate height + shadow could be added
+		animated_sprite.scale = Vector2(1.15, 1.15)
+		# Could also add a simple drop shadow here
+	elif was_flying and not is_flying:
+		# Landing - restore normal scale
+		animated_sprite.scale = Vector2.ONE
