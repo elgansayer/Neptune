@@ -858,17 +858,17 @@ func update_player(peer_id: String, data: Dictionary):
 			return
 		
 		# Get direction prefix from facing data
-		var direction_prefix = "south" # Default
+		var direction_prefix = "down" # Default
 		if data.has("facing"):
 			match data.facing:
 				"RIGHT":
-					direction_prefix = "east"
+					direction_prefix = "right"
 				"DOWN":
-					direction_prefix = "south"
+					direction_prefix = "down"
 				"LEFT":
-					direction_prefix = "west"
+					direction_prefix = "left"
 				"UP":
-					direction_prefix = "north"
+					direction_prefix = "up"
 		
 		# Store last direction for when player stops
 		player_node.set_meta("last_direction", direction_prefix)
@@ -897,13 +897,13 @@ func update_player(peer_id: String, data: Dictionary):
 		# Priority 3: Picking up bomb (animation)
 		elif data.has("is_picking_up_bomb") and data.is_picking_up_bomb:
 			# Get pickup animation direction
-			var pickup_dir = "south" # Default
+			var pickup_dir = "down" # Default
 			if data.has("pickup_animation_direction"):
 				var pickup_vec = Vector2(data.pickup_animation_direction.x, data.pickup_animation_direction.y)
 				if abs(pickup_vec.y) > abs(pickup_vec.x):
-					pickup_dir = "north" if pickup_vec.y < 0 else "south"
+					pickup_dir = "up" if pickup_vec.y < 0 else "down"
 				else:
-					pickup_dir = "west" if pickup_vec.x < 0 else "east"
+					pickup_dir = "left" if pickup_vec.x < 0 else "right"
 			anim_name = pickup_dir + "_pglove_pickup"
 		# Priority 4: Carrying bomb
 		elif data.has("is_carrying_bomb") and data.is_carrying_bomb:
