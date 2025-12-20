@@ -1139,16 +1139,10 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 
 
 func _player_dir_to_tirra_dir(player_dir: String) -> String:
-	"""Convert player direction names to Tirra direction names."""
+	"""Return Tirra direction name (up/down/left/right)."""
 	match player_dir:
-		"north":
-			return "up"
-		"south":
-			return "down"
-		"east":
-			return "right"
-		"west":
-			return "left"
+		"up", "down", "left", "right":
+			return player_dir
 		_:
 			return "down"
 
