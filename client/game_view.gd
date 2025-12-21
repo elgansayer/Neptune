@@ -878,6 +878,7 @@ func update_player(peer_id: String, data: Dictionary):
 		var velocity = Vector2(data.velocity.x, data.velocity.y)
 		var is_moving = velocity.length() >= 10.0
 		var is_mounted = data.get("is_mounted", false)
+		var is_flying = data.get("is_flying", false)
 		
 		# Priority 0: Match ended - Winner/Loser animations (highest priority after death)
 		if match_ended:
@@ -911,15 +912,18 @@ func update_player(peer_id: String, data: Dictionary):
 				anim_name = direction_prefix + "_carry"
 			else:
 				anim_name = direction_prefix + "_hold"
-		# Priority 5: Mounted on Tirra - player shows ride animation
+		# Priority 5: Flying/Arc jump (mounting/dismounting Tirra)
+		elif is_flying:
+			anim_name = direction_prefix + "_jump"
+		# Priority 6: Mounted on Tirra - player shows ride animation
 		elif is_mounted:
 			anim_name = direction_prefix + "_ride"
 			# Update Tirra visual if it exists
 			_update_tirra_visual(player_node, data, direction_prefix, is_moving)
-		# Priority 6: Walking
+		# Priority 7: Walking
 		elif is_moving:
 			anim_name = direction_prefix + "_walk"
-		# Priority 7: Stopped (directional idle)
+		# Priority 8: Stopped (directional idle)
 		else:
 			anim_name = direction_prefix + "_stopped"
 		

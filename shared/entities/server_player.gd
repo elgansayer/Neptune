@@ -94,6 +94,7 @@ var is_flying: bool = false                # True when in mid-air during jump
 var jump_target_position: Vector2 = Vector2.ZERO  # Target landing position
 var jump_velocity: Vector2 = Vector2.ZERO  # Current arc velocity
 var jump_gravity: float = 3000.0           # Gravity during jump (matches SBomberman)
+var jump_speed_scale: float = 1.0          # Speed scale for current jump (affects gravity and movement)
 var frozen_movement: bool = false          # When true, input is ignored (during jump/stun)
 var og_collision_layer: int = 0            # Stored collision layer during flight
 var og_collision_mask: int = 0             # Stored collision mask during flight
@@ -921,9 +922,11 @@ func get_carried_bomb_offset() -> Vector2:
 
 # ============ ARC JUMP SYSTEM (Saturn Bomberman) ============
 
-func calculate_arc_velocity(source: Vector2, dest: Vector2, arc_height: float, gravity: float) -> Vector2:
+func calculate_arc_velocity(source: Vector2, dest: Vector2, arc_height: float, gravity: float, speed_scale: float = 1.0) -> Vector2:
 	"""Calculate the velocity needed for an arc trajectory from source to dest.
-	Matches SBomberman throwable.gd logic."""
+	Matches SBomberman throwable.gd logic.
+	Note: speed_scale is NOT applied here - it's applied during _process_arc_jump movement.
+	This way arc_height stays independent of speed."""
 	var displacement := dest - source
 	
 	# Time to reach peak of arc
@@ -935,19 +938,25 @@ func calculate_arc_velocity(source: Vector2, dest: Vector2, arc_height: float, g
 	if total_time <= 0:
 		total_time = 0.1  # Prevent division by zero
 	
+	# Don't apply speed_scale here - it's applied during movement in _process_arc_jump
+	# This way the velocity is always correct for the target height
+	
 	var arc_velocity := Vector2.ZERO
 	arc_velocity.y = -sqrt(2.0 * gravity * arc_height) if arc_height > 0 else -100.0
 	arc_velocity.x = displacement.x / total_time
 	
+	print("[DEBUG] calculate_arc_velocity: arc_height=", arc_height, " gravity=", gravity, " displacement=", displacement, " total_time=", total_time)
+	print("[DEBUG]  -> arc_velocity.y calc: sqrt(2*", gravity, "*", arc_height, ") = ", arc_velocity.y)
+	print("[DEBUG]  -> result velocity: ", arc_velocity)
+	
 	return arc_velocity
 
-func launch_arc_jump(target: Vector2, arc_height: float = 48.0) -> void:
+func launch_arc_jump(target: Vector2, arc_height: float = 48.0, speed_scale: float = 1.0) -> void:
 	"""Launch player in an arc toward target position.
-	Used for mounting/dismounting Tirras."""
+	Used for mounting/dismounting Tirras.
+	speed_scale: 1.0 = normal, 0.5 = half speed (twice as slow), 2.0 = double speed."""
 	if is_flying:
 		return  # Already flying
-	
-	print("[ServerPlayer] ", username, " launching arc jump to ", target)
 	
 	# Store original collision settings
 	og_collision_layer = collision_layer
@@ -959,7 +968,11 @@ func launch_arc_jump(target: Vector2, arc_height: float = 48.0) -> void:
 	
 	# Calculate arc trajectory
 	jump_target_position = target
-	jump_velocity = calculate_arc_velocity(global_position, target, arc_height, jump_gravity)
+	jump_speed_scale = speed_scale  # Store speed scale for use in _process_arc_jump
+	jump_velocity = calculate_arc_velocity(global_position, target, arc_height, jump_gravity, speed_scale)
+	
+	print("[ServerPlayer] ", username, " launching arc jump to ", target, " with arc_height=", arc_height, " speed_scale=", speed_scale)
+	print("  calculated jump_velocity: ", jump_velocity, " gravity: ", jump_gravity)
 	
 	# Enter flying state
 	is_flying = true
@@ -973,15 +986,18 @@ func _process_arc_jump(delta: float) -> void:
 	if not is_flying:
 		return
 	
-	# Apply gravity
-	jump_velocity.y += jump_gravity * delta
+	# Apply speed scale to delta for slow-motion effect
+	var scaled_delta = delta * jump_speed_scale
 	
-	# Move
-	global_position += jump_velocity * delta
+	# Update vertical velocity with gravity
+	jump_velocity.y += jump_gravity * scaled_delta
+	
+	# Move with scaled delta
+	global_position += jump_velocity * scaled_delta
 	
 	# Check if we've landed (reached or passed target Y position going downward)
 	var past_target := jump_velocity.y > 0 and global_position.y >= jump_target_position.y
-	var close_to_target := global_position.distance_to(jump_target_position) < 4.0
+	var close_to_target := jump_velocity.y > 0 and global_position.distance_to(jump_target_position) < 2.0 # Tighter tolerance, only when falling
 	
 	if past_target or close_to_target:
 		_land_from_arc_jump()
@@ -1076,12 +1092,12 @@ func mount_tirra(tirra: Node2D) -> bool:
 	
 	# Launch arc jump to Tirra position
 	# Jump height based on Tirra growth level for visual effect
-	var tirra_level: int = 0
+	var _tirra_level: int = 0
 	if tirra.has_method("get") and tirra.get("current_level") != null:
-		tirra_level = tirra.current_level
-	var jump_height: float = 32.0 + (tirra_level * 8.0)  # Taller jump for bigger Tirras
-	
-	launch_arc_jump(tirra.global_position, jump_height)
+		_tirra_level = tirra.current_level
+	# var jump_height: float = (1.0 + 0.1 * tirra_level) * GameConfig.TILE_SIZE  # Base 1 tile + 0.5 tile per growth level (pixels)
+	var jump_height := GameConfig.TILE_SIZE + (_tirra_level * GameConfig.TILE_SIZE * 0.1)  # Base 2 tiles + 0.5 tile per growth level (pixels)
+	launch_arc_jump(tirra.global_position, jump_height, 0.2)  # Slower jump onto Tirra (speed_scale=0.7)
 	return true
 
 func _complete_tirra_mount(tirra: Node2D) -> void:
@@ -1193,7 +1209,9 @@ func dismount_tirra(kill_tirra_flag: bool = false, grant_immortality: bool = fal
 				_readd_tirra_pickup_area(tirra_ref)
 	
 	# Launch arc jump off the Tirra
-	launch_arc_jump(jump_target, 40.0)  # Smaller jump when dismounting
+	var jump_height := GameConfig.TILE_SIZE  * 1.5;
+	launch_arc_jump(jump_target, jump_height, 0.3)  # Ultra slow jump onto Tirra (speed_scale=0.01, 100x slower)
+	# launch_arc_jump(jump_target, jump_height, 0.01)  # Ultra slow jump off Tirra (speed_scale=0.01, 100x slower)
 	
 	tirra_dismounted.emit()
 
@@ -1351,7 +1369,7 @@ func _on_tirra_action_stopped(action_name: String, action_type: String) -> void:
 	"""Handle Tirra action stop signal"""
 	print("[ServerPlayer] Tirra action stopped: ", action_name, " type: ", action_type)
 
-func _on_tirra_action_info(info: Dictionary) -> void:
+func _on_tirra_action_info(_info: Dictionary) -> void:
 	"""Handle Tirra frame info updates (for dynamic rider offset)"""
 	# Could update visual offset here if needed
 	pass
@@ -1417,7 +1435,7 @@ func collect_powerup(powerup):
 	Stats are clamped automatically by the setter functions.
 	"""
 	var type = powerup.powerup_type
-	var type_name = ServerPowerUpScript.get_display_name(type)
+	var _type_name = ServerPowerUpScript.get_display_name(type)
 	
 	match type:
 		# === STAT INCREASE ITEMS ===

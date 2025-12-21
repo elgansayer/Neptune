@@ -281,20 +281,23 @@ func _physics_process(delta):
 			# Spawn test powerups if TEST_POWERUPS environment variable is set
 			if OS.get_environment("TEST_POWERUPS") != "":
 				spawn_test_powerups()
+			
+			# ALWAYS spawn an egg for testing the jump height/speed
+			spawn_egg(Vector2i(2, 2))
 	
 	# Update match timer if active
 	if match_active:
 		match_time_remaining -= delta
 		
 		# === PLAYER VIRUS UPDATES ===
-		var current_time_msec = Time.get_ticks_msec()
+		var _current_time_msec = Time.get_ticks_msec()
 		for peer_id in players:
 			var player = players[peer_id]
 			if not is_instance_valid(player) or player.is_dead:
 				continue
 			
 			# Check virus expiration
-			player.update_virus(current_time_msec)
+			player.update_virus(_current_time_msec)
 			
 			# DIARRHOEA virus: auto-place bombs constantly
 			if player.should_auto_place_bomb() and player.can_place_bomb():
