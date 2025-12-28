@@ -1,4 +1,4 @@
-extends Node
+extends "res://shared/rpc_interface.gd"
 
 # Main server entry point
 # Runs headless, manages all game instances, authentication, and lobbies
@@ -39,6 +39,13 @@ func _ready():
 	print("=== Bomberman Server Starting ===")
 	print("[Server] Node name: ", name)
 	print("[Server] Node path: ", get_path())
+	
+	# Validate RPC configuration
+	var rpc_validation = validate_rpc_config()
+	if rpc_validation["valid"]:
+		print("[Server] ✅ RPC config valid: ", rpc_validation["rpc_count"], " methods")
+	else:
+		push_error("[Server] ❌ RPC config mismatch! Expected ", rpc_validation["expected_count"], " got ", rpc_validation["rpc_count"])
 	print("[Server] RPC config:", get_script().get_rpc_config())
 	
 	# Load backend service (local SQLite for now)
@@ -80,18 +87,16 @@ func _on_player_disconnected(peer_id: int):
 	# Clean up from lobby
 	lobby_manager.remove_player(peer_id)
 
-# === Debug RPCs ===
+# === RPC Handlers (order matches shared/rpc_interface.gd) ===
 
-@rpc("any_peer", "call_remote", "reliable")
+# 1. Debug/Admin RPCs
 func set_debug_timescale(timescale: float) -> void:
 	# Clamp to sane range for debugging
 	var clamped = clamp(timescale, 0.1, 10.0)
 	Engine.time_scale = clamped
 	print("[Server] Debug time_scale set to ", Engine.time_scale)
 
-# === RPC Handlers ===
-
-@rpc("any_peer", "call_remote", "reliable")
+# 2. Client-to-Server Auth RPCs
 func authenticate_request(username: String, password: String):
 	var peer_id = multiplayer.get_remote_sender_id()
 	print("[Server] *** AUTHENTICATE RPC RECEIVED ***")
@@ -120,7 +125,6 @@ func authenticate_request(username: String, password: String):
 		print("[Server] Authentication failed: ", result.get("error", "Unknown error"))
 		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": result.get("error", "Invalid credentials")})
 
-@rpc("any_peer", "call_remote", "reliable")
 func register_request(username: String, password: String):
 	var peer_id = multiplayer.get_remote_sender_id()
 	print("[Server] *** REGISTER_USER RPC RECEIVED ***")
@@ -135,7 +139,7 @@ func register_request(username: String, password: String):
 		print("[Server] Registration failed: ", result.get("error", "Unknown error"))
 		get_node("/root/ClientMain").rpc_id(peer_id, "register_response", {"success": false, "error": result.get("error", "Registration failed")})
 
-@rpc("any_peer", "call_remote", "unreliable")
+# 3. Client-to-Server Game Input
 func send_player_input(input_data: Dictionary):
 	var peer_id = multiplayer.get_remote_sender_id()
 	
@@ -150,24 +154,38 @@ func send_player_input(input_data: Dictionary):
 	# Forward input to the game instance
 	active_games[game_id].handle_player_input(peer_id, input_data)
 
-# Server receives these from clients (stubs for client-side RPCs)
-@rpc("any_peer", "call_remote", "reliable")
+# 4. Ping/Pong (latency measurement)
+func ping(timestamp: int):
+	var peer_id = multiplayer.get_remote_sender_id()
+	# Respond immediately with pong, echoing the timestamp
+	# Use unreliable for ping/pong as we don't want retransmissions affecting latency measurement
+	get_node("/root/ClientMain").rpc_id(peer_id, "pong", timestamp)
+
+# 5. Server-to-Client Auth Responses (stubs)
 func auth_response(_data: Dictionary):
 	pass # Stub - actual implementation on client
 
-@rpc("any_peer", "call_remote", "reliable")
 func register_response(_data: Dictionary):
 	pass # Stub - actual implementation on client
 
-@rpc("any_peer", "call_remote", "unreliable")
+# 6. Server-to-Client Game State (stubs)
 func ai_debug_update(_debug_data: Dictionary):
 	pass # Stub - clients receive this
 
-@rpc("any_peer", "call_remote", "unreliable")
 func receive_state(_state: Dictionary):
 	pass # Stub - actual implementation on client
 
-@rpc("any_peer", "call_remote", "reliable")
+func receive_initial_map(_map_data: Dictionary):
+	pass # Stub - actual implementation on client
+
+func bomb_safety_update(_safety_data: Dictionary):
+	pass # Stub - actual implementation on client
+
+# 7. Latency Response (stub)
+func pong(_timestamp: int):
+	pass # Stub - actual implementation on client
+
+# 8. Gameplay Features
 func spawn_bot_request(personality: String = "BALANCED"):
 	var peer_id = multiplayer.get_remote_sender_id()
 	if not player_to_game.has(peer_id):
@@ -178,7 +196,6 @@ func spawn_bot_request(personality: String = "BALANCED"):
 	active_games[game_id].spawn_bot(personality)
 	print("[Server] Peer ", peer_id, " requested bot (", personality, ") in ", game_id)
 
-@rpc("any_peer", "call_remote", "reliable")
 func test_farming_spot_broadcast():
 	var peer_id = multiplayer.get_remote_sender_id()
 	print("[Server] TEST: Peer ", peer_id, " requested farming spot search test (F8)")
@@ -194,13 +211,6 @@ func test_farming_spot_broadcast():
 		game.test_farming_spot_search()
 	else:
 		print("[Server] TEST: GameInstance missing test method")
-
-@rpc("any_peer", "call_remote", "unreliable")
-func ping(timestamp: int):
-	var peer_id = multiplayer.get_remote_sender_id()
-	# Respond immediately with pong, echoing the timestamp
-	# Use unreliable for ping/pong as we don't want retransmissions affecting latency measurement
-	get_node("/root/ClientMain").rpc_id(peer_id, "pong", timestamp)
 
 # Quick-start game system (no lobby for now)
 func quick_start_game(peer_id: int, username: String):

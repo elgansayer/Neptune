@@ -1025,6 +1025,12 @@ func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionar
 				if player_sprite:
 					player_sprite.z_index = 1
 				
+				# Debug: Print children to verify the structure
+				print("[GameView] Created Tirra visual, growth_level=", growth_level)
+				for child in tirra_visual.get_children():
+					if child is AnimatedSprite2D:
+						print("  - ", child.name, " visible=", child.visible)
+				
 				print("[GameView] Created Tirra visual for mounted player, tirra z=0, player sprite z=1")
 			else:
 				# Fallback: Create a simple placeholder
@@ -1039,6 +1045,15 @@ func _manage_tirra_visual(player_node: Node2D, is_mounted: bool, data: Dictionar
 				tirra_visual.add_child(placeholder)
 				player_node.add_child(tirra_visual)
 				push_warning("[GameView] Could not load tirra.tscn, using placeholder")
+		else:
+			# Tirra visual already exists, update growth level if changed
+			var growth_level = data.get("tirra_growth_level", 0)
+			if tirra_visual.has_method("set_growth_level"):
+				tirra_visual.set_growth_level(growth_level)
+			elif "current_level" in tirra_visual:
+				var old_level = tirra_visual.get("current_level")
+				if old_level != growth_level:
+					tirra_visual.current_level = growth_level
 	else:
 		# Remove Tirra visual when dismounted
 		if tirra_visual:
@@ -1070,22 +1085,39 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 	# The Tirra scene has a controller script that manages child sprites (baby/teen/adult)
 	# We need to find the active sprite and play the animation on it
 	var growth_level = data.get("tirra_growth_level", 0)
-	var sprite_name = "baby"
-	match growth_level:
-		0: sprite_name = "baby"
-		1: sprite_name = "teen"
-		2: sprite_name = "adult"
 	
-	var tirra_sprite = tirra_visual.get_node_or_null(sprite_name) as AnimatedSprite2D
-	if tirra_sprite:
-		# Make sure this sprite is visible and others are hidden
+	# First ensure the controller's current_level is set correctly
+	# The controller's _update_visibility() will handle showing/hiding the right sprite
+	if tirra_visual.has_method("set_growth_level"):
+		tirra_visual.set_growth_level(growth_level)
+	elif "current_level" in tirra_visual:
+		if tirra_visual.get("current_level") != growth_level:
+			tirra_visual.current_level = growth_level
+	
+	# Get the currently active sprite from the controller's _current_sprite
+	var tirra_sprite: AnimatedSprite2D = null
+	if "_current_sprite" in tirra_visual:
+		tirra_sprite = tirra_visual.get("_current_sprite")
+	
+	# Fallback: manually find the visible sprite if controller doesn't expose _current_sprite
+	if not tirra_sprite:
 		for child in tirra_visual.get_children():
 			if child is AnimatedSprite2D:
-				child.visible = (child.name == sprite_name)
+				if child.visible:
+					tirra_sprite = child
+					break
+	
+	# Debug: Check if sprite has frames
+	if tirra_sprite and tirra_sprite.sprite_frames:
+		if tirra_sprite.sprite_frames.get_frame_count("default") == 0 and tirra_sprite.sprite_frames.get_frame_count("idle") == 0:
+			print("[GameView] WARNING: Tirra sprite '", tirra_sprite.name, "' has no frames in 'default' or 'idle' animation!")
 		
-		# Ensure the sprite is visible
-		tirra_sprite.visible = true
-		
+		if not tirra_sprite:
+			# Debug: check what children exist
+			print("[GameView] No visible Tirra sprite found. Growth level: ", growth_level)
+			print("[GameView] Tirra children: ", tirra_visual.get_children().map(func(c): return c.name + " (visible=" + str(c.visible) + ")" if c is AnimatedSprite2D else c.name))
+	
+	if tirra_sprite:
 		# Play animation if valid - with fallback for missing/empty animations
 		# Some Tirra directions (up, left, right) may have empty frame lists
 		var anim_to_play = tirra_anim
@@ -1113,33 +1145,48 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 		# - Looking down (toward camera): Tirra renders in front of player
 		# Set on the actual tirra sprite, not parent container
 		var tirra_z_table = {
-			"up": -1,    # Tirra behind player (player walking away)
-			"down": 1,   # Tirra in front (player walking toward camera)
-			"left": -1,  # Tirra behind
-			"right": -1, # Tirra behind
+			"up": 1,    # Tirra behind player (player walking away)
+			"down": 2,   # Tirra in front (player walking toward camera)
+			"left": 1,  # Tirra behind
+			"right": 1, # Tirra behind
 		}
-		tirra_sprite.z_index = tirra_z_table.get(tirra_direction, -1)
-		tirra_sprite.z_as_relative = false  # Use absolute z-index
+		tirra_sprite.z_index = tirra_z_table.get(tirra_direction, 1)
+		tirra_sprite.z_as_relative = true  # Use relative z-index
+		
+		# Ensure the parent container (TirraVisual) doesn't interfere with z-index
+		tirra_visual.z_index = 0
+		tirra_visual.z_as_relative = true
 	else:
-		push_warning("[GameView] Tirra sprite not found: " + sprite_name)
+		push_warning("[GameView] Tirra sprite not found for growth level: " + str(growth_level))
 	
 	# Apply rider offset based on direction and growth level
 	var rider_offset = _get_tirra_rider_offset(growth_level, tirra_direction)
 	
 	# The player sprite needs to be offset when mounted
 	var player_sprite = player_node.get_node_or_null("AnimatedSprite2D")
+	if not player_sprite:
+		# Try to find it in the sprite_root if it's nested
+		for child in player_node.get_children():
+			if child.name != "TirraVisual" and child is Node2D:
+				player_sprite = child.get_node_or_null("AnimatedSprite2D")
+				if player_sprite:
+					# Also ensure the player's sprite parent doesn't interfere
+					child.z_index = 0
+					child.z_as_relative = true
+					break
+
 	if player_sprite:
 		player_sprite.position = rider_offset
 		
 		# Player z-index opposite to tirra for proper layering
 		var player_z_table = {
-			"up": 1,     # Player in front (walking away)
-			"down": -1,  # Player behind (walking toward camera)
-			"left": 1,   # Player in front
-			"right": 1,  # Player in front
+			"up": 2,     # Player in front (walking away)
+			"down": 1,  # Player behind (walking toward camera)
+			"left": 2,   # Player in front
+			"right": 2,  # Player in front
 		}
-		player_sprite.z_index = player_z_table.get(tirra_direction, 1)
-		player_sprite.z_as_relative = false  # Use absolute z-index
+		player_sprite.z_index = player_z_table.get(tirra_direction, 2)
+		player_sprite.z_as_relative = true  # Use relative z-index
 
 
 func _player_dir_to_tirra_dir(player_dir: String) -> String:
@@ -1158,32 +1205,30 @@ func _get_tirra_rider_offset(growth_level: int, direction: String = "down") -> V
 	- Baby: Y=-20, X=13 for left, X=-13 for right
 	- Teen: Y=-25, X=13 for left, X=-13 for right  
 	- Adult: Y=-45, X=13 for left, X=-13 for right
-	
-	Adjusted for our smaller scale (we use 16px tiles vs 32px)
 	"""
 	var y_offset: float
 	var x_offset: float = 0.0
 	
 	# Vertical offset based on Tirra size
 	match growth_level:
-		0:  # BABY
-			y_offset = -10.0
-		1:  # TEEN
-			y_offset = -12.0
-		2:  # ADULT
-			y_offset = -22.0
+		0:  # BABY (Small)
+			y_offset = -6.0
+		1:  # TEEN (Middle)
+			y_offset = -25.0
+		2:  # ADULT (Big)
+			y_offset = -45.0
 		_:
-			y_offset = -10.0
+			y_offset = -20.0
 	
 	# Horizontal offset for left/right directions
 	# Player shifts to the side to appear sitting on Tirra's back properly
 	match direction:
 		"left":
-			x_offset = 6.0   # Player shifts right when Tirra faces left
+			x_offset = 6.5   # Player shifts right when Tirra faces left
 		"right":
-			x_offset = -6.0  # Player shifts left when Tirra faces right
+			x_offset = -6.5  # Player shifts left when Tirra faces right
 		_:
-			x_offset = 0.0   # Centered for up/down
+			x_offset = 0.0    # Centered for up/down
 	
 	return Vector2(x_offset, y_offset)
 

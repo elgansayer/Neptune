@@ -15,6 +15,16 @@ func picked_up(player):
 	super.picked_up(player)
 
 func award_player(player):
+	# Check if player is already mounted
+	if player.has_method("is_mounted") and player.is_mounted:
+		if player.mounted_tirra and player.mounted_tirra.has_method("level_up"):
+			print("[Egg] Upgrading existing Tirra for player: ", player.username if "username" in player else "unknown")
+			player.mounted_tirra.level_up()
+			# Update player's growth level for state sync
+			if player.mounted_tirra.has_method("get"):
+				player.tirra_growth_level = player.mounted_tirra.get("current_level")
+			return
+
 	print("[Egg] Hatching Tirra for player: ", player.username if "username" in player else "unknown")
 	
 	# Try to load Tirra scene from PCK

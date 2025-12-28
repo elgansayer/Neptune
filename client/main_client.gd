@@ -1,4 +1,4 @@
-extends Node
+extends "res://shared/rpc_interface.gd"
 
 # Main client entry point
 # Connects to server, handles authentication, and joins games
@@ -32,6 +32,15 @@ func _ready():
 		return
 	
 	print("=== Bomberman Client Starting ===")
+	
+	# Validate RPC configuration
+	var rpc_validation = validate_rpc_config()
+	if rpc_validation["valid"]:
+		print("[Client] ✅ RPC config valid: ", rpc_validation["rpc_count"], " methods")
+	else:
+		push_error("[Client] ❌ RPC config mismatch! Expected ", rpc_validation["expected_count"], " got ", rpc_validation["rpc_count"])
+	print("[Client] RPC config:", get_script().get_rpc_config())
+	
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
@@ -108,31 +117,28 @@ func register(user: String, password: String):
 	# Call RPC through ServerMain autoload (exists on both client and server)
 	ServerMain.rpc_id(1, "register_request", user, password)
 
-# === RPC Handlers ===
+# === RPC Handlers (order matches shared/rpc_interface.gd) ===
 
-# Client sends these to server (stubs)
-@rpc("any_peer", "call_remote", "reliable")
-func authenticate_request(_username: String, _password: String):
-	pass # Stub - actual implementation on server
-
-@rpc("any_peer", "call_remote", "reliable")
-func register_request(_username: String, _password: String):
-	pass # Stub - actual implementation on server
-
-@rpc("any_peer", "call_remote", "unreliable")
-func send_player_input(_input_data: Dictionary):
-	pass # Stub - actual implementation on server
-
-@rpc("any_peer", "call_remote", "reliable")
+# 1. Debug/Admin RPCs (stubs)
 func set_debug_timescale(_timescale: float):
 	pass # Stub - actual implementation on server
 
-@rpc("any_peer", "call_remote", "unreliable")
+# 2. Client-to-Server Auth RPCs (stubs)
+func authenticate_request(_username: String, _password: String):
+	pass # Stub - actual implementation on server
+
+func register_request(_username: String, _password: String):
+	pass # Stub - actual implementation on server
+
+# 3. Client-to-Server Game Input (stub)
+func send_player_input(_input_data: Dictionary):
+	pass # Stub - actual implementation on server
+
+# 4. Ping/Pong (stub)
 func ping(_timestamp: int):
 	pass # Stub - actual implementation on server
 
-# Client receives these from server authority
-@rpc("any_peer", "call_remote", "reliable")
+# 5. Server-to-Client Auth Responses
 func auth_response(data: Dictionary):
 	if data.success:
 		print("[Client] Authentication successful!")
@@ -144,28 +150,25 @@ func auth_response(data: Dictionary):
 		authenticated = false
 		authentication_failed.emit(data.get("error", "Unknown error"))
 
-@rpc("any_peer", "call_remote", "reliable")
 func register_response(data: Dictionary):
 	if data.success:
 		print("[Client] Registration successful!")
 	else:
 		print("[Client] Registration failed: ", data.get("error", "Unknown error"))
 
-@rpc("any_peer", "call_remote", "unreliable")
+# 6. Server-to-Client Game State
 func ai_debug_update(debug_data: Dictionary):
 	"""Receive AI debug data from server"""
 	var game_view = _find_game_view()
 	if game_view and game_view.has_method("update_ai_debug"):
 		game_view.update_ai_debug(debug_data)
 
-@rpc("any_peer", "call_remote", "unreliable")
 func receive_state(state: Dictionary):
 	# Forward to active game view scene - find GameView node in tree
 	var game_view = _find_game_view()
 	if game_view:
 		game_view.update_game_state(state)
 
-@rpc("any_peer", "call_remote", "reliable")
 func receive_initial_map(map_data: Dictionary):
 	# Initial map data sent reliably (TCP) to handle larger payload
 	print("[ClientMain] Received initial map data with keys: ", map_data.keys())
@@ -176,6 +179,34 @@ func receive_initial_map(map_data: Dictionary):
 		# Cache the map data until GameView is ready
 		pending_initial_map = map_data
 		print("[ClientMain] Cached initial map data (GameView not ready yet)")
+
+func bomb_safety_update(safety_data: Dictionary):
+	# Forward bomb safety data to current GameView
+	print("[ClientMain] RPC bomb_safety_update received with %d tiles" % safety_data.size())
+	var game_view = _find_game_view()
+	if game_view:
+		print("[ClientMain] Forwarding to GameView")
+		game_view.bomb_safety_update(safety_data)
+	else:
+		print("[ClientMain] GameView not ready yet")
+
+# 7. Latency Response
+func pong(timestamp: int):
+	var now = Time.get_ticks_msec()
+	var rtt = now - timestamp
+	# Latency is half of RTT
+	current_latency_ms = int(rtt / 2.0)
+	latency_updated.emit(current_latency_ms)
+	# print("[Client] Latency: %d ms" % current_latency_ms)
+
+# 8. Gameplay Features (stubs)
+func spawn_bot_request(_personality: String = "BALANCED"):
+	pass # Stub - actual implementation on server
+
+func test_farming_spot_broadcast():
+	pass # Stub - actual implementation on server
+
+# === Helper Functions ===
 
 func get_pending_initial_map() -> Dictionary:
 	"""Get and clear pending initial map data (called by GameView when ready)"""
@@ -198,26 +229,6 @@ func _find_game_view() -> Node:
 		if child.name == "GameView" and child.has_method("update_game_state"):
 			return child
 	return null
-
-@rpc("any_peer", "call_remote", "unreliable")
-func bomb_safety_update(safety_data: Dictionary):
-	# Forward bomb safety data to current GameView
-	print("[ClientMain] RPC bomb_safety_update received with %d tiles" % safety_data.size())
-	var game_view = _find_game_view()
-	if game_view:
-		print("[ClientMain] Forwarding to GameView")
-		game_view.bomb_safety_update(safety_data)
-	else:
-		print("[ClientMain] GameView not ready yet")
-
-@rpc("authority", "call_remote", "unreliable")
-func pong(timestamp: int):
-	var now = Time.get_ticks_msec()
-	var rtt = now - timestamp
-	# Latency is half of RTT
-	current_latency_ms = int(rtt / 2.0)
-	latency_updated.emit(current_latency_ms)
-	# print("[Client] Latency: %d ms" % current_latency_ms)
 
 func _send_ping():
 	if not connected:

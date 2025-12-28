@@ -1073,7 +1073,23 @@ func mount_tirra(tirra: Node2D) -> bool:
 	Player will jump in an arc onto the Tirra (Saturn Bomberman style).
 	Returns true if mounting process started."""
 	if is_mounted:
-		print("[ServerPlayer] ", username, " already mounted, cannot mount another Tirra")
+		# If already mounted, check if we can upgrade
+		if mounted_tirra and mounted_tirra.has_method("level_up"):
+			var current_lvl = 0
+			if mounted_tirra.has_method("get"):
+				current_lvl = mounted_tirra.get("current_level")
+			
+			if current_lvl < 2: # Not ADULT yet
+				print("[ServerPlayer] ", username, " already mounted, upgrading current Tirra instead")
+				mounted_tirra.level_up()
+				if mounted_tirra.has_method("get"):
+					tirra_growth_level = mounted_tirra.get("current_level")
+				# Remove the other Tirra from the world
+				if is_instance_valid(tirra):
+					tirra.queue_free()
+				return true
+		
+		print("[ServerPlayer] ", username, " already mounted at max level, ignoring Tirra")
 		return false
 	
 	if is_dead:
@@ -1253,10 +1269,10 @@ func get_tirra_rider_offset() -> Vector2:
 	
 	# Fallback offsets based on growth level
 	match tirra_growth_level:
-		0: return Vector2(0, -10)  # BABY
-		1: return Vector2(0, -20)  # TEEN
-		2: return Vector2(0, -30)  # ADULT
-	return Vector2(0, -10)
+		0: return Vector2(0, -20)  # BABY
+		1: return Vector2(0, -25)  # TEEN
+		2: return Vector2(0, -45)  # ADULT
+	return Vector2(0, -20)
 
 func trigger_tirra_action() -> void:
 	"""Called when player presses action button while mounted.

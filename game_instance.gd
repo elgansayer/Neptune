@@ -281,7 +281,7 @@ func _physics_process(delta):
 			# Spawn test powerups if TEST_POWERUPS environment variable is set
 			if OS.get_environment("TEST_POWERUPS") != "":
 				spawn_test_powerups()
-			
+	
 			# ALWAYS spawn an egg for testing the jump height/speed
 			spawn_egg(Vector2i(2, 2))
 	
