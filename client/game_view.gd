@@ -1214,11 +1214,11 @@ func _get_tirra_rider_offset(growth_level: int, direction: String = "down") -> V
 		0:  # BABY (Small)
 			y_offset = -6.0
 		1:  # TEEN (Middle)
-			y_offset = -25.0
+			y_offset = -6.0
 		2:  # ADULT (Big)
-			y_offset = -45.0
+			y_offset = -6.0
 		_:
-			y_offset = -20.0
+			y_offset = -6.0
 	
 	# Horizontal offset for left/right directions
 	# Player shifts to the side to appear sitting on Tirra's back properly
@@ -1551,7 +1551,7 @@ func render_map(map_data):
 	var map_width = map_data[0].size() if map_height > 0 else 0
 	
 	# Try to load the map from PCK first
-	var pck_path = "res://res/maps/stage1.pck"
+	var pck_path = "res://maps/stage1.pck"
 	var pck_loaded = false
 	
 	if FileAccess.file_exists(pck_path):

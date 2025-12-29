@@ -12,11 +12,11 @@ var current_test_index: int = 0
 
 # Test cases
 var test_cases := [
-	{"type": "file", "name": "Classic Arena", "path": "res://res/maps/classic_arena.json"},
-	{"type": "file", "name": "Open Battlefield", "path": "res://res/maps/open_battlefield.json"},
-	{"type": "file", "name": "Narrow Passages", "path": "res://res/maps/narrow_passages.json"},
-	{"type": "file", "name": "Cross Roads", "path": "res://res/maps/cross_roads.json"},
-	{"type": "file", "name": "Wide Battle Royale", "path": "res://res/maps/wide_battle_royale.json"},
+	{"type": "file", "name": "Classic Arena", "path": "res://maps/classic_arena.json"},
+	{"type": "file", "name": "Open Battlefield", "path": "res://maps/open_battlefield.json"},
+	{"type": "file", "name": "Narrow Passages", "path": "res://maps/narrow_passages.json"},
+	{"type": "file", "name": "Cross Roads", "path": "res://maps/cross_roads.json"},
+	{"type": "file", "name": "Wide Battle Royale", "path": "res://maps/wide_battle_royale.json"},
 	{"type": "generate", "name": "Generated: Classic", "style": MapGenerator.MapStyle.CLASSIC},
 	{"type": "generate", "name": "Generated: Arena", "style": MapGenerator.MapStyle.ARENA},
 	{"type": "generate", "name": "Generated: Maze", "style": MapGenerator.MapStyle.MAZE},

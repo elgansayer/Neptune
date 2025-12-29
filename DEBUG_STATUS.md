@@ -12,6 +12,7 @@
 6. ✅ Server starts on port 7777
 7. ✅ Duplicate server initialization fixed (_initialized flag)
 8. ✅ **RPC ID Mismatch FIXED** - Shared RPC interface ensures synchronization (Dec 28, 2025)
+9. ✅ **AI Bots RE-ENABLED** - LimboAI system fully operational with 3 auto-spawning bots (Dec 28, 2025)
 
 ## Previous Blocker 🟢 RESOLVED
 **RPC ID Mismatch**: ~~Client and server RPC configurations don't match~~ **FIXED**
@@ -72,10 +73,33 @@ Both `main_server.gd` and `main_client.gd` now extend `RPCInterface`, ensuring:
 - ℹ️ `shared/client_stub.gd` - No longer needed (can be removed)
 - ℹ️ `shared/server_stub.gd` - No longer needed (can be removed)
 
-## Temporary Workarounds Applied
-- AIPlayer completely disabled (prevents GameInstance compilation errors)
-- spawn_ai_bot RPC removed (was causing Dictionary→int conversion errors)
-- AI auto-spawning disabled in main_server.gd
+## AI System Status ✅ FULLY OPERATIONAL
+
+### LimboAI Integration (Dec 28, 2025)
+- **Auto-Spawn**: 3 bots spawn automatically when first player joins
+- **Default Personality**: COMPETITIVE (maximum aggression for testing)
+- **Behavior Trees**: Using LimboAI's BTPlayer system
+- **Movement**: BTMoveToCell nodes navigate the map
+- **Combat**: Bots place bombs and avoid explosions
+- **Perception**: Grid sampling, hazard prediction, opponent tracking
+
+### Bot Spawning Methods
+1. **Automatic** - 3 bots spawn on game start (configured in bot_manager.gd)
+2. **Manual via RPC** - `spawn_bot_request("BALANCED")` from client
+3. **Direct call** - `game_instance.spawn_bot("AGGRESSIVE")` from server
+
+### Available Personalities
+- BALANCED - Default tactical behavior
+- AGGRESSIVE - Maximum offense
+- DEFENSIVE - Survival focused
+- COMPETITIVE - Tournament-level play (current default)
+
+### Verified Working
+- ✅ Bots navigate using A* pathfinding
+- ✅ Bots avoid bomb explosions
+- ✅ Bots place bombs strategically
+- ✅ Multiple bots don't collide
+- ✅ 100% suicide prevention (from validation tests)
 
 ## Testing Commands
 ```bash
@@ -94,9 +118,10 @@ pkill -9 -f godot && rm -rf .godot server/.godot server.log
 
 ## Next Steps
 1. ✅ ~~Fix RPC method order mismatch~~ **COMPLETED**
-2. ✅ Verify client can authenticate **WORKING** (see server.log)
-3. ✅ Test game instance creation **WORKING**
-4. Test multiplayer with 2-4 human players
-5. Implement lobby system for match coordination
-6. Re-enable AIPlayer for bot testing
+2. ✅ ~~Verify client can authenticate~~ **WORKING** (see server.log)
+3. ✅ ~~Test game instance creation~~ **WORKING**
+4. ✅ ~~Re-enable AIPlayer once core gameplay works~~ **COMPLETED - LimboAI operational**
+5. Test multiplayer with 2-4 human players + bots
+6. Implement lobby system for match coordination
 7. Visual polish - replace placeholder sprites
+8. Add bot personality selection UI

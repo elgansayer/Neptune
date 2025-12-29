@@ -127,9 +127,9 @@ func _ready():
 	var map_data: Dictionary
 	
 	# Try to load PCK map first
-	if FileAccess.file_exists("res://res/maps/stage1.pck"):
+	if FileAccess.file_exists("res://maps/stage1.pck"):
 		print("[GameInstance] Loading map from PCK...")
-		map_data = MapPackLoader.load_map_from_pck("res://res/maps/stage1.pck")
+		map_data = MapPackLoader.load_map_from_pck("res://maps/stage1.pck")
 		
 		if not map_data.is_empty():
 			# Choose soft block pattern

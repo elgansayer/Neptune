@@ -12,7 +12,7 @@ func _ready():
 		push_error("[PCKLoader] Failed to mount PCK: ", player_pck)
 	
 	# Mount the Tirra (mount creature) PCK file
-	var tirra_pck = "res://characters/blue-tirra.pck"
+	var tirra_pck = "res://tirra/blue-tirra.pck"
 	var tirra_success = ProjectSettings.load_resource_pack(tirra_pck)
 	
 	if tirra_success:

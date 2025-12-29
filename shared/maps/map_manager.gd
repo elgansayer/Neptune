@@ -24,7 +24,7 @@ func load_map(source: MapSource, param: Variant = null) -> Dictionary:
 	Parameters:
 	- source: MapSource enum (FILE, GENERATE, CUSTOM)
 	- param: 
-	  * For FILE: String file path (e.g., "res://res/maps/classic_arena.json")
+	  * For FILE: String file path (e.g., "res://maps/classic_arena.json")
 	  * For GENERATE: MapGenerator.MapConfig or MapGenerator.MapStyle
 	  * For CUSTOM: Dictionary with map data
 	

@@ -182,7 +182,7 @@ static func save_map_to_file(map_data: Dictionary, file_path: String) -> bool:
 	print("[MapLoader] Saved map to: ", file_path)
 	return true
 
-static func list_available_maps(directory: String = "res://res/maps/") -> Array:
+static func list_available_maps(directory: String = "res://maps/") -> Array:
 	"""
 	List all available map files in a directory
 	Returns array of file paths
