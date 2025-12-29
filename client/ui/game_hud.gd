@@ -288,6 +288,17 @@ func update_player_face_state(peer_id: String, state: String):
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation(anim_name):
 		sprite.play(anim_name)
 
+func update_player_face_modulate(peer_id: String, modulate_color: Color):
+	"""Update player face modulation to sync with player flash effects"""
+	if not player_face_sprites.has(peer_id):
+		return
+	
+	var sprite = player_face_sprites[peer_id] as AnimatedSprite2D
+	if not sprite or not is_instance_valid(sprite):
+		return
+	
+	sprite.modulate = modulate_color
+
 func update_player_score(peer_id: String, score: int):
 	"""Update player's win score"""
 	if not player_face_mapping.has(peer_id):

@@ -720,23 +720,6 @@ func update_player(peer_id: String, data: Dictionary):
 		# label.position = Vector2(-label_offset / 2, -label_offset)
 		# player_node.add_child(label)
 		
-		# Add hitbox visualization (green square/rectangle)
-		var hitbox_visual = Line2D.new()
-		hitbox_visual.width = 2.0
-		hitbox_visual.default_color = Color(0, 1, 0, 0.8) # Bright green
-		hitbox_visual.z_index = 101
-		hitbox_visual.name = "HitboxVisual"
-		
-		# Create square points (rectangle)
-		var half_size = GameConfig.PLAYER_HALF_WIDTH
-		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Top-left
-		hitbox_visual.add_point(Vector2(half_size, -half_size)) # Top-right
-		hitbox_visual.add_point(Vector2(half_size, half_size)) # Bottom-right
-		hitbox_visual.add_point(Vector2(-half_size, half_size)) # Bottom-left
-		hitbox_visual.add_point(Vector2(-half_size, -half_size)) # Close the square
-		
-		player_node.add_child(hitbox_visual)
-		
 		# Add raycast visualization line
 		var raycast_debug_line = Line2D.new()
 		# Width = collision shape diameter to show actual raycast width
@@ -1085,7 +1068,7 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 	# The Tirra scene has a controller script that manages child sprites (baby/teen/adult)
 	# We need to find the active sprite and play the animation on it
 	var growth_level = data.get("tirra_growth_level", 0)
-	
+
 	# First ensure the controller's current_level is set correctly
 	# The controller's _update_visibility() will handle showing/hiding the right sprite
 	if tirra_visual.has_method("set_growth_level"):
@@ -1206,31 +1189,36 @@ func _get_tirra_rider_offset(growth_level: int, direction: String = "down") -> V
 	- Teen: Y=-25, X=13 for left, X=-13 for right  
 	- Adult: Y=-45, X=13 for left, X=-13 for right
 	"""
-	var y_offset: float
-	var x_offset: float = 0.0
+	# Comprehensive offset table: [growth_level][direction] = Vector2(x, y)
+	# Growth levels: 0=BABY, 1=TEEN, 2=ADULT
+	# Directions: up, down, left, right
+	const RIDER_OFFSETS = {
+		0: {  # BABY (Small Tirra)
+			"up":    Vector2(0.0, -8.5),
+			"down":  Vector2(0.0, -8.5),
+			"left":  Vector2(5.5, -8.5),
+			"right": Vector2(-5.5, -8.5)
+		},
+		1: {  # TEEN (Medium Tirra)
+			"up":    Vector2(0.0, -10.5),
+			"down":  Vector2(0.0, -10.5),
+			"left":  Vector2(6.5, -10.5),
+			"right": Vector2(-6.5, -10.5)
+		},
+		2: {  # ADULT (Large Tirra)
+			"up":    Vector2(0.0, -12.5),
+			"down":  Vector2(0.0, -12.5),
+			"left":  Vector2(5.5, -12.5),
+			"right": Vector2(-5.5, -12.5),
+		}
+	}
 	
-	# Vertical offset based on Tirra size
-	match growth_level:
-		0:  # BABY (Small)
-			y_offset = -6.0
-		1:  # TEEN (Middle)
-			y_offset = -6.0
-		2:  # ADULT (Big)
-			y_offset = -6.0
-		_:
-			y_offset = -6.0
-	
-	# Horizontal offset for left/right directions
-	# Player shifts to the side to appear sitting on Tirra's back properly
-	match direction:
-		"left":
-			x_offset = 6.5   # Player shifts right when Tirra faces left
-		"right":
-			x_offset = -6.5  # Player shifts left when Tirra faces right
-		_:
-			x_offset = 0.0    # Centered for up/down
-	
-	return Vector2(x_offset, y_offset)
+	# Lookup with fallback to default
+	if RIDER_OFFSETS.has(growth_level) and RIDER_OFFSETS[growth_level].has(direction):
+		return RIDER_OFFSETS[growth_level][direction]
+	else:
+		push_warning("[GameView] Unknown Tirra offset: level=%d, dir=%s" % [growth_level, direction])
+		return Vector2(0.0, -6.0)  # Safe fallback
 
 
 func _get_tirra_sprite_frames(growth_level: int) -> SpriteFrames:
@@ -1939,18 +1927,27 @@ func _update_virus_visual_effects(player_node: Node2D, data: Dictionary) -> void
 	# Get the animated sprite for flashing effect
 	var animated_sprite = player_node.get_meta("animated_sprite", null)
 	if animated_sprite:
+		var peer_id = str(data.get("peer_id", ""))
 		if has_virus:
 			# Flash black at 5Hz (Saturn Bomberman style)
 			var time_ms = Time.get_ticks_msec()
 			var flash_cycle = int(time_ms / 100) % 2 # Toggle every 100ms (5Hz)
+			var flash_color: Color
 			if flash_cycle == 0:
-				animated_sprite.modulate = Color(0.1, 0.1, 0.1) # Nearly black
+				flash_color = Color(0.1, 0.1, 0.1) # Nearly black
 			else:
-				animated_sprite.modulate = Color.WHITE # Normal
+				flash_color = Color.WHITE # Normal
+			animated_sprite.modulate = flash_color
+			# Sync HUD avatar flash
+			if hud and peer_id:
+				hud.update_player_face_modulate(peer_id, flash_color)
 		else:
 			# Ensure modulate is reset when virus clears
 			if animated_sprite.modulate != Color.WHITE:
 				animated_sprite.modulate = Color.WHITE
+				# Sync HUD avatar reset
+				if hud and peer_id:
+					hud.update_player_face_modulate(peer_id, Color.WHITE)
 
 func _create_skull_icon() -> Node2D:
 	"""Create a floating skull icon for infected players"""
@@ -1987,20 +1984,29 @@ func _update_immortality_flash(player_node: Node2D, data: Dictionary) -> void:
 	var was_immortal = player_node.get_meta("was_immortal", false)
 	player_node.set_meta("was_immortal", is_immortal)
 	
+	var peer_id = str(data.get("peer_id", ""))
 	if is_immortal:
 		# Flash between bright white and normal (Saturn Bomberman style)
 		# Note: This overrides virus flash when both active (immortal takes priority)
+		var flash_color: Color
 		if flash_white:
 			# Bright white flash - make sprite glow
-			animated_sprite.modulate = Color(2.5, 2.5, 2.5, 1.0)
+			flash_color = Color(2.5, 2.5, 2.5, 1.0)
 		else:
-			animated_sprite.modulate = Color.WHITE
+			flash_color = Color.WHITE
+		animated_sprite.modulate = flash_color
+		# Sync HUD avatar flash
+		if hud and peer_id:
+			hud.update_player_face_modulate(peer_id, flash_color)
 	elif was_immortal and not is_immortal:
 		# Immortality just ended - ensure modulate is restored
 		# Only restore if no virus is active
 		var has_virus = data.has("active_virus") and data.active_virus != 0
 		if not has_virus:
 			animated_sprite.modulate = Color.WHITE
+			# Sync HUD avatar reset
+			if hud and peer_id:
+				hud.update_player_face_modulate(peer_id, Color.WHITE)
 
 # === SATURN BOMBERMAN ARC JUMP/FLYING VISUAL ===
 # When player is in mid-air during arc jump (mounting/dismounting Tirra)

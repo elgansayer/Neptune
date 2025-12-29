@@ -504,10 +504,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("71_n2rxk")
+"texture": ExtResource("72_n3f2s")
 }, {
 "duration": 1.0,
-"texture": ExtResource("72_n3f2s")
+"texture": ExtResource("71_n2rxk")
 }],
 "loop": false,
 "name": &"left_kick",
@@ -534,10 +534,10 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("76_c8pcs")
+"texture": ExtResource("77_dt7wm")
 }, {
 "duration": 1.0,
-"texture": ExtResource("77_dt7wm")
+"texture": ExtResource("76_c8pcs")
 }],
 "loop": false,
 "name": &"right_kick",
@@ -638,7 +638,7 @@ animation = &"down_stopped"
 [node name="adult" type="AnimatedSprite2D" parent="."]
 position = Vector2(0, -7)
 sprite_frames = SubResource("SpriteFrames_dwc5g")
-animation = &"down_stopped"
+animation = &"right_kick"
 
 [node name="Particles" type="GPUParticles2D" parent="."]
 visible = false

@@ -31,6 +31,11 @@ window/size/viewport_height=224
 window/size/window_width_override=1280
 window/size/window_height_override=896
 window/stretch/mode="canvas_items"
+window/stretch/scale_mode="integer"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0
 
 [dotnet]
 

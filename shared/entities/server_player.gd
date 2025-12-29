@@ -567,30 +567,8 @@ func _show_debug_tile(tile_pos: Vector2i, color: Color):
 	var tile_key = "%d,%d" % [tile_pos.x, tile_pos.y]
 
 	# Remove old debug tile if exists
-	if debug_tiles.has(tile_key):
-		debug_tiles[tile_key].queue_free()
-		debug_tiles.erase(tile_key)
-
-	# Create new debug overlay with border
-	var debug_rect = ColorRect.new()
-	debug_rect.size = Vector2(GameConfig.TILE_SIZE, GameConfig.TILE_SIZE)
-	debug_rect.color = color
-	debug_rect.position = Vector2(
-		tile_pos.x * GameConfig.TILE_SIZE,
-		tile_pos.y * GameConfig.TILE_SIZE
-	)
-	debug_rect.z_index = 99
-
-	# Add to scene
-	get_parent().add_child(debug_rect)
-	debug_tiles[tile_key] = debug_rect
-
-	# Auto-remove after a short time
-	await get_tree().create_timer(0.1).timeout
-	if is_instance_valid(debug_rect):
-		debug_rect.queue_free()
-	if debug_tiles.has(tile_key):
-		debug_tiles.erase(tile_key)
+	# Debug visualization disabled
+	pass
 
 func get_4way_input() -> Vector2:
 	"""Convert input to strict 4-way cardinal directions (no diagonal movement)"""
