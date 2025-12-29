@@ -33,6 +33,9 @@ func _ready():
 	
 	print("=== Bomberman Client Starting ===")
 	
+	# Register console commands (client-side)
+	call_deferred("_register_client_console_commands")
+	
 	# Validate RPC configuration
 	var rpc_validation = validate_rpc_config()
 	if rpc_validation["valid"]:
@@ -249,3 +252,18 @@ func request_spawn_bot(personality: String = "BALANCED"):
 	
 	print("[Client] Requesting AI bot spawn (personality: ", personality, ")")
 	get_node("/root/ServerMain").rpc_id(1, "spawn_bot_request", personality)
+
+func _register_client_console_commands() -> void:
+	"""Register console commands on the client side"""
+	if not has_node("/root/LimboConsole"):
+		print("[Client] ⚠️ LimboConsole not found, skipping command registration")
+		return
+	
+	print("[Client] 🎮 Loading console commands...")
+	var console_commands = load("res://scripts/console_commands.gd").new()
+	console_commands.name = "ConsoleCommands"
+	add_child(console_commands)
+	
+	# Pass null - commands will find game_instance dynamically
+	console_commands.register_all_commands(null)
+	print("[Client] ✅ Console commands registered!")

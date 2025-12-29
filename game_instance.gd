@@ -195,6 +195,9 @@ func _ready():
 		bot_manager.configure(self)
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
+	
+	# Register console commands
+	_register_console_commands()
 
 func spawn_bot(personality: String = "BALANCED") -> void:
 	if bot_manager == null:
@@ -1541,3 +1544,33 @@ func _is_player_physically_trapped(center_tile: Vector2i) -> bool:
 		
 	# If we checked all directions and didn't find an opening, we are trapped
 	return true
+
+# ============================================================================
+# CONSOLE COMMANDS REGISTRATION
+# ============================================================================
+
+func _register_console_commands() -> void:
+	"""Register all console commands with LimboConsole"""
+	# Defer registration to ensure LimboConsole is ready
+	call_deferred("_do_register_console_commands")
+
+func _do_register_console_commands() -> void:
+	"""Actually register console commands (deferred)"""
+	if not has_node("/root/LimboConsole"):
+		print("[GameInstance] ⚠️ LimboConsole not found, skipping command registration")
+		print("[GameInstance] Make sure LimboConsole addon is enabled in project settings")
+		return
+	
+	print("[GameInstance] 🎮 Loading console commands script...")
+	var script = load("res://scripts/console_commands.gd")
+	if not script:
+		push_error("[GameInstance] ❌ Failed to load console_commands.gd")
+		return
+	
+	var console_commands = script.new()
+	console_commands.name = "ConsoleCommands"
+	add_child(console_commands)
+	
+	print("[GameInstance] 📝 Registering console commands...")
+	console_commands.register_all_commands(self)
+	print("[GameInstance] ✅ Console commands registered! Type 'commands' to see list")
