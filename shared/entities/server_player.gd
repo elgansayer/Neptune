@@ -1285,48 +1285,46 @@ func _handle_tirra_action(action_name: String, action_type: String) -> void:
 			pass
 
 func _tirra_kick_bomb() -> void:
-	"""Blue Tirra High Kick: Launch a bomb over obstacles.
+	"""Blue Tirra High Kick: Launch a bomb adjacent to the player.
 	
-	Based on Saturn Bomberman Blue Tirra ability:
-	- Level 1 (BABY):  2 tiles launch distance
-	- Level 2 (TEEN):  4 tiles launch distance  
-	- Level 3 (ADULT): 6 tiles launch distance
+	Player must be NEXT to the bomb (in the direction they're facing).
+	Kick distance based on Tirra growth level:
+	- BABY (level 0):  2 tiles launch distance
+	- TEEN (level 1):  4 tiles launch distance  
+	- ADULT (level 2): 6 tiles launch distance
 	
 	The bomb flies OVER all obstacles (soft blocks, hard blocks, walls,
 	enemies, players) and lands at the target tile. Fuse resets on landing.
 	"""
-	# Tirra kick works even without bomb kicker powerup!
-	
 	# Determine kick distance based on growth level
-	var kick_distance: int = 2  # Default Level 1 (BABY)
+	var kick_distance: int = 2  # Default BABY (level 0)
 	match tirra_growth_level:
-		0:  # BABY - Level 1
+		0:  # BABY
 			kick_distance = 2
-		1:  # TEEN - Level 2
+		1:  # TEEN
 			kick_distance = 4
-		2:  # ADULT - Level 3
+		2:  # ADULT
 			kick_distance = 6
 	
-	# Use the kick detector to find bombs at our feet or nearby
-	if kick_detector:
-		kick_detector.target_position = last_move_direction.normalized() * (GameConfig.TILE_SIZE / 2.0)
-		kick_detector.force_shapecast_update()
-		
-		if kick_detector.is_colliding():
-			var collider = kick_detector.get_collider(0)
-			if collider and collider.get_script() == ServerBombScript:
-				print("[Tirra] High Kick bomb: ", collider.name, " distance=", kick_distance, " tiles")
-				_launch_bomb_high_kick(collider, last_move_direction, kick_distance)
-				return
-	
-	# Also check for bomb at our current tile
+	# Check for bomb in the tile NEXT to us in the direction we're facing
 	var our_tile = get_tile_position()
+	var facing_direction = last_move_direction.normalized()
+	
+	# Default to down if no direction
+	if facing_direction == Vector2.ZERO:
+		facing_direction = Vector2.DOWN
+	
+	# Get the adjacent tile in the direction we're facing
+	var adjacent_tile = our_tile + Vector2i(int(facing_direction.x), int(facing_direction.y))
+	
 	var game_instance = get_parent()
 	if game_instance and game_instance.has_method("get_bomb_at_tile"):
-		var bomb = game_instance.get_bomb_at_tile(our_tile)
+		var bomb = game_instance.get_bomb_at_tile(adjacent_tile)
 		if bomb:
-			print("[Tirra] High Kick bomb at feet: ", bomb.name, " distance=", kick_distance, " tiles")
-			_launch_bomb_high_kick(bomb, last_move_direction, kick_distance)
+			print("[Tirra] Kicking bomb at adjacent tile ", adjacent_tile, " level=", tirra_growth_level, " distance=", kick_distance)
+			_launch_bomb_high_kick(bomb, facing_direction, kick_distance)
+		else:
+			print("[Tirra] No bomb found at adjacent tile ", adjacent_tile, " (facing: ", facing_direction, ")")
 
 func _launch_bomb_high_kick(bomb: Node, direction: Vector2, distance_tiles: int) -> void:
 	"""Launch a bomb using Tirra High Kick ability.

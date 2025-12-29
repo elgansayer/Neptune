@@ -419,7 +419,8 @@ func launch_bomb(direction: Vector2, distance_tiles: int) -> bool:
 	
 	Used by Tirra High Kick ability. Unlike regular kick, the bomb flies
 	OVER all obstacles (soft blocks, hard blocks, walls, players) and
-	lands at the target tile. 
+	lands at the target tile. If the landing tile has a collision, the bomb
+	will bounce to the next tile, just like when throwing.
 	
 	Args:
 		direction: Direction to launch (will be cardinalized)
@@ -448,49 +449,37 @@ func launch_bomb(direction: Vector2, distance_tiles: int) -> bool:
 	# Get current tile
 	var start_tile := get_tile_position()
 	
-	# Find the landing tile - check from max distance backwards
-	var landing_tile := start_tile
-	var found_landing := false
+	# Calculate initial landing tile based on kick distance
+	var initial_landing_tile := start_tile + dir_i * distance_tiles
 	
-	for dist in range(distance_tiles, 0, -1):
-		var check_tile := start_tile + dir_i * dist
-		var wrapped_tile := _wrap_tile_position(check_tile)
-		
-		# Check if tile is a valid landing spot (not a hard wall)
-		if not _check_tile_is_hard_wall(wrapped_tile):
-			landing_tile = wrapped_tile
-			found_landing = true
-			break
-	
-	if not found_landing:
-		print("[Bomb] No valid landing tile found - cannot launch")
-		return false
-	
-	# Calculate landing position (tile center)
-	var landing_pos := Vector2(
-		landing_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-		landing_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-	)
-	
-	# Set up throw state - reuse THROWN state and physics
+	# Set up throw state for bounce calculation
 	bomb_state = BombState.THROWN
 	throw_start_pos = position
 	throw_direction = Vector2(dir_i.x, dir_i.y).normalized()
 	throw_progress = 0.0
-	throw_distance_remaining = position.distance_to(landing_pos)
 	
-	# Single waypoint for direct arc (no bouncing for Tirra kick)
-	bounce_waypoints = [landing_pos] as Array[Vector2]
-	throw_target_pos = landing_pos
+	# Calculate bounce waypoints using the same logic as throw_bomb
+	# This will handle collisions and bouncing automatically
+	bounce_waypoints = _calculate_bounce_waypoints_from_kick(start_tile, dir_i, distance_tiles)
+	
+	# Final target is last waypoint
+	if bounce_waypoints.size() > 0:
+		throw_target_pos = bounce_waypoints[-1]
+		throw_distance_remaining = position.distance_to(throw_target_pos)
+	else:
+		# Fallback - shouldn't happen but safety check
+		print("[Bomb] No waypoints calculated - aborting launch")
+		bomb_state = BombState.PLANTED
+		return false
 	
 	# Initialize arc
 	current_waypoint_index = 0
 	current_arc_start = position
-	current_arc_target = landing_pos
+	current_arc_target = bounce_waypoints[0]
 	current_z_height = 0.0
 	current_arc_height = THROW_HEIGHT * 1.5  # Higher arc for Tirra kick
 	
-	print("[Bomb] Launched! From ", start_tile, " to ", landing_tile, " (", distance_tiles, " tiles max)")
+	print("[Bomb] Launched! From ", start_tile, " with ", bounce_waypoints.size(), " waypoints, final target: ", throw_target_pos)
 	
 	# Emit signals for network sync
 	thrown.emit(self, throw_start_pos, throw_target_pos, throw_direction)
@@ -668,6 +657,70 @@ func _wrap_tile_position(grid_pos: Vector2i) -> Vector2i:
 		wrapped_y = wrapped_y % GameConfig.map_height
 	
 	return Vector2i(wrapped_x, wrapped_y)
+
+func _calculate_bounce_waypoints_from_kick(start_tile: Vector2i, direction: Vector2i, max_distance: int) -> Array[Vector2]:
+	"""Calculate bounce waypoints for a kicked bomb.
+	
+	Similar to _calculate_bounce_waypoints but starts at the intended kick distance
+	and bounces forward if there's a collision at the landing spot.
+	
+	Args:
+		start_tile: Starting tile position (bomb's current position)
+		direction: Cardinal direction of kick
+		max_distance: Initial kick distance (2/4/6 tiles for baby/teen/adult)
+	
+	Returns:
+		Array of world positions for each bounce point
+	"""
+	var waypoints: Array[Vector2] = []
+	var landing_tile: Vector2i = start_tile + direction * max_distance
+	var _previous_tile: Vector2i = start_tile
+	
+	# Build waypoints by checking each potential landing spot
+	var safety: int = 20
+	while safety > 0:
+		# Handle map wrap-around when going out of bounds
+		var wrapped_tile = _wrap_tile_position(landing_tile)
+		
+		# Calculate tile center position (use wrapped coordinates)
+		var tile_world_pos := Vector2(
+			wrapped_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+			wrapped_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+		)
+		
+		# Check if tile is free or has collision
+		var has_collision = _check_tile_has_collision(wrapped_tile)
+		
+		if has_collision:
+			# Collision detected - check if continuing forward will cross boundary
+			var next_tile = landing_tile + direction
+			if _crosses_map_boundary(landing_tile, next_tile):
+				# Don't add this tile as bounce - instead add edge transition waypoints
+				_add_edge_transition_waypoints(waypoints, landing_tile, next_tile, direction)
+				_previous_tile = next_tile
+				landing_tile = next_tile + direction
+			else:
+				# Normal bounce - add waypoint and continue
+				waypoints.append(tile_world_pos)
+				_previous_tile = landing_tile
+				landing_tile += direction
+		else:
+			# Found free tile - this is final landing
+			waypoints.append(tile_world_pos)
+			break
+		
+		safety -= 1
+	
+	if waypoints.size() == 0:
+		# Fallback - land at the intended distance
+		var fallback_tile := start_tile + direction * max_distance
+		var wrapped_fallback = _wrap_tile_position(fallback_tile)
+		waypoints.append(Vector2(
+			wrapped_fallback.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
+			wrapped_fallback.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
+		))
+	
+	return waypoints
 
 func _crosses_map_boundary(from_tile: Vector2i, to_tile: Vector2i) -> bool:
 	"""Check if movement from one tile to another crosses a map boundary."""
