@@ -1,6 +1,8 @@
 extends CanvasLayer
 class_name GameHUD
 
+const RenderingLayers = preload("res://shared/rendering_layers.gd")
+
 # In-Game HUD displaying match timer, player stats, and game status
 # Shows critical information: time remaining, bombs available, power-up effects
 # Also handles spectator mode when local player is eliminated
@@ -43,8 +45,10 @@ var latency_label: Label = null
 var latency_icon: ColorRect = null
 
 func _ready():
-	# Ensure HUD is always on top
-	layer = 100
+	# HUD should be above the map but BELOW players.
+	# Players are rendered in a higher CanvasLayer (see GameView PlayersCanvas).
+	layer = RenderingLayers.CANVAS_UI
+	follow_viewport_enabled = true
 	
 	# Create semi-transparent background for countdown
 	countdown_bg = ColorRect.new()

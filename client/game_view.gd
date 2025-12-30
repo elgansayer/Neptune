@@ -59,6 +59,9 @@ var bomb_throw_predictor: BombThrowPredictor # Power Glove throw prediction
 var threat_visualizer: Node2D = null
 var bomb_safety_visualizer: Node2D = null
 
+# Players rendered above HUD via dedicated CanvasLayer
+var players_canvas: CanvasLayer = null
+
 # Input buffering: track order of pressed keys
 var input_buffer = [] # Array of currently pressed direction keys in order (most recent last)
 
@@ -107,20 +110,26 @@ func _ready():
 	# Setup Godot CanvasLayers for proper rendering separation (after visualizers created)
 	_setup_canvas_layers()
 	
-	# Initialize bomb safety visualizer (debug - toggle with F4)
-	bomb_safety_visualizer = BombSafetyVisualizerScript.new()
-	bomb_safety_visualizer.name = "BombSafetyVisualizer"
-	bomb_safety_visualizer.position = Vector2.ZERO
-	add_child(bomb_safety_visualizer)
-	print("[GameView] BombSafetyVisualizer created")
-	# Start with bomb safety shown
-	bomb_safety_visualizer.visible = true
-	
 	# Request current safety data from server (in case we missed initial broadcasts)
 	call_deferred("_request_farming_spot_update")
 
 # Setup CanvasLayers using Godot's layering system
 func _setup_canvas_layers() -> void:
+	# Players canvas (must be ABOVE HUD/top bar)
+	# This is the only reliable way to render players over UI in Godot.
+	players_canvas = RenderingLayers.create_canvas_layer(
+		RenderingLayers.CANVAS_PLAYERS,
+		"PlayersCanvas"
+	)
+	players_canvas.follow_viewport_enabled = true
+	players_canvas.follow_viewport_scale = 1.0
+	get_tree().root.add_child(players_canvas)
+	
+	# Move player visuals into players canvas
+	if players_container and players_container.get_parent():
+		players_container.get_parent().remove_child(players_container)
+		players_canvas.add_child(players_container)
+
 	# Create debug canvas (overlays, paths, visualizers)
 	debug_canvas = RenderingLayers.create_canvas_layer(
 		RenderingLayers.CANVAS_DEBUG,
@@ -149,8 +158,12 @@ func _setup_canvas_layers() -> void:
 	if has_node("/root/ServerMain"):
 		get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", 1.0)
 	
-	# Initialize HUD
+	# Initialize HUD (must be above map but below players)
 	hud = GameHUDScene.instantiate()
+	hud.layer = RenderingLayers.CANVAS_UI
+	# HUD must stay pinned to the screen
+	hud.follow_viewport_enabled = true
+	# HUD lives on CANVAS_UI; players are rendered on CANVAS_PLAYERS above it.
 	add_child(hud)
 	
 	# Set player name in HUD once we know it

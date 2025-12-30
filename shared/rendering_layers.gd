@@ -9,6 +9,7 @@ class_name RenderingLayers
 const CANVAS_BACKGROUND: int = -10   # Background tiles, floor
 const CANVAS_GAME: int = 0           # Main gameplay (uses Y-sorting)
 const CANVAS_UI: int = 10            # HUD, menus (no Y-sorting)
+const CANVAS_PLAYERS: int = 20       # Players above HUD/top bar
 const CANVAS_DEBUG: int = 100        # Debug overlays
 
 ## Z-Index within game canvas (for entity stacking)
@@ -16,11 +17,12 @@ const CANVAS_DEBUG: int = 100        # Debug overlays
 const FLOOR: int = -100
 const SHADOWS: int = -50
 const ITEMS: int = 5         # Powerups, eggs - ABOVE floor/map
-const BOMBS: int = 10         # Above items
-const EXPLOSIONS: int = 15    # Above bombs
-const PLAYER_BASE: int = 100       # Player sprite
+const BOMBS: int = 10        # Above items
+const EXPLOSIONS: int = 15   # Above bombs
+const HUD_ELEMENTS: int = 50 # HUD elements (score, timer) - above map, below players
+const PLAYER_BASE: int = 100       # Player sprite - ABOVE HUD
 const PLAYER_EFFECTS: int = 150    # Mounted creatures, flames
-const PLAYER_UI: int = 200         # Name tags, health bars
+const PLAYER_UI: int = 200         # Name tags, health bars - above players
 
 ## Debug layers (within debug canvas)
 const DEBUG_PATHS: int = 1000
