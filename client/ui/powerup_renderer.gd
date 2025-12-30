@@ -10,6 +10,8 @@ class_name PowerUpRenderer
 ## - "explode": Burn effect when destroyed by explosion
 ## - "RESET": Default state for editor preview
 
+const RenderingLayers = preload("res://shared/rendering_layers.gd")
+
 var powerup_id: String = ""
 var powerup_type: int = 0  # ServerPowerUp.PowerUpType enum value
 
@@ -39,6 +41,9 @@ func _ready():
 	# Calculate scale based on tile size from map
 	var tile_size: float = GameConfig.TILE_SIZE
 	pixel_scale = tile_size / 16.0  # Saturn native is 16px tiles
+	
+	# Ensure powerups render below players using RenderingLayers system
+	z_index = RenderingLayers.ITEMS
 	
 	# Items are 16x16 sprites, scale to match tile size (1:1 with tile)
 	item_scale = pixel_scale

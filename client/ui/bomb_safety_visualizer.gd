@@ -4,6 +4,8 @@ class_name BombSafetyVisualizer
 ## Visualizes which tiles are safe/unsafe for bomb planting
 ## Shows bot's perspective: Green = safe to plant, Red = death trap, Yellow = marginal
 
+const RenderingLayers = preload("res://shared/rendering_layers.gd")
+
 var tile_size: float = 16.0
 var map_width: int = 0
 var map_height: int = 0
@@ -11,7 +13,7 @@ var safety_data: Dictionary = {}  # tile_key -> safety_status (0=death, 1=margin
 var enabled: bool = true
 
 func _ready() -> void:
-	z_index = 150  # High but not too extreme
+	z_index = RenderingLayers.DEBUG_OVERLAY  # High-level debug overlay
 	print("[BombSafetyVisualizer] Initialized")
 
 func set_map_size(width: int, height: int) -> void:

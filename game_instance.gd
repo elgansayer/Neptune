@@ -10,6 +10,7 @@ const Constants = preload("res://shared/constants.gd")
 const ServerPlayerScene = preload("res://shared/entities/ServerPlayer.tscn")
 const ServerBombScene = preload("res://shared/entities/ServerBomb.tscn")
 const ServerPowerUpScene = preload("res://shared/entities/ServerPowerUp.tscn")
+const ServerEggScene = preload("res://shared/entities/ServerEgg.tscn")
 
 # AI System scaffolding (LimboAI-powered bot manager)
 const _BOT_MANAGER_PATHS := [
@@ -191,7 +192,7 @@ func _ready():
 		push_error("[GameInstance] Bot manager script missing; bots disabled")
 	else:
 		bot_manager = ServerBotManagerScript.new()
-		bot_manager.auto_spawn_count = 3 # Auto-spawn 3 bots for testing
+		bot_manager.auto_spawn_count = 0 # Disabled for Tirra testing - eggs spawn at 100%
 		bot_manager.configure(self)
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
@@ -1122,7 +1123,8 @@ func sync_state_to_clients():
 		var player_state = player.get_state_minimal()
 		
 		# Check if player is in a threatened tile (for panic animation)
-		if not player.is_dead:
+		# Don't panic if mounted on a Tirra
+		if not player.is_dead and not player.is_mounted:
 			var tile_pos: Vector2i = player.get_tile_position()
 			var tile_key: String = str(tile_pos.x) + "," + str(tile_pos.y)
 			# Only panic if in danger AND physically trapped
@@ -1259,9 +1261,8 @@ func sync_state_to_clients():
 		get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_state", client_state)
 func spawn_powerup(tile_pos: Vector2i):
 	"""Spawn a power-up at the given tile position (server-side, synced to clients)"""
-	# TESTING: 90% chance to spawn a Tirra egg instead of regular powerup
-	# TODO: Remove or reduce this after Tirra testing is complete
-	var egg_spawn_chance := 1.0  # 100% egg spawn rate for Tirra testing
+	# Tirra eggs spawn at ~10% chance
+	var egg_spawn_chance := 1.0  # 100% egg spawn rate for testing Tirra
 	if randf() < egg_spawn_chance:
 		spawn_egg(tile_pos)
 		return
@@ -1342,15 +1343,15 @@ func spawn_powerup_of_type(tile_pos: Vector2i, type: int):
 
 func spawn_egg(tile_pos: Vector2i):
 	"""Spawn a Tirra egg at the given tile position"""
-	var egg_scene = load("res://items/egg.tscn")
-	if not egg_scene:
-		push_warning("[Game] Failed to load egg.tscn")
+	if not ServerEggScene:
+		push_warning("[Game] Failed to load ServerEgg scene")
 		return
 	
 	var egg_id = str(next_egg_id)
 	next_egg_id += 1
 	
-	var egg = egg_scene.instantiate()
+	var egg = ServerEggScene.instantiate()
+	egg.egg_id = egg_id
 	egg.position = Vector2(
 		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
 		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0

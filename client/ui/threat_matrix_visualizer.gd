@@ -4,6 +4,8 @@ class_name ThreatMatrixVisualizer
 ## Debug visualization for AI threat matrix
 ## Shows ALL tiles color-coded by safety level + grid info + timing
 
+const RenderingLayers = preload("res://shared/rendering_layers.gd")
+
 @export var enabled: bool = true  ## Toggle visualization on/off (starts enabled for testing)
 @export var opacity: float = 0.7  ## Overlay opacity
 @export var show_grid_coords: bool = true  ## Show x,y coordinates on tiles
@@ -24,7 +26,7 @@ const COLOR_DANGER = Color(1.0, 0.6, 0.0, 0.7)         # Orange - dangerous (0.5
 const COLOR_IMMEDIATE = Color(1.0, 0.0, 0.0, 0.8)      # Red - immediate (<0.5s)
 
 func _ready():
-	z_index = 100  # Draw on top of most things but below UI
+	z_index = RenderingLayers.DEBUG_PATHS  # Debug overlay layer
 	position = Vector2.ZERO  # Ensure we start at origin
 	print("[ThreatMatrixVisualizer] Initialized at position: ", position)
 	print("[ThreatMatrixVisualizer] Enabled: ", enabled)

@@ -51,9 +51,9 @@ const SPEED_MAX: int = 8
 const SPEED_DEFAULT: int = 1
 
 # === Saturn Bomberman Pickup Mechanics (from spec) ===
-# Trigger zone is 12x12 pixels centered in 16x16 tile
+# Trigger zone matches full tile size for easier collection
 # Scaled to current TILE_SIZE
-const POWERUP_TRIGGER_RATIO: float = 0.75  # 12/16 = 0.75
+const POWERUP_TRIGGER_RATIO: float = 1.0  # Full tile size
 
 # Player Anchor: Single pixel at center-bottom of player sprite
 # Used for point-in-rect pickup detection (not AABB collision)

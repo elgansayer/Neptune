@@ -3,15 +3,14 @@ class_name ServerPlayer
 
 const ServerBombScript = preload("res://shared/entities/server_bomb.gd")
 const PlayerStatsScript = preload("res://shared/resources/player_stats.gd")
-
-# Server-authoritative player character
-# Handles movement, collision, bomb placement, and power-ups
-# Uses Godot's built-in collision system with exceptions
-# Implements corner sliding for smoother navigation
-
 const Constants = preload("res://shared/constants.gd")
 const ServerPowerUpScript = preload("res://shared/entities/server_powerup.gd")
 const InputBufferScript = preload("res://shared/entities/input_buffer.gd")
+const TIRRA_PICKUP_AREA = preload("res://shared/entities/TirraPickupArea.tscn")
+
+# TEMPORARY: Set this to desired Tirra color ("blue", "green", "orange", "red")
+# TODO: Move to player settings/customization system
+const TIRRA_COLOR = "blue"
 
 var player_id: String = ""
 var peer_id: int = 0
@@ -1210,20 +1209,16 @@ func dismount_tirra(kill_tirra_flag: bool = false, grant_immortality: bool = fal
 	tirra_dismounted.emit()
 
 func _readd_tirra_pickup_area(tirra: Node2D) -> void:
-	"""Re-add the pickup area to a dropped Tirra"""
+	"""Re-add the pickup area to a dropped Tirra using scene instance"""
 	if tirra.get_node_or_null("PickupArea"):
 		return  # Already has one
 	
-	var pickup_area = Area2D.new()
-	pickup_area.name = "PickupArea"
-	pickup_area.collision_layer = 0
-	pickup_area.collision_mask = 2  # Players
+	var pickup_area = TIRRA_PICKUP_AREA.instantiate()
 	
-	var collision = CollisionShape2D.new()
-	var shape = RectangleShape2D.new()
-	shape.size = Vector2(GameConfig.TILE_SIZE * 0.8, GameConfig.TILE_SIZE * 0.8)
-	collision.shape = shape
-	pickup_area.add_child(collision)
+	# Update collision size based on current tile size
+	var collision = pickup_area.get_node("CollisionShape2D")
+	if collision and collision.shape:
+		collision.shape.size = Vector2(GameConfig.TILE_SIZE * 0.8, GameConfig.TILE_SIZE * 0.8)
 	
 	# Connect to self for remounting
 	pickup_area.body_entered.connect(_on_dropped_tirra_touched.bind(tirra))

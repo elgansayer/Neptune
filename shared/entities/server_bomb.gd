@@ -477,7 +477,7 @@ func launch_bomb(direction: Vector2, distance_tiles: int) -> bool:
 	current_arc_start = position
 	current_arc_target = bounce_waypoints[0]
 	current_z_height = 0.0
-	current_arc_height = THROW_HEIGHT * 1.5  # Higher arc for Tirra kick
+	current_arc_height = THROW_HEIGHT * 3.0  # Much higher arc for Tirra kick
 	
 	print("[Bomb] Launched! From ", start_tile, " with ", bounce_waypoints.size(), " waypoints, final target: ", throw_target_pos)
 	

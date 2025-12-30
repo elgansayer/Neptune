@@ -1019,9 +1019,11 @@ func _cmd_game_info() -> void:
 func _register_debug_commands() -> void:
 	LimboConsole.register_command(_cmd_debug_fps, "debug fps", "Show FPS counter")
 	LimboConsole.register_command(_cmd_debug_info, "debug info", "Show debug information")
+	LimboConsole.register_command(_cmd_debug_collisions, "debug collisions", "Toggle collision shape visualization")
 	
 	# Shortcuts
 	LimboConsole.register_command(_cmd_debug_fps, "fps", "Show FPS counter")
+	LimboConsole.register_command(_cmd_debug_collisions, "collisions", "Toggle collision shapes")
 
 func _cmd_debug_fps() -> void:
 	var fps = Engine.get_frames_per_second()
@@ -1041,6 +1043,15 @@ func _cmd_debug_info() -> void:
 	var root = _get_game_instance().get_tree().root
 	node_count = _count_nodes(root)
 	LimboConsole.info("  Total Nodes: %d" % node_count)
+
+func _cmd_debug_collisions() -> void:
+	var tree = get_tree()
+	if tree:
+		tree.debug_collisions_hint = not tree.debug_collisions_hint
+		var status = "ENABLED" if tree.debug_collisions_hint else "DISABLED"
+		LimboConsole.info("🔲 Collision shapes %s" % status)
+	else:
+		LimboConsole.error("❌ Failed to access scene tree")
 
 # ============================================================================
 # CAMERA COMMANDS

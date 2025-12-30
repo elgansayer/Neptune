@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://tirra_pickup_area_001"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tirra_pickup"]
+size = Vector2(51.2, 51.2)
+
+[node name="PickupArea" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_tirra_pickup")

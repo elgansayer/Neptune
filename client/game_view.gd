@@ -2,8 +2,10 @@ extends Node2D
 
 # Client-side game display with lag mitigation
 # Implements Client-Side Prediction, Server Reconciliation, and Entity Interpolation
+# Uses Godot's CanvasLayers, YSort, and z_index for proper rendering order
 
 const Constants = preload("res://shared/constants.gd")
+const RenderingLayers = preload("res://shared/rendering_layers.gd")
 const BombScene = preload("res://client/ui/bomb.tscn")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
 const GameHUDScene = preload("res://client/ui/game_hud.tscn")
@@ -12,6 +14,13 @@ const BombSafetyVisualizerScript = preload("res://client/ui/bomb_safety_visualiz
 const HurryBlockShadowScene = preload("res://client/effects/HurryBlockShadow.tscn")
 const FallingHurryBlockScene = preload("res://client/effects/FallingHurryBlock.tscn")
 
+# Canvas layers (Godot feature for major separation)
+var background_canvas: CanvasLayer
+var game_canvas: CanvasLayer
+var ui_canvas: CanvasLayer
+var debug_canvas: CanvasLayer
+
+# Containers within game canvas (Y-sorted for depth)
 @onready var players_container = $Players
 @onready var bombs_container = $Bombs
 @onready var explosions_container = $Explosions
@@ -58,6 +67,12 @@ var current_timescale_index = 0
 var timescale_options = [3.0, 5.0, 0.1, 0.25, 0.5, 1.0, 2.0]
 
 func _ready():
+	# Enable Y-sorting on game containers (Godot's built-in depth sorting)
+	RenderingLayers.setup_ysort_container(self)  # Root game view
+	RenderingLayers.setup_ysort_container(players_container)
+	RenderingLayers.setup_ysort_container(bombs_container)
+	RenderingLayers.setup_ysort_container(explosions_container)
+	
 	# Set up FIXED camera to show entire arena (like classic Bomberman)
 	camera.enabled = true
 	camera.anchor_mode = Camera2D.ANCHOR_MODE_DRAG_CENTER
@@ -89,8 +104,42 @@ func _ready():
 	# Start with bomb safety shown
 	bomb_safety_visualizer.visible = true
 	
+	# Setup Godot CanvasLayers for proper rendering separation (after visualizers created)
+	_setup_canvas_layers()
+	
+	# Initialize bomb safety visualizer (debug - toggle with F4)
+	bomb_safety_visualizer = BombSafetyVisualizerScript.new()
+	bomb_safety_visualizer.name = "BombSafetyVisualizer"
+	bomb_safety_visualizer.position = Vector2.ZERO
+	add_child(bomb_safety_visualizer)
+	print("[GameView] BombSafetyVisualizer created")
+	# Start with bomb safety shown
+	bomb_safety_visualizer.visible = true
+	
 	# Request current safety data from server (in case we missed initial broadcasts)
 	call_deferred("_request_farming_spot_update")
+
+# Setup CanvasLayers using Godot's layering system
+func _setup_canvas_layers() -> void:
+	# Create debug canvas (overlays, paths, visualizers)
+	debug_canvas = RenderingLayers.create_canvas_layer(
+		RenderingLayers.CANVAS_DEBUG,
+		"DebugCanvas"
+	)
+	get_tree().root.add_child(debug_canvas)
+	
+	# Move debug visualizers to debug canvas (remove from current parent first)
+	if threat_visualizer and threat_visualizer.get_parent():
+		threat_visualizer.get_parent().remove_child(threat_visualizer)
+		debug_canvas.add_child(threat_visualizer)
+	if bomb_safety_visualizer and bomb_safety_visualizer.get_parent():
+		bomb_safety_visualizer.get_parent().remove_child(bomb_safety_visualizer)
+		debug_canvas.add_child(bomb_safety_visualizer)
+	
+	print("[GameView] CanvasLayers configured: Game=%d Debug=%d" % [
+		RenderingLayers.CANVAS_GAME,
+		RenderingLayers.CANVAS_DEBUG
+	])
 	
 	# Check for cached initial map data (might have arrived before we were ready)
 	call_deferred("_check_pending_initial_map")
@@ -114,7 +163,7 @@ func _ready():
 
 
 func update_game_state(state: Dictionary):
-	print("[GameView] update_game_state called with keys: ", state.keys())
+	print("[GameView] State keys: ", state.keys())
 	# === COMPACT FORMAT CONVERSION ===
 	# Server now sends compact keys to reduce packet size
 	# Convert to legacy format for existing code compatibility
@@ -245,6 +294,7 @@ func update_game_state(state: Dictionary):
 	if state.has("pu") and not state.has("powerups"):
 		# Compact powerup format - expand to legacy format
 		# Server sends: pu_id -> [tile_x, tile_y, type]
+		print("[GameView] Expanding ", state.pu.size(), " powerups")
 		state["powerups"] = {}
 		if state.pu is Dictionary:
 			for pu_id in state.pu:
@@ -260,6 +310,7 @@ func update_game_state(state: Dictionary):
 	# Expand compact egg format to usable format
 	# Server sends: eg_id -> [tile_x, tile_y]
 	if state.has("eg") and not state.has("eggs"):
+		print("[GameView] Expanding ", state.eg.size(), " eggs")
 		state["eggs"] = {}
 		if state.eg is Dictionary:
 			for eg_id in state.eg:
@@ -532,6 +583,7 @@ func update_game_state(state: Dictionary):
 
 	# Update eggs (Tirra eggs)
 	if state.has("eggs"):
+		print("[GameView] Processing ", state.eggs.size(), " eggs")
 		for egg_id in state.eggs:
 			var egg_data = state.eggs[egg_id]
 			update_egg(egg_id, egg_data)
@@ -635,24 +687,9 @@ func update_blocks(map_data: Array):
 					block.z_index = 0
 					add_child(block)
 					
-					# Add hitbox visualization
-					var hitbox = Line2D.new()
-					hitbox.width = 2.0
-					hitbox.default_color = Color(0, 1, 0, 0.6)
-					hitbox.z_index = 101
-					var radius = GameConfig.TILE_SIZE / 2.0
-					var num_points = 32
-					for i in range(num_points + 1):
-						var angle = (i / float(num_points)) * TAU
-						var point = Vector2(cos(angle), sin(angle)) * radius
-						hitbox.add_point(point)
-					hitbox.position = Vector2(
-						col * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-						row * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-					)
-					add_child(hitbox)
+					# Hitbox visualization removed
 					
-					block_nodes[tile_key] = {"block": block, "hitbox": hitbox}
+					block_nodes[tile_key] = {"block": block}
 	
 	# Remove blocks that no longer exist (destroyed)
 	for tile_key in block_nodes.keys():
@@ -660,7 +697,6 @@ func update_blocks(map_data: Array):
 			print("[Client] Removing destroyed block: ", tile_key)
 			var nodes = block_nodes[tile_key]
 			nodes.block.queue_free()
-			nodes.hitbox.queue_free()
 			block_nodes.erase(tile_key)
 
 func update_player(peer_id: String, data: Dictionary):
@@ -697,21 +733,7 @@ func update_player(peer_id: String, data: Dictionary):
 			sprite.color = Color(0.2, 0.6, 1.0) if is_local else Color(1.0, 0.3, 0.3)
 			player_node.add_child(sprite)
 		
-		# Add debug arrow to show facing direction
-		var arrow = Polygon2D.new()
-		var arrow_scale = GameConfig.TILE_SIZE / 32.0 # Scale based on tile size
-		var arrow_points = PackedVector2Array([
-			Vector2(0, -15 * arrow_scale), # Top left
-			Vector2(40 * arrow_scale, 0), # Tip (pointing right)
-			Vector2(0, 15 * arrow_scale), # Bottom left
-			Vector2(10 * arrow_scale, 0) # Inner notch
-		])
-		arrow.polygon = arrow_points
-		arrow.color = Color(1, 0, 0, 1.0) # Bright RED
-		arrow.z_index = 100
-		arrow.position = Vector2(0, -50 * arrow_scale) # Above the sprite
-		arrow.name = "DebugArrow"
-		player_node.add_child(arrow)
+		# Debug arrow removed
 		
 		# Label removed for better visibility
 		# var label = Label.new()
@@ -794,17 +816,7 @@ func update_player(peer_id: String, data: Dictionary):
 
 	_update_target_debug_line(player_node, data)
 	
-	# Update debug arrow rotation based on facing direction
-	var debug_arrow = player_node.get_node_or_null("DebugArrow")
-	if debug_arrow and data.has("facing"):
-		var rotation_map = {
-			"RIGHT": 0.0,
-			"DOWN": PI / 2.0,
-			"LEFT": PI,
-			"UP": - PI / 2.0
-		}
-		if data.facing in rotation_map:
-			debug_arrow.rotation = rotation_map[data.facing]
+	# Debug arrow removed
 	
 	# Update Robin Hood animations based on state and movement
 	var animated_sprite = player_node.get_meta("animated_sprite", null)
@@ -1263,7 +1275,7 @@ func update_bomb(bomb_id: String, data: Dictionary):
 		bomb_node = BombScene.instantiate()
 		bomb_node.bomb_id = bomb_id
 		bomb_node.name = "Bomb_" + bomb_id
-		bomb_node.z_index = 10 # Render bombs above explosions
+		bomb_node.z_index = RenderingLayers.BOMBS # Render bombs using RenderingLayers system
 		
 		bombs_container.add_child(bomb_node)
 		bomb_nodes[bomb_id] = bomb_node
@@ -1308,7 +1320,7 @@ func update_explosions(explosions_data: Array):
 			var explosion_node = ExplosionRenderer.new()
 			explosion_node.explosion_id = explosion_id
 			explosion_node.name = "Explosion_" + explosion_id
-			explosion_node.z_index = 5 # Render explosions below bombs (z_index 10)
+			explosion_node.z_index = RenderingLayers.EXPLOSIONS # Render explosions using RenderingLayers system
 			
 			# Pattern already in enriched format from compact expansion
 			var enriched_pattern = explosion_data["pattern"]
@@ -1642,23 +1654,8 @@ func render_map(map_data):
 					block.z_index = 0
 					add_child(block)
 					
-					# Add hitbox visualization (green circle to match actual collision)
-					var hitbox = Line2D.new()
-					hitbox.width = 2.0
-					hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
-					hitbox.z_index = 101
-					# Draw circle
-					var radius = GameConfig.TILE_SIZE / 2.0
-					var num_points = 32
-					for i in range(num_points + 1):
-						var angle = (i / float(num_points)) * TAU
-						var point = Vector2(cos(angle), sin(angle)) * radius
-						hitbox.add_point(point)
-					hitbox.position = Vector2(
-						col * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-						row * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-					)
-					add_child(hitbox)
+					
+					# Hitbox visualization removed
 	
 	# Calculate camera position for 320x224 viewport
 	# Map may be larger than viewport - center it
@@ -1721,6 +1718,7 @@ func bomb_safety_update(safety_data: Dictionary) -> void:
 		print("[GameView] WARNING: bomb_safety_visualizer not ready or missing method")
 
 func update_powerup(powerup_id: String, data: Dictionary):
+	print("[GameView] update_powerup called: id=", powerup_id, " type=", data.type, " pos=", data.position)
 	var powerup_node
 	
 	if not powerup_nodes.has(powerup_id):
@@ -1742,12 +1740,15 @@ func update_powerup(powerup_id: String, data: Dictionary):
 
 func update_egg(egg_id: String, data: Dictionary):
 	"""Update or create a Tirra egg visual on the client side"""
+	print("[GameView] update_egg called: id=", egg_id, " pos=", data.position)
 	var egg_node
 	
 	if not egg_nodes.has(egg_id):
 		# Try to load egg scene
+		print("[GameView] Loading egg scene for id=", egg_id)
 		var egg_scene = load("res://items/egg.tscn")
 		if not egg_scene:
+			print("[GameView] ERROR: Could not load egg.tscn, using fallback")
 			# Fallback: create a simple placeholder sprite
 			egg_node = Sprite2D.new()
 			egg_node.texture = load("res://res/icons/egg.png") if FileAccess.file_exists("res://res/icons/egg.png") else null
@@ -1760,7 +1761,9 @@ func update_egg(egg_id: String, data: Dictionary):
 				egg_node = Node2D.new()
 				egg_node.add_child(placeholder)
 		else:
+			print("[GameView] Egg scene loaded, instantiating...")
 			egg_node = egg_scene.instantiate()
+			print("[GameView] Egg instantiated: ", egg_node.name, " visible=", egg_node.visible)
 			# Disable server-side functionality (physics, pickup detection)
 			# The egg is just a visual on the client - the server handles pickup
 			var pickup_area = egg_node.get_node_or_null("PickupArea")
@@ -1769,7 +1772,24 @@ func update_egg(egg_id: String, data: Dictionary):
 		
 		egg_node.name = "Egg_" + egg_id
 		egg_node.position = Vector2(data.position.x, data.position.y)
+		egg_node.z_index = RenderingLayers.ITEMS  # Render below players via RenderingLayers system
+		print("[GameView] Adding egg to scene: pos=", egg_node.position, " z_index=", egg_node.z_index)
 		add_child(egg_node)
+		print("[GameView] Egg added! Parent=", egg_node.get_parent().name, " in_tree=", egg_node.is_inside_tree())
+		
+		# CRITICAL FIX: Egg scene has AnimatedSprite2D visible=false by default
+		# The spawn animation sets it to visible, but we need to force it on the client
+		var sprite = egg_node.get_node_or_null("AnimatedSprite2D")
+		if sprite:
+			sprite.visible = true
+			print("[GameView] Egg sprite DETAIL: visible=", sprite.visible, " scale=", sprite.scale, " modulate=", sprite.modulate, " z_index=", sprite.z_index, " position=", sprite.position)
+			print("[GameView] Egg sprite animation=", sprite.animation, " frame=", sprite.frame, " playing=", sprite.playing)
+		else:
+			print("[GameView] ERROR: AnimatedSprite2D not found in egg!")
+		
+		print("[GameView] Egg node FINAL: visible=", egg_node.visible, " z_index=", egg_node.z_index, " scale=", egg_node.scale, " modulate=", egg_node.modulate)
+		print("[GameView] Egg global_pos=", egg_node.global_position, " local_pos=", egg_node.position)
+		
 		egg_nodes[egg_id] = egg_node
 	else:
 		egg_node = egg_nodes[egg_id]

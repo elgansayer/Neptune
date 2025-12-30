@@ -306,11 +306,11 @@ item_type = "egg"
 pickup_sound = "pickup_egg"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-visible = false
+visible = true
 position = Vector2( 0, -6 )
 scale = Vector2( 0.67, 0.67 )
 frames = SubResource( 1 )
-animation = "explode"
+animation = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource( 2 )

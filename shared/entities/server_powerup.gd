@@ -2,17 +2,7 @@ extends Area2D
 class_name ServerPowerUp
 
 ## Server-side power-up entity
-## Spawns on block destruction and increases player stats
-##
-## === Saturn Bomberman Pickup Physics (from spec) ===
-## Tile Size: 16x16 logical units (scaled to GameConfig.TILE_SIZE)
-## Trigger Zone: 12x12 pixels centered in the tile (75% of tile)
-## Player Anchor: Single pixel at center-bottom of player sprite
-## Interaction Rule: if (TriggerRect.has_point(PlayerAnchor)): Collect()
-##
-## This model ensures a player must commit to entering the tile to 
-## trigger the pickup. A player moving perpendicularly along the edge 
-## (grazing the outer 2 pixels) will NOT trigger collection.
+## Uses common collectable sizing and collection logic
 ##
 ## === Saturn Bomberman Item Types ===
 ## Common Items (always drop):
@@ -38,8 +28,6 @@ class_name ServerPowerUp
 ##
 ## Negative Items:
 ##   Skull:      Apply random curse effect
-
-const Constants = preload("res://shared/constants.gd")
 
 ## Power-up types matching Saturn Bomberman item set
 ## NOTE: Enum values are used for network sync and must remain stable
@@ -72,22 +60,28 @@ enum PowerUpType {
 	VIRUS = 13            # Deprecated: use SKULL instead
 }
 
+## Ratio of tile size for collision trigger (0.0-1.0)
+@export_range(0.1, 1.0) var trigger_size_ratio: float = 1.0
+
 var powerup_id: String = ""
 var powerup_type: PowerUpType = PowerUpType.BOMB_INCREASE
 var collected: bool = false
-var destroyed: bool = false  # Destroyed by explosion
+var destroyed: bool = false
 
 # Collision shape is defined in ServerPowerUp.tscn
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 
+# Powerup-specific signals
+signal powerup_collected(powerup)
+signal powerup_destroyed(powerup)
+
 func _ready():
-	# Collision layers are already set in ServerPowerUp.tscn
-	# Update collision shape size to match current GameConfig values
+	# Update collision shape to match current GameConfig values
 	_update_collision_shape_size()
 	
-	# Ensure monitoring is enabled (required for body_entered signal)
+	# Ensure monitoring is enabled
 	monitoring = true
-	monitorable = false  # We don't need other areas to detect us
+	monitorable = false  # We detect players, not vice versa
 	
 	# Connect collision signal
 	body_entered.connect(_on_body_entered)
@@ -95,19 +89,22 @@ func _ready():
 func _update_collision_shape_size():
 	"""Update collision shape to match current GameConfig values"""
 	if collision_shape and collision_shape.shape:
-		var trigger_size = GameConfig.TILE_SIZE * Constants.POWERUP_TRIGGER_RATIO
+		var trigger_size = GameConfig.TILE_SIZE * trigger_size_ratio
 		collision_shape.shape.size = Vector2(trigger_size, trigger_size)
 
-func _on_body_entered(body):
+func _on_body_entered(body: Node):
+	"""Called when something enters the trigger area"""
 	if collected or destroyed:
 		return
 	
-	# Check if it's a player
 	if body.has_method("collect_powerup"):
-		collected = true
-		body.collect_powerup(self)
-		# Power-up will be removed by GameInstance
-		emit_signal("powerup_collected", self)
+		_collect(body)
+
+func _collect(body: Node):
+	"""Handle powerup collection"""
+	collected = true
+	body.collect_powerup(self)
+	powerup_collected.emit(self)
 
 func destroy():
 	"""Called when powerup is destroyed by explosion"""
@@ -115,13 +112,10 @@ func destroy():
 		return
 	
 	destroyed = true
-	# Emit signal for visual effect (smoke animation on client)
-	emit_signal("powerup_destroyed", self)
-	# Will be removed by GameInstance
-
-signal powerup_destroyed(powerup)
+	powerup_destroyed.emit(self)
 
 func get_tile_position() -> Vector2i:
+	"""Get the tile coordinates of this powerup"""
 	return Vector2i(
 		int(floor(position.x / GameConfig.TILE_SIZE)),
 		int(floor(position.y / GameConfig.TILE_SIZE))
@@ -133,8 +127,6 @@ func get_state() -> Dictionary:
 		"type": powerup_type,
 		"position": {"x": position.x, "y": position.y}
 	}
-
-signal powerup_collected(powerup)
 
 ## Get the animation name for this powerup type (used by renderer)
 static func get_animation_name(type: PowerUpType) -> String:
