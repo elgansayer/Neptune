@@ -69,7 +69,13 @@ var input_buffer = [] # Array of currently pressed direction keys in order (most
 var current_timescale_index = 0
 var timescale_options = [3.0, 5.0, 0.1, 0.25, 0.5, 1.0, 2.0]
 
+# Cached server node reference to avoid repeated lookups
+var server_node: Node = null
+
 func _ready():
+	# Cache server node reference
+	server_node = get_node_or_null("/root/ServerMain")
+
 	# Enable Y-sorting on game containers (Godot's built-in depth sorting)
 	RenderingLayers.setup_ysort_container(self)  # Root game view
 	RenderingLayers.setup_ysort_container(players_container)
@@ -155,8 +161,8 @@ func _setup_canvas_layers() -> void:
 
 	# Start at normal speed
 	Engine.time_scale = 1.0
-	if has_node("/root/ServerMain"):
-		get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", 1.0)
+	if server_node:
+		server_node.rpc_id(1, "set_debug_timescale", 1.0)
 	
 	# Initialize HUD (must be above map but below players)
 	hud = GameHUDScene.instantiate()
@@ -1486,13 +1492,14 @@ func _physics_process(delta):
 		# Visual position comes from server via reconciliation in update_player
 	
 	# Send input to server (server remains authoritative)
-	get_node("/root/ServerMain").rpc_id(1, "send_player_input", {
-		"input_x": input_x,
-		"input_y": input_y,
-		"place_bomb": place_bomb,
-		"action_pressed": action_pressed,
-		"action_released": action_released
-	})
+	if server_node:
+		server_node.rpc_id(1, "send_player_input", {
+			"input_x": input_x,
+			"input_y": input_y,
+			"place_bomb": place_bomb,
+			"action_pressed": action_pressed,
+			"action_released": action_released
+		})
 
 func _play_death_flash(sprite: Node2D):
 	"""Turn the player red when hit by a bomb explosion"""
@@ -1530,8 +1537,8 @@ func _input(event):
 			current_timescale_index = (current_timescale_index + 1) % timescale_options.size()
 			var new_timescale = timescale_options[current_timescale_index]
 			Engine.time_scale = new_timescale
-			if has_node("/root/ServerMain"):
-				get_node("/root/ServerMain").rpc_id(1, "set_debug_timescale", new_timescale)
+			if server_node:
+				server_node.rpc_id(1, "set_debug_timescale", new_timescale)
 			print("[GameView] Timescale set to: ", new_timescale)
 
 		elif event.keycode == Key.KEY_F7:
