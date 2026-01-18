@@ -137,7 +137,10 @@ var debug_target_active: bool = false
 const ENABLE_GRID_SNAPPING = true # Re-enabled with matching client prediction
 const ENABLE_CORNER_SLIDING = true # Toggle manual corner sliding logic
 
+var game_instance = null
+
 func _ready():
+	game_instance = get_parent()
 	# Collision layers and shapes are already set in ServerPlayer.tscn
 	# Update shapes to use dynamic GameConfig values at runtime
 	_update_collision_shape_sizes()
@@ -615,7 +618,6 @@ func is_opposite(dir1: Vector2, dir2: Vector2) -> bool:
 
 func is_tile_walkable(tile_pos: Vector2i) -> bool:
 	"""Check if a tile position is walkable (not a wall or block)"""
-	var game_instance = get_parent()
 	if not game_instance or not game_instance.has_method("get"):
 		return true # Assume walkable if we can't check
 
@@ -1122,10 +1124,10 @@ func _complete_tirra_mount(tirra: Node2D) -> void:
 	tirra.set_deferred("position", Vector2.ZERO)  # Center on player
 	
 	# Remove pickup area since we're now mounted (deferred to avoid physics issues)
-	var pickup_area = tirra.get_node_or_null("PickupArea")
-	if pickup_area:
-		pickup_area.set_deferred("monitoring", false)
-		pickup_area.call_deferred("queue_free")
+	var pickup_area_node = tirra.get_node_or_null("PickupArea")
+	if pickup_area_node:
+		pickup_area_node.set_deferred("monitoring", false)
+		pickup_area_node.call_deferred("queue_free")
 	
 	# Connect Tirra signals for action handling
 	if tirra.has_signal("action_started"):
@@ -1178,9 +1180,8 @@ func dismount_tirra(kill_tirra_flag: bool = false, grant_immortality: bool = fal
 		
 		if kill_tirra_flag:
 			# Tirra dies - reparent to world and play death animation
-			var game_parent = get_parent()
-			if game_parent:
-				game_parent.add_child(tirra_ref)
+			if game_instance:
+				game_instance.add_child(tirra_ref)
 				tirra_ref.global_position = dismount_pos
 			
 			# Play explode animation
@@ -1194,9 +1195,8 @@ func dismount_tirra(kill_tirra_flag: bool = false, grant_immortality: bool = fal
 			)
 		else:
 			# Drop Tirra back into the world as a pickup
-			var game_parent = get_parent()
-			if game_parent:
-				game_parent.add_child(tirra_ref)
+			if game_instance:
+				game_instance.add_child(tirra_ref)
 				tirra_ref.global_position = dismount_pos
 				# Re-add pickup area
 				_readd_tirra_pickup_area(tirra_ref)
@@ -1210,15 +1210,16 @@ func dismount_tirra(kill_tirra_flag: bool = false, grant_immortality: bool = fal
 
 func _readd_tirra_pickup_area(tirra: Node2D) -> void:
 	"""Re-add the pickup area to a dropped Tirra using scene instance"""
-	if tirra.get_node_or_null("PickupArea"):
+	var pickup_area_node = tirra.get_node_or_null("PickupArea")
+	if pickup_area_node:
 		return  # Already has one
 	
 	var pickup_area = TIRRA_PICKUP_AREA.instantiate()
 	
 	# Update collision size based on current tile size
-	var collision = pickup_area.get_node("CollisionShape2D")
-	if collision and collision.shape:
-		collision.shape.size = Vector2(GameConfig.TILE_SIZE * 0.8, GameConfig.TILE_SIZE * 0.8)
+	var collision_node = pickup_area.get_node("CollisionShape2D")
+	if collision_node and collision_node.shape:
+		collision_node.shape.size = Vector2(GameConfig.TILE_SIZE * 0.8, GameConfig.TILE_SIZE * 0.8)
 	
 	# Connect to self for remounting
 	pickup_area.body_entered.connect(_on_dropped_tirra_touched.bind(tirra))
@@ -1312,7 +1313,6 @@ func _tirra_kick_bomb() -> void:
 	# Get the adjacent tile in the direction we're facing
 	var adjacent_tile = our_tile + Vector2i(int(facing_direction.x), int(facing_direction.y))
 	
-	var game_instance = get_parent()
 	if game_instance and game_instance.has_method("get_bomb_at_tile"):
 		var bomb = game_instance.get_bomb_at_tile(adjacent_tile)
 		if bomb:
