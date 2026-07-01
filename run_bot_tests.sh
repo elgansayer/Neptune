@@ -4,7 +4,7 @@
 
 set -e
 
-PROJECT_DIR="/home/elgan/bomberman"
+PROJECT_DIR="."
 TEST_DIR="$PROJECT_DIR/tests"
 LOG_FILE="$PROJECT_DIR/test_results.log"
 
