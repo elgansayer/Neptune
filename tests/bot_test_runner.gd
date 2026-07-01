@@ -25,8 +25,16 @@ func _ready() -> void:
 		# TODO: Implement category filtering
 		print("Category filtering not yet implemented")
 	elif run_specific_test != "":
-		# TODO: Implement specific test running
-		print("Specific test running not yet implemented")
+		var all_tests = find_all_test_scripts()
+		var found = false
+		for test_path in all_tests:
+			var file_name = test_path.get_file()
+			if file_name == run_specific_test or file_name == run_specific_test + ".gd" or test_path == run_specific_test:
+				await run_test_file(test_path)
+				found = true
+				break
+		if not found:
+			print("Could not find specific test: ", run_specific_test)
 	
 	print_summary()
 	
@@ -43,16 +51,19 @@ func run_all() -> void:
 	for test_path in test_scripts:
 		await run_test_file(test_path)
 
-func find_all_test_scripts() -> Array:
+func find_all_test_scripts(path: String = "res://tests") -> Array:
 	var scripts = []
-	var dir = DirAccess.open("res://tests")
+	var dir = DirAccess.open(path)
 	if dir:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":
-			if not dir.current_is_dir():
-				if file_name.ends_with("_test.gd"):
-					scripts.append("res://tests/" + file_name)
+			if dir.current_is_dir():
+				if file_name != "." and file_name != "..":
+					scripts.append_array(find_all_test_scripts(path + "/" + file_name))
+			else:
+				if (file_name.ends_with("_test.gd") or file_name.begins_with("test_")) and file_name.ends_with(".gd"):
+					scripts.append(path + "/" + file_name)
 			file_name = dir.get_next()
 	return scripts
 
