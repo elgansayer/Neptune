@@ -44,7 +44,9 @@ func _ready() -> void:
 
 func _parse_cmdline_args() -> bool:
 	for arg in OS.get_cmdline_user_args():
-		if arg == "--run-all":
+		if arg == "--runtime-role=test":
+			continue
+		elif arg == "--run-all":
 			run_all_tests = true
 		elif arg.begins_with("--run-category="):
 			run_category = arg.trim_prefix("--run-category=")

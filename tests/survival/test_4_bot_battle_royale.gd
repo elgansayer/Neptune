@@ -1,17 +1,19 @@
-extends Node
+extends "res://tests/support/legacy_bot_scenario.gd"
 
-## 4-BOT BATTLE ROYALE - Ultimate suicide prevention test
+## Four-bot combat diagnostic; proximity does not establish death attribution.
 ## All 4 bots compete, testing all edge cases
 
 var test_name := "4_bot_battle_royale"
-var test_timeout := 120.0  # 2 minutes
+
 var bots: Array = []
 var test_result := ""
-var game_instance
 var initial_bot_count := 4
 var max_deaths_allowed := 2  # Allow some combat deaths, but track suicides
-var suicide_count := 0
+var suspected_self_kos := 0
 var combat_deaths := 0
+
+func _init() -> void:
+	test_timeout = 120.0
 
 func setup() -> void:
 	game_instance = BotTestHelpers.get_game_instance()
@@ -32,7 +34,7 @@ func setup() -> void:
 	print("[TEST] Spawning 4-bot battle royale...")
 	for i in range(spawn_configs.size()):
 		var config = spawn_configs[i]
-		var bot = BotTestHelpers.spawn_bot(config["tile"], config["personality"], game_instance)
+		var bot = await BotTestHelpers.spawn_bot(config["tile"], config["personality"], game_instance)
 		if bot:
 			bots.append(bot)
 			bot.set_meta("bot_id", i)
@@ -61,8 +63,8 @@ func execute() -> void:
 	
 	print("[TEST] ⚔️  BATTLE ROYALE STARTED - %d seconds" % int(test_timeout))
 	
-	var start_time = Time.get_ticks_msec()
-	var max_wait = test_timeout * 1000
+	var start_time = Engine.get_physics_frames()
+	var max_wait = int(test_timeout * Engine.physics_ticks_per_second)
 	var last_report = start_time
 	var bot_states = {}
 	
@@ -77,8 +79,8 @@ func execute() -> void:
 				"last_pos": bot.position
 			}
 	
-	while Time.get_ticks_msec() - start_time < max_wait:
-		var current_time = Time.get_ticks_msec()
+	while Engine.get_physics_frames() - start_time < max_wait:
+		var current_time = Engine.get_physics_frames()
 		
 		# Check each bot
 		for bot in bots:
@@ -92,7 +94,7 @@ func execute() -> void:
 				continue
 			
 			# Check death
-			if bot.has_method("is_dead") and bot.is_dead:
+			if bot.is_dead:
 				state["alive"] = false
 				var personality = bot.get_meta("personality", "UNKNOWN")
 				var last_tile = bot.get_meta("last_known_tile", Vector2i(-1, -1))
@@ -106,8 +108,8 @@ func execute() -> void:
 							nearby_bots += 1
 				
 				if nearby_bots == 0:
-					suicide_count += 1
-					print("[TEST] 💀 Bot %d (%s) SUICIDE at %s" % [bot_id, personality, last_tile])
+					suspected_self_kos += 1
+					print("[TEST] 💀 Bot %d (%s) SUSPECTED SELF-KO (proximity heuristic) at %s" % [bot_id, personality, last_tile])
 				else:
 					combat_deaths += 1
 					print("[TEST] ⚔️  Bot %d (%s) killed in combat" % [bot_id, personality])
@@ -123,20 +125,20 @@ func execute() -> void:
 					state["last_pos"] = bot.position
 		
 		# Periodic report
-		if current_time - last_report >= 10000:  # Every 10 seconds
+		if current_time - last_report >= 10 * Engine.physics_ticks_per_second:  # Every 10 seconds
 			last_report = current_time
 			var alive = 0
 			for bot_id in bot_states:
 				if bot_states[bot_id].get("alive", false):
 					alive += 1
-			var elapsed = (current_time - start_time) / 1000.0
-			print("[TEST] @ %.0fs: %d alive, %d suicides, %d combat deaths" % [elapsed, alive, suicide_count, combat_deaths])
+			var elapsed = (current_time - start_time) / float(Engine.physics_ticks_per_second)
+			print("[TEST] @ %.0fs: %d alive, %d suspected self-KOs, %d combat deaths" % [elapsed, alive, suspected_self_kos, combat_deaths])
 		
 		await get_tree().create_timer(0.1).timeout
 	
 	# Final evaluation
-	if suicide_count > 0:
-		test_result = "FAIL: %d SUICIDES detected in battle royale (combat deaths: %d)" % [suicide_count, combat_deaths]
+	if suspected_self_kos > 0:
+		test_result = "FAIL: %d proximity-classified self-KOs detected in battle royale (combat deaths: %d)" % [suspected_self_kos, combat_deaths]
 		return
 	
 	var survivors = 0
@@ -144,7 +146,7 @@ func execute() -> void:
 		if bot_states[bot_id].get("alive", false):
 			survivors += 1
 	
-	test_result = "PASS: 0 suicides in %ds battle (%d survivors, %d combat deaths)" % [int(test_timeout), survivors, combat_deaths]
+	test_result = "PASS: No proximity-classified self-KOs in %ds battle (%d survivors, %d combat deaths)" % [int(test_timeout), survivors, combat_deaths]
 
 func teardown() -> void:
 	for bot in bots:

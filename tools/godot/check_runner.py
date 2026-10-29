@@ -6,9 +6,11 @@ import argparse
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -127,6 +129,35 @@ class RunnerChecks(unittest.TestCase):
     def test_timeout_fails(self):
         self.fixture("test_hang.gd", 'extends Node\nfunc execute():\n\tawait get_tree().create_timer(20).timeout\n\treturn true\n')
         self.run_case(1, timeout=0.5, reason="FAIL: timeout")
+
+    def test_log_limit_fails(self):
+        self.fixture("test_noisy.gd", 'extends Node\nfunc execute() -> bool:\n\tfor i in range(100):\n\t\tprint("x".repeat(65536))\n\treturn true\n')
+        self.run_case(1, "--max-log-mib", "1", reason="log byte limit exceeded")
+
+    def test_log_limit_cannot_be_unbounded(self):
+        self.run_case(2, "--max-log-mib", "0", reason="between 1 and 32")
+
+    def test_terminated_supervisor_reaps_godot(self):
+        self.fixture("test_hang.gd", 'extends Node\nfunc execute():\n\tvar file = FileAccess.open("res://godot.pid", FileAccess.WRITE)\n\tfile.store_string(str(OS.get_process_id()))\n\tfile.close()\n\tawait get_tree().create_timer(30).timeout\n\treturn true\n')
+        command = [sys.executable, str(ROOT / "tools/godot/run_bot_tests.py"),
+                   "--godot", GODOT, "--project", str(self.project), "--timeout", "40"]
+        with (self.project / "supervisor.log").open("w") as output:
+            process = subprocess.Popen(command, stdout=output, stderr=subprocess.STDOUT)
+            try:
+                pid_file = self.project / "godot.pid"
+                deadline = time.monotonic() + 5
+                while not pid_file.exists() and time.monotonic() < deadline:
+                    time.sleep(0.02)
+                self.assertTrue(pid_file.exists(), "Godot did not reach the hanging fixture")
+                pid = int(pid_file.read_text())
+                process.send_signal(signal.SIGTERM)
+                self.assertNotEqual(process.wait(timeout=5), 0)
+                with self.assertRaises(ProcessLookupError):
+                    os.kill(pid, 0)
+            finally:
+                if process.poll() is None:
+                    process.terminate()
+                    process.wait(timeout=5)
 
     def test_early_zero_exit_without_summary_fails(self):
         self.fixture("test_quit.gd", 'extends Node\nfunc execute():\n\tget_tree().quit(0)\n\tawait get_tree().process_frame\n')
