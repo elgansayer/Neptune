@@ -529,7 +529,7 @@ func _spawn_hurry_block(pos: Vector2i):
 		var player_tile = player.get_tile_position()
 		if player_tile == pos:
 			print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-			player.die("Crushed by hurry block")
+			player.die()
 			
 			# Check for match end
 			_check_alive_players()
