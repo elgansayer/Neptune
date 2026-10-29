@@ -238,6 +238,7 @@ func test_repeated_physics_experiment_matches_with_wall_delays() -> Variant:
 func test_state_publication_follows_actual_actor_movement() -> Variant:
 	actor.position = BotTestHelpers.tile_to_world_center(Vector2i(2, 8))
 	var start_position := actor.position
+	game_instance.match_active = true
 	actor.set_input(1.0, 0.0)
 	actor.add_child(preload("res://tests/support/observe_player_clock.gd").new())
 	var publications: Array = game_instance.get("clock_publications")

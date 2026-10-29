@@ -8,6 +8,8 @@ func setup_test() -> void:
 	game_instance.set_physics_process(false)
 	game_instance.bot_manager.set_physics_process(false)
 	await super()
+	# Decisions are in an active match; physics remains explicitly frozen.
+	game_instance.match_active = true
 
 func _board(player, rng: RandomNumberGenerator):
 	var board = ClassDB.instantiate("Blackboard")

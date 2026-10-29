@@ -652,50 +652,24 @@ func _check_alive_players():
 	if alive_count <= 1:
 		end_match()
 
-func handle_player_input(peer_id: int, input_data: Dictionary) -> Dictionary:
-	if not players.has(peer_id):
-		return _bomb_command_result(false, "unknown_player")
-	
-	var player = players[peer_id]
-	
-	# Set movement input
-	player.set_input(input_data.get("input_x", 0.0), input_data.get("input_y", 0.0))
-	
-	var action_pressed = input_data.get("action_pressed", false)
-	var action_released = input_data.get("action_released", false)
+var _player_commands: RefCounted
 
-	# TIRRA MOUNT TAKES PRIORITY: Action button triggers Tirra ability when mounted
-	if player.is_mounted and action_pressed:
-		player.trigger_tirra_action()
-		# Note: Don't return here - still allow bomb placement on separate button
-	# Branch logic based on whether player has Power Glove
-	elif player.has_power_glove:
-		# Power Glove Logic: Place -> Pickup -> Throw, all on press
-		if action_pressed:
-			player.request_action_press()
-			# If currently carrying, throw on press
-			if player.is_carrying_bomb():
-				player.throw_carried_bomb()
-			else:
-				# Not carrying: try to pick up a bomb underfoot
-				var pickup_successful = _try_pickup_bomb_at_player(player)
-				if not pickup_successful:
-					return place_bomb(player)
-		elif action_released:
-			# Maintain state for completeness; no throw on release now
-			player.request_action_release()
-	elif player.bomb_type == ServerBomb.BOMB_TYPE_REMOTE:
-		# REMOTE BOMB Logic: Action detonates oldest remote bomb
-		if action_pressed:
-			_detonate_oldest_remote_bomb(player)
-		# Standard bomb placement still works
-		if input_data.get("place_bomb", false):
-			return place_bomb(player)
-	else:
-		# Standard Logic: Place bomb
-		if input_data.get("place_bomb", false):
-			return place_bomb(player)
-	return {"accepted": true, "reason": "input_applied", "bomb_ids": []}
+func _command_dispatcher():
+	if _player_commands == null:
+		_player_commands = preload("res://shared/player_commands.gd").new(self)
+	return _player_commands
+
+func _record_command_result(peer_id: int, result: Dictionary) -> Dictionary:
+	var player = players.get(peer_id)
+	if is_instance_valid(player):
+		player.last_command_result = result.duplicate(true)
+	return result
+
+func submit_player_command(peer_id: int, command: Dictionary) -> Dictionary:
+	return _record_command_result(peer_id, _command_dispatcher().submit(peer_id, command))
+
+func handle_player_input(peer_id: int, input_data: Dictionary) -> Dictionary:
+	return _record_command_result(peer_id, _command_dispatcher().apply_packet(peer_id, input_data))
 
 func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
 	"""Try to pick up a bomb at the player's current tile. Returns true if successful."""
@@ -726,7 +700,7 @@ func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
 	return false # No bomb picked up
 
 
-func _detonate_oldest_remote_bomb(player: ServerPlayer):
+func _detonate_oldest_remote_bomb(player: ServerPlayer) -> String:
 	"""Detonate the oldest REMOTE bomb placed by this player"""
 	var oldest_bomb: ServerBomb = null
 	var oldest_time: float = INF
@@ -753,6 +727,8 @@ func _detonate_oldest_remote_bomb(player: ServerPlayer):
 	if oldest_bomb:
 		print("[Game] Remote detonation by ", player.username, " - exploding bomb ", oldest_bomb.bomb_id)
 		oldest_bomb.explode()
+		return oldest_bomb.bomb_id
+	return ""
 
 
 func _bomb_command_result(accepted: bool, reason: String, bomb_ids: Array[String] = []) -> Dictionary:

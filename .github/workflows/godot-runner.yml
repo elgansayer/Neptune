@@ -16,6 +16,7 @@ on:
       - 'shared/ai/**'
       - 'client/**'
       - 'shared/runtime_config.gd'
+      - 'shared/player_commands.gd'
       - 'scripts/console_commands.gd'
       - '.github/workflows/godot-runner.yml'
   push:
@@ -34,6 +35,7 @@ on:
       - 'shared/ai/**'
       - 'client/**'
       - 'shared/runtime_config.gd'
+      - 'shared/player_commands.gd'
       - 'scripts/console_commands.gd'
       - '.github/workflows/godot-runner.yml'
   workflow_dispatch:
@@ -87,6 +89,12 @@ jobs:
         run: |
           for cadence in 30 60 144; do
             bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_commands --max-fps "$cadence" --timeout 40
+          done
+      - name: Verify common movement and real ability commands
+        run: |
+          for cadence in 30 60 144; do
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_player_commands --max-fps "$cadence" --timeout 50
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_native_kick_command --max-fps "$cadence" --timeout 30
           done
       - name: Preserve native startup diagnostics even when a check fails
         if: always()

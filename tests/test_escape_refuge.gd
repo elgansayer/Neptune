@@ -16,6 +16,8 @@ func setup_test() -> void:
 	await game_instance.add_player(-201, "RefugeFixture", BotTestHelpers.tile_to_world_center(Vector2i(7, 6)), true, "fixture")
 	actor = game_instance.players[-201]
 	actor.set_physics_process(false)
+	# Exercise legal live-match intent while keeping the fixture clock frozen.
+	game_instance.match_active = true
 	board = ClassDB.instantiate("Blackboard")
 	var values := {"player": actor, "game_instance": game_instance,
 		"ai_manager": game_instance.ai_manager, "grid_sampler": game_instance.bot_manager.grid_sampler,

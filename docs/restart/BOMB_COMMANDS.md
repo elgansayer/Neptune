@@ -54,13 +54,12 @@ without fabricating a plant timestamp or escape state. Only acceptance updates
 plant time and immediate escape bookkeeping. Native glove/throw placement also
 requires acceptance before reporting a placement or entering pickup.
 
-`handle_player_input` returns the placement result for its standard/remote and
-power-glove fallback placement branches. Packets without a placement return
-`input_applied`; that does not certify other ability outcomes. The current network
-router discards this local return value: client acknowledgements/rejection events
-remain future command protocol work. Input parsing/movement, kick, pickup, throw,
-mount and remote detonation validation are not completed by this change. Neither
-is the public bot observation boundary (#92), browser play or replay determinism.
+`handle_player_input` now delegates to the common
+[PLAYER_COMMANDS.md](PLAYER_COMMANDS.md) movement/ability boundary. It reports actual
+placement/ability and movement outcomes; movement-only frames use `input_applied`.
+The current network router discards local results: client acknowledgements remain
+future protocol work. The public bot observation boundary (#92), browser play and
+replay determinism remain separate.
 
 ## Runtime evidence
 

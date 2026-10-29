@@ -39,6 +39,12 @@ func _tick(delta: float) -> int:
 		player.set_input(0.0, 0.0)
 		_clear_input_blackboard_vars()
 		return SUCCESS
+	var checked: Dictionary = preload("res://shared/player_commands.gd").validate_packet(input_data)
+	if not checked.accepted:
+		_clear_input_blackboard_vars()
+		blackboard.set_var("last_command_rejection", checked.reason)
+		return FAILURE
+	input_data = checked.packet
 	
 	# Extract input values
 	var input_x = input_data.get("input_x", 0.0)
@@ -48,7 +54,11 @@ func _tick(delta: float) -> int:
 	var place_bomb = input_data.get("place_bomb", false)
 	
 	# Set movement input on player
-	player.set_input(input_x, input_y)
+	var movement: Dictionary = player.set_input(input_x, input_y)
+	if not movement.accepted:
+		_clear_input_blackboard_vars()
+		blackboard.set_var("last_command_rejection", movement.reason)
+		return FAILURE
 	
 	# Store input state in blackboard for other nodes to use
 	blackboard.set_var("input_x", input_x)
