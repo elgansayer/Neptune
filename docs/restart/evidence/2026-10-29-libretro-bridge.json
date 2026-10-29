@@ -1,0 +1,486 @@
+{
+  "schema": "neptune.libretro-acceptance-evidence.v1",
+  "date": "2026-10-29",
+  "base": "da944c0aa4a68ddaf5e2d84badf752e0846f556c",
+  "issues": [
+    462,
+    27
+  ],
+  "private_evidence_root": "/home/dev/neptune-research-private/27",
+  "core_source": {
+    "repository": "https://github.com/libretro/beetle-saturn-libretro",
+    "commit": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+    "tree": "2522acca8b2b48394ff579e89f50717c4ad8b230",
+    "build": [
+      "make",
+      "-j2",
+      "platform=unix",
+      "LTO=0",
+      "HAVE_OPENGL=0",
+      "HAVE_CHD=1"
+    ],
+    "binary_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e"
+  },
+  "references": [
+    {
+      "region": "usa",
+      "core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+      "frontend_sha256": "84b29f26338d31a0a4f546e75ecca88460f457f5463ae20dbb4a135ca7f1c8da",
+      "settings_sha256": "ff02611733c33ed14ee22b6d2821114434d964320b9d59e77e68212f08912f25",
+      "lock_file_sha256": "eb0d91e0bebd63af78181ce4d4d6af354554466b1f726bfe700e78eff6275cba",
+      "lock_canonical_sha256": "c3c92ca36aff56f96369efa7b70c19bd0b75ce90f1454746352e4a6076eedb99",
+      "file_count": 34,
+      "bios": {
+        "bytes": 524288,
+        "path": "system/mpr-17933.bin",
+        "sha256": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"
+      },
+      "boot_frames": 3240,
+      "av": {
+        "base_height": 224,
+        "base_width": 352,
+        "fps": 59.82650314089141,
+        "fps_binary64": "0x1.de9cadadc15bfp+5",
+        "sample_rate": 44100.0
+      },
+      "all_34_effective_options_match": true,
+      "fatal_core_logs": 0,
+      "settings_options": {
+        "beetle_saturn_analog_stick_deadzone": "0%",
+        "beetle_saturn_autortc": "disabled",
+        "beetle_saturn_autortc_lang": "english",
+        "beetle_saturn_backup_memory_size": "Default",
+        "beetle_saturn_cart": "Auto Detect",
+        "beetle_saturn_cdimagecache": "disabled",
+        "beetle_saturn_cpucache_emumode": "auto",
+        "beetle_saturn_crosshair_color_p1": "red",
+        "beetle_saturn_crosshair_color_p2": "blue",
+        "beetle_saturn_deinterlacer": "weave",
+        "beetle_saturn_horizontal_blend": "disabled",
+        "beetle_saturn_horizontal_overscan": "0",
+        "beetle_saturn_initial_scanline": "8",
+        "beetle_saturn_initial_scanline_pal": "16",
+        "beetle_saturn_jit_scsp": "enabled",
+        "beetle_saturn_jit_scu": "enabled",
+        "beetle_saturn_last_scanline": "231",
+        "beetle_saturn_last_scanline_pal": "271",
+        "beetle_saturn_mesh_transparency": "disabled",
+        "beetle_saturn_midsync": "enabled",
+        "beetle_saturn_mouse_sensitivity": "100%",
+        "beetle_saturn_mpeg_card": "disabled",
+        "beetle_saturn_multitap_port1": "enabled",
+        "beetle_saturn_multitap_port2": "enabled",
+        "beetle_saturn_opposite_directions": "disabled",
+        "beetle_saturn_region": "North America",
+        "beetle_saturn_save_method": "libretro",
+        "beetle_saturn_sh2_interleave": "exact",
+        "beetle_saturn_sh2_jit": "disabled",
+        "beetle_saturn_shared_ext": "disabled",
+        "beetle_saturn_shared_int": "disabled",
+        "beetle_saturn_trigger_deadzone": "0%",
+        "beetle_saturn_virtuagun_crosshair": "Cross",
+        "beetle_saturn_virtuagun_input": "Lightgun"
+      }
+    },
+    {
+      "region": "japan",
+      "core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+      "frontend_sha256": "84b29f26338d31a0a4f546e75ecca88460f457f5463ae20dbb4a135ca7f1c8da",
+      "settings_sha256": "0c84d9f6074ee78daa57ff048774c5a85b3383f9e9becc01864cf654fafa2297",
+      "lock_file_sha256": "8a081f263480088d511fe5f48413ba8ee83bbf5d870324d01930f989a42aa899",
+      "lock_canonical_sha256": "e1a5ac265c74912d464c3e37aa61beb031ec547b98ba643659aa0aef7a83b9b0",
+      "file_count": 34,
+      "bios": {
+        "bytes": 524288,
+        "path": "system/sega_101.bin",
+        "sha256": "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac"
+      },
+      "boot_frames": 300,
+      "av": {
+        "base_height": 224,
+        "base_width": 352,
+        "fps": 59.82650314089141,
+        "fps_binary64": "0x1.de9cadadc15bfp+5",
+        "sample_rate": 44100.0
+      },
+      "all_34_effective_options_match": true,
+      "fatal_core_logs": 0,
+      "settings_options": {
+        "beetle_saturn_analog_stick_deadzone": "0%",
+        "beetle_saturn_autortc": "disabled",
+        "beetle_saturn_autortc_lang": "japanese",
+        "beetle_saturn_backup_memory_size": "Default",
+        "beetle_saturn_cart": "Auto Detect",
+        "beetle_saturn_cdimagecache": "disabled",
+        "beetle_saturn_cpucache_emumode": "auto",
+        "beetle_saturn_crosshair_color_p1": "red",
+        "beetle_saturn_crosshair_color_p2": "blue",
+        "beetle_saturn_deinterlacer": "weave",
+        "beetle_saturn_horizontal_blend": "disabled",
+        "beetle_saturn_horizontal_overscan": "0",
+        "beetle_saturn_initial_scanline": "8",
+        "beetle_saturn_initial_scanline_pal": "16",
+        "beetle_saturn_jit_scsp": "enabled",
+        "beetle_saturn_jit_scu": "enabled",
+        "beetle_saturn_last_scanline": "231",
+        "beetle_saturn_last_scanline_pal": "271",
+        "beetle_saturn_mesh_transparency": "disabled",
+        "beetle_saturn_midsync": "enabled",
+        "beetle_saturn_mouse_sensitivity": "100%",
+        "beetle_saturn_mpeg_card": "disabled",
+        "beetle_saturn_multitap_port1": "enabled",
+        "beetle_saturn_multitap_port2": "enabled",
+        "beetle_saturn_opposite_directions": "disabled",
+        "beetle_saturn_region": "Japan",
+        "beetle_saturn_save_method": "libretro",
+        "beetle_saturn_sh2_interleave": "exact",
+        "beetle_saturn_sh2_jit": "disabled",
+        "beetle_saturn_shared_ext": "disabled",
+        "beetle_saturn_shared_int": "disabled",
+        "beetle_saturn_trigger_deadzone": "0%",
+        "beetle_saturn_virtuagun_crosshair": "Cross",
+        "beetle_saturn_virtuagun_input": "Lightgun"
+      }
+    }
+  ],
+  "usa_repeatability": {
+    "uninterrupted_frames": 3240,
+    "checkpoint_frame": 3000,
+    "state_bytes": 6323674,
+    "state_sha256": "a6f7f4adb7709b6f16584a54c2f87a3ce32d9f4cf170ed0bf1a5c88e23d5e2a9",
+    "fresh_process_replays": [
+      {
+        "frames": 240,
+        "canonical_digest": "7d1a2635f580d9181fd4f2d0cfbd920e0db591d8a13cc9854a50e89a8e070a63",
+        "video_digest": "3ee92c4abd02e82d940a2029d03a74ee1e6255234c8e45a1291d66d11910c48c",
+        "audio_digest": "fbd88b6c7fa9b6b8f1f25126040e3aaac676965b5d3654a824287f97b827a580",
+        "input_polls": [
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480
+        ],
+        "delivered_masks": [
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            256
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "frames": 240,
+        "canonical_digest": "7d1a2635f580d9181fd4f2d0cfbd920e0db591d8a13cc9854a50e89a8e070a63",
+        "video_digest": "3ee92c4abd02e82d940a2029d03a74ee1e6255234c8e45a1291d66d11910c48c",
+        "audio_digest": "fbd88b6c7fa9b6b8f1f25126040e3aaac676965b5d3654a824287f97b827a580",
+        "input_polls": [
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480
+        ],
+        "delivered_masks": [
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            256
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      },
+      {
+        "frames": 240,
+        "canonical_digest": "7d1a2635f580d9181fd4f2d0cfbd920e0db591d8a13cc9854a50e89a8e070a63",
+        "video_digest": "3ee92c4abd02e82d940a2029d03a74ee1e6255234c8e45a1291d66d11910c48c",
+        "audio_digest": "fbd88b6c7fa9b6b8f1f25126040e3aaac676965b5d3654a824287f97b827a580",
+        "input_polls": [
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480,
+          480
+        ],
+        "delivered_masks": [
+          [
+            0,
+            8
+          ],
+          [
+            0,
+            256
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ],
+          [
+            0
+          ]
+        ]
+      }
+    ],
+    "comparisons": [
+      {
+        "canonical_digest": "7d1a2635f580d9181fd4f2d0cfbd920e0db591d8a13cc9854a50e89a8e070a63",
+        "command": "compare",
+        "matched_frames": 240,
+        "exit": 0
+      },
+      {
+        "canonical_digest": "7d1a2635f580d9181fd4f2d0cfbd920e0db591d8a13cc9854a50e89a8e070a63",
+        "command": "compare",
+        "matched_frames": 240,
+        "exit": 0
+      },
+      {
+        "canonical_digest": "7d1a2635f580d9181fd4f2d0cfbd920e0db591d8a13cc9854a50e89a8e070a63",
+        "command": "compare",
+        "matched_frames": 240,
+        "exit": 0
+      }
+    ],
+    "no_input_changes_video": true,
+    "no_input_changes_audio": true,
+    "rtc_after_3240_frames": {
+      "valid": true,
+      "year": 2000,
+      "time": "00:00:54"
+    },
+    "deliberate_observation_mutation": {
+      "field": "video.sha256",
+      "candidate_index": 10,
+      "absolute_frame": 3010,
+      "parent_exit": 1,
+      "diagnostic": "saturn-frontend: First divergence at candidate index 10, reference frame 3010"
+    }
+  },
+  "negative_cases": [
+    {
+      "label": "core",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "0f939828d8f8cac3fb0f4160ad02ff6dbb9797cb7b70e19bf3e03da66c9f1e97",
+      "seconds": 2.409,
+      "reason": null
+    },
+    {
+      "label": "settings",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "c9f54727a31d82548e3158dbe5ebbae1e46b243a9dfef2cf4c7287cc4a8d8251",
+      "seconds": 2.514,
+      "reason": null
+    },
+    {
+      "label": "bios",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "49d6d1926147475d20242ac5341d40fda90e269516f2d2b3dade4bfd96251647",
+      "seconds": 2.359,
+      "reason": null
+    },
+    {
+      "label": "frontend",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "9b2d9dc30b5b7f28304a5cbc582d08de4a2ac9f3dd646b307652206d54a053a5",
+      "seconds": 2.312,
+      "reason": null
+    },
+    {
+      "label": "support-module",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "87d57604aa0a774414a7e11e3f3e9ad0cc7d7d714b18e92095e03941ccae87ef",
+      "seconds": 2.309,
+      "reason": null
+    },
+    {
+      "label": "log-shim",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "3f4f625d96e728052be065bf88fb0fc64aa35445f421798e040c66ea77b16fbd",
+      "seconds": 2.41,
+      "reason": null
+    },
+    {
+      "label": "missing-track",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "beb5ddc99152786a84282aed40b33622c8dae927d7902b6d6d5da703e0ef5a79",
+      "seconds": 0.151,
+      "reason": null
+    },
+    {
+      "label": "wrong-region-bios",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "49d6d1926147475d20242ac5341d40fda90e269516f2d2b3dade4bfd96251647",
+      "seconds": 2.358,
+      "reason": null
+    },
+    {
+      "label": "checkpoint-identity",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "6f14f73520ef19dd008880d937c22c5e158266c79a5be52814a0cc21ff6bcd41",
+      "seconds": 2.41,
+      "reason": null
+    },
+    {
+      "label": "checkpoint-state",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "afbb5914b18b6c2481c25c89385998f9cb31a7969a430f38935147c1299ebece",
+      "seconds": 2.561,
+      "reason": null
+    },
+    {
+      "label": "wall-timeout",
+      "exit": 1,
+      "expected": 1,
+      "worker_log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "seconds": 5.026,
+      "reason": "execution/log bound exceeded"
+    },
+    {
+      "label": "restored-control",
+      "exit": 0,
+      "expected": 0,
+      "worker_log_sha256": "70af72eb9dd85ec9dbf2b7aa610a07d40793310df93389c5313bf623ced8ec96",
+      "seconds": 2.461,
+      "reason": null
+    }
+  ],
+  "tooling_checks": {
+    "saturn_lab": 50,
+    "research_catalog": 14,
+    "factory": 27,
+    "merge_gate": 17,
+    "scope": "Tool/ABI/metadata checks; no Godot game or continuous-factory health claim"
+  },
+  "discovered_and_fixed": "Configure initially inherited the 64-MiB capture-file bound; a Japan track copy failed EFBIG. Both complete staging runs now use a separate 2-GiB configure bound; failure log and partial copy preserved, regression exercises >64-MiB copying under actual child limits.",
+  "unverified": [
+    "Identified campaign/battle room and per-player movement/bomb response",
+    "VDP1/VDP2 extraction/tracing and animation reconstruction",
+    "Neptune/reference mechanics parity and deliberate movement/fuse regression",
+    "Hardware/cross-host/core-build repeatability",
+    "Browser networking and continuous factory recovery"
+  ],
+  "spend": {
+    "new_provider_launches_during_bridge_work": 0,
+    "account_wide_cost": "unknown",
+    "paid_fallback_enabled": false
+  }
+}

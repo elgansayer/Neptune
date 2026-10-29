@@ -17,9 +17,14 @@ all relevant settings, including time and threading where needed. Repeated runs
 must agree on canonical observable state/image hashes within the pinned setup.
 Do not assume an emulator save state is portable across builds or cores.
 
-## Bridge to implement
+## Bridge and remaining hooks
 
-These are proposed operations, not existing APIs:
+`tools/saturn_lab/frontend.py` now implements bounded load, restore, frame stepping,
+video/audio/input observations and exact replay comparisons. Read its
+[commands and limits](../../tools/saturn_lab/README.md) and
+[real private-host evidence](evidence/2026-10-29-libretro-bridge.md).
+The full research interface below remains the target: selected game-state symbols,
+raw graphics and CD/memory/graphics tracing require additional adapters/hooks.
 
 | Operation | Required behaviour |
 | --- | --- |
