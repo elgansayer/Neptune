@@ -3,6 +3,36 @@
 Python 3.11+, standard library only. Run commands from the repository root.
 These tools operate locally; no files are sent to an AI service.
 
+## Inspect supplied CUE media and firmware
+
+```sh
+python3 tools/saturn_lab/media.py inspect --root /private/supplied-inputs \
+  --disc 'usa/game.cue' --region usa --output /private/evidence/usa.media.json
+python3 tools/saturn_lab/media.py verify --root /private/supplied-inputs \
+  --report /private/evidence/usa.media.json
+```
+
+`media.py` reuses the existing safe CUE dependency and SHA-256 readers. It reads
+TRACK 01/INDEX 01 in MODE1/2352 or MODE1/2048, checks the raw sync/mode and Saturn
+IP signature, and records product/revision, area and title. Field layout follows
+the pinned Beetle `disc.c` reader; this is header identity, not full-disc EDC/ECC,
+pressed-disc provenance or an emulator-boot guarantee. CHD header inspection is
+not implemented. Every referenced audio/data file must exist.
+
+Top-level `.bin`/`.rom`/`.bios` candidates are fingerprinted. Firmware selection
+requires 512 KiB and the [Beetle compatibility-catalogue MD5](https://docs.libretro.com/library/beetle_saturn/#bios);
+SHA-256 remains the research identity. Names never select firmware. Identical
+aliases are preserved and selected stably; differing SHA identities under the
+same expected MD5 fail. `--bios <relative-name>` requires that exact candidate to
+match, useful for testing incorrect firmware. Reports include all candidate hashes.
+
+The deterministic `neptune.saturn-media.v1` report is separate from the complete
+core/configuration lock below. Verification re-reads header, firmware and files;
+missing, tampered, wrong-region or incompatible firmware fail nonzero. Original
+media are never changed. Test mutations belong in ordinary disposable copies.
+Output cannot overwrite an input. Synthetic header/firmware tests validate these
+tools only; real input acceptance must retain its own commands and reports.
+
 ## Inventory an existing asset checkout
 
 ```sh

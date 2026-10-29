@@ -1,0 +1,537 @@
+{
+  "schema": "neptune.real-input-evidence.v1",
+  "issue": 462,
+  "status": "media verified; real core built/ABI-loaded; full frontend/settings locks remain for27",
+  "discs": {
+    "usa": {
+      "cue": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S).cue",
+      "track_file_count": 30,
+      "files": [
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S).cue",
+          "bytes": 3642,
+          "sha256": "785e6f9fbcb8639902e5239b3fb560555e17a3cb8c91a38cbdd8aaeed03ef9da"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 01).bin",
+          "bytes": 143399088,
+          "sha256": "34c3c15b6858971fd2f34fd1a98be7c8308b4141c1a8804288611bb2542c126c"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 02).bin",
+          "bytes": 4330032,
+          "sha256": "4320b7c64ddc02558d8fd92200928c68909aa83ed74ce00b8d2c01ee597abb76"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 03).bin",
+          "bytes": 28529760,
+          "sha256": "fcd05e5d22978d438e4a21af4d578b6946c52ae6a9defab18ad912b35f96c8fe"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 04).bin",
+          "bytes": 27269088,
+          "sha256": "e5f35f8ffbfc755ef2fda907dfb50d87a87ec11ad72d0975269d9026f7d63937"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 05).bin",
+          "bytes": 31688496,
+          "sha256": "5914e0abc743eee7ae838768a06789434a67d40fc1022efb05dc31a5f2b0ed68"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 06).bin",
+          "bytes": 32570496,
+          "sha256": "4f40f9932b7f59410eab3814bd5cfa042cad02487588ab1ec77e821f4cef983d"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 07).bin",
+          "bytes": 27012720,
+          "sha256": "ee973be2a7e5e3cf1df99a43cef6bb9ea2775c68dd3f0b2019f79cc20fe76109"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 08).bin",
+          "bytes": 21995904,
+          "sha256": "bb6f368867202f9ac7732671006996d363db7b38cd207bdc83946aafbd1168a5"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 09).bin",
+          "bytes": 20086080,
+          "sha256": "ee2c2f97e300cafccaebfa2812b71e1f25a46e73ade3e25fc402bb9ed7f83fc1"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 10).bin",
+          "bytes": 2721264,
+          "sha256": "9513b891148a489e663c9da8097296923b6591b3743e41927cc0c94a062c7ec1"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 11).bin",
+          "bytes": 31410960,
+          "sha256": "f8d9aa9bbb652f3367a88c7a1c11940090765ad4f804efc60c7e849dc436af6c"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 12).bin",
+          "bytes": 14984592,
+          "sha256": "6cad3c773d56cf4bdcf22aa7b0954d9df5818293f4e983cb64cd29605b6a608c"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 13).bin",
+          "bytes": 29270640,
+          "sha256": "53c65286e983eebdcea8657ff95a5d4fc0cff8b30bf7b9c279c2af619309169b"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 14).bin",
+          "bytes": 21878304,
+          "sha256": "07b6bcbe3bd872b139644cdfdbb9bbc38c990b36d65780b31e893fedf5ecf3b3"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 15).bin",
+          "bytes": 7552272,
+          "sha256": "5a778ca7dcb8636b26be6a04f5116ed0c37400aab88f1eab6300d180a428e2c9"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 16).bin",
+          "bytes": 30726528,
+          "sha256": "6526e4233891fe4a7287bc517ceee3fcb4bbbce315aeb4caacdd050f681772cb"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 17).bin",
+          "bytes": 27527808,
+          "sha256": "3993b246aec481c6f94107e1ed004195d05146c609c53425f97009a7c173995a"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 18).bin",
+          "bytes": 5482512,
+          "sha256": "becaa8abe4a12da103c4a40946881a21a7fee08d32d9548c22b723bf65ec98fd"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 19).bin",
+          "bytes": 2389632,
+          "sha256": "b3e7ce8d732a1524b04d069dc6b45b37b6dd682680056c4025dbc04a31b0d20b"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 20).bin",
+          "bytes": 1458240,
+          "sha256": "008d6a504a1a641bdb6bf683a2a0e71526c733e9baa377644d700e20fa03e97f"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 21).bin",
+          "bytes": 1587600,
+          "sha256": "3ca088a1e529764cc7cfa09a97a4ddce3a63e69b5934c00a56c24c9e7117560a"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 22).bin",
+          "bytes": 7371168,
+          "sha256": "cd7b6ea74ea75cb6e6c829e267ddd8e29d188e2ae6fa8bf19d3232843e0a6982"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 23).bin",
+          "bytes": 6616176,
+          "sha256": "7c450b0bfa68173d4504e16a2b7f95e04a92af96e7a06847c1f2ccafd4036df0"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 24).bin",
+          "bytes": 7206528,
+          "sha256": "e1494c64dc94ae95a7653db3ac93a224ed9cbd02af8d6e6e87168d1424954684"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 25).bin",
+          "bytes": 7989744,
+          "sha256": "280b8a773b070a2639c79c64750e17cbb0febe209b38e243797aa275e4f7a9ea"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 26).bin",
+          "bytes": 7448784,
+          "sha256": "8426cc5a9bc7eaae6a3c69dd02a8b980c4cb6fac312886aa473c52725a7d6175"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 27).bin",
+          "bytes": 1378272,
+          "sha256": "5125ab76e73b3f2f364a7c243e4440a5fd0cd8e09ba57eb3405bc6cd78a6244e"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 28).bin",
+          "bytes": 1427664,
+          "sha256": "8f4807d68a192e03e5db98f4ccd57f04c146cde823bccab1129190793395155f"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 29).bin",
+          "bytes": 26913936,
+          "sha256": "606d61f322590db74bb11bdd69cd06d8bd957bd2f2c70c3344177e4672c519ca"
+        },
+        {
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 30).bin",
+          "bytes": 1237152,
+          "sha256": "317813e5a157e218132ffb20cdf910350173f8acd4f946232c6d315ecfd13ea7"
+        }
+      ]
+    },
+    "japan": {
+      "cue": "Saturn-Bomberman-JA/Saturn Bomberman (Japan).cue",
+      "track_file_count": 30,
+      "files": [
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan).cue",
+          "bytes": 3575,
+          "sha256": "ac6c34bb6c9fb144b5794640b706a20f2cbe5d9f4f20ec71b2f7039ded1abcdb"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 01).bin",
+          "bytes": 131592048,
+          "sha256": "fab9524041fbf20d48e78da7125edc2d5467d03d4f2bd3d7d0948f2d3f3e3d10"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 02).bin",
+          "bytes": 4332384,
+          "sha256": "44449d52b13742399873e20f75800c9a7b6a37948ae147f59f831e724df3a32d"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 03).bin",
+          "bytes": 28529760,
+          "sha256": "d2e00acbd2bd6f4fea14d0f24407d453cf2413f70dbe3f8cea5fa875f906bf51"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 04).bin",
+          "bytes": 27269088,
+          "sha256": "5c92ae6b0fd36a4ed25675ac233a07ece8667bef245ded8fb5fd15b9e8287e6d"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 05).bin",
+          "bytes": 31688496,
+          "sha256": "781b15d19b5eb71cd9c88ad67afab0b8db705a51fc0d19409a1669c3485655d3"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 06).bin",
+          "bytes": 32570496,
+          "sha256": "13d0dd2ee3cea85ee9ce56800a565819c782c5284957585ae4414a1b20165779"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 07).bin",
+          "bytes": 27012720,
+          "sha256": "fba8f10b4d64aede86e06faa20be0a279b47e0bd8efd1851d0a1d6c34aae56f6"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 08).bin",
+          "bytes": 21995904,
+          "sha256": "19136349e9e8bb5b5c8f12ed472822262d22f993b1131102b1afb237460f4ba5"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 09).bin",
+          "bytes": 20086080,
+          "sha256": "108cca647eb08f3d364c64015cfc2d684a1db21f2fda1257350bafbbad4c2b97"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 10).bin",
+          "bytes": 2721264,
+          "sha256": "45fbb5999136bcc0a916a75e1fc33624e3e7c4982a3c2e938fdc6cca002d1b8d"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 11).bin",
+          "bytes": 31410960,
+          "sha256": "59eb9aef59c2950d11257debd3e0e4146eb40d436b2741448d9fa7a03ef1d4c2"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 12).bin",
+          "bytes": 14984592,
+          "sha256": "de6176b06036bad88830429354fb2104886fcf5f2d66e762c89bada579ee9c0b"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 13).bin",
+          "bytes": 29270640,
+          "sha256": "c111089e40c5f4ac2f849805f62860b744ff3df85f72d99f3c6762b0ff8256ac"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 14).bin",
+          "bytes": 21878304,
+          "sha256": "53656c3faa24e030d85db948a8981ca3f742a28847a791e26570a6cacc422ac9"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 15).bin",
+          "bytes": 7552272,
+          "sha256": "b35248ff10dc733ad77967dddcee231e90305f7991348ba8f97ae2785338a0b9"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 16).bin",
+          "bytes": 30726528,
+          "sha256": "d33b0744d6301f0208bed30f934a91c7974b3ef658263e87e85bd3f9c417ea60"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 17).bin",
+          "bytes": 27527808,
+          "sha256": "ba15c65bfc08c2676e4b49d936ad43914790450acffc766d3091c7bb1899193b"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 18).bin",
+          "bytes": 5482512,
+          "sha256": "9c88e878bdeb6e15e1de6a47165d025ce85311f8633af9f3c4c36cc71edb0faa"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 19).bin",
+          "bytes": 2389632,
+          "sha256": "c8f8ccb179e18c2711c05e245ef8d7f7ec4814b4c2da0da62292e6e484bd5d22"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 20).bin",
+          "bytes": 1458240,
+          "sha256": "b6974221dd2c44096f04c195cda6beab8e4d222a4928ec306afad57a91170ec3"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 21).bin",
+          "bytes": 1587600,
+          "sha256": "21ae2d9634768afacfd1ef59445834d5b46d515fce09fe1df5f5f25621229b58"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 22).bin",
+          "bytes": 7371168,
+          "sha256": "f8d247a0bb6103371a1c700c1e7e803470387a1f85ce443ae473c82caf59b754"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 23).bin",
+          "bytes": 6616176,
+          "sha256": "e6e4dc927778b5d4a687a3f109ff762d0494c5bc37d4bc2db1382bbf9666af56"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 24).bin",
+          "bytes": 7206528,
+          "sha256": "3fc9cedd323560092d62825a9261c392c56f2f8383c915529b77c20ea9ea8b82"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 25).bin",
+          "bytes": 7989744,
+          "sha256": "082844ae2131ffe69672bcc2371ecf584bf97ce97fc493ce57fb5166d2db99da"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 26).bin",
+          "bytes": 7448784,
+          "sha256": "72691120a60d623e4bbe7473e379f9b05fd5169ea471e9733cb063c6fb56ba5e"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 27).bin",
+          "bytes": 1378272,
+          "sha256": "e78df63c02dfaed6bf2eabf32e757edef46695bc06cf5c6791ff46f918f1c4fb"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 28).bin",
+          "bytes": 1427664,
+          "sha256": "6d4b1cf3829b325fa5bced26be017ccc185c99f3f48d50fc0c3821bbbf001ba6"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 29).bin",
+          "bytes": 26913936,
+          "sha256": "8c5de2be636f10fffec1b06fbc08be0ab3e5c4fc7b10092ed3bd8ad63c22081d"
+        },
+        {
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 30).bin",
+          "bytes": 1234800,
+          "sha256": "d02563570dbdb0f98375684edb3e79658f504dff599bb123554ca67a8a13eb51"
+        }
+      ]
+    }
+  },
+  "bios_candidates": [
+    {
+      "path": "Bios GameNavi HiSaturn 1.03.bin",
+      "bytes": 524288,
+      "sha256": "37561c4444bec52ae1aae31de5579f1856d5b23002ee083ade42f9ed13c8616f",
+      "md5": "0306c0e408d6682dd2d86324bd4ac661"
+    },
+    {
+      "path": "Bios HI-Saturn 1.01 (J) [!].bin",
+      "bytes": 524288,
+      "sha256": "feb733e0a1578eb8a6ff9c7f32b0b7319336bcf98f461a5f608e73159f672f4e",
+      "md5": "3ea3202e2634cb47cb90f3a05c015010"
+    },
+    {
+      "path": "Bios Hi-Saturn 1.02 (J).bin",
+      "bytes": 524288,
+      "sha256": "1d964171c979f87ca120d77fdb0d98063bb75bfa219bb180aeb650c528ce054e",
+      "md5": "cb2cebc1b6e573b7c44523d037edcd45"
+    },
+    {
+      "path": "Bios Saturn 1.00 (J) [!].bin",
+      "bytes": 524288,
+      "sha256": "ae4058627bb5db9be6d8d83c6be95a4aa981acc8a89042e517e73317886c8bc2",
+      "md5": "af5828fdff51384f99b3c4926be27762"
+    },
+    {
+      "path": "Bios Saturn 1.00a (U) [!].bin",
+      "bytes": 524288,
+      "sha256": "87293093fad802fcff31fcab427a16caff1acbc5184899b8383b360fd58efb73",
+      "md5": "f273555d7d91e8a5a6bfd9bcf066331c"
+    },
+    {
+      "path": "Bios Saturn 1.01 (J) [!].bin",
+      "bytes": 524288,
+      "sha256": "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac",
+      "md5": "85ec9ca47d8f6807718151cbcca8b964"
+    },
+    {
+      "path": "Bios Saturn 1.01a (U) [!].bin",
+      "bytes": 524288,
+      "sha256": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",
+      "md5": "3240872c70984b6cbfda1586cab68dbe"
+    },
+    {
+      "path": "Bios V-Saturn 1.01 (J) [!].bin",
+      "bytes": 524288,
+      "sha256": "53b303bb5965e4c6aa4310b389e761401f45d71f1459f3a46cf50b588aceddd5",
+      "md5": "ac4e4b6522e200c0d23d371a8cecbfd3"
+    },
+    {
+      "path": "Sega Saturn BIOS (1.003) (J).bin",
+      "bytes": 524288,
+      "sha256": "cc1e1b7f88f1c6e6fc35994bae2c2292e06fdae258c79eb26a1f1391e72914a8",
+      "md5": "74570fed4d44b2682b560c8cd44b8b6a"
+    },
+    {
+      "path": "Sega Saturn BIOS (EUR).bin",
+      "bytes": 524288,
+      "sha256": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",
+      "md5": "3240872c70984b6cbfda1586cab68dbe"
+    },
+    {
+      "path": "Sega Saturn BIOS (Oct 12, 1994).bin",
+      "bytes": 524288,
+      "sha256": "cc1e1b7f88f1c6e6fc35994bae2c2292e06fdae258c79eb26a1f1391e72914a8",
+      "md5": "74570fed4d44b2682b560c8cd44b8b6a"
+    }
+  ],
+  "firmware_catalog": {
+    "usa": {
+      "filename": "mpr-17933.bin",
+      "md5": "3240872c70984b6cbfda1586cab68dbe"
+    },
+    "japan": {
+      "filename": "sega_101.bin",
+      "md5": "85ec9ca47d8f6807718151cbcca8b964"
+    }
+  },
+  "core_build": {
+    "source_sha": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+    "tree": "2522acca8b2b48394ff579e89f50717c4ad8b230",
+    "command": [
+      "make",
+      "-j2",
+      "platform=unix",
+      "LTO=0",
+      "HAVE_OPENGL=0",
+      "HAVE_CHD=1"
+    ],
+    "compiler": "gcc (Debian 14.2.0-19) 14.2.0",
+    "exit": 0,
+    "seconds": 308.188,
+    "binary": {
+      "path": "/home/dev/neptune-research-private/462/beetle-saturn-source/mednafen_saturn_libretro.so",
+      "bytes": 9329088,
+      "sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e"
+    }
+  },
+  "abi": {
+    "api_version": 1,
+    "library_name": "Beetle Saturn",
+    "library_version": "v1.32.1",
+    "valid_extensions": "cue|ccd|chd|toc|m3u|zip",
+    "need_fullpath": true,
+    "block_extract": true,
+    "scope": "Real ABI/library load smoke only; no retro_init, game boot, settings application or frame repeatability yet",
+    "source_sha": "01bc063fdd0fb5fc208850c9ecc658834df762ab"
+  },
+  "media_reports": {
+    "usa": {
+      "sha256": "f98d4e9be0f4a111080273b9b86ee3ffdc0f3a3c3f0c9fbaf41140c6d69c51b2",
+      "header": {
+        "area_symbols": "U",
+        "product": "MK-81070",
+        "product_revision_field": "MK-81070  V1.003",
+        "revision": "V1.003",
+        "scope": "Header identity only; no EDC/ECC/full-disc validity, pressed-disc provenance or boot proof",
+        "source": {
+          "index_sector": 0,
+          "mode": "MODE1/2352",
+          "path": "Saturn-Bomberman-EN/Saturn Bomberman (USA) (1S) (Track 01).bin"
+        },
+        "title": "SATURN BOMBERMAN",
+        "user_sector_sha256": "e4a715a13885966f25cfc713f242b198dd52221357873517ab7c2f6dbc200645"
+      },
+      "bios": "Bios Saturn 1.01a (U) [!].bin",
+      "matching_bios_paths": [
+        "Bios Saturn 1.01a (U) [!].bin",
+        "Sega Saturn BIOS (EUR).bin"
+      ]
+    },
+    "japan": {
+      "sha256": "0a903b2e699a74d97220d80f2b2868a06048fa0488529767e55c253c90c45de2",
+      "header": {
+        "area_symbols": "J",
+        "product": "T-14302G",
+        "product_revision_field": "T-14302G  V1.000",
+        "revision": "V1.000",
+        "scope": "Header identity only; no EDC/ECC/full-disc validity, pressed-disc provenance or boot proof",
+        "source": {
+          "index_sector": 0,
+          "mode": "MODE1/2352",
+          "path": "Saturn-Bomberman-JA/Saturn Bomberman (Japan) (Track 01).bin"
+        },
+        "title": "BOMBERMAN SS",
+        "user_sector_sha256": "40c9a6dcce138202effe345a90de883a73f68ff83fbd31ed252fd8a55d7dbe6e"
+      },
+      "bios": "Bios Saturn 1.01 (J) [!].bin",
+      "matching_bios_paths": [
+        "Bios Saturn 1.01 (J) [!].bin"
+      ]
+    }
+  },
+  "real_negative_checks": [
+    {
+      "name": "media-copy-control",
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "6144a926bae86a2f06730302529b1003c86138d30c95e9197fea63aceed4b49c"
+    },
+    {
+      "name": "media-tampered-copy",
+      "exit": 1,
+      "expected_exit": 1,
+      "log_sha256": "e6920ae73fe1fec0404e07222223db857428213eaa3367779c0b7769b66c6de8"
+    },
+    {
+      "name": "media-missing-track-copy",
+      "exit": 1,
+      "expected_exit": 1,
+      "log_sha256": "a4d8ddb10a9477784f387c79dca5a01d4770cf122573c8b0090ec001e646313e"
+    },
+    {
+      "name": "media-wrong-bios-copy",
+      "exit": 1,
+      "expected_exit": 1,
+      "log_sha256": "6912d597b40b348dbde78a5ec9796b1e21867d751e3a752b4ed93106642c261f"
+    },
+    {
+      "name": "media-restored-copy",
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "6144a926bae86a2f06730302529b1003c86138d30c95e9197fea63aceed4b49c"
+    },
+    {
+      "name": "media-original-usa-recheck",
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "6144a926bae86a2f06730302529b1003c86138d30c95e9197fea63aceed4b49c"
+    },
+    {
+      "name": "media-original-japan-recheck",
+      "exit": 0,
+      "expected_exit": 0,
+      "log_sha256": "6144a926bae86a2f06730302529b1003c86138d30c95e9197fea63aceed4b49c"
+    }
+  ],
+  "unverified": [
+    "frontend",
+    "applied settings/RTC/save topology",
+    "complete input locks",
+    "original boot",
+    "frame/save repeatability",
+    "extraction/parity",
+    "continuous factory"
+  ],
+  "implementation_base": "957491ec44cec8b4c14e6bcfc461ed9cca3eb0f8",
+  "integration_base": "a9bb03ad126c7572b8dbcca6b3bbbe7f2d403629"
+}
