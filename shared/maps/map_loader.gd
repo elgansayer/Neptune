@@ -72,13 +72,16 @@ static func parse_map_data(data: Dictionary, map_name: String = "Unnamed") -> Di
 		return {}
 	
 	var grid = data.grid
-	if not grid is Array or grid.is_empty():
+	if not grid is Array or grid.is_empty() or not grid[0] is Array or grid[0].is_empty():
 		push_error("Map grid is invalid or empty")
 		return {}
 	
 	# Validate grid structure
 	map_result.height = grid.size()
 	map_result.width = grid[0].size() if grid.size() > 0 else 0
+	if map_result.width * map_result.height > 65536:
+		push_error("Map exceeds cell budget")
+		return {}
 	
 	# Ensure all rows have same width
 	for row in grid:
@@ -86,7 +89,17 @@ static func parse_map_data(data: Dictionary, map_name: String = "Unnamed") -> Di
 			push_error("Map grid has inconsistent row widths")
 			return {}
 	
-	map_result.grid = grid
+	# Godot JSON numbers are floats. Validate before converting terrain to the
+	# native integer codes required by spawn geometry and simulation.
+	for row in grid:
+		var native_row := []
+		for cell in row:
+			if not (cell is int or cell is float) or not is_finite(float(cell)) or cell < 0 or cell > 2 or floor(float(cell)) != float(cell):
+				push_error("Invalid map terrain code")
+				return {}
+			native_row.append(int(cell))
+		map_result.grid.append(native_row)
+	map_result["tile_size"] = Constants.TILE_SIZE
 	
 	# Extract spawn points
 	if data.has("spawn_points"):

@@ -45,6 +45,12 @@ var spawn_seed: int = 0
 var _spawn_plan: RefCounted
 var _spawn_signature := ""
 var _spawn_bindings: Dictionary = {}
+var room_map_path := "" # Trusted local JSON selection; public pack loading is separate.
+var room_capacity_request := {} # Set before _ready by the authority, not clients.
+var room_setup_result := {"accepted": false, "reason": "authority_not_ready"}
+var last_room_start_result := {}
+var _room_capacity := {}
+var _room_round_started := false
 var bot_manager: Node
 # Optional trusted match setup input. Null generates an independent policy seed;
 # deterministic scenarios set an int before adding the authority to SceneTree.
@@ -143,7 +149,14 @@ func _ready():
 	var map_data: Dictionary
 	
 	# Try to load PCK map first
-	if FileAccess.file_exists("res://maps/stage1.pck"):
+	if not room_map_path.is_empty():
+		map_data = MapLoader.load_map_from_file(room_map_path)
+		if map_data.is_empty():
+			room_setup_result = SpawnReservations.failure("invalid_room_map")
+			countdown_time = 0.0
+			set_physics_process(false)
+			return # An explicit selection must never silently fall back.
+	elif FileAccess.file_exists("res://maps/stage1.pck"):
 		print("[GameInstance] Loading map from PCK...")
 		map_data = MapPackLoader.load_map_from_pck("res://maps/stage1.pck")
 		
@@ -184,6 +197,24 @@ func _ready():
 	
 	# Load map configuration into GameConfig singleton
 	GameConfig.load_map_config(map_data)
+	if not room_capacity_request.is_empty():
+		var geometry := validate_spawn_capacity(1)
+		var requested = room_capacity_request.get("seats", 0)
+		var preset = room_capacity_request.get("preset_limit", Constants.MAX_MATCH_SEATS)
+		if not requested is int or not preset is int:
+			room_setup_result = SpawnReservations.failure("invalid_room_capacity")
+			countdown_time = 0.0
+			set_physics_process(false)
+			return
+		if geometry.accepted and requested == 0:
+			requested = mini(geometry.available, mini(preset, Constants.MAX_MATCH_SEATS))
+		room_setup_result = configure_room_capacity(requested, preset) if geometry.accepted else geometry
+		if not room_setup_result.accepted:
+			countdown_time = 0.0
+			set_physics_process(false)
+			return
+	else:
+		room_setup_result = {"accepted": true, "reason": "legacy_unconfigured"}
 	
 	print("[GameInstance] Loaded map '", map_data.get("name", "Unknown"),
 		  "' with ", spawn_points.size(), " spawn points")
@@ -297,7 +328,13 @@ func _physics_process(delta):
 		countdown_time -= delta
 		if countdown_time <= 0.0:
 			countdown_time = 0.0
+			if not _room_capacity.is_empty():
+				last_room_start_result = _validate_room_start()
+				if not last_room_start_result.accepted:
+					print("[GameInstance] Room start refused: ", last_room_start_result.reason)
+					return
 			match_active = true
+			if not _room_capacity.is_empty(): _room_round_started = true
 			print("[GameInstance] Match started! Countdown complete. Powerups in game: ", powerups.size())
 			# Spawn test powerups if TEST_POWERUPS environment variable is set
 			if OS.get_environment("TEST_POWERUPS") != "":
@@ -364,6 +401,43 @@ func get_simulation_time_sec() -> float:
 
 func get_clock_state() -> Dictionary:
 	return {"server_time": current_time_msec, "simulation_tick": simulation_tick}
+
+func configure_room_capacity(seats: Variant, preset_limit: Variant = Constants.MAX_MATCH_SEATS) -> Dictionary:
+	# Trusted preset limits remain independent of the protocol maximum. This does
+	# not assign unmeasured limits to a named Saturn/Power reference preset.
+	if not seats is int or not preset_limit is int or seats < 1 or preset_limit < 1 or seats > Constants.MAX_MATCH_SEATS or preset_limit > Constants.MAX_MATCH_SEATS:
+		return SpawnReservations.failure("invalid_room_capacity")
+	if seats > preset_limit: return SpawnReservations.failure("preset_capacity_exceeded")
+	if _room_round_started or match_active or countdown_time > 0.0 or not players.is_empty() or (_spawn_plan != null and not _spawn_plan.snapshot().reservations.is_empty()):
+		return SpawnReservations.failure("room_in_progress")
+	var geometry := validate_spawn_capacity(seats)
+	if not geometry.accepted: return geometry
+	_room_capacity = {"seats": seats, "preset_limit": preset_limit}
+	return {"accepted": true, "reason": "configured", "capacity": get_room_capacity()}
+
+func get_room_capacity() -> Dictionary:
+	var reserved: int = _spawn_plan.snapshot().reservations.size() if _spawn_plan != null else 0
+	var bots := 0
+	for actor in players.values():
+		if is_instance_valid(actor) and actor.is_bot: bots += 1
+	return {"protocol_limit": Constants.MAX_MATCH_SEATS, "transport_limit": Constants.MAX_CONNECTED_PEERS,
+		"seats": _room_capacity.get("seats", Constants.MAX_MATCH_SEATS), "preset_limit": _room_capacity.get("preset_limit", Constants.MAX_MATCH_SEATS),
+		"configured": not _room_capacity.is_empty(), "occupied": players.size(), "reserved": reserved, "humans": players.size() - bots, "bots": bots,
+		"bot_policy_seed": str(bot_manager.get_policy_seed()) if bot_manager != null else "", "bot_policy": bot_manager.POLICY_VERSION if bot_manager != null else ""}
+
+func _validate_room_start() -> Dictionary:
+	if _room_capacity.is_empty(): return SpawnReservations.failure("room_not_configured")
+	if players.is_empty(): return SpawnReservations.failure("empty_room")
+	if players.size() > _room_capacity.seats: return SpawnReservations.failure("room_full")
+	return validate_spawn_capacity(_room_capacity.seats)
+
+func start_room_countdown() -> Dictionary:
+	if match_active: return SpawnReservations.failure("round_already_active")
+	if _room_round_started: return SpawnReservations.failure("round_finished")
+	last_room_start_result = _validate_room_start()
+	if not last_room_start_result.accepted: return last_room_start_result
+	if countdown_time <= 0.0: countdown_time = 1.0
+	return {"accepted": true, "reason": "countdown_started"}
 
 func _spawn_definition() -> Dictionary:
 	if not is_finite(GameConfig.TILE_SIZE) or GameConfig.TILE_SIZE <= 0 or not is_finite(GameConfig.PLAYER_HALF_WIDTH) or GameConfig.PLAYER_HALF_WIDTH <= 0:
@@ -462,6 +536,8 @@ func restore_spawn_reservations(state: Dictionary) -> Dictionary:
 	var plan = SpawnReservations.new()
 	var result: Dictionary = plan.configure(game_map, definition.cells, spawn_seed)
 	if result.accepted: result = plan.restore(state, game_map)
+	if result.accepted and plan.snapshot().reservations.size() > get_room_capacity().seats:
+		return SpawnReservations.failure("reservation_capacity_exceeded")
 	if result.accepted:
 		_spawn_plan = plan
 		_spawn_signature = definition.signature
@@ -496,6 +572,9 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	if identity in _spawn_bindings.values(): return SpawnReservations.failure("participant_in_use")
 	var ready := _ensure_spawn_plan()
 	if not ready.accepted: return ready
+	var reserved: Dictionary = _spawn_plan.snapshot().reservations
+	if reserved.size() >= get_room_capacity().seats and not reserved.has(identity):
+		return SpawnReservations.failure("room_full")
 	var requested: Variant = null
 	if spawn_position != Vector2.ZERO:
 		if not spawn_position.is_finite(): return SpawnReservations.failure("invalid_spawn_position")
@@ -1323,6 +1402,7 @@ func sync_state_to_clients():
 		"t": int(match_time_remaining), # match timer (seconds as int)
 	}
 	state.merge(get_clock_state())
+	state["room"] = get_room_capacity()
 	# Only add optional fields if they have values (avoid sending nulls)
 	if match_active:
 		state["a"] = true
@@ -1458,6 +1538,7 @@ func sync_state_to_clients():
 				for cell in row:
 					packed_map.append(cell)
 			var map_data = {
+				"room": get_room_capacity(),
 				"map_packed": packed_map,
 				"map_width": game_map[0].size() if game_map.size() > 0 else 0,
 				"map_height": game_map.size(),

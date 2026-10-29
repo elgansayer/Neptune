@@ -15,6 +15,7 @@ var active_games = {} # game_id -> GameInstance
 var player_to_game = {} # peer_id -> game_id
 var _initialized = false # Prevent duplicate initialization
 var protocol_gate: Node
+var _server_room_options := {}
 
 func _ready():
 	# RPC ownership belongs to the autoload, never a second scene instance.
@@ -33,6 +34,11 @@ func _ready():
 	if runtime.role != "server":
 		print("[ServerMain] Runtime role: ", runtime.role, "; RPC router only")
 		return
+	# GameConfig/LimboConsole autoloads must exist before preparing the room.
+	call_deferred("_start_server", runtime)
+
+func _start_server(runtime: Dictionary) -> void:
+	_server_room_options = runtime.duplicate(true)
 	
 	print("=== Bomberman Server Starting ===")
 	print("[Server] Node name: ", name)
@@ -53,10 +59,15 @@ func _ready():
 	# Load lobby manager
 	lobby_manager = load("res://lobby/lobby_manager.gd").new()
 	add_child(lobby_manager)
+	var prepared := _prepare_shared_game(runtime)
+	if not prepared.accepted:
+		print("[Server] Room setup refused: ", prepared.reason)
+		get_tree().quit(2)
+		return
 	
 	# Start server
 	peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(runtime.port, Constants.MAX_PLAYERS)
+	var error = peer.create_server(runtime.port, Constants.MAX_CONNECTED_PEERS)
 	if error != OK:
 		push_error("Failed to start server: " + str(error))
 		get_tree().quit(1)
@@ -78,7 +89,7 @@ func _ready():
 	multiplayer.multiplayer_peer = peer
 	
 	print("Server listening on port ", runtime.port)
-	print("Max players: ", Constants.MAX_PLAYERS)
+	print("Max connected peers: ", Constants.MAX_CONNECTED_PEERS)
 	print("[Server] Multiplayer authority: ", multiplayer.is_server())
 	print("[Server] Unique ID: ", multiplayer.get_unique_id())
 
@@ -125,13 +136,12 @@ func authenticate_request(username: String, password: String):
 	
 	if result.success:
 		print("[Server] Authentication successful: ", username)
-		lobby_manager.add_player(peer_id, username)
-		# Send response back to client's ClientMain autoload
-		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": true, "username": username})
-		
-		# Quick-start: Create or join a game immediately
-		await get_tree().create_timer(0.1).timeout
-		quick_start_game(peer_id, username)
+		var admission := quick_start_game(peer_id, username)
+		if admission.accepted:
+			lobby_manager.add_player(peer_id, username)
+			get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": true, "username": username, "room": active_games["shared_game"].get_room_capacity()})
+		else:
+			get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": admission.reason})
 	else:
 		print("[Server] Authentication failed: ", result.get("error", "Unknown error"))
 		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": result.get("error", "Invalid credentials")})
@@ -223,12 +233,8 @@ func test_farming_spot_broadcast():
 	else:
 		print("[Server] TEST: GameInstance missing test method")
 
-# Quick-start game system (no lobby for now)
-func quick_start_game(peer_id: int, username: String) -> Dictionary:
-	# For now, all players join the SAME shared game
+func _prepare_shared_game(runtime: Dictionary = {}) -> Dictionary:
 	var shared_game_id = "shared_game"
-	
-	# Create shared game if it doesn't exist
 	if not active_games.has(shared_game_id):
 		print("[Server] Creating new shared game instance")
 		# Use load() instead of preload const to avoid compile-time issues
@@ -236,16 +242,22 @@ func quick_start_game(peer_id: int, username: String) -> Dictionary:
 		var new_game = GameInstanceClass.new()
 		new_game.game_id = shared_game_id
 		new_game.name = shared_game_id
+		new_game.countdown_time = 0.0
+		new_game.room_map_path = runtime.get("room_map", "")
+		new_game.room_capacity_request = {"seats": runtime.get("room_seats", 0), "preset_limit": runtime.get("room_preset_limit", Constants.MAX_MATCH_SEATS)}
 		add_child(new_game)
+		if not new_game.room_setup_result.accepted:
+			var refused: Dictionary = new_game.room_setup_result.duplicate(true)
+			new_game.queue_free()
+			return refused
 		active_games[shared_game_id] = new_game
-		
-		# AI System removed - preparing for rebuild
-		# Auto-spawn AI bots for testing (3 bots with different personalities)
-		# print("[Server] Auto-spawning 3 AI bots for testing...")
-		# game.call_deferred("add_ai_bot", 0)  # Balanced
-		# game.call_deferred("add_ai_bot", 1)  # Aggressive
-		# game.call_deferred("add_ai_bot", 2)  # Timid
-	
+	return {"accepted": true, "reason": "room_prepared"}
+
+# Quick-start still uses one shared room; host UI and round replacement are #31.
+func quick_start_game(peer_id: int, username: String) -> Dictionary:
+	var shared_game_id = "shared_game"
+	var prepared := _prepare_shared_game(_server_room_options)
+	if not prepared.accepted: return prepared
 	var game = active_games[shared_game_id]
 	# Record membership only after authoritative admission; never report a refusal
 	# as a successful join. Network admission UI/versioning remains separate.
@@ -253,6 +265,11 @@ func quick_start_game(peer_id: int, username: String) -> Dictionary:
 	if not admission.accepted:
 		print("[Server] Player admission refused: ", admission.reason)
 		return admission
+	if not game.match_active and game.get_room_capacity().configured:
+		var started: Dictionary = game.start_room_countdown()
+		if not started.accepted:
+			game.remove_player(peer_id)
+			return started
 	player_to_game[peer_id] = shared_game_id
 	print("[Server] Player ", username, " joined shared game. Total players: ", game.players.size())
 	return admission

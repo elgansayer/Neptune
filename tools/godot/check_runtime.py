@@ -11,6 +11,7 @@ import subprocess
 import time
 
 from run_bot_tests import ANSI, ERROR, ROOT
+from check_room_capacity import run_capacity_checks
 
 
 @contextmanager
@@ -49,6 +50,7 @@ def main():
     parser.add_argument("--godot", required=True)
     parser.add_argument("--evidence", type=Path, default=ROOT / ".godot/runtime-evidence")
     parser.add_argument("--graphical", action="store_true", help="Also require an Xvfb desktop client")
+    parser.add_argument("--room-only", action="store_true", help="Run only room capacity probes after import")
     parser.add_argument("--process-timeout", type=float, default=30.0,
                         help="Bound each engine process, including graphical driver startup (5..60 seconds)")
     args = parser.parse_args()
@@ -85,6 +87,9 @@ def main():
     code, text = bounded("import", base + ["--editor", "--import", "--quit"], 90)
     if code or ERROR.search(text):
         raise SystemExit("FAIL: import; inspect runtime evidence")
+    if args.room_only:
+        run_capacity_checks(base, env, args.evidence, bounded)
+        return
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
@@ -182,6 +187,7 @@ def main():
         if code != 2 or "Invalid --" not in text:
             raise SystemExit("FAIL: invalid configuration must exit 2")
     print("PASS: single server owner, non-zero bind failure and invalid-config checks")
+    run_capacity_checks(base, env, args.evidence, bounded)
     print("Native connection/startup evidence only; no match, browser or parity claim.")
 
 
