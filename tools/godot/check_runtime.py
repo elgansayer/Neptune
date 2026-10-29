@@ -125,11 +125,50 @@ def main():
                 else:
                     code, text = bounded(name, command)
                 if (code or ERROR.search(text) or "NEPTUNE_RUNTIME_CONNECTED" not in text
+                        or "NEPTUNE_PROTOCOL_SELECTED=1" not in text
                         or "=== Bomberman Server Starting ===" in text):
                     raise SystemExit("FAIL: " + name + "; inspect evidence")
                 print("PASS:", name, "connected through actual ClientMain")
+            before = len(server_log.read_text())
+            code, text = bounded("incompatible-production-client", base + [
+                "res://tools/godot/runtime_probe.tscn", "--", "--runtime-role=client",
+                "--server-port=" + str(port), "--probe-incompatible"])
+            if (code or ERROR.search(text) or
+                    "NEPTUNE_PROTOCOL_CLIENT_REFUSED=incompatible_protocol_versions" not in text):
+                raise SystemExit("FAIL: production client did not surface compatibility refusal")
+            if "[Server] Peer connected:" in server_log.read_text()[before:]:
+                raise SystemExit("FAIL: incompatible production client reached server admission")
+            print("PASS: actual ClientMain surfaces incompatibility without admitting/authenticating")
+            for mode, reason in [("future", "incompatible_protocol_versions"),
+                                 ("retry", "incompatible_protocol_versions"),
+                                 ("malformed", "invalid_protocol_offer"),
+                                 ("invalid", "invalid_protocol_offer"),
+                                 ("duplicate", "invalid_protocol_offer"),
+                                 ("oversized", "protocol_offer_too_large"),
+                                 ("bytes", "invalid_protocol_offer"),
+                                 ("format", "invalid_protocol_offer"),
+                                 ("silent", "protocol_handshake_timeout_or_disconnect")]:
+                before = len(server_log.read_text())
+                command = base + ["res://tools/godot/protocol_probe.tscn", "--",
+                                  "--runtime-role=test", "--server-port=" + str(port),
+                                  "--protocol-probe=" + mode]
+                code, text = bounded("protocol-" + mode, command)
+                if (code or ERROR.search(text) or
+                        "NEPTUNE_PROTOCOL_REJECTED mode=" + mode not in text):
+                    raise SystemExit("FAIL: protocol-" + mode + "; inspect evidence")
+                deadline = time.monotonic() + 2
+                while time.monotonic() < deadline:
+                    delta = server_log.read_text()[before:]
+                    if reason in delta:
+                        break
+                    time.sleep(0.05)
+                else:
+                    raise SystemExit("FAIL: no server rejection evidence for " + mode)
+                if "[Server] Peer connected:" in delta:
+                    raise SystemExit("FAIL: rejected protocol reached server admission")
+                print("PASS: pre-connection protocol rejection:", mode)
             text = ANSI.sub("", server_log.read_text())
-            if ERROR.search(text) or text.count("[Server] Peer connected:") < len(clients):
+            if ERROR.search(text) or text.count("[Server] Peer connected:") != len(clients):
                 raise SystemExit("FAIL: server did not confirm every connection")
         finally:
             server.terminate()

@@ -52,3 +52,4 @@ text = "Register"
 layout_mode = 2
 text = "Status: Not connected"
 horizontal_alignment = 1
+autowrap_mode = 3

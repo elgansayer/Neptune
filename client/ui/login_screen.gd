@@ -74,7 +74,16 @@ func _on_connection_succeeded():
 	client_main.login(username, password)
 
 func _on_connection_failed():
-	status_label.text = "Connection failed!"
+	var reason: String = client_main.last_connection_error
+	match reason:
+		"incompatible_protocol_versions":
+			status_label.text = "Game versions are incompatible. Update the client or choose a compatible server."
+		"invalid_protocol_offer", "protocol_offer_too_large", "protocol_not_negotiated":
+			status_label.text = "Server protocol is unsupported. Choose a compatible Neptune server."
+		"protocol_handshake_timeout_or_disconnect":
+			status_label.text = "Compatibility check timed out or the server disconnected. Try again."
+		_:
+			status_label.text = "Could not connect to the server. Try again."
 
 func _on_authentication_succeeded():
 	status_label.text = "Login successful!"
