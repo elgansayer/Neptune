@@ -28,6 +28,7 @@ def main() -> int:
     parser.add_argument("--log", type=Path)
     parser.add_argument("--timeout", type=float, default=120)
     parser.add_argument("--max-log-mib", type=int, default=8)
+    parser.add_argument("--max-fps", type=int, help="Bound idle/render cadence for native runtime experiments")
     select = parser.add_mutually_exclusive_group()
     select.add_argument("--run-specific")
     select.add_argument("--run-category")
@@ -37,6 +38,8 @@ def main() -> int:
         parser.error("--timeout must be greater than zero and at most 600 seconds")
     if not 1 <= args.max_log_mib <= 32:
         parser.error("--max-log-mib must be between 1 and 32")
+    if args.max_fps is not None and not 1 <= args.max_fps <= 240:
+        parser.error("--max-fps must be between 1 and 240")
     max_log_bytes = args.max_log_mib * 1024 * 1024
     if args.run_specific == "" or args.run_category == "":
         parser.error("Selections cannot be empty")
@@ -48,6 +51,8 @@ def main() -> int:
     log.parent.mkdir(parents=True, exist_ok=True)
     command = [args.godot, "--headless", "--path", str(project),
                "res://tests/bot_test_runner.tscn", "--", "--runtime-role=test"]
+    if args.max_fps is not None:
+        command[1:1] = ["--max-fps", str(args.max_fps)]
     if args.run_specific is not None:
         command.append("--run-specific=" + args.run_specific)
     elif args.run_category is not None:

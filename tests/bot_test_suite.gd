@@ -58,8 +58,7 @@ func run_single_test(method_name: String) -> void:
 
 func setup_suite() -> void:
 	# Create GameInstance
-	var GameInstanceClass = load("res://tests/support/fixture_game_instance.gd")
-	game_instance = GameInstanceClass.new()
+	game_instance = make_game_instance()
 	game_instance.name = "TestGameInstance"
 	
 	# Mock ServerMain if needed or ensure it doesn't crash
@@ -87,6 +86,9 @@ func setup_suite() -> void:
 		for peer_id in game_instance.players.keys():
 			if peer_id < 0:
 				game_instance.remove_player(peer_id)
+
+func make_game_instance() -> GameInstance:
+	return load("res://tests/support/fixture_game_instance.gd").new()
 
 func teardown_suite() -> void:
 	if is_instance_valid(game_instance):

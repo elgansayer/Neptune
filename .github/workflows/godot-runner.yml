@@ -12,6 +12,8 @@ on:
       - 'main_server.tscn'
       - 'game_instance.gd'
       - 'shared/entities/**'
+      - 'ai/**'
+      - 'shared/ai/**'
       - 'client/**'
       - 'shared/runtime_config.gd'
       - 'scripts/console_commands.gd'
@@ -28,6 +30,8 @@ on:
       - 'main_server.tscn'
       - 'game_instance.gd'
       - 'shared/entities/**'
+      - 'ai/**'
+      - 'shared/ai/**'
       - 'client/**'
       - 'shared/runtime_config.gd'
       - 'scripts/console_commands.gd'
@@ -59,6 +63,11 @@ jobs:
         run: |
           bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_collision_fix
           bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_trapped_algo
+      - name: Verify native bot tick ownership at different idle cadences
+        run: |
+          for cadence in 30 60 144; do
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bot_physics_ticks --max-fps "$cadence"
+          done
       - name: Preserve native startup diagnostics even when a check fails
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
