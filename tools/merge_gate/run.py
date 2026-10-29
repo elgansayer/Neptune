@@ -12,11 +12,11 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-CORE = ("input-tooling", "catalogue-tests", "catalogue-validation", "gate-contracts")
+CORE = ("input-tooling", "catalogue-tests", "catalogue-validation", "factory-contracts", "gate-contracts")
 NATIVE = ("native-install", "native-runner", "native-project")
 RUNTIME = ("native-runtime", "native-bots")
 # An allowlist: new/unrecognised paths require the full native gameplay gate.
-METADATA = ("docs/", "tools/saturn_lab/", "tools/research_catalog/", "tools/merge_gate/")
+METADATA = ("docs/", "tools/saturn_lab/", "tools/research_catalog/", "tools/merge_gate/", "tools/factory/")
 METADATA_FILES = {"AGENTS.md", "LICENSE", "NOTICE", ".gitignore",
                   ".github/workflows/neptune-merge-gate.yml", ".github/workflows/saturn-lab.yml"}
 RUNNER_FILES = {"run_bot_tests.sh", "tests/bot_test_runner.gd", "tests/bot_test_runner.tscn",
@@ -95,6 +95,7 @@ def commands(mode: str, evidence: Path, toolchain: Path) -> list[tuple[str, list
         ("input-tooling", [python, "tools/saturn_lab/check.py"], 60),
         ("catalogue-tests", [python, "tools/research_catalog/check.py"], 60),
         ("catalogue-validation", [python, "tools/research_catalog/cli.py", "validate"], 30),
+        ("factory-contracts", [python, "tools/factory/check.py"], 60),
         ("gate-contracts", [python, "tools/merge_gate/check.py"], 60),
     ]
     if mode == "metadata":
