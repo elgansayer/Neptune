@@ -12,6 +12,9 @@ from run import assert_pass, checkout_identity, commands, git, plan
 
 
 class GateContracts(unittest.TestCase):
+    def test_intentional_rejection_probe(self):
+        self.fail("Intentional #62 probe; this PR must never merge")
+
     def test_empty_or_unsafe_selection_fails(self):
         for paths in ([], [""], ["../game.gd"], ["/game.gd"], ["docs/../game.gd"]):
             with self.subTest(paths=paths), self.assertRaises(ValueError):
