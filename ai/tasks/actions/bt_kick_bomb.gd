@@ -91,7 +91,7 @@ func _tick(_delta: float) -> int:
 	
 	return SUCCESS
 
-func _get_bomb_at_tile(tile: Vector2i, game_instance) -> Node:
+func _get_bomb_at_tile(tile: Vector2i, game_instance) -> Object:
 	"""Find a bomb at the given tile position"""
 	if not "bombs" in game_instance:
 		return null

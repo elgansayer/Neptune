@@ -145,6 +145,8 @@ func set_tile(x: int, y: int, type: int) -> void:
 	if game_instance.game_map.size() > y and game_instance.game_map[y].size() > x:
 		game_instance.game_map[y][x] = type
 	
+	game_instance.invalidate_public_observation()
+
 	# Update collision
 	var tile_name = "Tile_%d_%d" % [x, y]
 	var existing_body = game_instance.get_node_or_null(tile_name)

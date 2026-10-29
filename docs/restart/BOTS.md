@@ -51,6 +51,8 @@ They do not teleport, alter speed/fuses or directly grant items. Feed them an
 explicit observation view. Hidden item contents, private opponent inputs and
 unobservable future events must not leak through server-state access. A visible
 bomb's observed placement time may be remembered to estimate its fuse.
+The integrated public snapshot, native observed-agent and bound-command interface
+is documented in [PUBLIC_OBSERVATIONS.md](PUBLIC_OBSERVATIONS.md).
 
 Use simulation ticks and a seeded policy RNG. Difficulty changes reaction delay,
 planning budget and deliberate fallibility rather than hidden stat boosts.

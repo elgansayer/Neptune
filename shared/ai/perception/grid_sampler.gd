@@ -18,8 +18,10 @@ func configure(instance: Node, region: NavigationRegion2D = null, new_tile_size:
 
 func _update_map_size() -> void:
 	if _game_instance and _game_instance.game_map.size() > 0:
-		_map_size = Vector2i(_game_instance.game_map[0].size(), _game_instance.game_map.size())
-		_init_astar()
+		var size: Vector2i = _game_instance.get_map_dimensions() if _game_instance.has_method("get_map_dimensions") else Vector2i(_game_instance.game_map[0].size(), _game_instance.game_map.size())
+		if size != _map_size or _astar == null:
+			_map_size = size
+			_init_astar()
 
 func _init_astar() -> void:
 	_astar = AStarGrid2D.new()
@@ -40,7 +42,7 @@ func tile_to_world_center(tile_position: Vector2i) -> Vector2:
 	)
 
 func is_in_bounds(tile_position: Vector2i) -> bool:
-	if _map_size == Vector2i.ZERO:
+	if _map_size == Vector2i.ZERO or _game_instance.has_method("get_map_dimensions") and _game_instance.get_map_dimensions() != _map_size:
 		_update_map_size()
 	return tile_position.x >= 0 and tile_position.x < _map_size.x \
 		and tile_position.y >= 0 and tile_position.y < _map_size.y
@@ -77,7 +79,7 @@ func is_tile_occupied(tile_position: Vector2i, ignore_player: Node = null) -> bo
 		return false
 	for peer_id in _game_instance.players:
 		var player = _game_instance.players[peer_id]
-		if not is_instance_valid(player) or player == ignore_player:
+		if not is_instance_valid(player) or is_instance_valid(ignore_player) and player.peer_id == ignore_player.peer_id:
 			continue
 		if player.is_dead:
 			continue
@@ -122,18 +124,19 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 	# 1. Reset grid solids based on static map (walls/soft blocks)
 	# We iterate the map to ensure dynamic soft block changes are reflected
 	# Optimization: We could track soft block changes, but for this map size, iteration is fast enough
+	var terrain: Array = _game_instance.game_map
 	for x in range(_map_size.x):
 		for y in range(_map_size.y):
 			var pos = Vector2i(x, y)
 			# 0 = Empty (Walkable), 1 = Hard Block (Solid), 2 = Soft Block (Solid)
-			var tile_type = _game_instance.get_tile_type(pos)
+			var tile_type = terrain[y][x]
 			var is_solid = (tile_type != 0)
 			_astar.set_point_solid(pos, is_solid)
 	
 	# 2. Mark other players as solid obstacles
 	for peer_id in _game_instance.players:
 		var p = _game_instance.players[peer_id]
-		if is_instance_valid(p) and p != ignore_player and not p.is_dead:
+		if is_instance_valid(p) and (not is_instance_valid(ignore_player) or p.peer_id != ignore_player.peer_id) and not p.is_dead:
 			var p_pos = p.get_tile_position()
 			if is_in_bounds(p_pos) and p_pos != goal_tile:
 				_astar.set_point_solid(p_pos, true)

@@ -132,7 +132,8 @@ func test_real_native_callbacks_see_clock_before_decisions() -> Variant:
 	tree.root_task = preload("res://tests/support/record_bot_clock.gd").new()
 	bot_controller.behavior_tree = tree
 	bot_controller.restart()
-	bot_player.set_meta("clock_records", [])
+	var observed_actor = bot_controller.get_blackboard().get_var("player")
+	observed_actor.set_meta("clock_records", [])
 	game_instance.current_time_msec = 0.0
 	if game_instance.get("simulation_tick") != null:
 		game_instance.set("simulation_tick", 0)
@@ -148,7 +149,7 @@ func test_real_native_callbacks_see_clock_before_decisions() -> Variant:
 	bot_manager.set_physics_process(false)
 	bot_controller.active = false
 	observed_bomb.set_physics_process(false)
-	var records: Array = bot_player.get_meta("clock_records")
+	var records: Array = observed_actor.get_meta("clock_records")
 	if records.size() < 5:
 		return "Missing real native callback observations"
 	for index in range(records.size()):

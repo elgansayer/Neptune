@@ -130,7 +130,11 @@ func _tick(_delta: float) -> int:
 						_throw_dir = best_throw.direction
 			
 			# Face the throw direction
-			player.last_move_direction = _throw_dir
+			# Face through the same movement/physics path as a human player.
+			if player.last_move_direction != _throw_dir:
+				var movement: Dictionary = player.set_input(_throw_dir.x, _throw_dir.y)
+				return RUNNING if movement.accepted else FAILURE
+			player.set_input(0, 0)
 			
 			# THROW!
 			if player.throw_carried_bomb():
@@ -147,7 +151,7 @@ func _tick(_delta: float) -> int:
 	
 	return FAILURE
 
-func _find_bomb_at_tile(tile: Vector2i, game_instance) -> Node:
+func _find_bomb_at_tile(tile: Vector2i, game_instance) -> Object:
 	"""Find a bomb at the specified tile that can be picked up"""
 	if not "bombs" in game_instance:
 		return null

@@ -1687,6 +1687,20 @@ func client_update_debug_target_line(points: PackedVector2Array):
 		local_points.append(to_local(p))
 	debug_target_line.points = local_points
 
+func get_observed_contacts() -> Array:
+	var contacts: Array = []
+	for index in range(get_slide_collision_count()):
+		var contact = get_slide_collision(index)
+		var collider = contact.get_collider()
+		var kind := "terrain"
+		if collider is ServerBomb:
+			kind = "bomb"
+		elif collider is ServerPlayer:
+			kind = "player"
+		var pos: Vector2 = contact.get_position()
+		contacts.append({"kind": kind, "position": [pos.x, pos.y]})
+	return contacts
+
 func set_debug_path(points: PackedVector2Array):
 	# Update locally (server view)
 	if not debug_path_line:

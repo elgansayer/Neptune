@@ -34,7 +34,13 @@ The full bot supervisor writes `native-bots.log`; Godot writes the distinct
 `native-bots-engine.log`, bounded at 16 MiB. The initial eight-MiB default was hit
 by the legacy forecast's verbose output in #51 run 40855908555. Both the original
 failure and artifacts are retained. Separate files prevent two writers corrupting
-the same log; the larger finite cap does not change a gameplay assertion or timeout.
+the same log; the larger finite log cap does not change a gameplay assertion.
+
+The full native suite now has140 cases, including public-observation/privacy and
+twelve-controller probes. Its aggregate supervisor budget is300 seconds (330 for
+the containing subprocess), increased explicitly from240 after the expanded suite
+reached the final clock tests at that limit. Individual scenario durations,
+assertions and reference tolerances remain unchanged. Timeout still fails the gate.
 
 ```sh
 python3 tools/merge_gate/check.py
