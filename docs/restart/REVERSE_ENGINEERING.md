@@ -63,7 +63,9 @@ Every observation must carry:
 - Whether the original execution was modified to expose content.
 
 Create confidence transitions from evidence, not the worker's prose. Original
-reference fixtures and tolerance changes require independent review.
+reference fixtures and tolerance changes require traceable evidence and executable
+regression checks. MERGE_POLICY.md makes review optional without permitting silent
+fixture weakening.
 
 ## Campaign and battle coverage
 

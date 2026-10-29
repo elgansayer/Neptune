@@ -2,6 +2,7 @@
 """Bounded real native startup/connection checks, not a match or browser test."""
 import argparse
 from contextlib import contextmanager
+import json
 import os
 from pathlib import Path
 import shutil
@@ -48,7 +49,11 @@ def main():
     parser.add_argument("--godot", required=True)
     parser.add_argument("--evidence", type=Path, default=ROOT / ".godot/runtime-evidence")
     parser.add_argument("--graphical", action="store_true", help="Also require an Xvfb desktop client")
+    parser.add_argument("--process-timeout", type=float, default=30.0,
+                        help="Bound each engine process, including graphical driver startup (5..60 seconds)")
     args = parser.parse_args()
+    if not 5.0 <= args.process_timeout <= 60.0:
+        parser.error("--process-timeout must be between 5 and 60 seconds")
     args.evidence.mkdir(parents=True, exist_ok=True)
     env = {k: v for k, v in os.environ.items() if k in ("PATH", "LANG", "LC_ALL", "USER", "LOGNAME")}
     for key in ("XDG_CONFIG_HOME", "XDG_DATA_HOME", "XDG_CACHE_HOME"):
@@ -57,11 +62,24 @@ def main():
         env[key] = str(folder)
     base = [args.godot, "--headless", "--path", str(ROOT)]
 
-    def bounded(name, command, timeout=10, process_env=None):
+    def bounded(name, command, timeout=None, process_env=None):
+        timeout = args.process_timeout if timeout is None else timeout
         log = args.evidence / (name + ".log")
+        record = {"command": command, "timeout_sec": timeout}
+        started = time.monotonic()
         with log.open("w") as output:
-            result = subprocess.run(command, env=process_env or env, stdout=output,
-                                    stderr=subprocess.STDOUT, timeout=timeout)
+            try:
+                result = subprocess.run(command, env=process_env or env, stdout=output,
+                                        stderr=subprocess.STDOUT, timeout=timeout)
+                record.update(exit=result.returncode, status="completed")
+            except subprocess.TimeoutExpired:
+                record.update(exit=None, status="timed_out")
+                output.flush()
+                print(log.read_text()[-3000:])
+                raise SystemExit("FAIL: " + name + " process startup/execution bound; inspect " + str(log))
+            finally:
+                record["elapsed_sec"] = round(time.monotonic() - started, 3)
+                (args.evidence / (name + ".json")).write_text(json.dumps(record, indent=2) + "\n")
         return result.returncode, ANSI.sub("", log.read_text())
 
     code, text = bounded("import", base + ["--editor", "--import", "--quit"], 90)
@@ -93,7 +111,8 @@ def main():
             clients = [("default-headless-client", base), ("explicit-headless-client", base)]
             if args.graphical:
                 clients.append(("graphical-client", [args.godot,
-                                "--audio-driver", "Dummy", "--path", str(ROOT)]))
+                                "--display-driver", "x11", "--rendering-method", "gl_compatibility",
+                                "--rendering-driver", "opengl3", "--audio-driver", "Dummy", "--path", str(ROOT)]))
             for name, command in clients:
                 options = ["--server-port=" + str(port)]
                 if name != "default-headless-client":
@@ -101,6 +120,7 @@ def main():
                 command = command + ["res://tools/godot/runtime_probe.tscn", "--", *options]
                 if name == "graphical-client":
                     with graphical_environment(env, args.evidence) as desktop_env:
+                        desktop_env["LIBGL_ALWAYS_SOFTWARE"] = "1"
                         code, text = bounded(name, command, process_env=desktop_env)
                 else:
                     code, text = bounded(name, command)
