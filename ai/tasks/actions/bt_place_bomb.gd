@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTPlaceBomb
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Places a bomb at the player's current position
 ## Checks if player can place a bomb before attempting
 
@@ -128,7 +130,7 @@ func _tick(delta: float) -> int:
 	# This prevents suicide if situation changed since planning
 	var bomb_safety_checker = blackboard.get_var("bomb_safety_checker")
 	if bomb_safety_checker:
-		var current_time_msec = Time.get_ticks_msec()
+		var current_time_msec = SimulationTime.milliseconds(blackboard)
 		# bomb_range already declared above
 		var bot_speed = 5.0 # tiles per second
 		
@@ -201,7 +203,7 @@ func _tick(delta: float) -> int:
 	
 	# CRITICAL: Store bomb placement info and trigger IMMEDIATE escape mode
 	blackboard.set_var("last_bomb_placed_at", player_tile)
-	blackboard.set_var("last_bomb_placed_time", Time.get_ticks_msec() / 1000.0)
+	blackboard.set_var("last_bomb_placed_time", SimulationTime.seconds(blackboard))
 	
 	# SAFETY: Force bot into danger mode so it escapes immediately
 	blackboard.set_var("in_danger", true)

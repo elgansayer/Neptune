@@ -161,7 +161,7 @@ func update_opponent_intel(bot_positions: Dictionary, all_players: Dictionary, d
 			
 			# Update last seen
 			profile.last_seen_pos = player_pos
-			profile.last_seen_time = Time.get_ticks_msec() / 1000.0
+			profile.last_seen_time = _game_instance.get_simulation_time_sec()
 			
 			# Calculate distance for aggression scoring
 			var dist_now := float(abs(bot_pos.x - player_pos.x) + abs(bot_pos.y - player_pos.y))

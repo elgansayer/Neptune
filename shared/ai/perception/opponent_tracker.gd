@@ -5,6 +5,10 @@ var _tracked_opponents: Array[Dictionary] = []
 var _opponent_history: Dictionary = {} ## peer_id -> Array[Dictionary] (position history)
 var _max_history_entries: int = 10 ## How many past positions to track
 var _behavior_patterns: Dictionary = {} ## peer_id -> behavior classification
+var _game_instance: Node
+
+func configure(game: Node) -> void:
+	_game_instance = game
 
 ## Tracks other players in the game from the perspective of an AI.
 ## Enhanced with velocity tracking, movement patterns, and behavioral analysis
@@ -15,7 +19,7 @@ func reset() -> void:
 	_behavior_patterns.clear()
 
 func update_from_players(players: Array) -> void:
-	var current_time = Time.get_ticks_msec() / 1000.0
+	var current_time: float = _game_instance.get_simulation_time_sec()
 	
 	_tracked_opponents.clear()
 	for player in players:
@@ -40,7 +44,7 @@ func update_from_players(players: Array) -> void:
 		_update_position_history(peer_id, current_pos, current_time)
 		
 		# Analyze behavioral pattern
-		var behavior = _analyze_behavior_pattern(peer_id, velocity, current_tile)
+		var behavior = _analyze_behavior_pattern(peer_id, velocity, current_tile, current_time)
 		
 		_tracked_opponents.append({
 			"peer_id": peer_id,
@@ -108,7 +112,7 @@ func _update_position_history(peer_id: int, position: Vector2, time: float) -> v
 		history.pop_front()
 
 ## Analyze opponent's behavior pattern (aggressive, defensive, neutral)
-func _analyze_behavior_pattern(peer_id: int, velocity: Vector2, current_tile: Vector2i) -> String:
+func _analyze_behavior_pattern(peer_id: int, velocity: Vector2, current_tile: Vector2i, current_time: float) -> String:
 	if not _behavior_patterns.has(peer_id):
 		_behavior_patterns[peer_id] = {
 			"movement_samples": [],
@@ -125,7 +129,6 @@ func _analyze_behavior_pattern(peer_id: int, velocity: Vector2, current_tile: Ve
 		pattern_data["movement_samples"].pop_front()
 	
 	# Only reclassify every 2 seconds
-	var current_time = Time.get_ticks_msec() / 1000.0
 	if current_time - pattern_data["classification_time"] < 2.0:
 		return pattern_data["last_classification"]
 	

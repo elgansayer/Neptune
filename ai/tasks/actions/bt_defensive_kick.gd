@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTDefensiveKick
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Kicks a threatening bomb AWAY from the player to safety
 ## Used when in danger - kick the bomb instead of running!
 ## Requires: has_bomb_kicker = true
@@ -92,7 +94,7 @@ func _tick(_delta: float) -> int:
 	
 	# Mark that we're doing a defensive kick
 	blackboard.set_var("defensive_kick_active", true)
-	blackboard.set_var("defensive_kick_time", Time.get_ticks_msec())
+	blackboard.set_var("defensive_kick_time", SimulationTime.milliseconds(blackboard))
 	
 	return SUCCESS
 

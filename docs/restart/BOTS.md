@@ -54,6 +54,10 @@ planning budget and deliberate fallibility rather than hidden stat boosts.
 Share bounded hazard computations where semantics are identical. Keep gameplay
 decisions local and bounded; no external LLM requests inside the match tick.
 
+The implemented authority clock and its units/physics phases are documented in
+[SIMULATION_TIME.md](SIMULATION_TIME.md). Controlled clock experiments are separate
+from complete policy RNG, fairness and replay determinism acceptance.
+
 Decision priorities: immediate survival, safe movement/escape, useful item/block
 collection, attack opportunities, positioning and team objectives. Require plan
 commitment/hysteresis to avoid oscillation, with immediate replanning on material

@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTKickBomb
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Kicks a bomb toward an opponent or strategic direction
 ## Bot walks into a bomb to trigger the kick mechanic
 ## Requires: has_bomb_kicker = true
@@ -81,7 +83,7 @@ func _tick(_delta: float) -> int:
 	])
 	
 	# Store that we're attempting a kick for follow-up
-	blackboard.set_var("last_kick_attempt", Time.get_ticks_msec())
+	blackboard.set_var("last_kick_attempt", SimulationTime.milliseconds(blackboard))
 	blackboard.set_var("kick_direction", best_direction)
 	
 	return SUCCESS

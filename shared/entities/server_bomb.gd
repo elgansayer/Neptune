@@ -85,6 +85,8 @@ signal landed(bomb, final_pos)
 signal kicked(bomb, direction)
 
 func _ready():
+	# Advance public bomb timers before hazard publication and bot decisions.
+	process_physics_priority = -150
 	# Collision layers and shapes are already set in ServerBomb.tscn
 	# Update collision shape to match current GameConfig values at runtime
 	_update_collision_shape_size()

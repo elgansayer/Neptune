@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTMoveToCell
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Moves the entity toward a target cell using pathfinding
 ## Calculates path once and follows waypoints, recalculating if stuck or target changes
 ## Includes COMMITMENT logic to prevent jittering when target shifts slightly
@@ -21,7 +23,7 @@ var _current_waypoint_index: int = 0
 var _stuck_counter: int = 0
 var _last_position: Vector2 = Vector2.ZERO
 var _stuck_start_position: Vector2 = Vector2.ZERO  # Position when we started counting stuck
-var _stuck_start_time: float = 0.0  # Real time (msec) when we started tracking stuck
+var _stuck_start_time: float = 0.0  # Simulation time (msec) when we started tracking stuck
 var _completed_successfully: bool = false # Track if we finished via SUCCESS
 
 # Stuck detection parameters
@@ -193,8 +195,8 @@ func _tick(_delta: float) -> int:
 			player.set_input(center_direction.x * speed_factor, center_direction.y * speed_factor)
 			return RUNNING
 	
-	# Detect if stuck using REAL TIME (immune to timescale changes)
-	var current_time_ms = Time.get_ticks_msec()
+	# Detect stuck movement in the same simulation time as displacement
+	var current_time_ms = SimulationTime.milliseconds(blackboard)
 	var frame_movement = player.position.distance_to(_last_position)
 	
 	if frame_movement < MIN_FRAME_MOVEMENT:  # Very little movement this frame
@@ -203,16 +205,13 @@ func _tick(_delta: float) -> int:
 			_stuck_start_time = current_time_ms
 		_stuck_counter += 1
 		
-		# Check using REAL TIME elapsed
+		# Check elapsed simulation time
 		var elapsed_ms = current_time_ms - _stuck_start_time
 		var total_stuck_movement = player.position.distance_to(_stuck_start_position)
 		
-		# Scale threshold by timescale - at 0.1x speed, expect 0.1x distance
-		var current_timescale = Engine.time_scale
-		var scaled_threshold = STUCK_DISTANCE_THRESHOLD * current_timescale
-		# Minimum threshold of 1 pixel to avoid triggering on tiny floating point differences
-		scaled_threshold = max(scaled_threshold, 1.0)
-		
+		# Delta and movement already scale together; do not scale the threshold twice.
+		var scaled_threshold = STUCK_DISTANCE_THRESHOLD
+
 		# Only trigger if we've been stuck for STUCK_TIME_THRESHOLD_MS and moved less than scaled threshold
 		if elapsed_ms >= STUCK_TIME_THRESHOLD_MS and total_stuck_movement < scaled_threshold:
 			print("[BTMoveToCell] frame=%d Bot stuck at %s (elapsed=%.0fms moved=%.2fpx thresh=%.2f) recalculating path" % [
@@ -256,7 +255,7 @@ func _tick(_delta: float) -> int:
 			
 			var t_key = "%d,%d" % [target_cell.x, target_cell.y]
 			if stuck_targets.has(t_key):
-				if Time.get_ticks_msec() < stuck_targets[t_key]:
+				if SimulationTime.milliseconds(blackboard) < stuck_targets[t_key]:
 					print("[BTMoveToCell] ABORT: Target %s is currently penalized (stuck recently)" % target_cell)
 					blackboard.set_var(cell_var, null)
 					player.set_input(0.0, 0.0)
@@ -481,7 +480,7 @@ func _unsafe_arrival(tile: Vector2i, player, sampler, predictor) -> bool:
 	var offset: Vector2 = sampler.tile_to_world_center(tile) - player.position
 	var speed: float = GameConfig.BASE_SPEED * GameConfig.get_skate_speed_multiplier(player.skate_count) * player.get_virus_speed_modifier()
 	var travel_seconds := (absf(offset.x) + absf(offset.y)) / maxf(speed, 1.0)
-	return not predictor.is_tile_safe(tile, Time.get_ticks_msec() / 1000.0, travel_seconds + 0.1)
+	return not predictor.is_tile_safe(tile, SimulationTime.seconds(blackboard), travel_seconds + 0.1)
 
 func _abort_unsafe_move(player) -> int:
 	blackboard.set_var(cell_var, null)
@@ -497,7 +496,7 @@ func _apply_stuck_penalty(target: Vector2i) -> void:
 		blackboard.set_var("stuck_targets", {})
 	
 	var stuck_targets = blackboard.get_var("stuck_targets")
-	var current_time = Time.get_ticks_msec()
+	var current_time = SimulationTime.milliseconds(blackboard)
 	
 	# Clean up old entries first
 	var keys_to_remove = []

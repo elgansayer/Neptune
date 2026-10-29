@@ -38,7 +38,7 @@ func refresh(current_time: float) -> void:
 
 func get_time_to_safety(tile: Vector2i, current_time: float) -> float:
 	var danger_time = _danger_cache.get(_tile_key(tile), -INF)
-	if danger_time <= 0.0:
+	if danger_time == -INF:
 		return 0.0
 	return max(danger_time - current_time, 0.0)
 
@@ -46,14 +46,13 @@ func is_tile_safe(tile: Vector2i, current_time: float, buffer: float = -1.0) -> 
 	if buffer < 0.0:
 		buffer = _default_buffer
 	var danger_time = _danger_cache.get(_tile_key(tile), -INF)
-	if danger_time <= 0.0:
+	if danger_time == -INF:
 		return true
 	return current_time + buffer < danger_time
 
 func is_tile_threatened(tile: Vector2i) -> bool:
 	"""Check if tile has any threat registered, regardless of time"""
-	var danger_time = _danger_cache.get(_tile_key(tile), -INF)
-	return danger_time > 0.0
+	return _danger_cache.has(_tile_key(tile))
 
 func find_escape_tiles(from_tile: Vector2i, current_time: float, max_distance: int = 6) -> Array[Vector2i]:
 	if _grid_sampler == null:
@@ -170,7 +169,7 @@ func is_in_mortal_danger(tile: Vector2i, current_time: float, buffer: float = 0.
 		return false
 	
 	# Compare: time until explosion vs time to reach safety
-	return threat_time <= (safety_time + buffer)
+	return threat_time <= current_time + safety_time + buffer
 
 ## Get time to reach nearest safety from tile
 func get_safety_time(tile: Vector2i) -> float:

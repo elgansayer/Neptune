@@ -45,7 +45,8 @@ var ai_manager: AIManager # Centralized AI brain with ThreatMatrix and pathfindi
 
 # State sync
 var last_sync_time := 0.0
-var current_time_msec := 0.0 # Current physics frame time in milliseconds
+var current_time_msec := 0.0 # Session simulation time; unrelated to host uptime.
+var simulation_tick := 0
 const SYNC_INTERVAL = 1.0 / Constants.NETWORK_SEND_RATE
 const EXPLOSION_DISPLAY_TIME = 0.5 # How long to show explosions
 
@@ -77,8 +78,10 @@ signal game_ended(winner_id: String)
 signal hurry_mode_started()
 
 func _ready():
-	# Set process priority to run AFTER physics/bombs (0) but BEFORE bots (200)
+	# Idle scheduling is separate from the explicit physics phases below.
 	process_priority = 100
+	# Clock/status phase precedes bombs, bot decisions, then player movement.
+	process_physics_priority = -200
 	
 	# Initialize map manager
 	map_manager = load("res://shared/maps/map_manager.gd").new()
@@ -267,10 +270,9 @@ func create_map_collision():
 					map_tiles[tile_key] = tile_body
 
 func _physics_process(delta):
-	# Update AI Manager's ThreatMatrix
-	if ai_manager != null:
-		current_time_msec = Time.get_ticks_msec()
-		ai_manager.refresh_threat_matrix(current_time_msec)
+	current_time_msec += delta * 1000.0
+	simulation_tick += 1
+	# BotManager publishes hazards after this tick's bomb updates, before decisions.
 	
 	# Check if any player is walking into an active explosion tile
 	_check_explosion_damage()
@@ -294,7 +296,7 @@ func _physics_process(delta):
 		match_time_remaining -= delta
 		
 		# === PLAYER VIRUS UPDATES ===
-		var _current_time_msec = Time.get_ticks_msec()
+		var _current_time_msec = current_time_msec
 		for peer_id in players:
 			var player = players[peer_id]
 			if not is_instance_valid(player) or player.is_dead:
@@ -336,6 +338,15 @@ func _physics_process(delta):
 	if last_sync_time >= SYNC_INTERVAL:
 		last_sync_time = 0.0
 		sync_state_to_clients()
+
+func get_simulation_time_msec() -> float:
+	return current_time_msec
+
+func get_simulation_time_sec() -> float:
+	return current_time_msec / 1000.0
+
+func get_clock_state() -> Dictionary:
+	return {"server_time": current_time_msec, "simulation_tick": simulation_tick}
 
 func get_next_spawn_point() -> Vector2:
 	"""Get the next available spawn point from the map"""
@@ -879,7 +890,7 @@ func _place_single_bomb(player: ServerPlayer):
 	
 	# CRITICAL: Immediately update threat matrix so AI can react to newly placed bomb
 	if ai_manager:
-		ai_manager.refresh_threat_matrix(Time.get_ticks_msec())
+		ai_manager.refresh_threat_matrix(current_time_msec)
 		print("[Game] Threat matrix refreshed immediately after bomb placement")
 	
 	# Also refresh BotManager's perception (HazardPredictor)
@@ -918,7 +929,7 @@ func _on_bomb_exploded(bomb, explosion_pattern: Array) -> void:
 		"bomb_id": bomb.bomb_id,
 		"center": bomb_tile,
 		"pattern": explosion_pattern,
-		"start_time": Time.get_ticks_msec() / 1000.0,
+		"start_time": get_simulation_time_sec(),
 		"owner_id": bomb_owner.username if bomb_owner else ""
 	})
 	
@@ -931,7 +942,7 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 	"""Handle damage/destruction for tiles as explosion expands progressively"""
 	# Calculate when this explosion tile expires (in milliseconds)
 	# Explosion lasts for EXPLOSION_DURATION (1.0 seconds by default)
-	var expiration_time = Time.get_ticks_msec() + int(GameConfig.EXPLOSION_DURATION * 1000)
+	var expiration_time = current_time_msec + GameConfig.EXPLOSION_DURATION * 1000.0
 	
 	for tile_pos in tiles:
 		# Track this tile as actively burning for continuous damage detection
@@ -984,7 +995,7 @@ func _check_explosion_damage():
 	This enables players to die when WALKING INTO an explosion, not just
 	when the explosion first reaches their tile.
 	"""
-	var current_time = Time.get_ticks_msec()
+	var current_time = current_time_msec
 	
 	# First, clean up expired explosion tiles
 	var expired_tiles: Array[String] = []
@@ -1087,7 +1098,7 @@ func _pack_explosion_tiles(tiles: Array) -> Array:
 
 func sync_state_to_clients():
 	# Clean up old explosions (keep for progressive display duration)
-	var current_time = Time.get_ticks_msec() / 1000.0
+	var current_time = get_simulation_time_sec()
 	var explosion_duration = 0.02 * 20 # ~20 expansion steps max
 	var remaining_explosions := []
 	for e in explosions:
@@ -1104,6 +1115,7 @@ func sync_state_to_clients():
 		"b": {}, # bombs (minimal state)
 		"t": int(match_time_remaining), # match timer (seconds as int)
 	}
+	state.merge(get_clock_state())
 	# Only add optional fields if they have values (avoid sending nulls)
 	if match_active:
 		state["a"] = true

@@ -2,6 +2,8 @@
 extends BTCondition
 class_name BTIsSafeToAttack
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Validates that attacking won't trap the bot
 ## Checks escape routes and safety margins before committing to offensive action
 ## Includes HYSTERESIS to prevent flickering
@@ -23,7 +25,7 @@ func _tick(_delta: float) -> int:
 		return FAILURE
 	
 	var player_tile = player.get_tile_position()
-	var current_time_msec = Time.get_ticks_msec()
+	var current_time_msec = SimulationTime.milliseconds(blackboard)
 	
 	# CRITICAL: If we are currently in danger (or latched), we CANNOT attack
 	# This prevents oscillation where we stop escaping to attack because IsSafeToAttack says "Safe"

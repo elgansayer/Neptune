@@ -2,6 +2,8 @@
 extends BTCondition
 class_name BTCanSafelyPlant
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Validates that the selected farming tile can be bombed safely and caches an escape cell
 
 @export var target_cell_var: StringName = &"target_cell"
@@ -29,7 +31,7 @@ func _tick(_delta: float) -> int:
 		return FAILURE
 	
 	var bomb_range = player.get_effective_bomb_range()
-	var current_time_msec = Time.get_ticks_msec()
+	var current_time_msec = SimulationTime.milliseconds(blackboard)
 	var bot_speed = 5.0
 	
 	if not bomb_safety_checker.can_safely_plant_bomb(

@@ -117,9 +117,9 @@ const PERSONALITY_CONFIGS = {
 }
 
 func _ready() -> void:
-	# Set process priority to run AFTER game instance (100)
-	# Higher numbers run later
+	# After the clock/status and bomb phases, before player movement.
 	process_priority = PROCESS_PRIORITY
+	process_physics_priority = PROCESS_PRIORITY
 	print("[BotManager] Process priority set to ", PROCESS_PRIORITY)
 
 func configure(instance) -> void:
@@ -138,6 +138,7 @@ func configure(instance) -> void:
 	hazard_predictor = HazardPredictorScript.new()
 	hazard_predictor.configure(game_instance, grid_sampler)
 	opponent_tracker = OpponentTrackerScript.new()
+	opponent_tracker.configure(game_instance)
 	bomb_planner = BombPlannerScript.new()
 	bomb_planner.configure(grid_sampler, hazard_predictor)
 	
@@ -179,7 +180,8 @@ func _physics_process(delta: float) -> void:
 	if not game_instance.match_active:
 		return
 	
-	hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
+	game_instance.ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
+	hazard_predictor.refresh(game_instance.get_simulation_time_sec())
 	opponent_tracker.update_from_players(game_instance.players.values())
 	
 	# Debug log every 120 frames (~2 seconds)
@@ -200,7 +202,7 @@ func _physics_process(delta: float) -> void:
 				if is_instance_valid(player_ref):
 					# Update dynamic blackboard values
 					blackboard.set_var("current_tile", player_ref.get_tile_position())
-					blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+					blackboard.set_var("time", game_instance.get_simulation_time_sec())
 					
 					# This manager is the sole physics-tick owner of native tree updates.
 					bt_player.call("update", delta)
@@ -296,7 +298,7 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	
 	# Initialize dynamic values
 	blackboard.set_var("current_tile", player.get_tile_position())
-	blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+	blackboard.set_var("time", game_instance.get_simulation_time_sec())
 	blackboard.set_var("target_cell", null)
 	blackboard.set_var("in_danger", false)
 	blackboard.set_var("escape_route_found", false)
@@ -345,4 +347,4 @@ func _exit_tree() -> void:
 func refresh_perception() -> void:
 	"""Force immediate refresh of perception modules (e.g. after bomb placement)"""
 	if hazard_predictor:
-		hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
+		hazard_predictor.refresh(game_instance.get_simulation_time_sec())

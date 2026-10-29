@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTTacticalAssessment
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Evaluates the tactical situation and chooses the best attack strategy
 ## Implements advanced Bomberman tactics: trapping, space control, defensive positioning
 ## Includes HYSTERESIS to prevent rapid switching between tactics
@@ -12,7 +14,7 @@ class_name BTTacticalAssessment
 
 # Hysteresis state
 var _current_tactic: String = "NONE"
-var _tactic_start_time: int = 0
+var _tactic_start_time: float = 0.0
 var _last_opponent_pos: Vector2i = Vector2i(-999, -999)
 
 func _generate_name() -> String:
@@ -187,7 +189,7 @@ func _tick(_delta: float) -> int:
 		new_priority = 0
 	
 	# === HYSTERESIS & LOCKING ===
-	var current_time = Time.get_ticks_msec()
+	var current_time = SimulationTime.milliseconds(blackboard)
 	var time_since_switch = current_time - _tactic_start_time
 	
 	# Determine if we should switch
@@ -247,7 +249,7 @@ func _tick(_delta: float) -> int:
 	
 	return SUCCESS if _current_tactic != "NONE" else FAILURE
 
-func _set_tactic(tactic: String, time: int) -> void:
+func _set_tactic(tactic: String, time: float) -> void:
 	_current_tactic = tactic
 	_tactic_start_time = time
 	blackboard.set_var("tactical_priority", _get_priority(tactic))

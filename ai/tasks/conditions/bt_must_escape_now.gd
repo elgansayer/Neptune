@@ -2,6 +2,8 @@
 extends BTCondition
 class_name BTMustEscapeNow
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## CRITICAL: Returns SUCCESS if bot MUST escape immediately (just planted bomb)
 ## This is used to override farming/combat and force escape behavior
 
@@ -18,7 +20,7 @@ func _tick(_delta: float) -> int:
 		# No bomb planted recently
 		return FAILURE
 	
-	var current_time = Time.get_ticks_msec() / 1000.0
+	var current_time = SimulationTime.seconds(blackboard)
 	var time_since_plant = (current_time - last_bomb_placed_time) * 1000.0
 	
 	if time_since_plant < mandatory_escape_duration_ms:

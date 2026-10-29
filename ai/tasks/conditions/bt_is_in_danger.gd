@@ -2,6 +2,8 @@
 extends BTCondition
 class_name BTIsInDanger
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Checks if the entity is currently in danger from explosions
 ## Uses the HazardPredictor to determine if current tile is dangerous
 
@@ -31,7 +33,7 @@ func _tick(delta: float) -> int:
 	# 	print("[BTIsInDanger] TICK - player_tile=%s" % player.get_tile_position())
 	
 	var player_tile = player.get_tile_position()
-	var current_time = Time.get_ticks_msec() / 1000.0
+	var current_time = SimulationTime.seconds(blackboard)
 	
 	# CRITICAL: Check if bot is standing on a bomb - IMMEDIATE DANGER!
 	var game_instance = blackboard.get_var("game_instance")
