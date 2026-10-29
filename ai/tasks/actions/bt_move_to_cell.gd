@@ -143,8 +143,7 @@ func _tick(_delta: float) -> int:
 		var both_centered = target_x_centered and target_y_centered
 		
 		if both_centered:
-			# Snap to exact center now that we've naturally moved there
-			player.position = target_center
+			# Movement remains physics-owned; never teleport the authority actor.
 			# Reached destination tile AND fully centered on both axes
 			print("[BTMoveToCell] ✓✓✓ SUCCESS: Reached target %s - Pos: (%.2f, %.2f), Center: (%.2f, %.2f), Offset: (%.2fpx, %.2fpx)" % [
 				target_cell, player.position.x, player.position.y, target_center.x, target_center.y,
@@ -218,10 +217,9 @@ func _tick(_delta: float) -> int:
 				Engine.get_physics_frames(), player.position, elapsed_ms, total_stuck_movement, scaled_threshold])
 			
 			# Debug collisions
-			for i in range(player.get_slide_collision_count()):
-				var collision = player.get_slide_collision(i)
-				if collision:
-					print("  COLLISION: ", collision.get_collider().name, " at ", collision.get_position())
+			if player.has_method("get_observed_contacts"):
+				for collision in player.get_observed_contacts():
+					print("  COLLISION: ", collision.kind, " at ", collision.position)
 			
 			# If we are stuck, penalize the target and fail
 			if target_cell != null:

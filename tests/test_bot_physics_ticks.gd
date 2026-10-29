@@ -15,12 +15,13 @@ func test_manager_owns_exactly_one_update_per_physics_tick() -> Variant:
 	tree.root_task = preload("res://tests/support/count_bot_ticks.gd").new()
 	bot_controller.behavior_tree = tree
 	bot_controller.restart()
-	bot_player.set_meta("fixture_bt_ticks", 0)
+	var observed_actor = bot_controller.get_blackboard().get_var("player")
+	observed_actor.set_meta("fixture_bt_ticks", 0)
 	bot_controller.active = true
 	for index in range(6):
 		await get_tree().physics_frame
 	await get_tree().process_frame
-	var paused_ticks: int = bot_player.get_meta("fixture_bt_ticks", 0)
+	var paused_ticks: int = observed_actor.get_meta("fixture_bt_ticks", 0)
 	print("BOT_TICK_PAUSED=" + JSON.stringify({"native_ticks": paused_ticks, "mode": bot_controller.update_mode}))
 	var previous_calls: int = bot_manager.observed_physics_calls
 	bot_manager.set_physics_process(true)
@@ -30,7 +31,7 @@ func test_manager_owns_exactly_one_update_per_physics_tick() -> Variant:
 	bot_manager.set_physics_process(false)
 	bot_controller.active = false
 	var calls: int = bot_manager.observed_physics_calls - previous_calls
-	var native_ticks: int = int(bot_player.get_meta("fixture_bt_ticks", 0)) - paused_ticks
+	var native_ticks: int = int(observed_actor.get_meta("fixture_bt_ticks", 0)) - paused_ticks
 	print("BOT_TICK_ACTIVE=" + JSON.stringify({"manager_calls": calls, "native_ticks": native_ticks, "mode": bot_controller.update_mode}))
 	if paused_ticks != 0:
 		return "Manager paused but native behaviour tree updated %d times" % paused_ticks

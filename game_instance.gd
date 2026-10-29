@@ -652,6 +652,27 @@ func _check_alive_players():
 	if alive_count <= 1:
 		end_match()
 
+var _public_observation_source: RefCounted
+
+func get_observation_source():
+	if _public_observation_source == null:
+		_public_observation_source = preload("res://shared/observations/source.gd").new(self)
+		child_entered_tree.connect(_public_observation_source.mark_dirty)
+		child_exiting_tree.connect(_public_observation_source.mark_dirty)
+	return _public_observation_source
+
+func invalidate_public_observation() -> void:
+	if _public_observation_source != null:
+		_public_observation_source.mark_dirty()
+
+func get_public_observation(viewer_id: int) -> Dictionary:
+	var viewer = players.get(viewer_id)
+	if not is_instance_valid(viewer) or viewer.game_instance != self:
+		return {"schema": 1, "valid": false, "reason": "unknown_viewer"}
+	var snapshot: Dictionary = get_observation_source().export_snapshot(true)
+	snapshot["viewer_id"] = viewer_id
+	return snapshot
+
 var _player_commands: RefCounted
 
 func _command_dispatcher():

@@ -15,7 +15,7 @@ func _board(player, rng: RandomNumberGenerator):
 	var board = ClassDB.instantiate("Blackboard")
 	board.set_var("player", player)
 	board.set_var("grid_sampler", bot_manager.grid_sampler)
-	board.set_var("ai_manager", game_instance.ai_manager)
+	board.set_var("ai_manager", bot_manager.observed_ai_manager)
 	board.set_var("policy_rng", rng)
 	return board
 
@@ -42,7 +42,8 @@ func _actor() -> Node:
 	bot_manager.set_physics_process(false)
 	bot_controller.active = false
 	bot_player.set_physics_process(false)
-	return bot_player
+	bot_manager.refresh_public_observations(true)
+	return bot_controller.get_blackboard().get_var("player")
 
 func test_native_ambush_does_not_consume_global_gameplay_rng() -> Variant:
 	var player = await _actor()

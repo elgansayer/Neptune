@@ -19,7 +19,9 @@ func configure(instance: Node, sampler, default_buffer: float = 0.1) -> void:
 	_grid_sampler = sampler
 	_default_buffer = default_buffer
 
-func refresh(current_time: float) -> void:
+func refresh(current_time: float, force_observation: bool = true) -> void:
+	if force_observation and is_instance_valid(_game_instance) and _game_instance.has_method("refresh"):
+		_game_instance.refresh(true)
 	_current_time = current_time
 	_danger_cache.clear()
 	_threat_matrix.clear()

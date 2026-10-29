@@ -379,48 +379,9 @@ func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]
 
 func _broadcast_safety_data(data: Dictionary) -> void:
-	"""Send safety evaluation to all clients for visualization (DEBUG ONLY)"""
-	# Skip broadcast in production - this is only for debug visualization
-	# and causes MTU exceeded warnings due to large data size (5000+ bytes)
-	# To enable debug visualization, set this to true
-	const ENABLE_SAFETY_BROADCAST := false
-	if not ENABLE_SAFETY_BROADCAST:
-		return
-	
-	print("[BTFindFarmingSpot] >>> _broadcast_safety_data called with %d tiles" % data.size())
-	
-	# Get the bot player node from blackboard
-	var player_node = blackboard.get_var("player")
-	if not player_node:
-		print("[BTFindFarmingSpot] !!! Cannot broadcast: no player in blackboard")
-		return
-	print("[BTFindFarmingSpot] >>> Got player_node: ", player_node.name)
-	
-	# Navigate to the game instance (player's parent)
-	var game_instance = player_node.get_parent()
-	if not game_instance:
-		print("[BTFindFarmingSpot] !!! Cannot broadcast: no game_instance")
-		return
-	print("[BTFindFarmingSpot] >>> Got game_instance")
-	
-	# Get ClientMain autoload
-	var client_main = game_instance.get_node_or_null("/root/ClientMain")
-	if not client_main:
-		print("[BTFindFarmingSpot] !!! Cannot broadcast: ClientMain not found")
-		return
-	print("[BTFindFarmingSpot] >>> Got ClientMain, players count: ", game_instance.players.size())
-	
-	# Send RPC to all connected clients (iterate through players, not multiplayer.get_peers())
-	var sent_count = 0
-	for peer_id in game_instance.players:
-		var player = game_instance.players[peer_id]
-		print("[BTFindFarmingSpot] >>> Checking peer_id ", peer_id, " is_ai_bot=", player.is_ai_bot())
-		if not player.is_ai_bot():
-			print("[BTFindFarmingSpot] >>> Sending RPC to peer %d with %d tiles" % [peer_id, data.size()])
-			client_main.rpc_id(peer_id, "bomb_safety_update", data)
-			sent_count += 1
-	
-	print("[BTFindFarmingSpot] >>> BROADCAST COMPLETE: %d tiles to %d clients" % [data.size(), sent_count])
+	# Local diagnostic data only. Policy views do not navigate to authority nodes
+	# or send RPCs; an operator can inspect this detached blackboard payload.
+	blackboard.set_var("safety_debug_snapshot", data.duplicate(true))
 
 func _coerce_to_tile(value) -> Vector2i:
 	if value == null:

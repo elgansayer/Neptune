@@ -32,7 +32,7 @@ func _tick(_delta: float) -> int:
 		var closest_powerup = null
 		var closest_distance = INF
 		
-		for powerup in game_instance.powerups:
+		for powerup in game_instance.powerups.values():
 			if not is_instance_valid(powerup):
 				continue
 			

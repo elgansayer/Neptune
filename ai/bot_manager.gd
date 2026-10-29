@@ -73,6 +73,21 @@ func restore_bot_policy_snapshot(peer_id: int, snapshot: Dictionary) -> bool:
 	rng.state = int(value)
 	return true
 
+const ObservationWorld = preload("res://shared/observations/world.gd")
+const ObservationPort = preload("res://shared/observations/command_port.gd")
+var observation_source
+var perception_world: Node
+var observed_ai_manager: AIManager
+var _observation_views: Dictionary = {}
+var observation_error := ""
+
+func refresh_public_observations(force: bool = false) -> void:
+	if is_instance_valid(perception_world):
+		perception_world.refresh(force)
+		for world in _observation_views.values():
+			if is_instance_valid(world):
+				world.refresh()
+
 var game_instance
 var _bot_players: Dictionary = {} # peer_id -> BTPlayer
 var grid_sampler
@@ -192,12 +207,20 @@ func configure(instance) -> void:
 	
 	print("[BotManager] Loaded behavior tree (cache ignored)")
 	
+	observation_source = game_instance.get_observation_source()
+	perception_world = ObservationWorld.new(observation_source)
+	perception_world.name = "PublicPerception"
+	add_child(perception_world)
 	grid_sampler = GridSamplerScript.new()
-	grid_sampler.configure(game_instance, null, GameConfig.TILE_SIZE)
+	grid_sampler.configure(perception_world, null, GameConfig.TILE_SIZE)
+	observed_ai_manager = AIManager.new()
+	var dimensions: Vector2i = perception_world.get_map_dimensions()
+	observed_ai_manager.configure(perception_world, grid_sampler, dimensions.x, dimensions.y)
+	perception_world.ai_manager = observed_ai_manager
 	hazard_predictor = HazardPredictorScript.new()
-	hazard_predictor.configure(game_instance, grid_sampler)
+	hazard_predictor.configure(perception_world, grid_sampler)
 	opponent_tracker = OpponentTrackerScript.new()
-	opponent_tracker.configure(game_instance)
+	opponent_tracker.configure(perception_world)
 	bomb_planner = BombPlannerScript.new()
 	bomb_planner.configure(grid_sampler, hazard_predictor)
 	
@@ -211,7 +234,7 @@ func configure(instance) -> void:
 
 func _configure_safety_checker() -> void:
 	if game_instance != null and game_instance.ai_manager != null:
-		bomb_safety_checker.configure(game_instance.ai_manager, grid_sampler)
+		bomb_safety_checker.configure(observed_ai_manager, grid_sampler)
 		bomb_safety_checker.debug_logging = true
 		print("[BotManager] BombSafetyChecker configured with AIManager (debug=ON)")
 
@@ -226,8 +249,10 @@ func _physics_process(delta: float) -> void:
 	if game_instance == null:
 		return
 	
-	# Handle match_active state for all bots
-	var should_be_active = game_instance.match_active
+	refresh_public_observations(true)
+	observation_error = "" if perception_world.bot_supported else "unsupported_public_observation"
+	# Supported visibility is an admission/runtime requirement, never a safety hint.
+	var should_be_active = game_instance.match_active and observation_error.is_empty()
 	for peer_id in _bot_players:
 		var bt_player = _bot_players[peer_id]
 		if is_instance_valid(bt_player):
@@ -236,12 +261,15 @@ func _physics_process(delta: float) -> void:
 				bt_player.set("active", should_be_active)
 	
 	# Don't update bots during countdown
-	if not game_instance.match_active:
+	if not should_be_active:
+		for peer_id in _bot_players:
+			game_instance.submit_player_command(peer_id, {"action": "move", "x": 0, "y": 0})
 		return
 	
 	game_instance.ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
-	hazard_predictor.refresh(game_instance.get_simulation_time_sec())
-	opponent_tracker.update_from_players(game_instance.players.values())
+	observed_ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
+	hazard_predictor.refresh(game_instance.get_simulation_time_sec(), false)
+	opponent_tracker.update_from_players(perception_world.players.values())
 	
 	# Debug log every 120 frames (~2 seconds)
 	if Engine.get_physics_frames() % 120 == 0 and not _bot_players.is_empty():
@@ -283,7 +311,7 @@ func _physics_process(delta: float) -> void:
 					if is_instance_valid(player_ref):
 						bot_positions[peer_id] = player_ref.get_tile_position()
 		
-		game_instance.ai_manager.update_opponent_intel(bot_positions, game_instance.players, delta)
+		observed_ai_manager.update_opponent_intel(bot_positions, perception_world.players, delta)
 
 func spawn_bots(count: int, personality: String = DEFAULT_PERSONALITY) -> void:
 	for i in range(count):
@@ -303,6 +331,12 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 		return
 	
 	var player = game_instance.players[peer_id]
+	var view = ObservationWorld.new(observation_source)
+	view.name = "ObservationView_%d" % abs(peer_id)
+	view.ai_manager = observed_ai_manager
+	view.configure_actor(peer_id, ObservationPort.new(game_instance, player, observation_source))
+	add_child(view)
+	_observation_views[peer_id] = view
 	print("[BotManager] Spawned bot %s (peer %d)" % [player.player_name, peer_id])
 	
 	# Create BTPlayer using ClassDB (native LimboAI class)
@@ -313,17 +347,17 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	bt_player.set("behavior_tree", bot_behavior_tree)
 	
 	# Set agent
-	bt_player.set("agent", player)
+	bt_player.set("agent_node", NodePath(".."))
 	
 	# CRITICAL: Must set scene_root_hint BEFORE add_child
 	# because BTPlayer._enter_tree() needs it during initialization
 	# NOTE: .owner can't be set before add_child, so use scene_root_hint property
-	var scene_root = get_tree().current_scene
+	var scene_root = view
 	if scene_root:
 		bt_player.call("set_scene_root_hint", scene_root)
 	
 	# Now add to scene tree (this triggers _enter_tree() initialization with tree and agent set)
-	add_child(bt_player)
+	view.own_actor.add_child(bt_player)
 	
 	# DEBUG: Check what owner was set
 	print("[BotManager] BTPlayer added. owner=", bt_player.owner, " get_tree()=", bt_player.get_tree(), " scene_root=", bt_player.get_tree().current_scene if bt_player.get_tree() else "null")
@@ -335,9 +369,9 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 		return
 	
 	# Populate the BTPlayer's blackboard with all required references
-	blackboard.set_var("player", player)
-	blackboard.set_var("game_instance", game_instance)
-	blackboard.set_var("ai_manager", game_instance.ai_manager)
+	blackboard.set_var("player", view.own_actor)
+	blackboard.set_var("game_instance", view)
+	blackboard.set_var("ai_manager", observed_ai_manager)
 	blackboard.set_var("grid_sampler", grid_sampler)
 	blackboard.set_var("hazard_predictor", hazard_predictor)
 	blackboard.set_var("opponent_tracker", opponent_tracker)
@@ -394,8 +428,12 @@ func _despawn_bot(peer_id: int) -> void:
 		var bt_player = _bot_players[peer_id]
 		if is_instance_valid(bt_player):
 			bt_player.active = false
-			bt_player.queue_free()
+			bt_player.free()
 		_bot_players.erase(peer_id)
+		var view = _observation_views.get(peer_id)
+		if is_instance_valid(view):
+			view.queue_free()
+		_observation_views.erase(peer_id)
 		print("[BotManager] Despawned bot (peer %d)" % peer_id)
 
 func get_bot_controller(peer_id: int):
@@ -405,11 +443,14 @@ func _exit_tree() -> void:
 	for bt_player in _bot_players.values():
 		if is_instance_valid(bt_player):
 			bt_player.active = false
-			bt_player.queue_free()
+			bt_player.free()
 	_bot_players.clear()
+	_observation_views.clear()
 	_policy_rngs.clear()
 
 func refresh_perception() -> void:
 	"""Force immediate refresh of perception modules (e.g. after bomb placement)"""
 	if hazard_predictor:
-		hazard_predictor.refresh(game_instance.get_simulation_time_sec())
+		refresh_public_observations(true)
+		observed_ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
+		hazard_predictor.refresh(game_instance.get_simulation_time_sec(), false)
