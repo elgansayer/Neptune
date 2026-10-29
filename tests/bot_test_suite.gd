@@ -26,6 +26,7 @@ func run_tests() -> void:
 	for method in all_methods:
 		if method.name.begins_with("test_"):
 			test_methods.append(method.name)
+	test_methods.sort()
 			
 	print("Test methods to run: %s" % str(test_methods))
 	
@@ -57,7 +58,7 @@ func run_single_test(method_name: String) -> void:
 
 func setup_suite() -> void:
 	# Create GameInstance
-	var GameInstanceClass = load("res://game_instance.gd")
+	var GameInstanceClass = load("res://tests/support/fixture_game_instance.gd")
 	game_instance = GameInstanceClass.new()
 	game_instance.name = "TestGameInstance"
 	
@@ -77,6 +78,7 @@ func setup_suite() -> void:
 	
 	map_manager = game_instance.map_manager
 	bot_manager = game_instance.bot_manager
+	seed(424242)
 	
 	# Disable auto-spawn in bot manager if possible, or just clear them
 	if bot_manager:
@@ -94,6 +96,9 @@ func teardown_suite() -> void:
 func setup_test() -> void:
 	# Default setup: Clear map
 	clear_map()
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	game_instance.ai_manager.configure(game_instance, game_instance.bot_manager.grid_sampler, default_map_width, default_map_height)
 
 func teardown_test() -> void:
 	# Remove all players/bots
@@ -179,11 +184,20 @@ func spawn_bot_at(tile: Vector2i) -> Node:
 		
 	# Get initial player count
 	var initial_players = game_instance.players.keys()
+	var was_active: bool = game_instance.match_active
+	var manager_processing: bool = game_instance.bot_manager.is_physics_processing()
+	game_instance.match_active = false
+	game_instance.bot_manager.set_physics_process(false)
 	
 	# Spawn bot using GameInstance (which uses BotManager)
 	print("Spawning bot... Initial players: ", initial_players)
 	print("GameConfig.TILE_SIZE: ", GameConfig.TILE_SIZE)
 	game_instance.spawn_bot("BALANCED")
+	for pid in game_instance.players:
+		if not pid in initial_players:
+			var controller = bot_manager.get_bot_controller(pid)
+			controller.active = false
+			controller.process_mode = Node.PROCESS_MODE_DISABLED
 	print("Spawned. Current players: ", game_instance.players.keys())
 	
 	# Find the new player
@@ -225,9 +239,18 @@ func spawn_bot_at(tile: Vector2i) -> Node:
 		# Get controller
 		if bot_manager:
 			bot_controller = bot_manager.get_bot_controller(new_peer_id)
+		await get_tree().physics_frame
+		if bot_player.get_tile_position() != tile or bot_controller == null:
+			push_error("Fixture did not create a controlled bot at the requested tile")
+		game_instance.match_active = was_active
+		game_instance.bot_manager.set_physics_process(manager_processing)
+		bot_controller.process_mode = Node.PROCESS_MODE_INHERIT
+		bot_controller.active = was_active
 			
 		return bot_player
 		
+	game_instance.match_active = was_active
+	game_instance.bot_manager.set_physics_process(manager_processing)
 	return null
 
 func wait_for_condition(condition_func: Callable, timeout: float = 2.0) -> bool:
