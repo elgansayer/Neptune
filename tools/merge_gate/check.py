@@ -23,6 +23,15 @@ class GateContracts(unittest.TestCase):
         self.assertIn("input-tooling", result["required"])
         self.assertIn("gate-contracts", result["required"])
 
+    def test_factory_is_tooling_but_its_checks_are_always_required(self):
+        self.assertEqual(plan(["tools/factory/store.py"])["mode"], "metadata")
+        for paths in (["README.md"], ["game_instance.gd"]):
+            self.assertIn("factory-contracts", plan(paths)["required"])
+        report, identity = self.passing()
+        del report["checks"]["factory-contracts"]
+        with self.assertRaises(ValueError):
+            assert_pass(report, identity)
+
     def test_gameplay_and_unknown_paths_require_runtime_and_full_bots(self):
         paths = ["shared/constants.gd", "game_config.gd", "new-gameplay/file.json",
                  "project.godot", "maps/new.pck", "characters/new.png", "assets/new.wav",
