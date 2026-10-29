@@ -1,7 +1,6 @@
 {
   "schema": "neptune.real-input-evidence.v1",
   "issue": 462,
-  "base": "957491ec44cec8b4c14e6bcfc461ed9cca3eb0f8",
   "status": "media verified; real core built/ABI-loaded; full frontend/settings locks remain for27",
   "discs": {
     "usa": {
@@ -532,5 +531,7 @@
     "frame/save repeatability",
     "extraction/parity",
     "continuous factory"
-  ]
+  ],
+  "implementation_base": "957491ec44cec8b4c14e6bcfc461ed9cca3eb0f8",
+  "integration_base": "a9bb03ad126c7572b8dbcca6b3bbbe7f2d403629"
 }

@@ -1,6 +1,8 @@
 # Real Saturn media and pinned core: first #462 increment
 
-Base `957491ec44cec8b4c14e6bcfc461ed9cca3eb0f8`. Issue #462 is the Codex media
+Initial implementation base `957491ec44cec8b4c14e6bcfc461ed9cca3eb0f8`.
+Integration base `a9bb03ad126c7572b8dbcca6b3bbbe7f2d403629` includes Gemini audit PR #466 unchanged.
+Issue #462 is the Codex media
 slice of #26; #27 supplies the actual frontend, applied settings and repeatability.
 Gemini owns the independent #463/#464 asset/research audit. No original disc, BIOS,
 capture, save or memory bytes are committed here.
