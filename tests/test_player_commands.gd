@@ -308,9 +308,15 @@ func test_unregistered_actor_helper_cannot_impersonate_an_existing_peer() -> Var
 
 func test_real_same_tick_fast_tap_performs_once_and_releases() -> Variant:
 	actor.has_power_glove = true
+	# Queue real input before physics, then sample in a real callback like GameView.
+	await get_tree().process_frame
+	var sampler = preload("res://tests/support/sample_action_edges.gd").new()
+	add_child(sampler)
 	Input.action_press("player_action")
 	Input.action_release("player_action")
-	var packet := {"action_pressed": Input.is_action_just_pressed("player_action"), "action_released": Input.is_action_just_released("player_action")}
+	await sampler.captured
+	var packet: Dictionary = sampler.packet.duplicate()
+	sampler.queue_free()
 	if not packet.action_pressed or not packet.action_released:
 		return "Real Input fixture did not produce its documented same-tick press/release"
 	var outcome: Dictionary = game_instance.handle_player_input(actor.peer_id, packet)

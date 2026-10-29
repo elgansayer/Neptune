@@ -39,7 +39,12 @@ var map_tiles := {} # Dictionary of tile_key -> StaticBody2D for collision
 var next_bomb_id := 0
 var map_manager: Node # MapManager instance
 var spawn_points := [] # Available spawn points from map
-var next_spawn_index := 0 # Track which spawn point to use next
+var next_spawn_index := 0 # Historical diagnostic field; allocation no longer wraps.
+const SpawnReservations = preload("res://shared/rooms/spawn_reservations.gd")
+var spawn_seed: int = 0
+var _spawn_plan: RefCounted
+var _spawn_signature := ""
+var _spawn_bindings: Dictionary = {}
 var bot_manager: Node
 # Optional trusted match setup input. Null generates an independent policy seed;
 # deterministic scenarios set an int before adding the authority to SceneTree.
@@ -214,11 +219,10 @@ func _ready():
 	# Register console commands
 	_register_console_commands()
 
-func spawn_bot(personality: String = "BALANCED") -> void:
+func spawn_bot(personality: String = "BALANCED", spawn_position: Vector2 = Vector2.ZERO) -> Dictionary:
 	if bot_manager == null:
-		push_warning("[GameInstance] Bot manager not ready; cannot spawn bot")
-		return
-	bot_manager.spawn_bot(personality)
+		return SpawnReservations.failure("bot_manager_unavailable")
+	return bot_manager.spawn_bot(personality, spawn_position)
 
 func spawn_bots(count: int, personality: String = "BALANCED") -> void:
 	if bot_manager == null:
@@ -361,27 +365,156 @@ func get_simulation_time_sec() -> float:
 func get_clock_state() -> Dictionary:
 	return {"server_time": current_time_msec, "simulation_tick": simulation_tick}
 
-func get_next_spawn_point() -> Vector2:
-	"""Get the next available spawn point from the map"""
-	if spawn_points.is_empty():
-		push_warning("[GameInstance] No spawn points available, using fallback")
-		return Vector2(64, 64)
-	
-	var spawn_pos = spawn_points[next_spawn_index % spawn_points.size()]
-	next_spawn_index += 1
-	return spawn_pos
+func _spawn_definition() -> Dictionary:
+	if not is_finite(GameConfig.TILE_SIZE) or GameConfig.TILE_SIZE <= 0 or not is_finite(GameConfig.PLAYER_HALF_WIDTH) or GameConfig.PLAYER_HALF_WIDTH <= 0:
+		return SpawnReservations.failure("invalid_spawn_geometry")
+	if not SpawnReservations.valid_map(game_map): return SpawnReservations.failure("invalid_spawn_map")
+	if spawn_points.size() > SpawnReservations.MAX_STARTS: return SpawnReservations.failure("spawn_budget_exceeded")
+	var cells: Array[Vector2i] = []
+	for position in spawn_points:
+		if not position is Vector2 or not position.is_finite(): return SpawnReservations.failure("invalid_spawn_definition")
+		if position.x < 0 or position.y < 0 or position.x >= game_map[0].size() * GameConfig.TILE_SIZE or position.y >= game_map.size() * GameConfig.TILE_SIZE:
+			return SpawnReservations.failure("out_of_bounds_spawn_definition")
+		var cell := Vector2i(floori(position.x / GameConfig.TILE_SIZE), floori(position.y / GameConfig.TILE_SIZE))
+		if position != (Vector2(cell) + Vector2.ONE * 0.5) * GameConfig.TILE_SIZE:
+			return SpawnReservations.failure("uncentered_spawn_definition")
+		cells.append(cell)
+	cells.sort_custom(func(a, b): return a.y < b.y or (a.y == b.y and a.x < b.x))
+	var portable := []
+	for cell in cells: portable.append([cell.x, cell.y])
+	return {"accepted": true, "cells": cells, "signature": JSON.stringify([portable, game_map[0].size(), game_map.size(), str(spawn_seed), GameConfig.TILE_SIZE, GameConfig.PLAYER_HALF_WIDTH]).sha256_text()}
 
-func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO, is_bot: bool = false, personality: String = ""):
+func _ensure_spawn_plan() -> Dictionary:
+	var definition := _spawn_definition()
+	if not definition.accepted: return definition
+	if _spawn_plan != null and definition.signature == _spawn_signature: return {"accepted": true}
+	if _spawn_plan != null and (not _spawn_bindings.is_empty() or not _spawn_plan.snapshot().reservations.is_empty()):
+		return SpawnReservations.failure("spawn_configuration_changed")
+	var plan = SpawnReservations.new()
+	var result: Dictionary = plan.configure(game_map, definition.cells, spawn_seed)
+	if result.accepted:
+		_spawn_plan = plan
+		_spawn_signature = definition.signature
+	return result
+
+func _occupied_start_cells() -> Array[Vector2i]:
+	var cells: Array[Vector2i] = []
+	var half := Vector2.ONE * GameConfig.PLAYER_HALF_WIDTH
+	var bodies: Array = []
+	var exit_blockers: Array = []
+	for actor in players.values():
+		if is_instance_valid(actor) and not actor.is_dead and not actor.is_spectator: bodies.append(actor)
+	for bomb in bombs.values():
+		if is_instance_valid(bomb) and not bomb.has_exploded:
+			bodies.append(bomb)
+			if bomb.collision_layer & Constants.COLLISION_LAYER_BOMBS: exit_blockers.append(bomb)
+	for position in spawn_points:
+		var cell := Vector2i(floori(position.x / GameConfig.TILE_SIZE), floori(position.y / GameConfig.TILE_SIZE))
+		if _start_footprint_blocked(position, half, bodies) or _spawn_flame_active(cell):
+			cells.append(cell)
+			continue
+		var exit_available := false
+		for direction in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+			var neighbor: Vector2i = cell + direction
+			var center := (Vector2(neighbor) + Vector2.ONE * 0.5) * GameConfig.TILE_SIZE
+			if SpawnReservations.open_cell(game_map, neighbor) and not _spawn_flame_active(neighbor) and not _start_footprint_blocked(center, half, exit_blockers):
+				exit_available = true
+				break
+		if not exit_available: cells.append(cell)
+	return cells
+
+func _start_footprint_blocked(position: Vector2, half: Vector2, bodies: Array) -> bool:
+	var candidate := Rect2(position - half, half * 2.0)
+	for body in bodies:
+		var shape_node = body.get_node_or_null("CollisionShape2D")
+		if shape_node != null and shape_node.shape != null:
+			var footprint: Rect2 = (body.transform * shape_node.transform) * shape_node.shape.get_rect()
+			if footprint.intersects(candidate): return true
+	return false
+
+func _spawn_flame_active(cell: Vector2i) -> bool:
+	var key := "%d,%d" % [cell.x, cell.y]
+	return active_explosion_tiles.has(key) and active_explosion_tiles[key] >= get_simulation_time_msec()
+
+func validate_spawn_capacity(required: int) -> Dictionary:
+	if required <= 0 or required > SpawnReservations.MAX_STARTS: return SpawnReservations.failure("invalid_spawn_count")
+	var ready := _ensure_spawn_plan()
+	if not ready.accepted: return ready
+	var available := 0
+	for cell in _spawn_definition().cells:
+		if SpawnReservations.supported_start(game_map, cell): available += 1
+	return {"accepted": available >= required, "reason": "supported" if available >= required else "insufficient_spawn_capacity", "available": available, "required": required}
+
+func get_next_spawn_point() -> Variant:
+	# Legacy debug preview only: no reservation, index increment or unsafe fallback.
+	if not _ensure_spawn_plan().accepted: return null
+	var result: Dictionary = _spawn_plan.preview(game_map, _occupied_start_cells())
+	return (Vector2(result.cell[0], result.cell[1]) + Vector2.ONE * 0.5) * GameConfig.TILE_SIZE if result.accepted else null
+
+func get_spawn_reservation_state() -> Dictionary:
+	var result := _ensure_spawn_plan()
+	return _spawn_plan.snapshot() if result.accepted else result
+
+func restore_spawn_reservations(state: Dictionary) -> Dictionary:
+	if not players.is_empty(): return SpawnReservations.failure("live_roster")
+	var definition := _spawn_definition()
+	if not definition.accepted: return definition
+	var plan = SpawnReservations.new()
+	var result: Dictionary = plan.configure(game_map, definition.cells, spawn_seed)
+	if result.accepted: result = plan.restore(state, game_map)
+	if result.accepted:
+		_spawn_plan = plan
+		_spawn_signature = definition.signature
+		_spawn_bindings.clear()
+	return result
+
+func reset_spawn_reservations() -> Dictionary:
+	if not players.is_empty(): return SpawnReservations.failure("live_roster")
+	_spawn_plan = null
+	_spawn_signature = ""
+	_spawn_bindings.clear()
+	return {"accepted": true, "reason": "reset"}
+
+func release_spawn_reservation(participant_id: String) -> Dictionary:
+	if participant_id in _spawn_bindings.values(): return SpawnReservations.failure("participant_in_use")
+	if _spawn_plan == null or not _spawn_plan.snapshot().reservations.has(participant_id):
+		return SpawnReservations.failure("unknown_reservation")
+	_spawn_plan.release(participant_id)
+	return {"accepted": true, "reason": "released"}
+
+func get_reserved_spawn_point(peer_id: int) -> Variant:
+	if _spawn_plan == null or not _spawn_bindings.has(peer_id): return null
+	var cell = _spawn_plan.snapshot().reservations.get(_spawn_bindings[peer_id])
+	return (Vector2(cell[0], cell[1]) + Vector2.ONE * 0.5) * GameConfig.TILE_SIZE if cell != null else null
+
+func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector2.ZERO, is_bot: bool = false, personality: String = "", participant_id: String = "") -> Dictionary:
+	if not is_inside_tree(): return SpawnReservations.failure("authority_not_ready")
+	if peer_id == 0: return SpawnReservations.failure("invalid_peer_id")
+	if players.has(peer_id): return SpawnReservations.failure("peer_in_use")
+	var identity := participant_id if not participant_id.is_empty() else "peer:%d" % peer_id
+	if not SpawnReservations.valid_identity(identity): return SpawnReservations.failure("invalid_participant_id")
+	if identity in _spawn_bindings.values(): return SpawnReservations.failure("participant_in_use")
+	var ready := _ensure_spawn_plan()
+	if not ready.accepted: return ready
+	var requested: Variant = null
+	if spawn_position != Vector2.ZERO:
+		if not spawn_position.is_finite(): return SpawnReservations.failure("invalid_spawn_position")
+		if spawn_position.x < 0 or spawn_position.y < 0 or spawn_position.x >= game_map[0].size() * GameConfig.TILE_SIZE or spawn_position.y >= game_map.size() * GameConfig.TILE_SIZE:
+			return SpawnReservations.failure("out_of_bounds_spawn_position")
+		var cell := Vector2i(floori(spawn_position.x / GameConfig.TILE_SIZE), floori(spawn_position.y / GameConfig.TILE_SIZE))
+		if spawn_position != (Vector2(cell) + Vector2.ONE * 0.5) * GameConfig.TILE_SIZE:
+			return SpawnReservations.failure("uncentered_spawn_position")
+		requested = cell
+	var allocation: Dictionary = _spawn_plan.reserve(identity, game_map, _occupied_start_cells(), requested)
+	if not allocation.accepted: return allocation
+	spawn_position = (Vector2(allocation.cell[0], allocation.cell[1]) + Vector2.ONE * 0.5) * GameConfig.TILE_SIZE
+	_spawn_bindings[peer_id] = identity
 	var player = ServerPlayerScene.instantiate()
 	player.peer_id = peer_id # CRITICAL: Set actual peer_id (-1, -2, -3 for bots)
 	player.player_id = str(peer_id)
 	player.username = username
 	if is_bot:
 		player.set_bot_metadata(personality)
-	
-	# Use provided spawn position, or get next available spawn from map
-	if spawn_position == Vector2.ZERO:
-		spawn_position = get_next_spawn_point()
 	
 	player.position = spawn_position
 	player.name = "Player_" + str(peer_id)
@@ -405,18 +538,26 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	if is_bot and peer_id < 0:
 		player.set_multiplayer_authority(1) # Server is always peer ID 1
 	
-	# Ensure the node is fully ready in the scene tree before anyone tries to access it
-	if is_inside_tree():
-		await get_tree().process_frame
-	
+	# add_child completes the actor's synchronous _ready before returning.
 	print("[Game] Player joined: ", username, " at ", spawn_position, " (Power Glove: ", player.has_power_glove, ")")
+	return {"accepted": true, "reason": "admitted", "peer_id": peer_id, "participant_id": identity, "cell": allocation.cell.duplicate(), "position": [spawn_position.x, spawn_position.y], "reused": allocation.reused}
 
-func remove_player(peer_id: int):
+func remove_player(peer_id: int, retain_spawn: bool = false):
 	if players.has(peer_id):
 		var player = players[peer_id]
-		player.queue_free()
+		if is_instance_valid(player):
+			player.set_physics_process(false)
+			player.input_direction = Vector2.ZERO
+			player.collision_layer = 0
+			player.collision_mask = 0
+			player.queue_free()
 		players.erase(peer_id)
-		print("[Game] Player left: ", peer_id)
+	# Idempotent cleanup also releases stale bookkeeping after an actor was
+	# removed by a trusted fixture/operator before this canonical leave call.
+	var identity: String = _spawn_bindings.get(peer_id, "")
+	_spawn_bindings.erase(peer_id)
+	if _spawn_plan != null and not retain_spawn: _spawn_plan.release(identity)
+	print("[Game] Player left: ", peer_id)
 
 func end_match():
 	"""End the match and determine winner"""

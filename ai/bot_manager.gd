@@ -315,20 +315,16 @@ func _physics_process(delta: float) -> void:
 
 func spawn_bots(count: int, personality: String = DEFAULT_PERSONALITY) -> void:
 	for i in range(count):
-		spawn_bot(personality)
+		if not spawn_bot(personality).accepted: break
 
-func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
+func spawn_bot(personality: String = DEFAULT_PERSONALITY, spawn_position: Vector2 = Vector2.ZERO) -> Dictionary:
 	if game_instance == null:
-		push_warning("[BotManager] GameInstance not assigned yet")
-		return
+		return {"accepted": false, "reason": "authority_not_ready"}
 	
 	var peer_id = next_bot_peer_id
+	var admission: Dictionary = game_instance.add_player(peer_id, "%s_Bot_%d" % [personality.capitalize(), abs(peer_id)], spawn_position, true, personality)
+	if not admission.accepted: return admission
 	next_bot_peer_id -= 1
-	
-	game_instance.add_player(peer_id, "%s_Bot_%d" % [personality.capitalize(), abs(peer_id)], Vector2.ZERO, true, personality)
-	if not game_instance.players.has(peer_id):
-		push_warning("[BotManager] Failed to spawn bot player for peer id %s" % peer_id)
-		return
 	
 	var player = game_instance.players[peer_id]
 	var view = ObservationWorld.new(observation_source)
@@ -366,7 +362,10 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	var blackboard = bt_player.get_blackboard()
 	if not blackboard:
 		push_error("[BotManager] BTPlayer did not create a blackboard!")
-		return
+		game_instance.remove_player(peer_id)
+		bt_player.queue_free()
+		view.queue_free()
+		return {"accepted": false, "reason": "bot_controller_unavailable"}
 	
 	# Populate the BTPlayer's blackboard with all required references
 	blackboard.set_var("player", view.own_actor)
@@ -421,6 +420,8 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	player.tree_exited.connect(func():
 		_despawn_bot(peer_id)
 	, Object.CONNECT_ONE_SHOT)
+	admission["controller_created"] = true
+	return admission
 
 func _despawn_bot(peer_id: int) -> void:
 	_policy_rngs.erase(peer_id)

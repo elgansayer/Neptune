@@ -14,8 +14,9 @@ func setup_test() -> void:
 	game_instance.ai_manager.refresh_threat_matrix(game_instance.current_time_msec)
 
 func teardown_test() -> void:
-	if is_instance_valid(actor) and not game_instance.players.has(actor.peer_id):
-		actor.queue_free()
+	if is_instance_valid(actor):
+		if not game_instance.players.has(actor.peer_id): actor.queue_free()
+		game_instance.remove_player(actor.peer_id)
 	await super()
 
 func _world_state() -> Dictionary:

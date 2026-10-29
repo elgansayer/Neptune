@@ -93,7 +93,10 @@ func _cmd_spawn_bot(personality: String = "BALANCED") -> void:
 		LimboConsole.error("❌ Invalid personality. Use: " + ", ".join(valid_personalities))
 		return
 	
-	_get_game_instance().spawn_bot(personality)
+	var result: Dictionary = _get_game_instance().spawn_bot(personality)
+	if not result.accepted:
+		LimboConsole.error("Spawn refused: " + result.reason)
+		return
 	LimboConsole.info("🤖 Spawned %s bot" % personality)
 
 func _cmd_spawn_fakeplayer(name: String = "FakePlayer") -> void:
@@ -101,8 +104,10 @@ func _cmd_spawn_fakeplayer(name: String = "FakePlayer") -> void:
 		return
 	
 	var peer_id = -1000 - randi() % 9000
-	var spawn_pos = _get_game_instance().get_next_spawn_point()
-	_get_game_instance().add_player(peer_id, name, spawn_pos, false, "")
+	var result: Dictionary = _get_game_instance().add_player(peer_id, name, Vector2.ZERO, false, "")
+	if not result.accepted:
+		LimboConsole.error("Spawn refused: " + result.reason)
+		return
 	LimboConsole.info("👤 Spawned fake player '%s' (ID: %d)" % [name, peer_id])
 
 func _cmd_spawn_tirra(level: String = "baby") -> void:
@@ -131,6 +136,10 @@ func _cmd_spawn_tirra(level: String = "baby") -> void:
 	
 	# Spawn at random location
 	var spawn_pos = _get_game_instance().get_next_spawn_point()
+	if spawn_pos == null:
+		tirra.free()
+		LimboConsole.error("No supported spawn available")
+		return
 	tirra.global_position = spawn_pos
 	
 	_get_game_instance().add_child(tirra)
@@ -238,9 +247,13 @@ func _cmd_player_respawn(peer_id: int) -> void:
 	if not player:
 		return
 	
+	var spawn_pos = _get_game_instance().get_reserved_spawn_point(peer_id)
+	if spawn_pos == null:
+		LimboConsole.error("Player has no spawn reservation")
+		return
 	player.is_dead = false
 	player.is_spectator = false
-	player.position = _get_game_instance().get_next_spawn_point()
+	player.position = spawn_pos
 	LimboConsole.info("♻️ Respawned %s" % player.username)
 
 func _cmd_player_immortal(peer_id: int, seconds: float = 10.0) -> void:
@@ -984,9 +997,13 @@ func _cmd_game_reset() -> void:
 	# Reset all players
 	for peer_id in _get_game_instance().players:
 		var player = _get_game_instance().players[peer_id]
+		var spawn_pos = _get_game_instance().get_reserved_spawn_point(peer_id)
+		if spawn_pos == null:
+			LimboConsole.error("Player has no spawn reservation")
+			continue
 		player.is_dead = false
 		player.is_spectator = false
-		player.position = _get_game_instance().get_next_spawn_point()
+		player.position = spawn_pos
 		player.max_bombs = 1
 		player.bomb_range = 2
 		player.skate_count = 1

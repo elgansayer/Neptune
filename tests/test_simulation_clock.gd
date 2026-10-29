@@ -125,7 +125,7 @@ func test_opponent_tracking_ignores_wall_pacing() -> Variant:
 	return true
 
 func test_real_native_callbacks_see_clock_before_decisions() -> Variant:
-	await spawn_bot_at(Vector2i(7, 6))
+	await spawn_bot_at(Vector2i(9, 6))
 	bot_manager.set_physics_process(false)
 	bot_controller.active = false
 	var tree = ClassDB.instantiate("BehaviorTree")
