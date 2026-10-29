@@ -74,6 +74,7 @@ static func place_bomb(tile: Vector2i, fuse_time := 3.0, owner_id := -999) -> No
 	game_instance.next_bomb_id += 1
 	bomb.owner_id = str(owner_id)
 	bomb.fuse_time = fuse_time
+	bomb.fuse_lower_bound = fuse_time
 	bomb.explosion_timer = 0.0
 	bomb.position = tile_to_world_center(tile)
 	bomb.game_instance = game_instance

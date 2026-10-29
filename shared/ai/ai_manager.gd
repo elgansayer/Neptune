@@ -6,13 +6,13 @@ class_name AIManager
 ## All bots query this singleton for danger awareness and navigation
 
 const Constants = preload("res://shared/constants.gd")
+const BombForecast = preload("res://shared/ai/perception/bomb_threat_forecast.gd")
 const DangerAwareAStarScript = preload("res://shared/ai/pathfinding/danger_aware_astar.gd")
 const OpponentProfileScript = preload("res://shared/ai/intel/opponent_profile.gd")
 
 # Global threat data: Vector2i -> time in milliseconds when tile becomes lethal
 # If tile not in dictionary, it's safe (threat time = INF)
 var threat_matrix: Dictionary = {}
-var debug_forecast_logging := false
 
 # Time-aware pathfinder (configured once at setup)
 var pathfinder: DangerAwareAStarScript = null
@@ -65,104 +65,7 @@ func _initialize_pathfinder_walls() -> void:
 ## Update ThreatMatrix based on current bomb state
 ## Called every physics frame
 func refresh_threat_matrix(current_time_msec: float) -> void:
-	threat_matrix.clear()
-	
-	if _game_instance == null:
-		return
-	
-	# CRITICAL: Include active explosion tiles (tiles currently on fire!)
-	# These are IMMEDIATELY lethal - bot will die if it walks into them.
-	# Mark them with current_time_msec so bots see them as "already exploding"
-	if "active_explosion_tiles" in _game_instance:
-		for tile_key in _game_instance.active_explosion_tiles:
-			# Active explosions are treated as immediately lethal
-			# The value is the expiration time, but for AI purposes, 
-			# we just need to know it's currently dangerous
-			threat_matrix[tile_key] = current_time_msec
-	
-	# Build threat data from all active bombs (future explosions)
-	_build_threat_matrix_with_chains(current_time_msec)
-	
-	# Debug log every 60 frames
-	if Engine.get_physics_frames() % 60 == 0:
-		var active_bombs = 0
-		if _game_instance and _game_instance.bombs:
-			for b in _game_instance.bombs.values():
-				if is_instance_valid(b) and not b.has_exploded:
-					active_bombs += 1
-		# print("[AIManager] Refreshed ThreatMatrix. Active Bombs: ", active_bombs, " Threat Tiles: ", threat_matrix.size())
-		if threat_matrix.size() > 0:
-			pass # print("[AIManager] Threat Matrix Keys: ", threat_matrix.keys())
-## Core Algorithm: Build ThreatMatrix with chain reaction simulation
-func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
-	if _game_instance == null or _grid_sampler == null:
-		return
-	
-	# Priority queue: [bomb_id, detonation_time_msec]
-	var bomb_queue: Array = []
-	
-	# Collect all active bombs
-	for bomb_id in _game_instance.bombs:
-		var bomb = _game_instance.bombs[bomb_id]
-		if not is_instance_valid(bomb) or bomb.has_exploded:
-			continue
-		
-		var fuse_remaining: float = max(Constants.BOMB_TIMER - bomb.explosion_timer, 0.0)
-		var detonation_time: float = current_time_msec + (fuse_remaining * 1000.0)
-		bomb_queue.append([bomb_id, detonation_time])
-		
-		# DEBUG: Log bomb details
-		if debug_forecast_logging and Engine.get_physics_frames() % 120 == 0:
-			print("[AIManager] Bomb ", bomb_id, " at ", bomb.get_tile_position(), " range=", bomb.explosion_range, " fuse=", fuse_remaining, "s det_time=", detonation_time, "ms")
-	
-	# Sort by detonation time (earliest first)
-	bomb_queue.sort_custom(func(a, b): return a[1] < b[1])
-	
-	# Process bombs in chronological order
-	var processed_bombs := {}
-	
-	while bomb_queue.size() > 0:
-		var entry = bomb_queue.pop_front()
-		var bomb_id = entry[0]
-		var det_time_msec = entry[1]
-		
-		if processed_bombs.has(bomb_id):
-			continue
-		
-		processed_bombs[bomb_id] = true
-		
-		var bomb = _game_instance.bombs.get(bomb_id)
-		if not is_instance_valid(bomb):
-			continue
-		
-		var bomb_pos: Vector2i = bomb.get_tile_position()
-		var bomb_range: int = bomb.explosion_range
-		
-		# DEBUG: Enable verbose logging for first bomb or every 120 frames
-		var debug_this_bomb: bool = debug_forecast_logging and Engine.get_physics_frames() % 120 == 0
-		
-		# Mark blast tiles with lethal time
-		var blast_tiles := _get_blast_tiles(bomb_pos, bomb_range, debug_this_bomb)
-		
-		if debug_this_bomb and blast_tiles.size() < 10:  # Only log small sets
-			print("[AIManager] Bomb ", bomb_id, " blast tiles: ", blast_tiles)
-		
-		for tile: Vector2i in blast_tiles:
-			var key := _tile_key(tile)
-			
-			# Only update if this is earlier than existing threat
-			if not threat_matrix.has(key) or det_time_msec < threat_matrix[key]:
-				threat_matrix[key] = det_time_msec
-		
-		# Check for chain reactions
-		for tile: Vector2i in blast_tiles:
-			var triggered_bomb_id = _find_bomb_at_tile(tile)
-			if triggered_bomb_id != null and not processed_bombs.has(triggered_bomb_id):
-				# This bomb will be triggered by current explosion
-				# It detonates at current bomb's time (instant chain)
-				bomb_queue.append([triggered_bomb_id, det_time_msec])
-				# Re-sort queue
-				bomb_queue.sort_custom(func(a, b): return a[1] < b[1])
+	threat_matrix = BombForecast.build(_game_instance, _grid_sampler, current_time_msec)
 
 ## Get all tiles affected by bomb blast
 func _get_blast_tiles(center: Vector2i, range_val: int, debug_log: bool = false) -> Array[Vector2i]:
@@ -216,22 +119,11 @@ func _find_bomb_at_tile(tile: Vector2i):
 
 ## Simulate ThreatMatrix with hypothetical bomb placement
 ## Used for "what-if" planning before committing to bomb placement
-func simulate_threat_matrix(hypothetical_bomb_pos: Vector2i, bomb_range: int, current_time_msec: float) -> Dictionary:
-	var simulated_matrix := threat_matrix.duplicate()
-	
-	# Add hypothetical bomb that detonates in 3 seconds
-	var fuse_time_msec := 3000.0
-	var det_time := current_time_msec + fuse_time_msec
-	
-	# Get blast tiles for hypothetical bomb
-	var blast_tiles := _get_blast_tiles(hypothetical_bomb_pos, bomb_range)
-	
-	for tile: Vector2i in blast_tiles:
-		var key := _tile_key(tile)
-		if not simulated_matrix.has(key) or det_time < simulated_matrix[key]:
-			simulated_matrix[key] = det_time
-	
-	return simulated_matrix
+func simulate_threat_matrix(hypothetical_bomb_pos: Vector2i, bomb_range: int, current_time_msec: float, fuse_lower_bound: float = Constants.BOMB_TIMER) -> Dictionary:
+	return BombForecast.build(_game_instance, _grid_sampler, current_time_msec, {
+		"cell": hypothetical_bomb_pos, "range": bomb_range,
+		"fuse_lower_bound": fuse_lower_bound, "elapsed": 0.0
+	})
 
 ## Get current ThreatMatrix (for external queries)
 func get_current_threat_matrix() -> Dictionary:

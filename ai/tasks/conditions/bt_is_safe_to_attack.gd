@@ -66,7 +66,7 @@ func _tick(_delta: float) -> int:
 		effective_routes = max(1, min_escape_routes - 1) # Allow 1 fewer route (but at least 1)
 	
 	# Check if we can safely place a bomb here
-	var bomb_range = player.bomb_range if player else 2
+	var bomb_range = player.get_effective_bomb_range() if player else 2
 	var bot_speed = 5.0 # tiles per second
 	
 	var safety_check = bomb_safety_checker.check_plant_safety_detailed(
@@ -74,7 +74,8 @@ func _tick(_delta: float) -> int:
 		player_tile,
 		bomb_range,
 		bot_speed,
-		current_time_msec
+		current_time_msec,
+		false, player.get_bomb_fuse_lower_bound()
 	)
 	
 	if not safety_check.get("safe", false):

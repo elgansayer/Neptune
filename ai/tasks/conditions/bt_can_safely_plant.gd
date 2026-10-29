@@ -28,7 +28,7 @@ func _tick(_delta: float) -> int:
 		_debug("No target tile set on %s" % target_cell_var)
 		return FAILURE
 	
-	var bomb_range = player.bomb_range
+	var bomb_range = player.get_effective_bomb_range()
 	var current_time_msec = Time.get_ticks_msec()
 	var bot_speed = 5.0
 	
@@ -37,7 +37,8 @@ func _tick(_delta: float) -> int:
 		target_tile,
 		bomb_range,
 		bot_speed,
-		current_time_msec
+		current_time_msec,
+		player.get_bomb_fuse_lower_bound()
 	):
 		blackboard.set_var(escape_target_var, null)
 		_debug("Safety checker rejected tile %s (range=%d)" % [target_tile, bomb_range])
@@ -49,7 +50,8 @@ func _tick(_delta: float) -> int:
 		ai_manager,
 		grid_sampler,
 		bot_speed,
-		current_time_msec
+		current_time_msec,
+		player.get_bomb_fuse_lower_bound()
 	)
 	
 	if escape_tile == INVALID_TILE:
@@ -67,9 +69,10 @@ func _find_escape_tile(
 	ai_manager,
 	grid_sampler,
 	bot_speed: float,
-	current_time_msec: float
+	current_time_msec: float,
+	fuse_lower_bound: float
 ) -> Vector2i:
-	var simulated_matrix = ai_manager.simulate_threat_matrix(start_tile, bomb_range, current_time_msec)
+	var simulated_matrix = ai_manager.simulate_threat_matrix(start_tile, bomb_range, current_time_msec, fuse_lower_bound)
 	var msec_per_tile = (1.0 / bot_speed) * 1000.0
 	var queue: Array[Vector2i] = [start_tile]
 	var visited: Dictionary = {_tile_key(start_tile): current_time_msec}
