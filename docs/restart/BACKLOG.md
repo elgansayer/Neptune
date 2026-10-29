@@ -50,3 +50,14 @@ when they exceed one reviewable implementation change.
 
 The foundation input tool is available before these tasks but does not close #26:
 that issue requires actual supplied media, a full asset audit and evidence.
+
+## Server execution follow-ups
+
+- [#40](https://github.com/elgansayer/Neptune-Bomberman/issues/40): reviewable
+  runner reconciliation/failure-boundary portion of #24. Passing these checks
+  establishes test infrastructure, not the full game baseline.
+- [#47](https://github.com/elgansayer/Neptune-Bomberman/issues/47): reproduced
+  duplicate server startup and headless client role failures, also under #24.
+- [#48](https://github.com/elgansayer/Neptune-Bomberman/issues/48): operator
+  dependency for real media/release, explicit spending policy and backup target.
+- [Actual host/runtime evidence](evidence/2026-10-29-server-baseline.md).
