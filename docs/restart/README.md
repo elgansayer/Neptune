@@ -1,7 +1,8 @@
 # Neptune restart: multiplayer, bots and community content
 
-Status: foundation work; no VPS factory, emulator bridge or disc extraction is
-claimed to be running. The current repository targets Godot 4.5. Pin that baseline
+Status: the [bounded libretro bridge has real boot/replay evidence](evidence/2026-10-29-libretro-bridge.md).
+Continuous VPS factory operation and disc-graphics extraction remain unverified.
+The current repository targets Godot 4.5. Pin that baseline
 for the first reproducible build; choose any engine upgrade through a separate
 compatibility task.
 
