@@ -111,7 +111,8 @@ def commands(mode: str, evidence: Path, toolchain: Path) -> list[tuple[str, list
             ("native-runtime", [python, "tools/godot/check_runtime.py", "--godot", binary,
                                 "--graphical", "--evidence", str(evidence / "native-runtime")], 180),
             ("native-bots", [python, "tools/godot/run_bot_tests.py", "--godot", binary,
-                             "--timeout", "240", "--log", str(evidence / "native-bots.log")], 270),
+                             "--timeout", "240", "--max-log-mib", "16",
+                             "--log", str(evidence / "native-bots-engine.log")], 270),
         ])
     return checks
 

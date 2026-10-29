@@ -5,6 +5,7 @@ extends "res://shared/rpc_interface.gd"
 
 const Constants = preload("res://shared/constants.gd")
 const GameInstanceScript = preload("res://game_instance.gd")
+const RuntimeConfig = preload("res://shared/runtime_config.gd")
 
 var peer: ENetMultiplayerPeer
 var auth_service # Will be LocalBackend or PlayFabBackend
@@ -14,26 +15,21 @@ var player_to_game = {} # peer_id -> game_id
 var _initialized = false # Prevent duplicate initialization
 
 func _ready():
+	# RPC ownership belongs to the autoload, never a second scene instance.
+	if self != get_node("/root/ServerMain"):
+		return
 	# Only initialize once
 	if _initialized:
 		return
 	_initialized = true
 	
-	# Check if we're running in server mode
-	# Server runs when: headless OR main_server.tscn is the main scene OR has server scene
-	var is_headless = DisplayServer.get_name() == "headless"
-	var current_scene = get_tree().current_scene
-	var is_server_scene = current_scene and (current_scene.scene_file_path.contains("server") or current_scene == self)
-	var is_login_screen = current_scene and current_scene.scene_file_path.contains("login")
-	
-	# If we're showing the login screen, we're the client - don't initialize server
-	if not is_headless and is_login_screen:
-		print("[ServerMain] Running in client mode (login screen), acting as RPC router only")
+	var runtime := RuntimeConfig.read()
+	if not runtime.error.is_empty():
+		push_error(runtime.error)
+		get_tree().quit(2)
 		return
-	
-	# If we're headless OR the server scene is loaded, we're the server
-	if not is_headless and not is_server_scene:
-		print("[ServerMain] Running in client mode, acting as RPC router only")
+	if runtime.role != "server":
+		print("[ServerMain] Runtime role: ", runtime.role, "; RPC router only")
 		return
 	
 	print("=== Bomberman Server Starting ===")
@@ -58,16 +54,17 @@ func _ready():
 	
 	# Start server
 	peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(Constants.SERVER_PORT, Constants.MAX_PLAYERS)
+	var error = peer.create_server(runtime.port, Constants.MAX_PLAYERS)
 	if error != OK:
 		push_error("Failed to start server: " + str(error))
+		get_tree().quit(1)
 		return
 	
 	multiplayer.multiplayer_peer = peer
 	multiplayer.peer_connected.connect(_on_player_connected)
 	multiplayer.peer_disconnected.connect(_on_player_disconnected)
 	
-	print("Server listening on port ", Constants.SERVER_PORT)
+	print("Server listening on port ", runtime.port)
 	print("Max players: ", Constants.MAX_PLAYERS)
 	print("[Server] Multiplayer authority: ", multiplayer.is_server())
 	print("[Server] Unique ID: ", multiplayer.get_unique_id())

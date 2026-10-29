@@ -26,7 +26,8 @@ func can_safely_plant_bomb(
 	plant_pos: Vector2i,
 	bomb_range: int,
 	bot_speed_tiles_per_sec: float = 5.0,
-	current_time_msec: float = 0.0
+	current_time_msec: float = 0.0,
+	fuse_lower_bound: float = Constants.BOMB_TIMER
 ) -> bool:
 	if _ai_manager == null or _grid_sampler == null:
 		if debug_logging:
@@ -37,15 +38,15 @@ func can_safely_plant_bomb(
 	var future_threat_matrix: Dictionary = _ai_manager.simulate_threat_matrix(
 		plant_pos,
 		bomb_range,
-		current_time_msec
+		current_time_msec,
+		fuse_lower_bound
 	)
 	
 	if debug_logging:
 		print("  [BombSafetyChecker] Checking plant at ", plant_pos, " range=", bomb_range, " threat_tiles=", future_threat_matrix.size())
 	
 	# Constants for BFS with safety buffers
-	var bomb_fuse_time_sec := 3.0
-	var time_to_explode_msec := current_time_msec + (bomb_fuse_time_sec * 1000.0)
+	var time_to_explode_msec: float = future_threat_matrix.get(_tile_key(plant_pos), current_time_msec + fuse_lower_bound * 1000.0)
 	var msec_per_tile := (1.0 / bot_speed_tiles_per_sec) * 1000.0
 	
 	# SAFETY: Account for movement delay and safety margin
@@ -141,7 +142,8 @@ func check_plant_safety_detailed(
 	bomb_range: int,
 	bot_speed_tiles_per_sec: float = 5.0,
 	current_time_msec: float = 0.0,
-	allow_dead_end_escape: bool = false
+	allow_dead_end_escape: bool = false,
+	fuse_lower_bound: float = Constants.BOMB_TIMER
 ) -> Dictionary:
 	"""Returns {safe: bool, escape_tile: Vector2i, margin_ms: float, explored_tiles: int}"""
 	
@@ -151,11 +153,11 @@ func check_plant_safety_detailed(
 	var future_threat_matrix: Dictionary = _ai_manager.simulate_threat_matrix(
 		plant_pos,
 		bomb_range,
-		current_time_msec
+		current_time_msec,
+		fuse_lower_bound
 	)
 	
-	var bomb_fuse_time_sec := 3.0
-	var time_to_explode_msec := current_time_msec + (bomb_fuse_time_sec * 1000.0)
+	var time_to_explode_msec: float = future_threat_matrix.get(_tile_key(plant_pos), current_time_msec + fuse_lower_bound * 1000.0)
 	var msec_per_tile := (1.0 / bot_speed_tiles_per_sec) * 1000.0
 	
 	# SAFETY: Account for movement delay

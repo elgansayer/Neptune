@@ -751,6 +751,16 @@ func should_auto_place_bomb() -> bool:
 	"""DIARRHOEA virus causes automatic bomb placement"""
 	return active_virus == VirusType.DIARRHOEA
 
+func get_bomb_fuse_lower_bound() -> float:
+	# Pure planning query: do not consume the actual placement RNG.
+	match active_virus:
+		VirusType.HASTY_FUSE:
+			return 1.0
+		VirusType.LEISURELY_FUSE:
+			return 5.0
+		_:
+			return Constants.BOMB_TIMER
+
 func get_bomb_fuse_time() -> float:
 	"""Get bomb timer based on virus status"""
 	match active_virus:

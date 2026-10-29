@@ -63,7 +63,7 @@ func _tick(_delta: float) -> int:
 			# CRITICAL: Also verify the PATH to the target is still valid!
 			# This prevents the bot from being trapped when another bomb blocks the path.
 			var path_valid = true
-			var path_to_target = grid_sampler.get_path(player_tile, current_escape_target)
+			var path_to_target = grid_sampler.find_path(player_tile, current_escape_target, escape_radius, player)
 			if path_to_target.is_empty() and player_tile != current_escape_target:
 				path_valid = false
 				if debug_logging:
@@ -72,13 +72,13 @@ func _tick(_delta: float) -> int:
 			# CRITICAL: Check if any tile along the path is in an active explosion!
 			# The threat_matrix now includes active_explosion_tiles (tiles currently on fire)
 			if path_valid and path_to_target.size() > 0:
-				for path_tile in path_to_target:
-					var tile_pos = Vector2i(int(path_tile.x / GameConfig.TILE_SIZE), int(path_tile.y / GameConfig.TILE_SIZE))
+				for index in range(path_to_target.size()):
+					var tile_pos: Vector2i = path_to_target[index]
 					var tile_key = _tile_key(tile_pos)
 					if threat_matrix.has(tile_key):
 						# Check if this tile is IMMEDIATELY dangerous (current time or earlier = active explosion)
 						var threat_time = threat_matrix[tile_key]
-						if threat_time <= current_time_msec:
+						if threat_time <= current_time_msec + (index + 1) * msec_per_tile + 100.0:
 							path_valid = false
 							if debug_logging:
 								print("[BTFindEscapeRoute] ⚠ Path passes through ACTIVE EXPLOSION at ", tile_pos, "! Recalculating...")
@@ -86,10 +86,12 @@ func _tick(_delta: float) -> int:
 			
 			# Check if the target has a bomb on it (which would be bad)
 			var has_bomb = false
-			if game_instance.game_map[current_escape_target.y][current_escape_target.x] == 3: # Bomb
+			if not grid_sampler.is_tile_safe_for_target(current_escape_target):
 				has_bomb = true
 				
 			if is_target_safe and not has_bomb and path_valid:
+				current_escape_target = _improve_refuge(current_escape_target, player_tile, threat_matrix, grid_sampler, player, current_time_msec, msec_per_tile)
+				blackboard.set_var(target_cell_var, current_escape_target)
 				if debug_logging:
 					print("[BTFindEscapeRoute] Keeping existing valid escape target: ", current_escape_target)
 				return SUCCESS
@@ -115,6 +117,7 @@ func _tick(_delta: float) -> int:
 	var best_distance: int = 999999
 	var best_safety_margin: float = -1.0
 	var found_permanent_safe: bool = false
+	var found_safe_dead_end := false
 	var best_panic_tile: Vector2i = Vector2i(-1, -1)
 	var best_panic_margin: float = -1.0
 	
@@ -149,12 +152,13 @@ func _tick(_delta: float) -> int:
 					if debug_logging:
 						print("[BTFindEscapeRoute] ✓ Tile ", current_pos, " is DEAD END but PERMANENTLY SAFE - acceptable for escape!")
 					# Accept this as a valid escape destination (lower priority than tiles with exits)
-					if not found_permanent_safe or distance_from_start < best_distance:
-						# Only use dead end if we haven't found a better option with exits
-						if best_safe_tile == Vector2i(-1, -1) or distance_from_start < best_distance:
+					if not found_permanent_safe:
+						# A true refuge outranks a closer tile that will explode.
+						if not found_safe_dead_end or distance_from_start < best_distance:
 							best_safe_tile = current_pos
 							best_distance = distance_from_start
 							best_safety_margin = 999999.0
+							found_safe_dead_end = true
 							print("[BTFindEscapeRoute] Using SAFE DEAD END at ", current_pos, " (distance: ", distance_from_start, ")")
 				elif not found_permanent_safe:
 					# This tile never explodes AND has further exits - PRIORITIZE IT
@@ -170,7 +174,7 @@ func _tick(_delta: float) -> int:
 					print("[BTFindEscapeRoute] Found CLOSER permanently safe tile at ", current_pos, " (distance: ", distance_from_start, ")")
 			else:
 				# Tile will explode at some point
-				if not found_permanent_safe:
+				if not found_permanent_safe and not found_safe_dead_end:
 					var explosion_time: float = threat_matrix[current_key]
 					safety_margin = explosion_time - arrival_time
 					
@@ -279,6 +283,8 @@ func _tick(_delta: float) -> int:
 	
 	if best_safe_tile != Vector2i(-1, -1):
 		final_target = best_safe_tile
+		if found_permanent_safe:
+			final_target = _improve_refuge(final_target, player_tile, threat_matrix, grid_sampler, player, current_time_msec, msec_per_tile)
 	elif best_panic_tile != Vector2i(-1, -1):
 		final_target = best_panic_tile
 		is_panic = true
@@ -360,6 +366,40 @@ func _tick(_delta: float) -> int:
 
 func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]
+
+func _adjacent_threat_count(tile: Vector2i, threats: Dictionary) -> int:
+	var count := 0
+	for direction: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
+		if threats.has(_tile_key(tile + direction)):
+			count += 1
+	return count
+
+func _improve_refuge(refuge: Vector2i, start: Vector2i, threats: Dictionary, sampler, player, now_msec: float, msec_per_tile: float) -> Vector2i:
+	# Leave a flame edge when an immediately adjoining, reachable refuge is better.
+	# Strictly decreasing adjacency bounds retargeting; a tight refuge stays valid.
+	if threats.has(_tile_key(refuge)):
+		return refuge
+	var best := refuge
+	var best_count := _adjacent_threat_count(refuge, threats)
+	for candidate: Vector2i in sampler.get_cardinal_neighbors(refuge):
+		if not sampler.is_tile_safe_for_target(candidate) or threats.has(_tile_key(candidate)):
+			continue
+		var count := _adjacent_threat_count(candidate, threats)
+		if count >= best_count:
+			continue
+		var path: Array[Vector2i] = sampler.find_path(start, candidate, escape_radius, player)
+		if path.is_empty() or path.size() > escape_radius:
+			continue
+		var safe := true
+		for index in range(path.size()):
+			var key := _tile_key(path[index])
+			if threats.has(key) and threats[key] <= now_msec + (index + 1) * msec_per_tile + 100.0:
+				safe = false
+				break
+		if safe:
+			best = candidate
+			best_count = count
+	return best
 
 func _tile_has_further_exit(tile: Vector2i, threat_matrix: Dictionary, player_tile: Vector2i, grid_sampler) -> bool:
 	"""Check if tile has at least one walkable neighbor that is NOT in the threat matrix.

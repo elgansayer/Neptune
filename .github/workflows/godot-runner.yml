@@ -8,6 +8,15 @@ on:
       - 'addons/**'
       - 'run_bot_tests.sh'
       - 'project.godot'
+      - 'main_server.gd'
+      - 'main_server.tscn'
+      - 'game_instance.gd'
+      - 'shared/entities/**'
+      - 'ai/**'
+      - 'shared/ai/**'
+      - 'client/**'
+      - 'shared/runtime_config.gd'
+      - 'scripts/console_commands.gd'
       - '.github/workflows/godot-runner.yml'
   push:
     branches: [main]
@@ -17,6 +26,15 @@ on:
       - 'addons/**'
       - 'run_bot_tests.sh'
       - 'project.godot'
+      - 'main_server.gd'
+      - 'main_server.tscn'
+      - 'game_instance.gd'
+      - 'shared/entities/**'
+      - 'ai/**'
+      - 'shared/ai/**'
+      - 'client/**'
+      - 'shared/runtime_config.gd'
+      - 'scripts/console_commands.gd'
       - '.github/workflows/godot-runner.yml'
   workflow_dispatch:
 
@@ -39,3 +57,27 @@ jobs:
         run: python3 tools/godot/check_runner.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
       - name: Verify actual suite null contract and native addon loading
         run: python3 tools/godot/check_project_contracts.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
+      - name: Prove bounded server/client round trips and startup failures
+        run: python3 tools/godot/check_runtime.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --graphical
+      - name: Exercise actual collision and trapped-state regressions
+        run: |
+          bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_collision_fix
+          bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_trapped_algo
+      - name: Verify native bot tick ownership at different idle cadences
+        run: |
+          for cadence in 30 60 144; do
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bot_physics_ticks --max-fps "$cadence"
+          done
+      - name: Verify public fuse bounds and real chain forecasts
+        run: |
+          for cadence in 30 60 144; do
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_forecast --max-fps "$cadence" --timeout 30
+          done
+      - name: Preserve native startup diagnostics even when a check fails
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: native-runtime-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .godot/runtime-evidence
+          if-no-files-found: warn
+          retention-days: 14
