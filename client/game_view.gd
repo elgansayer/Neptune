@@ -263,6 +263,7 @@ func update_game_state(state: Dictionary):
 				"bomb_id": bomb_id, # Use the key as bomb_id
 				"position": {"x": bmin.p[0], "y": bmin.p[1]},
 				"timer": bmin.t / 100.0, # Convert centiseconds back to seconds
+				"fuse_lower_bound": bmin.get("f", 300) / 100.0,
 				"state": bmin.s,
 			}
 			if bmin.has("k"):

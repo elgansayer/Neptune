@@ -62,7 +62,7 @@ func _tick(delta: float) -> int:
 	# CRITICAL: Validate bomb has PURPOSE (soft blocks to destroy OR opponent in range OR tactical attack)
 	# This prevents useless bombs in open areas UNLESS we're executing an attack tactic
 	var grid_sampler = blackboard.get_var("grid_sampler")
-	var bomb_range = player.bomb_range if player else 2
+	var bomb_range = player.get_effective_bomb_range() if player else 2
 	var has_purpose = false
 	
 	# Check if we're executing a tactical attack - if so, bomb has purpose!
@@ -141,7 +141,8 @@ func _tick(delta: float) -> int:
 				player_tile,
 				bomb_range,
 				bot_speed,
-				current_time_msec
+				current_time_msec,
+				player.get_bomb_fuse_lower_bound()
 			)
 			
 			if not is_safe:
@@ -155,7 +156,8 @@ func _tick(delta: float) -> int:
 				player_tile,
 				bomb_range,
 				bot_speed,
-				current_time_msec
+				current_time_msec,
+				false, player.get_bomb_fuse_lower_bound()
 			)
 			
 			# If we explored 0 tiles, we're completely blocked (shouldn't happen)

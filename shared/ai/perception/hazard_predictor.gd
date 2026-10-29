@@ -2,6 +2,7 @@ extends Resource
 class_name HazardPredictor
 
 const Constants = preload("res://shared/constants.gd")
+const BombForecast = preload("res://shared/ai/perception/bomb_threat_forecast.gd")
 
 ## Tracks bomb danger windows with chain reaction simulation (Tactical Doctrine v1.0)
 
@@ -27,17 +28,11 @@ func refresh(current_time: float) -> void:
 	if _game_instance == null:
 		return
 	
-	# CRITICAL: Include active explosion tiles (tiles currently on fire!)
-	# These are IMMEDIATELY lethal - bot will die if it walks into them.
-	if "active_explosion_tiles" in _game_instance:
-		for tile_key in _game_instance.active_explosion_tiles:
-			# Active explosions are treated as immediately lethal (current_time = now)
-			_threat_matrix[tile_key] = current_time
-			_danger_cache[tile_key] = current_time
-	
-	# Build ThreatMatrix with chain reaction simulation (future explosions)
-	_build_threat_matrix_with_chains(current_time)
-	
+	var milliseconds: Dictionary = BombForecast.build(_game_instance, _grid_sampler, current_time * 1000.0)
+	for key in milliseconds:
+		_threat_matrix[key] = milliseconds[key] / 1000.0
+	_danger_cache = _threat_matrix.duplicate()
+
 	# Build SafetyMap for escape route analysis
 	_build_safety_map()
 
@@ -112,99 +107,6 @@ func _project_bomb_tiles(bomb) -> Array[Vector2i]:
 
 func _tile_key(tile: Vector2i) -> String:
 	return "%d,%d" % [tile.x, tile.y]
-
-## Core Algorithm: ThreatMatrix with Chain Reactions (Doctrine Section 3.1)
-func _build_threat_matrix_with_chains(current_time: float) -> void:
-	# 1. Initialize ThreatMatrix with Infinity
-	# (Using sparse dict - only store dangerous tiles)
-	# 2. Create bomb queue sorted by explosion time
-	var bomb_queue := []
-	var bomb_times := {} # bomb_id -> explosion_time (for chain updates)
-	
-	for bomb_id in _game_instance.bombs:
-		var bomb = _game_instance.bombs[bomb_id]
-		if not is_instance_valid(bomb) or bomb.has_exploded:
-			continue
-		var fuse_remaining = max(Constants.BOMB_TIMER - bomb.explosion_timer, 0.0)
-		var explosion_time = current_time + fuse_remaining
-		bomb_times[bomb_id] = explosion_time
-		bomb_queue.append({"bomb": bomb, "time": explosion_time, "id": bomb_id})
-	
-	# Sort by explosion time (ascending)
-	bomb_queue.sort_custom(func(a, b): return a.time < b.time)
-	
-	# 3. Process queue with chain reactions
-	var processed := {}
-	for bomb_data in bomb_queue:
-		var bomb = bomb_data.bomb
-		var bomb_id = bomb_data.id
-		var t_explode = bomb_times.get(bomb_id, bomb_data.time) # Use updated time if chained
-		
-		if processed.has(bomb_id):
-			continue
-		processed[bomb_id] = true
-		
-		var origin = bomb.get_tile_position()
-		if not _grid_sampler.is_in_bounds(origin):
-			continue
-		
-		# Mark bomb tile
-		_set_threat(origin, t_explode)
-		
-		# Project blasts in 4 directions
-		var directions = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, -1), Vector2i(0, 1)]
-		for dir in directions:
-			for step in range(1, bomb.explosion_range + 1):
-				var tile = origin + dir * step
-				
-				# Check bounds
-				if not _grid_sampler.is_in_bounds(tile):
-					break
-				
-				var tile_type = _game_instance.get_tile_type(tile)
-				
-				# Indestructible wall or hurry block stops blast
-				if tile_type == 1 or tile_type == 3:
-					break
-				
-				# CRITICAL FIX: Do NOT stop blast just because there's an earlier threat!
-				# Explosions pass through empty space even if another explosion happened there earlier.
-				# Only walls and blocks stop blasts.
-				# var existing_threat = _threat_matrix.get(_tile_key(tile), INF)
-				# if existing_threat <= t_explode:
-				# 	break
-				
-				# Mark this tile as dangerous
-				_set_threat(tile, t_explode)
-				
-				# Check for chain reaction (bomb at this tile)
-				var other_bomb_id = _find_bomb_at_tile(tile)
-				if other_bomb_id != null and other_bomb_id != bomb_id:
-					var other_time = bomb_times.get(other_bomb_id, INF)
-					if other_time > t_explode:
-						# Chain reaction! Update explosion time
-						bomb_times[other_bomb_id] = t_explode
-						# Resort queue (simple re-process on next iteration)
-				
-				# Destructible wall stops blast (but tile itself is marked)
-				if tile_type == 2:
-					break
-	
-	# Copy to legacy cache for compatibility
-	_danger_cache = _threat_matrix.duplicate()
-
-func _set_threat(tile: Vector2i, time: float) -> void:
-	var key = _tile_key(tile)
-	var current = _threat_matrix.get(key, INF)
-	_threat_matrix[key] = min(current, time)
-
-func _find_bomb_at_tile(tile: Vector2i):
-	for bomb_id in _game_instance.bombs:
-		var bomb = _game_instance.bombs[bomb_id]
-		if is_instance_valid(bomb) and not bomb.has_exploded:
-			if bomb.get_tile_position() == tile:
-				return bomb_id
-	return null
 
 ## Core Algorithm: SafetyMap (Doctrine Section 4.1)
 func _build_safety_map() -> void:

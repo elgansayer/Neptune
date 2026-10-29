@@ -116,6 +116,7 @@ func _tick(_delta: float) -> int:
 			return FAILURE
 	
 	var current_tile = grid_sampler.world_to_tile(player.position)
+	var hazard_predictor = blackboard.get_var("hazard_predictor")
 	var target_center = grid_sampler.tile_to_world_center(target_cell)
 	var offset_from_center = target_center - player.position
 	var abs_offset_x = abs(offset_from_center.x)
@@ -131,6 +132,8 @@ func _tick(_delta: float) -> int:
 	# Check if we've reached the destination tile AND are reasonably centered
 	# This is critical for safety - bot must be centered to avoid blast from adjacent tiles
 	if inside_target_tile:
+		if hazard_predictor and _unsafe_arrival(target_cell, player, grid_sampler, hazard_predictor):
+			return _abort_unsafe_move(player)
 		# CRITICAL: Must be centered on BOTH axes, not just overall distance!
 		# Check each axis independently to prevent stopping when only one axis is aligned
 		var target_x_centered = abs_offset_x < 1.0
@@ -264,7 +267,6 @@ func _tick(_delta: float) -> int:
 	
 	# CRITICAL SAFETY CHECK: Is the target tile currently threatened by an explosion?
 	# This must be checked BEFORE the commitment logic to prevent walking into explosions!
-	var hazard_predictor = blackboard.get_var("hazard_predictor")
 	if hazard_predictor and target_cell != null:
 		var is_target_threatened = hazard_predictor.is_tile_threatened(target_cell)
 		if is_target_threatened:
@@ -376,12 +378,9 @@ func _tick(_delta: float) -> int:
 	# SAFETY: Check if our current waypoint is threatened - if so, abort!
 	if hazard_predictor and hazard_predictor.is_tile_threatened(waypoint):
 		var is_escape = (cell_var == "escape_cell")
-		if not is_escape:
+		if not is_escape or _unsafe_arrival(waypoint, player, grid_sampler, hazard_predictor):
 			print("[BTMoveToCell] 🛑 ABORT: Waypoint %s (index %d) is THREATENED by explosion!" % [waypoint, _current_waypoint_index])
-			blackboard.set_var(cell_var, null)
-			player.set_input(0.0, 0.0)
-			_reset_state()
-			return FAILURE
+			return _abort_unsafe_move(player)
 	
 	var waypoint_center = grid_sampler.tile_to_world_center(waypoint)
 	
@@ -477,6 +476,20 @@ func _draw_debug_path(player, grid_sampler) -> void:
 	if player.has_method("set_debug_path"):
 		# print("[DEBUG DRAW] Sending points: ", points)
 		player.set_debug_path(points)
+
+func _unsafe_arrival(tile: Vector2i, player, sampler, predictor) -> bool:
+	var offset: Vector2 = sampler.tile_to_world_center(tile) - player.position
+	var speed: float = GameConfig.BASE_SPEED * GameConfig.get_skate_speed_multiplier(player.skate_count) * player.get_virus_speed_modifier()
+	var travel_seconds := (absf(offset.x) + absf(offset.y)) / maxf(speed, 1.0)
+	return not predictor.is_tile_safe(tile, Time.get_ticks_msec() / 1000.0, travel_seconds + 0.1)
+
+func _abort_unsafe_move(player) -> int:
+	blackboard.set_var(cell_var, null)
+	if cell_var == &"escape_cell":
+		blackboard.set_var("escape_route_found", false)
+	player.set_input(0.0, 0.0)
+	_reset_state()
+	return FAILURE
 
 func _apply_stuck_penalty(target: Vector2i) -> void:
 	"""Apply a temporary penalty to this target so we don't immediately retry it"""

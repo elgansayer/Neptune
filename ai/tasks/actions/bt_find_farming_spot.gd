@@ -35,7 +35,7 @@ func _tick(_delta: float) -> int:
 		return FAILURE
 	
 	var current_tile = player.get_tile_position()
-	var bomb_range = player.bomb_range
+	var bomb_range = player.get_effective_bomb_range()
 	var current_time_msec = Time.get_ticks_msec()
 
 	# If we already have a valid farming target, reuse it to avoid expensive rescans every tick
@@ -144,7 +144,8 @@ func _tick(_delta: float) -> int:
 				check_tile, # Where the bomb will be planted
 				bomb_range,
 				5.0, # bot speed
-				current_time_msec
+				current_time_msec,
+				false, player.get_bomb_fuse_lower_bound()
 			)
 			
 			if not safety_result.get("safe", false):
@@ -526,7 +527,8 @@ func _do_full_search_and_broadcast(current_tile: Vector2i, bomb_range: int, curr
 				check_tile,
 				bomb_range,
 				5.0,
-				current_time_msec
+				current_time_msec,
+				false, player.get_bomb_fuse_lower_bound()
 			)
 			
 			if not safety_result.get("safe", false):
@@ -625,7 +627,7 @@ func _find_breakout_position(current_tile: Vector2i, bomb_range: int, grid_sampl
 			# Check if we can safely bomb here and escape
 			# For BREAKOUT, allow dead-end escapes since the bomb will create a new path
 			var safety_result = bomb_safety_checker.check_plant_safety_detailed(
-				tile, tile, bomb_range, 5.0, current_time_msec, true # allow_dead_end_escape=true
+				tile, tile, bomb_range, 5.0, current_time_msec, true, player.get_bomb_fuse_lower_bound() # allow_dead_end_escape=true
 			)
 			if safety_result.get("safe", false):
 				return tile

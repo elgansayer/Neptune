@@ -4,6 +4,10 @@ extends "res://shared/rpc_interface.gd"
 # Connects to server, handles authentication, and joins games
 
 const Constants = preload("res://shared/constants.gd")
+const RuntimeConfig = preload("res://shared/runtime_config.gd")
+
+var _runtime_role := ""
+var _server_port := 7777
 
 var peer: ENetMultiplayerPeer
 var server_address = "127.0.0.1" # localhost for testing
@@ -23,12 +27,14 @@ var _last_ping_timestamp: int = 0
 var current_latency_ms: int = 0
 
 func _ready():
-	# Don't initialize client if running headless (server mode)
-	if DisplayServer.get_name() == "headless":
+	var runtime := RuntimeConfig.read()
+	if not runtime.error.is_empty():
+		push_error(runtime.error)
+		get_tree().quit(2)
 		return
-	
-	# Don't initialize client if running server scene
-	if get_tree().current_scene and "server" in get_tree().current_scene.scene_file_path:
+	_runtime_role = runtime.role
+	_server_port = runtime.port
+	if _runtime_role != "client":
 		return
 	
 	print("=== Bomberman Client Starting ===")
@@ -58,16 +64,15 @@ func _ready():
 	add_child(_ping_timer)
 
 func connect_to_server(address: String = "127.0.0.1"):
-	# Safety check: Never connect as client if we are the headless server
-	if DisplayServer.get_name() == "headless":
-		print("[Client] Ignoring connect_to_server call in headless mode")
+	if _runtime_role != "client":
+		print("[Client] Ignoring connect_to_server outside client role")
 		return
 
 	server_address = address
 	peer = ENetMultiplayerPeer.new()
 	
-	print("[Client] Connecting to ", address, ":", Constants.SERVER_PORT)
-	var error = peer.create_client(address, Constants.SERVER_PORT)
+	print("[Client] Connecting to ", address, ":", _server_port)
+	var error = peer.create_client(address, _server_port)
 	
 	if error != OK:
 		push_error("Failed to create client: " + str(error))

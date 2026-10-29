@@ -529,7 +529,7 @@ func _spawn_hurry_block(pos: Vector2i):
 		var player_tile = player.get_tile_position()
 		if player_tile == pos:
 			print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-			player.die("Crushed by hurry block")
+			player.die()
 			
 			# Check for match end
 			_check_alive_players()
@@ -795,6 +795,7 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i):
 	bomb.game_instance = self
 	bomb.explosion_timer = 0.0
 	bomb.fuse_time = player.get_bomb_fuse_time()
+	bomb.fuse_lower_bound = player.get_bomb_fuse_lower_bound()
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)
@@ -847,6 +848,7 @@ func _place_single_bomb(player: ServerPlayer):
 	# Apply SHORT_FUSE curse if active
 	bomb.explosion_timer = 0.0
 	bomb.fuse_time = player.get_bomb_fuse_time() # 1s if cursed, 3s otherwise
+	bomb.fuse_lower_bound = player.get_bomb_fuse_lower_bound()
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)

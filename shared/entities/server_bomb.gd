@@ -22,6 +22,7 @@ var owner_id: String = ""
 var explosion_range: int = 2
 var explosion_timer: float = Constants.BOMB_TIMER
 var fuse_time: float = Constants.BOMB_TIMER  # Can be modified by SHORT_FUSE curse
+var fuse_lower_bound: float = Constants.BOMB_TIMER # Public planning bound; random long-fuse sample remains private.
 var has_exploded := false
 var game_instance: Node = null # Reference to GameInstance for collision checking
 
@@ -270,6 +271,10 @@ func expand_explosion():
 		queue_free()
 		return
 
+func get_forecast_observation() -> Dictionary:
+	return {"cell": get_tile_position(), "range": explosion_range,
+		"fuse_lower_bound": fuse_lower_bound, "elapsed": explosion_timer}
+
 func get_state_minimal() -> Dictionary:
 	# Minimal state for frequent updates - position, timer, state
 	# Note: bomb_id is already in the dictionary key, no need to repeat
@@ -277,6 +282,7 @@ func get_state_minimal() -> Dictionary:
 		"p": [int(position.x), int(position.y)],  # position
 		"t": int(explosion_timer * 100),  # timer (centiseconds for compact int)
 		"s": bomb_state,  # state enum
+		"f": int(fuse_lower_bound * 100), # Public bound, not the private sampled fuse.
 	}
 	# Only add movement data if moving
 	if bomb_state == BombState.KICKED:
@@ -291,6 +297,7 @@ func get_state() -> Dictionary:
 		"owner_id": owner_id,
 		"position": {"x": position.x, "y": position.y},
 		"timer": explosion_timer,
+		"fuse_lower_bound": fuse_lower_bound,
 		"range": explosion_range,
 		"state": bomb_state,
 		"carrier_id": carrier_id,
@@ -792,18 +799,25 @@ func _check_tile_has_collision(grid_pos: Vector2i) -> bool:
 	
 	# Check dynamic occupancy: players and other bombs
 	if game_instance:
+		var tile_size = GameConfig.TILE_SIZE
+		var min_x = grid_pos.x * tile_size
+		var max_x = min_x + tile_size
+		var min_y = grid_pos.y * tile_size
+		var max_y = min_y + tile_size
+
 		# Players
-		for peer_id in game_instance.players:
-			var player = game_instance.players[peer_id]
+		for player in game_instance.players.values():
 			if is_instance_valid(player) and not player.is_dead:
-				if player.get_tile_position() == grid_pos:
+				var p_pos = player.position
+				if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
 					return true # Player collision - bounce
 		# Bombs
-		for other_id in game_instance.bombs:
-			var other_bomb = game_instance.bombs[other_id]
+		for other_bomb in game_instance.bombs.values():
 			if is_instance_valid(other_bomb) and not other_bomb.has_exploded:
-				if other_bomb.bomb_id != bomb_id and other_bomb.get_tile_position() == grid_pos:
-					return true # Bomb collision - bounce
+				if other_bomb.bomb_id != bomb_id:
+					var p_pos = other_bomb.position
+					if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
+						return true # Bomb collision - bounce
 	
 	return false # Tile is free
 
@@ -822,18 +836,25 @@ func _is_tile_free_for_landing(grid_pos: Vector2i) -> bool:
 	
 	# Check dynamic occupancy: players and other bombs
 	if game_instance:
+		var tile_size = GameConfig.TILE_SIZE
+		var min_x = grid_pos.x * tile_size
+		var max_x = min_x + tile_size
+		var min_y = grid_pos.y * tile_size
+		var max_y = min_y + tile_size
+
 		# Players
-		for peer_id in game_instance.players:
-			var player = game_instance.players[peer_id]
+		for player in game_instance.players.values():
 			if is_instance_valid(player) and not player.is_dead:
-				if player.get_tile_position() == grid_pos:
+				var p_pos = player.position
+				if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
 					return false
 		# Bombs
-		for other_id in game_instance.bombs:
-			var other_bomb = game_instance.bombs[other_id]
+		for other_bomb in game_instance.bombs.values():
 			if is_instance_valid(other_bomb) and not other_bomb.has_exploded:
-				if other_bomb.bomb_id != bomb_id and other_bomb.get_tile_position() == grid_pos:
-					return false
+				if other_bomb.bomb_id != bomb_id:
+					var p_pos = other_bomb.position
+					if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
+						return false
 
 	return true
 
