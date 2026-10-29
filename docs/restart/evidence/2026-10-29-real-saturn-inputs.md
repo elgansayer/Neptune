@@ -80,8 +80,8 @@ candidates. Repeated original verification passes. In a separate ordinary USA co
 
 The log/command ledger is `/home/dev/neptune-research-private/462/media-negative-checks.json`;
 all original bytes remain unchanged. No complete emulator-lock claim is derived
-from these media-report negatives. The lab suite now passes **39 synthetic tooling
-tests**, including eleven new header, unsafe-path, firmware, tampering and report
+from these media-report negatives. The lab suite now passes **40 synthetic tooling
+tests**, including twelve new header, unsafe-path, firmware, tampering and report
 cases. They do not establish original-game compatibility or reference fidelity.
 
 ## Remaining work and ownership

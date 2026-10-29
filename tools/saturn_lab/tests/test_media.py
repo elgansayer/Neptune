@@ -95,6 +95,16 @@ class MediaTests(unittest.TestCase):
         self.assertEqual(result["matching_bios_paths"], ["alias.bin", "bios.bin"])
         self.assertEqual(result["bios"], "alias.bin")
 
+    def test_inconsistent_lookup_aliases_fail_even_with_explicit_selection(self):
+        # Controlled lookup collision exercises policy, not a real MD5 collision
+        # claim. SHA-256 is still computed from the two different fixture files.
+        (self.root / "alias.bin").write_bytes(b"different synthetic bytes".ljust(524288, b"\0"))
+        with patch.object(media.hashlib, "md5") as lookup:
+            lookup.return_value.hexdigest.return_value = self.catalog["md5"]
+            for selected in [None, "bios.bin"]:
+                with self.assertRaisesRegex(media.LabError, "Ambiguous"):
+                    media.inspect_media(self.root, "disc/game.cue", "usa", selected)
+
     def test_wrong_size_explicit_bios_and_no_match_fail(self):
         (self.root / "wrong.bin").write_bytes(b"wrong")
         with self.assertRaisesRegex(media.LabError, "Explicit BIOS"):

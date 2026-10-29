@@ -121,6 +121,8 @@ def inspect_media(root: Path, disc: str, region: str, bios: str | None = None) -
         candidates.append(item)
     expected = FIRMWARE[region]
     matches = [item for item in candidates if item["bytes"] == 524288 and item["md5"] == expected["md5"]]
+    if len({item["sha256"] for item in matches}) > 1:
+        raise LabError("Ambiguous MD5 matches with differing SHA-256 identities")
     if bios is not None:
         selected = next((item for item in matches if item["path"] == bios), None)
         if selected is None:
@@ -128,8 +130,6 @@ def inspect_media(root: Path, disc: str, region: str, bios: str | None = None) -
     else:
         if not matches:
             raise LabError("No checksum-matching firmware candidate for region")
-        if len({item["sha256"] for item in matches}) != 1:
-            raise LabError("Ambiguous MD5 matches with differing SHA-256 identities")
         selected = matches[0]  # Stable alias selection only after byte identity.
     files = {item["path"]: {key: item[key] for key in ("path", "bytes", "sha256")} for item in candidates}
     files.update({path: record(root, path) for path in paths})
