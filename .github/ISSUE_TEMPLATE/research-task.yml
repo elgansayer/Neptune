@@ -1,0 +1,32 @@
+name: Research or factory task
+description: A bounded task with dependencies, evidence and acceptance checks
+title: '[Research] '
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Observable outcome
+      description: What must demonstrably work? State the scope and exclusions.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and prerequisites
+      description: Link blocking issues and required private inputs; never attach credentials or disc images.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Reference evidence
+      description: Catalogue feature IDs, source/version, input hashes, harness/core build, scenario, capture IDs, timing uncertainty and known unknowns. Distinguish documented from observed.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance checks
+      description: Commands, expected observable results and failure cases. Missing evidence must fail.
+    validations:
+      required: true
