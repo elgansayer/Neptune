@@ -197,7 +197,11 @@ func _tick(delta: float) -> int:
 					return FAILURE
 	
 	# Place the bomb
-	game_instance.place_bomb(player)
+	var placement: Dictionary = game_instance.place_bomb(player)
+	if not placement.accepted:
+		blackboard.set_var("last_bomb_rejection", placement.reason)
+		return FAILURE
+	blackboard.set_var("last_bomb_rejection", "")
 	
 	print("[BTPlaceBomb] ✓ Placed bomb at ", player_tile)
 	

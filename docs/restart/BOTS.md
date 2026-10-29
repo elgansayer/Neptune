@@ -44,6 +44,8 @@ Keep useful working components. Prefer a behaviour tree for top-level priorities
 with utility scoring for tactical choices, bounded search and time-aware navigation.
 
 Bots submit actions through the same validated command semantics as human players.
+The implemented placement boundary and remaining command work are documented in
+[BOMB_COMMANDS.md](BOMB_COMMANDS.md).
 They do not teleport, alter speed/fuses or directly grant items. Feed them an
 explicit observation view. Hidden item contents, private opponent inputs and
 unobservable future events must not leak through server-state access. A visible

@@ -652,9 +652,9 @@ func _check_alive_players():
 	if alive_count <= 1:
 		end_match()
 
-func handle_player_input(peer_id: int, input_data: Dictionary):
+func handle_player_input(peer_id: int, input_data: Dictionary) -> Dictionary:
 	if not players.has(peer_id):
-		return
+		return _bomb_command_result(false, "unknown_player")
 	
 	var player = players[peer_id]
 	
@@ -680,17 +680,7 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 				# Not carrying: try to pick up a bomb underfoot
 				var pickup_successful = _try_pickup_bomb_at_player(player)
 				if not pickup_successful:
-					# Only place a new bomb if NOT on an existing bomb
-					var player_tile = player.get_tile_position()
-					var bomb_at_position = false
-					for bomb_id in bombs:
-						var bomb = bombs[bomb_id]
-						if is_instance_valid(bomb) and bomb.get_tile_position() == player_tile:
-							bomb_at_position = true
-							break
-					# Place if no bomb here and allowed
-					if not bomb_at_position and player.can_place_bomb():
-						place_bomb(player)
+					return place_bomb(player)
 		elif action_released:
 			# Maintain state for completeness; no throw on release now
 			player.request_action_release()
@@ -699,12 +689,13 @@ func handle_player_input(peer_id: int, input_data: Dictionary):
 		if action_pressed:
 			_detonate_oldest_remote_bomb(player)
 		# Standard bomb placement still works
-		if input_data.get("place_bomb", false) and player.can_place_bomb():
-			place_bomb(player)
+		if input_data.get("place_bomb", false):
+			return place_bomb(player)
 	else:
 		# Standard Logic: Place bomb
-		if input_data.get("place_bomb", false) and player.can_place_bomb():
-			place_bomb(player)
+		if input_data.get("place_bomb", false):
+			return place_bomb(player)
+	return {"accepted": true, "reason": "input_applied", "bomb_ids": []}
 
 func _try_pickup_bomb_at_player(player: ServerPlayer) -> bool:
 	"""Try to pick up a bomb at the player's current tile. Returns true if successful."""
@@ -764,21 +755,48 @@ func _detonate_oldest_remote_bomb(player: ServerPlayer):
 		oldest_bomb.explode()
 
 
-func place_bomb(player: ServerPlayer):
-	# Prevent bomb placement during countdown
+func _bomb_command_result(accepted: bool, reason: String, bomb_ids: Array[String] = []) -> Dictionary:
+	return {"accepted": accepted, "reason": reason, "bomb_ids": bomb_ids}
+
+func _bomb_placement_rejection(player: ServerPlayer) -> String:
+	# Shared authority checks: policy prechecks are never permissions.
+	if not is_instance_valid(player) or players.get(player.peer_id) != player:
+		return "unknown_player"
+	if player.game_instance != self:
+		return "foreign_player"
 	if not match_active:
-		print("[Game] place_bomb failed: match_active is false")
-		return
-	
-	# LINE_BOMB: Place multiple bombs in facing direction
+		return "match_inactive"
+	if player.is_dead:
+		return "dead_player"
+	if player.active_virus == ServerPlayer.VirusType.CONSTIPATION:
+		return "placement_disabled"
+	if player.bombs_placed >= player.max_bombs:
+		return "capacity"
+	if not player.position.is_finite():
+		return "invalid_position"
+	var tile := player.get_tile_position()
+	if tile.y < 0 or tile.y >= game_map.size() or tile.x < 0 or tile.x >= game_map[tile.y].size():
+		return "outside_map"
+	if not _is_tile_valid_for_bomb(tile):
+		return "blocked_tile"
+	if _has_bomb_at_tile(tile):
+		return "occupied_tile"
+	return ""
+
+func place_bomb(player: ServerPlayer) -> Dictionary:
+	var reason := _bomb_placement_rejection(player)
+	if not reason.is_empty():
+		return _bomb_command_result(false, reason)
+	var placed: Array[String] = []
 	if player.has_line_bomb:
-		_place_line_bombs(player)
-		return
-	
-	_place_single_bomb(player)
+		placed = _place_line_bombs(player)
+	else:
+		placed.append(_place_single_bomb(player))
+	_refresh_bomb_perception()
+	return _bomb_command_result(true, "placed", placed)
 
 
-func _place_line_bombs(player: ServerPlayer):
+func _place_line_bombs(player: ServerPlayer) -> Array[String]:
 	"""Place a line of bombs in the player's facing direction (LINE_BOMB ability)"""
 	var facing = player.last_move_direction
 	if facing.length() < 0.1:
@@ -793,6 +811,7 @@ func _place_line_bombs(player: ServerPlayer):
 	var facing_v = Vector2i(int(facing.x), int(facing.y))
 	var start_tile = player.get_tile_position()
 	var bombs_placed_count = 0
+	var placed: Array[String] = []
 	var max_to_place = player.max_bombs - player.bombs_placed
 	
 	print("[Game] LINE_BOMB: ", player.username, " placing up to ", max_to_place, " bombs in direction ", facing)
@@ -811,22 +830,24 @@ func _place_line_bombs(player: ServerPlayer):
 			print("[Game] LINE_BOMB: Stopped at tile ", tile_pos, " (bomb exists)")
 			break
 		
-		_place_single_bomb_at_tile(player, tile_pos)
+		placed.append(_place_single_bomb_at_tile(player, tile_pos))
 		bombs_placed_count += 1
 	
 	print("[Game] LINE_BOMB: Placed ", bombs_placed_count, " bombs")
+	return placed
 
 
 func _is_tile_valid_for_bomb(tile_pos: Vector2i) -> bool:
 	"""Check if a tile can have a bomb placed on it"""
 	if tile_pos.x < 0 or tile_pos.y < 0:
 		return false
-	if tile_pos.y >= game_map.size() or tile_pos.x >= game_map[0].size():
+	if tile_pos.y >= game_map.size() or tile_pos.x >= game_map[tile_pos.y].size():
 		return false
 	
 	var tile_value = game_map[tile_pos.y][tile_pos.x]
-	# 0 = empty, 1 = wall, 2 = block, 3+ = powerups
-	return tile_value == 0 or tile_value >= 3 # Can place on empty or powerup tiles
+	# Live terrain: 0 empty, 1 wall, 2 soft block, 3 hurry block.
+	# Pickups are separate entities, never a terrain permission.
+	return tile_value == 0
 
 
 func _has_bomb_at_tile(tile_pos: Vector2i) -> bool:
@@ -838,7 +859,7 @@ func _has_bomb_at_tile(tile_pos: Vector2i) -> bool:
 	return false
 
 
-func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i):
+func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i) -> String:
 	"""Place a single bomb at a specific tile position"""
 	var bomb = ServerBombScene.instantiate()
 	bomb.bomb_id = str(next_bomb_id)
@@ -878,14 +899,10 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i):
 	bomb.tree_exited.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
 	
 	print("[Game] Bomb placed at tile ", tile_pos, " fuse=", bomb.fuse_time, "s")
+	return bomb.bomb_id
 
 
-func _place_single_bomb(player: ServerPlayer):
-	# Prevent bomb placement during countdown
-	if not match_active:
-		print("[Game] place_bomb failed: match_active is false")
-		return
-	
+func _place_single_bomb(player: ServerPlayer) -> String:
 	var bomb = ServerBombScene.instantiate()
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
@@ -937,7 +954,9 @@ func _place_single_bomb(player: ServerPlayer):
 	bomb.tree_exited.connect(cleanup_callable, Object.CONNECT_ONE_SHOT)
 	
 	print("[Game] Bomb placed by ", player.username, " at tile ", bomb.get_tile_position(), " fuse=", bomb.fuse_time, "s")
-	
+	return bomb.bomb_id
+
+func _refresh_bomb_perception() -> void:
 	# CRITICAL: Immediately update threat matrix so AI can react to newly placed bomb
 	if ai_manager:
 		ai_manager.refresh_threat_matrix(current_time_msec)
