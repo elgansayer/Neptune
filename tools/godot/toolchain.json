@@ -1,0 +1,13 @@
+{
+  "godot_version": "4.5.stable.official.876b29033",
+  "archive_url": "https://github.com/godotengine/godot/releases/download/4.5-stable/Godot_v4.5-stable_linux.x86_64.zip",
+  "archive_sha256": "c7316e1fd782ad276a4d985a7673b5976eaaa8d90561a2bea5289210dc53e9ba",
+  "binary_name": "Godot_v4.5-stable_linux.x86_64",
+  "binary_sha256": "cd8bb15130f92aad58a4e9fdd10117172b14c703edec8819c97ec6cdd45691b8",
+  "addons": {
+    "addons/limboai/bin/liblimboai.linux.editor.x86_64.so": "4b658aacd24c9bd62c3d5e5b8e7aece5f0ba5ac7b33e8e690150e274af841ffa",
+    "addons/limboai/bin/liblimboai.linux.template_release.x86_64.so": "12e0727521f717a326a175ff1e7b7e34b234b809a249b7318db732b3d05c0dff",
+    "addons/godot-sqlite/bin/libgdsqlite.linux.template_debug.x86_64.so": "3436c70c74bd427090ccce8a52dba3b2fe4c87109caa811ac3b97eb2c66409d5",
+    "addons/godot-sqlite/bin/libgdsqlite.linux.template_release.x86_64.so": "6282d16585df84c44f530d7810d4cb024369781456ec4968f2853aac31f88762"
+  }
+}

@@ -1,0 +1,41 @@
+name: Godot runner contracts
+
+on:
+  pull_request:
+    paths:
+      - 'tools/godot/**'
+      - 'tests/**'
+      - 'addons/**'
+      - 'run_bot_tests.sh'
+      - 'project.godot'
+      - '.github/workflows/godot-runner.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/godot/**'
+      - 'tests/**'
+      - 'addons/**'
+      - 'run_bot_tests.sh'
+      - 'project.godot'
+      - '.github/workflows/godot-runner.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runner-contracts:
+    name: Real Godot runner and addon contracts (not game parity)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Install hash-pinned Godot and verify addon identities
+        run: python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
+      - name: Exercise runner failure boundaries on real Godot
+        run: python3 tools/godot/check_runner.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
+      - name: Verify actual suite null contract and native addon loading
+        run: python3 tools/godot/check_project_contracts.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
