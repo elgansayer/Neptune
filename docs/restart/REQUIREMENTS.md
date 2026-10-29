@@ -1,0 +1,97 @@
+# Requirements and operator handoff
+
+## Required from Elgan now
+
+| Item | Exact requirement | Purpose |
+| --- | --- | --- |
+| Research VPS | x86_64 Linux; Ubuntu 24.04 LTS recommended; start with 8 vCPU, 16 GB RAM and at least 160 GB SSD; 320 GB preferred for traces/builds | Initial sizing recommendation, not a benchmark or capacity promise. Add workers after profiling. |
+| Access | Hostname/IP, SSH username and port, and a secure way to provision an SSH public key; a sudo-capable operator account | Install and diagnose services. Do not paste private keys/passwords into GitHub issues or chat. |
+| Reference disc | One complete BIN/CUE set with every referenced track, or a CHD, for a precisely identified release/region | Reproducible reference. Avoid a bare executable or incomplete BIN. Keep an unmodified source copy. |
+| BIOS | Matching Saturn BIOS available on the research host | Boot the selected release with the chosen emulator. The operator supplies material they are authorised to use. |
+| Model access | At least one supported provider credential with working billing/quota, provisioned on the VPS | Run unattended AI jobs. Current chat access is not itself a VPS credential. |
+| Spend limit | Choose an explicit daily/monthly AI cap and whether paid fallback is allowed | Prevent uncontrolled continuous usage. Do not start paid workers until configured. |
+| Repository access | Game repo read/write; asset repo read initially; use separate intake/worker/merger roles | Current ChatGPT GitHub access works, but the VPS needs its own credentials. |
+| Private backup | Off-host encrypted backup destination and credentials configured locally | Preserve disc fingerprints, traces, job database and research progress. |
+
+The initial lab needs no domain, GPU, paid sprite extractor or public game server.
+A GPU might later help vision/local models; benchmark that requirement first.
+Subscriptions may be used only through supported provider-native integrations.
+Verify unattended access and quotas; do not assume subscription login can be
+reused as an OpenHands API credential. A single funded API provider is enough to
+prove the first live job. No specific model ID is hard-coded before a live check.
+
+## GitHub configuration for the VPS
+
+Prefer narrowly scoped GitHub App installation tokens. Start with a single-repo
+installation for the game and read-only access to the asset repo. Required features:
+
+- Read repository contents, issues, PRs and check results.
+- Create branches, commits and PRs for implementation.
+- Create/update issues for trusted planning and evidence reports.
+- Separate merge authority from the worker. Keep the private app key in the
+  coordinator's secret store and issue short-lived credentials.
+- CI workflow changes need the corresponding workflow permission where applicable.
+- Branch rules and required checks are an administrator setup step. Do not enable
+  unattended merges until failure handling and exact-head review are demonstrated.
+
+Account-wide administrator tokens and repository secrets are not worker inputs.
+Untrusted community issues must not directly launch code with privileged access.
+
+## Software to install/build (factory work, not purchases)
+
+| Component | Plan |
+| --- | --- |
+| Git, Git LFS, Python | Python 3.11+ for current lab tools; use lockfiles for future dependencies |
+| Container runtime | Docker Engine/Compose; isolated workers with constrained resources |
+| Godot | First reproduce the repository's 4.5 baseline with matching native addons; pin executable hashes and export templates |
+| Emulator | Evaluate/pin Beetle Saturn via libretro; build a small noninteractive frontend and instrumented core |
+| Graphics debugging | Use Yabause/Kronos source as reference where useful; verify against the chosen reference emulator |
+| Reverse engineering | Ghidra, its required JDK, headless scripts and validated Saturn loader support |
+| Factory | Pin an OpenHands SDK/Agent Server release; durable scheduler/job database and independently verified provider adapter |
+| Image/trace processing | Python imaging tools and FFmpeg as needed; CLI processing with reproducible configuration |
+| Monitoring/backups | Structured logs, health checks, bounded storage retention and restoration tests |
+
+The tools in this PR install none of these and do not operate a continuous agent.
+Avoid downloading and running unverified binaries through a root shell.
+
+## Storage layout
+
+Suggested locations, created during provisioning:
+
+```text
+/srv/neptune/repos/               game and asset checkouts
+/srv/neptune/private/disc/        original disc image and tracks
+/srv/neptune/private/bios/        BIOS
+/srv/neptune/private/emulator/    pinned core executable/build
+/srv/neptune/private/settings/    actual emulator configuration
+/srv/neptune/private/manifests/   input locks and inventories
+/srv/neptune/private/captures/    states, traces and original reference captures
+/srv/neptune/state/              durable factory state
+/srv/neptune/workspaces/         disposable implementation workspaces
+```
+
+Mount original media read-only into capture jobs. Credentials live outside both
+repositories and worker mounts. Retain hashes in metadata without placing original
+media in git. Capture recordings may contain original assets and belong in private
+research storage until distribution permissions are established.
+
+## Required later, before public community launch
+
+- Domain and DNS access; TLS certificates and a transactional email service.
+- Production game hosting separated from research/build load.
+- Object storage/CDN for permitted packs, downloads and previews, with versioning.
+- PostgreSQL; Nakama for shared identities/social features; a separate community
+  API/metadata store where requirements exceed Nakama's supported storage APIs.
+- WebRTC signalling and a TURN service with tested deployment/bandwidth limits.
+- A TypeScript website and Godot web export; signed short-lived launch tickets.
+- Admin/moderation tools, content reports, upload validation, rate limits,
+  privacy controls, account deletion and backup-restoration handling.
+- Permission/licensing for material distributed to players. Owning a disc,
+  extracting data or keeping a repository private does not itself grant redistribution rights.
+
+## First operator handoff
+
+Supply only the VPS host/user/port, reference release/region, local input paths,
+chosen provider and spending cap. Provision secrets directly on the host using a
+secure channel. The implementation can proceed on GitHub before this handoff;
+live emulation and the continuous paid factory depend on it.
