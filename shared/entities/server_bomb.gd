@@ -801,18 +801,25 @@ func _check_tile_has_collision(grid_pos: Vector2i) -> bool:
 	
 	# Check dynamic occupancy: players and other bombs
 	if game_instance:
+		var tile_size = GameConfig.TILE_SIZE
+		var min_x = grid_pos.x * tile_size
+		var max_x = min_x + tile_size
+		var min_y = grid_pos.y * tile_size
+		var max_y = min_y + tile_size
+
 		# Players
-		for peer_id in game_instance.players:
-			var player = game_instance.players[peer_id]
+		for player in game_instance.players.values():
 			if is_instance_valid(player) and not player.is_dead:
-				if player.get_tile_position() == grid_pos:
+				var p_pos = player.position
+				if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
 					return true # Player collision - bounce
 		# Bombs
-		for other_id in game_instance.bombs:
-			var other_bomb = game_instance.bombs[other_id]
+		for other_bomb in game_instance.bombs.values():
 			if is_instance_valid(other_bomb) and not other_bomb.has_exploded:
-				if other_bomb.bomb_id != bomb_id and other_bomb.get_tile_position() == grid_pos:
-					return true # Bomb collision - bounce
+				if other_bomb.bomb_id != bomb_id:
+					var p_pos = other_bomb.position
+					if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
+						return true # Bomb collision - bounce
 	
 	return false # Tile is free
 
@@ -831,18 +838,25 @@ func _is_tile_free_for_landing(grid_pos: Vector2i) -> bool:
 	
 	# Check dynamic occupancy: players and other bombs
 	if game_instance:
+		var tile_size = GameConfig.TILE_SIZE
+		var min_x = grid_pos.x * tile_size
+		var max_x = min_x + tile_size
+		var min_y = grid_pos.y * tile_size
+		var max_y = min_y + tile_size
+
 		# Players
-		for peer_id in game_instance.players:
-			var player = game_instance.players[peer_id]
+		for player in game_instance.players.values():
 			if is_instance_valid(player) and not player.is_dead:
-				if player.get_tile_position() == grid_pos:
+				var p_pos = player.position
+				if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
 					return false
 		# Bombs
-		for other_id in game_instance.bombs:
-			var other_bomb = game_instance.bombs[other_id]
+		for other_bomb in game_instance.bombs.values():
 			if is_instance_valid(other_bomb) and not other_bomb.has_exploded:
-				if other_bomb.bomb_id != bomb_id and other_bomb.get_tile_position() == grid_pos:
-					return false
+				if other_bomb.bomb_id != bomb_id:
+					var p_pos = other_bomb.position
+					if p_pos.x >= min_x and p_pos.x < max_x and p_pos.y >= min_y and p_pos.y < max_y:
+						return false
 
 	return true
 
