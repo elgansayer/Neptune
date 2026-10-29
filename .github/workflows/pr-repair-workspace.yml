@@ -1,0 +1,25 @@
+name: PR repair workspace
+on:
+  push:
+    branches: [repair/pr-integration-diagnostics]
+permissions:
+  contents: read
+jobs:
+  workspace:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Prepare exact source and pinned engine for local reproduction
+        run: |
+          mkdir -p "$RUNNER_TEMP/repair-workspace"
+          git archive --format=tar.gz -o "$RUNNER_TEMP/repair-workspace/source.tar.gz" HEAD
+          python3 tools/godot/install.py --directory "$RUNNER_TEMP/repair-workspace/godot"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: pr-repair-workspace
+          path: ${{ runner.temp }}/repair-workspace
+          retention-days: 1
+          if-no-files-found: error
