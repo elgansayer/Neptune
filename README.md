@@ -18,14 +18,27 @@ A competitive multiplayer Bomberman game with server-authoritative physics and m
 
 ### Start Server
 ```bash
-cd server
-godot --headless --path . res://server/main_server.tscn
+godot --headless --path . res://main_server.tscn
 ```
 
 ### Start Client
 ```bash
 godot --path .
 ```
+
+The main scene selects the runtime role independently of the display driver.
+The login scene is a client, `main_server.tscn` is a server, and the bot runner is
+a test process. Explicit automation overrides use user arguments, for example:
+
+```bash
+godot --headless --path . res://main_server.tscn -- --runtime-role=server --server-port=7777
+godot --headless --path . -- --runtime-role=client --server-port=7777
+```
+
+The `ServerMain` autoload owns the server socket; the server scene never starts a
+second server. Invalid role/port configuration and server bind failure exit
+non-zero. Headless client transport is available for automation; this does not
+establish browser compatibility or complete match correctness.
 
 The client will auto-generate a random username (e.g., "Player_1234") and connect to localhost automatically.
 

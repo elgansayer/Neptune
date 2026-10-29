@@ -9,7 +9,7 @@ func test_escape_own_bomb_open_area() -> Variant:
 			set_tile(x, y, 0) # Empty
 			
 	# Spawn bot at center
-	spawn_bot_at(center)
+	await spawn_bot_at(center)
 	
 	if not is_instance_valid(bot_player):
 		return "Failed to spawn bot"
@@ -62,7 +62,7 @@ func test_escape_own_bomb_corner() -> Variant:
 	set_tile(corner.x - 1, corner.y, 1) # Left wall
 	set_tile(corner.x, corner.y - 1, 1) # Top wall
 	
-	spawn_bot_at(corner)
+	await spawn_bot_at(corner)
 	
 	game_instance.place_bomb(bot_player)
 	

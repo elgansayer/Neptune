@@ -30,6 +30,12 @@ The workflow has a 15-minute bound and commands have shorter bounds. Diagnostics
 contain test output only; private media, model keys and production secrets must never
 be passed into this job.
 
+The full bot supervisor writes `native-bots.log`; Godot writes the distinct
+`native-bots-engine.log`, bounded at 16 MiB. The initial eight-MiB default was hit
+by the legacy forecast's verbose output in #51 run 40855908555. Both the original
+failure and artifacts are retained. Separate files prevent two writers corrupting
+the same log; the larger finite cap does not change a gameplay assertion or timeout.
+
 ```sh
 python3 tools/merge_gate/check.py
 python3 tools/merge_gate/run.py --event <github-event.json> --kind pull_request \
