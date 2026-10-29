@@ -1,13 +1,15 @@
-extends Node
+extends "res://tests/support/legacy_bot_scenario.gd"
 
 ## Test: Bot must not commit suicide when spawned in a corner
 
 var test_name := "no_suicide_corner"
-var test_timeout := 10.0
+
 var bot: Node
 var initial_tile: Vector2i
 var test_result := ""
-var game_instance
+
+func _init() -> void:
+	test_timeout = 10.0
 
 func setup() -> void:
 	game_instance = BotTestHelpers.get_game_instance()
@@ -19,7 +21,7 @@ func setup() -> void:
 	
 	# Spawn bot in a corner
 	var corner_tile = Vector2i(2, 2)
-	bot = BotTestHelpers.spawn_bot(corner_tile, "BALANCED", game_instance)
+	bot = await BotTestHelpers.spawn_bot(corner_tile, "BALANCED", game_instance)
 	
 	if not bot:
 		test_result = "FAIL: Bot failed to spawn"
@@ -27,11 +29,9 @@ func setup() -> void:
 	
 	initial_tile = BotTestHelpers.world_to_tile(bot.position)
 	
-	# Clear area but leave walls to create corner
-	for dx in range(-1, 2):
-		for dy in range(-1, 2):
-			if abs(dx) + abs(dy) <= 1:  # Only clear adjacent tiles
-				BotTestHelpers.clear_tile(initial_tile + Vector2i(dx, dy), game_instance)
+	# Author an actual corner, with two open escape directions.
+	set_tile(initial_tile.x - 1, initial_tile.y, 1)
+	set_tile(initial_tile.x, initial_tile.y - 1, 1)
 	
 	await get_tree().create_timer(0.5).timeout
 	print("[TEST] Bot spawned in corner at tile %s" % initial_tile)
@@ -45,20 +45,24 @@ func execute() -> void:
 		if not game_instance.match_active:
 			await BotTestHelpers.wait_for_condition(func(): return game_instance.match_active, 10.0)
 	
-	await get_tree().create_timer(1.0).timeout
+	var previous_bombs: int = game_instance.next_bomb_id
+	game_instance.place_bomb(bot)
+	if game_instance.next_bomb_id != previous_bombs + 1:
+		test_result = "FAIL: Controlled corner bomb was not placed"
+		return
 	
 	print("[TEST] Monitoring bot in corner for %d seconds..." % int(test_timeout))
 	
-	var start_time = Time.get_ticks_msec()
-	var max_wait = test_timeout * 1000
+	var start_time = Engine.get_physics_frames()
+	var max_wait = int(test_timeout * Engine.physics_ticks_per_second)
 	var bomb_count = 0
 	
-	while Time.get_ticks_msec() - start_time < max_wait:
+	while Engine.get_physics_frames() - start_time < max_wait:
 		if not is_instance_valid(bot):
 			test_result = "FAIL: Bot was destroyed"
 			return
 		
-		if bot.has_method("is_dead") and bot.is_dead:
+		if bot.is_dead:
 			test_result = "FAIL: Bot committed suicide in corner"
 			return
 		
@@ -74,7 +78,7 @@ func execute() -> void:
 		test_result = "FAIL: Bot was destroyed during test"
 		return
 	
-	if bot.has_method("is_dead") and bot.is_dead:
+	if bot.is_dead:
 		test_result = "FAIL: Bot died (SUICIDE)"
 		return
 	

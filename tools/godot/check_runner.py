@@ -130,6 +130,13 @@ class RunnerChecks(unittest.TestCase):
         self.fixture("test_hang.gd", 'extends Node\nfunc execute():\n\tawait get_tree().create_timer(20).timeout\n\treturn true\n')
         self.run_case(1, timeout=0.5, reason="FAIL: timeout")
 
+    def test_log_limit_fails(self):
+        self.fixture("test_noisy.gd", 'extends Node\nfunc execute() -> bool:\n\tfor i in range(100):\n\t\tprint("x".repeat(65536))\n\treturn true\n')
+        self.run_case(1, "--max-log-mib", "1", reason="log byte limit exceeded")
+
+    def test_log_limit_cannot_be_unbounded(self):
+        self.run_case(2, "--max-log-mib", "0", reason="between 1 and 32")
+
     def test_terminated_supervisor_reaps_godot(self):
         self.fixture("test_hang.gd", 'extends Node\nfunc execute():\n\tvar file = FileAccess.open("res://godot.pid", FileAccess.WRITE)\n\tfile.store_string(str(OS.get_process_id()))\n\tfile.close()\n\tawait get_tree().create_timer(30).timeout\n\treturn true\n')
         command = [sys.executable, str(ROOT / "tools/godot/run_bot_tests.py"),

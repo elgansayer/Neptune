@@ -53,6 +53,10 @@ duplicate or inconsistent machine summaries. It preserves non-zero outcomes.
 Default timeout: 120 seconds; configurable up to 600. Default log:
 `test_results.log`; use `--log /private/evidence/run.log` to retain runs separately.
 Runtime configuration/cache stays in ignored `.godot/restart-runtime` directories.
+The default output budget is 8 MiB. Long stress runs may explicitly select
+`--max-log-mib 16`; accepted values remain bounded to 1..32 MiB. Overflow is a
+failure and its artifact must be retained. This setting does not change gameplay
+assertions, durations or engine error detection.
 Termination or interruption of the supervisor reaps its Godot process group;
 this failure boundary is checked with a real hanging Godot fixture.
 
