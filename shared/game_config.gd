@@ -85,7 +85,7 @@ const DEFAULT_BOMB_RANGE = 2
 
 # Network
 const SERVER_PORT = 7777
-const MAX_PLAYERS = 8
+const MAX_PLAYERS = preload("res://shared/constants.gd").MAX_MATCH_SEATS
 const TICK_RATE = 60 # Server physics runs at 60 FPS
 const NETWORK_SEND_RATE = 20 # Send state updates 20 times per second
 
