@@ -69,9 +69,22 @@ bash run_bot_tests.sh --godot <pinned-binary> --run-specific test_public_observa
 bash run_bot_tests.sh --godot <pinned-binary> --timeout 300 --max-log-mib 16 --log <full-engine-log>
 ```
 
-The latest full suite is pending at this evidence revision. Final acceptance must
-include its result, native startup/ping-pong probes and exact-head/current-base CI;
-record final identifiers in the issue/PR evidence rather than self-report success.
+Code head `24a5ee9` passed140 cases in22 files locally in241.385 seconds and
+in required CI [40893161288](https://github.com/elgansayer/Neptune-Bomberman/actions/runs/40893161288)
+at base `2553be6`. All ten applicable checks succeeded; native full CI took237.523s.
+The informational cadence workflow40893161267 also passed. Focused observation12,
+RNG11, clock13 and tick1 cases pass30/60/144 FPS caps locally. Actual local default
+and explicit headless plus graphical ClientMain connections pass, alongside
+server ownership, bind failure and invalid role/port probes. These are startup
+and ping-pong checks, not complete online matches or browser evidence.
+
+The ordinary local and CI full logs each retain one ObjectDB exit warning and
+zero engine/script errors. Focused verbose runs and a later bounded complete
+verbose140/22 run have no ObjectDB warning. Its cause is still unverified; a clean
+rerun is not a fix. Track the focused lifecycle diagnostic separately and do not
+claim warning-free cleanup or long-running server health. All original diagnostics
+remain preserved. The final documentation update changes no native source; final
+head/base/merge checks and the diagnostic link are recorded on PR #455 / issue #452.
 
 No public packets, browser transport, downloaded script sandbox, advanced hazard
 coverage, observer-specific profile quality, room-fill quality, Saturn parity or
