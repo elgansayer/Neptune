@@ -82,6 +82,10 @@ func _ready():
 	process_priority = 100
 	# Clock/status phase precedes bombs, bot decisions, then player movement.
 	process_physics_priority = -200
+	var state_publisher = preload("res://shared/simulation_state_publisher.gd").new()
+	state_publisher.name = "SimulationStatePublisher"
+	state_publisher.authority = self
+	add_child(state_publisher)
 	
 	# Initialize map manager
 	map_manager = load("res://shared/maps/map_manager.gd").new()
@@ -334,7 +338,9 @@ func _physics_process(delta):
 	# 		place_bomb(player)
 	# 		player.place_bomb_requested = false
 	
-	# Send state updates to all clients
+	# The late physics publisher sends state after actor movement has completed.
+
+func _publish_due_state() -> void:
 	if last_sync_time >= SYNC_INTERVAL:
 		last_sync_time = 0.0
 		sync_state_to_clients()

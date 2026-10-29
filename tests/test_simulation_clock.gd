@@ -2,6 +2,9 @@ extends "res://tests/bot_test_suite.gd"
 
 var actor: ServerPlayer
 
+func make_game_instance() -> GameInstance:
+	return preload("res://tests/support/clock_capture_game.gd").new()
+
 func setup_test() -> void:
 	game_instance.match_active = false
 	game_instance.countdown_time = 0.0
@@ -230,4 +233,27 @@ func test_repeated_physics_experiment_matches_with_wall_delays() -> Variant:
 	if experiments[0] != experiments[1]:
 		return "Identical public physics experiment changed under wall pacing"
 	print("SIMULATION_EXPERIMENT=" + JSON.stringify({"steps": 40, "delays_ms": [0, 2], "trace_sha256": JSON.stringify(experiments[0]).sha256_text()}))
+	return true
+
+func test_state_publication_follows_actual_actor_movement() -> Variant:
+	actor.position = BotTestHelpers.tile_to_world_center(Vector2i(2, 8))
+	var start_position := actor.position
+	actor.set_input(1.0, 0.0)
+	actor.add_child(preload("res://tests/support/observe_player_clock.gd").new())
+	var publications: Array = game_instance.get("clock_publications")
+	publications.clear()
+	game_instance.last_sync_time = 0.0
+	game_instance.match_active = true
+	game_instance.set_physics_process(true)
+	actor.set_physics_process(true)
+	for index in range(7):
+		await get_tree().physics_frame
+	await get_tree().process_frame
+	game_instance.set_physics_process(false)
+	actor.set_physics_process(false)
+	if actor.position.x <= start_position.x or publications.is_empty():
+		return "Missing actual movement/publication observations"
+	for snapshot: Dictionary in publications:
+		if snapshot.time != snapshot.observed.time or snapshot.position != snapshot.observed.position:
+			return "Published clock/tick described state before this tick's actor update"
 	return true

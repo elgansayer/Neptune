@@ -62,9 +62,20 @@ errors. The pre-existing ObjectDB lifetime warning is retained, not suppressed.
 This local full run predates integration of concurrent main updates; current-base
 CI/revalidation remains authoritative for the eventual candidate.
 
+The first current-main rerun incorporated the newer console/landing/Full Fire
+tests and an additional publication-order regression: 59 passed, one failed across
+16 files (`clock-current-main-full.log`). The focused case also reproduced the
+defect (12 passed/one failed in `clock-publication-before-valid.log`): the early
+clock phase sent state before actual actor movement. A priority-100 physics
+publisher now sends after movement. An observation-only game fixture invokes
+production sync unchanged and compares its publication with a post-movement actor
+observer. All thirteen focused cases then pass (`clock-publication-after.log`).
+The draft PR remains gated while the updated full suite and cadence checks run;
+the earlier green twelve-case CI is not promoted as evidence for this added fix.
+
 Raw logs/command summaries are retained under `/home/dev/neptune-evidence/clock-*`.
 The existing input18/catalogue9 checks passed again, tooling only. The workflow
-adds all twelve clock cases at all three caps; the required aggregate also executes
+adds all clock cases at all three caps; the required aggregate also executes
 the entire discovered native suite. Original fixture changes only express their
 time inputs in simulation units and supply the already-required authority context;
 none of their behavioral assertions is relaxed.
