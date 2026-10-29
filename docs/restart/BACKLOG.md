@@ -2,6 +2,12 @@
 
 Tracker: [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23).
 
+The multiplayer-first community expansion and dependency table for #52–#57 are in
+[COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md). Start with the current server baseline
+and bot work; inspect PRs #49/#51 and remaining scenario-contract issue #50.
+Community fixtures do not depend on full ROM extraction. #43's generic profile
+contract depends on #24; observed Power defaults remain evidence-gated by #41/#42.
+
 Priorities order eligible work, not permission to skip dependencies. The operator
 can prepare the host while the game baseline and bot audit proceed. Read each
 issue's acceptance checks before claiming. Broad tasks should be split further
@@ -24,6 +30,13 @@ when they exceed one reviewable implementation change.
 | [#36](https://github.com/elgansayer/Neptune-Bomberman/issues/36) | [P1] Add shared player identity and trusted event-based match statistics | #31 |
 | [#37](https://github.com/elgansayer/Neptune-Bomberman/issues/37) | [P2] Build community workshop upload-to-cross-play experience | #35, #34, #36 |
 | [#38](https://github.com/elgansayer/Neptune-Bomberman/issues/38) | [P1] Expand verified campaign, bosses, battle modes and Saturn CPU coverage | #29 |
+| [#40](https://github.com/elgansayer/Neptune-Bomberman/issues/40) | [P0] Reconciled runner implementation, already owned by server Codex | #24 subtask; preserve its active branch |
+| [#41](https://github.com/elgansayer/Neptune-Bomberman/issues/41) | [P0] Pin Power Bomberman and expand the feature catalogue | Foundation PR |
+| [#42](https://github.com/elgansayer/Neptune-Bomberman/issues/42) | [P0] Automate private Power Bomberman experiments | #41 |
+| [#43](https://github.com/elgansayer/Neptune-Bomberman/issues/43) | [P0] Shared Saturn/Neptune ruleset profiles | #24; reference claims separately require #41/#42 |
+| [#44](https://github.com/elgansayer/Neptune-Bomberman/issues/44) | [P1] Measured Reversi mode slice | #42, #43 |
+| [#45](https://github.com/elgansayer/Neptune-Bomberman/issues/45) | [P0] Netplay comparison and synchronisation decision | #42, #34 |
+| [#46](https://github.com/elgansayer/Neptune-Bomberman/issues/46) | [P1] Open-source/content release audit | Foundation PR |
 
 ## First eligible server work
 
@@ -31,6 +44,9 @@ when they exceed one reviewable implementation change.
 2. #25: inspect/provision the supplied host and credential boundaries.
 3. After #24, #30: reproduce the concrete bot hazards/decision failures.
 4. After #25, #26 and #33: pin real reference inputs and prove one bounded factory job.
+5. #41 can begin with public documentation while original disc inputs are pending;
+   actual observations require the pinned runnable client/server. #46 is also an
+   independent inventory task. Avoid duplicating server-owned #40.
 
 The foundation input tool is available before these tasks but does not close #26:
 that issue requires actual supplied media, a full asset audit and evidence.
