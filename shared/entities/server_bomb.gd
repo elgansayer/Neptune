@@ -65,6 +65,7 @@ var kick_speed := 200.0 # Speed when kicked (pixels per second)
 const EXPLOSION_GROWTH_INTERVAL = 0.02 # 50 tiles/second
 var explosion_started := false
 var explosion_growth_timer := 0.0
+var _removal_timer: Timer
 var current_explosion_length := 1
 var explosion_pattern: Array[Dictionary] = [] # Full explosion pattern calculated at start
 
@@ -268,9 +269,19 @@ func expand_explosion():
 	current_explosion_length += 1
 	
 	if current_explosion_length > explosion_range:
-		# Explosion complete, remove bomb after short delay
-		await get_tree().create_timer(0.5).timeout
-		queue_free()
+		# The delay belongs to this bomb. An awaited SceneTreeTimer can survive
+		# cancellation when its owner/room is destroyed before the timeout.
+		if not is_instance_valid(_removal_timer):
+			_removal_timer = Timer.new()
+			_removal_timer.name = "RemovalDelay"
+			_removal_timer.one_shot = true
+			_removal_timer.wait_time = 0.5
+			# Match create_timer's existing idle, pause-always semantics.
+			_removal_timer.process_callback = Timer.TIMER_PROCESS_IDLE
+			_removal_timer.process_mode = Node.PROCESS_MODE_ALWAYS
+			_removal_timer.timeout.connect(queue_free, Object.CONNECT_ONE_SHOT)
+			add_child(_removal_timer)
+			_removal_timer.start()
 		return
 
 func get_forecast_observation() -> Dictionary:
