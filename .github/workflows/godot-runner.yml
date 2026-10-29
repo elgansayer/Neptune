@@ -68,3 +68,8 @@ jobs:
           for cadence in 30 60 144; do
             bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bot_physics_ticks --max-fps "$cadence"
           done
+      - name: Verify public fuse bounds and real chain forecasts
+        run: |
+          for cadence in 30 60 144; do
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_forecast --max-fps "$cadence" --timeout 30
+          done
