@@ -1,9 +1,15 @@
 # Operating the three-track AI factory
 
 This is the implementation contract for #33, not a deployed scheduler. Use the
-current working host services if present; first inspect them. OpenHands remains
-the initial orchestration direction, with provider adapters verified on the host.
-A Codex session can implement these tasks without pretending to be an installed daemon.
+current working host services if present; first inspect them. Keep one coordinator
+with a supported Codex worker or a configured OpenHands adapter. Existing supported
+VPS Codex access can be reused within its configured limits; a cloud environment
+is optional. Do not repurpose another repository's provider credentials/policy.
+
+PR #453 adds [local intake and durable ownership](../../tools/factory/README.md)
+with executable concurrency/recovery tests. Remote intake/publication adapters,
+provider execution and supervised live-job recovery remain integration work.
+A Codex session or successful local store test is not a running factory.
 
 [MERGE_POLICY.md](MERGE_POLICY.md) supersedes the earlier mandatory review gate:
 merge automatically after applicable exact-head/current-base tests succeed.

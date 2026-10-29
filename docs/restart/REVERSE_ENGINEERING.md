@@ -1,5 +1,9 @@
 # Automated Saturn research lab
 
+The next executable research sequence is [SATURN_RECONSTRUCTION.md](SATURN_RECONSTRUCTION.md).
+The canonical comparison tool and its limits are documented in
+[TRACE_FORMAT.md](../../tools/saturn_lab/TRACE_FORMAT.md).
+
 ## Input identity and repeatability
 
 The current `tools/saturn_lab/cli.py` inventories files and creates/verifies input

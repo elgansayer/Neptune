@@ -71,3 +71,11 @@ or includes a disc, BIOS or emulator. The check fails if no tests are discovered
 Not implemented yet: emulator boot/control, graphics extraction, archive decoding,
 animation reconstruction, repeatability measurement, gameplay parity and a live
 AI factory. Track those separately in `docs/restart/BACKLOG.md`.
+# Behaviour trace comparisons
+
+`python3 tools/saturn_lab/compare_trace.py reference.json candidate.json` compares
+canonical observations and reports the first differing frame/field. See
+[TRACE_FORMAT.md](TRACE_FORMAT.md) and the
+[Saturn execution plan](../../docs/restart/SATURN_RECONSTRUCTION.md).
+The comparator's synthetic tests do not establish reference-game fidelity.
+

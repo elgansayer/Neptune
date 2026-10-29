@@ -4,7 +4,7 @@
 
 | Item | Exact requirement | Purpose |
 | --- | --- | --- |
-| Research VPS | x86_64 Linux; Ubuntu 24.04 LTS recommended; start with 8 vCPU, 16 GB RAM and at least 160 GB SSD; 320 GB preferred for traces/builds | Initial sizing recommendation, not a benchmark or capacity promise. Add workers after profiling. |
+| Research VPS | Reuse the existing x86_64 Linux VPS and one bounded job initially; measure available CPU/RAM/disk before expanding | Separate coordinator needs from emulator/build load. No upgrade or new machine is required by this document. |
 | Access | Hostname/IP, SSH username and port, and a secure way to provision an SSH public key; a sudo-capable operator account | Install and diagnose services. Do not paste private keys/passwords into GitHub issues or chat. |
 | Reference disc | One complete BIN/CUE set with every referenced track, or a CHD, for a precisely identified release/region | Reproducible reference. Avoid a bare executable or incomplete BIN. Keep an unmodified source copy. |
 | BIOS | Matching Saturn BIOS available on the research host | Boot the selected release with the chosen emulator. The operator supplies material they are authorised to use. |
@@ -49,7 +49,7 @@ Untrusted community issues must not directly launch code with privileged access.
 | Emulator | Evaluate/pin Beetle Saturn via libretro; build a small noninteractive frontend and instrumented core |
 | Graphics debugging | Use Yabause/Kronos source as reference where useful; verify against the chosen reference emulator |
 | Reverse engineering | Ghidra, its required JDK, headless scripts and validated Saturn loader support |
-| Factory | Pin an OpenHands SDK/Agent Server release; durable scheduler/job database and independently verified provider adapter |
+| Factory | Pin the coordinator and supported Codex CLI or OpenHands adapter; reuse the durable job store and verify the actual execution identity/limits |
 | Image/trace processing | Python imaging tools and FFmpeg as needed; CLI processing with reproducible configuration |
 | Monitoring/backups | Structured logs, health checks, bounded storage retention and restoration tests |
 
