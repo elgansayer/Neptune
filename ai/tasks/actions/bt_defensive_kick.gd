@@ -86,7 +86,10 @@ func _tick(_delta: float) -> int:
 	
 	# Execute the kick by walking INTO the bomb
 	var kick_dir = best_kick.kick_dir
-	player.set_input(kick_dir.x, kick_dir.y)
+	var movement: Dictionary = player.set_input(kick_dir.x, kick_dir.y)
+	if not movement.accepted:
+		blackboard.set_var("last_command_rejection", movement.reason)
+		return FAILURE
 	
 	print("[BTDefensiveKick] 🛡️ DEFENSIVE KICK! Kicking bomb at %s away (score=%.2f)" % [
 		best_kick.bomb_tile, best_score

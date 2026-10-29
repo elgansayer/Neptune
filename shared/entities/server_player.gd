@@ -351,7 +351,7 @@ func _physics_process(_delta):
 	if Engine.get_physics_frames() % 300 == 0: # Log every 5 seconds
 		print("[ServerPlayer] _physics_process running. Version: DEBUG-DIAGNOSE-5")
 	
-	if is_dead:
+	if is_dead or not is_instance_valid(game_instance) or not game_instance.match_active:
 		velocity = Vector2.ZERO
 		# last_move_direction = Vector2.ZERO
 		move_and_slide()
@@ -642,42 +642,45 @@ func get_tile_position() -> Vector2i:
 		int(floor(position.y / GameConfig.TILE_SIZE))
 	)
 
-func set_input(input_x: float, input_y: float):
-	"""Set movement input direction.
-	Can be called directly or via input buffer for BT-based control."""
-	input_direction = Vector2(input_x, input_y)
+var last_command_result: Dictionary = {}
 
+func _submit_command(command: Dictionary) -> Dictionary:
+	if not is_instance_valid(game_instance) or not game_instance.has_method("submit_player_command"):
+		last_command_result = {"accepted": false, "reason": "unknown_authority", "action": command.get("action", ""), "bomb_ids": []}
+		return last_command_result.duplicate(true)
+	if game_instance.players.get(peer_id) != self:
+		last_command_result = {"accepted": false, "reason": "unknown_player", "action": command.get("action", ""), "bomb_ids": []}
+		return last_command_result.duplicate(true)
+	return game_instance.submit_player_command(peer_id, command)
 
-func queue_input(input_data: Dictionary) -> void:
-	"""Queue input for BT-based processing.
-	Used when LimboAI input buffer is enabled."""
+func set_input(input_x: Variant, input_y: Variant) -> Dictionary:
+	return _submit_command({"action": "move", "x": input_x, "y": input_y})
+
+func queue_input(input_data: Dictionary) -> Dictionary:
+	var checked: Dictionary = preload("res://shared/player_commands.gd").validate_packet(input_data)
+	if not checked.accepted:
+		last_command_result = checked.duplicate(true)
+		return checked
 	if input_buffer:
-		input_buffer.push_input(input_data)
-	else:
-		# Fallback to direct input if buffer not initialized
-		set_input(input_data.get("input_x", 0.0), input_data.get("input_y", 0.0))
-		place_bomb_requested = input_data.get("place_bomb", false)
-		action_button_pressed = input_data.get("action_pressed", false)
+		input_buffer.push_input(checked.packet.duplicate(true))
+		return {"accepted": true, "reason": "buffered", "action": "packet", "bomb_ids": []}
+	if not is_instance_valid(game_instance):
+		return _submit_command({"action": "move", "x": 0, "y": 0})
+	return game_instance.handle_player_input(peer_id, checked.packet)
 
 func initialize_input_buffer() -> void:
 	"""Initialize input buffer for LimboAI-based player control."""
 	if not input_buffer:
 		input_buffer = InputBufferScript.new()
 
-func request_bomb_placement():
-	if is_dead:
-		return
-	place_bomb_requested = true
+func request_bomb_placement() -> Dictionary:
+	return _submit_command({"action": "place_bomb"})
 
-func request_action_press():
-	"""Called when action button is pressed (for Power Glove pickup/throw)"""
-	if is_dead:
-		return
-	action_button_pressed = true
+func request_action_press() -> Dictionary:
+	return _submit_command({"action": "action_press"})
 
-func request_action_release():
-	"""Called when action button is released (for Power Glove throw)"""
-	action_button_pressed = false
+func request_action_release() -> Dictionary:
+	return _submit_command({"action": "action_release"})
 
 func can_place_bomb() -> bool:
 	if is_dead:
@@ -802,6 +805,15 @@ func get_input_direction_with_virus(raw_direction: Vector2) -> Vector2:
 # ============ POWER GLOVE SYSTEM ============
 
 func try_pickup_bomb(bomb: Node) -> bool:
+	if not is_instance_valid(game_instance) or not game_instance.has_method("submit_player_command"):
+		_submit_command({"action": "pickup_bomb"})
+		return false
+	if not is_instance_valid(bomb) or game_instance.bombs.get(bomb.bomb_id) != bomb:
+		last_command_result = {"accepted": false, "reason": "foreign_bomb", "action": "pickup_bomb", "bomb_ids": []}
+		return false
+	return _submit_command({"action": "pickup_bomb", "bomb_id": bomb.bomb_id}).accepted
+
+func _apply_pickup_bomb(bomb: Node) -> bool:
 	"""Try to pick up a bomb with Power Glove (server-side)"""
 	if not has_power_glove:
 		return false
@@ -809,7 +821,7 @@ func try_pickup_bomb(bomb: Node) -> bool:
 	if not is_instance_valid(bomb):
 		return false
 
-	if carried_bomb != null:
+	if is_instance_valid(carried_bomb):
 		return false # Already carrying a bomb
 
 	# Check if standing on the bomb's tile
@@ -831,6 +843,9 @@ func try_pickup_bomb(bomb: Node) -> bool:
 	return false
 
 func throw_carried_bomb() -> bool:
+	return _submit_command({"action": "throw_bomb"}).accepted
+
+func _apply_throw_bomb() -> bool:
 	"""Throw the currently carried bomb (server-side)"""
 	if not has_power_glove:
 		return false
@@ -1259,14 +1274,17 @@ func get_tirra_rider_offset() -> Vector2:
 		2: return Vector2(0, -45)  # ADULT
 	return Vector2(0, -20)
 
-func trigger_tirra_action() -> void:
+func trigger_tirra_action() -> Dictionary:
+	return _submit_command({"action": "mount_action"})
+
+func _apply_tirra_action() -> bool:
 	"""Called when player presses action button while mounted.
 	Triggers the Tirra's special ability (e.g., kick)."""
 	if not is_mounted or not mounted_tirra:
-		return
+		return false
 	
 	if tirra_action_cooldown > 0.0:
-		return  # On cooldown
+		return false # On cooldown
 	
 	if mounted_tirra.has_method("run_action"):
 		var info = mounted_tirra.run_action("kick")  # Default action for blue Tirra
@@ -1276,6 +1294,9 @@ func trigger_tirra_action() -> void:
 			
 			# Handle the action effect immediately
 			_handle_tirra_action(info["action"], info.get("type", "physical"))
+			return true
+
+	return false
 
 func _handle_tirra_action(action_name: String, action_type: String) -> void:
 	"""Execute the effect of a Tirra action"""

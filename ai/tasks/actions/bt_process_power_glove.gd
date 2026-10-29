@@ -26,7 +26,9 @@ func _tick(delta: float) -> int:
 	
 	# PRIORITY 1: Throw if currently carrying a bomb
 	if player.is_carrying_bomb():
-		player.throw_carried_bomb()
+		if not player.throw_carried_bomb():
+			blackboard.set_var("last_command_rejection", player.last_command_result.reason)
+			return FAILURE
 		_consume_input_if_enabled()
 		blackboard.set_var("last_action", "throw_bomb")
 		return SUCCESS

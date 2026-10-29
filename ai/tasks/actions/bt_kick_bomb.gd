@@ -76,7 +76,10 @@ func _tick(_delta: float) -> int:
 	
 	# To kick: we need to WALK INTO the bomb
 	# Set input direction toward the bomb
-	player.set_input(best_direction.x, best_direction.y, false, false)
+	var movement: Dictionary = player.set_input(best_direction.x, best_direction.y)
+	if not movement.accepted:
+		blackboard.set_var("last_command_rejection", movement.reason)
+		return FAILURE
 	
 	print("[BTKickBomb] ⚽ Kicking bomb at %s toward target %s (score=%.2f)" % [
 		best_bomb.get_tile_position(), kick_target, best_score
