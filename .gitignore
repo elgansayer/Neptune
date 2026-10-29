@@ -6,3 +6,11 @@ server/.godot/*
 /android/
 SBomberman-main/
 *.log
+
+# Private research inputs and local credentials
+/research-private/
+.env
+.env.*
+!.env.example
+**/__pycache__/
+*.py[cod]
