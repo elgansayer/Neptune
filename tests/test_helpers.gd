@@ -12,39 +12,55 @@ static func spawn_bot(tile: Vector2i, personality := "BALANCED", game_instance =
 		push_error("[TestHelpers] No game instance found")
 		return null
 	
-	var peer_id = -1000 - randi() % 1000
-	game_instance.add_player(peer_id, "TestBot_%d" % abs(peer_id), Vector2.ZERO, true, personality)
-	
-	if not game_instance.players.has(peer_id):
+	if tile.x <= 0 or tile.y <= 0 or tile.y >= game_instance.game_map.size() - 1 or tile.x >= game_instance.game_map[0].size() - 1:
+		push_error("[TestHelpers] Spawn outside fixture interior: " + str(tile))
+		return null
+	var existing: Array = game_instance.players.keys()
+	game_instance.spawn_bot(personality)
+	var peer_id := 0
+	for candidate in game_instance.players:
+		if not candidate in existing:
+			peer_id = candidate
+	if peer_id == 0 or game_instance.bot_manager.get_bot_controller(peer_id) == null:
 		push_error("[TestHelpers] Failed to spawn bot")
 		return null
 	
 	var bot = game_instance.players[peer_id]
+	var controller = game_instance.bot_manager.get_bot_controller(peer_id)
+	controller.active = false
+	controller.process_mode = Node.PROCESS_MODE_DISABLED
 	bot.position = tile_to_world_center(tile)
+	bot.set_meta("fixture_spawn", tile)
+	await game_instance.get_tree().physics_frame
+	await game_instance.get_tree().physics_frame
+	if bot.get_tile_position() != tile or bot.is_dead:
+		push_error("[TestHelpers] Bot did not start alive at requested tile")
+		return null
 	return bot
 
 static func get_game_instance():
 	"""Get the current game instance"""
 	var tree = Engine.get_main_loop() as SceneTree
 	if tree:
-		for child in tree.root.get_children():
-			if child.has_method("add_player"):
-				return child
+		var games := tree.get_nodes_in_group("bot_test_game")
+		if games.size() == 1:
+			return games[0]
 	return null
 
 static func tile_to_world_center(tile: Vector2i) -> Vector2:
 	"""Convert tile coordinates to world position (center of tile)"""
-	return Vector2(tile.x * 16 + 8, tile.y * 16 + 8)
+	return Vector2(tile) * GameConfig.TILE_SIZE + Vector2.ONE * GameConfig.TILE_SIZE / 2.0
 
 static func clear_tile(tile: Vector2i, game_instance = null) -> void:
 	"""Clear a tile (remove any blocks)"""
 	if not game_instance:
 		game_instance = get_game_instance()
 	
-	if not game_instance or not game_instance.has_method("destroy_block_at"):
+	if not game_instance or not game_instance.has_meta("fixture_owner"):
 		return
-	
-	game_instance.destroy_block_at(tile)
+	if tile.x <= 0 or tile.y <= 0 or tile.y >= game_instance.game_map.size() - 1 or tile.x >= game_instance.game_map[0].size() - 1:
+		return
+	game_instance.get_meta("fixture_owner").set_tile(tile.x, tile.y, 0)
 
 static func place_bomb(tile: Vector2i, fuse_time := 3.0, owner_id := -999) -> Node:
 	"""Place a bomb at a specific tile"""
@@ -52,11 +68,22 @@ static func place_bomb(tile: Vector2i, fuse_time := 3.0, owner_id := -999) -> No
 	if not game_instance:
 		return null
 	
-	# Create bomb through game instance if possible
-	if game_instance.has_method("create_bomb"):
-		return game_instance.create_bomb(owner_id, tile, fuse_time)
-	
-	return null
+	# Scenario adapter: real bomb scene and real explosion/damage callbacks.
+	var bomb = game_instance.ServerBombScene.instantiate()
+	bomb.bomb_id = str(game_instance.next_bomb_id)
+	game_instance.next_bomb_id += 1
+	bomb.owner_id = str(owner_id)
+	bomb.fuse_time = fuse_time
+	bomb.fuse_lower_bound = fuse_time
+	bomb.explosion_timer = 0.0
+	bomb.position = tile_to_world_center(tile)
+	bomb.game_instance = game_instance
+	game_instance.bombs[bomb.bomb_id] = bomb
+	game_instance.add_child(bomb)
+	bomb.exploded.connect(game_instance._on_bomb_exploded)
+	bomb.explosion_expanded.connect(func(tiles): game_instance._on_explosion_expanded(bomb, tiles))
+	bomb.tree_exited.connect(func(): game_instance.bombs.erase(bomb.bomb_id))
+	return bomb
 
 static func wait_for_condition(condition: Callable, timeout: float) -> bool:
 	"""Wait for a condition to become true, with timeout"""
@@ -106,7 +133,7 @@ static func is_bot_in_danger(bot: Node) -> bool:
 
 static func world_to_tile(pos: Vector2) -> Vector2i:
 	"""Convert world position to tile coordinates"""
-	return Vector2i(int(pos.x / 16), int(pos.y / 16))
+	return Vector2i(floori(pos.x / GameConfig.TILE_SIZE), floori(pos.y / GameConfig.TILE_SIZE))
 
 static func get_safe_tiles_around(center: Vector2i, radius: int, game_instance = null) -> Array[Vector2i]:
 	"""Get all safe (non-threatened) tiles around a center point"""
@@ -143,13 +170,12 @@ static func count_bombs_near(pos: Vector2, radius: float, game_instance = null) 
 	if not game_instance:
 		game_instance = get_game_instance()
 	
-	if not game_instance or not game_instance.has_node("Bombs"):
+	if not game_instance:
 		return 0
 	
 	var count = 0
-	var bombs_node = game_instance.get_node("Bombs")
-	for bomb in bombs_node.get_children():
-		if bomb.position.distance_to(pos) <= radius:
+	for bomb in game_instance.bombs.values():
+		if is_instance_valid(bomb) and not bomb.has_exploded and bomb.position.distance_to(pos) <= radius:
 			count += 1
 	
 	return count

@@ -365,8 +365,9 @@ func get_aliases() -> PackedStringArray:
 
 ## Returns the alias's actual command as an argument vector.
 func get_alias_argv(p_alias: String) -> PackedStringArray:
-	# TODO: I believe _aliases values are stored as an array so this iis unneccessary?
-	return _aliases.get(p_alias, [p_alias]).duplicate()
+	# Packed arrays share storage; callers must not mutate the registered alias.
+	var argv: PackedStringArray = _aliases.get(p_alias, PackedStringArray([p_alias]))
+	return argv.duplicate()
 
 
 ## Registers a callable that should return an array of possible values for the given argument and command.

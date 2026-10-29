@@ -39,6 +39,7 @@ var sub_pixel_accumulator: int = 0 # Range: 0 to 255, overflows at 256
 var has_bomb_kicker := false # Can kick bombs
 var has_power_glove := false # Can pick up and throw bombs
 var has_line_bomb := false   # Can place all bombs in a line
+var has_full_fire := false   # Can max out fire range
 
 # === BOMB TYPE SYSTEM (Saturn Bomberman) ===
 # 0 = Normal, 1 = Remote (manual detonate), 2 = Power (pierce blocks), 3 = Rubber (bounce)
@@ -751,6 +752,16 @@ func should_auto_place_bomb() -> bool:
 	"""DIARRHOEA virus causes automatic bomb placement"""
 	return active_virus == VirusType.DIARRHOEA
 
+func get_bomb_fuse_lower_bound() -> float:
+	# Pure planning query: do not consume the actual placement RNG.
+	match active_virus:
+		VirusType.HASTY_FUSE:
+			return 1.0
+		VirusType.LEISURELY_FUSE:
+			return 5.0
+		_:
+			return Constants.BOMB_TIMER
+
 func get_bomb_fuse_time() -> float:
 	"""Get bomb timer based on virus status"""
 	match active_virus:
@@ -1435,7 +1446,7 @@ func collect_powerup(powerup):
 		
 		ServerPowerUpScript.PowerUpType.RANGE_INCREASE:
 			var old_val = bomb_range
-			var max_range = Constants.FIRE_MAX  # TODO: Use FIRE_MAX_FULL if has_full_fire
+			var max_range = Constants.FIRE_MAX_FULL if has_full_fire else Constants.FIRE_MAX
 			bomb_range = mini(bomb_range + 1, max_range)
 			var changed = bomb_range != old_val
 			print("[Player] ", username, " collected FIRE power-up! ", old_val, " -> ", bomb_range,
@@ -1467,6 +1478,7 @@ func collect_powerup(powerup):
 		
 		# === SPECIAL ITEMS ===
 		ServerPowerUpScript.PowerUpType.FULL_FIRE:
+			has_full_fire = true
 			bomb_range = Constants.FIRE_MAX_FULL  # Set to max (16)
 			print("[Player] ", username, " collected FULL FIRE! Range -> ", bomb_range)
 		
@@ -1526,7 +1538,7 @@ func get_state_minimal() -> Dictionary:
 	# Optimized for packet size - uses short keys and packed formats
 	
 	# Pack boolean flags into single integer to save bytes
-	# Bit layout: [0]=kicker, [1]=glove, [2]=line_bomb, [3]=carrying, [4]=picking_up, [5]=mounted, [6]=flying, [7]=immortal, [8]=flash_white
+	# Bit layout: [0]=kicker, [1]=glove, [2]=line_bomb, [3]=carrying, [4]=picking_up, [5]=mounted, [6]=flying, [7]=immortal, [8]=flash_white, [9]=has_full_fire
 	var flags = 0
 	if has_bomb_kicker: flags |= 1
 	if has_power_glove: flags |= 2
@@ -1537,6 +1549,7 @@ func get_state_minimal() -> Dictionary:
 	if is_flying: flags |= 64   # Bit 6 = in arc jump
 	if is_immortal: flags |= 128  # Bit 7 = invincible
 	if flash_white: flags |= 256  # Bit 8 = white flash active
+	if has_full_fire: flags |= 512 # Bit 9 = full fire
 	
 	# Use single-char facing: U/D/L/R instead of UP/DOWN/LEFT/RIGHT
 	var facing_char = "D"  # default down
@@ -1554,17 +1567,17 @@ func get_state_minimal() -> Dictionary:
 		}
 	
 	# Pack stats into 2 integers for ultra-compact transmission:
-	# s1: (max_bombs<<12) | (bomb_range<<8) | (bombs_placed<<4) | skate_count
-	# s2: (bomb_type<<16) | (active_virus<<8) | flags  (flags now uses bits 0-8)
-	var s1 = (max_bombs << 12) | (bomb_range << 8) | (bombs_placed << 4) | skate_count
-	var s2 = (bomb_type << 16) | flags  # Flags now include immortality/flying
+	# s1 retains four stat nibbles; s2 bit 10 carries the fifth range bit.
+	# Full Fire ownership is flag bit 9; virus state is transmitted separately.
+	var stats = preload("res://shared/player_snapshot_stats.gd").pack(
+		max_bombs, bomb_range, bombs_placed, skate_count, bomb_type, flags)
 	
 	var state = {
 		"p": [int(position.x), int(position.y)],  # position as array
 		"f": facing_char,  # facing: U/D/L/R
 		# Note: omit "d" for alive players - absence means alive (saves bytes)
 		# Stats packed into 2 integers
-		"s": [s1, s2],
+		"s": stats,
 	}
 	# Only send velocity if non-zero (most players are stationary most of the time)
 	if velocity.x != 0 or velocity.y != 0:
@@ -1601,6 +1614,7 @@ func get_state() -> Dictionary:
 		"has_bomb_kicker": has_bomb_kicker,
 		"has_power_glove": has_power_glove,
 		"has_line_bomb": has_line_bomb,
+		"has_full_fire": has_full_fire,
 		"bomb_type": bomb_type,
 		"active_virus": active_virus,
 		"virus_end_time": virus_end_time,

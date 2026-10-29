@@ -194,22 +194,18 @@ func update_game_state(state: Dictionary):
 			# Expand minimal player state to full format for existing code
 			# Keys: p=position, v=velocity, f=facing (U/D/L/R), d=dead, c=carried_bomb (optional)
 			# Stats packed into 2 integers: s=[s1, s2]
-			# s1: (max_bombs<<12) | (bomb_range<<8) | (bombs_placed<<4) | skate_count
-			# s2: (bomb_type<<16) | (active_virus<<8) | flags
+			# s1: legacy stat nibbles; s2: bomb type and flags, including range high bit.
+			# Virus state is transmitted separately.
 			# flags = packed booleans (bit 0=kicker, 1=glove, 2=line_bomb, 3=carrying, 4=picking)
 			
 			var stats_packed = pmin.get("s", [0x1200, 0]) # Default: max_bombs=1, range=2
-			var s1 = stats_packed[0] if stats_packed.size() > 0 else 0x1200
-			var s2 = stats_packed[1] if stats_packed.size() > 1 else 0
-			
-			# Unpack stats
-			var max_bombs = (s1 >> 12) & 0xF
-			var bomb_range = (s1 >> 8) & 0xF
-			var bombs_placed = (s1 >> 4) & 0xF
-			var skate_count = s1 & 0xF
-			var bomb_type = (s2 >> 16) & 0xFF
-			# Flags now uses all lower 16 bits (was 8 bits) to include flying/immortal/flash
-			var flags = s2 & 0xFFFF
+			var stats = preload("res://shared/player_snapshot_stats.gd").unpack(stats_packed)
+			var max_bombs = stats.max_bombs
+			var bomb_range = stats.bomb_range
+			var bombs_placed = stats.bombs_placed
+			var skate_count = stats.skate_count
+			var bomb_type = stats.bomb_type
+			var flags = stats.flags
 			
 			# Expand single-char facing back to full name
 			var facing = "DOWN"
@@ -237,6 +233,7 @@ func update_game_state(state: Dictionary):
 				"has_bomb_kicker": (flags & 1) != 0,
 				"has_power_glove": (flags & 2) != 0,
 				"has_line_bomb": (flags & 4) != 0,
+				"has_full_fire": (flags & 512) != 0,
 				"is_carrying_bomb": (flags & 8) != 0,
 				"is_picking_up_bomb": (flags & 16) != 0,
 				"is_mounted": (flags & 32) != 0,  # Bit 5 = mounted on Tirra
@@ -266,6 +263,7 @@ func update_game_state(state: Dictionary):
 				"bomb_id": bomb_id, # Use the key as bomb_id
 				"position": {"x": bmin.p[0], "y": bmin.p[1]},
 				"timer": bmin.t / 100.0, # Convert centiseconds back to seconds
+				"fuse_lower_bound": bmin.get("f", 300) / 100.0,
 				"state": bmin.s,
 			}
 			if bmin.has("k"):

@@ -39,7 +39,7 @@ func _get_game_instance():
 	
 	# Try finding it directly
 	for node in get_tree().root.get_children():
-		if node.name == "GameInstance" or node.get_script() == load("res://_get_game_instance().gd"):
+		if node is GameInstance:
 			game_instance_ref = node
 			return node
 	
@@ -69,6 +69,7 @@ func _cmd_spawn_bomb(x: int, y: int, range: int = 3, fuse: float = 3.0) -> void:
 	game_instance.next_bomb_id += 1
 	bomb.explosion_range = range
 	bomb.fuse_time = fuse
+	bomb.fuse_lower_bound = fuse
 	bomb.position = Vector2(
 		tile_pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
 		tile_pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
