@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTThrowBomb
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Throws a bomb at an opponent using Power Glove
 ## State machine: PLACE -> PICKUP -> THROW
 ## Used with POWER_THROW tactic for aggressive ranged attacks
@@ -130,7 +132,7 @@ func _tick(_delta: float) -> int:
 			# THROW!
 			if player.throw_carried_bomb():
 				print("[BTThrowBomb] 💣 THROW! Direction %s" % _throw_dir)
-				blackboard.set_var("last_throw_time", Time.get_ticks_msec())
+				blackboard.set_var("last_throw_time", SimulationTime.milliseconds(blackboard))
 				# Clear the tactic so we don't repeat
 				blackboard.set_var("tactical_plan", "NONE")
 				return SUCCESS

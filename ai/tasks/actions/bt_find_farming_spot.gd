@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTFindFarmingSpot
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Finds a nearby soft block position that has an escape route
 ## Sets target_cell in blackboard for safe bomb placement
 
@@ -36,7 +38,7 @@ func _tick(_delta: float) -> int:
 	
 	var current_tile = player.get_tile_position()
 	var bomb_range = player.get_effective_bomb_range()
-	var current_time_msec = Time.get_ticks_msec()
+	var current_time_msec = SimulationTime.milliseconds(blackboard)
 
 	# If we already have a valid farming target, reuse it to avoid expensive rescans every tick
 	var existing_target = _coerce_to_tile(blackboard.get_var(target_cell_var))
@@ -107,7 +109,7 @@ func _tick(_delta: float) -> int:
 				stuck_targets = blackboard.get_var("stuck_targets")
 				
 			if stuck_targets.has(tile_key):
-				if Time.get_ticks_msec() < stuck_targets[tile_key]:
+				if SimulationTime.milliseconds(blackboard) < stuck_targets[tile_key]:
 					if debug_logging:
 						pass # print("  [REJECT] ", check_tile, " - penalized (stuck)")
 					continue
@@ -456,7 +458,7 @@ func _is_valid_target(tile: Vector2i, grid_sampler, bomb_range: int) -> bool:
 		
 	var s_key = "%d,%d" % [tile.x, tile.y]
 	if stuck_targets.has(s_key):
-		if Time.get_ticks_msec() < stuck_targets[s_key]:
+		if SimulationTime.milliseconds(blackboard) < stuck_targets[s_key]:
 			print("[BTFindFarmingSpot] ⚠ Cached target ", tile, " is PENALIZED (stuck) - invalidating cache")
 			return false
 		else:

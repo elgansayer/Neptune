@@ -37,8 +37,8 @@ func teardown_test() -> void:
 func _observe_bomb() -> void:
 	var bomb = BotTestHelpers.place_bomb(Vector2i(7, 6), 3.0)
 	bomb.set_physics_process(false)
-	game_instance.ai_manager.refresh_threat_matrix(Time.get_ticks_msec())
-	game_instance.bot_manager.hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
+	game_instance.ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
+	game_instance.bot_manager.hazard_predictor.refresh(game_instance.get_simulation_time_sec())
 
 func _execute() -> int:
 	task.abort()
@@ -63,8 +63,8 @@ func test_tight_safe_refuge_is_retained_without_extension() -> Variant:
 		for x in range(default_map_width):
 			if Vector2i(x, y) not in [Vector2i(7, 6), Vector2i(6, 6), Vector2i(6, 5)]:
 				set_tile(x, y, 1)
-	game_instance.ai_manager.refresh_threat_matrix(Time.get_ticks_msec())
-	game_instance.bot_manager.hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
+	game_instance.ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
+	game_instance.bot_manager.hazard_predictor.refresh(game_instance.get_simulation_time_sec())
 	if _execute() != _success():
 		return "A tight safe escape was incorrectly rejected"
 	return assert_eq(board.get_var("escape_cell"), Vector2i(6, 5), "Must keep the only safe refuge")
@@ -110,8 +110,8 @@ func _move_task():
 func test_escape_movement_rejects_a_waypoint_already_on_fire() -> Variant:
 	board.set_var("escape_cell", Vector2i(5, 6))
 	board.set_var("escape_route_found", true)
-	game_instance.active_explosion_tiles["6,6"] = Time.get_ticks_msec() + 1000.0
-	game_instance.bot_manager.hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
+	game_instance.active_explosion_tiles["6,6"] = game_instance.get_simulation_time_msec() + 1000.0
+	game_instance.bot_manager.hazard_predictor.refresh(game_instance.get_simulation_time_sec())
 	var move = _move_task()
 	var status: int = move.execute(1.0 / 60.0)
 	print("ACTIVE_FLAME_MOVE=" + JSON.stringify({"status": status, "input": str(actor.input_direction)}))
@@ -133,7 +133,7 @@ func test_escape_movement_rejects_a_blast_before_waypoint_arrival() -> Variant:
 	_observe_bomb()
 	var bomb: ServerBomb = game_instance.bombs.values()[0]
 	bomb.explosion_timer = 2.9
-	game_instance.bot_manager.hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
+	game_instance.bot_manager.hazard_predictor.refresh(game_instance.get_simulation_time_sec())
 	board.set_var("escape_cell", Vector2i(6, 5))
 	board.set_var("escape_route_found", true)
 	var move = _move_task()
@@ -144,7 +144,7 @@ func test_centering_cannot_bypass_active_target_check() -> Variant:
 	actor.position = BotTestHelpers.tile_to_world_center(target) + Vector2(0, 3)
 	board.set_var("escape_cell", target)
 	board.set_var("escape_route_found", true)
-	game_instance.active_explosion_tiles["6,5"] = Time.get_ticks_msec() + 1000.0
-	game_instance.bot_manager.hazard_predictor.refresh(Time.get_ticks_msec() / 1000.0)
+	game_instance.active_explosion_tiles["6,5"] = game_instance.get_simulation_time_msec() + 1000.0
+	game_instance.bot_manager.hazard_predictor.refresh(game_instance.get_simulation_time_sec())
 	var move = _move_task()
 	return assert_eq(move.execute(1.0 / 60.0), ClassDB.class_get_integer_constant("BT", "FAILURE"), "Already inside target: centering must not bypass the flame guard")

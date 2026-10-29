@@ -2,6 +2,8 @@
 extends BTAction
 class_name BTFindEscapeRoute
 
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Finds a safe escape route from danger using the AI pathfinder
 ## Sets target_cell in blackboard if a safe path is found
 
@@ -25,7 +27,7 @@ func _tick(_delta: float) -> int:
 	var ai_manager = blackboard.get_var("ai_manager")
 	var grid_sampler = blackboard.get_var("grid_sampler")
 	var threat_matrix = ai_manager.threat_matrix if ai_manager else {}
-	var current_time_msec = Time.get_ticks_msec()
+	var current_time_msec = SimulationTime.milliseconds(blackboard)
 	# Calculate msec_per_tile based on bot speed (tiles per second = speed / tile_size)
 	# Default: BASE_SPEED=45 px/s, TILE_SIZE=16px → 45/16 = 2.8125 tiles/s → 355ms/tile
 	var bot_speed_tiles_per_sec = GameConfig.BASE_SPEED / GameConfig.TILE_SIZE
@@ -57,7 +59,7 @@ func _tick(_delta: float) -> int:
 			
 		if current_escape_target is Vector2i:
 			# Check if the target is still safe
-			var current_time = Time.get_ticks_msec() / 1000.0
+			var current_time = SimulationTime.seconds(blackboard)
 			var is_target_safe = hazard_predictor.is_tile_safe(current_escape_target, current_time, 0.5)
 			
 			# CRITICAL: Also verify the PATH to the target is still valid!
@@ -250,7 +252,7 @@ func _tick(_delta: float) -> int:
 				# if blackboard.has_var("stuck_targets"):
 				# 	stuck_targets = blackboard.get_var("stuck_targets")
 				# if stuck_targets.has(next_key):
-				# 	if Time.get_ticks_msec() < stuck_targets[next_key]:
+				# 	if SimulationTime.milliseconds(blackboard) < stuck_targets[next_key]:
 				# 		if debug_logging and current_pos == player_tile:
 				# 			print("[BTFindEscapeRoute] DEBUG: Neighbor ", next_pos, " penalized (stuck)")
 				# 		continue

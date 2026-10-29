@@ -161,7 +161,7 @@ func _update_limbo_blackboard() -> void:
 	
 	# State
 	_limbo_blackboard.set_var("current_tile", player_ref.get_tile_position() if player_ref else Vector2i.ZERO)
-	_limbo_blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
+	_limbo_blackboard.set_var("time", game_instance.get_simulation_time_sec())
 	_limbo_blackboard.set_var("danger_buffer", _personality_profile.get("danger_buffer", 0.1))
 	_limbo_blackboard.set_var("escape_radius", _personality_profile.get("escape_radius", 8))
 	

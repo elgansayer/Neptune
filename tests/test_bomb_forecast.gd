@@ -87,7 +87,7 @@ func test_native_plant_condition_uses_actor_short_fuse() -> Variant:
 	await game_instance.add_player(-101, "FuseFixture", BotTestHelpers.tile_to_world_center(tile), true, "fixture")
 	var player: ServerPlayer = game_instance.players[-101]
 	var blackboard = ClassDB.instantiate("Blackboard")
-	var values := {"player": player, "ai_manager": game_instance.ai_manager, "grid_sampler": game_instance.bot_manager.grid_sampler, "bomb_safety_checker": game_instance.bot_manager.bomb_safety_checker, "target_cell": tile}
+	var values := {"player": player, "game_instance": game_instance, "ai_manager": game_instance.ai_manager, "grid_sampler": game_instance.bot_manager.grid_sampler, "bomb_safety_checker": game_instance.bot_manager.bomb_safety_checker, "target_cell": tile}
 	for key in values:
 		blackboard.set_var(key, values[key])
 	var task = preload("res://ai/tasks/conditions/bt_can_safely_plant.gd").new()

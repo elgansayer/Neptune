@@ -64,7 +64,7 @@ enum VirusType {
 	LEISURELY_FUSE = 9,   # Bombs have 5-6 second fuse
 }
 var active_virus: VirusType = VirusType.NONE
-var virus_end_time: float = 0.0  # When virus expires (Time.get_ticks_msec())
+var virus_end_time: float = 0.0  # Simulation millisecond deadline.
 const VIRUS_DURATION_MS: float = 12000.0  # 12 seconds (Saturn Bomberman spec)
 var last_nonzero_direction: Vector2 = Vector2.DOWN  # For UNSTOPPABLE virus
 
@@ -105,7 +105,7 @@ signal jump_landed()
 # === IMMORTALITY/INVINCIBILITY SYSTEM (Saturn Bomberman) ===
 # After being hit while mounted, player becomes temporarily invincible
 var is_immortal: bool = false              # True during invincibility frames
-var immortal_end_time: float = 0.0         # Time.get_ticks_msec() when immortality expires
+var immortal_end_time: float = 0.0         # Simulation millisecond deadline.
 var flash_white: bool = false              # Toggles each flash tick for white shader effect
 const IMMORTAL_DURATION_MS: float = 3000.0 # 3 seconds of invincibility after hit
 const FLASH_INTERVAL_SEC: float = 0.1      # Flash every 100ms
@@ -696,7 +696,7 @@ func update_virus(current_time_msec: float) -> void:
 func apply_virus(virus_type: VirusType) -> void:
 	"""Apply a virus effect from skull pickup or transfer"""
 	active_virus = virus_type
-	virus_end_time = Time.get_ticks_msec() + VIRUS_DURATION_MS
+	virus_end_time = game_instance.get_simulation_time_msec() + VIRUS_DURATION_MS
 	print("[Player] ", username, " INFECTED with ", VirusType.keys()[virus_type], " for ", VIRUS_DURATION_MS/1000.0, "s")
 	
 	# Apply immediate effects
@@ -1028,7 +1028,7 @@ func set_immortal(value: bool) -> void:
 	is_immortal = value
 	
 	if value:
-		immortal_end_time = Time.get_ticks_msec() + IMMORTAL_DURATION_MS
+		immortal_end_time = game_instance.get_simulation_time_msec() + IMMORTAL_DURATION_MS
 		flash_timer = 0.0
 		flash_white = true
 		print("[ServerPlayer] ", username, " is now IMMORTAL for ", IMMORTAL_DURATION_MS / 1000.0, " seconds")
@@ -1042,7 +1042,7 @@ func _process_immortality(delta: float) -> void:
 		return
 	
 	# Check if immortality has expired
-	if Time.get_ticks_msec() >= immortal_end_time:
+	if game_instance.get_simulation_time_msec() >= immortal_end_time:
 		set_immortal(false)
 		return
 	
