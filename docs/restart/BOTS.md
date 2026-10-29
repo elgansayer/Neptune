@@ -54,6 +54,9 @@ planning budget and deliberate fallibility rather than hidden stat boosts.
 Share bounded hazard computations where semantics are identical. Keep gameplay
 decisions local and bounded; no external LLM requests inside the match tick.
 
+Per-participant policy seed/state and its limits are documented in
+[BOT_POLICY_RNG.md](BOT_POLICY_RNG.md).
+
 The implemented authority clock and its units/physics phases are documented in
 [SIMULATION_TIME.md](SIMULATION_TIME.md). Controlled clock experiments are separate
 from complete policy RNG, fairness and replay determinism acceptance.
