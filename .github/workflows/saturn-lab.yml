@@ -1,14 +1,18 @@
-name: Saturn research tooling
+name: Research input and catalogue tooling
 
 on:
   pull_request:
     paths:
       - 'tools/saturn_lab/**'
+      - 'tools/research_catalog/**'
+      - 'docs/restart/feature-catalogue.json'
       - '.github/workflows/saturn-lab.yml'
   push:
     branches: [main]
     paths:
       - 'tools/saturn_lab/**'
+      - 'tools/research_catalog/**'
+      - 'docs/restart/feature-catalogue.json'
       - '.github/workflows/saturn-lab.yml'
   workflow_dispatch:
 
@@ -27,3 +31,5 @@ jobs:
           submodules: false
       - name: Verify input tooling
         run: python3 tools/saturn_lab/check.py
+      - name: Verify catalogue metadata and rejection cases
+        run: python3 tools/research_catalog/check.py
