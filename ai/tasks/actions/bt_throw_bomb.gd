@@ -79,7 +79,10 @@ func _tick(_delta: float) -> int:
 		ThrowState.PLACING:
 			# Place the bomb - AI bots call game_instance directly
 			if player.can_place_bomb() and not _bomb_at_position(player_tile, game_instance):
-				game_instance.place_bomb(player)
+				var placement: Dictionary = game_instance.place_bomb(player)
+				if not placement.accepted:
+					blackboard.set_var("last_bomb_rejection", placement.reason)
+					return FAILURE
 				print("[BTThrowBomb] 💣 Placed bomb for throwing")
 				_state = ThrowState.PICKING_UP
 				_attempts = 0

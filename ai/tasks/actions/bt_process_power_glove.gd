@@ -40,7 +40,10 @@ func _tick(delta: float) -> int:
 	# PRIORITY 3: Place new bomb if allowed and no bomb at position
 	var player_tile = player.get_tile_position()
 	if player.can_place_bomb() and not _bomb_at_position(player_tile, game_instance):
-		game_instance.place_bomb(player)
+		var placement: Dictionary = game_instance.place_bomb(player)
+		if not placement.accepted:
+			blackboard.set_var("last_bomb_rejection", placement.reason)
+			return FAILURE
 		_consume_input_if_enabled()
 		blackboard.set_var("last_action", "place_bomb")
 		return SUCCESS
