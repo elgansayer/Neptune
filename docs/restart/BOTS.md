@@ -90,8 +90,15 @@ Initial deterministic scenarios:
 Measure avoidable self-KOs separately from unavoidable deaths; do not promise zero
 deaths in adversarial play. Track win rate with sample sizes/uncertainty, survival,
 idle/oscillation time, item efficiency, invalid actions and p95/p99 tick cost.
-Benchmark the intended 10-player mixed load and multiple matches on the target host
-before declaring performance adequate. Establish numeric budgets from that baseline.
+Benchmark ten-player Saturn scenarios, twelve-seat extensible rooms and multiple
+matches on the target host before declaring performance adequate. Establish
+numeric budgets from that baseline.
+
+Power-inspired modes require mode-aware objectives, not only survival logic.
+The mode/pack capability contract supplies observable objectives and hazard rules.
+Test score pursuit, team cooperation and tie/timeout decisions after observing each
+mode. Refuse unsupported mechanics explicitly rather than treating unknown hazards
+as safe. Keep mode-specific tournament results separate from aggregate win rate.
 
 AI development agents can run tournaments, inspect replays, propose policy changes
 and tune parameters offline. Promote a candidate only if regression, fairness,

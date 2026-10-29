@@ -1,0 +1,94 @@
+# Server Codex starting prompt
+
+Paste the text below into Codex on the VPS. It is a working instruction, not an
+assertion that any service is already deployed. Supply secrets through the host's
+configured secret mechanism, not this prompt or GitHub issues.
+
+---
+
+Continue the authorised Neptune project in `elgansayer/Neptune-Bomberman`.
+Asset reference repository: `elgansayer/SaturnBomberman-Assets`.
+Tracker: https://github.com/elgansayer/Neptune-Bomberman/issues/23
+Foundation: https://github.com/elgansayer/Neptune-Bomberman/pull/39
+
+Build an open-source, highly moddable Bomberman community platform: faithful
+Saturn campaign and battle, measured Power Bomberman feature coverage, strong
+online bots, browser/native cross-play, superior measured netplay, profiles,
+trusted detailed statistics and a map/character/mod workshop. Implement our own
+code and track content provenance separately. Existing root licence is Apache-2.0.
+
+Act on small eligible tasks autonomously. Do not spend the session producing
+another broad plan when an implementation or experiment can proceed. Never claim
+emulation, extraction, gameplay or factory success from documentation/tooling tests.
+
+First inspect repository status/remotes, current main, PR #39, other open PRs,
+host resources, installed tools and existing factory services without exposing
+secrets. Preserve uncommitted work. If #39 is merged, use current main; otherwise
+inspect its current head and continue in an isolated worktree based on it. Do not
+force-reset an existing checkout or overwrite other workers' changes.
+
+Read AGENTS.md and docs/restart/README.md, REQUIREMENTS.md, SERVER_HANDOFF.md,
+FACTORY_PLAYBOOK.md, REVERSE_ENGINEERING.md, POWER_BOMBERMAN.md,
+NETPLAY_BENCHMARKS.md, BOTS.md, OPEN_SOURCE_AND_CONTENT.md and BACKLOG.md.
+Read feature-catalogue.json using tools/research_catalog/cli.py. These are the
+current scope; older completion reports need runtime evidence.
+
+Run these existing tooling checks:
+
+    python3 tools/saturn_lab/check.py
+    python3 tools/research_catalog/check.py
+    python3 tools/research_catalog/cli.py validate
+    python3 tools/research_catalog/cli.py report
+
+Then make actual progress in three logical tracks, within host and spend budgets:
+
+1. Factory/build: #24 and #25 first. Continue server-owned #40 on
+   `restart/server-runner-baseline`, reconciling test-runner PRs #18/#20, and prove
+   the actual Godot baseline. Implement one recoverable issue-to-PR job in #33,
+   with independent review, real tests and exact-commit merge gates before scaling.
+2. Saturn lab: #26 -> #27 -> #28 -> #29. Pin supplied complete disc/BIOS/core,
+   automate emulator control, extract real graphics with provenance and measure
+   one campaign room plus battle arena. Then expand coverage through #38.
+3. Power Bomberman lab: #41 -> #42; #43 also requires #24. Pin the developer-linked
+   0.7.8c client/server/manual, automate isolated local observations and implement
+   a measured first mode slice in #44. Verify newer releases separately instead
+   of silently changing the reference version. Never load-test public servers.
+
+Keep bots central: #30, #31 and #32 cover safety, room filling and held-out
+tournaments. Keep faithful Saturn CPU separate from enhanced Neptune opponents.
+Design extensible rooms for twelve seats, reference limits separately. Use local,
+bounded bot decisions; no external LLM calls inside the match tick.
+
+Preserve one authoritative Godot simulation. Separate Saturn and extensible Neptune
+profiles. Continue browser/cross-play #34, portable content #35, trusted stats #36,
+workshop #37, measured networking #45 and source/content release audit #46 according
+to dependencies. Custom characters must not require unlock grinding. No arbitrary
+downloaded GDScript/native code in community packs. Keep simulation-affecting pack
+versions/hashes identical across match participants.
+
+Use supported, already authorised provider access and the configured spending cap.
+Do not assume a ChatGPT/Claude subscription is an unattended API credential. If
+credentials, media or capacity are missing, record the precise block and continue
+independent eligible work. Do not purchase services or start unlimited paid workers.
+Start with one bounded worker, then scale only after measuring recovery and costs.
+
+For each task: inspect current issue/PR overlap; claim with a durable lease; write
+acceptance checks; implement in an isolated branch; run relevant tests and inspect
+real logs; attach evidence; obtain independent automated review of the exact head;
+merge only through configured current-base checks; update issue/catalogue truthfully.
+An issue being closed or a model saying “done” is not a passing gate. Do not modify
+reference fixtures or loosen tests just to pass. Do not stall for routine decisions.
+
+End each work report with: implemented, actually validated, still unverified,
+blocked inputs, PR/issue/evidence links, spend and next eligible task. Report the
+factory as running only after a real job and restart-recovery test succeed.
+
+---
+
+Already using the earlier handoff? Keep the active task/worktree, fetch the current
+PR #39 documentation without resetting local work, read the new Power Bomberman
+and factory documents, and incorporate #41–#46 after the active bounded task.
+
+First-session success means a concrete tested implementation or real reference
+experiment with evidence, plus accurate blockers. It does not mean all three
+tracks or the complete game must be finished in one context window.

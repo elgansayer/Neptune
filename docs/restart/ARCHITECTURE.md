@@ -2,6 +2,10 @@
 
 ## Durable factory
 
+Read [FACTORY_PLAYBOOK.md](FACTORY_PLAYBOOK.md) for queue ownership, evidence
+contracts and restart tests. Saturn and Power Bomberman research feed independent
+specifications into the same game repository; they are separate reference baselines.
+
 GitHub issues are the visible work queue. A durable coordinator tracks issue ID,
 dependency state, input/base/head hashes, worker lease/heartbeat, attempt history,
 spend and evidence references. Define explicit states such as ready, claimed,
@@ -39,6 +43,16 @@ network IDs separate from persistent user IDs. Start with explicit tick/seed
 management and authoritative replay snapshots; do not promise cross-platform
 deterministic Godot physics without proving it.
 
+Version ruleset profiles: faithful Saturn and extensible Neptune. Profiles define
+timebase, mechanics, mode lifecycle, objectives, capabilities and participant
+limits. Design extensible rooms for twelve seats while retaining original limits
+where fidelity requires them. Snapshot profile/settings/pack hashes into replays
+and stats. Power-inspired changes must not silently mutate Saturn defaults.
+
+Use [NETPLAY_BENCHMARKS.md](NETPLAY_BENCHMARKS.md) to select prediction/reconciliation
+or rollback from measurements. Browser transport support alone proves neither
+responsive gameplay nor synchronisation correctness.
+
 Audit LimboAI, SQLite and other native addons for web exports; exclude server-only
 dependencies from clients. Test Compatibility renderer exports, input/audio startup,
 background tabs, reconnects, pack cache eviction, HTTPS/headers and memory limits.
@@ -55,6 +69,11 @@ Bundled content must use the same interface. Each match pins exact pack versions
 and ruleset hashes; clients download/validate before joining. Registry versions are
 immutable; publisher updates do not change active matches or old replays. Advanced
 scripting is a later restricted-runtime decision. Ranked servers use approved packs.
+
+Allow any installed compatible character without compulsory unlocks. Cosmetic art
+does not change hitboxes or abilities; ability packs declare gameplay capabilities.
+Creators need template, validator, preview and bot test tools. Keep APIs compatible
+with later self-hosted registries and separate code/content release provenance.
 
 Workshop flow: draft upload -> validation -> previews/test match -> publish ->
 share/play/subscribe. Include map/character editors, templates, creator pages,

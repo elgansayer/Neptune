@@ -7,12 +7,16 @@ the chat transcript, old completion reports or assumed tool capabilities.
 
 1. Fetch the foundation PR branch and read `AGENTS.md` plus all documents in
    `docs/restart/`, especially `REQUIREMENTS.md`, `REVERSE_ENGINEERING.md`,
-   `BOTS.md` and `BACKLOG.md`. The branch/PR link is in the GitHub restart epic.
+   `BOTS.md`, `POWER_BOMBERMAN.md`, `FACTORY_PLAYBOOK.md`,
+   `NETPLAY_BENCHMARKS.md` and `BACKLOG.md`. The branch/PR link is in the GitHub
+   restart epic. `CODEX_START.md` is the updated paste-ready instruction.
 2. Inspect the actual host OS/architecture, CPU/RAM/disk, installed software,
    repository remotes/status, existing factory processes and local credentials
    without printing secrets. Reuse working services where appropriate.
 3. Run `python3 tools/saturn_lab/check.py`. Record that these are tooling tests,
    not an emulator, game or factory health check.
+   Also run `python3 tools/research_catalog/check.py` and the catalogue report;
+   these validate metadata structure, not feature implementation.
 4. Discover the exact private disc/BIOS paths and selected release. If absent,
    continue independent host/build/bot tasks and report the specific missing input.
 5. Use the operator's configured spend cap/provider policy. Do not infer permission
@@ -23,10 +27,15 @@ the chat transcript, old completion reports or assumed tool capabilities.
 
 - Preserve the current game revision. Reconcile test-runner PRs #18/#20, reproduce
   the Godot/native-addon build and fix false-green checks before trusting bot tests.
+  Server task #40 already tracks this work on `restart/server-runner-baseline`;
+  continue its current branch safely instead of starting a duplicate.
 - Establish a pinned emulator/core and settings. Run the inventory and input-lock
   tools on actual files. Add real emulator smoke/repeatability checks; a hash match
   alone is insufficient.
 - Build the noninteractive libretro bridge and bounded graphics/trace hooks.
+- In the Power Bomberman track, pin the official client/server/manual (#41), build
+  isolated desktop experiments (#42), and keep shared profile work (#43) separate
+  from claims of measured parity. Use #44 for the first additional mode slice.
 - Audit current bot hazards/decisions and produce repeatable failures. Treat bots
   as a main product track alongside research; use their results as test evidence.
 - Recover one character, one campaign room and one battle arena; compare observed
@@ -36,6 +45,11 @@ the chat transcript, old completion reports or assumed tool capabilities.
   provider failure behaviour. Only then increase concurrency and enable continuity.
 - Keep browser cross-play and portable content interfaces in every architectural
   decision. Add workshop/profile/stats implementations once their dependencies exist.
+  Benchmark network quality via #45 and audit distributable source/content via #46.
+
+If already working from the earlier handoff, keep the current task/worktree. Fetch
+the foundation updates without resetting local work, read the changed documents,
+and incorporate the new queue after the active bounded task. Do not restart setup.
 
 ## Working contract
 
