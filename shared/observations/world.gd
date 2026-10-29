@@ -83,7 +83,9 @@ func get_map_dimensions() -> Vector2i:
 	return _dimensions
 
 func get_simulation_time_msec() -> float:
-	return _get("current_time_msec")
+	# Clock queries are observation boundaries even in controlled/frozen experiments.
+	refresh()
+	return float(_frame.get("server_time", 0.0))
 
 func get_simulation_time_sec() -> float:
 	return get_simulation_time_msec() / 1000.0

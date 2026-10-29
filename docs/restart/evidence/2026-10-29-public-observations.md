@@ -40,10 +40,23 @@ authority position is not snapped even inside that tolerance.
 showed excess query overhead. Neither is a passing suite. Cached property lists,
 versioned terrain/dimension queries and one manager-owned capture removed repeated
 work; explicit fixture/perception refresh still observes changed public state.
-No test selection, tolerance, duration or required timeout was weakened.
+No test selection, assertion, reference tolerance or individual scenario duration
+was weakened. `observations-cached-full.log` exposed stale raw/observed fixture
+interfaces in two RNG checks; they retain the original sequence assertions and
+now use refreshed observed agents (11/11 in isolation).
+
+`observations-vector-full.log` reached the final clock suite at the240-second
+aggregate limit. It reproduced a stale time read when controlled experiments
+advanced authority time outside normal manager ticks. The public time getter now
+refreshes at that boundary; the unchanged thirteen-case clock suite passes.
+The full suite grew from128 to140 cases, including twelve-actor native probes.
+Its aggregate supervisor budget is explicitly increased from240 to300 seconds,
+with330 seconds for the containing merge-gate subprocess. It remains bounded;
+all missing, skipped, failed and timed-out required checks still block merging.
+The next full run is measured, and the existing long scenario durations remain.
 
 On this Debian13 x86_64/4vCPU host, the last twelve-actor frozen-physics probe had
-20 native decision batches: p50=15300us, p95=19696us, max=45616us; capture p95=998us.
+20 native decision batches: p50=13125us, p95=17964us, max=41347us; capture p95=874us.
 These are noisy local measurements including initial tree planning and logging,
 not twelve-seat room-capacity, real-time or held-out evaluation acceptance. Keep
 capturing comparable measurements before selecting budgets under #32.
@@ -53,7 +66,7 @@ capturing comparable measurements before selecting budgets under #32.
 ```sh
 python3 tools/godot/check_project_contracts.py --godot <pinned-binary> --evidence <directory>
 bash run_bot_tests.sh --godot <pinned-binary> --run-specific test_public_observations --max-fps 60 --timeout 55 --log <engine-log>
-bash run_bot_tests.sh --godot <pinned-binary> --timeout 240 --max-log-mib 16 --log <full-engine-log>
+bash run_bot_tests.sh --godot <pinned-binary> --timeout 300 --max-log-mib 16 --log <full-engine-log>
 ```
 
 The latest full suite is pending at this evidence revision. Final acceptance must
