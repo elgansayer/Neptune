@@ -1,5 +1,9 @@
 # Server Codex starting prompt
 
+For the current post-bootstrap execution brief, start with [CODEX_NEXT.md](CODEX_NEXT.md).
+It records the accepted simulation-clock work, the 379-feature queue and the next
+factory/product/research goals. Recheck live state before acting on historical steps below.
+
 Paste the text below into Codex on the VPS. It is a working instruction, not an
 assertion that any service is already deployed. Supply secrets through the host's
 configured secret mechanism, not this prompt or GitHub issues.
