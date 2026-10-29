@@ -30,6 +30,8 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 - [Everything to provide and install](REQUIREMENTS.md)
 - [Paste-ready server Codex prompt](CODEX_START.md)
 - [Three-track factory operating contract](FACTORY_PLAYBOOK.md)
+- [Next Saturn reconstruction experiments and capture gates](SATURN_RECONSTRUCTION.md)
+- [Factory intake and durable lease tools](../../tools/factory/README.md)
 - [Reverse-engineering pipeline and evidence contracts](REVERSE_ENGINEERING.md)
 - [Power Bomberman research and feature scope](POWER_BOMBERMAN.md)
 - [Machine-readable starter feature catalogue](feature-catalogue.json)
