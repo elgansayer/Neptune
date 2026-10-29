@@ -17,6 +17,11 @@ online bots, browser/native cross-play, superior measured netplay, profiles,
 trusted detailed statistics and a map/character/mod workshop. Implement our own
 code and track content provenance separately. Existing root licence is Apache-2.0.
 
+Multiplayer and strong bots are the priority. Creators can publish power-ups and
+whole single-player/co-op stories through the same public interfaces as default
+content. Read COMMUNITY_CONTENT.md for the accepted contract and #52–#57 backlog.
+Do not delay original creator-system fixtures until full reference extraction.
+
 Act on small eligible tasks autonomously. Do not spend the session producing
 another broad plan when an implementation or experiment can proceed. Never claim
 emulation, extraction, gameplay or factory success from documentation/tooling tests.
@@ -30,6 +35,7 @@ force-reset an existing checkout or overwrite other workers' changes.
 Read AGENTS.md and docs/restart/README.md, REQUIREMENTS.md, SERVER_HANDOFF.md,
 FACTORY_PLAYBOOK.md, REVERSE_ENGINEERING.md, POWER_BOMBERMAN.md,
 NETPLAY_BENCHMARKS.md, BOTS.md, OPEN_SOURCE_AND_CONTENT.md and BACKLOG.md.
+Also read COMMUNITY_CONTENT.md, including its checkpoint/save and bot-role rules.
 Read feature-catalogue.json using tools/research_catalog/cli.py. These are the
 current scope; older completion reports need runtime evidence.
 
@@ -42,14 +48,17 @@ Run these existing tooling checks:
 
 Then make actual progress in three logical tracks, within host and spend budgets:
 
-1. Factory/build: #24 and #25 first. Continue server-owned #40 on
-   `restart/server-runner-baseline`, reconciling test-runner PRs #18/#20, and prove
-   the actual Godot baseline. Implement one recoverable issue-to-PR job in #33,
+1. Factory/build: #24 and #25 first. Inspect server-owned #40, PRs #49/#51 and #50;
+   finish the active bounded task and repair legacy test contracts before claiming
+   the full Godot baseline. Preserve branches and evidence; do not reimplement
+   the runner or reset work. Implement one recoverable issue-to-PR job in #33,
    with independent review, real tests and exact-commit merge gates before scaling.
 2. Saturn lab: #26 -> #27 -> #28 -> #29. Pin supplied complete disc/BIOS/core,
    automate emulator control, extract real graphics with provenance and measure
    one campaign room plus battle arena. Then expand coverage through #38.
-3. Power Bomberman lab: #41 -> #42; #43 also requires #24. Pin the developer-linked
+3. Power Bomberman lab: #41 -> #42. Generic profile work #43 requires #24 but can
+   proceed before reference experiments; observed Power defaults still need evidence.
+   Pin the developer-linked
    0.7.8c client/server/manual, automate isolated local observations and implement
    a measured first mode slice in #44. Verify newer releases separately instead
    of silently changing the reference version. Never load-test public servers.
@@ -65,6 +74,12 @@ workshop #37, measured networking #45 and source/content release audit #46 accor
 to dependencies. Custom characters must not require unlock grinding. No arbitrary
 downloaded GDScript/native code in community packs. Keep simulation-affecting pack
 versions/hashes identical across match participants.
+
+After the baseline/bot work, coordinate #35/#43 first, then implement one small
+creator slice: #52 declarative effects or #53 campaign runtime. #54 proves co-op,
+#55 companion/enemy roles, #56 accessible editors and #57 integrated publication
+and play. Respect issue dependencies; do not implement the entire expansion in
+one PR. Preserve competitive bot priority and the earlier map-only workshop gate.
 
 Use supported, already authorised provider access and the configured spending cap.
 Do not assume a ChatGPT/Claude subscription is an unattended API credential. If
@@ -87,7 +102,9 @@ factory as running only after a real job and restart-recovery test succeed.
 
 Already using the earlier handoff? Keep the active task/worktree, fetch the current
 PR #39 documentation without resetting local work, read the new Power Bomberman
-and factory documents, and incorporate #41–#46 after the active bounded task.
+and factory documents plus COMMUNITY_CONTENT.md, and incorporate #41–#46 and
+#52–#57 after the active bounded task. Current server PRs #49/#51 and issue #50
+must be checked before choosing the next issue. Do not restart host setup.
 
 First-session success means a concrete tested implementation or real reference
 experiment with evidence, plus accurate blockers. It does not mean all three

@@ -2,6 +2,12 @@
 
 Tracker: [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23).
 
+The multiplayer-first community expansion and dependency table for #52–#57 are in
+[COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md). Start with the current server baseline
+and bot work; inspect PRs #49/#51 and remaining scenario-contract issue #50.
+Community fixtures do not depend on full ROM extraction. #43's generic profile
+contract depends on #24; observed Power defaults remain evidence-gated by #41/#42.
+
 Priorities order eligible work, not permission to skip dependencies. The operator
 can prepare the host while the game baseline and bot audit proceed. Read each
 issue's acceptance checks before claiming. Broad tasks should be split further
@@ -27,7 +33,7 @@ when they exceed one reviewable implementation change.
 | [#40](https://github.com/elgansayer/Neptune-Bomberman/issues/40) | [P0] Reconciled runner implementation, already owned by server Codex | #24 subtask; preserve its active branch |
 | [#41](https://github.com/elgansayer/Neptune-Bomberman/issues/41) | [P0] Pin Power Bomberman and expand the feature catalogue | Foundation PR |
 | [#42](https://github.com/elgansayer/Neptune-Bomberman/issues/42) | [P0] Automate private Power Bomberman experiments | #41 |
-| [#43](https://github.com/elgansayer/Neptune-Bomberman/issues/43) | [P0] Shared Saturn/Neptune ruleset profiles | #24, #41 |
+| [#43](https://github.com/elgansayer/Neptune-Bomberman/issues/43) | [P0] Shared Saturn/Neptune ruleset profiles | #24; reference claims separately require #41/#42 |
 | [#44](https://github.com/elgansayer/Neptune-Bomberman/issues/44) | [P1] Measured Reversi mode slice | #42, #43 |
 | [#45](https://github.com/elgansayer/Neptune-Bomberman/issues/45) | [P0] Netplay comparison and synchronisation decision | #42, #34 |
 | [#46](https://github.com/elgansayer/Neptune-Bomberman/issues/46) | [P1] Open-source/content release audit | Foundation PR |

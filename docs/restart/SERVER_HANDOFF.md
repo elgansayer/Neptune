@@ -10,6 +10,8 @@ the chat transcript, old completion reports or assumed tool capabilities.
    `BOTS.md`, `POWER_BOMBERMAN.md`, `FACTORY_PLAYBOOK.md`,
    `NETPLAY_BENCHMARKS.md` and `BACKLOG.md`. The branch/PR link is in the GitHub
    restart epic. `CODEX_START.md` is the updated paste-ready instruction.
+   Read `COMMUNITY_CONTENT.md` for multiplayer priority, creator power-ups,
+   solo/co-op stories and #52–#57. These are targets, not completed capabilities.
 2. Inspect the actual host OS/architecture, CPU/RAM/disk, installed software,
    repository remotes/status, existing factory processes and local credentials
    without printing secrets. Reuse working services where appropriate.
@@ -29,6 +31,8 @@ the chat transcript, old completion reports or assumed tool capabilities.
   the Godot/native-addon build and fix false-green checks before trusting bot tests.
   Server task #40 already tracks this work on `restart/server-runner-baseline`;
   continue its current branch safely instead of starting a duplicate.
+  Read current PRs #49/#51 and scenario-contract issue #50 first; #40 may already
+  have a reviewable implementation. Do not restart completed experiments.
 - Establish a pinned emulator/core and settings. Run the inventory and input-lock
   tools on actual files. Add real emulator smoke/repeatability checks; a hash match
   alone is insufficient.
@@ -46,6 +50,10 @@ the chat transcript, old completion reports or assumed tool capabilities.
 - Keep browser cross-play and portable content interfaces in every architectural
   decision. Add workshop/profile/stats implementations once their dependencies exist.
   Benchmark network quality via #45 and audit distributable source/content via #46.
+- After baseline and bot work, establish #35/#43 interfaces, then choose a bounded
+  #52 power-up or #53 campaign slice. Add #54 co-op, #55 bot roles, #56 editors and
+  #57 integrated acceptance in dependency order. Original community fixtures do
+  not wait for full Saturn extraction or completed Power feature research.
 
 If already working from the earlier handoff, keep the current task/worktree. Fetch
 the foundation updates without resetting local work, read the changed documents,

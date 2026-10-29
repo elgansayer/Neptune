@@ -59,6 +59,11 @@ background tabs, reconnects, pack cache eviction, HTTPS/headers and memory limit
 
 ## Portable packs and workshop
 
+The product contract in [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md) extends packs
+to declarative power-ups and complete solo/co-op campaigns. It defines effect
+ordering/budgets, campaign saves, explicit co-op support, bot roles and creator
+acceptance. Implement these through the shared simulation and public interfaces.
+
 Define a versioned, namespaced data-only format for maps, characters, animations,
 cosmetics, sound and supported rules. Include author, licence/provenance,
 dependencies, API compatibility and content hashes. Reject traversal, archive
@@ -99,8 +104,13 @@ leaderboards, achievements, workshop, friends/parties, clubs, notifications and
 events. Account privacy/deletion, moderation and operational restoration need
 end-to-end tests. Untrusted user text is not a factory instruction.
 
-## Integrated platform gate (after research proof)
+## Integrated platform gates
 
 A player signs into the website, uploads a custom map, invites a friend via a link,
 plays a browser/desktop match using the exact same pack version, and sees correct
 server-confirmed results on both profiles.
+
+That first map-only gate can proceed using original/permitted content without
+waiting for full reference extraction. #57 expands it to a custom power-up,
+two-level solo/co-op story, companion bots and checkpoint recovery. Reference
+fidelity and network-superiority claims retain their separate evidence gates.

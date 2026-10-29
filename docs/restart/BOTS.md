@@ -5,6 +5,13 @@ real opponents in casual online rooms, solo practice, configurable challenges an
 repeatable playtests. This is a major product workstream alongside extraction and
 fidelity, not only a testing convenience.
 
+Read [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md) for the expanded contract. Bot
+role and policy lineage are independent: competitive opponents, cooperative
+companions and authored campaign enemies/bosses can share bounded navigation and
+hazard infrastructure without sharing objectives or fairness assumptions. #55
+adds role-specific proof; #30–#32 remain the initial competitive priorities.
+Unknown mod effects must never be assumed safe from untrusted author hints.
+
 ## Two explicitly different policies
 
 1. Saturn CPU: behaviour reproduced from the selected original release, difficulty
