@@ -13,6 +13,65 @@ const HazardPredictorScript = preload("res://shared/ai/perception/hazard_predict
 const OpponentTrackerScript = preload("res://shared/ai/perception/opponent_tracker.gd")
 const BombPlannerScript = preload("res://shared/ai/perception/bomb_planner.gd")
 const BombSafetyCheckerScript = preload("res://shared/ai/planning/bomb_safety_checker.gd")
+const POLICY_VERSION := "neptune-heuristic-rng-v1"
+const POLICY_STATE_FORMAT := "neptune.bot-policy-rng/1"
+
+# Each participant owns its stream. Neither provisioning nor decisions consume
+# the global RNG used by item drops/maps. This seed is recorded, not a secret.
+var _policy_seed: int
+var _policy_rngs: Dictionary = {}
+
+func _init() -> void:
+	var source := RandomNumberGenerator.new()
+	source.randomize()
+	_policy_seed = source.seed
+
+func configure_policy_seed(value: int) -> bool:
+	# A live roster must not change policy lineage halfway through a match.
+	if not _bot_players.is_empty():
+		return false
+	_policy_seed = value
+	return true
+
+func get_policy_seed() -> int:
+	return _policy_seed
+
+func _new_policy_rng(peer_id: int) -> RandomNumberGenerator:
+	var rng := RandomNumberGenerator.new()
+	# Stable derivation independent of spawn/iteration order. Use 60 digest bits
+	# to stay within signed int64, including browser/native JSON boundaries.
+	var identity := "%s:%d:%d" % [POLICY_VERSION, _policy_seed, peer_id]
+	rng.seed = identity.sha256_text().substr(0, 15).hex_to_int()
+	return rng
+
+func get_bot_policy_snapshot(peer_id: int) -> Dictionary:
+	if not _policy_rngs.has(peer_id):
+		return {}
+	var rng: RandomNumberGenerator = _policy_rngs[peer_id]
+	return {
+		"format": POLICY_STATE_FORMAT, "policy": POLICY_VERSION,
+		"engine": Engine.get_version_info().string,
+		"peer_id": str(peer_id), "match_seed": str(_policy_seed),
+		"stream_seed": str(rng.seed), "state": str(rng.state),
+	}
+
+func restore_bot_policy_snapshot(peer_id: int, snapshot: Dictionary) -> bool:
+	# Trusted server/checkpoint API, deliberately not an RPC. Restore is atomic:
+	# reject incompatible/malformed identities before touching the live stream.
+	var current := get_bot_policy_snapshot(peer_id)
+	if current.is_empty() or snapshot.size() != current.size():
+		return false
+	for key in current:
+		if not snapshot.has(key) or not snapshot[key] is String:
+			return false
+		if key != "state" and snapshot[key] != current[key]:
+			return false
+	var value: String = snapshot.state
+	if not value.is_valid_int() or str(int(value)) != value:
+		return false
+	var rng: RandomNumberGenerator = _policy_rngs[peer_id]
+	rng.state = int(value)
+	return true
 
 var game_instance
 var _bot_players: Dictionary = {} # peer_id -> BTPlayer
@@ -285,6 +344,10 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	blackboard.set_var("bomb_planner", bomb_planner)
 	blackboard.set_var("bomb_safety_checker", bomb_safety_checker)
 	blackboard.set_var("personality", personality)
+	var policy_rng := _new_policy_rng(peer_id)
+	_policy_rngs[peer_id] = policy_rng
+	blackboard.set_var("policy_rng", policy_rng)
+	blackboard.set_var("policy_version", POLICY_VERSION)
 	
 	# Add personality configuration parameters for advanced AI behaviors
 	var personality_config = PERSONALITY_CONFIGS.get(personality, PERSONALITY_CONFIGS["BALANCED"])
@@ -326,6 +389,7 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	, Object.CONNECT_ONE_SHOT)
 
 func _despawn_bot(peer_id: int) -> void:
+	_policy_rngs.erase(peer_id)
 	if _bot_players.has(peer_id):
 		var bt_player = _bot_players[peer_id]
 		if is_instance_valid(bt_player):
@@ -343,6 +407,7 @@ func _exit_tree() -> void:
 			bt_player.active = false
 			bt_player.queue_free()
 	_bot_players.clear()
+	_policy_rngs.clear()
 
 func refresh_perception() -> void:
 	"""Force immediate refresh of perception modules (e.g. after bomb placement)"""

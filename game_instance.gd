@@ -41,6 +41,9 @@ var map_manager: Node # MapManager instance
 var spawn_points := [] # Available spawn points from map
 var next_spawn_index := 0 # Track which spawn point to use next
 var bot_manager: Node
+# Optional trusted match setup input. Null generates an independent policy seed;
+# deterministic scenarios set an int before adding the authority to SceneTree.
+var bot_policy_seed: Variant = null
 var ai_manager: AIManager # Centralized AI brain with ThreatMatrix and pathfinding
 
 # State sync
@@ -200,6 +203,10 @@ func _ready():
 	else:
 		bot_manager = ServerBotManagerScript.new()
 		bot_manager.auto_spawn_count = 0 # Disabled for Tirra testing - eggs spawn at 100%
+		if bot_policy_seed != null:
+			if not bot_policy_seed is int or not bot_manager.configure_policy_seed(bot_policy_seed):
+				push_error("[GameInstance] Invalid bot policy seed configuration")
+				return
 		bot_manager.configure(self)
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)

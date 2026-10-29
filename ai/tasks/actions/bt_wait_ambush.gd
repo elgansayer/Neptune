@@ -75,7 +75,12 @@ func _tick(delta: float) -> int:
 		return RUNNING
 	
 	# Otherwise, random idle wander
-	var random_dir = [Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN, Vector2.ZERO].pick_random()
+	var rng = blackboard.get_var("policy_rng", null)
+	if not rng is RandomNumberGenerator:
+		player.set_input(0, 0)
+		return FAILURE
+	var directions := [Vector2.RIGHT, Vector2.LEFT, Vector2.UP, Vector2.DOWN, Vector2.ZERO]
+	var random_dir: Vector2 = directions[rng.randi_range(0, directions.size() - 1)]
 	var target_tile = player_tile + Vector2i(int(random_dir.x), int(random_dir.y))
 	
 	# Check if walkable
