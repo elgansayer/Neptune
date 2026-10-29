@@ -59,3 +59,11 @@ jobs:
         run: |
           bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_collision_fix
           bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_trapped_algo
+      - name: Preserve native startup diagnostics even when a check fails
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: native-runtime-diagnostics-${{ github.run_id }}-${{ github.run_attempt }}
+          path: .godot/runtime-evidence
+          if-no-files-found: warn
+          retention-days: 14
