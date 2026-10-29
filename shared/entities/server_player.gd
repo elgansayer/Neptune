@@ -1557,17 +1557,17 @@ func get_state_minimal() -> Dictionary:
 		}
 	
 	# Pack stats into 2 integers for ultra-compact transmission:
-	# s1: (max_bombs<<12) | (bomb_range<<8) | (bombs_placed<<4) | skate_count
-	# s2: (bomb_type<<16) | (active_virus<<8) | flags  (flags now uses bits 0-8)
-	var s1 = (max_bombs << 12) | (bomb_range << 8) | (bombs_placed << 4) | skate_count
-	var s2 = (bomb_type << 16) | flags  # Flags now include immortality/flying
+	# s1 retains four stat nibbles; s2 bit 10 carries the fifth range bit.
+	# Full Fire ownership is flag bit 9; virus state is transmitted separately.
+	var stats = preload("res://shared/player_snapshot_stats.gd").pack(
+		max_bombs, bomb_range, bombs_placed, skate_count, bomb_type, flags)
 	
 	var state = {
 		"p": [int(position.x), int(position.y)],  # position as array
 		"f": facing_char,  # facing: U/D/L/R
 		# Note: omit "d" for alive players - absence means alive (saves bytes)
 		# Stats packed into 2 integers
-		"s": [s1, s2],
+		"s": stats,
 	}
 	# Only send velocity if non-zero (most players are stationary most of the time)
 	if velocity.x != 0 or velocity.y != 0:
