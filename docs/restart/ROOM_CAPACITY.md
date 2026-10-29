@@ -28,7 +28,9 @@ its requested map/seat combination before listening. Invalid combinations exit 2
 without starting a countdown. Its first admitted human starts the one-second
 countdown. Repeated joins do not reset it, and final geometry is rechecked before
 activation. A finished round cannot implicitly restart; next-round lifecycle and
-safe human/bot replacement remain #31.
+safe human/bot replacement remain #31. The separate
+[initial-round bot-fill policy](ROOM_BOT_FILL.md) now provisions missing seats at
+this first activation boundary when the trusted operator explicitly enables it.
 
 `GameInstance.configure_room_capacity(seats, preset_limit)` validates integral
 inputs, protocol/preset limits and actual supported map starts. Active/counting-down
@@ -76,5 +78,5 @@ Each multi-client probe uses independent SceneMultiplayer/ENet peers in one boun
 native process and the shared RPC interface. ServerMain performs actual auth,
 admission, physics, bot creation and publication. This does not represent twelve
 rendered game clients or a complete round, browser cross-play, held-out bot quality,
-multiple-room load, host UI, matchmaking, automatic bot fill, ranking or workshop
+multiple-room load, host UI, matchmaking, ranking or workshop
 acceptance. Those requirements remain in their respective issues.

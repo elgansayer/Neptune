@@ -18,10 +18,12 @@ var bots_requested := false
 var refused := false
 var finished := false
 var policy_identity := {}
+var auto_fill := false
 
 func _ready() -> void:
 	port = preload("res://shared/runtime_config.gd").read().port
 	for arg in OS.get_cmdline_user_args():
+		if arg == "--probe-auto-fill": auto_fill = true
 		if arg.begins_with("--probe-humans="): humans = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-bots="): bots = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-preset="): preset = arg.get_slice("=", 1).to_int()
@@ -81,7 +83,7 @@ func auth_received(index: int, data: Dictionary) -> void:
 			return
 		accepted[index] = true
 		if accepted.size() == humans:
-			if bots > 0 and not bots_requested:
+			if bots > 0 and not bots_requested and not auto_fill:
 				bots_requested = true
 				for _bot in range(bots): peers[0].router.rpc_id(1, "spawn_bot_request", "BALANCED")
 			elif bots == 0: _start_extra()
@@ -109,6 +111,11 @@ func state_received(index: int, state: Dictionary) -> void:
 		fail("missing/inconsistent policy identity for repeatable evidence")
 		return
 	policy_identity = policy
+	if auto_fill:
+		var fill: Dictionary = capacity.get("bot_fill", {})
+		if fill.get("target", 0) != seats or fill.get("personality", "") != "DEFENSIVE" or not fill.get("applied", false):
+			fail("automatic fill policy was not applied at the round boundary")
+			return
 	if capacity.get("seats", 0) != seats or capacity.get("preset_limit", 0) != preset or capacity.get("protocol_limit", 0) != 12 or capacity.get("occupied", 0) != seats or capacity.get("humans", 0) != humans or capacity.get("bots", 0) != bots:
 		fail("authoritative capacity/participant metadata mismatch")
 		return
@@ -117,6 +124,12 @@ func state_received(index: int, state: Dictionary) -> void:
 	for id in roster:
 		if str(id).to_int() < 0: bot_count += 1
 		positions[str(roster[id].get("p"))] = true
+		if auto_fill:
+			var participant: Dictionary = capacity.get("participants", {}).get(str(id), {})
+			var bot: bool = str(id).to_int() < 0
+			if participant.get("type", "") != ("bot" if bot else "human") or (bot and participant.get("personality", "") != "DEFENSIVE"):
+				fail("missing/inconsistent explicit bot participant metadata")
+				return
 	if bot_count != bots or not roster.has(str(peers[index].api.get_unique_id())) or positions.size() != seats:
 		fail("actual roster identities/positions disagree with room metadata")
 		return
@@ -134,6 +147,7 @@ func _check_complete() -> void:
 	finished = true
 	var receipt := {"seats": seats, "humans": humans, "bots": bots, "preset_limit": preset, "protocol_limit": 12, "accepted": accepted.size(), "refused": 1, "snapshots": snapshots.size(), "maps": maps.size(), "active": true}
 	receipt.merge(policy_identity)
+	if auto_fill: receipt["auto_fill"] = true
 	print("NEPTUNE_ROOM_CAPACITY=", JSON.stringify(receipt))
 	for entry in peers: entry.api.multiplayer_peer.close()
 	get_tree().quit(0)
