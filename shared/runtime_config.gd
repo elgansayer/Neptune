@@ -19,15 +19,25 @@ static func read() -> Dictionary:
 	var room_seats := 0 # Omitted means choose the supported map/preset capacity.
 	var preset_limit := Defaults.MAX_MATCH_SEATS
 	var room_map := ""
+	var fill_to := 0
+	var bot_personality := "BALANCED"
 	var room_options := {}
 	for arg in OS.get_cmdline_user_args():
 		var option: String = arg.get_slice("=", 0)
-		if option in ["--room-seats", "--room-preset-limit", "--room-map"]:
+		if option in ["--room-seats", "--room-preset-limit", "--room-map", "--room-fill-to", "--room-bot-personality"]:
 			if not "=" in arg or room_options.has(option):
 				return {"error": "Duplicate or missing value for " + option}
 			room_options[option] = true
 			var value := arg.substr(option.length() + 1)
-			if option == "--room-map":
+			if option == "--room-bot-personality":
+				if value.is_empty() or value.length() > 32:
+					return {"error": "Invalid --room-bot-personality"}
+				bot_personality = value # Authority validates actual supported profiles.
+			elif option == "--room-fill-to":
+				if not value.is_valid_int() or value.to_int() < 0 or value.to_int() > Defaults.MAX_MATCH_SEATS:
+					return {"error": "Invalid --room-fill-to; use 0..12"}
+				fill_to = value.to_int()
+			elif option == "--room-map":
 				if not value.begins_with("res://maps/") or not value.ends_with(".json") or ".." in value or value.length() > 256:
 					return {"error": "Invalid --room-map; use a local res://maps/*.json resource"}
 				room_map = value
@@ -56,4 +66,4 @@ static func read() -> Dictionary:
 			return {"error": "Runtime options require =value"}
 	if room_seats > preset_limit:
 		return {"error": "Room seats exceed preset limit"}
-	return {"role": role, "port": port, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "error": ""}
+	return {"role": role, "port": port, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}

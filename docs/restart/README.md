@@ -42,6 +42,7 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 - [Online bots and evaluation](BOTS.md)
 - [Gameplay protocol negotiation and remaining save scope](PROTOCOL_NEGOTIATION.md)
 - [Room capacity, presets and pre-start validation](ROOM_CAPACITY.md)
+- [Initial-round authoritative bot filling](ROOM_BOT_FILL.md)
 - [Server Codex handoff](SERVER_HANDOFF.md)
 - [Ordered backlog](BACKLOG.md)
 - [Runnable inventory and input lock tools](../../tools/saturn_lab/README.md)

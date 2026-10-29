@@ -245,6 +245,7 @@ func _prepare_shared_game(runtime: Dictionary = {}) -> Dictionary:
 		new_game.countdown_time = 0.0
 		new_game.room_map_path = runtime.get("room_map", "")
 		new_game.room_capacity_request = {"seats": runtime.get("room_seats", 0), "preset_limit": runtime.get("room_preset_limit", Constants.MAX_MATCH_SEATS)}
+		new_game.room_bot_fill_request = {"target": runtime.get("room_fill_to", 0), "personality": runtime.get("room_bot_personality", "BALANCED")}
 		add_child(new_game)
 		if not new_game.room_setup_result.accepted:
 			var refused: Dictionary = new_game.room_setup_result.duplicate(true)

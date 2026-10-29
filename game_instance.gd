@@ -51,6 +51,9 @@ var room_setup_result := {"accepted": false, "reason": "authority_not_ready"}
 var last_room_start_result := {}
 var _room_capacity := {}
 var _room_round_started := false
+var room_bot_fill_request := {} # Trusted startup configuration, never an RPC.
+var _room_bot_fill := {"target": 0, "personality": "BALANCED", "applied": false}
+var last_bot_fill_result := {}
 var bot_manager: Node
 # Optional trusted match setup input. Null generates an independent policy seed;
 # deterministic scenarios set an int before adding the authority to SceneTree.
@@ -246,6 +249,12 @@ func _ready():
 		bot_manager.configure(self)
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
+	if not room_bot_fill_request.is_empty():
+		var fill := configure_room_bot_fill(room_bot_fill_request.get("target"), room_bot_fill_request.get("personality"))
+		if not fill.accepted:
+			room_setup_result = fill
+			set_physics_process(false)
+			return
 	
 	# Register console commands
 	_register_console_commands()
@@ -333,6 +342,11 @@ func _physics_process(delta):
 				if not last_room_start_result.accepted:
 					print("[GameInstance] Room start refused: ", last_room_start_result.reason)
 					return
+				last_bot_fill_result = _provision_initial_room_bots()
+				if not last_bot_fill_result.accepted:
+					last_room_start_result = last_bot_fill_result.duplicate(true)
+					print("[GameInstance] Room start refused: ", last_bot_fill_result.reason)
+					return
 			match_active = true
 			if not _room_capacity.is_empty(): _room_round_started = true
 			print("[GameInstance] Match started! Countdown complete. Powerups in game: ", powerups.size())
@@ -408,6 +422,7 @@ func configure_room_capacity(seats: Variant, preset_limit: Variant = Constants.M
 	if not seats is int or not preset_limit is int or seats < 1 or preset_limit < 1 or seats > Constants.MAX_MATCH_SEATS or preset_limit > Constants.MAX_MATCH_SEATS:
 		return SpawnReservations.failure("invalid_room_capacity")
 	if seats > preset_limit: return SpawnReservations.failure("preset_capacity_exceeded")
+	if _room_bot_fill.target > seats: return SpawnReservations.failure("bot_fill_capacity_exceeded")
 	if _room_round_started or match_active or countdown_time > 0.0 or not players.is_empty() or (_spawn_plan != null and not _spawn_plan.snapshot().reservations.is_empty()):
 		return SpawnReservations.failure("room_in_progress")
 	var geometry := validate_spawn_capacity(seats)
@@ -415,14 +430,56 @@ func configure_room_capacity(seats: Variant, preset_limit: Variant = Constants.M
 	_room_capacity = {"seats": seats, "preset_limit": preset_limit}
 	return {"accepted": true, "reason": "configured", "capacity": get_room_capacity()}
 
+func configure_room_bot_fill(target: Variant, personality: Variant = "BALANCED") -> Dictionary:
+	if not target is int or target < 0 or target > Constants.MAX_MATCH_SEATS or not personality is String:
+		return SpawnReservations.failure("invalid_bot_fill")
+	if _room_capacity.is_empty(): return SpawnReservations.failure("room_not_configured")
+	if target > _room_capacity.seats: return SpawnReservations.failure("bot_fill_capacity_exceeded")
+	if bot_manager == null: return SpawnReservations.failure("bot_manager_unavailable")
+	if not bot_manager.PERSONALITY_CONFIGS.has(personality): return SpawnReservations.failure("unknown_bot_personality")
+	if _room_round_started or match_active or countdown_time > 0.0 or not players.is_empty() or (_spawn_plan != null and not _spawn_plan.snapshot().reservations.is_empty()):
+		return SpawnReservations.failure("room_in_progress")
+	_room_bot_fill = {"target": target, "personality": personality, "applied": false}
+	return {"accepted": true, "reason": "bot_fill_configured"}
+
+func _provision_initial_room_bots() -> Dictionary:
+	# Only the initial countdown transition calls this. Never top up active rounds
+	# or replace a human/retained reservation. Targets count reserved participants.
+	if _room_round_started or match_active or _room_bot_fill.applied:
+		return SpawnReservations.failure("bot_fill_boundary_passed")
+	var ready := _validate_room_start()
+	if not ready.accepted: return ready
+	var missing: int = maxi(0, _room_bot_fill.target - get_room_capacity().reserved)
+	if missing > 0 and bot_manager == null: return SpawnReservations.failure("bot_manager_unavailable")
+	var first_id: int = bot_manager.next_bot_peer_id if bot_manager != null else 0
+	for _index in range(missing):
+		var receipt := spawn_bot(_room_bot_fill.personality)
+		if not receipt.accepted:
+			# Free before reusing IDs: a queued old tree_exited callback must not
+			# remove a controller created by a later retry.
+			for id in range(first_id, bot_manager.next_bot_peer_id, -1):
+				var actor = players.get(id)
+				bot_manager._despawn_bot(id)
+				remove_player(id)
+				if is_instance_valid(actor): actor.free()
+			bot_manager.next_bot_peer_id = first_id
+			return {"accepted": false, "reason": "bot_fill_provision_failed", "cause": receipt.get("reason", "unknown")}
+	_room_bot_fill.applied = true
+	return {"accepted": true, "reason": "bot_fill_applied", "added": missing}
+
 func get_room_capacity() -> Dictionary:
 	var reserved: int = _spawn_plan.snapshot().reservations.size() if _spawn_plan != null else 0
 	var bots := 0
-	for actor in players.values():
-		if is_instance_valid(actor) and actor.is_bot: bots += 1
+	var participants := {}
+	for id in players:
+		var actor = players[id]
+		if not is_instance_valid(actor): continue
+		if actor.is_bot: bots += 1
+		participants[str(id)] = {"type": "bot" if actor.is_bot else "human", "personality": actor.bot_personality if actor.is_bot else ""}
 	return {"protocol_limit": Constants.MAX_MATCH_SEATS, "transport_limit": Constants.MAX_CONNECTED_PEERS,
 		"seats": _room_capacity.get("seats", Constants.MAX_MATCH_SEATS), "preset_limit": _room_capacity.get("preset_limit", Constants.MAX_MATCH_SEATS),
 		"configured": not _room_capacity.is_empty(), "occupied": players.size(), "reserved": reserved, "humans": players.size() - bots, "bots": bots,
+		"bot_fill": _room_bot_fill.duplicate(true), "participants": participants,
 		"bot_policy_seed": str(bot_manager.get_policy_seed()) if bot_manager != null else "", "bot_policy": bot_manager.POLICY_VERSION if bot_manager != null else ""}
 
 func _validate_room_start() -> Dictionary:

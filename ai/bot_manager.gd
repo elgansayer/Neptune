@@ -431,11 +431,11 @@ func _despawn_bot(peer_id: int) -> void:
 			bt_player.active = false
 			bt_player.free()
 		_bot_players.erase(peer_id)
-		var view = _observation_views.get(peer_id)
-		if is_instance_valid(view):
-			view.queue_free()
-		_observation_views.erase(peer_id)
 		print("[BotManager] Despawned bot (peer %d)" % peer_id)
+	# A view may exist before the controller is registered on a failed spawn.
+	var view = _observation_views.get(peer_id)
+	if is_instance_valid(view): view.queue_free()
+	_observation_views.erase(peer_id)
 
 func get_bot_controller(peer_id: int):
 	return _bot_players.get(peer_id)
