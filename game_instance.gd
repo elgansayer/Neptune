@@ -515,7 +515,7 @@ func _process_hurry_mode(delta: float):
 		players_by_tile = {}
 		for peer_id in players:
 			var player = players[peer_id]
-			if not player.is_dead:
+			if is_instance_valid(player) and not player.is_dead:
 				var p_tile = player.get_tile_position()
 				if not players_by_tile.has(p_tile):
 					players_by_tile[p_tile] = []
@@ -547,20 +547,20 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 	if players_by_tile != null:
 		if players_by_tile.has(pos):
 			for player in players_by_tile[pos]:
-				if not player.is_dead:
+				if is_instance_valid(player) and not player.is_dead:
 					print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-					player.die("Crushed by hurry block")
+					player.die()
 					_check_alive_players()
 	else:
 		for peer_id in players:
 			var player = players[peer_id]
-			if player.is_dead:
+			if not is_instance_valid(player) or player.is_dead:
 				continue
 			
 			var player_tile = player.get_tile_position()
 			if player_tile == pos:
 				print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-				player.die("Crushed by hurry block")
+				player.die()
 
 				# Check for match end
 				_check_alive_players()
@@ -580,8 +580,9 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 					bombs_to_remove.append(bomb_id)
 	
 	for bomb_id in bombs_to_remove:
-		var bomb = bombs[bomb_id]
+		var bomb = bombs.get(bomb_id)
 		if is_instance_valid(bomb):
+			# Earlier explosions may have removed another cached bomb ID.
 			# Trigger explosion before removing
 			bomb.explode()
 	
