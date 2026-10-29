@@ -1,0 +1,790 @@
+{
+  "anomalies": [
+    {
+      "bytes": 2097152,
+      "detected_format": "sega_film_cpk",
+      "error": "Truncated Sega FILM payload: STAB requires 32202056 bytes, file has 2097152 bytes",
+      "extension": "(none)",
+      "extension_matches_format": false,
+      "path": "audio/rips/.goutputstream-4XSJ30",
+      "sha256": "98d4cae43f1a285dcf4c0b66102b254e02ea03759e838ae9f09e1def022f22f3",
+      "valid": false
+    },
+    {
+      "bytes": 1782,
+      "detected_format": "bmp",
+      "error": null,
+      "extension": ".png",
+      "extension_matches_format": false,
+      "path": "images/UI/map/GO-G.png",
+      "sha256": "79d081afd999a295b837e64aee6f7c337bdb2a48ce24a441acb593344684ced5",
+      "valid": true
+    },
+    {
+      "bytes": 1782,
+      "detected_format": "bmp",
+      "error": null,
+      "extension": ".png",
+      "extension_matches_format": false,
+      "path": "images/UI/map/GO-O.png",
+      "sha256": "2fa0b0cfe2c24c76ef6e5c016696afd348ed5ecf4d164badf9f338d0ee44b481",
+      "valid": true
+    }
+  ],
+  "boundaries": {
+    "notes": [
+      "Filename and directory categories are unverified leads, not proof of Sega Saturn origin.",
+      "Neither Neptune's Apache-2.0 licence nor README Spriters Resource credits grant asset redistribution rights.",
+      "exports/ (46,351 files) exhibits GameMaker Studio / UndertaleModTool dump layout rather than Saturn disc data."
+    ],
+    "raw_assets_committed_to_neptune": false,
+    "redistribution_licence_established": false,
+    "saturn_fidelity_certified": false
+  },
+  "by_decode_level": {
+    "container_header": 85,
+    "container_table": 4,
+    "full_parse": 183,
+    "full_stream": 50004,
+    "header_only": 131
+  },
+  "by_detected_format": {
+    "aiff": 19,
+    "audacity_au": 102,
+    "avif": 2,
+    "bmp": 53,
+    "gif": 1,
+    "godot_import_ini": 50,
+    "jpeg": 1,
+    "json": 5,
+    "ogg_vorbis": 9,
+    "ole2_compound_db": 4,
+    "opaque_binary": 22,
+    "png": 50004,
+    "sega_film_cpk": 4,
+    "utf8_text": 94,
+    "xcf": 3,
+    "xml_data": 2,
+    "xml_plist": 5,
+    "xml_project": 27
+  },
+  "by_extension": {
+    "(none)": 1,
+    ".aif": 19,
+    ".au": 102,
+    ".aup": 27,
+    ".avif": 2,
+    ".bat": 1,
+    ".bin": 22,
+    ".bmp": 51,
+    ".cpk": 3,
+    ".db": 4,
+    ".gif": 1,
+    ".import": 50,
+    ".jpeg": 1,
+    ".json": 3,
+    ".md": 1,
+    ".ogg": 9,
+    ".plist": 5,
+    ".png": 50006,
+    ".tps": 2,
+    ".tpsheet": 2,
+    ".txt": 92,
+    ".xcf": 3
+  },
+  "by_inferred_category": {
+    "audio_and_fmv": 31,
+    "bombs_items_and_effects": 218,
+    "bombs_items_or_vdp1_dumps": 5,
+    "characters_and_animations": 300,
+    "characters_and_mounts": 3004,
+    "characters_items_or_sprites_export": 16656,
+    "editor_project_or_os_artifact": 200,
+    "enemies_and_bosses": 93,
+    "packed_or_grouped_textures_export": 28481,
+    "reference_guide": 1,
+    "repository_documentation": 1,
+    "text_and_string_tables": 2,
+    "tiles_maps_and_backgrounds": 1145,
+    "ui_and_menus": 155,
+    "ui_fonts_or_engine_shaders": 110,
+    "unknown": 5
+  },
+  "by_origin_hypothesis": {
+    "community_reference_guide_lead": 1,
+    "community_rip_or_sheet_lead": 3437,
+    "derived_audio_reencode_or_project_lead": 9,
+    "derived_project_or_os_artifact": 200,
+    "non_saturn_gamemaker_export_lead": 46352,
+    "repacked_character_frames_lead": 298,
+    "repository_metadata": 1,
+    "saturn_disc_fmv_or_pcm_lead": 22,
+    "saturn_vdp1_debugger_dump_lead": 5,
+    "unknown_or_custom_image": 1,
+    "unknown_pc_or_mockup_ui_lead": 60,
+    "unscoped_root_file_lead": 21
+  },
+  "by_top_level_entry": {
+    "(root)": {
+      "bytes": 614451,
+      "files": 25
+    },
+    "Stupid_Rat": {
+      "bytes": 420519,
+      "files": 1
+    },
+    "audio": {
+      "bytes": 162175012,
+      "files": 161
+    },
+    "characters": {
+      "bytes": 246994,
+      "files": 302
+    },
+    "exports": {
+      "bytes": 309384112,
+      "files": 46351
+    },
+    "images": {
+      "bytes": 12393871,
+      "files": 3567
+    }
+  },
+  "candidate_gap_sets": [
+    {
+      "candidate_id": "player-white-bomberman",
+      "kind": "player_animation_set",
+      "measured_inventory": {
+        "formats": {
+          "json": 1,
+          "png": 328,
+          "utf8_text": 1,
+          "xml_data": 1
+        },
+        "matched_file_count": 331,
+        "png_color_types": {
+          "2": 1,
+          "3": 93,
+          "6": 234
+        },
+        "sample_files": [
+          {
+            "bytes": 4990,
+            "dimensions": [
+              1324,
+              31
+            ],
+            "path": "characters/chara/chara.png",
+            "sha256": "da4127b1b84034afce535b99b83ed5389676644bca10d830813edef03390e7a9"
+          },
+          {
+            "bytes": 12066,
+            "dimensions": null,
+            "path": "characters/chara/chara.tps",
+            "sha256": "501bd4cc071c905855fad4c72f8ca269bcfffacd567875a4c0fca2f67a2ee382"
+          },
+          {
+            "bytes": 15158,
+            "dimensions": null,
+            "path": "characters/chara/chara.tpsheet",
+            "sha256": "3b1e01c19624605273ecc2117cde06e4d72b4cee0e1725077375af7673ff02bc"
+          },
+          {
+            "bytes": 643,
+            "dimensions": [
+              33,
+              33
+            ],
+            "path": "characters/chara/data/east/hold/hold.png",
+            "sha256": "28e9bc0f3eccde4df0bd706390534866b32cc3ceb545ec756f61611a81e090ef"
+          },
+          {
+            "bytes": 665,
+            "dimensions": [
+              33,
+              33
+            ],
+            "path": "characters/chara/data/east/jump/jump.png",
+            "sha256": "91e7ca6e2afaae73249a974a4f7a153f65376d5b260f7e233738d13d846b2cb4"
+          },
+          {
+            "bytes": 644,
+            "dimensions": [
+              33,
+              33
+            ],
+            "path": "characters/chara/data/east/ride/ride.png",
+            "sha256": "c392e0c7758b9ce4b9d72f1c03e833ae53f94a1dd611a5ea851ed51c2e26024d"
+          },
+          {
+            "bytes": 673,
+            "dimensions": [
+              33,
+              33
+            ],
+            "path": "characters/chara/data/east/walk/walk_0.png",
+            "sha256": "63ee1f3ef7092dd6217a54176a9774ee01ea791c2d7bb4f6560b53894554d769"
+          },
+          {
+            "bytes": 685,
+            "dimensions": [
+              33,
+              33
+            ],
+            "path": "characters/chara/data/east/walk/walk_1.png",
+            "sha256": "8b1849ac99795de63468e2a5868e278c404c05b66433be67b69296d09d4fcc49"
+          }
+        ],
+        "total_bytes": 225263,
+        "unique_sha256_count": 313
+      },
+      "missing_requires_27_28_runtime_evidence": [
+        "Total authentic animation state denominator for USA and Japan releases (unknown from static PNGs; kick, punch, throw release, illness/curse flashes, campaign warp/cutscene states are unverified or absent).",
+        "Exact frame ordering and per-frame durations in rational Saturn frame ticks (including speed-up/slow-down coupling to movement velocity).",
+        "Per-frame sprite anchor/pivot offsets relative to authoritative collision/subpixel position and shadow layer.",
+        "Original VDP1 character patterns, CLUT/palette RAM banks, colour-calculation/mesh flags, and hardware horizontal-flip vs distinct east/west art.",
+        "Separate head/body or mount+rider VDP1 draw-command composition order."
+      ],
+      "observed_in_static_files": [
+        "1 composite sheet (Character White Bomberman.png), 85 unlabelled frame0..frame84.png slices, 92 named wbm-*.png slices, and 149 PNGs + 2 TexturePacker files under characters/chara/.",
+        "Named state leads in wbm/ and chara/data/: walk (4 dirs, 3 frames each), carry_walk (north/south/west only in chara/ — east/carrying is absent), hold, jump, ride, idle, win/celebrate, lose/cry, defeat/explode, panic, stunned/dizzy, fly, and HUD portraits.",
+        "Decoded PNG headers/streams are RGB/RGBA raster exports rather than raw Saturn VDP1 4bpp/8bpp indexed colour tables; ReplaceColour.bat indicates offline palette editing."
+      ],
+      "selected_paths": [
+        "images/Sprite Sheets/characters/Character White Bomberman.png",
+        "images/Single Sprites/players/WhiteBomberman/",
+        "characters/chara/"
+      ]
+    },
+    {
+      "candidate_id": "campaign-room-normal-map1",
+      "kind": "campaign_room",
+      "measured_inventory": {
+        "formats": {
+          "png": 34
+        },
+        "matched_file_count": 34,
+        "png_color_types": {
+          "2": 2,
+          "6": 32
+        },
+        "sample_files": [
+          {
+            "bytes": 414,
+            "dimensions": [
+              16,
+              17
+            ],
+            "path": "images/Single Sprites/Block/map1/block-explode-01.png",
+            "sha256": "27c5467b278f616473576d17285ff016b7413b0a53beb9dc856ddf861e28e8ad"
+          },
+          {
+            "bytes": 434,
+            "dimensions": [
+              21,
+              19
+            ],
+            "path": "images/Single Sprites/Block/map1/block-explode-02.png",
+            "sha256": "dcac6d5abd056edbae670967e3a3e209804a2f6235229c1fbe0586cd07a57d5d"
+          },
+          {
+            "bytes": 362,
+            "dimensions": [
+              23,
+              20
+            ],
+            "path": "images/Single Sprites/Block/map1/block-explode-03.png",
+            "sha256": "e045bc8feaf85b36b67dc812130eba5a9474c04e525fa652aab574736928c217"
+          },
+          {
+            "bytes": 3022,
+            "dimensions": [
+              16,
+              16
+            ],
+            "path": "images/Single Sprites/Block/map1/block.png",
+            "sha256": "ed07573d0e06823e83d1d02994eef1f09e05ce35c0f893b91edbedb3845a225e"
+          },
+          {
+            "bytes": 3022,
+            "dimensions": [
+              16,
+              16
+            ],
+            "path": "images/Single Sprites/Block/map1/block1.png",
+            "sha256": "ed07573d0e06823e83d1d02994eef1f09e05ce35c0f893b91edbedb3845a225e"
+          },
+          {
+            "bytes": 9064,
+            "dimensions": [
+              320,
+              320
+            ],
+            "path": "images/Single Sprites/single player/map1/1.png",
+            "sha256": "faa73542337e0461da8de4f3fd6104a1b936fc7f1a9623b6bd292bc000d50e82"
+          },
+          {
+            "bytes": 332,
+            "dimensions": [
+              24,
+              16
+            ],
+            "path": "images/Single Sprites/single player/map1/1train.png",
+            "sha256": "325182bedb0eed1b9925062885605810650116d0f2d91177fcdb122eb3f93d94"
+          },
+          {
+            "bytes": 27754,
+            "dimensions": [
+              320,
+              320
+            ],
+            "path": "images/Single Sprites/single player/map1/2.png",
+            "sha256": "2966c36b45ab85a4ef1bf5f4a478fdfb37b377406fa23eead0958704f9dedc3e"
+          }
+        ],
+        "total_bytes": 2053305,
+        "unique_sha256_count": 31
+      },
+      "missing_requires_27_28_runtime_evidence": [
+        "Exact stage/room identifier in USA vs Japan Normal Mode progression (e.g. World 1 Stage 1 room index and camera bounds).",
+        "Authoritative tile collision grid, hard-wall vs soft-block coordinates, and minecart/train track Spline/cell pathing.",
+        "Player 1 / Player 2 co-op spawn coordinates, enemy types, enemy initial positions, AI state tables, and hidden power-up spawn table.",
+        "Switch/cart/train trigger logic, room-clear condition (destroy generators vs defeat enemies), exit portal activation, and next-room transition.",
+        "VDP2 background plane scroll rates, tilemap planes, priority bits over/under sprites, and stage BGM/SFX trigger IDs."
+      ],
+      "observed_in_static_files": [
+        "29 visual PNG slices under single player/map1/ (full.png 431,272 bytes plus numbered layer/prop slices, cart1..4.png, train1..4.png, water1..3.png, track/wheel/smoke) and 5 destructible-block PNGs under Block/map1/.",
+        "Exact byte duplicates already present inside the slice: 2.png == 3.png (27,754 bytes), water1.png == water2.png == water3.png (7,347 bytes), smoke.png == smoke4.png (292 bytes), and block.png == block1.png (3,022 bytes)."
+      ],
+      "selected_paths": [
+        "images/Single Sprites/single player/map1/",
+        "images/Single Sprites/Block/map1/"
+      ]
+    },
+    {
+      "candidate_id": "battle-arena-standard-and-wide",
+      "kind": "battle_arena",
+      "measured_inventory": {
+        "formats": {
+          "bmp": 2,
+          "png": 6,
+          "xcf": 1
+        },
+        "matched_file_count": 9,
+        "png_color_types": {
+          "2": 2,
+          "6": 4
+        },
+        "sample_files": [
+          {
+            "bytes": 4413,
+            "dimensions": [
+              320,
+              224
+            ],
+            "path": "images/maps/background-wide.png",
+            "sha256": "113d0b9c7147d8600ea6800bda9e89c65c952839fafbc28599dabf4edc51f216"
+          },
+          {
+            "bytes": 14761,
+            "dimensions": [
+              336,
+              224
+            ],
+            "path": "images/maps/background1.png",
+            "sha256": "81f5ec221adc073f15346db131b48d0afe99a8fb5ce92e8b15a3a4ff7f81b3b7"
+          },
+          {
+            "bytes": 282,
+            "dimensions": [
+              336,
+              24
+            ],
+            "path": "images/maps/banner-336.png",
+            "sha256": "6b71798a8ee3d7895ad2007733ce83016845c486a12e836d78e116363e62e7d1"
+          },
+          {
+            "bytes": 13878,
+            "dimensions": [
+              192,
+              24
+            ],
+            "path": "images/maps/banner-left.bmp",
+            "sha256": "f87a46b0141273b8b77112828190cd4e1a39c5532c946cb9efb41340b4e28f67"
+          },
+          {
+            "bytes": 2506,
+            "dimensions": [
+              336,
+              24
+            ],
+            "path": "images/maps/banner-left.xcf",
+            "sha256": "c3ce2c7b4150c82fae1ca91a482397c87aa1c1024152da99fa32637f548ce094"
+          },
+          {
+            "bytes": 9270,
+            "dimensions": [
+              128,
+              24
+            ],
+            "path": "images/maps/banner-right.bmp",
+            "sha256": "286c99702fa6b3975970feb218dc0011b7ce78c5f8c22f429a814e579f5dd8ce"
+          },
+          {
+            "bytes": 810,
+            "dimensions": [
+              192,
+              40
+            ],
+            "path": "images/maps/battle stage blocks 1.png",
+            "sha256": "96dcc929633f5cdb3a33b4690b47607146eb5c3d71828bd63e65185f54729cde"
+          },
+          {
+            "bytes": 45231,
+            "dimensions": [
+              640,
+              448
+            ],
+            "path": "images/maps/double.png",
+            "sha256": "91a9b2116c730a9bc9273efb04369a192581a623fd32a8097a0dd050477eff39"
+          }
+        ],
+        "total_bytes": 105912,
+        "unique_sha256_count": 8
+      },
+      "missing_requires_27_28_runtime_evidence": [
+        "Exact tile grid dimensions and pixel-to-cell origin for standard (8-player) vs wide (Hi-Ten / 10-player) Saturn battle arenas.",
+        "Per-seat spawn coordinates for all supported player counts and multitap port mappings.",
+        "Soft-block spawn mask, random placement density/RNG consumption, and item drop table/counts per stage.",
+        "Sudden-death (Hurry!) pressure-block start frame, drop cadence, spiral trajectory, and crush/bomb interaction precedence.",
+        "Stage-specific hazard/conveyor/warp mechanics, VDP2 layer composition, and USA vs Japan regional rule differences."
+      ],
+      "observed_in_static_files": [
+        "9 files under images/maps/: original.png and background1.png (exact byte duplicates, 14,761 bytes each), background-wide.png (4,413 bytes), double.png (45,231 bytes), battle stage blocks 1.png (810 bytes), plus HUD banner BMP/PNG/XCF mockups.",
+        "Note: exports/roms to png/rm_battle_*.png and exports/tilesets/tl_map_*.png come from a non-Saturn GameMaker dump (including Reversi/Power Bomberman stages) and cannot be used as Saturn arena evidence."
+      ],
+      "selected_paths": [
+        "images/maps/"
+      ]
+    }
+  ],
+  "cross_directory_duplicate_group_counts": {
+    "(root) <-> exports/grouped text <-> exports/sprites <-> exports/textures": 1,
+    "characters/chara <-> characters/robin_hood": 62,
+    "exports/grouped text <-> exports/sprites <-> exports/textures": 3422,
+    "exports/grouped text <-> exports/textures": 7017,
+    "exports/grouped text <-> exports/textures <-> exports/tilesets": 176,
+    "images/Single Sprites <-> images/Sprite Sheets": 4,
+    "images/Single Sprites <-> images/other": 5,
+    "images/UI <-> images/maps": 1,
+    "images/UI <-> images/other": 1
+  },
+  "largest_duplicate_groups_sample": [
+    {
+      "bytes_each": 4398946,
+      "count": 2,
+      "group_id": "dup-00305",
+      "redundant_bytes": 4398946,
+      "sample_paths": [
+        "exports/grouped text/Fonts/fnt_chat_3/fnt_chat_3_0.png",
+        "exports/textures/Fonts/fnt_chat_3_0.png"
+      ],
+      "sha256": "8166d3c8dc50a13cb1cc596d3a98ed940b5a94164a83d035b9e5f5a5ad16cfe1"
+    },
+    {
+      "bytes_each": 2882839,
+      "count": 2,
+      "group_id": "dup-00304",
+      "redundant_bytes": 2882839,
+      "sample_paths": [
+        "exports/grouped text/Fonts/fnt_chat_2/fnt_chat_2_0.png",
+        "exports/textures/Fonts/fnt_chat_2_0.png"
+      ],
+      "sha256": "e74cc7e1682757e49f01c100703c4db6c55d65cece6b706f8620accff5a58d97"
+    },
+    {
+      "bytes_each": 2286980,
+      "count": 2,
+      "group_id": "dup-00303",
+      "redundant_bytes": 2286980,
+      "sample_paths": [
+        "exports/grouped text/Fonts/fnt_chat/fnt_chat_0.png",
+        "exports/textures/Fonts/fnt_chat_0.png"
+      ],
+      "sha256": "439f7d2d9dfd27f19a3814ab2fb3eab9fe4af92bb8e196c7c91f072d3fca7430"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00017",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000013.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00001e7.au"
+      ],
+      "sha256": "62bf664800a565bc2b3100248d3808bb0024cd17c7e72e8247e121f5d1bb5526"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00018",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000024.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e000060b.au"
+      ],
+      "sha256": "ee137b4f2292fba70284b6558f9aec4c59d4ec958561098498a50f42784047c6"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00019",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e000003d.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00004dd.au"
+      ],
+      "sha256": "ef27fa48b7c2ae7914cb8cbb6943d47f1efe700e5229970e8d68757300adabb8"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00020",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000176.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00005d4.au"
+      ],
+      "sha256": "de3629c99e68e791140144ca3036f919e1e4deb820074e6e704301d43f04f106"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00021",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e000025b.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00002a7.au"
+      ],
+      "sha256": "2665f883e6d1e024dcaf4feb1ecc281b5f8c4c9dfda01adcd7752801bf4f64ff"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00022",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00002a8.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000a9b.au"
+      ],
+      "sha256": "20490ee87ed8cb56e87feb42533258964f3a10f18cd89e5c8a86f83dd25a4b09"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00023",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00002c9.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000dbe.au"
+      ],
+      "sha256": "fd3f7329dc66bec8bd97143af2683b85a80a10d2aee25097fb728d1236003b5e"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00024",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000317.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000cf0.au"
+      ],
+      "sha256": "fa6402aca8bcadb8e60ca0e37d6232814cca60d7f18fef87bfb83ec70d889de9"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00025",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e000059a.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000e55.au"
+      ],
+      "sha256": "b9f06ed870d2cfd0796c0ee18d351d7fb7239f6452c79a9bb61ff6828652b2d9"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00026",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00005a2.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000736.au"
+      ],
+      "sha256": "8b78ccfbfbfc7592c7540681909cdf9a5b5c76240ad5b66cf6f45f0586746c84"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00027",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000721.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e0000fd0.au"
+      ],
+      "sha256": "842045ddfa92231ded7ae8030c371a80e40cb558f397a2caaa4cb3a6be25cb15"
+    },
+    {
+      "bytes_each": 1060956,
+      "count": 2,
+      "group_id": "dup-00028",
+      "redundant_bytes": 1060956,
+      "sample_paths": [
+        "audio/rips/GAME SOUNDS_data/e00/d00/e00007ad.au",
+        "audio/rips/GAME SOUNDS_data/e00/d00/e000095c.au"
+      ],
+      "sha256": "a825438518ac270db8ba915e1cb9a160a51b5c2ef8e5c9950a9a3789d6199f76"
+    }
+  ],
+  "private_manifest_sha256": "c82ee4ddbbc036efe82e85b1b8be96937f7ad527376a728b0c350f99731b8537",
+  "provenance_scopes": [
+    {
+      "applies_to_globs": [
+        "images/Sprite Sheets/**",
+        "images/Single Sprites/**"
+      ],
+      "distribution_permission": "unknown",
+      "license_evidence": "none",
+      "neptune_apache_2_0_applies": false,
+      "provenance_status": "partially_credited_unverified_mapping",
+      "readme_sha256": "2379019e0ba5778643b7e56cdb254ea88f8d97ae8ab999496b9b2ba2a23638ac",
+      "scope_id": "readme-spriters-resource-credits",
+      "supplied_contributors": [
+        "Ragey",
+        "Pulse Commander",
+        "PlayBud101"
+      ],
+      "supplied_source_text": "www.spriters-resource.com",
+      "unresolved_fields": [
+        "per_file_contributor_mapping",
+        "original_saturn_release_region_and_revision",
+        "capture_emulator_or_decoder_method",
+        "local_recolour_and_slicing_modifications",
+        "redistribution_permission"
+      ]
+    },
+    {
+      "applies_to_globs": [
+        "audio/rips/BOMSS*.CPK",
+        "audio/rips/M_*.AIF",
+        "audio/rips/.goutputstream-*"
+      ],
+      "distribution_permission": "unknown",
+      "license_evidence": "none",
+      "neptune_apache_2_0_applies": false,
+      "provenance_status": "uncredited_disc_format_candidates",
+      "readme_sha256": "2379019e0ba5778643b7e56cdb254ea88f8d97ae8ab999496b9b2ba2a23638ac",
+      "scope_id": "audio-cpk-and-aiff-rips",
+      "supplied_contributors": [],
+      "supplied_source_text": null,
+      "unresolved_fields": [
+        "exact_disc_track_and_sector_match_against_462_lock",
+        "usa_vs_japan_release_identity",
+        "extraction_tool_provenance",
+        "copyright_and_redistribution_status"
+      ]
+    },
+    {
+      "applies_to_globs": [
+        "audio/projects/**",
+        "audio/rips/*.aup",
+        "audio/rips/*.ogg"
+      ],
+      "distribution_permission": "unknown",
+      "license_evidence": "none",
+      "neptune_apache_2_0_applies": false,
+      "provenance_status": "derived_audacity_projects_and_lossy_reencodes",
+      "readme_sha256": "2379019e0ba5778643b7e56cdb254ea88f8d97ae8ab999496b9b2ba2a23638ac",
+      "scope_id": "audio-audacity-projects-and-ogg",
+      "supplied_contributors": [],
+      "supplied_source_text": null,
+      "unresolved_fields": [
+        "recording_source_emulator_or_game",
+        "lossy_vorbis_generation_loss",
+        "cue_and_loop_frame_timing",
+        "redistribution_permission"
+      ]
+    },
+    {
+      "applies_to_globs": [
+        "exports/**",
+        "spr_b_white_0.png"
+      ],
+      "distribution_permission": "unknown",
+      "license_evidence": "none",
+      "neptune_apache_2_0_applies": false,
+      "provenance_status": "non_saturn_gamemaker_export_structure",
+      "readme_sha256": "2379019e0ba5778643b7e56cdb254ea88f8d97ae8ab999496b9b2ba2a23638ac",
+      "scope_id": "exports-gamemaker-dump-tree",
+      "supplied_contributors": [],
+      "supplied_source_text": null,
+      "unresolved_fields": [
+        "exact_upstream_executable_and_version_probably_power_bomberman",
+        "fan_artist_and_developer_authorship",
+        "massive_internal_duplication_across_textures_and_grouped_text",
+        "redistribution_permission"
+      ]
+    },
+    {
+      "applies_to_globs": [
+        "characters/**",
+        "images/UI/**",
+        "images/maps/**",
+        "images/other/**",
+        "Stupid_Rat/**",
+        "*"
+      ],
+      "distribution_permission": "unknown",
+      "license_evidence": "none",
+      "neptune_apache_2_0_applies": false,
+      "provenance_status": "mixed_repacks_mockups_and_unattributed_files",
+      "readme_sha256": "2379019e0ba5778643b7e56cdb254ea88f8d97ae8ab999496b9b2ba2a23638ac",
+      "scope_id": "repacked-characters-ui-and-misc",
+      "supplied_contributors": [
+        "Kaiju (inferred from filename only)"
+      ],
+      "supplied_source_text": "Animation reference guide by Kaiju.png (filename credit only)",
+      "unresolved_fields": [
+        "source_game_per_ui_bitmap_set",
+        "author_and_license_for_custom_edits_and_xcf_mockups",
+        "redistribution_permission"
+      ]
+    }
+  ],
+  "saturn_lab_inventory_sha256": "3d27c1450f3044e867546479c4dc22cc7195237a31bcfbd5739700279026cd9e",
+  "schema": "neptune.asset-audit-summary.v1",
+  "source_repository": "elgansayer/SaturnBomberman-Assets",
+  "source_snapshot": {
+    "commit_sha": "b55b5a55a4c76c73f4622ffcd20d92bf4755d8b3",
+    "dirty_tracked": [],
+    "is_clean": true,
+    "present": true,
+    "tree_sha": "7d265616d71d98b6f5e8754db05334e22cdcba60",
+    "untracked": []
+  },
+  "tool": {
+    "decoder_version": "python-stdlib/3.13.5/zlib-1.3.1",
+    "full_png_decode": true,
+    "name": "tools/asset_audit/cli.py"
+  },
+  "totals": {
+    "duplicate_group_count": 12209,
+    "extension_mismatch_count": 3,
+    "file_count": 50407,
+    "invalid_or_corrupt_count": 1,
+    "redundant_duplicate_bytes": 80234632,
+    "redundant_duplicate_files": 26785,
+    "total_bytes": 485234959,
+    "unique_sha256_count": 23622
+  }
+}

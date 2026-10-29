@@ -1,0 +1,412 @@
+{
+  "schema": "neptune.saturn-coverage-ledger.v1",
+  "updated_on": "2026-10-29",
+  "goal_issue": 464,
+  "milestone_issue": 463,
+  "profiles": {
+    "usa": {
+      "status": "awaiting_462_input_lock",
+      "disc_lock_sha256": null,
+      "bios_sha256": null,
+      "emulator_core_sha256": null,
+      "notes": "Primary Saturn reconstruction baseline. Media path supplied in #26/#462; owned by Codex #462 after #121."
+    },
+    "japan": {
+      "status": "awaiting_462_input_lock",
+      "disc_lock_sha256": null,
+      "bios_sha256": null,
+      "emulator_core_sha256": null,
+      "notes": "Secondary comparative Saturn profile. Kept strictly separate from USA, Power Bomberman, and Neptune 12-seat extensions."
+    }
+  },
+  "accounting_policy": {
+    "unknown_denominator_representation": "unknown",
+    "never_claim_100_percent_without_verified_denominator": true,
+    "forced_or_debug_states_counted_as_normal_reachable": false,
+    "confidence_levels": [
+      "unknown",
+      "hypothesis",
+      "observed",
+      "cross_checked",
+      "implemented_and_compared"
+    ]
+  },
+  "existing_asset_repo_baseline": {
+    "repository": "elgansayer/SaturnBomberman-Assets",
+    "visibility_verified": "private",
+    "commit_sha": "b55b5a55a4c76c73f4622ffcd20d92bf4755d8b3",
+    "tree_sha": "7d265616d71d98b6f5e8754db05334e22cdcba60",
+    "saturn_lab_inventory_sha256": "3d27c1450f3044e867546479c4dc22cc7195237a31bcfbd5739700279026cd9e",
+    "total_files": 50407,
+    "total_bytes": 485234959,
+    "duplicate_groups": 12209,
+    "redundant_duplicate_files": 26785,
+    "confidence_as_saturn_truth": "hypothesis",
+    "summary_path": "docs/restart/asset-audit/saturn-assets-b55b5a55.summary.json"
+  },
+  "domains": [
+    {
+      "domain_id": "releases_and_disc_resources",
+      "title": "Pinned USA/Japan releases, BIOS, filesystem and byte-range accounting",
+      "backlog_ids": ["REF-001", "REF-013"],
+      "issues": [26, 394, 409, 462, 463],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "Pending #462 CUE/track lock and ISO-9660/sector parser run",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "Pending #462 CUE/track lock and ISO-9660/sector parser run",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "3 complete Sega FILM 1.04 CPK streams (BOMSS1.CPK, BOMSS2.CPK, BOMSS3.CPK; 320x160 cvid, 22050 Hz stereo) plus 1 truncated 2 MiB .goutputstream-4XSJ30 prefix of BOMSS2.CPK.",
+        "19 AIFF audio files (M_007.AIF..M_067.AIF, 44100 Hz) requiring byte/sector comparison against disc tracks/files."
+      ],
+      "open_unknowns": [
+        "Exact CUE track layout (data vs CD-DA tracks, pregap/index offsets) for USA and Japan.",
+        "IP.BIN header product number, revision, build date, region string, and boot executable load address.",
+        "Complete Track 01 file table, archive/compression formats, and any unindexed sector data."
+      ]
+    },
+    {
+      "domain_id": "emulator_bridge_and_timing",
+      "title": "Deterministic libretro harness, RTC/backup RAM, controller topology and rational timebase",
+      "backlog_ids": ["REF-001"],
+      "issues": [27, 394],
+      "usa": {
+        "denominator": 1,
+        "denominator_basis": "Pinned USA Beetle Saturn core + noninteractive repeatable harness contract (#27)",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "japan": {
+        "denominator": 1,
+        "denominator_basis": "Pinned Japan Beetle Saturn core + noninteractive repeatable harness contract (#27)",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [],
+      "open_unknowns": [
+        "Exact rational video/update frame rate reported by pinned Beetle Saturn core for USA vs Japan.",
+        "Effective fixed RTC, clean backup RAM, and 2-multitap (up to 10-controller) port mapping verification.",
+        "Three-process fresh replay determinism and identification of any unstable memory/state fields."
+      ]
+    },
+    {
+      "domain_id": "modes_menus_and_options",
+      "title": "Boot/title/menu state graph, Normal, Battle, Master, options and hidden gestures",
+      "backlog_ids": ["SATURN-010", "SATURN-011", "SATURN-012"],
+      "issues": [38, 426, 427, 428],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "Must be discovered by menu navigation and code/table inspection in pinned USA build",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "Must be discovered by menu navigation and code/table inspection in pinned Japan build",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "155 UI files under images/UI/ (mix of Saturn title/front-page leads, GIMP .xcf mockups, Godot .import sidecars, and PC/Atomic-style BMP buttons)."
+      ],
+      "open_unknowns": [
+        "Complete menu transition graph, option values, save/continue/password or backup-RAM flows, and secret selection gestures.",
+        "Regional differences in menu options, wide-mode requirements, and bonus/Master mode rules."
+      ]
+    },
+    {
+      "domain_id": "campaign_rooms_routes_and_triggers",
+      "title": "Normal & Master mode stages, rooms, collision grids, spawns, switches and exits",
+      "backlog_ids": ["REF-002", "SATURN-001", "SATURN-002", "SATURN-003", "SATURN-004", "SATURN-005", "SATURN-007", "SATURN-008", "SATURN-009"],
+      "issues": [29, 38, 395, 417, 418, 419, 420, 421, 423, 424, 425],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "Total worlds/stages/sub-rooms and secret branches not yet extracted from USA disc tables",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "hypothesis"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "Total worlds/stages/sub-rooms and secret branches not yet extracted from Japan disc tables",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "34 PNG visual slices in images/Single Sprites/single player/map1/ and Block/map1/ (no collision, spawns, or trigger scripts)."
+      ],
+      "open_unknowns": [
+        "Binary map/room container format, tile collision flags, camera scroll bounds, and solo vs 2P co-op rule differences.",
+        "Switch/minecart/train/door scripts, item spawn tables, clear conditions, and Master Mode floor progression."
+      ]
+    },
+    {
+      "domain_id": "enemies_and_boss_phases",
+      "title": "Campaign & Master enemies, boss multi-part sprites, phase graphs and RNG",
+      "backlog_ids": ["REF-003", "SATURN-005", "SATURN-006"],
+      "issues": [28, 38, 396, 421, 422],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "Enemy/boss actor table not yet decoded from USA executable/archives",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "hypothesis"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "Enemy/boss actor table not yet decoded from Japan executable/archives",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "Static sprite sheets/slices for Bomber Bomb Kami, Bomber Debugon, Bomber Dragon, Castle Joe, madbombercart, mujoe, and mastergameenemies."
+      ],
+      "open_unknowns": [
+        "Complete enemy/boss roster, HP/invulnerability timers, hitbox/hurtbox tables, multi-sprite articulation, and RNG-driven phase selection."
+      ]
+    },
+    {
+      "domain_id": "battle_arenas_and_wide_stages",
+      "title": "Standard and wide battle stages, gimmicks, spawns, item pools and Hurry! rules",
+      "backlog_ids": ["REF-004", "SATURN-010", "SATURN-011"],
+      "issues": [29, 38, 397, 426, 427],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "Battle stage table (normal, hidden, wide/Hi-Ten) not yet decoded from USA disc",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "hypothesis"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "Battle stage table (normal, hidden, wide/Hi-Ten) not yet decoded from Japan disc",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "5 candidate raster files in images/maps/ (original.png == background1.png, background-wide.png, double.png, battle stage blocks 1.png). Note: exports/roms to png/rm_battle_* are non-Saturn GameMaker dumps."
+      ],
+      "open_unknowns": [
+        "Stage count, unlock/selection codes, grid sizes, spawn coordinates per player count, item drop tables, stage hazards, and sudden-death block order."
+      ]
+    },
+    {
+      "domain_id": "characters_mounts_animations_and_palettes",
+      "title": "Playable roster, Tirra/mounts, animation state tables, VDP1 CLUT palettes and anchors",
+      "backlog_ids": ["REF-006", "MEDIA-004", "MEDIA-005"],
+      "issues": [28, 38, 285, 295, 399],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "Playable character, colour-slot, mount, and animation table counts require VDP1/disc decoding",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "hypothesis"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "Playable character, colour-slot, mount, and animation table counts require VDP1/disc decoding",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "12 character sheets under images/Sprite Sheets/characters/ (White, Black, Honey, Kotetsu, Bonk, Milon, Master Higgins, Manjimaru, Kabuki, Kinu, Manto, Yuna), Bomura, Tirra variants, and sliced subsets under images/Single Sprites/ and characters/."
+      ],
+      "open_unknowns": [
+        "Complete animation state IDs, frame durations, pivots, raw indexed pixels + palettes, VDP1 flip/mesh flags, and mount+rider composition."
+      ]
+    },
+    {
+      "domain_id": "items_abilities_mechanics_and_cpu",
+      "title": "Subpixel movement, bombs/chains, pickups, illnesses, mounts and Saturn CPU AI",
+      "backlog_ids": ["REF-005", "REF-011", "SATURN-014"],
+      "issues": [29, 38, 398, 407, 430],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "Item/illness IDs and physics/CPU parameters require controlled runtime experiments and SH-2 analysis",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "Item/illness IDs and physics/CPU parameters require controlled runtime experiments and SH-2 analysis",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "5 VDP1 debugger dump PNGs (images/other/vdp1-418..554.png) and item/bomb sprite leads under images/Single Sprites/."
+      ],
+      "open_unknowns": [
+        "Subpixel coordinate scale, speed steps, corner assistance, bomb fuse ticks, chain propagation order, flame lifetime, item caps/stacking, illness effects/durations, RNG algorithm, and CPU decision cadence."
+      ]
+    },
+    {
+      "domain_id": "audio_samples_sequences_cd_and_text",
+      "title": "CD-DA tracks, SCSP PCM/sequence banks, FMV audio, fonts and regional text tables",
+      "backlog_ids": ["REF-006", "MEDIA-007", "MEDIA-008"],
+      "issues": [28, 38, 287, 288, 399],
+      "usa": {
+        "denominator": "unknown",
+        "denominator_basis": "CD-DA track count and SCSP bank/text table counts pending #462 disc lock",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "hypothesis"
+      },
+      "japan": {
+        "denominator": "unknown",
+        "denominator_basis": "CD-DA track count and SCSP bank/text table counts pending #462 disc lock",
+        "observed": 0,
+        "decoded": 0,
+        "validated": 0,
+        "uploaded": 0,
+        "implemented_and_compared": 0,
+        "forced_or_unreachable": 0,
+        "confidence": "unknown"
+      },
+      "known_leads_from_463": [
+        "19 AIFF rips (M_007..M_067.AIF), 3 complete CPK FMVs, plus derived Audacity .aup/.au projects and lossy .ogg files (cannot substitute for lossless disc/SCSP extraction)."
+      ],
+      "open_unknowns": [
+        "Exact Red Book CD-DA track index/loop timings, SCSP sound driver/sequence/PCM formats, channel priority, and English vs Japanese font/string encodings."
+      ]
+    }
+  ],
+  "next_experiments": [
+    {
+      "experiment_id": "EXP-SAT-DISC-001",
+      "status": "queued_on_462_input_lock",
+      "backlog_ids": ["REF-001", "REF-013"],
+      "issues": [26, 28, 394, 462],
+      "hypothesis": "Track 01 of each #462-locked Saturn Bomberman CUE contains a valid Sega Saturn IP.BIN system header and ISO-9660 file hierarchy accounting for boot SH-2 code, BOMSS*.CPK Cinepak streams, sound driver/banks, and packed graphics/map containers, while remaining tracks are Red Book CD-DA.",
+      "controlled_initial_state": "Verified #462 USA and Japan input-lock manifests on read-only staged media (zero modification of /home/dev/Sega-Saturn-BIOS).",
+      "changed_variable": "Compare USA vs Japan disc header, ISO-9660 directory entries, sector ranges, and SHA-256 digests against #463 BOMSS1..3.CPK and M_*.AIF leads.",
+      "expected_observations": [
+        "100% byte/sector range accounting of Track 01 and all CUE-referenced BIN tracks for USA and Japan.",
+        "Exact regional product serials, revision strings, and binary file/archive inventory with unknown compression formats isolated for decoder work."
+      ],
+      "failure_conditions": [
+        "Input lock verification fails.",
+        "Any sector or byte range on Track 01 is silently skipped instead of classified.",
+        "File extensions are reported as decoded formats without magic/structure validation."
+      ]
+    },
+    {
+      "experiment_id": "EXP-SAT-VDP-002",
+      "status": "blocked_on_27_bridge",
+      "backlog_ids": ["REF-006", "REF-002", "REF-004"],
+      "issues": [27, 28, 395, 397, 399],
+      "hypothesis": "Bounded VDP1 command/texture/CLUT and VDP2 tile/palette capture on pinned Beetle Saturn recovers raw indexed sprites, palettes, anchors, and frame durations for White Bomberman, Normal Stage 1-1, and Standard Battle Arena without altering canonical replay hashes.",
+      "controlled_initial_state": "Pinned #27 USA checkpoint in fresh isolated process with fixed RTC, clean backup RAM, and deterministic input script.",
+      "changed_variable": "Enable vs disable bounded VDP1/VDP2 read-only instrumentation across identical 3-process replays.",
+      "expected_observations": [
+        "Identical canonical gameplay/video digests with and without VDP tracing enabled.",
+        "Recovered raw indexed textures, palettes, draw coordinates, and frame durations filling the three #463 gap tables."
+      ],
+      "failure_conditions": [
+        "Instrumentation alters emulated timing or replay digests.",
+        "Reconstructed sample frame diverges from reference frame beyond documented renderer rules."
+      ]
+    },
+    {
+      "experiment_id": "EXP-SAT-TRACE-003",
+      "status": "blocked_on_27_and_28",
+      "backlog_ids": ["REF-011", "REF-002", "REF-004"],
+      "issues": [29, 407],
+      "hypothesis": "Controlled single-variable input sweeps from #27 checkpoints measure exact subpixel speed, corner assistance, and bomb fuse/chain frame counts, allowing compare_trace.py to pass on matching Neptune Saturn-profile scenarios and fail on a 1-frame fuse or subpixel mutation.",
+      "controlled_initial_state": "Pinned #27 battle arena checkpoint and equivalent Neptune scenario adapter.",
+      "changed_variable": "1-frame directional press/release, bomb placement, chain-reaction distance, and deliberate +/-1 tick fuse mutation.",
+      "expected_observations": [
+        "Exact frame-by-frame trace agreement on canonical fixed-point observations and deterministic failure on deliberate mutation."
+      ],
+      "failure_conditions": [
+        "Trace comparator passes on synthetic or mutated traces or masks unstable fields."
+      ]
+    }
+  ]
+}
