@@ -12,6 +12,7 @@ const OpponentProfileScript = preload("res://shared/ai/intel/opponent_profile.gd
 # Global threat data: Vector2i -> time in milliseconds when tile becomes lethal
 # If tile not in dictionary, it's safe (threat time = INF)
 var threat_matrix: Dictionary = {}
+var debug_forecast_logging := false
 
 # Time-aware pathfinder (configured once at setup)
 var pathfinder: DangerAwareAStarScript = null
@@ -111,7 +112,7 @@ func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
 		bomb_queue.append([bomb_id, detonation_time])
 		
 		# DEBUG: Log bomb details
-		if Engine.get_physics_frames() % 120 == 0:
+		if debug_forecast_logging and Engine.get_physics_frames() % 120 == 0:
 			print("[AIManager] Bomb ", bomb_id, " at ", bomb.get_tile_position(), " range=", bomb.explosion_range, " fuse=", fuse_remaining, "s det_time=", detonation_time, "ms")
 	
 	# Sort by detonation time (earliest first)
@@ -138,7 +139,7 @@ func _build_threat_matrix_with_chains(current_time_msec: float) -> void:
 		var bomb_range: int = bomb.explosion_range
 		
 		# DEBUG: Enable verbose logging for first bomb or every 120 frames
-		var debug_this_bomb: bool = true  # DEBUG ALWAYS ON
+		var debug_this_bomb: bool = debug_forecast_logging and Engine.get_physics_frames() % 120 == 0
 		
 		# Mark blast tiles with lethal time
 		var blast_tiles := _get_blast_tiles(bomb_pos, bomb_range, debug_this_bomb)
