@@ -45,3 +45,7 @@ that issue requires actual supplied media, a full asset audit and evidence.
 - [#48](https://github.com/elgansayer/Neptune-Bomberman/issues/48): operator
   dependency for real media/release, explicit spending policy and backup target.
 - [Actual host/runtime evidence](evidence/2026-10-29-server-baseline.md).
+- [#50](https://github.com/elgansayer/Neptune-Bomberman/issues/50): repair the
+  legacy scenarios' missing GameInstance ownership and standalone test contracts
+  before relying on the full bot suite. Do not remove failing cases.
+- [Native startup/round-trip evidence](evidence/2026-10-29-runtime-roles.md).

@@ -18,6 +18,10 @@ ANSI = re.compile(r"\x1b\[[0-9;]*m")
 MAX_LOG_BYTES = 8 * 1024 * 1024
 
 
+def terminate_supervisor(signum, _frame):
+    raise SystemExit(128 + signum)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--godot", default=os.environ.get("GODOT_BIN", "godot"))
@@ -40,7 +44,7 @@ def main() -> int:
     log = candidate.resolve()
     log.parent.mkdir(parents=True, exist_ok=True)
     command = [args.godot, "--headless", "--path", str(project),
-               "res://tests/bot_test_runner.tscn", "--"]
+               "res://tests/bot_test_runner.tscn", "--", "--runtime-role=test"]
     if args.run_specific is not None:
         command.append("--run-specific=" + args.run_specific)
     elif args.run_category is not None:
@@ -62,16 +66,24 @@ def main() -> int:
         except OSError as exc:
             print(f"FAIL: Cannot start Godot: {exc}")
             return 1
-        while process.poll() is None:
-            if time.monotonic() - started > args.timeout:
-                stopped = "timeout"
-            elif log.stat().st_size > MAX_LOG_BYTES:
-                stopped = "log byte limit exceeded"
-            if stopped:
-                os.killpg(process.pid, signal.SIGKILL)
-                break
-            time.sleep(0.02)
-        process.wait()
+        signal.signal(signal.SIGTERM, terminate_supervisor)
+        try:
+            while process.poll() is None:
+                if time.monotonic() - started > args.timeout:
+                    stopped = "timeout"
+                elif log.stat().st_size > MAX_LOG_BYTES:
+                    stopped = "log byte limit exceeded"
+                if stopped:
+                    break
+                time.sleep(0.02)
+        finally:
+            # Reap Godot even if this supervisor is interrupted or terminated.
+            if process.poll() is None:
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+            process.wait()
     with log.open("rb") as source:
         raw = source.read(MAX_LOG_BYTES + 1)
     text = ANSI.sub("", raw.decode("utf-8", errors="replace"))

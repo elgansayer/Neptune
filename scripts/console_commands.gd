@@ -39,7 +39,7 @@ func _get_game_instance():
 	
 	# Try finding it directly
 	for node in get_tree().root.get_children():
-		if node.name == "GameInstance" or node.get_script() == load("res://_get_game_instance().gd"):
+		if node is GameInstance:
 			game_instance_ref = node
 			return node
 	

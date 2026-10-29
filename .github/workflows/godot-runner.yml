@@ -8,6 +8,11 @@ on:
       - 'addons/**'
       - 'run_bot_tests.sh'
       - 'project.godot'
+      - 'main_server.gd'
+      - 'main_server.tscn'
+      - 'client/**'
+      - 'shared/runtime_config.gd'
+      - 'scripts/console_commands.gd'
       - '.github/workflows/godot-runner.yml'
   push:
     branches: [main]
@@ -17,6 +22,11 @@ on:
       - 'addons/**'
       - 'run_bot_tests.sh'
       - 'project.godot'
+      - 'main_server.gd'
+      - 'main_server.tscn'
+      - 'client/**'
+      - 'shared/runtime_config.gd'
+      - 'scripts/console_commands.gd'
       - '.github/workflows/godot-runner.yml'
   workflow_dispatch:
 
@@ -39,3 +49,5 @@ jobs:
         run: python3 tools/godot/check_runner.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
       - name: Verify actual suite null contract and native addon loading
         run: python3 tools/godot/check_project_contracts.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
+      - name: Prove bounded server/client round trips and startup failures
+        run: python3 tools/godot/check_runtime.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --graphical
