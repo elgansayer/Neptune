@@ -6,6 +6,7 @@ extends "res://shared/rpc_interface.gd"
 const Constants = preload("res://shared/constants.gd")
 const GameInstanceScript = preload("res://game_instance.gd")
 const RuntimeConfig = preload("res://shared/runtime_config.gd")
+const ProtocolNegotiation = preload("res://shared/network/protocol_negotiation.gd")
 
 var peer: ENetMultiplayerPeer
 var auth_service # Will be LocalBackend or PlayFabBackend
@@ -13,6 +14,7 @@ var lobby_manager
 var active_games = {} # game_id -> GameInstance
 var player_to_game = {} # peer_id -> game_id
 var _initialized = false # Prevent duplicate initialization
+var protocol_gate: Node
 
 func _ready():
 	# RPC ownership belongs to the autoload, never a second scene instance.
@@ -60,9 +62,20 @@ func _ready():
 		get_tree().quit(1)
 		return
 	
-	multiplayer.multiplayer_peer = peer
+	protocol_gate = ProtocolNegotiation.new()
+	add_child(protocol_gate)
+	if protocol_gate.configure(multiplayer) != OK:
+		push_error("Could not configure gameplay protocol negotiation")
+		get_tree().quit(2)
+		return
+	# All traffic is client <-> authority. Do not relay other clients as new peers.
+	multiplayer.server_relay = false
+	protocol_gate.rejected.connect(func(id: int, reason: String):
+		print("[Server] Protocol rejected: ", id, " ", reason)
+	)
 	multiplayer.peer_connected.connect(_on_player_connected)
 	multiplayer.peer_disconnected.connect(_on_player_disconnected)
+	multiplayer.multiplayer_peer = peer
 	
 	print("Server listening on port ", runtime.port)
 	print("Max players: ", Constants.MAX_PLAYERS)
@@ -71,6 +84,7 @@ func _ready():
 
 func _on_player_connected(peer_id: int):
 	print("[Server] Peer connected: ", peer_id)
+	print("[Server] Protocol selected: ", peer_id, " ", protocol_gate.selected_version(peer_id))
 	# Wait for authentication before doing anything
 
 func _on_player_disconnected(peer_id: int):

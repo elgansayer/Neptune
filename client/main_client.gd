@@ -5,6 +5,7 @@ extends "res://shared/rpc_interface.gd"
 
 const Constants = preload("res://shared/constants.gd")
 const RuntimeConfig = preload("res://shared/runtime_config.gd")
+const ProtocolNegotiation = preload("res://shared/network/protocol_negotiation.gd")
 
 var _runtime_role := ""
 var _server_port := 7777
@@ -13,6 +14,9 @@ var peer: ENetMultiplayerPeer
 var server_address = "127.0.0.1" # localhost for testing
 var connected = false
 var authenticated = false
+var protocol_gate: Node
+var negotiated_protocol := 0
+var last_connection_error := ""
 var username = ""
 var pending_initial_map: Dictionary = {} # Cache initial map until GameView is ready
 
@@ -53,6 +57,16 @@ func _ready():
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	protocol_gate = ProtocolNegotiation.new()
+	add_child(protocol_gate)
+	if protocol_gate.configure(multiplayer) != OK:
+		push_error("Could not configure gameplay protocol negotiation")
+		get_tree().quit(2)
+		return
+	protocol_gate.rejected.connect(func(_id: int, reason: String):
+		last_connection_error = reason
+		_on_connection_failed()
+	)
 	print("[Client] RPC config:", get_script().get_rpc_config())
 	
 	# Setup ping timer
@@ -69,6 +83,11 @@ func connect_to_server(address: String = "127.0.0.1"):
 		return
 
 	server_address = address
+	connected = false
+	authenticated = false
+	negotiated_protocol = 0
+	pending_initial_map.clear()
+	last_connection_error = ""
 	peer = ENetMultiplayerPeer.new()
 	
 	print("[Client] Connecting to ", address, ":", _server_port)
@@ -82,7 +101,14 @@ func connect_to_server(address: String = "127.0.0.1"):
 	multiplayer.multiplayer_peer = peer
 
 func _on_connected_to_server():
+	negotiated_protocol = protocol_gate.selected_version(1)
+	if negotiated_protocol == 0:
+		last_connection_error = "protocol_not_negotiated"
+		peer.close()
+		_on_connection_failed()
+		return
 	print("[Client] Connected to server!")
+	print("[Client] Protocol selected: ", negotiated_protocol)
 	print("[Client] Multiplayer peer valid: ", multiplayer.multiplayer_peer != null)
 	print("[Client] Multiplayer unique ID: ", multiplayer.get_unique_id())
 	connected = true
@@ -95,12 +121,22 @@ func _on_connected_to_server():
 func _on_connection_failed():
 	print("[Client] Connection failed!")
 	connected = false
+	authenticated = false
+	negotiated_protocol = 0
+	pending_initial_map.clear()
+	if last_connection_error.is_empty():
+		last_connection_error = "transport_connection_failed"
+	if _ping_timer:
+		_ping_timer.stop()
+	print("[Client] Connection refused: ", last_connection_error)
 	connection_failed.emit()
 
 func _on_server_disconnected():
 	print("[Client] Disconnected from server")
 	connected = false
 	authenticated = false
+	negotiated_protocol = 0
+	pending_initial_map.clear()
 	if _ping_timer:
 		_ping_timer.stop()
 
