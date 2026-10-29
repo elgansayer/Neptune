@@ -9,12 +9,12 @@ specifications into the same game repository; they are separate reference baseli
 GitHub issues are the visible work queue. A durable coordinator tracks issue ID,
 dependency state, input/base/head hashes, worker lease/heartbeat, attempt history,
 spend and evidence references. Define explicit states such as ready, claimed,
-implementing, verifying, reviewing, mergeable, merged and blocked. Claims must be
+implementing, verifying, mergeable, merged and blocked. Claims must be
 idempotent and recover after process/host restarts.
 
 Begin with one live worker to prove intake, provider authentication, evidence,
-restart recovery and costs. Increase to two implementation workers plus independent
-review once measured. Keep interface-changing work serial where necessary.
+restart recovery and costs. Increase to two implementation workers once measured.
+AI review is optional. Keep interface-changing work serial where necessary.
 
 The coordinator dispatches version-pinned OpenHands SDK/Agent Server conversations
 in isolated workspaces. GitHub Actions executes deterministic checks, not a second
@@ -22,10 +22,10 @@ competing autonomous planner. Provider adapters use documented authentication,
 bounded retries/backoff and explicit paid-fallback policy. A provider failure must
 not mark a task complete or produce an infinite retry loop.
 
-Independent review must inspect the diff and evidence at the exact head SHA.
-Re-check CI, branch base, dependencies and review after any push/rebase before a
-serial merge. Keep merge credentials out of workers. Prevent workers from approving
-their own fixture/test weakening or altering the coordinator's policy through PRs.
+Follow [MERGE_POLICY.md](MERGE_POLICY.md): no mandatory human/AI approval wait.
+Re-check applicable CI, branch base and dependencies after any push/rebase before a
+serial merge. Keep merge credentials out of workers. Do not weaken fixtures/tests
+or silently alter the coordinator's policy to obtain a passing result.
 Separate policy deployment from ordinary gameplay changes.
 
 Failure handling should create a focused diagnosis or split task, release stale

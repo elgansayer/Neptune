@@ -13,7 +13,7 @@ player profiles, detailed stats and a creator workshop. Reproduce Saturn campaig
 and battle behaviour using measured references and independently implement Power
 Bomberman feature coverage in separate ruleset profiles. A continuously running
 AI factory should work through GitHub issues, with deterministic verification and
-independent review of the exact proposed commit.
+tests-gated automatic merging. AI review is optional, following [MERGE_POLICY.md](MERGE_POLICY.md).
 
 The work has three tracks: factory/build, Saturn research and Power Bomberman
 research. Keep one shared implementation with separate ruleset profiles. The
@@ -25,6 +25,7 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 
 ## Documents
 
+- [Tests-only automatic merge policy and setup](MERGE_POLICY.md)
 - [Multiplayer, power-ups, campaigns and co-op contract](COMMUNITY_CONTENT.md)
 - [Everything to provide and install](REQUIREMENTS.md)
 - [Paste-ready server Codex prompt](CODEX_START.md)

@@ -33,7 +33,8 @@ installation for the game and read-only access to the asset repo. Required featu
   coordinator's secret store and issue short-lived credentials.
 - CI workflow changes need the corresponding workflow permission where applicable.
 - Branch rules and required checks are an administrator setup step. Do not enable
-  unattended merges until failure handling and exact-head review are demonstrated.
+  unattended merges until applicable exact-head/current-base checks are enforced.
+  No required approving review: follow MERGE_POLICY.md and preserve unrelated protections.
 
 Account-wide administrator tokens and repository secrets are not worker inputs.
 Untrusted community issues must not directly launch code with privileged access.

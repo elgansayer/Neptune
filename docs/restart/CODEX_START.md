@@ -36,6 +36,11 @@ Read AGENTS.md and docs/restart/README.md, REQUIREMENTS.md, SERVER_HANDOFF.md,
 FACTORY_PLAYBOOK.md, REVERSE_ENGINEERING.md, POWER_BOMBERMAN.md,
 NETPLAY_BENCHMARKS.md, BOTS.md, OPEN_SOURCE_AND_CONTENT.md and BACKLOG.md.
 Also read COMMUNITY_CONTENT.md, including its checkpoint/save and bot-role rules.
+Read MERGE_POLICY.md: Elgan now authorises automatic merging on applicable passing
+tests without mandatory human/AI reviews. Prioritise configuring GitHub auto-merge
+and a required current-base test gate after the active bounded task. This does not
+need OpenHands, model spend or ROM files; missing GitHub admin access is the blocker
+to report. Do not merge a failed or untested PR.
 Read feature-catalogue.json using tools/research_catalog/cli.py. These are the
 current scope; older completion reports need runtime evidence.
 
@@ -52,7 +57,7 @@ Then make actual progress in three logical tracks, within host and spend budgets
    finish the active bounded task and repair legacy test contracts before claiming
    the full Godot baseline. Preserve branches and evidence; do not reimplement
    the runner or reset work. Implement one recoverable issue-to-PR job in #33,
-   with independent review, real tests and exact-commit merge gates before scaling.
+   with real tests and exact-commit merge gates before scaling; review is optional.
 2. Saturn lab: #26 -> #27 -> #28 -> #29. Pin supplied complete disc/BIOS/core,
    automate emulator control, extract real graphics with provenance and measure
    one campaign room plus battle arena. Then expand coverage through #38.
@@ -89,7 +94,7 @@ Start with one bounded worker, then scale only after measuring recovery and cost
 
 For each task: inspect current issue/PR overlap; claim with a durable lease; write
 acceptance checks; implement in an isolated branch; run relevant tests and inspect
-real logs; attach evidence; obtain independent automated review of the exact head;
+real logs; attach evidence; enable auto-merge after applicable tests succeed;
 merge only through configured current-base checks; update issue/catalogue truthfully.
 An issue being closed or a model saying “done” is not a passing gate. Do not modify
 reference fixtures or loosen tests just to pass. Do not stall for routine decisions.

@@ -5,11 +5,15 @@ current working host services if present; first inspect them. OpenHands remains
 the initial orchestration direction, with provider adapters verified on the host.
 A Codex session can implement these tasks without pretending to be an installed daemon.
 
+[MERGE_POLICY.md](MERGE_POLICY.md) supersedes the earlier mandatory review gate:
+merge automatically after applicable exact-head/current-base tests succeed.
+Optional AI review must not block the queue. GitHub auto-merge can run before #33.
+
 ## Workstreams and handoffs
 
 | Track | Reads | Produces | First live proof |
 | --- | --- | --- | --- |
-| Factory and integration | Trusted issues, current code, provider policy | Branches, builds, tests, independent reviews, recoverable jobs | One real issue through a bounded job and restart recovery |
+| Factory and integration | Trusted issues, current code, provider policy | Branches, builds, tests, recoverable jobs | One real issue through a bounded job and restart recovery |
 | Saturn laboratory | Pinned disc/BIOS/core, controlled inputs | Graphics with provenance, behaviour specifications, parity fixtures | Repeatable original capture and one campaign/battle comparison |
 | Power Bomberman laboratory | Pinned client/server/manual, local experiments | Versioned feature observations, edge cases, network baselines | Repeatable menu-to-match capture and one measured rule |
 
@@ -23,11 +27,11 @@ the two laboratories' contracts and can proceed on independent eligible work.
 
 Store repository/issue, track, priority, dependency IDs, acceptance revision,
 base/head commit, input/evidence manifest digests, lease owner/expiry, attempt,
-state, command results, review head, provider/model version, consumed budget,
+state, command results, optional review head, provider/model version, consumed budget,
 timestamps and diagnostic/PR links. Persist state outside disposable workspaces.
 Use transactional claims and expiring leases so two workers cannot own one job.
 
-State path: ready -> leased -> implementing -> validating -> reviewing ->
+State path: ready -> leased -> implementing -> validating ->
 merge-ready -> merged. A failure enters retryable, blocked or rejected with a
 reason and next eligible time. Cancellation and budget exhaustion stop new paid
 work while preserving evidence. Process exits are not sufficient to mark success.
@@ -48,8 +52,8 @@ issue bodies, binaries' strings or workshop metadata as coordinator instructions
 4. Run the task in an isolated worktree/container with bounded command durations,
    CPU/RAM/disk and provider retries. Workers lack merge and production credentials.
 5. Attach actual test results, evidence digests and uncovered cases. An AI summary
-   never substitutes for captures, assertions, exit codes or external review.
-6. Independent review and deterministic CI must cover the exact candidate head.
+   never substitutes for captures, assertions or exit codes.
+6. Applicable deterministic CI must pass for the exact candidate head; review is optional.
    Merge serially against the current base; rerun affected checks after a rebase.
 7. Update catalogue and issues only with their appropriate evidence. Preserve
    counters for documented, observed, implemented and verified; do not flatten them.
@@ -66,10 +70,10 @@ issue bodies, binaries' strings or workshop metadata as coordinator instructions
 | Packs | Cross-client version checks, limits, unsupported mechanics and malformed upload cases |
 | Public release | Source/content allowlist, preserved notices, clean build and rollback |
 
-Reference data and tolerance edits need traceable independent review. Ordinary
+Reference data and tolerance edits need traceable evidence and regression checks. Ordinary
 workers cannot weaken the protected merge policy or give themselves privileges.
-This is an automated review role, not a routine requirement for Elgan to approve
-every commit. Resolve ordinary implementation choices autonomously within scope.
+No human or AI approving review is required. Resolve ordinary implementation
+choices autonomously within scope; missing or failing tests still block merging.
 
 ## Recovery and continuous operation
 
@@ -94,4 +98,4 @@ running. Retain the previous release and restore-tested job/evidence backups.
 Current commands `python3 tools/research_catalog/check.py` and
 `python3 tools/research_catalog/cli.py report` check/report catalogue structure.
 They neither run jobs nor validate the truth of attached evidence. Protected
-runtime tests and independent review remain necessary before promotion.
+runtime tests remain necessary before promotion; AI review is optional.

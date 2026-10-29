@@ -3,6 +3,11 @@
 Continue the authorised Neptune restart from repository state. Do not rely only on
 the chat transcript, old completion reports or assumed tool capabilities.
 
+Read `MERGE_POLICY.md` first: the user has replaced mandatory reviewer approval
+with applicable exact-head/current-base tests. Configure GitHub native auto-merge
+without waiting for the OpenHands factory. Preserve existing work and fix failed
+checks; a missing/skipped test is not a pass.
+
 ## Start
 
 1. Fetch the foundation PR branch and read `AGENTS.md` plus all documents in
@@ -45,7 +50,7 @@ the chat transcript, old completion reports or assumed tool capabilities.
 - Recover one character, one campaign room and one battle arena; compare observed
   mechanics and frames before scaling to all content.
 - Bring up one bounded OpenHands job through implementation, verification,
-  independent review and exact-head merge checks. Verify restart recovery and
+  applicable exact-head merge checks. AI review is optional. Verify restart recovery and
   provider failure behaviour. Only then increase concurrency and enable continuity.
 - Keep browser cross-play and portable content interfaces in every architectural
   decision. Add workshop/profile/stats implementations once their dependencies exist.
