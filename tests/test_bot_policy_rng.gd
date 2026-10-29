@@ -38,7 +38,8 @@ func _choices(task, player, noise: bool, count: int = 32) -> Array:
 	return choices
 
 func _actor() -> Node:
-	await spawn_bot_at(Vector2i(7, 6))
+	var tile := Vector2i(7, 6) if game_instance.players.is_empty() else Vector2i(9, 6)
+	await spawn_bot_at(tile)
 	bot_manager.set_physics_process(false)
 	bot_controller.active = false
 	bot_player.set_physics_process(false)

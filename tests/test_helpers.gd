@@ -16,7 +16,7 @@ static func spawn_bot(tile: Vector2i, personality := "BALANCED", game_instance =
 		push_error("[TestHelpers] Spawn outside fixture interior: " + str(tile))
 		return null
 	var existing: Array = game_instance.players.keys()
-	game_instance.spawn_bot(personality)
+	game_instance.spawn_bot(personality, tile_to_world_center(tile))
 	var peer_id := 0
 	for candidate in game_instance.players:
 		if not candidate in existing:
@@ -29,7 +29,6 @@ static func spawn_bot(tile: Vector2i, personality := "BALANCED", game_instance =
 	var controller = game_instance.bot_manager.get_bot_controller(peer_id)
 	controller.active = false
 	controller.process_mode = Node.PROCESS_MODE_DISABLED
-	bot.position = tile_to_world_center(tile)
 	bot.set_meta("fixture_spawn", tile)
 	await game_instance.get_tree().physics_frame
 	await game_instance.get_tree().physics_frame

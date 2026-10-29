@@ -137,6 +137,12 @@ func clear_map() -> void:
 		for x in range(default_map_width):
 			set_tile(x, y, 0)
 
+	# This original fixture explicitly supports its clear interior spawn cells.
+	game_instance.spawn_points = []
+	for y in range(1, default_map_height - 1):
+		for x in range(1, default_map_width - 1):
+			game_instance.spawn_points.append(BotTestHelpers.tile_to_world_center(Vector2i(x, y)))
+
 func set_tile(x: int, y: int, type: int) -> void:
 	if x < 0 or x >= default_map_width or y < 0 or y >= default_map_height:
 		return
@@ -196,7 +202,7 @@ func spawn_bot_at(tile: Vector2i) -> Node:
 	# Spawn bot using GameInstance (which uses BotManager)
 	print("Spawning bot... Initial players: ", initial_players)
 	print("GameConfig.TILE_SIZE: ", GameConfig.TILE_SIZE)
-	game_instance.spawn_bot("BALANCED")
+	game_instance.spawn_bot("BALANCED", BotTestHelpers.tile_to_world_center(tile))
 	for pid in game_instance.players:
 		if not pid in initial_players:
 			var controller = bot_manager.get_bot_controller(pid)
@@ -222,7 +228,9 @@ func spawn_bot_at(tile: Vector2i) -> Node:
 		# Move to target tile
 		var tile_size = GameConfig.TILE_SIZE
 		var spawn_pos = Vector2(tile.x * tile_size + tile_size / 2.0, tile.y * tile_size + tile_size / 2.0)
-		bot_player.position = spawn_pos
+		if bot_player.position != spawn_pos:
+			push_error("Fixture did not admit the bot at its declared spawn")
+			return null
 		print("Moved bot to %s (Tile %s). Actual pos: %s" % [spawn_pos, tile, bot_player.position])
 		
 		# Force physics update?

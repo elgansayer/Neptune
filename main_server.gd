@@ -210,7 +210,7 @@ func test_farming_spot_broadcast():
 		print("[Server] TEST: GameInstance missing test method")
 
 # Quick-start game system (no lobby for now)
-func quick_start_game(peer_id: int, username: String):
+func quick_start_game(peer_id: int, username: String) -> Dictionary:
 	# For now, all players join the SAME shared game
 	var shared_game_id = "shared_game"
 	
@@ -233,12 +233,15 @@ func quick_start_game(peer_id: int, username: String):
 		# game.call_deferred("add_ai_bot", 2)  # Timid
 	
 	var game = active_games[shared_game_id]
+	# Record membership only after authoritative admission; never report a refusal
+	# as a successful join. Network admission UI/versioning remains separate.
+	var admission: Dictionary = game.add_player(peer_id, username, Vector2.ZERO, false, "", "user:" + username)
+	if not admission.accepted:
+		print("[Server] Player admission refused: ", admission.reason)
+		return admission
 	player_to_game[peer_id] = shared_game_id
-	
-	# Add player to the shared game (auto-assigns spawn point)
-	game.add_player(peer_id, username)
-	
 	print("[Server] Player ", username, " joined shared game. Total players: ", game.players.size())
+	return admission
 
 # (no-op) Debug forwarding not required; broadcast happens from AI tasks via ClientMain
 
