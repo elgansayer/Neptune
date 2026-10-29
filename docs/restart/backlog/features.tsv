@@ -1,0 +1,406 @@
+# Domain|Priority|Phase|Parent issue|Provenance
+@REF|P1|5|41|reference-research
+Pin regional Saturn releases and timing profiles|Record release, region, revision and refresh-rate evidence; reject mixed-version fixtures; expose unresolved differences without choosing convenient defaults.
+Index every Saturn campaign room and transition|Enumerate reachable rooms, entrances, exits and scripted events from the pinned game; attach captures; create one bounded child per observed room.
+Index every Saturn enemy and boss phase|Record distinct actors, attacks, vulnerabilities and transitions; distinguish recolours from behaviour variants; create per-actor comparison tasks.
+Index Saturn battle stages and hidden variants|Capture selection conditions, geometry, gimmicks and supported seats; test hidden-option claims; generate one task per confirmed variant.
+Inventory Saturn items and illnesses by mode|Record availability, stacking, caps, duration and removal in Normal, Battle and Master; retain counterexamples and unknowns.
+Inventory Saturn animation and sound states|Map movement, death, victory, carrying, mounts and campaign states to raw evidence; retain palettes, timing and missing-state records.
+Pin the current Power manual and settings inventory|Hash the developer-distributed manual and executable; enumerate every menu option and default; compare documentation with actual execution.
+Inventory Power items and combination rules|Enumerate the pinned item-help entries and interactions; record mutually exclusive equipment and action priorities; split confirmed mechanics into bounded children.
+Inventory Power stages and variant restrictions|Record every selectable variant, seat limit, mode constraint and hazard; distinguish advertised totals from measured entries; generate per-variant tasks.
+Inventory Power characters and presentation metadata|Record animation requirements, portraits, palette variants and credits; distinguish cosmetic identity from mechanics; do not treat availability as redistribution permission.
+Create a reference interaction experiment matrix|Cover item-item, bomb-hazard, mount-status and simultaneous-event pairs; prioritise high-risk combinations; retain replayable counterexamples.
+Reconcile video claims with playable references|Catalogue claims and timestamps from the supplied video when retrievable; mark unavailable footage explicitly; verify gameplay claims against pinned builds.
+Maintain evidence confidence and coverage reports|Separate documented, observed, implemented and verified states; reject missing capture/build IDs; report gaps per release and feature family.
+Generate bounded tasks from verified content inventories|Produce one idempotent child per observed entity/version; retain parent dependencies and evidence; never create invented assets or mark generated tasks complete.
+@SIM|P1|1|43|neptune-requirement
+Drive gameplay from an authoritative simulation clock|Represent durations in simulation ticks; pause and resume without wall-clock drift; compare outcomes across render rates and headless execution.
+Partition seeded random streams by subsystem|Separate gameplay, bots, presentation and generation streams; serialise RNG state; prove cosmetic or planning queries cannot change item drops.
+Define deterministic simultaneous-event ordering|Specify movement, pickups, placement, chains, damage and objectives in one tick; replay reversed input arrival orders; record stable tie outcomes.
+Validate human and bot actions through one command path|Reject impossible movement, unavailable abilities and excess placements; return explicit rejection reasons; run equivalent human/bot action traces.
+Implement fixed-point movement and corner assistance profiles|Measure subpixel steps and corner thresholds independently; test narrow corridors and opposed inputs; preserve profile-specific movement behaviour.
+Specify tile occupancy and collision layers|Distinguish terrain, players, bombs, mounts and projectiles; test tile-edge rounding and overlap escape; publish consistent queries for bots and mods.
+Implement spawn selection and safe spawn reservations|Reserve nonoverlapping supported spawn slots; detect insufficient reachable starts; reproduce seeded placement across clients and reconnects.
+Make entity identities stable across snapshots|Use generation-safe IDs for actors and effects; reject stale references after despawn; preserve identity in replay and checkpoint restore.
+Implement damage attribution and elimination events|Record owner, source, chain origin and assists separately; handle owner disconnect and simultaneous deaths; use events for results and bot diagnostics.
+Define lives, hearts and invulnerability lifecycle|Specify hit, death, respawn, expiry and reset; test overlapping protection and repeated damage; keep mode and reference profiles separate.
+Implement round start, countdown and clean reset|Block gameplay during countdown; clear transient entities and statuses between rounds; verify repeated rounds do not leak state or resources.
+Resolve wins, draws and team elimination atomically|Handle simultaneous final hits and disconnected survivors; emit one terminal result; prevent duplicate rewards and delayed events changing a finished round.
+Expose simulation snapshots and state hashes|Canonicalise state independently of dictionary order; include content locks and RNG; detect intentional divergence at the first differing tick.
+Add bounded event queues and entity budgets|Reject recursive spawns and unbounded events deterministically; preserve authoritative state on failure; expose actionable pack/runtime diagnostics.
+Version gameplay protocol and save schemas|Negotiate supported versions before play; reject incompatible peers and saves clearly; test explicit supported migration paths without silent fallback.
+Implement pause and time-scale rules by session type|Permit local pause, define co-op consensus and online restrictions; keep timers and reconnect budgets consistent; prevent clients changing server time.
+@BOMB|P1|2|43|reference-candidate
+Specify normal bomb placement and owner overlap|Enforce capacity, grid snapping and placement cooldown; let overlapping actors leave once; reject re-entry and double placement in the same cell.
+Specify fuse expiry and flame lifetime profiles|Measure fuse, growth and persistence independently; test exact boundary ticks; keep experimental timing separate from measured reference profiles.
+Resolve multi-bomb chains and ownership|Handle simultaneous and multi-hop chains without duplicate damage; test insertion-order independence; preserve initial owner and chain attribution.
+Define solid and destructible blast obstruction|Test directional stopping, destroyed-block ordering and hidden items; compare simultaneous blasts; make danger prediction use identical obstruction rules.
+Implement bomb kicking and deliberate stopping|Test kick initiation, moving collisions and stop-at-grid behaviour; reject invalid stops; expose moving trajectories to clients and bots.
+Implement pickup and carried-bomb lifecycle|Define pickup delay, ownership, fuse handling and cancellation; test carrier death/disconnect; prevent duplicate carried entities.
+Implement throws, landing and chained bounces|Resolve occupied landings, wall contact and airborne shadow positions; test edge boundaries and simultaneous landings; preserve event timing across clients.
+Implement wraparound bomb trajectories|Define entry/exit points and occupancy on wrapped maps; test corners and chained bounces; keep predictions consistent with authoritative landings.
+Implement remote detonation ownership|Specify trigger ordering and owner death/disconnect policy; test remote bombs in chains; expose supported detonation actions to bots.
+Implement penetrating power bombs|Define penetration through blocks and interaction with solid terrain; test mixed chains; compare real blast tiles with previews and hazard forecasts.
+Implement rubber and bouncing bomb profiles|Specify bounce direction, speed, stopping and collision rules; test blocked loops and concurrent contacts; bound trajectory prediction.
+Implement line-bomb placement|Place only allowed available bombs along valid cells; test obstacles, partial capacity and repeated inputs; apply one deterministic placement order.
+Investigate bead or rolling-chain bomb mechanics|Capture the pinned reference before selecting semantics; prototype a separately named Neptune variant; test ownership, gaps and obstruction.
+Implement landmine placement and triggering|Specify arming delay, visibility, activation and friendly-fire rules; test simultaneous crossings and chain reactions; expose truthful bot observations.
+Investigate dangerous bomb fusion|Measure supported fusion pairs and blast geometry; reject unsupported combinations; test fusion ownership, capacity accounting and replay.
+Implement bomb punch and aerial redirection|Define action range and target priority; test multiple bombs, walls and landing collisions; preserve authoritative action validation.
+Implement bomb pushing and collision arbitration|Resolve actor/bomb and bomb/bomb displacement deterministically; reject impossible pushes; test narrow lanes and opposed actions.
+Specify fire interactions with moving and carried bombs|Measure whether each supported bomb state chains, pauses or restarts fuses; test transition ticks; reject forecasts for unsupported states.
+Implement bomb preview and placement feedback|Show capacity, supported trajectories and rejection reasons without leaking hidden information; match preview to authoritative rules; test controller and keyboard use.
+@ITEM|P2|2|52|reference-candidate
+Implement item pools and weighted hidden drops|Lock eligible items and weights per ruleset; use seeded server selection; prove clients and bots cannot inspect concealed drops.
+Implement bomb-capacity upgrades and caps|Specify pickup, cap, reset and carried-bomb accounting; test repeated pickups and full inventory; preserve network and save round trips.
+Implement fire-range upgrades and Full Fire|Keep normal and extended caps separate; prevent later pickups reducing range; verify actual blasts and full/minimal snapshots agree.
+Implement skate upgrades and speed reduction items|Define discrete levels and profile-specific speed curves; test repeated reductions and cap boundaries; retain movement/collision consistency.
+Implement kick, glove and line-bomb ability pickups|Grant capabilities independently of cosmetic characters; test death/reset and conflicting controls; expose supported actions to bots.
+Implement heart and shield protection rules|Specify damage absorption and expiry; test simultaneous hits, crushing and mounted actors through explicit profile decisions; preserve HUD and replay state.
+Implement temporary invincibility and flashing feedback|Define start/end ticks and damage exceptions; test expiry-edge collisions; offer reduced-flash presentation without changing gameplay.
+Implement illness/status selection and transmission|Use declared status pools and seeded selection; test contact transmission, replacement and immunity; separate hidden random samples from observable bounds.
+Implement short-fuse and long-fuse illnesses|Define fuse effects at placement and after pickup; preserve private randomness; compare real explosions with conservative bot forecasts.
+Implement forced-planting and inability-to-plant illnesses|Bound automatic actions and enforce capacity; test death, pause and expiry; ensure client and bot inputs cannot bypass restrictions.
+Implement slow, fast and reversed-control illnesses|Apply changes through validated movement/input semantics; test stacked expiry and control remapping; preserve reference-specific profiles.
+Implement range/capacity restriction illnesses|Specify whether existing bombs change or only future placements; test pickup interaction and expiry restoration; reject invalid negative stats.
+Implement illness cleansing and global Devil-style events|Define cleansing triggers, affected participants and event priority; test simultaneous pickup/contact; preserve deterministic global selection.
+Implement item scatter and loss on damage|Specify which items drop, retention and pickup immunity; test mounts and simultaneous damage; preserve exact item accounting.
+Implement item burn, relocation and respawn rules|Define fire destruction versus relocation per profile; test overlapping explosions and blocked destinations; prevent lost or duplicated items.
+Implement score pickups and combo accounting|Separate score items from abilities; test pickup ownership and retry events; use permitted original art and explicit mode score tables.
+Implement clock and time-stop effects|Specify affected actors and timers; test stacked pauses and expiry; keep network sessions and authoritative clocks consistent.
+Implement block-pass and bomb-pass abilities|Define traversable entities and safe expiry when overlapping; test trapped termination and respawn; prevent unsupported bot routes.
+Implement limited-use dash and movement abilities|Define charges, cooldowns and collision termination; test wall contact and control conflicts; publish movement traces for bot planning.
+Implement item-slot action priority and selection|Resolve multiple active items on one input; provide explicit selection and HUD; test simultaneous pickup/use and controller remapping.
+Implement pickup race and team sharing policies|Resolve same-tick claims and allowed sharing; test latency-independent outcomes; record personal/team ownership in snapshots.
+Build item help and interactive demonstrations|Generate descriptions from versioned definitions; run small playable examples; show unsupported combinations and accessibility-friendly controls.
+@MOUNT|P2|3|38|reference-candidate
+Implement reusable mount and rider state|Separate actor, rider and ability state; test mounting, dismounting and owner death; serialise exact identity and collision semantics.
+Implement eggs, hatching and growth progression|Define mode-specific growth inputs and maximum stage; test duplicate pickups and interrupted hatching; keep original and community profiles separate.
+Implement blue Tirra-style bomb launch capability|Measure distance and growth effects before fidelity claims; test obstacles, landing and carried bombs; expose authoritative trajectories to bots.
+Implement green Tirra-style dash capability|Define growth-dependent steering and stopping from evidence; test walls and sudden hazards; preserve rider input authority.
+Implement yellow Tirra-style stun capability|Measure radius, targets and duration; test immunity and simultaneous roars; synchronise effects and readable warnings.
+Implement pink Tirra-style jump capability|Measure traversable obstacle classes by growth; test landing occupancy and map edges; preserve shadow/hitbox separation.
+Implement purple Tirra-style sonar capability|Measure reveal and detonation semantics; prevent unauthorised information reaching opponents; test hidden-item and remote-bomb interactions.
+Implement mount damage and sacrifice lifecycle|Define rider protection, mount loss and post-hit windows; test chained hits and crushing separately; preserve exact death attribution.
+Inventory Power Louie and other steed abilities|Enumerate pinned mounts and growth differences; create one child per confirmed ability; map each to supported public capability primitives.
+Expose community-authored mounts through packs|Load original mount visuals and supported abilities without source branches; validate rider anchors and collision; reject unsupported bot/browser mechanics.
+@ARENA|P2|2|35|neptune-requirement
+Implement logical tile layers and visual themes|Separate terrain, collision, hazards and decoration; swap themes without changing state hashes; validate dimensions and layer references.
+Implement normal and wide arena layouts|Support declared seats and readable camera framing; validate distinct reachable spawns; retain separate Saturn and Neptune capacity profiles.
+Implement destructible block variants|Support health, drops and destruction events; test simultaneous blasts and state sync; keep material rules data-driven.
+Implement conveyor belts|Define actor and bomb transport speeds and priorities; test intersections and blocked exits; expose timed movement to navigation.
+Implement warp pads and teleport routing|Lock destination selection and occupancy policy; test loops and simultaneous arrivals; provide previews without leaking hidden routes.
+Implement directional arrows and bomb curve tiles|Define which entities redirect and when; test loops and competing forces; keep forecast paths consistent with runtime.
+Implement trampolines, launchers and seesaws|Specify activation, flight and landing rules; test multiple occupants and failed landings; support versioned hazard capabilities.
+Implement rails, carts and moving platforms|Move riders and bombs through authoritative trajectories; test boarding, obstruction and disconnect; include motion in bot planning.
+Implement doors, switches and rotating barriers|Define state transitions and actor occupancy during closing; test simultaneous triggers; persist puzzle state in saves.
+Implement ice, water, lava and terrain effects|Treat terrain effects as declared capabilities; test overlapping statuses and movement; reject unsupported cross-platform or bot combinations.
+Implement timed lasers, vents and floor traps|Expose warning/active/recovery phases; test exact activation boundaries; make authoritative hazard intervals available to bots.
+Implement moving stage enemies and large obstacles|Use bounded authored actors with clear collision footprints; test occlusion/readability and multiple hits; distinguish stage hazards from competitive players.
+Implement pressure-block patterns and warnings|Support authored and seeded pattern lists; test multi-block ticks, occupants and removed entities; retain warnings in reduced-effects presentation.
+Implement collapsing floors and shrinking arenas|Define fall outcomes, refuge checks and progression; test disconnected actors and simultaneous collapse; preserve deterministic match completion.
+Implement vertical layers and height restrictions|Specify traversal links, blast reach and landing rules; test stacked visual overlap; require explicit compatible bots and camera support.
+Implement wraparound arena topology|Make adjacency, movement, blasts and camera cues agree; test all edges and corner transitions; validate graph connectivity.
+Implement arena variants and deterministic presets|Share base geometry with explicit variant overrides; validate incompatible overrides; lock the resolved variant for replay and multiplayer.
+Implement seeded procedural arena generation|Generate within declared fairness/connectivity constraints; reproduce seeds; reject unsatisfiable settings and preserve generation version.
+Implement arena reachability and spawn fairness checks|Detect isolated starts, unreachable objectives and immediate forced deaths; report locations to authors; separate structural validity from competitive balance.
+Implement hazard composition and event ordering|Exercise conveyor/warp/bomb and door/explosion combinations; define same-tick priority; reject loops that exceed declared budgets.
+@BATTLE|P1|2|43|neptune-requirement
+Implement configurable free-for-all survival|Support round count, win target, timer and draw policy; resolve simultaneous last eliminations; reproduce results from the command log.
+Implement team survival and friendly-fire profiles|Support uneven and mixed human/bot teams; define shared victory and friendly-fire exceptions; prevent teammate information leaking to opponents.
+Implement tile-conversion Reversi battles|Use the measured profile and existing #44 slice as the starting point; test tile ownership, ties and final scoring; expose objective progress to bots.
+Implement Dodge-style avoidance battles|Pin reference victory and bomb restrictions before claiming parity; test survival and simultaneous eliminations; provide a separate original preset while measurements are missing.
+Implement Hyper Bomber-style objective battles|Measure objective collection, delivery and elimination rules; test contested objectives and dropped progress; provide objective observations for bots.
+Implement King-style scoring battles|Measure crown or target selection and scoring intervals; test transfer, ties and disconnects; keep score updates authoritative.
+Implement Battle Royale rule profiles|Pin the reference meaning separately from modern genre assumptions; test its measured elimination and score rules; label an original Neptune interpretation explicitly.
+Implement elimination revenge vehicles|Define perimeter movement, attacks and return conditions from the selected profile; test corners and same-tick revenge kills; support controller and bot actions.
+Implement sudden-death and overtime options|Define ties, timer extensions and escalating hazards; test multiple overtime rounds; prevent indefinite matches with bounded policies.
+Implement a configurable series and points table|Persist stage sequence and placements across rounds; test ties, substitutions and interrupted series; support an explicit long Saturn-style series preset after measurement.
+Implement stage voting, shuffle and rotation|Use reproducible selection and published eligibility; handle empty pools and tied votes; lock the chosen stage before ready checks.
+Implement starting loadouts and item bans|Validate per-player and shared settings against the selected profile; show rule differences before joining; reject illegal loadouts server-side.
+Implement handicaps and asymmetric teams|Support explicit health, speed or equipment adjustments; mark adjusted sessions in results; prevent hidden competitive advantages.
+Implement training matches and restart controls|Allow instant repeat of a seeded scenario with bots; retain settings and useful diagnostics; exclude practice from trusted competitive statistics.
+Implement original capture-the-flag battles|Specify flag pickup, return, drop and simultaneous capture; teach bots both attack and defence; test team disconnect and overtime rules.
+Implement original payload and zone-control battles|Provide bounded objective paths and occupancy scoring; test contested zones and stalled payloads; publish mode capabilities for authored variants.
+@SATURN|P2|5|38|reference-candidate
+Build Saturn Normal-mode campaign progression|Model measured stage ordering, exits and unlock conditions; preserve regional differences; run each confirmed transition through an executable fixture.
+Build Saturn Normal-mode two-player rules|Measure joining, shared resources and failure conditions; test deaths and stage transitions together; retain separate Neptune co-op improvements.
+Implement Saturn Master-mode stage progression|Measure stage sequence, timer and restart rules; test all confirmed transitions; keep Master state separate from campaign saves.
+Implement Master-mode grading and score breakdown|Capture measured scoring factors and thresholds; reproduce known reference runs; display explainable category totals without guessed parity claims.
+Implement campaign enemy spawning and room clear rules|Capture trigger, wave and respawn conditions; test leaving and revisiting rooms; create per-room children from the inventory rather than hardcoded assumptions.
+Implement campaign bosses with explicit phase graphs|Build one confirmed boss as the framework example; test vulnerability windows and simultaneous hits; generate bounded phase tasks for remaining observed bosses.
+Implement campaign cutscenes and transition timing|Separate skippable presentation from gameplay triggers; test skip, pause and co-op synchronisation; use independently authored placeholder media until permitted assets exist.
+Implement campaign secrets and bonus entrances|Record evidenced entry conditions and rewards; test repeat visits and missed conditions; avoid undocumented secrets becoming mandatory progression.
+Implement the Saturn bonus-game framework|Measure the crane/bonus inputs, timing and rewards; test player ordering and interruptions; keep reward decisions deterministic.
+Implement Saturn battle setup options|Reconcile timer, shuffle, draw and Devil settings with pinned evidence; test combinations and defaults; retain a named versioned preset.
+Implement Saturn hidden settings and selection gestures|Record exact observed controller/menu conditions; test false positives and discoverable alternatives; keep unavailable reference options visibly unverified.
+Implement Saturn save, continue and game-over behaviour|Measure lives, continues and reset boundaries; test corrupted or incompatible saves safely; separate convenience autosave from faithful profiles.
+Implement Saturn presentation and camera comparisons|Capture framing, HUD placements and animation cadence per supported resolution; compare screenshots at documented tolerances; distinguish art mismatch from rule mismatch.
+Implement Saturn CPU behaviour comparison scenarios|Record observable decisions for the supported difficulty levels; compare routes and actions under matched situations; publish differences without calling enhanced bots faithful CPUs.
+@POWER|P2|5|42|reference-candidate
+Implement the pinned Power battle preset library|Translate measured defaults into versioned Neptune presets; test supported mode/stage/item combinations; report omitted or uncertain settings explicitly.
+Implement Power Score-mode progression|Measure stage, score, failure and continuation rules; test transitions and submitted scores; isolate original substitute levels from reference claims.
+Implement Power Turbo timing and progression|Measure the actual mode before selecting its semantics; test speed-dependent collision and control windows; publish comparable timing evidence.
+Implement Power character-selection ergonomics|Support large searchable rosters, favourites and palette choices; keep installed compatible characters freely selectable; test missing packs and duplicate display names.
+Implement Power taunts and battle expressions|Measure available actions and cooldown behaviour; implement original/licensed presentation through packs; keep mute and reduced-distraction options local.
+Implement Power settings compatibility reports|Map each pinned setting to supported, partial or unsupported Neptune behaviour; show exact differences before loading a preset; verify mappings against executable tests.
+@BOT|P0|1|30|neptune-requirement
+Provide bots with an explicit public observation model|Expose visible actors, terrain and observable fuse bounds; hide concealed drops and secret sampled timers; test equivalent visibility for human and bot roles.
+Predict space-time danger for all supported hazards|Combine chain reactions, moving bombs and stage hazards; compare intervals to actual simulation traces; reject unsupported hazard capabilities before a bot match starts.
+Plan escape routes with travel and reaction time|Account for movement speed, turns and occupied tiles; test strict edge clearances and blocked refuges; retain a reproducible failure trace for every unsafe action.
+Require a viable post-placement escape plan|Simulate hypothetical placement and changed chains; reject self-trapping actions; test that later input delay and shared occupancy can invalidate a stale plan.
+Coordinate path reservations between team bots|Avoid head-on deadlocks and mutually blocked refuges; expire reservations after death or replanning; test congested corridors with mixed human teammates.
+Plan destructible-block farming and item collection|Balance useful reachable drops against risk and travel cost; avoid knowing hidden item identities; test deterministic choices under equal utility.
+Build opponent-trapping and tactical bomb planning|Evaluate exits, timing and opponent capabilities; preserve self-survival constraints; compare seeded duels against a documented baseline policy.
+Teach bots kick, carry, throw and remote abilities|Select only actions supported by the observation/capability API; verify action execution and escape consequences; cover each ability with focused scenarios.
+Teach bots mounts, terrain and stage mechanisms|Use declared movement links and hazard intervals; reject unsupported routes; test a mount ability and a moving-stage mechanism end to end.
+Create difficulty profiles without hidden-information cheats|Vary reaction time, planning budget and mistakes explicitly; publish the profile parameters; test that all levels share the same observation permissions.
+Create distinct and reproducible bot personalities|Separate aggression, item preference and team style from skill; seed personality variation; expose clear lobby descriptions and replay metadata.
+Support companion follow, defend and assist commands|Validate player-issued role orders; avoid stealing critical puzzle actions or blocking humans; test command changes and disconnected leaders.
+Support authored enemy perception and attack policies|Give campaign enemies bounded sensory and state-machine components; test spawn, patrol, chase and retreat; isolate enemy rules from competitive bot advantages.
+Expose objectives to bots through a common interface|Represent capture, escort, collect and survive tasks with progress and legal actions; test two different modes; report unsupported objectives to authors.
+Recover bots from stuck, oscillating and invalid paths|Detect lack of progress without teleporting or cheating; bound replans and fallback actions; retain the map/seed/decision trace for regression.
+Budget bot planning across large rooms|Enforce per-tick CPU and query limits; degrade planning quality predictably under load; measure twelve-seat and supported stress profiles.
+Build bot explanations and replay overlays|Show chosen target, danger interval and rejected alternatives in developer mode; preserve private-information boundaries for spectators; export concise failure evidence.
+Build seeded bot tournaments and promotion thresholds|Compare survival, objective success, illegal actions and runtime across varied seeds; retain confidence intervals and regressions; block promotion on any safety regression.
+@ROOM|P0|2|31|neptune-requirement
+Implement twelve-seat extensible room capacity|Separate protocol capacity from reference preset limits; support mixed humans and bots; reject unsupported map/seat combinations before starting.
+Implement local guest seats inside online rooms|Map multiple controllers on one client to distinct seats; handle device loss and guest names; test local guests alongside remote players and bots.
+Implement host-controlled and automatic bot filling|Support empty-seat targets and difficulty choices; avoid replacing reserved reconnecting humans; persist the effective roster in match metadata.
+Implement public and private room discovery|Filter region, mode, seats, latency and pack compatibility; keep private rooms out of public results; handle stale listings and full-room races.
+Implement invite codes and direct joins|Use expiring or revocable room capabilities; show compatibility before downloading content; test invalid, reused and full-room joins.
+Implement ready checks with a frozen session contract|Lock rules, versions, packs and roster at countdown; invalidate readiness on relevant changes; reject clients with mismatched content hashes.
+Implement host transfer within a surviving server session|Transfer lobby administration and permissions; test leader disconnect and simultaneous claims; keep the authoritative simulation on its existing server.
+Implement reconnect grace and seat reclaim|Resume authenticated seats without duplicate actors; retain bounded grace timers; test reconnect during countdown, death and round transition.
+Implement human-to-bot takeover and handback|Define permitted takeover boundaries; preserve actor inventory and team; avoid two command owners during reconnect.
+Implement spectator seats and admission rules|Support spectators independently of player capacity; enforce hidden-information and delay policies; handle joining mid-round and switching at round boundaries.
+Implement rematches and persistent room settings|Retain compatible participants, packs and votes; clear transient match state; test players leaving during the rematch countdown.
+Implement room moderation and host permissions|Support kick, temporary exclusion and settings permissions; validate actions server-side; show affected users a clear reason and retry policy.
+Implement room region and server selection|Measure available endpoint latency before joining; expose selected region and fallback; avoid silent mid-match server moves.
+Implement queue matchmaking with party constraints|Match compatible profiles, region preferences and party sizes; bound wait expansion; test cancellation and duplicate allocation.
+Implement seamless late join policy by mode|Allow supported co-op joins and round-boundary competitive entry; initialise exact state and ownership; reject unsupported mid-round joins clearly.
+Implement authoritative room lifecycle and cleanup|Reclaim abandoned rooms and reserved slots; preserve reconnect windows; test process restarts and duplicate create/join requests.
+@NET|P0|2|34|neptune-requirement
+Provide browser and native transport parity|Use supported browser transports with the authoritative server; run native-browser-human-bot matches; verify no gameplay assumption depends on ENet availability.
+Implement command sequencing and duplicate suppression|Track actor sequence numbers and authoritative ticks; reject stale, duplicate and impossible commands; test reordered and repeated packets.
+Implement movement prediction and reconciliation|Correct local prediction against server state; preserve collision and ability authority; measure visible correction under a documented latency matrix.
+Implement interpolation for remote actors and bombs|Buffer timestamped snapshots within bounds; handle teleports, deaths and moving bombs distinctly; measure jitter without altering gameplay time.
+Implement full and delta snapshot consistency|Recover from lost baselines with a full snapshot; round-trip every gameplay stat and flag; test packet size and fragmented delivery limits.
+Synchronise server time and input deadlines|Estimate clock offset without trusting client timestamps; bound accepted late inputs; test drift, jitter and malicious timing claims.
+Define rollback scope and evaluate its tradeoffs|Prototype only behind an explicit profile; compare authoritative outcomes, CPU and perceived latency; adopt it only with evidence over the baseline.
+Implement reconnect state resynchronisation|Send versioned world, RNG and actor ownership state; resume command sequences safely; detect content or protocol changes during disconnection.
+Implement reliable event delivery and idempotence|Make joins, rewards, transitions and results safe to retry; reconcile snapshots with event streams; test loss at every acknowledgement boundary.
+Benchmark netplay under controlled impairment|Measure matched configurations at varied RTT, loss and jitter; capture corrections, input latency and desyncs; reuse #45 methodology before improvement claims.
+Implement bandwidth and interest-management budgets|Bound snapshots for large rooms and campaigns; preserve nearby hazard visibility; measure bytes per second and CPU on browser and native clients.
+Validate all client requests and rate limits|Reject forged actor IDs, impossible stats and excessive input; test malformed and oversized packets; preserve legitimate play during bounded rejection.
+Implement cross-platform determinism diagnostics|Compare authoritative hashes and decoded state across supported targets; capture first divergence; avoid claiming determinism from same-platform replay alone.
+Implement degraded-connection UX and recovery|Show latency, packet loss and reconnect state accessibly; prevent stuck input after focus/network loss; test recovery without duplicated actions.
+@PACK|P1|3|35|neptune-requirement
+Define versioned pack manifests and stable identifiers|Require namespaced IDs, author, version, dependencies and content types; reject duplicate IDs and incompatible schemas; provide precise file/field diagnostics.
+Implement deterministic dependency resolution and locks|Resolve compatible versions into a reproducible lockfile; detect cycles and conflicting constraints; test offline reuse and missing dependencies.
+Implement content-addressed pack installation|Verify archive hashes before activation; deduplicate immutable files; recover from interruption without partially enabled content.
+Validate archive paths and expansion budgets|Reject traversal, symlinks, duplicate paths and decompression bombs; cap file counts and expanded size; leave the existing installation intact on failure.
+Implement pack capabilities and compatibility negotiation|Declare required engine, renderer, bot and rules capabilities; compute compatible session sets; explain which dependency prevents play.
+Implement data-only resource loading boundaries|Whitelist supported formats and properties; reject scripts, native libraries and executable scene resources; test nested resource references and parser edge cases.
+Define character sprite and animation contracts|Specify named states, directions, timings, anchors and fallback animations; validate missing frames; load an original character with no engine edits.
+Define character palettes, portraits and voice metadata|Support per-character previews, names, credits and palette variants; prevent palette choice changing hitboxes; validate audio and portrait limits.
+Separate cosmetic character identity from gameplay classes|Keep competitive cosmetics mechanically equivalent by default; allow explicit authored class rules in declared modes; show gameplay-affecting choices before joining.
+Define portable map and tile-set schemas|Store layers, spawns, bounds, hazards and objectives with stable references; validate unsupported tiles and missing resources; load the same map in editor, server and client.
+Define portable item and bomb schemas|Reference approved effect primitives and presentation separately; validate caps and incompatible combinations; generate item help and bot capabilities from the resolved definition.
+Define portable mode and ruleset schemas|Represent scoring, teams, objectives, rounds and restrictions declaratively; validate terminal conditions; run an original mode without source-code modification.
+Define campaign and encounter pack schemas|Link levels, actors, dialogue, objectives and transitions by stable IDs; validate dangling edges; support standalone solo and explicitly declared co-op compatibility.
+Implement pack upgrades, rollback and save compatibility|Keep old locked versions while active sessions need them; migrate only supported save schemas; demonstrate failed upgrade rollback without lost progress.
+Implement pack enablement, profiles and conflict diagnostics|Allow named local content profiles; report conflicting overrides with provenance; ensure disabling a pack cannot silently change a running match.
+Migrate first-party fixtures to the public pack API|Ship an original character, map, item and mode through documented schemas; remove privileged loading assumptions; use the same validation path as community packs.
+Publish a pack SDK, examples and command-line validator|Provide minimal working templates and versioned schema docs; produce actionable machine-readable validation output; exercise examples in CI on supported targets.
+Implement reproducible pack builds and provenance manifests|Record input hashes, tools and licences per asset; produce byte-stable packages where possible; distinguish source, generated and reference-private inputs.
+@EFFECT|P1|3|52|neptune-requirement
+Define a typed declarative effect graph|Support validated events, conditions and bounded actions; reject type mismatches and cycles without budgets; serialise the resolved graph for replay.
+Implement effect triggers and filters|Cover pickup, hit, placement, explosion, entry and timed expiry; specify event payloads and ownership; test same-tick trigger ordering and cancellation.
+Implement stat modifiers with stacking policies|Support additive, capped and replacement rules with explicit precedence; restore state correctly after overlapping expiry; round-trip active modifiers through snapshots and saves.
+Implement bounded area and target queries|Restrict selection to declared radius, shape and observable state; use deterministic ordering; reject unbounded scans and hidden-information access.
+Implement projectile, hazard and entity spawn actions|Require approved entity types and finite lifetime/count; preserve owner attribution; stop recursive spawn graphs with a deterministic error.
+Implement movement, teleport and force actions|Reuse authoritative collision and occupancy rules; test invalid destinations and competing effects; expose resulting movement capabilities to bots.
+Implement freeze and Ice Bomb as a complete example|Define freeze duration, immunity, thaw and chain interactions; run human and bot matches with the pack; verify browser/native state and reduced-effects cues.
+Implement cooldowns, charges and consumable actions|Specify recharge and reset boundaries; reject duplicate activation packets; show accurate controller hints and HUD state.
+Implement effect composition and conflict policies|Resolve mutually exclusive bomb types and status combinations explicitly; test representative pairwise interactions; report ambiguous definitions at validation time.
+Expose conservative bot forecasts for custom effects|Derive danger, movement and timing bounds from supported primitives; reject competitive bot use when forecasts are unavailable; compare predictions with real effect execution.
+Enforce per-pack runtime budgets and failure isolation|Limit actions, entities, query work and memory; terminate offending effects predictably; retain a diagnostic without crashing other sessions.
+Add effect graph inspection and debugging traces|Trace trigger, condition, action and resulting state by tick; replay a failed effect deterministically; redact hidden state in public views.
+Version effect semantics and migration adapters|Keep existing locked packs reproducible across engine updates; provide explicit migration warnings; run historical effect fixtures against compatibility adapters.
+Evaluate a future sandboxed scripting extension|Specify threat model, determinism and browser requirements first; benchmark a restricted prototype against data-only limits; keep arbitrary downloaded GDScript and native code disabled.
+@STORY|P1|4|53|neptune-requirement
+Implement campaign graphs and branching transitions|Support ordered levels and conditional branches with stable IDs; validate unreachable and dead-end nodes; run the existing two-level fixture through both endings.
+Implement scoped campaign variables and conditions|Separate player, party, level and campaign state; define typed defaults and mutation rules; test save/restore and absent-variable diagnostics.
+Implement reusable quest and objective components|Support defeat, collect, reach, interact and survive goals; compose bounded all/any sequences; test simultaneous completion and failed objectives.
+Implement dialogue, choices and localisation keys|Separate text from logic and use stable choice IDs; support keyboard/controller navigation; test missing translations and repeated interactions.
+Implement cutscene timelines and skip contracts|Author camera, dialogue and presentation events separately from required state changes; preserve outcomes when skipped; test pause, disconnect and replay.
+Implement NPC interaction and service templates|Support talk, trade and quest hand-in through validated actions; reject duplicate rewards; test cancelled conversations and full inventories.
+Implement encounters, waves and spawn directors|Use seeded schedules and explicit budgets; detect unreachable enemies and exhausted spawn points; expose author diagnostics and restart behaviour.
+Implement reusable boss phase state machines|Support health, timer and objective transitions with bounded actions; test simultaneous triggers and interrupted phases; provide one original boss pack example.
+Implement keys, switches and cooperative puzzles|Persist door and switch state at the correct scope; validate required participants and reachable solutions; detect missing-key softlocks in fixture maps.
+Implement checkpoint, retry and game-over policies|Define retained resources and reset state for each checkpoint; test death during transition and interrupted writes; prevent reward duplication after retry.
+Implement campaign inventory and progression rewards|Define stack limits, quest items and equipment unlock policies; validate reward references; retain free character selection outside authored progression rules.
+Implement chapter selection and completed-story replay|Record discovered routes and completed chapters; separate replay rewards from first completion; handle removed or upgraded campaign packs.
+Implement campaign difficulty and accessibility modifiers|Declare scaling, damage and objective assistance explicitly; show changes before play; keep author intent and trusted-score eligibility clear.
+Implement authored endings and completion records|Resolve simultaneous ending conditions deterministically; persist ending IDs and campaign version; replay endings without corrupting progression.
+Implement campaign save slots and export/import|Version and validate saves before activation; isolate each campaign and player profile; recover from truncated or incompatible data without overwriting good saves.
+Implement procedural story episodes from authored pieces|Assemble only validated compatible encounters and transitions; record generator version and seed; verify reachable completion and bounded length.
+Implement campaign content warnings and metadata|Let authors describe themes, expected length and supported players; surface metadata before installation/play; validate localisation and avoid inferring suitability from missing metadata.
+Build a complete original sample campaign|Include a tutorial, branching quest, puzzle, boss and two endings; support solo and declared co-op; package source, tests and permitted assets as a creator reference.
+@COOP|P1|4|54|neptune-requirement
+Define explicit co-op campaign compatibility|Declare player limits, joining policy and shared-resource rules; reject unsupported party sizes; distinguish tested co-op from unverified metadata claims.
+Implement local and online co-op in one session|Combine local guests, remote humans and companion bots; preserve actor ownership across transitions; run mixed browser/native campaign sessions.
+Implement shared, personal and leader-owned objectives|Define completion and reward ownership for each scope; test split parties and duplicate events; display each player's outstanding tasks clearly.
+Implement co-op checkpoint and restore consensus|Capture all party actors and shared world state atomically; define who may request retry; recover consistently after one client disconnects.
+Implement co-op join, leave and catch-up rules|Choose spawn, equipment and quest state from declared policies; prevent duplicated rewards; test joins during combat, dialogue and transition.
+Implement downed, revive and party-wipe states|Define revive windows, costs and safe completion; test simultaneous downing and interrupted revives; provide bot companion participation.
+Implement camera tethering and split-view policies|Support declared shared-camera and independent-camera modes; handle separated players and teleport transitions; retain readable hazards at supported screen sizes.
+Implement dialogue and branch-choice arbitration|Support leader choice, voting or individual choices as authored; bound stalled votes; preserve deterministic results during disconnects.
+Implement co-op puzzle capability validation|Require enough players or supported companion actions; provide explicit solo alternatives where authored; detect impossible party compositions before entry.
+Implement companion substitution without progress exploits|Transfer control and inventories once at allowed boundaries; prevent duplicate quest rewards; test human return and full-party disconnect.
+Implement scalable encounters and loot sharing|Use declared player-count scaling and allocation policies; test changes at join/leave boundaries; keep scaling separate from hidden difficulty adjustments.
+Build co-op authoring and regression fixtures|Provide two-player puzzle, four-player combat and mixed companion examples; replay checkpoint/disconnect cases; publish unsupported patterns and diagnostics.
+@EDITOR|P1|4|56|neptune-requirement
+Build a map editor with layered tile painting|Support terrain, collision, decoration, hazards and spawns; show validation locations; export a portable pack that runs without editor-only state.
+Implement editor undo, redo and autosave recovery|Group meaningful operations into transactions; recover after interrupted writes; preserve stable object IDs across undo and reload.
+Implement selection, copy, transforms and reusable prefabs|Remap internal references when copying; validate rotation/mirroring of directional hazards; test paste across compatible maps and packs.
+Implement map preview and one-click bot playtesting|Launch the edited map through the production loading path; retain seed and selected bot profiles; link failures back to authoring locations.
+Build a character animation and anchor editor|Preview directional states, timings, palettes and rider anchors; flag missing required frames; export an independently loadable cosmetic character.
+Build an item and effect graph editor|Restrict nodes to supported public primitives; show types, budgets and incompatibilities; test the exported effect in a small simulation scene.
+Build a ruleset and battle-mode editor|Expose scoring, team, round and item policies with validation; preview terminal conditions; export an original mode with bot capability declarations.
+Build a campaign graph and chapter editor|Create branching levels, checkpoints and endings; identify unreachable nodes and dangling references; launch a selected chapter with controlled test state.
+Build a dialogue and localisation editor|Edit stable keys, choices and conditions with previews; detect missing translations and invalid branches; export text independently of gameplay logic.
+Build an encounter and boss-phase editor|Author waves, triggers and bounded phase graphs; visualise transition conditions; run phase-specific tests with reproducible state.
+Build a co-op scenario validator|Check declared party sizes, simultaneous switches and recovery paths; produce actionable failure locations; distinguish static validation from tested completion.
+Implement creator asset import and conversion|Validate dimensions, formats, audio duration and provenance metadata; produce deterministic supported outputs; keep source assets available for later editing.
+Implement creator preview profiles and device sizes|Preview browser/native constraints, aspect ratios and reduced effects; report unsupported capabilities; retain identical gameplay state across visual previews.
+Implement pack project templates and guided onboarding|Create minimal character, map, item and story projects; explain required fields in context; take each template through validate, install and play.
+Implement editor diagnostics and machine-readable reports|Group errors by source field and severity; link to relevant schema documentation; produce stable codes for factory and CLI use.
+Implement portable project source and collaborative diffs|Store editable sources in version-control-friendly formats; retain stable IDs and deterministic formatting; demonstrate conflict resolution without corrupting references.
+Implement creator publish preparation and previews|Generate thumbnails, changelog and compatibility summary from the selected build; show exact files and version; require explicit submission action after validation.
+Implement editor keyboard/controller accessibility|Provide remappable shortcuts, focus order and readable error cues; avoid colour-only status indicators; test common creation tasks without precise pointer input.
+@WORKSHOP|P1|4|37|neptune-requirement
+Implement workshop pack submission and version records|Accept validated immutable releases with author metadata; keep draft and published states distinct; reject mismatched hashes and duplicate version contents.
+Implement workshop browsing, search and filters|Filter content type, compatibility, player count and language; provide stable pagination; handle removed, private and unavailable entries correctly.
+Implement pack pages with dependencies and provenance|Show screenshots, credits, licence, changelog and required packs; distinguish author claims from automated verification; explain installation size and compatibility.
+Implement subscriptions and controlled updates|Notify clients of compatible releases; preserve active session locks; let users pin or roll back a version without losing authored projects.
+Implement dependency-aware downloads and offline use|Resume interrupted transfers and verify hashes; install a complete compatible set atomically; play installed packs while the catalogue is unavailable.
+Implement creator ownership and collaborator roles|Validate who may edit metadata or publish versions; support revocation and audited transfer; prevent removed collaborators modifying future releases.
+Implement content reports and moderation queues|Capture the relevant pack version and reason; provide bounded moderator actions and appeal status; keep decisions traceable without exposing reporters.
+Implement asset provenance and licence compatibility checks|Require per-asset source and reuse metadata; flag missing or conflicting declarations; avoid treating uploader assertions as proof of third-party permission.
+Implement pack quarantine and emergency disablement|Disable a specific unsafe version with an explained reason; preserve user-created source and unaffected versions; define offline and active-session behaviour.
+Implement ratings, reviews and creator replies|Tie ratings to installed/played versions where measurable; support edit and removal; resist duplicate ratings and expose moderation controls.
+Implement collections, playlists and share links|Pin compatible pack versions or documented update policies; validate collection dependencies; open links to a preview before installation.
+Implement featured content and discovery policies|Keep editorial, popularity and compatibility signals distinct; publish selection criteria; avoid unreviewed content becoming mandatory default downloads.
+Implement creator analytics with privacy controls|Report aggregate installs, plays, completion and failures; use minimum aggregation thresholds; exclude private player identifiers from creator dashboards.
+Implement pack retirement, forks and successor links|Preserve version history and source licence obligations; mark compatible successors without silently replacing packs; test saves referencing a retired release.
+Implement service pagination, caching and abuse budgets|Bound upload, query and download requests; preserve useful offline caches; exercise catalogue outages and quota responses.
+Build a full community creation acceptance journey|Create, validate, submit, discover, install and play an original pack on two clients; include bots and co-op campaign checkpoint recovery; attach versioned evidence to existing #57.
+@SOCIAL|P2|4|36|neptune-requirement
+Implement guest and account identity transitions|Let guests play supported local/online modes; claim eligible progress without duplicate accounts; keep identity separate from actor and seat IDs.
+Implement friends, presence and invitations|Respect opt-in presence visibility; show compatible joinable sessions; handle blocked users and expired invitations.
+Implement persistent parties and party leadership|Keep a group together across matchmaking and rematches; transfer leadership predictably; recover after partial disconnects.
+Implement text chat with mute and channel scopes|Separate lobby, team and spectator audiences; enforce length/rate limits; test hidden-team-information boundaries and local mute.
+Implement pings and quick communication wheels|Provide position, danger and objective cues without free text; support controller and localisation; let companion bots consume supported commands.
+Implement block and report controls|Prevent unwanted invitations and direct chat; attach appropriate session evidence to reports; explain which public-match interactions cannot be hidden completely.
+Implement player profile visibility and privacy settings|Control presence, match history and statistics exposure; apply access checks server-side; test guest and blocked-user views.
+Implement tournament registration and brackets|Validate eligible rulesets and entrants; support bounded bracket formats and byes; recover from withdrawal without duplicate matches.
+Implement tournament check-in, results and disputes|Use authoritative match IDs and declared forfeiture rules; prevent double advancement; retain evidence for disputed results.
+Implement clubs and shared community collections|Support named groups with bounded roles and invite policies; share permitted pack collections and events; validate ownership transfer and removal.
+@STATS|P2|4|36|neptune-requirement
+Define authoritative match statistics and event schemas|Record kills, deaths, assists, objectives, pickups and duration with versioned semantics; reject duplicate events; document what custom servers may self-report.
+Separate verified, community and local result trust|Tag the issuing server and rules/content lock; prevent untrusted results entering verified leaderboards; show trust provenance in history views.
+Implement player match history and result detail|Link each result to mode, pack versions, roster and replay availability; paginate consistently; handle deleted accounts and missing replay media.
+Implement skill ratings by compatible ruleset|Define eligible human/bot participation and team handling; test provisional ratings and ties; prevent incomparable custom modes sharing a rating pool.
+Implement ranked queues and seasonal resets|Version season rules and eligible packs; preserve historical results; test season-boundary matches and abandoned games.
+Implement campaign completion and personal bests|Track campaign version, difficulty, modifiers and checkpoints used; separate incomparable runs; prevent retry or import duplication.
+Implement achievements and optional progression|Use versioned declarative conditions and idempotent rewards; keep installed compatible characters freely selectable; test offline reconciliation and retired definitions.
+Implement leaderboards with reproducible score validation|Verify supported runs against authoritative logs or replay policy; reject impossible or duplicate submissions; expose rules and invalidation reasons.
+Implement aggregate balance and bot performance reports|Segment by ruleset, map, character mechanics and difficulty; include sample sizes; avoid inferring causal balance from tiny or mixed samples.
+Implement player data export and deletion workflows|Export supported profile, save and history records in documented formats; apply deletion consistently across public views; test retries and retained aggregate policies.
+Implement statistics schema migrations and backfills|Preserve source events and semantic versions; make backfills idempotent; detect incompatible historical metrics instead of silently mixing them.
+Implement custom-mode statistics declarations|Allow bounded named counters and score tables through packs; validate types and limits; keep custom counters separate from verified global rankings.
+@UX|P1|2|34|neptune-requirement
+Build a multiplayer-first home and navigation flow|Make quick play, rooms and bot practice discoverable; retain solo stories and creation entry points; test first launch without an account or downloaded packs.
+Implement keyboard and gamepad remapping|Support per-player bindings and conflict diagnostics; persist profiles per device where appropriate; test menus and gameplay after remapping.
+Implement controller hotplug and local seat assignment|Identify controller ownership without assuming connection order; pause or recover supported local sessions after loss; avoid one device controlling two seats unintentionally.
+Implement touch controls and mobile-browser layout|Provide adjustable touch targets and simultaneous movement/actions; handle orientation and browser UI changes; validate real supported device performance before advertising support.
+Implement focus-loss and stuck-input recovery|Clear held actions on focus/device changes; preserve explicit online pause rules; test Alt-Tab, browser tab switching and virtual keyboard interruptions.
+Implement readable character outlines and player markers|Distinguish identical characters, teams and spectators; retain contrast over varied maps; keep indicators independent of cosmetic pack quality.
+Implement colour-vision accessible palettes and symbols|Offer tested palettes plus non-colour team/objective cues; preserve author art as an optional presentation choice; verify HUD and gameplay markers together.
+Implement scalable text, HUD and safe areas|Support small browser windows and large displays; prevent overlapping status and timer elements; test long translated strings and large text.
+Implement reduced motion, flash and screen-shake settings|Replace essential warnings with readable alternatives; keep gameplay timing unchanged; test custom effects against the same presentation capabilities.
+Implement independent audio levels and visual sound cues|Control music, effects, voice and UI separately; provide captions or visual equivalents for critical cues; retain settings across device changes.
+Implement screen-reader-friendly menus and text alternatives|Expose labels, focus and state in supported environments; offer accessible error and validation text; document engine/platform limits with tested coverage.
+Implement interactive movement and bomb tutorials|Teach safe placement, escape, kicking and objectives through short scenarios; support keyboard, controller and bots; let experienced players skip or replay lessons.
+Implement context-sensitive help and control prompts|Resolve prompts from actual bindings and current capabilities; show why an action is unavailable; test multiple devices and custom items.
+Implement searchable content selection and favourites|Search large map, character, item and campaign libraries; filter by compatibility and installed state; preserve selection when content updates or disappears.
+Implement clear loading, validation and failure states|Show download/import progress and actionable errors; support cancellation without corrupting installs; never report a failed or missing task as complete.
+Implement localisation, pluralisation and right-to-left layouts|Keep gameplay IDs independent of translated text; validate fonts and fallback strings; test bidirectional menus, chat and author metadata.
+@MEDIA|P2|3|35|neptune-requirement
+Define pixel-perfect and flexible rendering profiles|Support integer scaling and explicit filtering choices; preserve collision coordinates independently; test aspect ratios and wide maps without cropped hazards.
+Implement sprite batching and large-roster memory budgets|Load only needed character animation data; bound texture memory and draw calls; benchmark twelve unique characters and effect-heavy maps.
+Implement animation event and gameplay separation|Drive damage and actions from simulation events; let render rate change presentation only; test skipped frames and headless execution.
+Implement layered character, mount and equipment rendering|Define stable draw order and attachment anchors; test carries, jumps and occlusion; validate pack fallbacks for missing cosmetic layers.
+Implement palette swaps and colour remapping|Keep transparent pixels and outlines intact; cache validated variants; compare native/browser output without modifying gameplay state.
+Implement directional and spatial sound policies|Use authoritative positions for world events; bound simultaneous voices and attenuation; test wide arenas, spectators and local co-op listening positions.
+Implement music transitions and campaign audio states|Support bounded intro, loop, combat and victory transitions; preserve user volume settings; test pause, chapter changes and missing audio resources.
+Implement captions and authored voice playback|Use stable localisation keys and timing metadata; handle missing voice variants gracefully; prevent unbounded or overlapping authored playback.
+Implement effect quality tiers and fallback assets|Scale particles and decoration within platform budgets; preserve essential gameplay silhouettes and warnings; reject effects without a safe readable fallback.
+Implement camera effects and spectator framing|Bound zoom and shake while keeping active hazards visible; support wide arenas and campaign transitions; test reduced-motion and split-view settings.
+Implement thumbnail and preview generation|Render maps, characters and packs in a controlled fixture; avoid executing unsupported content; generate consistent sizes with provenance and cache keys.
+Build an original starter asset set with source credits|Provide coherent characters, tiles, UI and sound placeholders through packs; track reusable source and licence per asset; ensure the game can run without reference-owned media.
+@REPLAY|P1|3|32|neptune-requirement
+Record authoritative replay headers and command streams|Include engine/profile versions, pack locks, seeds and roster; bound file growth; reject incomplete or incompatible headers explicitly.
+Implement deterministic replay verification|Re-simulate commands against recorded checkpoints; report the first state divergence; verify terminal results without trusting stored score text.
+Implement replay seeking and checkpoint indexes|Restore complete simulation state at checkpoints; compare seeked and uninterrupted playback; handle truncated final chunks safely.
+Implement replay speed, pause and camera controls|Change presentation playback without altering recorded state; support controller navigation; retain precise tick stepping for debugging.
+Implement replay sharing with privacy filters|Strip optional private chat and identifiers according to policy; retain required gameplay identity mappings; show pack dependencies before opening a replay.
+Implement live spectating and broadcast delay|Keep spectator state separate from player inputs; enforce declared delay and hidden-information rules; test reconnect and late admission.
+Implement tournament broadcast overlays|Show scores, bracket context, player markers and ruleset information; consume read-only events; recover overlays after stream interruption.
+Implement replay-based bug reports|Export a bounded reproduction, versions and recent diagnostics; let users inspect included data; verify reports reopen the same failure in a test environment.
+Implement ghost runs and asynchronous challenges|Use validated compatible replay tracks for campaign/time trials; separate ghosts from authoritative collision unless declared; reject mismatched seeds and content versions.
+Implement replay retention and compatibility policy|Preserve required pack versions or report unavailable dependencies; provide supported migrations explicitly; never silently reinterpret historical gameplay with new rules.
+@FACTORY|P0|1|33|neptune-requirement
+Validate issue readiness and bounded implementation scope|Require feature ID, prerequisites, acceptance and evidence expectations; detect overlap with active PRs; refuse to call a broad epic a single executable task.
+Implement durable task leases and worker ownership|Claim work atomically with expiry and heartbeat; recover abandoned leases; prevent two workers publishing incompatible repairs for the same issue.
+Implement dependency-aware ready-task selection|Select only satisfied prerequisites and available capabilities; distinguish research, implementation and integration tasks; detect cycles and blocked-input reasons.
+Implement isolated worker branches and workspaces|Create one bounded task branch from a recorded base; preserve other workers' checkouts; retain failed work and evidence before cleanup.
+Implement deterministic preflight and environment manifests|Check pinned engine, native addons and required fixtures; fail on missing prerequisites; record versions and commands for reproduction.
+Implement feature-specific acceptance test selection|Map changed capabilities to applicable native, browser, network and pack fixtures; reject empty/skipped/error runs; preserve original assertions and tolerances.
+Implement native/browser/co-op integration lanes|Run original sample packs with humans, bots and mixed clients; capture exact build and pack locks; surface failures as actionable bounded repair tasks.
+Implement current-base PR revalidation and merge ordering|Retest after dependency/base changes; preserve stacked ancestry with merge commits; block stale-head, failed or missing required checks without mandatory review delays.
+Implement automatic conflict repair within task boundaries|Attempt a three-way merge using the current base; run affected tests and inspect semantic overlaps; retain an explicit blocker when a correct resolution is not established.
+Implement post-merge regression detection and recovery|Run bounded main-branch smoke checks; identify the introducing merge with preserved evidence; prepare and validate a targeted revert or repair without erasing history.
+Implement failure classification and bounded retry budgets|Separate infrastructure, flaky, assertion and missing-input failures; cap attempts and total runtime; never convert exhausted retries into success.
+Implement evidence storage and searchable run reports|Persist command, versions, logs, exit codes and artifact hashes; enforce retention and size limits; link issue, PR, commit and test evidence bidirectionally.
+Implement factory dashboard and operator controls|Show ready, active, blocked and completed work with reasons; provide pause/cancel/resume controls; distinguish running automation from merely documented automation.
+Implement provider cost and concurrency enforcement|Require explicit configured budgets before paid calls; stop at bounded limits and expose usage; keep account-wide spend unknown unless actually measured.
+Implement worker credential and tool isolation|Give workers only task-scoped source/evidence access; keep merge credentials and production secrets separate; test denied operations and credential redaction.
+Implement completion reconciliation and duplicate prevention|Close features only after their acceptance evidence is linked to merged code; reconcile issue state with real implementation; detect duplicate feature IDs and preserve superseded work links.
+@OPS|P1|3|47|neptune-requirement
+Package dedicated authoritative game servers|Provide pinned headless builds with documented ports and limits; start original fixture rooms without UI dependencies; retain gameplay physics outside account/lobby services.
+Implement configuration validation and environment separation|Validate startup settings and fail clearly on missing required values; separate local, test and production state; avoid silently enabling paid or public services.
+Implement server health, readiness and graceful shutdown|Stop new joins before draining rooms; preserve declared session/checkpoint policies; test SIGTERM and dependency outages.
+Implement structured runtime metrics and bounded logs|Expose tick time, room count, memory, bot cost and network errors; keep engine/supervisor logs separate; redact secrets and cap diagnostic volume.
+Implement crash recovery and room reconciliation|Recover persisted lobby and campaign records after restart; mark unrecoverable matches explicitly; prevent duplicate rewards and ghost rooms.
+Implement backup, restore and migration drills|Back up account, workshop metadata and permitted content stores; restore into an isolated environment; measure recovery time and validate consistency.
+Implement server capacity benchmarks and admission limits|Measure supported player/bot/content loads on declared hardware; reject excess allocations gracefully; publish limits from evidence rather than guesses.
+Implement release channels and protocol rollout|Support stable and preview builds with compatible server pools; block mismatched joins clearly; retain rollback artifacts and migration notes.
+Implement native packaging, signing and update workflows|Produce reproducible supported desktop packages; verify installation and upgrade with existing packs/saves; record signing availability rather than claiming unconfigured release support.
+Implement browser caching and offline installation policy|Version cached engine and packs coherently; recover from partial updates and storage eviction; explain which features require an online server.
+Implement service abuse controls and audit records|Rate-limit account, room, upload and result operations by declared policy; preserve useful incident evidence; test that legitimate reconnects remain usable.
+Publish self-hosting and local-development operations guides|Document tested start, upgrade, backup and recovery commands; provide a minimal original-content deployment; verify instructions from a fresh supported environment.
+@EXP|P3|6|42|neptune-experiment
+Prototype cooperative horde and survival expeditions|Use bounded waves, shared objectives and checkpoint policies; test scaling with humans and companions; evaluate completion and performance before promotion.
+Prototype a roguelite campaign ruleset|Compose seeded rooms, temporary upgrades and declared run resets; prevent impossible paths and reward duplication; keep standard campaigns unaffected.
+Prototype puzzle and time-attack challenge packs|Support no-combat and limited-bomb goals through public objectives; validate solvability fixtures and scoring; share repeatable seeds and replays.
+Prototype asymmetric heroes and authored classes|Declare abilities and counterplay through existing effect primitives; show class mechanics before joining; evaluate balance separately from cosmetic character selection.
+Prototype cooperative raid encounters|Coordinate multi-stage objectives with readable threats and bounded actors; provide companion-compatible roles where supported; benchmark declared party limits.
+Prototype racing and obstacle-course modes|Use ordered checkpoints and authoritative lap timing; test shortcuts, respawns and ties; teach bots the declared route objective.
+Prototype bomb sports and arena minigames|Build one original ball/goal mode through public schemas; test ownership and simultaneous scores; require no mode-specific engine fork for ordinary variants.
+Prototype community challenge rotations|Publish immutable challenge seeds, packs and scoring windows; retain historical versions; verify equal rules and replayable submissions.
+Prototype seasonal community events and collaborations|Use collections, server rules and original creator packs; define start/end behaviour and archival play; keep participation and character selection optional.
+Evaluate larger-than-twelve-player modes|Benchmark simulation, bandwidth, bots and visual readability before raising supported limits; require compatible maps and clients; preserve reference-specific seat limits.
