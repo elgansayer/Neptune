@@ -1,5 +1,10 @@
 # Neptune Bomberman
 
+> **October 2026 restart:** start with [the current plan](docs/restart/README.md),
+> [requirements](docs/restart/REQUIREMENTS.md), [online bots](docs/restart/BOTS.md)
+> and [server handoff](docs/restart/SERVER_HANDOFF.md). The historical description
+> below includes outdated paths/status claims. Verify them against the current code.
+
 A competitive multiplayer Bomberman game with server-authoritative physics and modern networking.
 
 ## 🏗️ Architecture

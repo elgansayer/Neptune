@@ -1,99 +1,22 @@
 ---
 applyTo: '**'
 ---
-remember #file:prompt.md 
-#file:PLAN.md 
-#file:ARCHITECTURE.md 
+Read #file:AGENTS.md and #file:docs/restart/README.md first.
 
-look at my existing #file:SBomberman  project for ideas
+The October 2026 restart includes faithful Saturn campaign/battle, online bots,
+browser/desktop cross-play, portable community packs and a complete community site.
+Follow #file:docs/restart/REVERSE_ENGINEERING.md and #file:docs/restart/BOTS.md.
+Read #file:docs/restart/COMMUNITY_CONTENT.md: prioritise multiplayer and bots, and
+support creator power-ups and complete solo/co-op stories through public pack APIs.
+Inspect PRs #49/#51 and #50 before choosing new work; preserve the active server task.
+Power Bomberman is a second reference; read #file:docs/restart/POWER_BOMBERMAN.md,
+#file:docs/restart/FACTORY_PLAYBOOK.md and #file:docs/restart/NETPLAY_BENCHMARKS.md.
+Separate documented reference claims from observed and implemented behaviour.
+Preserve current server task #40 and its branch when updating foundation docs.
 
-Ensure we are always aiming for smooth authorative network game play
+Older prompt.md, PLAN.md and ARCHITECTURE.md contain historical assumptions. Do not
+silently restore the superseded TypeScript gameplay server or trust completion
+claims without running the actual checks. Keep authoritative gameplay in Godot.
 
-
-1. Latency Mitigation & Compensation
-
-These techniques help to hide or correct for network delay (latency) to make the game feel more responsive.
-
-Lag Compensation (Server-Side Rewind):
-
-The server stores a history of recent game states (e.g., player positions).
-
-When a player's action (like a shot) arrives, the server 'rewinds' the game world for that player to the time the action was made on their client.
-
-This ensures that hits register where the player saw them on their screen, making the experience feel fairer and more immediate.
-
-Client-Side Prediction:
-
-The client immediately simulates the result of a local player's input (e.g., movement, ability use) without waiting for server confirmation.
-
-This provides instant feedback to the player, making controls feel responsive.
-
-Server Reconciliation (Correction):
-
-The server remains the final authority on the game state.
-
-The client's prediction is occasionally corrected by authoritative updates from the server.
-
-The client then 'reconciles' its state, often by re-simulating inputs from the time of the server update to the present, or by blending the predicted and corrected positions smoothly.
-
-Interpolation:
-
-Clients buffer a few recent updates from the server for remote entities (other players, objects).
-
-The client displays the remote entities at a calculated position between two received updates, based on a fixed delay (usually $\approx 100\text{ms}$).
-
-This makes remote movement look smooth instead of jerky, as it compensates for varying update rates and network jitter.
-
-2. State & Bandwidth Optimisation
-
-These methods reduce the amount of data sent over the network, lowering bandwidth use and often latency.
-
-Dead Reckoning (Extrapolation):
-
-When a client hasn't received an update for a remote entity, it predicts the entity's future position based on its last known position, velocity, and direction.
-
-This is typically used in conjunction with interpolation to 'guess' where an object is until the next authoritative update arrives, preventing stops and starts.
-
-Delta Compression/Updates:
-
-Instead of sending the entire game state or object data in every packet, only send the changes (the "delta") from the last sent state.
-
-This drastically reduces packet size.
-
-Bit Packing / Quantisation:
-
-Using the minimum number of bits required to represent data (e.g., using 4 bits for a value that only ranges from 0-15 instead of a full byte).
-
-Quantisation reduces floating-point precision to represent positions and rotations with fewer bits.
-
-Interest Management:
-
-Servers only send updates for game objects that are relevant to a specific client. For example, a player in one area of a massive game map doesn't need updates about actions taking place on the other side of the map.
-
-Compression Algorithms:
-
-Using lossless compression (like Huffman coding or specialised game compression libraries) on the network packets before sending them to reduce the data size.
-
-3. Protocol & Control
-
-These relate to how data is transmitted and prioritised.
-
-UDP (User Datagram Protocol):
-
-Used for most real-time, time-critical game data (e.g., player movement, shooting). It's fast because it does not guarantee delivery or ordering, which is acceptable since outdated data is often useless anyway.
-
-TCP (Transmission Control Protocol):
-
-Used for less time-critical, but essential, data (e.g., chat, login, initial world data). It guarantees delivery and order but introduces more latency.
-
-Traffic Prioritisation (Quality of Service - QoS):
-
-Network administrators or specialised software can mark game traffic as high priority, ensuring it gets preference over other network traffic (like streaming or downloads).
-
-Dedicated Server Infrastructure:
-
-Using servers specifically designed for gaming, often geographically distributed, to minimise the physical distance data has to travel (reducing latency).
-
-Server Tick Rate:
-
-The frequency (e.g., 60 times per second) at which the server updates the game state. A higher tick rate generally means more precise and smooth gameplay, especially for fast-paced games.
+Use bounded runs, inspect server.log for gameplay changes when available, and
+report missing dependencies honestly. Read current open PRs before duplicating work.

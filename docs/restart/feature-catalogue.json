@@ -1,0 +1,737 @@
+{
+  "schema_version": 1,
+  "coverage_scope": "starter",
+  "sources": [
+    {
+      "id": "pb-release",
+      "url": "https://www.bombermanboard.com/viewtopic.php?t=1925",
+      "checked_on": "2026-10-29",
+      "description": "Developer release post; advertised 0.7.8c feature families, not runtime validation."
+    },
+    {
+      "id": "pb-changelog",
+      "url": "https://pastee.dev/p/5XtRWu50",
+      "checked_on": "2026-10-29",
+      "description": "Developer-linked 0.7.8c change log; fixes are experiment leads, not current defects."
+    },
+    {
+      "id": "pb-history",
+      "url": "https://www.bombermanboard.com/viewtopic.php?start=840&t=1925",
+      "checked_on": "2026-10-29",
+      "description": "March 2022 developer replies; historical custom-character and campaign priorities."
+    },
+    {
+      "id": "pb-style-mod",
+      "url": "https://www.moddb.com/mods/power-bomberman-styles-mods",
+      "checked_on": "2026-10-29",
+      "description": "Mod author describes replacing game data and sound files; not an official current pack API."
+    }
+  ],
+  "features": [
+    {
+      "id": "pb-twelve-seats",
+      "title": "Twelve-seat battles",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 43,
+      "depends_on": [],
+      "acceptance": [
+        "Complete a full room with stable player/input ownership.",
+        "Keep faithful profile limits separate."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-play-entry",
+      "title": "Quick/local/online entry",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Record each entry flow and its settings ownership.",
+        "Test cancellation, rematch and mixed local/remote participants where supported."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-survival",
+      "title": "Survival Battle",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 43,
+      "depends_on": [],
+      "acceptance": [
+        "Measure elimination, draw and simultaneous final-hit outcomes.",
+        "Retain native regression cases before adding other modes."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-reversi",
+      "title": "Reversi Battle",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 44,
+      "depends_on": [],
+      "acceptance": [
+        "Observe tile scoring and tie/timeout rules in pinned runs.",
+        "Implement through the shared mode interface and expose bot objectives."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-dodge",
+      "title": "Dodge Battle",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Measure hazard scheduling and result conditions before implementation.",
+        "Split a bounded implementation issue with recorded cases."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-hyper",
+      "title": "Hyper Bomber",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Record objective state transitions and simultaneous completion.",
+        "Define observed bot-visible objectives separately from hidden state."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-king",
+      "title": "King Battle",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Measure objective ownership, transfer and round end.",
+        "Include equal-time and disconnect cases in the proposed implementation contract."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-royale",
+      "title": "Battle Royale",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Identify exact semantics instead of inferring them from the mode name.",
+        "Record scoring, respawn if any, team settings and termination."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-score",
+      "title": "Score progression",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Inventory level/progression, failure and persistence rules.",
+        "Separate these observations from the Saturn campaign."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-turbo",
+      "title": "Turbo variation",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Measure which rules change relative to the ordinary score profile.",
+        "Keep variant settings explicit and replayable."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-items",
+      "title": "Items and configurable selection",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Catalogue interactions, precedence and availability by mode.",
+        "Use controlled pairs before combinatorial sampling."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-settings",
+      "title": "Battle settings and timing",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Inventory values, defaults, units and persistence.",
+        "Probe boundary and simultaneous-event cases without guessing timebases."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-roster",
+      "title": "Character roster and unlock behaviour",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Inventory animation/capability metadata and provenance separately from counts.",
+        "Document the intentional Neptune choice to avoid mandatory custom-character unlocks."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-stages",
+      "title": "Stages and variants",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Identify geometry, hazards, collision and spawn semantics separately from art.",
+        "Track unknown inventory size and distinct variants rather than PNG totals."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-own-server",
+      "title": "Self-hosted reference server",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-release"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 42,
+      "depends_on": [],
+      "acceptance": [
+        "Pin matching client/server builds and demonstrate an owned local match.",
+        "Do not infer protocol compatibility or server internals from availability."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-style-replacement",
+      "title": "Community style replacement",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.7c (historical mod report)",
+      "reference_status": "reported",
+      "source_ids": [
+        "pb-style-mod"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Inspect the selected build and distinguish replacement mods from supported authoring APIs.",
+        "Record tool/version and online compatibility limits."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-current-custom",
+      "title": "Current custom map/character workflow",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "unknown",
+      "source_ids": [
+        "pb-history"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 41,
+      "depends_on": [],
+      "acceptance": [
+        "Test current creation/import/sharing with a controlled original asset.",
+        "Do not treat historical priorities as current missing-feature proof."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "pb-online-edge-cases",
+      "title": "Online interaction regression leads",
+      "reference": "power-bomberman",
+      "reference_version": "0.7.8c",
+      "reference_status": "documented",
+      "source_ids": [
+        "pb-changelog"
+      ],
+      "profile": "neptune",
+      "implementation_status": "unaudited",
+      "issue": 42,
+      "depends_on": [],
+      "acceptance": [
+        "Test health, status, wrap and thrown-bomb combinations in the current reference.",
+        "Treat changelog fixes as test seeds, not unresolved bug claims."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "saturn-campaign",
+      "title": "Saturn campaign",
+      "reference": "saturn",
+      "reference_version": "unselected",
+      "reference_status": "unknown",
+      "source_ids": [],
+      "profile": "saturn",
+      "implementation_status": "unaudited",
+      "issue": 29,
+      "depends_on": [],
+      "acceptance": [
+        "Pin release/region and reproduce one room including progression.",
+        "Expand enemies, bosses and transitions with explicit missing coverage."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "saturn-battle",
+      "title": "Saturn battle rules",
+      "reference": "saturn",
+      "reference_version": "unselected",
+      "reference_status": "unknown",
+      "source_ids": [],
+      "profile": "saturn",
+      "implementation_status": "unaudited",
+      "issue": 29,
+      "depends_on": [],
+      "acceptance": [
+        "Reproduce one battle arena from controlled reference input.",
+        "Detect an intentional movement or fuse regression."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "saturn-graphics",
+      "title": "Saturn graphics recovery",
+      "reference": "saturn",
+      "reference_version": "unselected",
+      "reference_status": "unknown",
+      "source_ids": [],
+      "profile": "saturn",
+      "implementation_status": "unaudited",
+      "issue": 28,
+      "depends_on": [],
+      "acceptance": [
+        "Recover raw graphics, palettes, composition and timings with provenance.",
+        "Separate forced-state discovery from normal animation order."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "saturn-cpu",
+      "title": "Faithful Saturn CPU opponents",
+      "reference": "saturn",
+      "reference_version": "unselected",
+      "reference_status": "unknown",
+      "source_ids": [],
+      "profile": "saturn",
+      "implementation_status": "unaudited",
+      "issue": 38,
+      "depends_on": [],
+      "acceptance": [
+        "Measure policies by mode and difficulty.",
+        "Keep enhanced bots separate from fidelity claims."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "factory-jobs",
+      "title": "Durable issue-to-PR factory",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 33,
+      "depends_on": [],
+      "acceptance": [
+        "Complete a bounded real job with independent exact-head checks.",
+        "Recover leases and spend accounting after restart."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "ruleset-profiles",
+      "title": "Explicit ruleset profiles",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 43,
+      "depends_on": [],
+      "acceptance": [
+        "Version settings, capabilities and replay identity.",
+        "Prevent mode-switch leakage into faithful defaults."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "online-bots",
+      "title": "Online bot room filling",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 31,
+      "depends_on": [
+        "ruleset-profiles"
+      ],
+      "acceptance": [
+        "Fill rooms and replace bot seats at the declared boundary.",
+        "Preserve observation fairness and participant identity."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "bot-tournaments",
+      "title": "Held-out bot tournaments",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 32,
+      "depends_on": [
+        "online-bots"
+      ],
+      "acceptance": [
+        "Measure safety, objective competence and tick cost.",
+        "Keep held-out maps/seeds and prior policy rollback."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "browser-crossplay",
+      "title": "Browser/native cross-play",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 34,
+      "depends_on": [
+        "ruleset-profiles"
+      ],
+      "acceptance": [
+        "Complete a mixed-client match on shared authoritative rules.",
+        "Exercise direct and relayed connections plus reconnect."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "measured-netplay",
+      "title": "Measured netplay improvements",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 45,
+      "depends_on": [
+        "browser-crossplay"
+      ],
+      "acceptance": [
+        "Compare raw responsiveness and correctness under equivalent conditions.",
+        "Publish uncertainty and failed cases before claiming superiority."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "portable-packs",
+      "title": "Portable community packs",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 35,
+      "depends_on": [
+        "ruleset-profiles"
+      ],
+      "acceptance": [
+        "Validate immutable versions and simulation capabilities on both clients.",
+        "Reject executable content and mismatched gameplay hashes."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "free-character-choice",
+      "title": "Unrestricted compatible character selection",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 35,
+      "depends_on": [
+        "portable-packs"
+      ],
+      "acceptance": [
+        "Select installed compatible characters without compulsory unlocks.",
+        "Separate cosmetic selection from gameplay ability capabilities."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "creator-tools",
+      "title": "Map and character authoring tools",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 37,
+      "depends_on": [
+        "portable-packs"
+      ],
+      "acceptance": [
+        "Create an original pack from a template with live validation.",
+        "Preview and test with bots before publishing."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "community-workshop",
+      "title": "Community workshop and subscriptions",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 37,
+      "depends_on": [
+        "portable-packs",
+        "browser-crossplay"
+      ],
+      "acceptance": [
+        "Upload, validate, publish and share an immutable pack version.",
+        "Join the same version from browser and desktop with clear errors."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "trusted-stats",
+      "title": "Trusted event-based statistics",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 36,
+      "depends_on": [
+        "ruleset-profiles"
+      ],
+      "acceptance": [
+        "Rebuild aggregates without duplicate events.",
+        "Separate mode, ruleset, human/bot and custom/ranked results."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "community-profiles",
+      "title": "Profiles and community features",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 37,
+      "depends_on": [
+        "trusted-stats"
+      ],
+      "acceptance": [
+        "Show identity, creator attribution and confirmed match history.",
+        "Provide accessible controls and privacy/moderation flows."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "readable-interface",
+      "title": "Accessible scalable interface",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 37,
+      "depends_on": [],
+      "acceptance": [
+        "Support large text/DPI, keyboard navigation and clear player identification.",
+        "Keep important state legible without colour-only cues."
+      ],
+      "observations": [],
+      "verification": null
+    },
+    {
+      "id": "open-source-release",
+      "title": "Buildable open-source release",
+      "reference": "neptune",
+      "reference_version": "neptune-restart-v1",
+      "reference_status": "not_applicable",
+      "source_ids": [],
+      "profile": "shared",
+      "implementation_status": "planned",
+      "issue": 46,
+      "depends_on": [],
+      "acceptance": [
+        "Preserve licences/notices and publish reproducible source instructions.",
+        "Build with permitted content and exclude unverified reference media."
+      ],
+      "observations": [],
+      "verification": null
+    }
+  ]
+}

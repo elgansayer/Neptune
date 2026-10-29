@@ -44,7 +44,7 @@ func run_single_test(method_name: String) -> void:
 	var result = await call(method_name)
 	
 	# Record result
-	if result == null or (result is bool and result == true):
+	if result is bool and result == true:
 		passed += 1
 		results[method_name] = "PASS"
 		print("    PASS")

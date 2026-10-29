@@ -1,0 +1,35 @@
+name: Research input and catalogue tooling
+
+on:
+  pull_request:
+    paths:
+      - 'tools/saturn_lab/**'
+      - 'tools/research_catalog/**'
+      - 'docs/restart/feature-catalogue.json'
+      - '.github/workflows/saturn-lab.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/saturn_lab/**'
+      - 'tools/research_catalog/**'
+      - 'docs/restart/feature-catalogue.json'
+      - '.github/workflows/saturn-lab.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  input-tooling-tests:
+    name: Input tooling tests (not game parity)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Verify input tooling
+        run: python3 tools/saturn_lab/check.py
+      - name: Verify catalogue metadata and rejection cases
+        run: python3 tools/research_catalog/check.py
