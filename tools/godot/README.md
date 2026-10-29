@@ -76,6 +76,14 @@ client. Xvfb is required for that option; xauth/root/package installation is not
 It checks both process logs and confirms server-side connection events. These
 probes do not log in, play a full match or establish browser transport support.
 
+`--max-fps 30|60|144` supplies a bounded idle/render cadence for native experiments;
+the supervisor accepts 1..240. `test_bot_physics_ticks` installs a counting native
+BTAction into a controller spawned by the production manager. An observation-only
+manager subclass counts calls and always invokes production `super` behaviour.
+The regression requires zero ticks while paused and exactly one native update per
+active manager physics callback at every tested cadence. It does not establish
+complete policy determinism or tactical quality.
+
 ## Known project failures
 
 The full existing suite currently fails correctly: five legacy scenarios cannot

@@ -202,8 +202,7 @@ func _physics_process(delta: float) -> void:
 					blackboard.set_var("current_tile", player_ref.get_tile_position())
 					blackboard.set_var("time", Time.get_ticks_msec() / 1000.0)
 					
-					# WORKAROUND: Manual update since BTPlayer doesn't auto-update (update_mode stuck at 0)
-					# Call update() to tick the tree once
+					# This manager is the sole physics-tick owner of native tree updates.
 					bt_player.call("update", delta)
 					
 					# DO NOT call restart() here! It interrupts all running tasks including escape movement.
@@ -309,7 +308,7 @@ func spawn_bot(personality: String = DEFAULT_PERSONALITY) -> void:
 	
 	# IMPORTANT: Set active BEFORE setting update mode
 	bt_player.set("active", true)
-	bt_player.set("update_mode", 0) # 0 = MANUAL (we call update() ourselves in _physics_process)
+	bt_player.set("update_mode", ClassDB.class_get_integer_constant("BTPlayer", "MANUAL"))
 	
 	# Ensure BTPlayer process mode is set correctly
 	bt_player.process_mode = Node.PROCESS_MODE_INHERIT

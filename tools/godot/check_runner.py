@@ -137,6 +137,9 @@ class RunnerChecks(unittest.TestCase):
     def test_log_limit_cannot_be_unbounded(self):
         self.run_case(2, "--max-log-mib", "0", reason="between 1 and 32")
 
+    def test_invalid_render_cadence_fails(self):
+        self.run_case(2, "--max-fps", "0", reason="between 1 and 240")
+
     def test_terminated_supervisor_reaps_godot(self):
         self.fixture("test_hang.gd", 'extends Node\nfunc execute():\n\tvar file = FileAccess.open("res://godot.pid", FileAccess.WRITE)\n\tfile.store_string(str(OS.get_process_id()))\n\tfile.close()\n\tawait get_tree().create_timer(30).timeout\n\treturn true\n')
         command = [sys.executable, str(ROOT / "tools/godot/run_bot_tests.py"),
