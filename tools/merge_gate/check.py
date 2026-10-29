@@ -60,6 +60,14 @@ class GateContracts(unittest.TestCase):
         report, identity = self.passing()
         assert_pass(report, identity)
 
+    def test_engine_and_supervisor_logs_are_distinct_and_bounded(self):
+        evidence = Path("/tmp/evidence")
+        native = next(command for name, command, _ in commands("gameplay", evidence, Path("/tmp/binary")) if name == "native-bots")
+        engine_log = Path(native[native.index("--log") + 1])
+        self.assertNotEqual(engine_log, evidence / "native-bots.log")
+        self.assertEqual(engine_log.parent, evidence)
+        self.assertEqual(native[native.index("--max-log-mib") + 1], "16")
+
     def test_failure_missing_skipped_neutral_and_empty_do_not_pass(self):
         for status in ("failure", "skipped", "neutral", "cancelled", "timed_out", "running", None):
             report, identity = self.passing()
