@@ -507,13 +507,36 @@ func _process_hurry_mode(delta: float):
 	
 	hurry_spawn_timer += delta
 	
+	# If we are going to spawn blocks this frame, pre-calculate spatial maps
+	var players_by_tile = null
+	var bombs_by_tile = null
+
+	if hurry_spawn_timer >= hurry_spawn_interval and hurry_spawn_index < hurry_spawn_pattern.size():
+		players_by_tile = {}
+		for peer_id in players:
+			var player = players[peer_id]
+			if is_instance_valid(player) and not player.is_dead:
+				var p_tile = player.get_tile_position()
+				if not players_by_tile.has(p_tile):
+					players_by_tile[p_tile] = []
+				players_by_tile[p_tile].append(player)
+
+		bombs_by_tile = {}
+		for bomb_id in bombs:
+			var bomb = bombs[bomb_id]
+			if is_instance_valid(bomb):
+				var b_tile = bomb.get_tile_position()
+				if not bombs_by_tile.has(b_tile):
+					bombs_by_tile[b_tile] = []
+				bombs_by_tile[b_tile].append(bomb_id)
+
 	# Spawn blocks at regular intervals
 	while hurry_spawn_timer >= hurry_spawn_interval and hurry_spawn_index < hurry_spawn_pattern.size():
 		hurry_spawn_timer -= hurry_spawn_interval
-		_spawn_hurry_block(hurry_spawn_pattern[hurry_spawn_index])
+		_spawn_hurry_block(hurry_spawn_pattern[hurry_spawn_index], players_by_tile, bombs_by_tile)
 		hurry_spawn_index += 1
 
-func _spawn_hurry_block(pos: Vector2i):
+func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = null):
 	"""Spawn a hurry block at the given position.
 	Kills any player standing there, destroys bombs, and becomes impassable."""
 	
@@ -521,31 +544,45 @@ func _spawn_hurry_block(pos: Vector2i):
 	var world_pos = Vector2(pos.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
 							pos.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0)
 	
-	for peer_id in players:
-		var player = players[peer_id]
-		if player.is_dead:
-			continue
-		
-		var player_tile = player.get_tile_position()
-		if player_tile == pos:
-			print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-			player.die()
+	if players_by_tile != null:
+		if players_by_tile.has(pos):
+			for player in players_by_tile[pos]:
+				if is_instance_valid(player) and not player.is_dead:
+					print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
+					player.die()
+					_check_alive_players()
+	else:
+		for peer_id in players:
+			var player = players[peer_id]
+			if not is_instance_valid(player) or player.is_dead:
+				continue
 			
-			# Check for match end
-			_check_alive_players()
+			var player_tile = player.get_tile_position()
+			if player_tile == pos:
+				print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
+				player.die()
+
+				# Check for match end
+				_check_alive_players()
 	
 	# Destroy any bomb at this position
 	var bombs_to_remove = []
-	for bomb_id in bombs:
-		var bomb = bombs[bomb_id]
-		if is_instance_valid(bomb):
-			var bomb_tile = bomb.get_tile_position()
-			if bomb_tile == pos:
+	if bombs_by_tile != null:
+		if bombs_by_tile.has(pos):
+			for bomb_id in bombs_by_tile[pos]:
 				bombs_to_remove.append(bomb_id)
+	else:
+		for bomb_id in bombs:
+			var bomb = bombs[bomb_id]
+			if is_instance_valid(bomb):
+				var bomb_tile = bomb.get_tile_position()
+				if bomb_tile == pos:
+					bombs_to_remove.append(bomb_id)
 	
 	for bomb_id in bombs_to_remove:
-		var bomb = bombs[bomb_id]
+		var bomb = bombs.get(bomb_id)
 		if is_instance_valid(bomb):
+			# Earlier explosions may have removed another cached bomb ID.
 			# Trigger explosion before removing
 			bomb.explode()
 	

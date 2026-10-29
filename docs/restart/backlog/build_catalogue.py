@@ -295,6 +295,20 @@ Link the implementation PR and exact-head/current-base test evidence. Missing, e
 """
 
 
+def render_index(features, numbers):
+    lines = ["# Feature issue index", "", f"Master roadmap: [#69]({URL}/issues/69). {len(features)} bounded feature specifications across {len(GROUPS)} domains.", "", "This is a planning index, not a completion report. Dependency edges in `catalogue.json` take precedence over suggested waves. Existing issues are reused where their scope matches.", ""]
+    for group, name in GROUPS.items():
+        lines.extend([f"## {group}: {name}", "", "| ID | Priority / wave | Feature | GitHub |", "| --- | --- | --- | --- |"])
+        for f in features:
+            if f["domain"] != group:
+                continue
+            n = numbers.get(f["id"])
+            link = f"[#{n}]({URL}/issues/{n})" if n else "Pending publication"
+            lines.append(f"| {f['id']} | {f['priority']} / {f['phase']} | {f['title']} | {link} |")
+        lines.append("")
+    return "\n".join(lines)
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
@@ -310,6 +324,8 @@ def main():
         numbers[fid] = n
     if len(set(numbers.values())) != len(numbers):
         raise ValueError("Two features linked to the same issue")
+    if any(type(n) is not int or n <= 0 for n in numbers.values()):
+        raise ValueError("Invalid issue number")
     for feature in features:
         if feature["id"] in numbers:
             feature["issue_number"] = numbers[feature["id"]]
@@ -319,9 +335,14 @@ def main():
                    features=features, publication_order=[x["id"] for x in ordered])
     content = json.dumps(catalog, indent=2, ensure_ascii=False) + "\n"
     target = ROOT / "catalogue.json"
+    index_content = render_index(features, numbers)
     if args.check:
         if not target.exists() or target.read_text() != content:
             raise ValueError("catalogue.json is stale; run build_catalogue.py")
+        if len(numbers) != len(features):
+            raise ValueError("Not all features have published or reused issue links")
+        if not (ROOT / "INDEX.md").exists() or (ROOT / "INDEX.md").read_text() != index_content:
+            raise ValueError("INDEX.md is stale; run build_catalogue.py")
     else:
         target.write_text(content)
         journal_path.write_text(json.dumps(numbers, indent=2, sort_keys=True) + "\n")
@@ -329,17 +350,7 @@ def main():
                          title=f"[{x['priority']}][{x['id']}] {x['title']}",
                          body=issue_body(x, numbers)) for x in ordered]
         (ROOT / "issue-payloads.json").write_text(json.dumps(payloads, indent=2, ensure_ascii=False) + "\n")
-        lines = ["# Feature issue index", "", f"Master roadmap: [#69]({URL}/issues/69). {len(features)} bounded feature specifications across {len(GROUPS)} domains.", "", "This is a planning index, not a completion report. Dependency edges in `catalogue.json` take precedence over suggested waves. Existing issues are reused where their scope matches.", ""]
-        for group, name in GROUPS.items():
-            lines.extend([f"## {group}: {name}", "", "| ID | Priority / wave | Feature | GitHub |", "| --- | --- | --- | --- |"])
-            for f in features:
-                if f["domain"] != group:
-                    continue
-                n = numbers.get(f["id"])
-                link = f"[#{n}]({URL}/issues/{n})" if n else "Pending publication"
-                lines.append(f"| {f['id']} | {f['priority']} / {f['phase']} | {f['title']} | {link} |")
-            lines.append("")
-        (ROOT / "INDEX.md").write_text("\n".join(lines))
+        (ROOT / "INDEX.md").write_text(index_content)
     counts = collections.Counter(x["domain"] for x in features)
     print(json.dumps(dict(features=len(features), domains=len(counts), reused=len(REUSE),
                           linked=len(numbers), unpublished=len(features)-len(numbers),

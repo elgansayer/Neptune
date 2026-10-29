@@ -20,7 +20,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 394,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/394"
     },
     {
       "id": "REF-002",
@@ -40,7 +42,9 @@
         "REF-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 395,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/395"
     },
     {
       "id": "REF-003",
@@ -60,7 +64,9 @@
         "REF-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 396,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/396"
     },
     {
       "id": "REF-004",
@@ -80,7 +86,9 @@
         "REF-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 397,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/397"
     },
     {
       "id": "REF-005",
@@ -99,7 +107,9 @@
         "REF-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 398,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/398"
     },
     {
       "id": "REF-006",
@@ -118,7 +128,9 @@
         "REF-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 399,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/399"
     },
     {
       "id": "REF-007",
@@ -136,7 +148,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 400,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/400"
     },
     {
       "id": "REF-008",
@@ -156,7 +170,9 @@
         "REF-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 402,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/402"
     },
     {
       "id": "REF-009",
@@ -176,7 +192,9 @@
         "REF-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 405,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/405"
     },
     {
       "id": "REF-010",
@@ -196,7 +214,9 @@
         "REF-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 406,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/406"
     },
     {
       "id": "REF-011",
@@ -217,7 +237,9 @@
         "REF-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 407,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/407"
     },
     {
       "id": "REF-012",
@@ -235,7 +257,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 408,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/408"
     },
     {
       "id": "REF-013",
@@ -253,7 +277,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 409,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/409"
     },
     {
       "id": "REF-014",
@@ -273,7 +299,9 @@
         "REF-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 410,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/410"
     },
     {
       "id": "SIM-001",
@@ -291,7 +319,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 86,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/86"
     },
     {
       "id": "SIM-002",
@@ -311,7 +341,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 87,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/87"
     },
     {
       "id": "SIM-003",
@@ -331,7 +363,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 88,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/88"
     },
     {
       "id": "SIM-004",
@@ -352,7 +386,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 91,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/91"
     },
     {
       "id": "SIM-005",
@@ -372,7 +408,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 89,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/89"
     },
     {
       "id": "SIM-006",
@@ -392,7 +430,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 90,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/90"
     },
     {
       "id": "SIM-007",
@@ -412,7 +452,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 100,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/100"
     },
     {
       "id": "SIM-008",
@@ -432,7 +474,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 101,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/101"
     },
     {
       "id": "SIM-009",
@@ -453,7 +497,9 @@
         "SIM-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 102,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/102"
     },
     {
       "id": "SIM-010",
@@ -473,7 +519,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 103,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/103"
     },
     {
       "id": "SIM-011",
@@ -493,7 +541,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 104,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/104"
     },
     {
       "id": "SIM-012",
@@ -514,7 +564,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 105,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/105"
     },
     {
       "id": "SIM-013",
@@ -535,7 +587,9 @@
         "SIM-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 106,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/106"
     },
     {
       "id": "SIM-014",
@@ -555,7 +609,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 107,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/107"
     },
     {
       "id": "SIM-015",
@@ -575,7 +631,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 108,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/108"
     },
     {
       "id": "SIM-016",
@@ -595,7 +653,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 109,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/109"
     },
     {
       "id": "BOMB-001",
@@ -616,7 +676,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 147,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/147"
     },
     {
       "id": "BOMB-002",
@@ -637,7 +699,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 148,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/148"
     },
     {
       "id": "BOMB-003",
@@ -659,7 +723,9 @@
         "BOMB-004"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 150,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/150"
     },
     {
       "id": "BOMB-004",
@@ -680,7 +746,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 149,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/149"
     },
     {
       "id": "BOMB-005",
@@ -701,7 +769,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 157,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/157"
     },
     {
       "id": "BOMB-006",
@@ -722,7 +792,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 158,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/158"
     },
     {
       "id": "BOMB-007",
@@ -742,7 +814,9 @@
         "BOMB-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 159,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/159"
     },
     {
       "id": "BOMB-008",
@@ -763,7 +837,9 @@
         "ARENA-016"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 201,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/201"
     },
     {
       "id": "BOMB-009",
@@ -784,7 +860,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 161,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/161"
     },
     {
       "id": "BOMB-010",
@@ -805,7 +883,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 163,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/163"
     },
     {
       "id": "BOMB-011",
@@ -826,7 +906,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 164,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/164"
     },
     {
       "id": "BOMB-012",
@@ -847,7 +929,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 165,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/165"
     },
     {
       "id": "BOMB-013",
@@ -867,7 +951,9 @@
         "REF-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 403,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/403"
     },
     {
       "id": "BOMB-014",
@@ -888,7 +974,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 166,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/166"
     },
     {
       "id": "BOMB-015",
@@ -909,7 +997,9 @@
         "BOMB-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 404,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/404"
     },
     {
       "id": "BOMB-016",
@@ -930,7 +1020,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 167,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/167"
     },
     {
       "id": "BOMB-017",
@@ -951,7 +1043,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 168,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/168"
     },
     {
       "id": "BOMB-018",
@@ -973,7 +1067,9 @@
         "BOMB-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 169,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/169"
     },
     {
       "id": "BOMB-019",
@@ -994,7 +1090,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 170,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/170"
     },
     {
       "id": "ITEM-001",
@@ -1015,7 +1113,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 205,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/205"
     },
     {
       "id": "ITEM-002",
@@ -1035,7 +1135,9 @@
         "BOMB-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 206,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/206"
     },
     {
       "id": "ITEM-003",
@@ -1056,7 +1158,9 @@
         "NET-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 207,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/207"
     },
     {
       "id": "ITEM-004",
@@ -1077,7 +1181,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 208,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/208"
     },
     {
       "id": "ITEM-005",
@@ -1098,7 +1204,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 209,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/209"
     },
     {
       "id": "ITEM-006",
@@ -1119,7 +1227,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 210,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/210"
     },
     {
       "id": "ITEM-007",
@@ -1140,7 +1250,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 211,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/211"
     },
     {
       "id": "ITEM-008",
@@ -1161,7 +1273,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 212,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/212"
     },
     {
       "id": "ITEM-009",
@@ -1182,7 +1296,9 @@
         "BOMB-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 213,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/213"
     },
     {
       "id": "ITEM-010",
@@ -1203,7 +1319,9 @@
         "BOMB-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 214,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/214"
     },
     {
       "id": "ITEM-011",
@@ -1224,7 +1342,9 @@
         "SIM-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 215,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/215"
     },
     {
       "id": "ITEM-012",
@@ -1246,7 +1366,9 @@
         "ITEM-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 216,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/216"
     },
     {
       "id": "ITEM-013",
@@ -1267,7 +1389,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 217,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/217"
     },
     {
       "id": "ITEM-014",
@@ -1288,7 +1412,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 218,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/218"
     },
     {
       "id": "ITEM-015",
@@ -1309,7 +1435,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 219,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/219"
     },
     {
       "id": "ITEM-016",
@@ -1330,7 +1458,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 220,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/220"
     },
     {
       "id": "ITEM-017",
@@ -1351,7 +1481,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 221,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/221"
     },
     {
       "id": "ITEM-018",
@@ -1372,7 +1504,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 222,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/222"
     },
     {
       "id": "ITEM-019",
@@ -1393,7 +1527,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 223,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/223"
     },
     {
       "id": "ITEM-020",
@@ -1414,7 +1550,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 224,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/224"
     },
     {
       "id": "ITEM-021",
@@ -1435,7 +1573,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 225,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/225"
     },
     {
       "id": "ITEM-022",
@@ -1456,7 +1596,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 226,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/226"
     },
     {
       "id": "MOUNT-001",
@@ -1477,7 +1619,9 @@
         "SIM-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 293,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/293"
     },
     {
       "id": "MOUNT-002",
@@ -1497,7 +1641,9 @@
         "MOUNT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 296,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/296"
     },
     {
       "id": "MOUNT-003",
@@ -1518,7 +1664,9 @@
         "BOMB-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 297,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/297"
     },
     {
       "id": "MOUNT-004",
@@ -1538,7 +1686,9 @@
         "MOUNT-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 298,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/298"
     },
     {
       "id": "MOUNT-005",
@@ -1558,7 +1708,9 @@
         "MOUNT-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 299,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/299"
     },
     {
       "id": "MOUNT-006",
@@ -1578,7 +1730,9 @@
         "MOUNT-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 300,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/300"
     },
     {
       "id": "MOUNT-007",
@@ -1598,7 +1752,9 @@
         "MOUNT-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 301,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/301"
     },
     {
       "id": "MOUNT-008",
@@ -1619,7 +1775,9 @@
         "SIM-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 302,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/302"
     },
     {
       "id": "MOUNT-009",
@@ -1639,7 +1797,9 @@
         "REF-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 401,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/401"
     },
     {
       "id": "MOUNT-010",
@@ -1661,7 +1821,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 303,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/303"
     },
     {
       "id": "ARENA-001",
@@ -1681,7 +1843,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 185,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/185"
     },
     {
       "id": "ARENA-002",
@@ -1701,7 +1865,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 186,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/186"
     },
     {
       "id": "ARENA-003",
@@ -1721,7 +1887,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 187,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/187"
     },
     {
       "id": "ARENA-004",
@@ -1741,7 +1909,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 188,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/188"
     },
     {
       "id": "ARENA-005",
@@ -1761,7 +1931,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 189,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/189"
     },
     {
       "id": "ARENA-006",
@@ -1781,7 +1953,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 190,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/190"
     },
     {
       "id": "ARENA-007",
@@ -1801,7 +1975,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 191,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/191"
     },
     {
       "id": "ARENA-008",
@@ -1821,7 +1997,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 192,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/192"
     },
     {
       "id": "ARENA-009",
@@ -1841,7 +2019,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 193,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/193"
     },
     {
       "id": "ARENA-010",
@@ -1861,7 +2041,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 194,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/194"
     },
     {
       "id": "ARENA-011",
@@ -1881,7 +2063,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 195,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/195"
     },
     {
       "id": "ARENA-012",
@@ -1901,7 +2085,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 196,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/196"
     },
     {
       "id": "ARENA-013",
@@ -1921,7 +2107,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 197,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/197"
     },
     {
       "id": "ARENA-014",
@@ -1941,7 +2129,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 198,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/198"
     },
     {
       "id": "ARENA-015",
@@ -1961,7 +2151,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 199,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/199"
     },
     {
       "id": "ARENA-016",
@@ -1981,7 +2173,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 200,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/200"
     },
     {
       "id": "ARENA-017",
@@ -2002,7 +2196,9 @@
         "PACK-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 262,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/262"
     },
     {
       "id": "ARENA-018",
@@ -2023,7 +2219,9 @@
         "SIM-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 203,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/203"
     },
     {
       "id": "ARENA-019",
@@ -2043,7 +2241,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 202,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/202"
     },
     {
       "id": "ARENA-020",
@@ -2063,7 +2263,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 204,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/204"
     },
     {
       "id": "BATTLE-001",
@@ -2084,7 +2286,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 133,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/133"
     },
     {
       "id": "BATTLE-002",
@@ -2105,7 +2309,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 134,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/134"
     },
     {
       "id": "BATTLE-003",
@@ -2149,7 +2355,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 135,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/135"
     },
     {
       "id": "BATTLE-005",
@@ -2170,7 +2378,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 136,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/136"
     },
     {
       "id": "BATTLE-006",
@@ -2191,7 +2401,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 137,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/137"
     },
     {
       "id": "BATTLE-007",
@@ -2212,7 +2424,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 138,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/138"
     },
     {
       "id": "BATTLE-008",
@@ -2233,7 +2447,9 @@
         "SIM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 160,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/160"
     },
     {
       "id": "BATTLE-009",
@@ -2254,7 +2470,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 139,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/139"
     },
     {
       "id": "BATTLE-010",
@@ -2275,7 +2493,9 @@
         "BATTLE-011"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 141,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/141"
     },
     {
       "id": "BATTLE-011",
@@ -2296,7 +2516,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 140,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/140"
     },
     {
       "id": "BATTLE-012",
@@ -2317,7 +2539,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 142,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/142"
     },
     {
       "id": "BATTLE-013",
@@ -2338,7 +2562,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 143,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/143"
     },
     {
       "id": "BATTLE-014",
@@ -2359,7 +2585,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 144,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/144"
     },
     {
       "id": "BATTLE-015",
@@ -2380,7 +2608,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 145,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/145"
     },
     {
       "id": "BATTLE-016",
@@ -2401,7 +2631,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 146,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/146"
     },
     {
       "id": "SATURN-001",
@@ -2422,7 +2654,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 417,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/417"
     },
     {
       "id": "SATURN-002",
@@ -2443,7 +2677,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 418,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/418"
     },
     {
       "id": "SATURN-003",
@@ -2464,7 +2700,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 419,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/419"
     },
     {
       "id": "SATURN-004",
@@ -2485,7 +2723,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 420,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/420"
     },
     {
       "id": "SATURN-005",
@@ -2507,7 +2747,9 @@
         "STORY-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 421,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/421"
     },
     {
       "id": "SATURN-006",
@@ -2528,7 +2770,9 @@
         "STORY-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 422,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/422"
     },
     {
       "id": "SATURN-007",
@@ -2549,7 +2793,9 @@
         "STORY-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 423,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/423"
     },
     {
       "id": "SATURN-008",
@@ -2570,7 +2816,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 424,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/424"
     },
     {
       "id": "SATURN-009",
@@ -2591,7 +2839,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 425,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/425"
     },
     {
       "id": "SATURN-010",
@@ -2612,7 +2862,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 426,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/426"
     },
     {
       "id": "SATURN-011",
@@ -2633,7 +2885,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 427,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/427"
     },
     {
       "id": "SATURN-012",
@@ -2654,7 +2908,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 428,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/428"
     },
     {
       "id": "SATURN-013",
@@ -2675,7 +2931,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 429,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/429"
     },
     {
       "id": "SATURN-014",
@@ -2697,7 +2955,9 @@
         "BOT-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 430,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/430"
     },
     {
       "id": "POWER-001",
@@ -2718,7 +2978,9 @@
         "BATTLE-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 411,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/411"
     },
     {
       "id": "POWER-002",
@@ -2739,7 +3001,9 @@
         "BATTLE-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 412,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/412"
     },
     {
       "id": "POWER-003",
@@ -2760,7 +3024,9 @@
         "BATTLE-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 413,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/413"
     },
     {
       "id": "POWER-004",
@@ -2781,7 +3047,9 @@
         "BATTLE-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 414,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/414"
     },
     {
       "id": "POWER-005",
@@ -2802,7 +3070,9 @@
         "BATTLE-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 415,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/415"
     },
     {
       "id": "POWER-006",
@@ -2823,7 +3093,9 @@
         "BATTLE-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 416,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/416"
     },
     {
       "id": "BOT-001",
@@ -2844,7 +3116,9 @@
         "SIM-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 92,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/92"
     },
     {
       "id": "BOT-002",
@@ -2865,7 +3139,9 @@
         "BOMB-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 151,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/151"
     },
     {
       "id": "BOT-003",
@@ -2886,7 +3162,9 @@
         "SIM-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 152,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/152"
     },
     {
       "id": "BOT-004",
@@ -2906,7 +3184,9 @@
         "BOT-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 153,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/153"
     },
     {
       "id": "BOT-005",
@@ -2926,7 +3206,9 @@
         "BOT-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 154,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/154"
     },
     {
       "id": "BOT-006",
@@ -2946,7 +3228,9 @@
         "BOT-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 155,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/155"
     },
     {
       "id": "BOT-007",
@@ -2966,7 +3250,9 @@
         "BOT-004"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 156,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/156"
     },
     {
       "id": "BOT-008",
@@ -2989,7 +3275,9 @@
         "BOMB-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 162,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/162"
     },
     {
       "id": "BOT-009",
@@ -3011,7 +3299,9 @@
         "ARENA-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 294,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/294"
     },
     {
       "id": "BOT-010",
@@ -3031,7 +3321,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 93,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/93"
     },
     {
       "id": "BOT-011",
@@ -3051,7 +3343,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 94,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/94"
     },
     {
       "id": "BOT-012",
@@ -3071,7 +3365,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 95,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/95"
     },
     {
       "id": "BOT-013",
@@ -3091,7 +3387,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 96,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/96"
     },
     {
       "id": "BOT-014",
@@ -3112,7 +3410,9 @@
         "PACK-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 265,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/265"
     },
     {
       "id": "BOT-015",
@@ -3132,7 +3432,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 97,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/97"
     },
     {
       "id": "BOT-016",
@@ -3152,7 +3454,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 98,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/98"
     },
     {
       "id": "BOT-017",
@@ -3172,7 +3476,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 99,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/99"
     },
     {
       "id": "BOT-018",
@@ -3216,7 +3522,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 121,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/121"
     },
     {
       "id": "ROOM-002",
@@ -3236,7 +3544,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 122,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/122"
     },
     {
       "id": "ROOM-003",
@@ -3279,7 +3589,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 123,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/123"
     },
     {
       "id": "ROOM-005",
@@ -3299,7 +3611,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 124,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/124"
     },
     {
       "id": "ROOM-006",
@@ -3320,7 +3634,9 @@
         "PACK-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 255,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/255"
     },
     {
       "id": "ROOM-007",
@@ -3340,7 +3656,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 125,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/125"
     },
     {
       "id": "ROOM-008",
@@ -3360,7 +3678,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 126,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/126"
     },
     {
       "id": "ROOM-009",
@@ -3381,7 +3701,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 128,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/128"
     },
     {
       "id": "ROOM-010",
@@ -3401,7 +3723,9 @@
         "REPLAY-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 279,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/279"
     },
     {
       "id": "ROOM-011",
@@ -3421,7 +3745,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 129,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/129"
     },
     {
       "id": "ROOM-012",
@@ -3441,7 +3767,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 130,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/130"
     },
     {
       "id": "ROOM-013",
@@ -3461,7 +3789,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 131,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/131"
     },
     {
       "id": "ROOM-014",
@@ -3482,7 +3812,9 @@
         "SOCIAL-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 372,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/372"
     },
     {
       "id": "ROOM-015",
@@ -3503,7 +3835,9 @@
         "COOP-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 323,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/323"
     },
     {
       "id": "ROOM-016",
@@ -3523,7 +3857,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 132,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/132"
     },
     {
       "id": "NET-001",
@@ -3543,7 +3879,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 110,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/110"
     },
     {
       "id": "NET-002",
@@ -3563,7 +3901,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 111,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/111"
     },
     {
       "id": "NET-003",
@@ -3584,7 +3924,9 @@
         "SIM-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 112,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/112"
     },
     {
       "id": "NET-004",
@@ -3605,7 +3947,9 @@
         "NET-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 115,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/115"
     },
     {
       "id": "NET-005",
@@ -3626,7 +3970,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 113,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/113"
     },
     {
       "id": "NET-006",
@@ -3646,7 +3992,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 114,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/114"
     },
     {
       "id": "NET-007",
@@ -3667,7 +4015,9 @@
         "NET-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 442,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/442"
     },
     {
       "id": "NET-008",
@@ -3688,7 +4038,9 @@
         "ROOM-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 127,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/127"
     },
     {
       "id": "NET-009",
@@ -3708,7 +4060,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 116,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/116"
     },
     {
       "id": "NET-010",
@@ -3751,7 +4105,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 117,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/117"
     },
     {
       "id": "NET-012",
@@ -3771,7 +4127,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 118,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/118"
     },
     {
       "id": "NET-013",
@@ -3792,7 +4150,9 @@
         "NET-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 119,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/119"
     },
     {
       "id": "NET-014",
@@ -3812,7 +4172,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 120,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/120"
     },
     {
       "id": "PACK-001",
@@ -3830,7 +4192,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 237,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/237"
     },
     {
       "id": "PACK-002",
@@ -3850,7 +4214,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 250,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/250"
     },
     {
       "id": "PACK-003",
@@ -3871,7 +4237,9 @@
         "PACK-004"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 252,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/252"
     },
     {
       "id": "PACK-004",
@@ -3891,7 +4259,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 251,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/251"
     },
     {
       "id": "PACK-005",
@@ -3912,7 +4282,9 @@
         "PACK-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 254,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/254"
     },
     {
       "id": "PACK-006",
@@ -3932,7 +4304,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 258,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/258"
     },
     {
       "id": "PACK-007",
@@ -3952,7 +4326,9 @@
         "PACK-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 259,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/259"
     },
     {
       "id": "PACK-008",
@@ -3972,7 +4348,9 @@
         "PACK-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 260,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/260"
     },
     {
       "id": "PACK-009",
@@ -3993,7 +4371,9 @@
         "PACK-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 266,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/266"
     },
     {
       "id": "PACK-010",
@@ -4014,7 +4394,9 @@
         "ARENA-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 261,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/261"
     },
     {
       "id": "PACK-011",
@@ -4035,7 +4417,9 @@
         "PACK-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 263,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/263"
     },
     {
       "id": "PACK-012",
@@ -4056,7 +4440,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 264,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/264"
     },
     {
       "id": "PACK-013",
@@ -4076,7 +4462,9 @@
         "PACK-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 267,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/267"
     },
     {
       "id": "PACK-014",
@@ -4098,7 +4486,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 268,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/268"
     },
     {
       "id": "PACK-015",
@@ -4118,7 +4508,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 269,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/269"
     },
     {
       "id": "PACK-016",
@@ -4141,7 +4533,9 @@
         "PACK-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 270,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/270"
     },
     {
       "id": "PACK-017",
@@ -4162,7 +4556,9 @@
         "PACK-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 271,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/271"
     },
     {
       "id": "PACK-018",
@@ -4182,7 +4578,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 272,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/272"
     },
     {
       "id": "EFFECT-001",
@@ -4204,7 +4602,9 @@
         "SIM-014"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 238,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/238"
     },
     {
       "id": "EFFECT-002",
@@ -4224,7 +4624,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 239,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/239"
     },
     {
       "id": "EFFECT-003",
@@ -4244,7 +4646,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 240,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/240"
     },
     {
       "id": "EFFECT-004",
@@ -4264,7 +4668,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 241,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/241"
     },
     {
       "id": "EFFECT-005",
@@ -4284,7 +4690,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 242,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/242"
     },
     {
       "id": "EFFECT-006",
@@ -4304,7 +4712,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 243,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/243"
     },
     {
       "id": "EFFECT-007",
@@ -4348,7 +4758,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 244,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/244"
     },
     {
       "id": "EFFECT-009",
@@ -4368,7 +4780,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 245,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/245"
     },
     {
       "id": "EFFECT-010",
@@ -4389,7 +4803,9 @@
         "BOT-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 246,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/246"
     },
     {
       "id": "EFFECT-011",
@@ -4409,7 +4825,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 247,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/247"
     },
     {
       "id": "EFFECT-012",
@@ -4429,7 +4847,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 248,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/248"
     },
     {
       "id": "EFFECT-013",
@@ -4449,7 +4869,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 249,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/249"
     },
     {
       "id": "EFFECT-014",
@@ -4470,7 +4892,9 @@
         "NET-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 431,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/431"
     },
     {
       "id": "STORY-001",
@@ -4490,7 +4914,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 318,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/318"
     },
     {
       "id": "STORY-002",
@@ -4510,7 +4936,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 329,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/329"
     },
     {
       "id": "STORY-003",
@@ -4531,7 +4959,9 @@
         "STORY-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 330,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/330"
     },
     {
       "id": "STORY-004",
@@ -4551,7 +4981,9 @@
         "STORY-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 331,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/331"
     },
     {
       "id": "STORY-005",
@@ -4571,7 +5003,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 334,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/334"
     },
     {
       "id": "STORY-006",
@@ -4592,7 +5026,9 @@
         "STORY-004"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 335,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/335"
     },
     {
       "id": "STORY-007",
@@ -4612,7 +5048,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 336,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/336"
     },
     {
       "id": "STORY-008",
@@ -4633,7 +5071,9 @@
         "EFFECT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 337,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/337"
     },
     {
       "id": "STORY-009",
@@ -4653,7 +5093,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 339,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/339"
     },
     {
       "id": "STORY-010",
@@ -4675,7 +5117,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 342,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/342"
     },
     {
       "id": "STORY-011",
@@ -4695,7 +5139,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 346,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/346"
     },
     {
       "id": "STORY-012",
@@ -4715,7 +5161,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 347,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/347"
     },
     {
       "id": "STORY-013",
@@ -4735,7 +5183,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 348,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/348"
     },
     {
       "id": "STORY-014",
@@ -4755,7 +5205,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 349,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/349"
     },
     {
       "id": "STORY-015",
@@ -4775,7 +5227,9 @@
         "STORY-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 350,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/350"
     },
     {
       "id": "STORY-016",
@@ -4797,7 +5251,9 @@
         "SIM-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 351,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/351"
     },
     {
       "id": "STORY-017",
@@ -4817,7 +5273,9 @@
         "PACK-013"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 352,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/352"
     },
     {
       "id": "STORY-018",
@@ -4840,7 +5298,9 @@
         "COOP-004"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 353,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/353"
     },
     {
       "id": "COOP-001",
@@ -4861,7 +5321,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 319,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/319"
     },
     {
       "id": "COOP-002",
@@ -4883,7 +5345,9 @@
         "NET-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 320,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/320"
     },
     {
       "id": "COOP-003",
@@ -4904,7 +5368,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 321,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/321"
     },
     {
       "id": "COOP-004",
@@ -4949,7 +5415,9 @@
         "ROOM-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 322,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/322"
     },
     {
       "id": "COOP-006",
@@ -4970,7 +5438,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 324,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/324"
     },
     {
       "id": "COOP-007",
@@ -4991,7 +5461,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 325,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/325"
     },
     {
       "id": "COOP-008",
@@ -5012,7 +5484,9 @@
         "STORY-004"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 332,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/332"
     },
     {
       "id": "COOP-009",
@@ -5034,7 +5508,9 @@
         "BOT-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 340,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/340"
     },
     {
       "id": "COOP-010",
@@ -5055,7 +5531,9 @@
         "ROOM-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 326,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/326"
     },
     {
       "id": "COOP-011",
@@ -5076,7 +5554,9 @@
         "STORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 327,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/327"
     },
     {
       "id": "COOP-012",
@@ -5098,7 +5578,9 @@
         "COOP-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 344,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/344"
     },
     {
       "id": "EDITOR-001",
@@ -5119,7 +5601,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 304,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/304"
     },
     {
       "id": "EDITOR-002",
@@ -5139,7 +5623,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 305,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/305"
     },
     {
       "id": "EDITOR-003",
@@ -5159,7 +5645,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 306,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/306"
     },
     {
       "id": "EDITOR-004",
@@ -5180,7 +5668,9 @@
         "BOT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 307,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/307"
     },
     {
       "id": "EDITOR-005",
@@ -5201,7 +5691,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 308,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/308"
     },
     {
       "id": "EDITOR-006",
@@ -5222,7 +5714,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 309,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/309"
     },
     {
       "id": "EDITOR-007",
@@ -5243,7 +5737,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 310,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/310"
     },
     {
       "id": "EDITOR-008",
@@ -5264,7 +5760,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 328,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/328"
     },
     {
       "id": "EDITOR-009",
@@ -5285,7 +5783,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 333,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/333"
     },
     {
       "id": "EDITOR-010",
@@ -5306,7 +5806,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 338,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/338"
     },
     {
       "id": "EDITOR-011",
@@ -5327,7 +5829,9 @@
         "EDITOR-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 341,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/341"
     },
     {
       "id": "EDITOR-012",
@@ -5347,7 +5851,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 311,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/311"
     },
     {
       "id": "EDITOR-013",
@@ -5367,7 +5873,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 312,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/312"
     },
     {
       "id": "EDITOR-014",
@@ -5387,7 +5895,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 313,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/313"
     },
     {
       "id": "EDITOR-015",
@@ -5407,7 +5917,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 314,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/314"
     },
     {
       "id": "EDITOR-016",
@@ -5427,7 +5939,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 315,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/315"
     },
     {
       "id": "EDITOR-017",
@@ -5447,7 +5961,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 316,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/316"
     },
     {
       "id": "EDITOR-018",
@@ -5467,7 +5983,9 @@
         "PACK-017"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 317,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/317"
     },
     {
       "id": "WORKSHOP-001",
@@ -5489,7 +6007,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 355,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/355"
     },
     {
       "id": "WORKSHOP-002",
@@ -5509,7 +6029,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 356,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/356"
     },
     {
       "id": "WORKSHOP-003",
@@ -5529,7 +6051,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 357,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/357"
     },
     {
       "id": "WORKSHOP-004",
@@ -5550,7 +6074,9 @@
         "PACK-014"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 358,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/358"
     },
     {
       "id": "WORKSHOP-005",
@@ -5571,7 +6097,9 @@
         "PACK-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 359,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/359"
     },
     {
       "id": "WORKSHOP-006",
@@ -5591,7 +6119,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 360,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/360"
     },
     {
       "id": "WORKSHOP-007",
@@ -5611,7 +6141,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 361,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/361"
     },
     {
       "id": "WORKSHOP-008",
@@ -5631,7 +6163,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 362,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/362"
     },
     {
       "id": "WORKSHOP-009",
@@ -5652,7 +6186,9 @@
         "PACK-014"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 363,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/363"
     },
     {
       "id": "WORKSHOP-010",
@@ -5672,7 +6208,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 364,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/364"
     },
     {
       "id": "WORKSHOP-011",
@@ -5692,7 +6230,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 365,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/365"
     },
     {
       "id": "WORKSHOP-012",
@@ -5712,7 +6252,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 366,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/366"
     },
     {
       "id": "WORKSHOP-013",
@@ -5732,7 +6274,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 367,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/367"
     },
     {
       "id": "WORKSHOP-014",
@@ -5752,7 +6296,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 368,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/368"
     },
     {
       "id": "WORKSHOP-015",
@@ -5772,7 +6318,9 @@
         "WORKSHOP-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 369,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/369"
     },
     {
       "id": "WORKSHOP-016",
@@ -5816,7 +6364,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 354,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/354"
     },
     {
       "id": "SOCIAL-002",
@@ -5836,7 +6386,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 370,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/370"
     },
     {
       "id": "SOCIAL-003",
@@ -5857,7 +6409,9 @@
         "ROOM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 371,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/371"
     },
     {
       "id": "SOCIAL-004",
@@ -5877,7 +6431,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 373,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/373"
     },
     {
       "id": "SOCIAL-005",
@@ -5897,7 +6453,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 374,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/374"
     },
     {
       "id": "SOCIAL-006",
@@ -5917,7 +6475,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 375,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/375"
     },
     {
       "id": "SOCIAL-007",
@@ -5937,7 +6497,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 376,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/376"
     },
     {
       "id": "SOCIAL-008",
@@ -5958,7 +6520,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 381,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/381"
     },
     {
       "id": "SOCIAL-009",
@@ -5979,7 +6543,9 @@
         "STATS-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 383,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/383"
     },
     {
       "id": "SOCIAL-010",
@@ -5999,7 +6565,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 377,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/377"
     },
     {
       "id": "STATS-001",
@@ -6020,7 +6588,9 @@
         "SIM-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 378,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/378"
     },
     {
       "id": "STATS-002",
@@ -6041,7 +6611,9 @@
         "SOCIAL-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 380,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/380"
     },
     {
       "id": "STATS-003",
@@ -6062,7 +6634,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 382,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/382"
     },
     {
       "id": "STATS-004",
@@ -6083,7 +6657,9 @@
         "STATS-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 385,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/385"
     },
     {
       "id": "STATS-005",
@@ -6104,7 +6680,9 @@
         "ROOM-014"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 386,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/386"
     },
     {
       "id": "STATS-006",
@@ -6125,7 +6703,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 387,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/387"
     },
     {
       "id": "STATS-007",
@@ -6146,7 +6726,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 388,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/388"
     },
     {
       "id": "STATS-008",
@@ -6167,7 +6749,9 @@
         "REPLAY-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 389,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/389"
     },
     {
       "id": "STATS-009",
@@ -6188,7 +6772,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 390,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/390"
     },
     {
       "id": "STATS-010",
@@ -6209,7 +6795,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 391,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/391"
     },
     {
       "id": "STATS-011",
@@ -6230,7 +6818,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 392,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/392"
     },
     {
       "id": "STATS-012",
@@ -6251,7 +6841,9 @@
         "STATS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 393,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/393"
     },
     {
       "id": "UX-001",
@@ -6271,7 +6863,9 @@
         "ROOM-004"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 171,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/171"
     },
     {
       "id": "UX-002",
@@ -6289,7 +6883,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 172,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/172"
     },
     {
       "id": "UX-003",
@@ -6307,7 +6903,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 173,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/173"
     },
     {
       "id": "UX-004",
@@ -6325,7 +6923,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 174,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/174"
     },
     {
       "id": "UX-005",
@@ -6343,7 +6943,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 175,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/175"
     },
     {
       "id": "UX-006",
@@ -6361,7 +6963,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 176,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/176"
     },
     {
       "id": "UX-007",
@@ -6379,7 +6983,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 177,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/177"
     },
     {
       "id": "UX-008",
@@ -6397,7 +7003,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 178,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/178"
     },
     {
       "id": "UX-009",
@@ -6415,7 +7023,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 179,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/179"
     },
     {
       "id": "UX-010",
@@ -6433,7 +7043,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 180,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/180"
     },
     {
       "id": "UX-011",
@@ -6451,7 +7063,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 181,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/181"
     },
     {
       "id": "UX-012",
@@ -6469,7 +7083,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 182,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/182"
     },
     {
       "id": "UX-013",
@@ -6490,7 +7106,9 @@
         "PACK-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 256,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/256"
     },
     {
       "id": "UX-014",
@@ -6510,7 +7128,9 @@
         "PACK-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 257,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/257"
     },
     {
       "id": "UX-015",
@@ -6528,7 +7148,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 183,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/183"
     },
     {
       "id": "UX-016",
@@ -6546,7 +7168,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 184,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/184"
     },
     {
       "id": "MEDIA-001",
@@ -6566,7 +7190,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 282,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/282"
     },
     {
       "id": "MEDIA-002",
@@ -6586,7 +7212,9 @@
         "PACK-007"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 283,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/283"
     },
     {
       "id": "MEDIA-003",
@@ -6606,7 +7234,9 @@
         "SIM-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 284,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/284"
     },
     {
       "id": "MEDIA-004",
@@ -6627,7 +7257,9 @@
         "MOUNT-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 295,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/295"
     },
     {
       "id": "MEDIA-005",
@@ -6647,7 +7279,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 285,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/285"
     },
     {
       "id": "MEDIA-006",
@@ -6667,7 +7301,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 286,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/286"
     },
     {
       "id": "MEDIA-007",
@@ -6687,7 +7323,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 287,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/287"
     },
     {
       "id": "MEDIA-008",
@@ -6707,7 +7345,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 288,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/288"
     },
     {
       "id": "MEDIA-009",
@@ -6727,7 +7367,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 289,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/289"
     },
     {
       "id": "MEDIA-010",
@@ -6747,7 +7389,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 290,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/290"
     },
     {
       "id": "MEDIA-011",
@@ -6767,7 +7411,9 @@
         "PACK-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 291,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/291"
     },
     {
       "id": "MEDIA-012",
@@ -6788,7 +7434,9 @@
         "PACK-018"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 292,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/292"
     },
     {
       "id": "REPLAY-001",
@@ -6810,7 +7458,9 @@
         "PACK-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 273,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/273"
     },
     {
       "id": "REPLAY-002",
@@ -6830,7 +7480,9 @@
         "REPLAY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 274,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/274"
     },
     {
       "id": "REPLAY-003",
@@ -6850,7 +7502,9 @@
         "REPLAY-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 275,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/275"
     },
     {
       "id": "REPLAY-004",
@@ -6870,7 +7524,9 @@
         "REPLAY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 276,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/276"
     },
     {
       "id": "REPLAY-005",
@@ -6890,7 +7546,9 @@
         "REPLAY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 277,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/277"
     },
     {
       "id": "REPLAY-006",
@@ -6910,7 +7568,9 @@
         "NET-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 278,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/278"
     },
     {
       "id": "REPLAY-007",
@@ -6931,7 +7591,9 @@
         "SOCIAL-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 384,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/384"
     },
     {
       "id": "REPLAY-008",
@@ -6951,7 +7613,9 @@
         "REPLAY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 280,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/280"
     },
     {
       "id": "REPLAY-009",
@@ -6972,7 +7636,9 @@
         "STORY-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 343,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/343"
     },
     {
       "id": "REPLAY-010",
@@ -6992,7 +7658,9 @@
         "REPLAY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 281,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/281"
     },
     {
       "id": "FACTORY-001",
@@ -7010,7 +7678,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 71,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/71"
     },
     {
       "id": "FACTORY-002",
@@ -7030,7 +7700,9 @@
         "FACTORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 72,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/72"
     },
     {
       "id": "FACTORY-003",
@@ -7051,7 +7723,9 @@
         "FACTORY-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 73,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/73"
     },
     {
       "id": "FACTORY-004",
@@ -7071,7 +7745,9 @@
         "FACTORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 74,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/74"
     },
     {
       "id": "FACTORY-005",
@@ -7091,7 +7767,9 @@
         "FACTORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 75,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/75"
     },
     {
       "id": "FACTORY-006",
@@ -7111,7 +7789,9 @@
         "FACTORY-005"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 76,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/76"
     },
     {
       "id": "FACTORY-007",
@@ -7133,7 +7813,9 @@
         "COOP-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 345,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/345"
     },
     {
       "id": "FACTORY-008",
@@ -7153,7 +7835,9 @@
         "FACTORY-006"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 77,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/77"
     },
     {
       "id": "FACTORY-009",
@@ -7174,7 +7858,9 @@
         "FACTORY-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 78,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/78"
     },
     {
       "id": "FACTORY-010",
@@ -7195,7 +7881,9 @@
         "FACTORY-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 81,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/81"
     },
     {
       "id": "FACTORY-011",
@@ -7215,7 +7903,9 @@
         "FACTORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 79,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/79"
     },
     {
       "id": "FACTORY-012",
@@ -7235,7 +7925,9 @@
         "FACTORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 80,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/80"
     },
     {
       "id": "FACTORY-013",
@@ -7256,7 +7948,9 @@
         "FACTORY-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 82,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/82"
     },
     {
       "id": "FACTORY-014",
@@ -7276,7 +7970,9 @@
         "FACTORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 83,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/83"
     },
     {
       "id": "FACTORY-015",
@@ -7296,7 +7992,9 @@
         "FACTORY-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 84,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/84"
     },
     {
       "id": "FACTORY-016",
@@ -7317,7 +8015,9 @@
         "FACTORY-012"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 85,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/85"
     },
     {
       "id": "OPS-001",
@@ -7335,7 +8035,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 227,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/227"
     },
     {
       "id": "OPS-002",
@@ -7353,7 +8055,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 228,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/228"
     },
     {
       "id": "OPS-003",
@@ -7374,7 +8078,9 @@
         "OPS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 229,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/229"
     },
     {
       "id": "OPS-004",
@@ -7392,7 +8098,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 230,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/230"
     },
     {
       "id": "OPS-005",
@@ -7413,7 +8121,9 @@
         "STATS-001"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 379,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/379"
     },
     {
       "id": "OPS-006",
@@ -7433,7 +8143,9 @@
         "OPS-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 231,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/231"
     },
     {
       "id": "OPS-007",
@@ -7454,7 +8166,9 @@
         "BOT-016"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 232,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/232"
     },
     {
       "id": "OPS-008",
@@ -7475,7 +8189,9 @@
         "SIM-015"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 233,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/233"
     },
     {
       "id": "OPS-009",
@@ -7493,7 +8209,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 234,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/234"
     },
     {
       "id": "OPS-010",
@@ -7514,7 +8232,9 @@
         "PACK-003"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 253,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/253"
     },
     {
       "id": "OPS-011",
@@ -7532,7 +8252,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 235,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/235"
     },
     {
       "id": "OPS-012",
@@ -7550,7 +8272,9 @@
       ],
       "depends_on": [],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 236,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/236"
     },
     {
       "id": "EXP-001",
@@ -7571,7 +8295,9 @@
         "COOP-011"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 432,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/432"
     },
     {
       "id": "EXP-002",
@@ -7592,7 +8318,9 @@
         "STORY-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 433,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/433"
     },
     {
       "id": "EXP-003",
@@ -7613,7 +8341,9 @@
         "REPLAY-002"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 434,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/434"
     },
     {
       "id": "EXP-004",
@@ -7634,7 +8364,9 @@
         "EFFECT-009"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 435,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/435"
     },
     {
       "id": "EXP-005",
@@ -7655,7 +8387,9 @@
         "COOP-011"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 436,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/436"
     },
     {
       "id": "EXP-006",
@@ -7676,7 +8410,9 @@
         "BOT-014"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 437,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/437"
     },
     {
       "id": "EXP-007",
@@ -7697,7 +8433,9 @@
         "BOT-014"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 438,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/438"
     },
     {
       "id": "EXP-008",
@@ -7718,7 +8456,9 @@
         "STATS-008"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 439,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/439"
     },
     {
       "id": "EXP-009",
@@ -7739,7 +8479,9 @@
         "SOCIAL-010"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 440,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/440"
     },
     {
       "id": "EXP-010",
@@ -7761,7 +8503,9 @@
         "NET-011"
       ],
       "existing_issue": null,
-      "implementation_status": "needs-code-and-evidence-audit"
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 441,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/441"
     }
   ],
   "publication_order": [
