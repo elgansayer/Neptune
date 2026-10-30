@@ -1,0 +1,101 @@
+{
+  "schema": "neptune.whole-sheet-research.v1",
+  "date": "2026-10-30",
+  "scope": "Sega Saturn Bomberman",
+  "status": "research-and-source-tooling-no-new-original-sheet",
+  "sources": [
+    {
+      "id": "sega-vdp1",
+      "url": "https://antime.kapsi.fi/sega/files/ST-013-R3-061694.pdf",
+      "kind": "original-manual",
+      "finding": "Chapter 5 character patterns; command-defined dimensions and colour mode, not a required prepacked sheet."
+    },
+    {
+      "id": "ripper-game",
+      "url": "https://randomhoohaas.flyingomelette.com/spr/bomberman.html",
+      "kind": "firsthand-ripper",
+      "finding": "Search-indexed game-specific VRAM/memory-editing technique and explicit Normal Game animation gaps.",
+      "limitation": "Direct fetch repeatedly returned 502; downloads/current complete sheet contents not inspected."
+    },
+    {
+      "id": "historical-discussion",
+      "url": "https://archive.vg-resource.com/archive/index.php/thread-15341-55.html",
+      "kind": "firsthand-discussion",
+      "finding": "Original Saturn Bomberman ripping/layout/palette problem; historical Yabause offset is not portable."
+    },
+    {
+      "id": "yabause-manual",
+      "url": "https://wiki.yabause.org/index.php5?title=Readme_QT",
+      "kind": "official-tool-documentation",
+      "finding": "Per-command texture bitmap export and VDP2 map viewer."
+    },
+    {
+      "id": "saturn-homebrew",
+      "url": "https://segaxtreme.net/content/satdev/tutorial/SaturnGameTutorial.htm",
+      "kind": "author-demonstration",
+      "finding": "Resident pattern selection and streamed work-RAM-to-VRAM animations; not a claim about Bomberman's format."
+    },
+    {
+      "id": "gpu-tutorial",
+      "url": "https://spritedatabase.net/tutorial/saturn",
+      "kind": "firsthand-tool-demonstration",
+      "finding": "Yabause-rr/OpenGL interception atlas examples; not Bomberman build completeness."
+    },
+    {
+      "id": "glintercept",
+      "url": "https://github.com/dtrebilco/glintercept",
+      "kind": "official-tool-documentation",
+      "finding": "Windows OpenGL interceptor; not a native headless Debian or software-renderer extraction recipe."
+    },
+    {
+      "id": "yabause-ui",
+      "kind": "primary-repository-file",
+      "repository": "Yabause/yabause",
+      "revision": "7e38821dbac265490f115e163c523a939acda759",
+      "path": "yabause/src/qt/ui/UIDebugVDP1.cpp",
+      "git_blob_sha1": "5c06b7226c23be75fb1281561f7279d421a7c3a7",
+      "url": "https://github.com/Yabause/yabause/blob/7e38821dbac265490f115e163c523a939acda759/yabause/src/qt/ui/UIDebugVDP1.cpp",
+      "inspection": "Actual UTF-8 file read; runtime capability on supplied original remains unverified."
+    },
+    {
+      "id": "yabause-debug",
+      "kind": "primary-repository-file",
+      "repository": "Yabause/yabause",
+      "revision": "7e38821dbac265490f115e163c523a939acda759",
+      "path": "yabause/src/vdp1.c",
+      "git_blob_sha1": "ab3b375e3144003a5ad4bdd6c5b79f89b45ab83a",
+      "url": "https://github.com/Yabause/yabause/blob/7e38821dbac265490f115e163c523a939acda759/yabause/src/vdp1.c",
+      "inspection": "Actual UTF-8 file read; runtime capability on supplied original remains unverified."
+    },
+    {
+      "id": "upstream-inventory",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/pc-saturnbomberman",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "path": "inventory.tsv",
+      "git_blob_sha1": "93533d409ace2f959474c48a481f338f9d29fa83",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/inventory.tsv",
+      "inspection": "Actual UTF-8 file read; runtime capability on supplied original remains unverified."
+    },
+    {
+      "id": "upstream-dump",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/pc-saturnbomberman",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "path": "src/bomberman/research/dump.py",
+      "git_blob_sha1": "4e2b3349917852737db5cc11a7d2c9e283d1ffd3",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/src/bomberman/research/dump.py",
+      "inspection": "Actual UTF-8 file read; runtime capability on supplied original remains unverified."
+    },
+    {
+      "id": "disc-inventory",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "eb0bb06fb753a0ecc8f031eb6a56791f310e183c",
+      "path": "docs/restart/evidence/2026-10-30-gemini-saturn-disc-inventory.md",
+      "git_blob_sha1": "39a48d988df5310fc44233f954792b2f07bcae2e",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/eb0bb06fb753a0ecc8f031eb6a56791f310e183c/docs/restart/evidence/2026-10-30-gemini-saturn-disc-inventory.md",
+      "inspection": "Actual UTF-8 file read; runtime capability on supplied original remains unverified."
+    }
+  ]
+}

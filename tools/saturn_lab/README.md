@@ -220,3 +220,16 @@ VRAM snapshot, preserving native samples, lookup data and provenance. Supported
 RGB source patterns get a PNG; unresolved palette/end-code previews are reported.
 See [VDP1_EXPORT.md](VDP1_EXPORT.md) for the strict capture format, CLI and remaining
 original-game experiment. Synthetic checks establish decoder tooling only.
+
+## Coherent graphics inputs and whole sprite sheets
+
+[`state_graphics.py`](STATE_GRAPHICS.md) adapts a bounded raw checkpoint from the
+pinned Beetle serializer into VDP1/VDP2 capture inputs without modifying or running
+the core. Original mode requires the hash-verified USA kernel as a word-order and
+residency witness. It is not command discovery, palette resolution or a completed
+sheet extraction. The optional pinned-source serializer smoke uses constructed
+arrays; ordinary tests remain synthetic tooling checks.
+
+The [whole-sheet investigation](../../docs/restart/research/2026-10-30-whole-spritesheets.md)
+sets out archive-table and multi-frame paths, actual Yabause export capabilities,
+Normal Game coverage gaps, composite frame assembly and completeness criteria.
