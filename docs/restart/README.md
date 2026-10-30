@@ -10,7 +10,8 @@ compatibility task.
 
 Build a multiplayer-first platform with strong bots, desktop/browser cross-play,
 community-authored characters, maps, power-ups and complete solo/co-op stories,
-player profiles, detailed stats and a creator workshop. Reproduce Saturn campaign
+player profiles, detailed stats and a creator workshop. Support both standard
+(non-wide) and wide battle arenas as first-class layouts. Reproduce Saturn campaign
 and battle behaviour using measured references and independently implement Power
 Bomberman feature coverage in separate ruleset profiles. A continuously running
 AI factory should work through GitHub issues, with deterministic verification and

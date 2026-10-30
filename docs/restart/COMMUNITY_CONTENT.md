@@ -46,6 +46,27 @@ GDScript, native extensions or code-bearing scenes through the public pack loade
 Arbitrary pack combinations are not guaranteed compatible. Explain conflicts to
 the host before play instead of selecting a silent fallback.
 
+## Standard and wide arenas
+
+Support both standard (non-wide) and wide battle arenas as first-class layouts.
+Creators can author and share either through the same arena pack API, without an
+engine fork. Arena definitions declare their actual dimensions, spawn positions
+and supported participant counts; width alone must not imply a player limit.
+Do not impose one fixed aspect ratio or infer reference-game dimensions without
+measured evidence.
+
+The client adapts camera framing, scaling and HUD placement to each layout so
+players can see the playable arena and read essential match information. Preserve
+the arena's geometry and authoritative collision rules rather than stretching
+tiles to fit a display. Both desktop and browser play must support both layouts.
+
+Acceptance requires permitted standard and wide fixtures through the same loading,
+validation and rendering paths. Exercise spawn/capacity checks, human and bot play,
+hazard/pathfinding bounds and readable camera/HUD framing on each. Creator preview
+and online compatibility validation must retain the declared dimensions. These
+are delivery goals; existing map files or capacity tests alone do not establish
+complete support.
+
 ## Power-ups: bounded composition first
 
 Issue [#52](https://github.com/elgansayer/Neptune-Bomberman/issues/52) introduces a
