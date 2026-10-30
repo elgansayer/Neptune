@@ -21,6 +21,10 @@ A competitive multiplayer Bomberman game with server-authoritative physics and m
 
 ## 🚀 Quick Start
 
+Development uses the [latest stable dependency policy](docs/restart/DEPENDENCY_POLICY.md),
+including Godot, addons and tooling. Check upstream releases, refresh reproducible
+pins and validate compatibility when adopting updates.
+
 ### Start Server
 ```bash
 godot --headless --path . res://main_server.tscn
@@ -122,7 +126,7 @@ See `docs/SBOMBERMAN_REFERENCE.md` for detailed comparison.
 
 ## 🛠️ Tech Stack
 
-- **Engine**: Godot 4.5
+- **Engine**: Godot (latest stable target; recorded toolchain currently pins 4.5)
 - **Language**: GDScript
 - **Networking**: ENet (client-server RPC)
 - **Database**: SQLite (local), PlayFab (future)

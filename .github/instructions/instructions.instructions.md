@@ -2,6 +2,12 @@
 applyTo: '**'
 ---
 Read #file:AGENTS.md and #file:docs/restart/README.md first.
+Commit and push completed changes. When using a PR, open it and merge after
+required checks pass, or enable auto-merge; never leave completed work only local.
+Preserve unrelated local changes and report any concrete merge blocker.
+Follow #file:docs/restart/DEPENDENCY_POLICY.md: check upstream releases and adopt
+the latest stable packages, tools and Godot. Refresh exact pins and validate
+compatibility; track concrete blockers rather than defaulting to an old baseline.
 
 The October 2026 restart includes faithful Saturn campaign/battle, online bots,
 browser/desktop cross-play, portable community packs and a complete community site.

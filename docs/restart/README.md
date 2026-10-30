@@ -5,9 +5,10 @@ Real input, bridge and static disc/regional inventory work is accepted through
 #467/#468/#473. Full disc-graphics extraction and continuous Neptune factory
 operation remain unverified. Start with [research execution](RESEARCH_EXECUTION.md)
 and [issue #477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
-The current repository targets Godot 4.5. Pin that baseline
-for the first reproducible build; choose any engine upgrade through a separate
-compatibility task.
+Development must stay on the latest stable packages and Godot, following the
+[dependency policy](DEPENDENCY_POLICY.md). Existing Godot 4.5 pins record the
+current toolchain, not the preferred ongoing target. Refresh pins and validate
+compatibility as part of adopting current releases.
 
 ## Goal
 
@@ -38,6 +39,7 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 ## Documents
 
 - [Source-backed project evaluation and build recommendations](PROJECT_EVALUATION.md)
+- [Latest stable dependencies and Godot policy](DEPENDENCY_POLICY.md)
 - [Tests-only automatic merge policy and setup](MERGE_POLICY.md)
 - [Multiplayer, power-ups, campaigns and co-op contract](COMMUNITY_CONTENT.md)
 - [Everything to provide and install](REQUIREMENTS.md)

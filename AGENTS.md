@@ -50,10 +50,12 @@ claims to verify against code and actual execution, not evidence of correctness.
 ## Work and evidence
 
 - Always commit and push completed task changes before ending a work session;
-  never leave completed work only locally. For integration, create or update a PR
-  and merge once applicable exact-head/current-base checks pass. Report the commit,
-  pushed branch and PR/merge state, or the concrete blocker. Stage only task-owned
-  files and preserve unrelated work; never bypass failing merge gates.
+  never leave completed work only locally. When using a PR, create or update it
+  and merge once applicable exact-head/current-base checks pass, or enable
+  auto-merge while checks run. Routine commit, push, PR creation and eligible
+  merge need no further confirmation. Report the commit, pushed branch and
+  PR/merge state, or the concrete blocker. Stage only task-owned files, preserve
+  unrelated work and never bypass failing merge gates.
 - GitHub issues define scope, dependencies, acceptance checks and evidence.
 - `docs/restart/feature-catalogue.json` separates reference claims and implementation
   status. Its validator checks metadata only; it cannot certify gameplay or evidence.
@@ -82,6 +84,16 @@ claims to verify against code and actual execution, not evidence of correctness.
 - Tests must fail on missing fixtures, no discovered tests and execution errors.
 - For actual gameplay changes, run bounded server/client tests and inspect
   `server.log` when available. Report missing tools or logs rather than fabricating results.
+
+## Dependency freshness
+
+Follow `docs/restart/DEPENDENCY_POLICY.md`: always adopt the latest stable
+packages, tooling and Godot, including major/minor releases. Check official
+upstream versions at task intake; update exact pins, hashes, native addons,
+export templates, CI and setup guidance together and run applicable checks.
+Existing pins ensure reproducibility, not permission to stay outdated. Track any
+concrete compatibility blocker with an owner, next action and recheck; preserve
+historical reference versions and evidence separately.
 
 ## Automatic tool preparation
 
