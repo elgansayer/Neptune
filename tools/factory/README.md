@@ -41,6 +41,28 @@ services remain unchanged. One actual issue, quota/failure handling, restart
 recovery and continuity still require #33 acceptance. Raw research inputs and
 other projects' credentials must never be mounted into ordinary game workers.
 
+## Tests-only GitHub handoff
+
+The shared factory's Neptune GitHub adapter is tracked by #77. It reads the
+required `Neptune merge gate` as a GitHub Actions app 15368 check-run for the
+exact head, rather than accepting a same-name commit status. Missing checks
+wait; skipped, neutral, failed, cancelled and timed-out required checks block.
+It verifies that current protected main is contained in the candidate head.
+Retarget stacked children to main after their parent merges and rerun checks.
+
+The coordinator validates the existing strict branch protection, app identity,
+zero required approvals, administrator enforcement and retained-branch settings.
+Use native `--auto --merge --match-head-commit` for the tested head. GitHub's
+atomic protection handles a head/base change after the coordinator's read.
+Already-enabled auto-merge is reconciled without repeatedly re-enqueuing it.
+No approving AI or human review is required for Neptune. Preserve other projects'
+review policies when reusing their factory.
+
+This boundary is separate from provider execution and daemon activation. A real
+merge through the adapter demonstrates publication, not a complete AI job,
+restart recovery or continuous operation. #33 still requires those live tests
+before enabling unattended continuity.
+
 ## Local ownership foundations
 
 Implements the local foundations of #71/#72. No scheduler, provider, remote GitHub
