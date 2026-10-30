@@ -52,6 +52,73 @@ services remain unchanged. One actual issue, quota/failure handling, restart
 recovery and continuity still require #33 acceptance. Raw research inputs and
 other projects' credentials must never be mounted into ordinary game workers.
 
+## Requirements before preparation
+
+Ask what a selection needs before provisioning or entering the offline verifier:
+
+```sh
+python3 tools/factory/verify.py --plan --changed-path README.md
+python3 tools/factory/verify.py --plan --changed-path game_instance.gd --changed-path README.md
+```
+
+`--plan` takes only `--changed-path` (repeat it for every changed file) and rejects
+`--toolchain` and `--evidence`. It reuses the CI classifier, so metadata, runner and
+gameplay selections need exactly the 5/8/10 checks of a real run and of CI. It prints
+one line, `NEPTUNE_FACTORY_REQUIREMENTS=` plus JSON with sorted keys, and exits 0.
+Empty, malformed, unsafe or unbounded selections exit 1 with `FAIL:` on stderr and no
+stdout. So does a runner or gameplay selection whose `tools/godot/toolchain.json` is
+missing or invalid; a metadata selection never reads it. Usage errors exit 2.
+
+Planning verifies, installs, downloads and executes nothing: no `git`, installer,
+engine or check subprocess starts, no evidence or cache directory is created, and an
+absent engine or cache is not an error. Without `--plan` nothing changes: the toolchain
+and evidence arguments stay required, and a missing cache or failed check still fails.
+
+| Field | Contract |
+| --- | --- |
+| `schema` | `neptune.factory-requirements.v1` |
+| `scope` | Starts `requirements only`: no check ran and no host, tool cache or engine was inspected |
+| `plan` | The shared classifier result: `mode` (`metadata`, `runner`, `gameplay`), sorted unique `paths` and the ordered `required` check names |
+| `baseline.checks` | Required checks that need no engine: the core checks every selection runs |
+| `baseline.python`, `baseline.executables` | Declared interpreter minimum and host tools those checks invoke (`cc`, `git`) |
+| `native.required` | True for runner and gameplay selections: the test a real run applies before it demands the offline cache |
+| `native.checks` | Required engine checks; `baseline.checks` then `native.checks` equals `plan.required` |
+| `native.executables` | Host tools beyond the engine: `Xvfb` when `native-runtime` (a graphical client) is required, else empty |
+| `native.toolchain` | `null` unless required. Otherwise the lock's pinned requirement: `tool` (`godot`, the `provision.py --tool` ID), `lock` path, `lock_sha256`, `godot_version`, `binary_name`, `binary_sha256` and `addons` (repository path to SHA-256) |
+
+These are declared requirements, not observations. Nothing reports an installed
+version, probe result, capability, Git identity or readiness, and the lock's download
+location and every command are deliberately omitted. `native.required` and the
+`executables` lists mean needed, not present. The result has a different prefix and
+schema from the verification receipt and no `conclusion`, `identity` or check statuses,
+so it cannot stand in for one. `native.toolchain.lock_sha256` equals
+`offline_toolchain.lock_sha256` in the evidence `report.json` of a later real run on the
+same checkout.
+
+### Coordinator use
+
+Candidate repository code is not host policy. `--plan` executes the `verify.py` and
+classifier of the checkout that contains it and reads that checkout's toolchain lock,
+and a worker can edit all three. The isolated coordinator therefore:
+
+1. derives the changed-path list itself from the exact head/base diff, as the merge
+   gate does, never from the worker's report, and binds the result to those commits.
+   The result carries no Git identity;
+2. runs `--plan` from its own trusted checkout of the protected base, not the task
+   worktree, inside the credential-free no-network namespace. That checkout may be
+   read-only because planning writes nothing;
+3. uses the result only to reserve the shared slot and request preparation: it compares
+   `baseline` and `native.executables` with host preflight and, for `native.toolchain.tool`,
+   runs the trusted `provision.py` recipe. Provisioning reads the trusted revision's own
+   lock. No value from the candidate tree, including a changed lock or hash, is passed to
+   an installer or command;
+4. runs the real command afterwards with `--toolchain` and `--evidence` and validates its
+   `NEPTUNE_FACTORY_VERIFICATION=` receipt. A candidate that edits the planner, lock or
+   provisioning files does not change what the coordinator prepared or trusted: its run
+   fails closed on a cache that lacks the changed pin, and required GitHub CI remains
+   authoritative;
+5. never records the result as readiness, a capability, verification or CI.
+
 ## Tests-only GitHub handoff
 
 The shared factory's Neptune GitHub adapter is tracked by #77. It reads the
