@@ -1,0 +1,32 @@
+{
+  "core_source_revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+  "fixture_sha256": "32e033f7826c0306f9ec38c4f2ed32c54bf3a70548211f67706cd222d1c61bed",
+  "producer_byte_order": "little",
+  "scope": "Actual pinned state.c writer, constructed arrays; no full core or original game",
+  "source_sha256": {
+    "boolean.h": "9ae2871b702c3c7d89b5e0e40de28895e72bd0177e1d6da32cde6f59e46bb36e",
+    "general.h": "683f45cc9a9947826b81b35bffb99a3a1399ec457dca10c96fda68a22a0dc431",
+    "retro_inline.h": "7543242f56677091d46e3bc9a8b7d567a0df631cb8cdb1878970feaa53f77403",
+    "state.c": "60c6aeb596154ad04a5e20abda7d563148b67fd92899d15b69bbc192b59254a8",
+    "state.h": "af8d99457f565d238aa8ad5f2f8d7e1a18e5f7adc7dc35fa3c7b674b41be717f"
+  },
+  "state_sha256": "82fb3aad96d69c9ee6548b61b1a5596c72b0fd816b3012e26690b56f055f52c3",
+  "status": "serializer-interop-passed",
+  "synthetic": true,
+  "verified_uint16_words": 526592,
+  "wrong_byte_order_detected": true,
+  "experiment": "EXP-SAT-TOOL-STATE-001",
+  "ordinary_test_cases": 91,
+  "original_game_execution": false,
+  "source_mutation_control": "Appending a newline to pinned state.c was rejected before compilation.",
+  "runtime": {
+    "python": "3.12.14",
+    "host": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0"
+  },
+  "tool_sha256": {
+    "state_graphics.py": "66916b47fa64165d0a6f56d6470948b92e6e3b26c53b7b19d780cc60d3ed8c10",
+    "check_state_serializer.py": "664d1220d430351bba7dbc42d79a668b041de9f71b820c2e9e8974e2ca5025a8",
+    "tests/fixtures/state_serializer.c": "32e033f7826c0306f9ec38c4f2ed32c54bf3a70548211f67706cd222d1c61bed"
+  }
+}
