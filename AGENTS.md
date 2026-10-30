@@ -63,6 +63,16 @@ claims to verify against code and actual execution, not evidence of correctness.
 - For actual gameplay changes, run bounded server/client tests and inspect
   `server.log` when available. Report missing tools or logs rather than fabricating results.
 
+## Dependency freshness
+
+Follow `docs/restart/DEPENDENCY_POLICY.md`: always adopt the latest stable
+packages, tooling and Godot, including major/minor releases. Check official
+upstream versions at task intake; update exact pins, hashes, native addons,
+export templates, CI and setup guidance together and run applicable checks.
+Existing pins ensure reproducibility, not permission to stay outdated. Track any
+concrete compatibility blocker with an owner, next action and recheck; preserve
+historical reference versions and evidence separately.
+
 ## Automatic tool preparation
 
 Routine free tools needed for authorised work should be obtained, built and tested

@@ -1,12 +1,14 @@
 ---
 applyTo: '**'
 ---
-#fetch https://docs.godotengine.org/en/4.4/tutorials/scripting/gdscript/gdscript_basics.html
+#fetch https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html
 
-These instructions tell GitHub Copilot how to write, complete, and reason about **GDScript**, based on the official Godot 4.4 documentation:
+These instructions tell GitHub Copilot how to write, complete, and reason about **GDScript**, based on the official stable Godot documentation. Follow
+#file:docs/restart/DEPENDENCY_POLICY.md and verify API availability against the
+exact engine version selected for the build while upgrading to the latest stable.
 
 Source for language rules:  
-https://docs.godotengine.org/en/4.4/tutorials/scripting/gdscript/gdscript_basics.html
+https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html
 
 ---
 

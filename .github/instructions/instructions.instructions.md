@@ -2,6 +2,9 @@
 applyTo: '**'
 ---
 Read #file:AGENTS.md and #file:docs/restart/README.md first.
+Follow #file:docs/restart/DEPENDENCY_POLICY.md: check upstream releases and adopt
+the latest stable packages, tools and Godot. Refresh exact pins and validate
+compatibility; track concrete blockers rather than defaulting to an old baseline.
 
 The October 2026 restart includes faithful Saturn campaign/battle, online bots,
 browser/desktop cross-play, portable community packs and a complete community site.

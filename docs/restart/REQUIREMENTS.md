@@ -54,7 +54,7 @@ Untrusted community issues must not directly launch code with privileged access.
 | --- | --- |
 | Git, Git LFS, Python | Python 3.11+ for current lab tools; use lockfiles for future dependencies |
 | Container runtime | Docker Engine/Compose; isolated workers with constrained resources |
-| Godot | First reproduce the repository's 4.5 baseline with matching native addons; pin executable hashes and export templates |
+| Godot | Adopt the latest stable release with matching native addons and export templates; refresh exact pins/hashes and validate compatibility under [the dependency policy](DEPENDENCY_POLICY.md) |
 | Emulator | Evaluate/pin Beetle Saturn via libretro; build a small noninteractive frontend and instrumented core |
 | Graphics debugging | Use Yabause/Kronos source as reference where useful; verify against the chosen reference emulator |
 | Reverse engineering | Ghidra, its required JDK, headless scripts and validated Saturn loader support |
