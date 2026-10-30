@@ -1,0 +1,521 @@
+{
+  "schema": "neptune.research-sources.v1",
+  "retrieved": "2026-10-30",
+  "scope": "Source research and synthetic tooling checks; no new original-game execution",
+  "sources": [
+    {
+      "id": "S01",
+      "title": "callumjenkins/pc-saturnbomberman/README.md",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "status": "source_inspected",
+      "finding": "Exact-game AI-assisted static recompilation lead; upstream author describes Claude Code use and known divergence.",
+      "issues": [
+        478,
+        509
+      ]
+    },
+    {
+      "id": "S02",
+      "title": "callumjenkins/pc-saturnbomberman/decomp/krnl.c",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/decomp/krnl.c",
+      "retrieved": "2026-10-30",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "status": "source_inspected",
+      "finding": "Nine candidate kernel functions; direction-mask helper is suitable for a bounded original-byte experiment.",
+      "issues": [
+        478,
+        483
+      ]
+    },
+    {
+      "id": "S03",
+      "title": "callumjenkins/pc-saturnbomberman/decomp/check.py",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/decomp/check.py",
+      "retrieved": "2026-10-30",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "status": "source_inspected",
+      "finding": "Randomized interpreter comparison, not independent hardware proof; zero/negative trials and unknown names can yield false success; VDP1 register range is modelled as RAM.",
+      "issues": [
+        478,
+        483,
+        513
+      ]
+    },
+    {
+      "id": "S04",
+      "title": "callumjenkins/pc-saturnbomberman/src/bomberman/lab.py",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/src/bomberman/lab.py",
+      "retrieved": "2026-10-30",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "status": "source_inspected",
+      "finding": "sheet combines screenshots; verify/memory/writes expose useful comparison mechanisms with declared constraints.",
+      "issues": [
+        478,
+        487
+      ]
+    },
+    {
+      "id": "S05",
+      "title": "callumjenkins/pc-saturnbomberman/src/bomberman/routes.py",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/src/bomberman/routes.py",
+      "retrieved": "2026-10-30",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "status": "source_inspected",
+      "finding": "normal/single are input-only starting routes; wide battle requests multitap and other routes inject writes/hooks.",
+      "issues": [
+        478,
+        490
+      ]
+    },
+    {
+      "id": "S06",
+      "title": "callumjenkins/pc-saturnbomberman/game.toml",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/game.toml",
+      "retrieved": "2026-10-30",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "status": "source_inspected",
+      "finding": "USA symbols and inventory source ranges; selected build explicitly enables optional GPL VDP1 renderer.",
+      "issues": [
+        478,
+        480,
+        488
+      ]
+    },
+    {
+      "id": "S07",
+      "title": "callumjenkins/saturn-recomp/src/saturnrecomp/sh2emu.py",
+      "url": "https://github.com/callumjenkins/saturn-recomp/blob/f20de940e8013fc84103a5b39c4069ed8071b1f9/src/saturnrecomp/sh2emu.py",
+      "retrieved": "2026-10-30",
+      "revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "status": "source_inspected",
+      "finding": "Bounded isolated SH-2 CPU interpreter; flat memory lacks full Saturn hardware behaviour.",
+      "issues": [
+        483,
+        513
+      ]
+    },
+    {
+      "id": "S08",
+      "title": "callumjenkins/saturn-recomp/THIRD_PARTY.md",
+      "url": "https://github.com/callumjenkins/saturn-recomp/blob/f20de940e8013fc84103a5b39c4069ed8071b1f9/THIRD_PARTY.md",
+      "retrieved": "2026-10-30",
+      "revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "status": "source_inspected",
+      "finding": "Component notices and optional renderer build implications; preserve separation from Neptune runtime.",
+      "issues": [
+        478,
+        46
+      ]
+    },
+    {
+      "id": "S09",
+      "title": "ymir-emu/Ymir/README.md",
+      "url": "https://github.com/ymir-emu/Ymir/blob/840911553fb5e6ce6d121aab58811995091551ad/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "840911553fb5e6ce6d121aab58811995091551ad",
+      "status": "source_inspected",
+      "finding": "Current Linux-capable emulator/debugging candidate; not yet executed on Neptune originals.",
+      "issues": [
+        479,
+        513
+      ]
+    },
+    {
+      "id": "S10",
+      "title": "ymir-emu/Ymir/libs/ymir-core/include/ymir/debug/sh2_tracer_base.hpp",
+      "url": "https://github.com/ymir-emu/Ymir/blob/840911553fb5e6ce6d121aab58811995091551ad/libs/ymir-core/include/ymir/debug/sh2_tracer_base.hpp",
+      "retrieved": "2026-10-30",
+      "revision": "840911553fb5e6ce6d121aab58811995091551ad",
+      "status": "source_inspected",
+      "finding": "Explicit ISH2Tracer interface; concrete integration point for bounded instruction/memory observations.",
+      "issues": [
+        482
+      ]
+    },
+    {
+      "id": "S11",
+      "title": "ymir-emu/Ymir/libs/ymir-core/include/ymir/sys/saturn.hpp",
+      "url": "https://github.com/ymir-emu/Ymir/blob/840911553fb5e6ce6d121aab58811995091551ad/libs/ymir-core/include/ymir/sys/saturn.hpp",
+      "retrieved": "2026-10-30",
+      "revision": "840911553fb5e6ce6d121aab58811995091551ad",
+      "status": "source_inspected",
+      "finding": "RunFrame, debug-tracing and per-component tracer APIs; potential headless research adapter.",
+      "issues": [
+        479,
+        482,
+        513
+      ]
+    },
+    {
+      "id": "S12",
+      "title": "FCare/Kronos/yabause/src/port/qt/ui/UIDebugVDP1.cpp",
+      "url": "https://github.com/FCare/Kronos/blob/d451a55253e2e75bcef704ec8ade2085d298212c/yabause/src/port/qt/ui/UIDebugVDP1.cpp",
+      "retrieved": "2026-10-30",
+      "revision": "d451a55253e2e75bcef704ec8ade2085d298212c",
+      "status": "source_inspected",
+      "finding": "Actual Vdp1DebugRawTexture and bitmap save paths exist; test export rather than rebuilding a decoder first.",
+      "issues": [
+        479,
+        485,
+        487
+      ]
+    },
+    {
+      "id": "S13",
+      "title": "Yabause Qt debugger documentation",
+      "url": "https://wiki.yabause.org/index.php5?title=Readme_QT",
+      "retrieved": "2026-10-30",
+      "revision": null,
+      "status": "source_inspected",
+      "finding": "VDP1 texture export and VDP2 tilemap viewer; GUI capabilities are not a headless API.",
+      "issues": [
+        479,
+        485,
+        486
+      ]
+    },
+    {
+      "id": "S14",
+      "title": "Sega VDP1 User's Manual",
+      "url": "https://antime.kapsi.fi/sega/files/ST-013-R3-061694.pdf",
+      "retrieved": "2026-10-30",
+      "revision": "ST-013-R3-061694",
+      "status": "source_inspected",
+      "finding": "Primary hardware description for commands, pixels and end-code rules; archived original publication.",
+      "issues": [
+        485,
+        487
+      ]
+    },
+    {
+      "id": "S15",
+      "title": "Sega VDP1 supplement",
+      "url": "https://antime.kapsi.fi/sega/files/ST-013-SP1-052794.pdf",
+      "retrieved": "2026-10-30",
+      "revision": "ST-013-SP1-052794",
+      "status": "source_inspected",
+      "finding": "Use with main VDP1 manual when resolving implementation details.",
+      "issues": [
+        485
+      ]
+    },
+    {
+      "id": "S16",
+      "title": "Sega VDP2 User's Manual",
+      "url": "https://antime.kapsi.fi/sega/files/ST-058-R2-060194.pdf",
+      "retrieved": "2026-10-30",
+      "revision": "ST-058-R2-060194",
+      "status": "source_inspected",
+      "finding": "Sprite-type palette interpretation and display composition must accompany texture extraction.",
+      "issues": [
+        485,
+        486,
+        487
+      ]
+    },
+    {
+      "id": "S17",
+      "title": "Sega SCSP User's Manual",
+      "url": "https://antime.kapsi.fi/sega/files/ST-077-R2-052594.pdf",
+      "retrieved": "2026-10-30",
+      "revision": "ST-077-R2-052594",
+      "status": "source_inspected",
+      "finding": "Preserve sample loop modes and register state; rendered WAV alone does not represent the instrument.",
+      "issues": [
+        488
+      ]
+    },
+    {
+      "id": "S18",
+      "title": "Renesas SH-1/SH-2/SH-DSP Software Manual",
+      "url": "https://www.renesas.com/en/document/mah/sh-1sh-2sh-dsp-software-manual",
+      "retrieved": "2026-10-30",
+      "revision": "REJ09B0171-0500O",
+      "status": "source_inspected",
+      "finding": "Primary instruction semantics, including delayed branches; compare interpreters against documented behaviour.",
+      "issues": [
+        481,
+        483
+      ]
+    },
+    {
+      "id": "S19",
+      "title": "Mednafen debugger manual",
+      "url": "https://mednafen.github.io/documentation/debugger.html",
+      "retrieved": "2026-10-30",
+      "revision": "1.32.0-UNSTABLE manual",
+      "status": "source_inspected",
+      "finding": "Saturn CPU/memory debugger supports bounded dumps; warns about state/reset actions while stepping.",
+      "issues": [
+        479,
+        482
+      ]
+    },
+    {
+      "id": "S20",
+      "title": "Mednafen Saturn manual",
+      "url": "https://mednafen.github.io/documentation/ss.html",
+      "retrieved": "2026-10-30",
+      "revision": "1.32.1 manual",
+      "status": "source_inspected",
+      "finding": "Standalone Saturn settings and limitations; not automatically the same frontend/API as libretro.",
+      "issues": [
+        479,
+        513
+      ]
+    },
+    {
+      "id": "S21",
+      "title": "Beetle Saturn core documentation",
+      "url": "https://docs.libretro.com/library/beetle_saturn/",
+      "retrieved": "2026-10-30",
+      "revision": null,
+      "status": "source_inspected",
+      "finding": "Use existing accepted libretro reference; pin actual binary, settings and controller topology.",
+      "issues": [
+        479,
+        513
+      ]
+    },
+    {
+      "id": "S22",
+      "title": "VGKintsugi/Ghidra-SegaSaturn-Loader/README.md",
+      "url": "https://github.com/VGKintsugi/Ghidra-SegaSaturn-Loader/blob/c489a190a79d2634b9ecf82e2c0dcec8fd999cf5/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "c489a190a79d2634b9ecf82e2c0dcec8fd999cf5",
+      "status": "source_inspected",
+      "finding": "ISO loader only loads first file; mirrors and save-state format limitations require explicit overlay/state import.",
+      "issues": [
+        480,
+        481
+      ]
+    },
+    {
+      "id": "S23",
+      "title": "Ghidra headless analysis",
+      "url": "https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/RuntimeScripts/support/analyzeHeadlessREADME.md",
+      "retrieved": "2026-10-30",
+      "revision": null,
+      "status": "source_inspected",
+      "finding": "Supported deterministic import/scripts/timeouts are the baseline before adding agent adapters.",
+      "issues": [
+        481,
+        508
+      ]
+    },
+    {
+      "id": "S24",
+      "title": "LaurieWired/GhidraMCP/README.md",
+      "url": "https://github.com/LaurieWired/GhidraMCP/blob/1e980252087b2479a21b9ca6d82d5829538651a7/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "1e980252087b2479a21b9ca6d82d5829538651a7",
+      "status": "source_inspected",
+      "finding": "Headless PyGhidra path exists but documents Ghidra 12.1.4 and Python 3.10-3.13; pin a compatible stack.",
+      "issues": [
+        481,
+        508,
+        518
+      ]
+    },
+    {
+      "id": "S25",
+      "title": "UnderminersTeam/UndertaleModTool/README.md",
+      "url": "https://github.com/UnderminersTeam/UndertaleModTool/blob/f43e12c445c37d50dc6244caa12ccab232983f3f/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "f43e12c445c37d50dc6244caa12ccab232983f3f",
+      "status": "source_inspected",
+      "finding": "Linux CLI supported; VM code recovery is distinct from YYC; source build has its own .NET requirements.",
+      "issues": [
+        498,
+        499,
+        518
+      ]
+    },
+    {
+      "id": "S26",
+      "title": "UnderminersTeam/UndertaleModTool/UndertaleModCli/Program.cs",
+      "url": "https://github.com/UnderminersTeam/UndertaleModTool/blob/f43e12c445c37d50dc6244caa12ccab232983f3f/UndertaleModCli/Program.cs",
+      "retrieved": "2026-10-30",
+      "revision": "f43e12c445c37d50dc6244caa12ccab232983f3f",
+      "status": "source_inspected",
+      "finding": "Actual info and dump --sprites/--textures/--code options inspected; prefer fresh export directories.",
+      "issues": [
+        498,
+        499,
+        500
+      ]
+    },
+    {
+      "id": "S27",
+      "title": "UnderminersTeam/UndertaleModTool/SCRIPTS.md",
+      "url": "https://github.com/UnderminersTeam/UndertaleModTool/blob/f43e12c445c37d50dc6244caa12ccab232983f3f/SCRIPTS.md",
+      "retrieved": "2026-10-30",
+      "revision": "f43e12c445c37d50dc6244caa12ccab232983f3f",
+      "status": "source_inspected",
+      "finding": "Separate exporters cover code, assembly, textures, sprites, masks, sounds, fonts and rooms; room PNG script is Windows GUI only.",
+      "issues": [
+        499,
+        500,
+        501,
+        502
+      ]
+    },
+    {
+      "id": "S28",
+      "title": "UnderminersTeam/Underanalyzer/README.md",
+      "url": "https://github.com/UnderminersTeam/Underanalyzer/blob/4ff50a866b4c1a7acee8cebe6a56d6a48709b453/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "4ff50a866b4c1a7acee8cebe6a56d6a48709b453",
+      "status": "source_inspected",
+      "finding": "VM analysis/compiler/decompiler library, not a YYC-native decompiler; API stability needs a pin.",
+      "issues": [
+        499
+      ]
+    },
+    {
+      "id": "S29",
+      "title": "Power Bomberman developer release post",
+      "url": "https://www.bombermanboard.com/viewtopic.php?t=1925",
+      "retrieved": "2026-10-30",
+      "revision": "0.7.8c advertised",
+      "status": "source_inspected",
+      "finding": "Developer still lists 0.7.8c (1 March 2026), platform clients and matching optional server; archive hashes remain to collect.",
+      "issues": [
+        498,
+        400,
+        506
+      ]
+    },
+    {
+      "id": "S30",
+      "title": "Jyamarui mod author's instructions",
+      "url": "https://randomhoohaas.flyingomelette.com/shr/jyamarui/",
+      "retrieved": "2026-10-30",
+      "revision": "0.7.7-era example",
+      "status": "source_inspected",
+      "finding": "Firsthand Power 0.7.7+ data.win/UTMT sprite replacement example, including embedded texture and menu icon dependencies.",
+      "issues": [
+        498,
+        500,
+        507
+      ]
+    },
+    {
+      "id": "S31",
+      "title": "Saturn sprite ripper's catalogue",
+      "url": "https://randomhoohaas.flyingomelette.com/spr/bomberman.html",
+      "retrieved": "2026-10-30",
+      "revision": null,
+      "status": "source_inspected",
+      "finding": "Author reports VRAM/memory editing and missing Normal-only Bomberman/Tirra animations; useful coverage gap, not proof of our output.",
+      "issues": [
+        487,
+        515
+      ]
+    },
+    {
+      "id": "S32",
+      "title": "Master-mode TAS authors' submission discussion",
+      "url": "https://tasvideos.org/Forum/Topics/15420",
+      "retrieved": "2026-10-30",
+      "revision": null,
+      "status": "firsthand_hypothesis",
+      "finding": "Firsthand collision, subpixel and held/thrown/kicked bomb timing leads. Search retrieved text; direct page fetch restricted.",
+      "issues": [
+        493,
+        492,
+        397
+      ]
+    },
+    {
+      "id": "S33",
+      "title": "kingshriek SSF tools and notes",
+      "url": "https://snesmusic.org/hoot/kingshriek/ssf/",
+      "retrieved": "2026-10-30",
+      "revision": null,
+      "status": "source_inspected",
+      "finding": "Driver-specific sound-memory/tone/sequence tools, false-positive and DSP cautions; must identify Bomberman's driver first.",
+      "issues": [
+        488
+      ]
+    },
+    {
+      "id": "S34",
+      "title": "niekvlessert/ssfplay_tools/README.md",
+      "url": "https://github.com/niekvlessert/ssfplay_tools/blob/a28e0d7e14a3dc04a486ea26f30bc52edad3dc4d/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "a28e0d7e14a3dc04a486ea26f30bc52edad3dc4d",
+      "status": "source_inspected",
+      "finding": "Headless SSF WAV/VGM and triggered-sample tools; active samples only, Mednafen lineage, padded WAV defaults.",
+      "issues": [
+        488,
+        513
+      ]
+    },
+    {
+      "id": "S35",
+      "title": "vgmtrans/vgmtrans/README.md",
+      "url": "https://github.com/vgmtrans/vgmtrans/blob/a6af8d2e593b6c2c6602849f75687b505ae258fc/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "a6af8d2e593b6c2c6602849f75687b505ae258fc",
+      "status": "source_inspected",
+      "finding": "Sega sequence/instrument support is a candidate decoder after format identification, not universal driver support.",
+      "issues": [
+        488
+      ]
+    },
+    {
+      "id": "S36",
+      "title": "FFmpeg Sega FILM demuxer",
+      "url": "https://ffmpeg.org/doxygen/8.1/segafilm_8c_source.html",
+      "retrieved": "2026-10-30",
+      "revision": "FFmpeg 8.1 documentation",
+      "status": "source_inspected",
+      "finding": "Recognizes FILM/FDSC/STAB and video/audio packets; prefer this route for Saturn CPK over unrelated CRI CPK tools.",
+      "issues": [
+        489
+      ]
+    },
+    {
+      "id": "S37",
+      "title": "sonsegajp/SaturnRecomp/README.md",
+      "url": "https://github.com/sonsegajp/SaturnRecomp/blob/26c9715e5493054b8a205aa31d73d8f125fdd8f5/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "26c9715e5493054b8a205aa31d73d8f125fdd8f5",
+      "status": "source_inspected",
+      "finding": "Additional toolkit lead explicitly says public playable path is interpreted, complete AOT emitter not present; defer adoption.",
+      "issues": [
+        479,
+        509
+      ]
+    },
+    {
+      "id": "S38",
+      "title": "ecruells/resident-evil-pc-decomp/README.md",
+      "url": "https://github.com/ecruells/resident-evil-pc-decomp/blob/76119e852733d6d58c76888ece32f879a36bf6a0/README.md",
+      "retrieved": "2026-10-30",
+      "revision": "76119e852733d6d58c76888ece32f879a36bf6a0",
+      "status": "source_inspected",
+      "finding": "Different-game prior art for native reconstruction and asset tooling; no evidence its formats equal Bomberman's.",
+      "issues": [
+        509
+      ]
+    },
+    {
+      "id": "S39",
+      "title": "Ghidra current installation requirements",
+      "url": "https://github.com/NationalSecurityAgency/ghidra",
+      "retrieved": "2026-10-30",
+      "revision": null,
+      "status": "documentation_inspected",
+      "finding": "Current main documentation calls for JDK 25; do not mix it blindly with GhidraMCP's documented 12.1.4/Java 21 stack.",
+      "issues": [
+        481,
+        508,
+        518
+      ]
+    }
+  ]
+}

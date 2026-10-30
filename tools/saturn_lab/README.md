@@ -197,3 +197,13 @@ canonical observations and reports the first differing frame/field. See
 [Saturn execution plan](../../docs/restart/SATURN_RECONSTRUCTION.md).
 The comparator's synthetic tests do not establish reference-game fidelity.
 
+## Bounded original kernel probe
+
+`probe_kernel.py` prepares EXP-SAT-CODE-001 for the USA `0600A4B0` helper.
+It verifies the accepted kernel SHA-256 and upstream SHA-1 plus three pinned
+interpreter source files, checks 256 inputs with instruction limits, and writes
+one new JSON report. It does not fetch dependencies or contain original bytes.
+See [the source investigation and exact host recipe](../../docs/restart/research/2026-10-30-deep-dive.md).
+Run it under the existing unprivileged research environment with private inputs
+and a fresh private report path. A pass is CPU-only evidence for this bounded
+hypothesis, not hardware/timing, whole-game or graphics parity.
