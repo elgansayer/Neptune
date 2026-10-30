@@ -3620,7 +3620,8 @@
       "acceptance": [
         "Filter region, mode, seats, latency and pack compatibility",
         "keep private rooms out of public results",
-        "handle stale listings and full-room races"
+        "handle stale listings and full-room races",
+        "List compatible player-hosted servers with declared modes, required content digests and reachable endpoints, validate listing ownership and expire stale advertisements"
       ],
       "depends_on": [
         "ROOM-001"
@@ -3664,7 +3665,8 @@
       "acceptance": [
         "Lock rules, versions, packs and roster at countdown",
         "invalidate readiness on relevant changes",
-        "reject clients with mismatched content hashes"
+        "reject clients with mismatched content hashes",
+        "Validate completed map, mode, item and selected-character downloads before readiness, refresh the session contract on pre-start roster or character changes and define safe boundaries for later changes"
       ],
       "depends_on": [
         "ROOM-001",
@@ -3820,7 +3822,8 @@
       "acceptance": [
         "Measure available endpoint latency before joining",
         "expose selected region and fallback",
-        "avoid silent mid-match server moves"
+        "avoid silent mid-match server moves",
+        "Allow direct connection to compatible player-hosted servers independently of the official directory"
       ],
       "depends_on": [
         "ROOM-001"
@@ -4224,8 +4227,9 @@
       "title": "Define versioned pack manifests and stable identifiers",
       "acceptance": [
         "Require namespaced IDs, author, version, dependencies and content types",
-        "reject duplicate IDs and incompatible schemas",
-        "provide precise file/field diagnostics"
+        "reject duplicate registrations within a resolved session and incompatible schemas, immutable versions of the same logical ID may coexist in storage",
+        "provide precise file/field diagnostics",
+        "Reserve built-in namespaces and reject shadowing of existing content IDs or resource paths, new variants register new IDs while originals remain selectable"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -4267,7 +4271,8 @@
       "acceptance": [
         "Verify archive hashes before activation",
         "deduplicate immutable files",
-        "recover from interruption without partially enabled content"
+        "recover from interruption without partially enabled content",
+        "Isolate pack versions without mounting replacement resources into the engine root, test two additions coexisting and attempted overwrites failing"
       ],
       "depends_on": [
         "PACK-002",
@@ -4312,7 +4317,8 @@
       "acceptance": [
         "Declare required engine, renderer, bot and rules capabilities",
         "compute compatible session sets",
-        "explain which dependency prevents play"
+        "explain which dependency prevents play",
+        "Negotiate the exact server content lock and selected-character descriptors before readiness, distinguish cosmetic inventory from simulation-affecting capabilities"
       ],
       "depends_on": [
         "PACK-001",
@@ -4401,7 +4407,8 @@
       "acceptance": [
         "Keep competitive cosmetics mechanically equivalent by default",
         "allow explicit authored class rules in declared modes",
-        "show gameplay-affecting choices before joining"
+        "show gameplay-affecting choices before joining",
+        "Carry each participant's selected character ID and immutable digest through the validated server content pipeline to other clients and late joiners, including unpublished session uploads, without altering hitboxes or granting abilities"
       ],
       "depends_on": [
         "PACK-007",
@@ -4515,7 +4522,8 @@
       "acceptance": [
         "Keep old locked versions while active sessions need them",
         "migrate only supported save schemas",
-        "demonstrate failed upgrade rollback without lost progress"
+        "demonstrate failed upgrade rollback without lost progress",
+        "Publishing or selecting a new release preserves old immutable releases pinned by saves and replays and leaves baseline content unchanged"
       ],
       "depends_on": [
         "PACK-002",
@@ -4538,7 +4546,7 @@
       "title": "Implement pack enablement, profiles and conflict diagnostics",
       "acceptance": [
         "Allow named local content profiles",
-        "report conflicting overrides with provenance",
+        "reject duplicate registrations and replacement overrides with provenance, variants require new IDs",
         "ensure disabling a pack cannot silently change a running match"
       ],
       "depends_on": [
@@ -4561,7 +4569,8 @@
       "acceptance": [
         "Ship an original character, map, item and mode through documented schemas",
         "remove privileged loading assumptions",
-        "use the same validation path as community packs"
+        "use the same validation path as community packs",
+        "Verify adding and removing compatible community packs leaves built-in IDs, assets and default Saturn settings unchanged, sample definitions must not require pack-ID-specific engine branches"
       ],
       "depends_on": [
         "PACK-007",
@@ -6127,7 +6136,8 @@
       "acceptance": [
         "Resume interrupted transfers and verify hashes",
         "install a complete compatible set atomically",
-        "play installed packs while the catalogue is unavailable"
+        "play installed packs while the catalogue is unavailable",
+        "Server selection automatically fetches missing exact versions and reuses verified cached bytes, test clean and cached joins, switching server locks and late-arriving custom characters without mandatory public workshop publication"
       ],
       "depends_on": [
         "WORKSHOP-001",
@@ -8305,7 +8315,8 @@
       "acceptance": [
         "Document tested start, upgrade, backup and recovery commands",
         "provide a minimal original-content deployment",
-        "verify instructions from a fresh supported environment"
+        "verify instructions from a fresh supported environment",
+        "Demonstrate a fresh player-hosted server publishing a listing with a custom map and mode and accepting a clean client that automatically obtains its required creations"
       ],
       "depends_on": [],
       "existing_issue": null,

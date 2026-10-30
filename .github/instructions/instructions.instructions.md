@@ -8,6 +8,12 @@ browser/desktop cross-play, portable community packs and a complete community si
 Follow #file:docs/restart/REVERSE_ENGINEERING.md and #file:docs/restart/BOTS.md.
 Read #file:docs/restart/COMMUNITY_CONTENT.md: prioritise multiplayer and bots, and
 support creator power-ups and complete solo/co-op stories through public pack APIs.
+The owner's clarified ethos is Saturn-identical starting presentation/behaviour,
+then additions-only extensibility. Mods add namespaced content; never overwrite
+built-ins/other packs or silently change defaults. Player-hosted server discovery,
+automatic exact-version downloads and automatic sharing of each participant's
+custom character are core acceptance journeys. Use clean clients to prove them.
+Read #file:docs/restart/PROJECT_EVALUATION.md for current source-backed gaps.
 Inspect PRs #49/#51 and #50 before choosing new work; preserve the active server task.
 Power Bomberman is a second reference; read #file:docs/restart/POWER_BOMBERMAN.md,
 #file:docs/restart/FACTORY_PLAYBOOK.md and #file:docs/restart/NETPLAY_BENCHMARKS.md.
