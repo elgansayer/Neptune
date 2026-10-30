@@ -199,6 +199,11 @@ The comparator's synthetic tests do not establish reference-game fidelity.
 
 ## Bounded original kernel probe
 
+The [first real-original result](../../docs/restart/research/2026-10-30-saturn-original-kernel-result.md)
+records two identical 256-case USA kernel runs and an actual altered-return
+negative control. This is partial CPU-only evidence; independent emulator/caller,
+timing and graphics validation remain open.
+
 `probe_kernel.py` prepares EXP-SAT-CODE-001 for the USA `0600A4B0` helper.
 It verifies the accepted kernel SHA-256 and upstream SHA-1 plus three pinned
 interpreter source files, checks 256 inputs with instruction limits, and writes

@@ -1,0 +1,116 @@
+{
+  "schema": "neptune.original-kernel-host-evidence.v1",
+  "experiment": "EXP-SAT-CODE-001",
+  "scope": "partial original-source CPU semantics; not emulator/caller/timing/graphics parity",
+  "coordinator": "VPS Codex /root",
+  "base": "b4cc6de97976ac247ca3f77d73acaa6c4380257f",
+  "source_extraction": {
+    "schema": "neptune.kernel-extraction.v1",
+    "status": "success",
+    "game": "USA MK-81070 V1.003",
+    "file": "BOMSS/0KRNL.BIN",
+    "bytes": 786432,
+    "sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+    "sha1": "6fc53e5715d89cae7b4684bb3b65165ac1865736",
+    "extent": [
+      {
+        "extent_lba": 3854,
+        "byte_length": 786432,
+        "sector_count": 384
+      }
+    ],
+    "edc_verified_kernel_sectors": 384,
+    "cue_sha256": "785e6f9fbcb8639902e5239b3fb560555e17a3cb8c91a38cbdd8aaeed03ef9da",
+    "source_track_sha256": "34c3c15b6858971fd2f34fd1a98be7c8308b4141c1a8804288611bb2542c126c",
+    "accepted_media_report_sha256": "f98d4e9be0f4a111080273b9b86ee3ffdc0f3a3c3f0c9fbaf41140c6d69c51b2",
+    "all_30_track_identities_match": true,
+    "source_modules": {
+      "cue.py": "a0147633b474ccf3b81184b4be7ab0691562f6246177caa1b3ff0293a029a710",
+      "iso9660.py": "811668c4d8628ee8f03001ffb070977e82d1aee1aec23e7c00f54de144da31ce",
+      "classify.py": "bd5463e8eeb8aba877770a562f9acf5e05bf5d7b7472ca108d492e0d62b06f26",
+      "ipbin.py": "49789d084e685136648db33e1e91b5d4a0a665bc070ddcc524191e29d7c796ca"
+    },
+    "recipe_sha256": "b10969ed7aa41dbe412cb3a3e23d985acb2543cf43825875da91a8de2bc9fa55"
+  },
+  "runtime": {
+    "os": "Linux-6.12.105+deb13-cloud-amd64-x86_64-with-glibc2.41",
+    "python": "3.13.5"
+  },
+  "runs": {
+    "fresh_processes": 2,
+    "exit_codes": [
+      0,
+      0
+    ],
+    "byte_identical": true,
+    "report_sha256": "12e4e02aa382172f5aa77c56534cd339ae8eb486a464f9eac082c9f98250fa6a",
+    "results_sha256": "76c3b831d03cbe47a27db58ca6321e5b9f788396b3a8fc70119a69a8f6fa047b"
+  },
+  "instrumented_cpu": {
+    "calls": 256,
+    "all_returned_to_sentinel": true,
+    "r4_and_stack_preserved": true,
+    "instruction_counts": [
+      5,
+      8,
+      11,
+      14,
+      15
+    ],
+    "actual_byte_mutation": {
+      "kind": "in-memory altered original return immediate; original file unchanged",
+      "pc": "0x600a4b8",
+      "replacement_return": 5,
+      "mismatching_cases": 128,
+      "comparator_failure": "Mismatch for 0x00004000: expected 3, got 5",
+      "mutant_sha256": "8541da8208d6ec217f2ec63483563bdba3832945002a2a108ddcba3e7b73ed32"
+    },
+    "limitations": [
+      "Same pinned CPU interpreter and decoder, not an independent emulator oracle",
+      "Return sentinel replaces original caller; no original timing/device semantics"
+    ]
+  },
+  "instrumented_cpu_private_report_sha256": "49b69fe123d28145248ebdb2d77821b41a611cdb55b8fb50773d4671b783fe10",
+  "observed_instruction_pcs": [
+    "0x600a4b0",
+    "0x600a4b2",
+    "0x600a4b4",
+    "0x600a4b6",
+    "0x600a4b8",
+    "0x600a4ba",
+    "0x600a4bc",
+    "0x600a4be",
+    "0x600a4c0",
+    "0x600a4c2",
+    "0x600a4c4",
+    "0x600a4c6",
+    "0x600a4c8",
+    "0x600a4ca",
+    "0x600a4cc",
+    "0x600a4dc",
+    "0x600a4de",
+    "0x600a4e0",
+    "0x600a4e2",
+    "0x600a4e4",
+    "0x600a4e6",
+    "0x600a4e8",
+    "0x600a4ea"
+  ],
+  "observed_data_literals": [
+    "0x0600A4CE",
+    "0x0600A4D0",
+    "0x0600A4D8",
+    "0x0600A5B8"
+  ],
+  "failed_setup_attempt": "First extraction wrapper expected an enriched summary field absent from raw parser records; failed before writing a kernel/report. Fixed wrapper used the exact parsed extent list. No original-source experiment failed.",
+  "limitations": [
+    "No original gameplay/caller validation",
+    "No timing or hardware equivalence",
+    "Shared upstream interpreter is not an independent oracle",
+    "No spritesheet extracted",
+    "Not exhaustive over 32-bit input"
+  ],
+  "provider_calls_started": 0,
+  "new_variable_provider_cost_usd": 0,
+  "account_wide_spend": "not independently metered; no budget change"
+}
