@@ -149,3 +149,13 @@ Apply the existing exact-head/current-base test gate with no mandatory AI/human
 approving review. Trusted private receipts #511 prove the applicable reference
 experiment; ordinary metadata CI does not. Preserve completed evidence, report
 failed hypotheses, and reconcile active ownership before resuming work.
+
+## Applied web and source investigation (30 October)
+
+The [deep-dive report](research/2026-10-30-deep-dive.md) and
+[39-source registry](research/sources-2026-10-30.json) add pinned upstream
+function candidates, concrete graphics/audio exporters, comparison hazards and
+Power/Ghidra capability checks. `tools/saturn_lab/probe_kernel.py` is the bounded
+EXP-SAT-CODE-001 entrypoint for the accepted USA kernel. It has synthetic contract
+coverage; the original-file VPS execution and independent trace remain pending.
+Use the report's issue map and preserve current owners.
