@@ -95,6 +95,22 @@ power-up/mode and a saved solo/co-op story as their runtimes become available.
 
 ## Priority and scope
 
+Customisation is the defining product advantage: a player brings their own avatar,
+and a server admin creates/selects their own maps, game types and power-ups, with
+automatic sharing making those creations playable together. This capability must
+drive implementation choices and acceptance, not remain an optional workshop layer.
+Prioritise a working creator-to-play journey over simply growing the stock roster,
+map count or reference feature checklist. This is our intended differentiation
+from Power Bomberman; actual comparative feature claims still need evidence.
+
+Development continues the existing pack experiments. Inspect the player, Tirra
+and stage authoring projects, their PCK exports, runtime loading/animation paths
+and JSON map APIs before inventing replacements. Preserve useful atlas/timing,
+tile-layer, metadata, preview and export work; migrate it incrementally into the
+additive public interfaces. Existing trusted PCK exports are a foundation to adapt,
+not evidence that automatic, data-only online sharing is already delivered. The
+[project evaluation](PROJECT_EVALUATION.md) inventories the concrete starting points.
+
 Neptune is a multiplayer-first, open-source community platform with strong bots.
 Solo play and co-op are first-class supported modes. Creators must eventually be
 able to publish complete stories as well as characters, maps, power-ups and modes.
