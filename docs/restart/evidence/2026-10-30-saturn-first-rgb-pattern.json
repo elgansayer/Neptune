@@ -1,0 +1,63 @@
+{
+  "actual_changed_colour_bit_detected": true,
+  "all_native_words_recovered_from_png": true,
+  "capture": "SATURN-GFX-REAL-001",
+  "command_byte_offset": 96,
+  "command_type": 2,
+  "comparison_domain": "Source-oriented native RGB555 words and explicit bit-replicated RGBA; not final display composition",
+  "frame": 3000,
+  "game": "USA MK-81070 V1.003",
+  "height": 160,
+  "mode": "rgb555",
+  "native_words_sha256": "6eddba01c06f5dd7bde97b67072a753aa71d14346d1a53604065efd17dff9cdd",
+  "not_a_player_animation_or_sheet": true,
+  "pixels_compared": 51200,
+  "png_sha256": "41007b8fceb7a4e6b7e1f4666fe7c6383e14341b895da7d6c1c5bfbbae019667",
+  "private_publication": {
+    "asset_path": "saturn/usa-mk81070-v1003/runtime-captures/SATURN-GFX-REAL-001/frame-003000-command-000060/source-pattern.png",
+    "base": "b55b5a55a4c76c73f4622ffcd20d92bf4755d8b3",
+    "branch_deletion_requested": false,
+    "checks": [
+      {
+        "app": 15368,
+        "conclusion": "success",
+        "head": "98ac29fb8bbc60961a1d1f1075b462aa70a64176",
+        "id": 123987788337,
+        "name": "Saturn capture validation",
+        "status": "completed"
+      },
+      {
+        "app": 15368,
+        "conclusion": "success",
+        "head": "98ac29fb8bbc60961a1d1f1075b462aa70a64176",
+        "id": 123987787312,
+        "name": "Saturn capture validation",
+        "status": "completed"
+      }
+    ],
+    "head": "98ac29fb8bbc60961a1d1f1075b462aa70a64176",
+    "merge": "e1e31236e5288f6181f411bf4d2feca04f022ad2",
+    "merge_parents": [
+      "b55b5a55a4c76c73f4622ffcd20d92bf4755d8b3",
+      "98ac29fb8bbc60961a1d1f1075b462aa70a64176"
+    ],
+    "merged_at": "2026-10-30T09:26:32Z",
+    "normal_merge": true,
+    "pr": 1,
+    "private": true,
+    "remote_png_bytes": 8518,
+    "remote_png_sha256": "41007b8fceb7a4e6b7e1f4666fe7c6383e14341b895da7d6c1c5bfbbae019667",
+    "repo": "elgansayer/SaturnBomberman-Assets",
+    "schema": "neptune.private-asset-publication.v1"
+  },
+  "recipe_sha256": "91191fd2ae5b9b0972c28d81e088fb14ad88f47427eee68ec405006d7f3f8e27",
+  "rgba_sha256": "61871ccfb012cac0e2c48fc12fe2f1e12be56a714849108b550266c16e2c65ae",
+  "schema": "neptune.original-rgb-pattern-proof.v1",
+  "scope": "One actual observed source pattern; no player/scene parity or animation completeness",
+  "source_byte_offset": 32768,
+  "source_length": 102400,
+  "status": "success",
+  "subject": "Observed intro-like image; subject/resource mapping remains unidentified",
+  "two_exports_byte_identical": true,
+  "width": 320
+}
