@@ -156,6 +156,21 @@ The [deep-dive report](research/2026-10-30-deep-dive.md) and
 [39-source registry](research/sources-2026-10-30.json) add pinned upstream
 function candidates, concrete graphics/audio exporters, comparison hazards and
 Power/Ghidra capability checks. `tools/saturn_lab/probe_kernel.py` is the bounded
-EXP-SAT-CODE-001 entrypoint for the accepted USA kernel. It has synthetic contract
-coverage; the original-file VPS execution and independent trace remain pending.
+EXP-SAT-CODE-001 entrypoint for the accepted USA kernel. The original-file VPS
+execution is now documented in [PR #524's result](research/2026-10-30-saturn-original-kernel-result.md):
+two fresh 256-case runs and an altered-original-return negative control. This is
+CPU-only evidence; independent original-emulator caller/timing validation remains pending.
 Use the report's issue map and preserve current owners.
+
+## Saturn-only VPS research handoff (30 October)
+
+The [source-checked VPS playbook](research/2026-10-30-saturn-vps-playbook.md),
+[18 bounded experiments](research/saturn-vps-experiments-2026-10-30.json) and
+[pinned source receipts](research/saturn-vps-sources-2026-10-30.json) prioritize
+original USA kernel execution, named Beetle state extraction and one real sheet.
+New findings include native-order state payloads, coherent VDP2 palette context,
+a configuration-only Ymir headless executable, and conflicting upstream object
+layout notes requiring original validation. These are source findings and proposed
+experiments, reconciled with #524's existing original-kernel result. Preserve #484's active ownership and
+existing factory budgets; do not reset the delivered first-success email alert.
+
