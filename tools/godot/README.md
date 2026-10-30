@@ -121,12 +121,16 @@ The regression requires zero ticks while paused and exactly one native update pe
 active manager physics callback at every tested cadence. It does not establish
 complete policy determinism or tactical quality.
 
-## Known project failures
+## Historical project failures
 
-The full existing suite currently fails correctly: five legacy scenarios cannot
+The original runner-baseline audit found failures: five legacy scenarios cannot
 find their game instance, one `_ready()` script lacks a suite contract, and one
 standalone `SceneTree` script is not a Node suite. Migrate these with real scenario
 assertions; do not exclude or reinterpret them to obtain green CI.
+
+The current upgrade checks and compatibility findings are recorded in
+[the upgrade evidence](../../docs/restart/evidence/2026-10-30-godot-upgrade.json).
+Use current CI results for the full-suite status.
 
 Startup role/duplicate-binding work is tracked in #47. CI is explicitly named as
 infrastructure/addon validation, not full game health or Saturn parity.
