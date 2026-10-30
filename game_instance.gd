@@ -1603,7 +1603,8 @@ func sync_state_to_clients():
 					"tile_size": GameConfig.TILE_SIZE,
 					"width": GameConfig.map_width,
 					"height": GameConfig.map_height,
-					"name": GameConfig.map_name
+					"name": GameConfig.map_name,
+					"render_geometry": not room_map_path.is_empty()
 				}
 			}
 			# Send map reliably (TCP) to avoid MTU issues on first sync

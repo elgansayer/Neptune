@@ -12,14 +12,18 @@ def run_capacity_checks(base, env, evidence, bounded):
                                        ("mixed", 6, 6, 12, False),
                                        ("preset-four", 4, 0, 4, False),
                                        ("auto-fill-four", 1, 3, 4, True),
-                                       ("auto-fill-twelve", 2, 10, 12, True)]:
+                                       ("auto-fill-twelve", 2, 10, 12, True),
+                                       ("standard-arena", 2, 2, 4, True),
+                                       ("wide-arena", 2, 2, 4, True)]:
+        map_name, width, height = {"standard-arena": ("neptune_standard", 15, 13),
+                                   "wide-arena": ("neptune_wide", 27, 13)}.get(name, ("neptune_twelve", 17, 13))
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as port_reservation:
             port_reservation.bind(("127.0.0.1", 0))
             port = port_reservation.getsockname()[1]
         seats = humans + bots
         options = ["--server-port=" + str(port), "--room-seats=" + str(seats),
                    "--room-preset-limit=" + str(preset),
-                   "--room-map=res://maps/neptune_twelve.json"]
+                   "--room-map=res://maps/" + map_name + ".json"]
         if auto_fill:
             options += ["--room-fill-to=" + str(seats), "--room-bot-personality=DEFENSIVE"]
         command = base + ["res://main_server.tscn", "--", *options]
@@ -40,7 +44,8 @@ def run_capacity_checks(base, env, evidence, bounded):
                 command = base + ["res://tools/godot/room_capacity_probe.tscn", "--",
                                   "--runtime-role=test", "--server-port=" + str(port),
                                   "--probe-humans=" + str(humans), "--probe-bots=" + str(bots),
-                                  "--probe-preset=" + str(preset)]
+                                  "--probe-preset=" + str(preset),
+                                  "--probe-map-width=" + str(width), "--probe-map-height=" + str(height)]
                 if auto_fill: command.append("--probe-auto-fill")
                 code, text = bounded("room-" + name + "-clients", command)
                 markers = [line.split("=", 1)[1] for line in text.splitlines()

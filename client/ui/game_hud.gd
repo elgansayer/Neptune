@@ -1,6 +1,8 @@
 extends CanvasLayer
 class_name GameHUD
 
+signal arena_inset_changed
+
 const RenderingLayers = preload("res://shared/rendering_layers.gd")
 
 # In-Game HUD displaying match timer, player stats, and game status
@@ -48,7 +50,7 @@ func _ready():
 	# HUD should be above the map but BELOW players.
 	# Players are rendered in a higher CanvasLayer (see GameView PlayersCanvas).
 	layer = RenderingLayers.CANVAS_UI
-	follow_viewport_enabled = true
+	follow_viewport_enabled = false
 	
 	# Create semi-transparent background for countdown
 	countdown_bg = ColorRect.new()
@@ -392,8 +394,10 @@ func _update_face_spacing():
 	player_faces_container.add_theme_constant_override("h_separation", 4)
 	player_faces_container.add_theme_constant_override("v_separation", 2)
 	var rows := ceili(count / 6.0)
+	var previous_inset: float = $TopBar.offset_bottom
 	$TopBar.offset_bottom = 24 + maxi(0, rows - 1) * 20
 	player_faces_container.offset_bottom = 20 + maxi(0, rows - 1) * 20
+	if previous_inset != $TopBar.offset_bottom: arena_inset_changed.emit()
 
 func show_countdown(time_remaining: float):
 	"""Display animated countdown before match starts"""
