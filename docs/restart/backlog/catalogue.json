@@ -4229,7 +4229,8 @@
         "Require namespaced IDs, author, version, dependencies and content types",
         "reject duplicate registrations within a resolved session and incompatible schemas, immutable versions of the same logical ID may coexist in storage",
         "provide precise file/field diagnostics",
-        "Reserve built-in namespaces and reject shadowing of existing content IDs or resource paths, new variants register new IDs while originals remain selectable"
+        "Reserve built-in namespaces and reject shadowing of existing content IDs or resource paths, new variants register new IDs while originals remain selectable",
+        "Inspect existing player, Tirra and stage authoring projects, exports and loaders first, record reuse/adaptation decisions and connect their content to the public identity contract"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -4363,7 +4364,8 @@
       "acceptance": [
         "Specify named states, directions, timings, anchors and fallback animations",
         "validate missing frames",
-        "load an original character with no engine edits"
+        "load an original character with no engine edits",
+        "Extend the existing character atlas and animation workflow, verify source-to-export reproducibility and preserve compatible names, timing, regions and trim margins rather than restarting authoring"
       ],
       "depends_on": [
         "PACK-006"
@@ -4431,7 +4433,8 @@
       "acceptance": [
         "Store layers, spawns, bounds, hazards and objectives with stable references",
         "validate unsupported tiles and missing resources",
-        "load the same map in editor, server and client"
+        "load the same map in editor, server and client",
+        "Reuse existing stage TileMap authoring, MapPackLoader conversion and JSON MapLoader/MapManager APIs, retain map identity/version, dimensions, spawns and soft-block settings through export/import"
       ],
       "depends_on": [
         "PACK-006",

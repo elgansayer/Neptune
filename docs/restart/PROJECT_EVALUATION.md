@@ -19,6 +19,61 @@ character, a second player finding that server and automatically downloading bot
 and both completing a match. Advance a measured Saturn battle/campaign slice
 alongside it. Finish active bounded work and check current ownership first.
 
+## Existing pack experiments to extend
+
+Owner clarification and follow-up source inspection, 30 October 2026, from
+`7f64513a7835d03213d0a385cfdc8008ca131456`: player and map packs already exist
+as early development experiments. They are substantive starting points, not empty
+stubs. Customisation is the defining product advantage: personal avatars and
+admin-authored maps, game types and power-ups, shared automatically in play.
+
+| Existing work | What to preserve and extend |
+| --- | --- |
+| [Robin Hood authoring project](<../../pack projects/characters/bomberman-player-robin-hood/player.tscn>) and [player PCK](../../characters/player-robin-hood.pck), 88,828 bytes | Script-free visual scene, 36 named animations, frame timing, 71 atlas resources, trim margins and sprite anchor. Client animation names are an existing contract to preserve during per-player selection work. |
+| [Tirra authoring project](<../../pack projects/tirra/blue/tirra.tscn>) and [Tirra PCK](../../tirra/blue-tirra.pck), 123,464 bytes | Baby/teen/adult art, animation/frame data, rider offsets and presentation transitions. Separate declarative presentation data from its trusted controller when designing public packs. |
+| [Stage authoring project](<../../pack projects/stages/bomberman-stage1/Stage.tscn>) and [stage PCK](../../maps/stage1.pck), 24,180 bytes | Existing floor/wall and spawn/soft-block tile layers, background art and [map metadata](<../../pack projects/stages/bomberman-stage1/MapMetadata.gd>). Preserve identity, version, geometry, spawns and soft-block settings when exporting data. |
+| [Map conversion](../../shared/maps/map_pack_loader.gd), [JSON loader](../../shared/maps/map_loader.gd) and [MapManager](../../shared/maps/map_manager.gd) | Reuse scene-to-grid conversion, file/generated/custom sources, validation, metadata, listing/previews and saving. Strengthen boundaries and missing fields incrementally. |
+| [Map preview/demo](../../shared/maps/map_test.gd) and [arena tests](../../tests/test_arena_layouts.gd) | Existing cycling, validation and export controls plus geometry/framing regressions are useful starting points for creator tooling. Verify old documentation against their actual paths. |
+
+The exported PCKs report format v3 / Godot 4.5.1 and use generic root paths. They
+also contain executable resources: the player export includes importer scripts,
+Tirra includes a controller, and the map includes a metadata script. Keep these
+trusted experiments usable while author-time conversion and public data-only
+loading are introduced; do not expose raw PCK mounting to automatic server downloads.
+The current [PCK inspector](../../inspect-pck.py) assumes an older fixed directory
+layout, so do not use its file-count output to certify these v3 archives.
+
+Follow-up inspection found 38 stale directional atlas paths in the Robin Hood
+source scene. The checked-in resources use west/east/north/south directories;
+the scene referenced left/right/up/down directories. The repair changes only
+those resource paths to existing UID-identical atlas entries. Animation names,
+timings, anchors, image regions/margins and the existing PCK bytes are preserved.
+An existing exported binary alone does not prove the current authoring source
+can be rebuilt; fresh import/export validation is part of continuing this work.
+
+Before each content task, record the existing paths and observed behaviour,
+what will be reused/adapted/repaired, and the remaining gap. Extend the stage
+conversion and character atlas workflows with versioned IDs, additive registration,
+per-participant selection and distribution. Do not reimplement map authoring or
+animation handling merely because the final public registry is not yet present.
+
+Follow-up authoring validation used official Godot 4.7.2 stable in disposable
+project copies with writable XDG directories. Fresh player and Tirra imports
+completed without script/engine errors after updating both existing TexturePacker
+copies to upstream v4.3.0 plus the documented unknown-preset return fix. The player
+scene loaded, exported to a fresh PCK and loaded from that PCK in an empty harness.
+Source/export results matched: 36 animations, 77 frame uses, offset `(0, -8)` and
+pixel/timing fingerprint
+`45aa601ba8d012906ad9ef4641b734b7f35e0408fcf64324876d05ed69697c28`.
+The reusable [character authoring check](../../tools/asset_audit/check_character_pack.gd)
+rejected unknown arguments, a missing pack and an empty animation; changing a
+frame sequence's speed changed the fingerprint. All 71 source references also
+matched their checked-in resource UIDs and TexturePacker regions/trim margins.
+Original PCK bytes remain unchanged. See the [authoring guide](<../../pack projects/README.md>)
+for commands, dependency sources, the local importer patch and remaining public
+pack/runtime boundaries. This validates the repaired authoring path, not automatic
+online sharing, a complete public mod API or whole-game Godot 4.7.2 compatibility.
+
 ## Implementation gaps and recommendations
 
 | Priority | Source finding | Recommended change |
@@ -51,6 +106,8 @@ their linked issues are open/unowned. Inspect live issue/PR state before dispatc
    [#254](https://github.com/elgansayer/Neptune-Bomberman/issues/254),
    [#258](https://github.com/elgansayer/Neptune-Bomberman/issues/258)). Prove two
    additions coexist, overwrite attempts fail and interrupted installs remain inactive.
+   Adapt the existing pack projects and conversion paths; new identity/validation
+   work is not a reason to discard their authoring or animation systems.
 2. **One server-to-play journey.** Combine bounded slices of ROOM-004/006/013
    (#123/#255/#131), PACK-007/009/010/016 (#259/#266/#261/#270),
    WORKSHOP-005 (#359) and OPS-012 (#236). A fresh self-hosted server advertises
@@ -99,9 +156,9 @@ complete extraction is not a prerequisite for original creator-system tests.
   A model's completion message, generated catalogue or saved prompt is not evidence
   that a feature works or a continuous factory is running.
 
-## Scope of this update
+## Original evaluation update and validation
 
-This change records the ethos in agent/handoff guidance and strengthens existing
+The initial evaluation change records the ethos in agent/handoff guidance and strengthens existing
 catalogue acceptance for additive content, self-hosting, downloads and character
 sharing. It does not implement those runtime features, change remote GitHub issue
 bodies, deliver instructions to already-running workers, or start a factory.

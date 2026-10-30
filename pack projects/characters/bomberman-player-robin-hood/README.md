@@ -22,6 +22,7 @@ Alternatively, download or clone this repository and copy the contents of the
 * Import sprite sheets as AtlasTextures
 * Supports trimmed sprites (margin)
 * Supports MultiPack
+* Supports normal maps
 
 ## Usage (once the plugin is enabled)
 
@@ -37,6 +38,15 @@ Alternatively, download or clone this repository and copy the contents of the
 
 
 # Release notes
+
+### 4.3.0 (2025-12-08)
+
+* Support sprites with normal map (use CanvasTexture if normal map is present)
+
+### 4.2.0 (2025-06-11)
+
+* Remove sprites no longer present on a sheet
+* Refresh Godot UI after import
 
 ### 4.1.0 (2023-08-28)
 
