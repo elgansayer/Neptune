@@ -20,6 +20,8 @@ claims to verify against code and actual execution, not evidence of correctness.
   cross-play, portable community packs, profiles, detailed stats and a workshop.
 - Independently implement measured Power Bomberman feature coverage in extensible
   Neptune profiles. Preserve separate Saturn defaults and reference evidence.
+- Support standard (non-wide) and wide arenas through the same pack/runtime API,
+  with layout-aware camera/HUD framing and explicit dimensions/spawn capacities.
 - Support twelve-seat extensible rooms, reference-specific original limits, and
   freely selectable installed compatible characters without compulsory unlocks.
 - Preserve the existing Apache-2.0 root licence and upstream notices. Reference

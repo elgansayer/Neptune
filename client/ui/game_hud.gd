@@ -8,14 +8,14 @@ const RenderingLayers = preload("res://shared/rendering_layers.gd")
 # Also handles spectator mode when local player is eliminated
 
 @onready var match_timer: Label = $TopBar/MatchTimer
-@onready var player_faces_container: HBoxContainer = $TopBar/PlayerFaces
+@onready var player_faces_container: GridContainer = $TopBar/PlayerFaces
 @onready var player_name: Label = $BottomLeft/PlayerName
 @onready var bomb_label: Label = $BottomLeft/BombCount/BombLabel
 @onready var range_label: Label = $BottomLeft/RangeIndicator/RangeLabel
 @onready var speed_label: Label = $BottomLeft/SpeedIndicator/SpeedLabel
 
 # Player face tracking - uses placeholder slots from scene
-var player_face_slots: Array = [] # Array of placeholder slot nodes (Player1-4)
+var player_face_slots: Array = [] # Scene slots plus dynamically added room participants
 var player_face_mapping := {} # peer_id -> slot_index
 var player_face_sprites := {} # peer_id -> AnimatedSprite2D
 var player_scene: PackedScene = null # Cached player scene for extracting sprite frames
@@ -204,9 +204,18 @@ func _ready():
 # PLAYER FACE MANAGEMENT
 # ============================================================================
 
-func add_player_face(peer_id: String, _username: String, score: int = 0):
+func update_player_roster(players: Dictionary, participants: Dictionary) -> void:
+	for peer_id in player_face_mapping.keys():
+		if not players.has(peer_id): remove_player_face(peer_id)
+	for peer_id in players:
+		var data: Dictionary = players[peer_id]
+		add_player_face(peer_id, data.get("username", "Player"), data.get("wins", 0), participants.get(peer_id, {}))
+
+func add_player_face(peer_id: String, username: String, score: int = 0, participant: Dictionary = {}):
 	"""Add a player face to the HUD top bar using placeholder slots"""
 	if player_face_mapping.has(peer_id):
+		_update_participant_label(peer_id, username, participant)
+		update_player_score(peer_id, score)
 		return # Already assigned a slot
 	
 	# Find first available slot
@@ -216,6 +225,30 @@ func add_player_face(peer_id: String, _username: String, score: int = 0):
 			slot_index = i
 			break
 	
+	if slot_index == -1 and player_face_slots.size() < Constants.MAX_MATCH_SEATS:
+		var extra := HBoxContainer.new()
+		extra.name = "Player%d" % (player_face_slots.size() + 1)
+		extra.add_theme_constant_override("separation", 1)
+		var face := SubViewportContainer.new()
+		face.name = "FaceViewport"
+		face.custom_minimum_size = Vector2(18, 18)
+		var viewport := SubViewport.new()
+		viewport.name = "SubViewport"
+		viewport.size = Vector2i(18, 18)
+		viewport.transparent_bg = true
+		viewport.handle_input_locally = false
+		viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
+		face.add_child(viewport)
+		face.stretch = true
+		extra.add_child(face)
+		var score_label := Label.new()
+		score_label.name = "Score"
+		score_label.add_theme_font_size_override("font_size", 8)
+		score_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		extra.add_child(score_label)
+		player_faces_container.add_child(extra)
+		slot_index = player_face_slots.size()
+		player_face_slots.append(extra)
 	if slot_index == -1:
 		push_warning("[HUD] No available player face slots!")
 		return
@@ -253,8 +286,34 @@ func add_player_face(peer_id: String, _username: String, score: int = 0):
 	if anim_sprite:
 		player_face_sprites[peer_id] = anim_sprite
 	
+	_update_participant_label(peer_id, username, participant)
 	# Update spacing for even distribution
 	_update_face_spacing()
+
+func _update_participant_label(peer_id: String, username: String, participant: Dictionary) -> void:
+	var slot = player_face_slots[player_face_mapping[peer_id]]
+	var face = slot.get_node("FaceViewport")
+	var badge = face.get_node_or_null("BotBadge") as Label
+	if badge == null:
+		badge = Label.new()
+		badge.name = "BotBadge"
+		badge.text = "BOT"
+		badge.position = Vector2(0, 11)
+		badge.add_theme_font_size_override("font_size", 6)
+		badge.add_theme_color_override("font_outline_color", Color.BLACK)
+		badge.add_theme_constant_override("outline_size", 1)
+		badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		face.add_child(badge)
+	# Only explicit authority metadata identifies bots; names/peer IDs do not.
+	badge.visible = participant.get("type", "") == "bot"
+	var description := username
+	if badge.visible:
+		description += " — Bot"
+		var personality: String = participant.get("personality", "")
+		if not personality.is_empty(): description += " (" + personality.capitalize() + ")"
+	slot.tooltip_text = description
+	face.tooltip_text = description
+
 
 func remove_player_face(peer_id: String):
 	"""Remove a player face from the HUD (hide slot and clear sprite)"""
@@ -327,37 +386,14 @@ func clear_all_player_faces():
 	_update_face_spacing()
 
 func _update_face_spacing():
-	"""Dynamically adjust spacing to evenly distribute player faces"""
-	var visible_count := 0
-	var total_slot_width := 0.0
-	
-	# Count visible slots and calculate total width
-	for slot in player_face_slots:
-		if slot.visible:
-			visible_count += 1
-			# Each slot is FaceViewport (18px) + Score label (~8px) + internal spacing (1px)
-			total_slot_width += 27.0 # Approximate width per slot
-	
-	if visible_count <= 1:
-		# With 0-1 players, use default spacing
-		player_faces_container.add_theme_constant_override("separation", 4)
-		return
-	
-	# Calculate available space and required separation
-	# PlayerFaces container is ~246px wide (296 - 50)
-	var container_width := player_faces_container.size.x
-	if container_width <= 0:
-		container_width = 246.0 # Fallback based on scene offsets
-	
-	# Space to distribute = container width - total slot widths
-	# Gaps = visible_count - 1 (between items)
-	var available_space := container_width - total_slot_width
-	var gap_count := visible_count - 1
-	var separation := int(available_space / gap_count) if gap_count > 0 else 4
-	
-	# Clamp to reasonable values
-	separation = clampi(separation, 2, 60)
-	player_faces_container.add_theme_constant_override("separation", separation)
+	# Keep all twelve participants inside the HUD: at most six faces per row.
+	var count := player_face_mapping.size()
+	player_faces_container.columns = maxi(1, mini(count, 6))
+	player_faces_container.add_theme_constant_override("h_separation", 4)
+	player_faces_container.add_theme_constant_override("v_separation", 2)
+	var rows := ceili(count / 6.0)
+	$TopBar.offset_bottom = 24 + maxi(0, rows - 1) * 20
+	player_faces_container.offset_bottom = 20 + maxi(0, rows - 1) * 20
 
 func show_countdown(time_remaining: float):
 	"""Display animated countdown before match starts"""

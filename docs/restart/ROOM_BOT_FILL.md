@@ -52,3 +52,17 @@ and adds automatic 4/12-seat starts, explicit participant metadata, zero spawn-b
 RPCs, extra-human refusal and invalid startup policy rejection. They do not prove
 browser transport, full rounds, held-out quality, latency/load budgets, host UI,
 human replacement or persistent ranked history. #31 remains open.
+
+## Client participant display
+
+The in-game HUD consumes the authority's `room.participants` metadata. Bot faces
+show a visible `BOT` badge; their tooltip includes the configured personality.
+Names and negative peer IDs alone never identify a bot. The roster supports the
+protocol maximum of twelve faces in two rows of six, retains scores and removes
+faces absent from the next player snapshot. Slot reuse refreshes participant
+identity rather than retaining a departed bot's label.
+
+`tests/test_participant_hud.gd` instantiates the actual HUD scene and checks badge
+identity, tooltip personality, score refresh, snapshot removal, slot reuse and
+layout bounds for twelve participants. These headless checks do not establish
+visual polish, browser rendering, difficulty selection or safe human replacement.
