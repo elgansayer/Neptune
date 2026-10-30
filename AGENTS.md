@@ -38,6 +38,12 @@ claims to verify against code and actual execution, not evidence of correctness.
 
 ## Work and evidence
 
+- Finish authorised changes by committing and pushing them; never leave completed
+  work only in a local checkout. When using a PR, open it and merge after the
+  applicable tests-gated merge requirements pass, or enable auto-merge while
+  checks run. Routine commit, push, PR creation and eligible merge need no further
+  confirmation. Report the remote branch/PR and any concrete merge blocker.
+  Include only task changes; preserve unrelated local work.
 - GitHub issues define scope, dependencies, acceptance checks and evidence.
 - `docs/restart/feature-catalogue.json` separates reference claims and implementation
   status. Its validator checks metadata only; it cannot certify gameplay or evidence.
