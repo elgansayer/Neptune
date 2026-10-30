@@ -63,6 +63,15 @@ claims to verify against code and actual execution, not evidence of correctness.
 - For actual gameplay changes, run bounded server/client tests and inspect
   `server.log` when available. Report missing tools or logs rather than fabricating results.
 
+## Automatic tool preparation
+
+Routine free tools needed for authorised work should be obtained, built and tested
+without asking Elgan for manual installation. Use trusted pinned recipes in
+`tools/factory/PROVISIONING.md` (#518 / FACTORY-017) before offline verification.
+For a missing recipe, create/reuse a bounded implementation task; keep the original
+job resumable. Preserve accepted reference tools and configured budgets. Ordinary
+workers do not gain host root; host-package needs use the configured provisioner.
+
 ## Secrets and operations
 
 - Keep discs, BIOS, save states, private captures and credentials outside Git.

@@ -9415,6 +9415,30 @@
       "implementation_status": "needs-code-and-evidence-audit",
       "issue_number": 515,
       "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/515"
+    },
+    {
+      "id": "FACTORY-017",
+      "domain": "FACTORY",
+      "domain_name": "Continuous implementation and merge automation",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 75,
+      "provenance": "neptune-requirement",
+      "title": "Automatically provision missing tools and resume factory jobs",
+      "acceptance": [
+        "Resolve required capabilities to trusted pinned recipes and reuse verified healthy caches",
+        "automatically obtain or build missing free tools in the coordinator preparation sandbox and smoke-test actual capabilities before offline verification",
+        "create or reuse bounded missing-recipe and constrained host-dependency jobs without routine manual setup requests",
+        "prove concurrent interrupted corrupt-cache and failed-tool recovery plus resumption of the original job within existing resource limits"
+      ],
+      "depends_on": [
+        "FACTORY-001",
+        "FACTORY-002"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 518,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/518"
     }
   ],
   "publication_order": [
@@ -9433,6 +9457,7 @@
     "FACTORY-014",
     "FACTORY-015",
     "FACTORY-016",
+    "FACTORY-017",
     "RLAB-003",
     "RLAB-004",
     "RLAB-005",

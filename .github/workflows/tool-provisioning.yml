@@ -1,0 +1,55 @@
+name: Real tool provisioning
+
+on:
+  pull_request:
+    paths:
+      - 'tools/factory/provision*'
+      - 'tools/factory/tests/test_provision.py'
+      - 'tools/godot/install.py'
+      - 'tools/godot/toolchain.json'
+      - '.github/workflows/tool-provisioning.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Pinned Godot and Saturn installation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Install real tools into a fresh disposable cache
+        run: |
+          python3 tools/factory/provision.py --tool godot --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/godot-first" --timeout 300
+          python3 tools/factory/provision.py --tool beetle-saturn --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/saturn-first" --timeout 1200
+      - name: Reuse and recheck without another build or download
+        run: |
+          python3 tools/factory/provision.py --tool godot --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/godot-reuse" --timeout 60
+          python3 tools/factory/provision.py --tool beetle-saturn --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/saturn-reuse" --timeout 60
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root = Path(os.environ['RUNNER_TEMP']) / 'provision-evidence'
+          for tool in ('godot', 'saturn'):
+              first = json.loads((root / (tool + '-first') / 'report.json').read_text())
+              again = json.loads((root / (tool + '-reuse') / 'report.json').read_text())
+              assert first['conclusion'] == again['conclusion'] == 'success'
+              assert first['reused'] is False and again['reused'] is True
+              assert first['binary_sha256'] == again['binary_sha256']
+              assert first['recipe_sha256'] == again['recipe_sha256']
+              assert len(again['commands']) == 1, 'Reuse must run only the real smoke check'
+          print('Real installers and idempotent reuse passed; no game or BIOS was loaded.')
+          PY
+      - name: Preserve logs and receipts including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: tool-provisioning-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provision-evidence
+          if-no-files-found: error
+          retention-days: 14

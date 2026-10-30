@@ -1,6 +1,6 @@
 # Feature issue index
 
-Master roadmap: [#69](https://github.com/elgansayer/Neptune-Bomberman/issues/69). 417 bounded feature specifications across 29 domains.
+Master roadmap: [#69](https://github.com/elgansayer/Neptune-Bomberman/issues/69). 418 bounded feature specifications across 29 domains.
 
 This is a planning index, not a completion report. Dependency edges in `catalogue.json` take precedence over suggested waves. Existing issues are reused where their scope matches.
 
@@ -533,6 +533,7 @@ This is a planning index, not a completion report. Dependency edges in `catalogu
 | FACTORY-014 | P0 / 1 | Implement provider cost and concurrency enforcement | [#83](https://github.com/elgansayer/Neptune-Bomberman/issues/83) |
 | FACTORY-015 | P0 / 1 | Implement worker credential and tool isolation | [#84](https://github.com/elgansayer/Neptune-Bomberman/issues/84) |
 | FACTORY-016 | P0 / 1 | Implement completion reconciliation and duplicate prevention | [#85](https://github.com/elgansayer/Neptune-Bomberman/issues/85) |
+| FACTORY-017 | P0 / 1 | Automatically provision missing tools and resume factory jobs | [#518](https://github.com/elgansayer/Neptune-Bomberman/issues/518) |
 
 ## OPS: Packaging, hosting and operations
 

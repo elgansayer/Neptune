@@ -5,13 +5,17 @@ Start with the [issue index](INDEX.md) and machine-readable [catalogue](catalogu
 The existing restart epic [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23)
 and its implementation issues retain their scope and history.
 
-This catalogue contains 417 feature specifications in 29 domains. Seven matching
-existing issues are reused; the remaining 410 are new bounded implementation or
+This catalogue contains 418 feature specifications in 29 domains. Seven matching
+existing issues are reused; the remaining 411 are new bounded implementation or
 research issues. These are desired outcomes, not claims that the game already has
 them. A worker must inspect current code, active PRs and evidence before deciding
 whether to implement, extend, or close an already-satisfied feature.
 
 The 30 October research expansion is coordinated by [#477](https://github.com/elgansayer/Neptune-Bomberman/issues/477), with Saturn [#464](https://github.com/elgansayer/Neptune-Bomberman/issues/464) and Power [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476). See [research execution](../RESEARCH_EXECUTION.md) for accepted inputs, tool candidates and next experiments. The 38 RSAT/RPWR/RLAB jobs add code recovery, complete media extraction and original execution; they do not replace the existing content inventories or community implementation backlog.
+
+Automatic tool preparation is [FACTORY-017 / #518](https://github.com/elgansayer/Neptune-Bomberman/issues/518).
+Its pinned installer CLI is documented in [PROVISIONING.md](../../../tools/factory/PROVISIONING.md);
+factory lifecycle integration and real VPS recovery remain explicit acceptance.
 
 ## Product direction
 
@@ -47,7 +51,7 @@ GDScript, scene scripts and native libraries remain outside the supported pack A
 | 5 | Broad Saturn/Power fidelity implementation; research and extraction begin in wave 1 |
 | 6 | Optional original modes, larger rooms and exploratory ideas |
 
-Waves describe emphasis, not a rigid dependency schedule. The 617 explicit
+Waves describe emphasis, not a rigid dependency schedule. The 619 explicit
 dependency edges take precedence; foundational pack interfaces or reference
 measurements may be needed earlier. P0 means foundation/critical-path work, P1 core
 product capability, P2 breadth/polish, and P3 optional experiment. Priority does not
@@ -148,5 +152,5 @@ history when editing scope. Audit related issues before adding a new feature.
 
 `publication-audit.json` retains the historical 29 October 379-feature audit.
 `research-expansion-audit.json` records live exact title/body readback for the 38 new
-research issues. The generator validates all 417 current mappings locally; neither
+research issues. The generator validates all 418 current mappings locally; neither
 audit certifies implementation. The two new coordinating epics are not feature entries.

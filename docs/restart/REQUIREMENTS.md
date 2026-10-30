@@ -62,8 +62,12 @@ Untrusted community issues must not directly launch code with privileged access.
 | Image/trace processing | Python imaging tools and FFmpeg as needed; CLI processing with reproducible configuration |
 | Monitoring/backups | Structured logs, health checks, bounded storage retention and restoration tests |
 
-The tools in this PR install none of these and do not operate a continuous agent.
-Avoid downloading and running unverified binaries through a root shell.
+The [preparation CLI](../../tools/factory/PROVISIONING.md) now supplies pinned
+Godot installation and Beetle Saturn source build/smoke recipes. Other tool
+families and automatic lifecycle resumption are tracked in #518 / FACTORY-017.
+Routine free tool setup is factory work; do not ask Elgan to install emulators
+manually. Keep preparation separate from offline verification, using trusted
+sources and the existing restricted environments.
 
 ## Storage layout
 

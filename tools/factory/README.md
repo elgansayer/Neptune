@@ -1,5 +1,16 @@
 # Factory intake and durable ownership
 
+## Automatic preparation
+
+[`provision.py`](PROVISIONING.md) installs/builds pinned Godot and Beetle Saturn
+in a coordinator-owned cache, validates real capabilities, preserves receipts,
+and rechecks/reuses healthy outputs. Run preparation in its network-enabled
+sandbox before entering the offline verifier. Missing recipe/host dependency,
+concurrent install, disk pressure and command failure are explicit resumable
+outcomes. #518 / FACTORY-017 owns integration into the existing factory lifecycle
+and extension to other required tools; the CLI alone does not enable that daemon.
+
+
 ## Existing Repo Factory integration
 
 `verify.py` is the local entrypoint for the existing Elgl Repo Factory's Neptune
