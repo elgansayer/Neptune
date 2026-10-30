@@ -1,0 +1,24 @@
+name: Neptune multilingual fonts
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  fonts:
+    name: Font bytes, shaping and locale selection
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - run: python3 -m pip install -r fonts/neptune-arcade/tools/requirements.txt
+      - run: python3 fonts/neptune-arcade/tools/build_arcade.py --check
+      - run: python3 fonts/neptune-arcade/tools/bundle_fallbacks.py --check
+      - run: python3 tools/fonts/generate_resources.py --check
+      - name: Install the repository-pinned engine
+        run: python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
+      - name: Shape bundled language samples and verify regional glyphs in real Godot
+        run: python3 tools/fonts/check.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"

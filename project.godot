@@ -23,6 +23,11 @@ ServerMain="*res://main_server.gd"
 Constants="*res://shared/constants.gd"
 GameConfig="*res://shared/game_config.gd"
 LimboConsole="*res://addons/limbo_console/limbo_console.gd"
+ArcadeFontLocale="*res://scripts/arcade_font_locale.gd"
+
+[gui]
+
+theme/custom="res://themes/main_theme.tres"
 
 [display]
 
