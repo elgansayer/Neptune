@@ -207,3 +207,11 @@ See [the source investigation and exact host recipe](../../docs/restart/research
 Run it under the existing unprivileged research environment with private inputs
 and a fresh private report path. A pass is CPU-only evidence for this bounded
 hypothesis, not hardware/timing, whole-game or graphics parity.
+
+## Native VDP1 texture decoder
+
+`export_vdp1.py` unpacks one explicitly selected command from an existing private
+VRAM snapshot, preserving native samples, lookup data and provenance. Supported
+RGB source patterns get a PNG; unresolved palette/end-code previews are reported.
+See [VDP1_EXPORT.md](VDP1_EXPORT.md) for the strict capture format, CLI and remaining
+original-game experiment. Synthetic checks establish decoder tooling only.
