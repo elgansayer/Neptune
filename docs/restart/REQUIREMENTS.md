@@ -1,6 +1,15 @@
 # Requirements and operator handoff
 
-## Required from Elgan now
+## Current resolved inputs (30 October 2026)
+
+USA/Japan discs and BIOS are already supplied under `/home/dev/Sega-Saturn-BIOS/`
+and accepted through #467/#468/#473. Do not ask for them again. Existing Elgl Repo
+Factory/shared supported provider access is authorised through #33; inspect actual
+health, quotas and ownership. The checklist below describes capabilities to audit,
+not a request to repurchase or reprovision everything. Record only demonstrated
+remaining blockers in #48. Read [research execution](RESEARCH_EXECUTION.md).
+
+## Provisioning checklist
 
 | Item | Exact requirement | Purpose |
 | --- | --- | --- |
@@ -11,7 +20,7 @@
 | Power Bomberman reference | Developer-linked client, matching local server and included manual; begin with the documented 0.7.8c release and pin actual hashes | A separate reference for feature and network experiments; the factory can obtain public releases where available. |
 | Model access | At least one supported provider credential with working billing/quota, provisioned on the VPS | Run unattended AI jobs. Current chat access is not itself a VPS credential. |
 | Spend limit | Choose an explicit daily/monthly AI cap and whether paid fallback is allowed | Prevent uncontrolled continuous usage. Do not start paid workers until configured. |
-| Repository access | Game repo read/write; asset repo read initially; use separate intake/worker/merger roles | Current ChatGPT GitHub access works, but the VPS needs its own credentials. |
+| Repository access | Game repo read/write; decoded private asset publication authorised through #512; use separate intake/worker/merger roles | Current ChatGPT GitHub access works, but the VPS needs its own credentials. |
 | Private backup | Off-host encrypted backup destination and credentials configured locally | Preserve disc fingerprints, traces, job database and research progress. |
 
 The initial lab needs no domain, GPU, paid sprite extractor or public game server.
@@ -24,7 +33,7 @@ prove the first live job. No specific model ID is hard-coded before a live check
 ## GitHub configuration for the VPS
 
 Prefer narrowly scoped GitHub App installation tokens. Start with a single-repo
-installation for the game and read-only access to the asset repo. Required features:
+installation for the game and scoped access to the asset repo for the authorised decoded-content publisher. Required features:
 
 - Read repository contents, issues, PRs and check results.
 - Create branches, commits and PRs for implementation.

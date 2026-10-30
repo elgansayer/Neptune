@@ -1,5 +1,12 @@
 # Automated Saturn research lab
 
+The expanded code/content/behaviour programme is [RESEARCH_EXECUTION.md](RESEARCH_EXECUTION.md)
+and execution index #477. Existing input/bridge/disc inventory results remain
+accepted; complete static/dynamic code recovery, raw graphics/audio extraction and
+Normal/co-op/Master/Battle coverage now have bounded RSAT/RLAB issues. User-authorised
+decoded private asset publication follows #512; original discs/BIOS/states/dumps stay
+host-private. Existing reconstruction experiments remain applicable.
+
 The next executable research sequence is [SATURN_RECONSTRUCTION.md](SATURN_RECONSTRUCTION.md).
 The canonical comparison tool and its limits are documented in
 [TRACE_FORMAT.md](../../tools/saturn_lab/TRACE_FORMAT.md).

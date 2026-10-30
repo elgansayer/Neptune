@@ -5,11 +5,13 @@ Start with the [issue index](INDEX.md) and machine-readable [catalogue](catalogu
 The existing restart epic [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23)
 and its implementation issues retain their scope and history.
 
-This catalogue contains 379 feature specifications in 26 domains. Seven matching
-existing issues are reused; the remaining 372 are new bounded implementation or
+This catalogue contains 417 feature specifications in 29 domains. Seven matching
+existing issues are reused; the remaining 410 are new bounded implementation or
 research issues. These are desired outcomes, not claims that the game already has
 them. A worker must inspect current code, active PRs and evidence before deciding
 whether to implement, extend, or close an already-satisfied feature.
+
+The 30 October research expansion is coordinated by [#477](https://github.com/elgansayer/Neptune-Bomberman/issues/477), with Saturn [#464](https://github.com/elgansayer/Neptune-Bomberman/issues/464) and Power [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476). See [research execution](../RESEARCH_EXECUTION.md) for accepted inputs, tool candidates and next experiments. The 38 RSAT/RPWR/RLAB jobs add code recovery, complete media extraction and original execution; they do not replace the existing content inventories or community implementation backlog.
 
 ## Product direction
 
@@ -38,14 +40,14 @@ GDScript, scene scripts and native libraries remain outside the supported pack A
 
 | Wave | Outcome |
 | --- | --- |
-| 1 | Reliable simulation, bot safety, bounded factory work and test evidence |
+| 1 | Reliable simulation, bot safety, bounded factory work, reference foundations and test evidence |
 | 2 | Fun multiplayer rooms, cross-play, battle rules, useful bots and controls |
 | 3 | Portable packs, custom effects, replays, packaging and original starter media |
 | 4 | Solo/co-op campaigns, editors, workshop, identity and community services |
-| 5 | Exhaustive measured Saturn/Power content and reference comparisons |
+| 5 | Broad Saturn/Power fidelity implementation; research and extraction begin in wave 1 |
 | 6 | Optional original modes, larger rooms and exploratory ideas |
 
-Waves describe emphasis, not a rigid dependency schedule. The 573 explicit
+Waves describe emphasis, not a rigid dependency schedule. The 617 explicit
 dependency edges take precedence; foundational pack interfaces or reference
 measurements may be needed earlier. P0 means foundation/critical-path work, P1 core
 product capability, P2 breadth/polish, and P3 optional experiment. Priority does not
@@ -64,8 +66,9 @@ retain their original acceptance requirements when a catalogue entry links them.
 2. Resolve its concrete prerequisites and available inputs. Select one bounded
    deliverable. Split oversized implementation work into linked children with
    explicit acceptance; do not mark a whole feature complete after a prototype.
-3. Implement an original permitted fixture through production paths. Add useful
-   regression coverage for the changed behaviour and failure cases.
+3. For implementation, use an original permitted fixture through production paths.
+   For research, run a bounded pinned-reference experiment with reproducible outputs,
+   uncertainty and relevant negative controls. Add useful regression coverage.
 4. Run applicable native, browser, network, pack and replay checks. Record exact
    versions, seeds, head/base commits, commands, logs and results. Missing, skipped,
    empty and failed applicable checks are failures, not acceptable substitutes.
@@ -142,3 +145,8 @@ The validator checks IDs, titles, links, dependency references, acyclicity and
 generated metadata consistency. It cannot certify gameplay, reference fidelity,
 asset permissions, service deployment or a running factory. Preserve IDs and issue
 history when editing scope. Audit related issues before adding a new feature.
+
+`publication-audit.json` retains the historical 29 October 379-feature audit.
+`research-expansion-audit.json` records live exact title/body readback for the 38 new
+research issues. The generator validates all 417 current mappings locally; neither
+audit certifies implementation. The two new coordinating epics are not feature entries.

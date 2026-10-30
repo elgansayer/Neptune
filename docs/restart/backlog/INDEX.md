@@ -1,27 +1,80 @@
 # Feature issue index
 
-Master roadmap: [#69](https://github.com/elgansayer/Neptune-Bomberman/issues/69). 379 bounded feature specifications across 26 domains.
+Master roadmap: [#69](https://github.com/elgansayer/Neptune-Bomberman/issues/69). 417 bounded feature specifications across 29 domains.
 
 This is a planning index, not a completion report. Dependency edges in `catalogue.json` take precedence over suggested waves. Existing issues are reused where their scope matches.
+
+## RSAT: Saturn code, extraction and original execution
+
+| ID | Priority / wave | Feature | GitHub |
+| --- | --- | --- | --- |
+| RSAT-001 | P0 / 1 | Evaluate and reuse the existing AI-assisted Saturn Bomberman recompilation | [#478](https://github.com/elgansayer/Neptune-Bomberman/issues/478) |
+| RSAT-002 | P1 / 1 | Benchmark emulator debugging and extraction capabilities | [#479](https://github.com/elgansayer/Neptune-Bomberman/issues/479) |
+| RSAT-003 | P1 / 1 | Map every Saturn executable module, overlay and code-bearing bank | [#480](https://github.com/elgansayer/Neptune-Bomberman/issues/480) |
+| RSAT-004 | P1 / 1 | Create reproducible Ghidra projects and validated Saturn symbols | [#481](https://github.com/elgansayer/Neptune-Bomberman/issues/481) |
+| RSAT-005 | P1 / 1 | Instrument bounded instruction, memory, DMA and resource-load traces | [#482](https://github.com/elgansayer/Neptune-Bomberman/issues/482) |
+| RSAT-006 | P1 / 1 | Validate recovered Saturn functions through decompilation and recompilation | [#483](https://github.com/elgansayer/Neptune-Bomberman/issues/483) |
+| RSAT-007 | P0 / 1 | Decode PROGRAM.BIN banks against their resident memory images | [#484](https://github.com/elgansayer/Neptune-Bomberman/issues/484) |
+| RSAT-008 | P0 / 1 | Capture and reconstruct VDP1 textures, palettes and draw commands | [#485](https://github.com/elgansayer/Neptune-Bomberman/issues/485) |
+| RSAT-009 | P1 / 1 | Capture and reconstruct VDP2 tiles, maps and backgrounds | [#486](https://github.com/elgansayer/Neptune-Bomberman/issues/486) |
+| RSAT-010 | P1 / 1 | Compile faithful sprite atlases and animation state metadata | [#487](https://github.com/elgansayer/Neptune-Bomberman/issues/487) |
+| RSAT-011 | P1 / 1 | Recover SCSP samples, sequences, sound drivers and trigger semantics | [#488](https://github.com/elgansayer/Neptune-Bomberman/issues/488) |
+| RSAT-012 | P1 / 1 | Decode CD audio, FILM movies and streamed audio with exact timing | [#489](https://github.com/elgansayer/Neptune-Bomberman/issues/489) |
+| RSAT-013 | P1 / 1 | Build autonomous original-game navigation and campaign/battle exploration | [#490](https://github.com/elgansayer/Neptune-Bomberman/issues/490) |
+| RSAT-014 | P1 / 1 | Expose validated typed observations from Saturn game state | [#491](https://github.com/elgansayer/Neptune-Bomberman/issues/491) |
+| RSAT-015 | P1 / 1 | Recover Saturn RNG, task scheduling and timing domains | [#492](https://github.com/elgansayer/Neptune-Bomberman/issues/492) |
+| RSAT-016 | P1 / 1 | Measure exact Saturn movement, bomb and collision contracts | [#493](https://github.com/elgansayer/Neptune-Bomberman/issues/493) |
+| RSAT-017 | P1 / 1 | Recover Saturn save, continue and campaign persistence formats | [#494](https://github.com/elgansayer/Neptune-Bomberman/issues/494) |
+| RSAT-018 | P1 / 1 | Recover UI, text, fonts, camera and presentation state machines | [#495](https://github.com/elgansayer/Neptune-Bomberman/issues/495) |
+| RSAT-019 | P1 / 1 | Reverse-engineer Saturn NetLink and XBAND code and resources offline | [#496](https://github.com/elgansayer/Neptune-Bomberman/issues/496) |
+| RSAT-020 | P1 / 1 | Account for hidden, unused and dynamically discovered Saturn code/content | [#497](https://github.com/elgansayer/Neptune-Bomberman/issues/497) |
+
+## RPWR: Power code, extraction and original execution
+
+| ID | Priority / wave | Feature | GitHub |
+| --- | --- | --- | --- |
+| RPWR-001 | P0 / 1 | Identify Power binaries and reconcile existing GameMaker exports | [#498](https://github.com/elgansayer/Neptune-Bomberman/issues/498) |
+| RPWR-002 | P1 / 1 | Recover Power gameplay code, object events and call graphs | [#499](https://github.com/elgansayer/Neptune-Bomberman/issues/499) |
+| RPWR-003 | P1 / 1 | Extract Power texture pages, characters and animation metadata | [#500](https://github.com/elgansayer/Neptune-Bomberman/issues/500) |
+| RPWR-004 | P1 / 1 | Extract Power audio, fonts, text and interface resources | [#501](https://github.com/elgansayer/Neptune-Bomberman/issues/501) |
+| RPWR-005 | P1 / 1 | Recover Power room layouts, stages, hazards and variant data | [#502](https://github.com/elgansayer/Neptune-Bomberman/issues/502) |
+| RPWR-006 | P1 / 1 | Instrument Power updates, inputs, RNG and deterministic experiment boundaries | [#503](https://github.com/elgansayer/Neptune-Bomberman/issues/503) |
+| RPWR-007 | P1 / 1 | Recover Power mode, scoring, progression and reset state machines | [#504](https://github.com/elgansayer/Neptune-Bomberman/issues/504) |
+| RPWR-008 | P1 / 1 | Recover Power CPU policies and difficulty behaviour | [#505](https://github.com/elgansayer/Neptune-Bomberman/issues/505) |
+| RPWR-009 | P1 / 1 | Recover the Power local client/server protocol and synchronisation | [#506](https://github.com/elgansayer/Neptune-Bomberman/issues/506) |
+| RPWR-010 | P1 / 1 | Reverse-engineer Power custom-content formats and authoring workflows | [#507](https://github.com/elgansayer/Neptune-Bomberman/issues/507) |
+
+## RLAB: Research tooling, evidence and factory integration
+
+| ID | Priority / wave | Feature | GitHub |
+| --- | --- | --- | --- |
+| RLAB-001 | P1 / 1 | Build tested reusable research skills and local analysis adapters | [#508](https://github.com/elgansayer/Neptune-Bomberman/issues/508) |
+| RLAB-002 | P1 / 1 | Maintain a verified prior-art and research-source registry | [#509](https://github.com/elgansayer/Neptune-Bomberman/issues/509) |
+| RLAB-003 | P0 / 1 | Route Saturn and Power research jobs through the existing Repo Factory | [#510](https://github.com/elgansayer/Neptune-Bomberman/issues/510) |
+| RLAB-004 | P0 / 1 | Verify private reference experiments through trusted reproducible receipts | [#511](https://github.com/elgansayer/Neptune-Bomberman/issues/511) |
+| RLAB-005 | P0 / 1 | Publish extracted content to the private assets repository with regeneration gates | [#512](https://github.com/elgansayer/Neptune-Bomberman/issues/512) |
+| RLAB-006 | P1 / 1 | Reproduce reference results across independent engines and measurement methods | [#513](https://github.com/elgansayer/Neptune-Bomberman/issues/513) |
+| RLAB-007 | P1 / 1 | Recover long-running research safely within disk and provider budgets | [#514](https://github.com/elgansayer/Neptune-Bomberman/issues/514) |
+| RLAB-008 | P1 / 1 | Prove whole-program and content reconstruction coverage without false completeness | [#515](https://github.com/elgansayer/Neptune-Bomberman/issues/515) |
 
 ## REF: Reference research and exhaustive inventories
 
 | ID | Priority / wave | Feature | GitHub |
 | --- | --- | --- | --- |
-| REF-001 | P1 / 5 | Pin regional Saturn releases and timing profiles | [#394](https://github.com/elgansayer/Neptune-Bomberman/issues/394) |
-| REF-002 | P1 / 5 | Index every Saturn campaign room and transition | [#395](https://github.com/elgansayer/Neptune-Bomberman/issues/395) |
-| REF-003 | P1 / 5 | Index every Saturn enemy and boss phase | [#396](https://github.com/elgansayer/Neptune-Bomberman/issues/396) |
-| REF-004 | P1 / 5 | Index Saturn battle stages and hidden variants | [#397](https://github.com/elgansayer/Neptune-Bomberman/issues/397) |
-| REF-005 | P1 / 5 | Inventory Saturn items and illnesses by mode | [#398](https://github.com/elgansayer/Neptune-Bomberman/issues/398) |
-| REF-006 | P1 / 5 | Inventory Saturn animation and sound states | [#399](https://github.com/elgansayer/Neptune-Bomberman/issues/399) |
-| REF-007 | P1 / 5 | Pin the current Power manual and settings inventory | [#400](https://github.com/elgansayer/Neptune-Bomberman/issues/400) |
-| REF-008 | P1 / 5 | Inventory Power items and combination rules | [#402](https://github.com/elgansayer/Neptune-Bomberman/issues/402) |
-| REF-009 | P1 / 5 | Inventory Power stages and variant restrictions | [#405](https://github.com/elgansayer/Neptune-Bomberman/issues/405) |
-| REF-010 | P1 / 5 | Inventory Power characters and presentation metadata | [#406](https://github.com/elgansayer/Neptune-Bomberman/issues/406) |
-| REF-011 | P1 / 5 | Create a reference interaction experiment matrix | [#407](https://github.com/elgansayer/Neptune-Bomberman/issues/407) |
-| REF-012 | P1 / 5 | Reconcile video claims with playable references | [#408](https://github.com/elgansayer/Neptune-Bomberman/issues/408) |
-| REF-013 | P1 / 5 | Maintain evidence confidence and coverage reports | [#409](https://github.com/elgansayer/Neptune-Bomberman/issues/409) |
-| REF-014 | P1 / 5 | Generate bounded tasks from verified content inventories | [#410](https://github.com/elgansayer/Neptune-Bomberman/issues/410) |
+| REF-001 | P1 / 1 | Pin regional Saturn releases and timing profiles | [#394](https://github.com/elgansayer/Neptune-Bomberman/issues/394) |
+| REF-002 | P1 / 1 | Index every Saturn campaign room and transition | [#395](https://github.com/elgansayer/Neptune-Bomberman/issues/395) |
+| REF-003 | P1 / 1 | Index every Saturn enemy and boss phase | [#396](https://github.com/elgansayer/Neptune-Bomberman/issues/396) |
+| REF-004 | P1 / 1 | Index Saturn battle stages and hidden variants | [#397](https://github.com/elgansayer/Neptune-Bomberman/issues/397) |
+| REF-005 | P1 / 1 | Inventory Saturn items and illnesses by mode | [#398](https://github.com/elgansayer/Neptune-Bomberman/issues/398) |
+| REF-006 | P1 / 1 | Inventory Saturn animation and sound states | [#399](https://github.com/elgansayer/Neptune-Bomberman/issues/399) |
+| REF-007 | P1 / 1 | Pin the current Power manual and settings inventory | [#400](https://github.com/elgansayer/Neptune-Bomberman/issues/400) |
+| REF-008 | P1 / 1 | Inventory Power items and combination rules | [#402](https://github.com/elgansayer/Neptune-Bomberman/issues/402) |
+| REF-009 | P1 / 1 | Inventory Power stages and variant restrictions | [#405](https://github.com/elgansayer/Neptune-Bomberman/issues/405) |
+| REF-010 | P1 / 1 | Inventory Power characters and presentation metadata | [#406](https://github.com/elgansayer/Neptune-Bomberman/issues/406) |
+| REF-011 | P1 / 1 | Create a reference interaction experiment matrix | [#407](https://github.com/elgansayer/Neptune-Bomberman/issues/407) |
+| REF-012 | P1 / 1 | Reconcile video claims with playable references | [#408](https://github.com/elgansayer/Neptune-Bomberman/issues/408) |
+| REF-013 | P1 / 1 | Maintain evidence confidence and coverage reports | [#409](https://github.com/elgansayer/Neptune-Bomberman/issues/409) |
+| REF-014 | P1 / 1 | Generate bounded tasks from verified content inventories | [#410](https://github.com/elgansayer/Neptune-Bomberman/issues/410) |
 
 ## SIM: Authoritative simulation
 

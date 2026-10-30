@@ -1,7 +1,10 @@
 # Neptune restart: multiplayer, bots and community content
 
 Status: the [bounded libretro bridge has real boot/replay evidence](evidence/2026-10-29-libretro-bridge.md).
-Continuous VPS factory operation and disc-graphics extraction remain unverified.
+Real input, bridge and static disc/regional inventory work is accepted through
+#467/#468/#473. Full disc-graphics extraction and continuous Neptune factory
+operation remain unverified. Start with [research execution](RESEARCH_EXECUTION.md)
+and [issue #477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
 The current repository targets Godot 4.5. Pin that baseline
 for the first reproducible build; choose any engine upgrade through a separate
 compatibility task.
@@ -51,7 +54,7 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 - [Static Saturn disc inventories and regional diff](saturn-disc/README.md)
 - [Saturn coverage and unknowns ledger](asset-audit/saturn-coverage-ledger.json)
 
-## Current evidence
+## Historical initial inspection
 
 Source inspection at `6da6f5f5f187cab272699603a7bc1bc09fe3c885` found:
 

@@ -9,14 +9,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 464,
       "provenance": "reference-research",
       "title": "Pin regional Saturn releases and timing profiles",
       "acceptance": [
         "Record release, region, revision and refresh-rate evidence",
         "reject mixed-version fixtures",
-        "expose unresolved differences without choosing convenient defaults"
+        "expose unresolved differences without choosing convenient defaults",
+        "Correct coordination parent: Saturn #464, execution #477, begin research now (wave 1). Reuse accepted USA MK-81070 V1.003 and Japan T-14302G V1.000 locks from #467/#468/#473",
+        "Add platform clock/RTC/controller topology, BIOS/core/settings identities, measured timing domains and regional code/resource map. #492 measures timing/RNG, never silently coerce Japan/USA/PAL into the same 60 Hz profile",
+        "Existing CPK provenance has an unconfirmed PAL hypothesis only. Acquire no invented PAL reference, retain unknown and record exact evidence before regional attribution"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -29,14 +32,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 464,
       "provenance": "reference-research",
       "title": "Index every Saturn campaign room and transition",
       "acceptance": [
         "Enumerate reachable rooms, entrances, exits and scripted events from the pinned game",
         "attach captures",
-        "create one bounded child per observed room"
+        "create one bounded child per observed room",
+        "Cover every discovered Normal room/transition, solo and original co-op entry/exit, death/retry/continue/game-over, switches/puzzles/hazards, enemy/spawn waves, boss gates, bonus/secret routes, cutscenes/endings and progression flags",
+        "For each room join source bank/layout #484/#486, code consumers #480/#481, state #491, input-only route #490, save semantics #494 and Neptune comparison. Rendering tiles are not collision or objective logic",
+        "Track room/route/transition denominators by release, forced-state-only discoveries stay labelled. Generate bounded per-entity children #410, preserving unexplored branches instead of claiming completion after one traversal"
       ],
       "depends_on": [
         "REF-001"
@@ -51,14 +57,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 464,
       "provenance": "reference-research",
       "title": "Index every Saturn enemy and boss phase",
       "acceptance": [
         "Record distinct actors, attacks, vulnerabilities and transitions",
         "distinguish recolours from behaviour variants",
-        "create per-actor comparison tasks"
+        "create per-actor comparison tasks",
+        "Inventory every discovered enemy variant, boss phase, mount/companion interaction and original CPU policy by mode/region, with transitions, decision cadence, RNG, hitboxes, damage/invulnerability and attack/projectile timing",
+        "Correlate natural repeated scenarios with code #483, state #491 and scheduling #492, include co-op target selection, simultaneous damage, interruption/death and rare-phase boundaries",
+        "Original battle CPU reconstruction feeds SATURN-014 (#430), Power CPU #505 remains separate. Enhanced Neptune bots must not be labelled faithful merely because they win or use the same names"
       ],
       "depends_on": [
         "REF-001"
@@ -73,14 +82,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 464,
       "provenance": "reference-research",
       "title": "Index Saturn battle stages and hidden variants",
       "acceptance": [
         "Capture selection conditions, geometry, gimmicks and supported seats",
         "test hidden-option claims",
-        "generate one task per confirmed variant"
+        "generate one task per confirmed variant",
+        "Enumerate actual mode/settings/player/topology combinations: Normal/co-op, Master, standard and wide Battle, teams/rounds, timers/ties, sudden death, revenge/bonus/results and hidden options where observed",
+        "Measure controller/multitap mapping and original seat limits per mode, twelve-seat Neptune/Power support is not evidence for Saturn's original limits. Distinguish local battle from NetLink/XBAND #496",
+        "Link menu graph #495, transitions #490, rules #493 and source routines, record unavailable combinations and discovery evidence without treating advertised totals as exhaustive"
       ],
       "depends_on": [
         "REF-001"
@@ -95,13 +107,16 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 464,
       "provenance": "reference-research",
       "title": "Inventory Saturn items and illnesses by mode",
       "acceptance": [
         "Record availability, stacking, caps, duration and removal in Normal, Battle and Master",
-        "retain counterexamples and unknowns"
+        "retain counterexamples and unknowns",
+        "Inventory every observed item, illness, bomb type, mount ability and mode-dependent effect across Normal/Battle/Master by release, identify source table/code and visual/audio resources",
+        "Specify acquisition, limits/stacks, timer refresh/expiry, persistence/death/reset, drop/spawn RNG, immunity/countereffects, kick/throw/mount and simultaneous-event interactions",
+        "Feed #407 per-game interaction experiments and #493 movement/bomb boundaries. Link exact source/state/units and generate separate disputed or unknown semantics tasks"
       ],
       "depends_on": [
         "REF-001"
@@ -116,13 +131,16 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 464,
       "provenance": "reference-research",
       "title": "Inventory Saturn animation and sound states",
       "acceptance": [
         "Map movement, death, victory, carrying, mounts and campaign states to raw evidence",
-        "retain palettes, timing and missing-state records"
+        "retain palettes, timing and missing-state records",
+        "Enumerate all discovered players, enemies, bosses, mounts, objects, hazards, effects, menus/fonts/text, cutscenes, ending/credits, SFX/voices/music and palette/regional variants",
+        "Join #485–#489 and #495 to source bank/range, animation frames/durations/directions/anchors/layers, sound sample/sequence/trigger and runtime state coverage",
+        "Track extracted bytes, decoded files, reference reconstruction, private asset commit and Neptune presentation separately. No PNG/WAV count or lack of newly observed frames proves completeness"
       ],
       "depends_on": [
         "REF-001"
@@ -137,14 +155,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 476,
       "provenance": "reference-research",
       "title": "Pin the current Power manual and settings inventory",
       "acceptance": [
         "Hash the developer-distributed manual and executable",
         "enumerate every menu option and default",
-        "compare documentation with actual execution"
+        "compare documentation with actual execution",
+        "Coordinate under #476 and start wave 1. Pin developer-distributed client/server/manual and real hashes through #41/#498, identify VM/YYC and runtime/platform before choosing extractors",
+        "Inventory all actual menu/help/config/editor options, discovered mode names/settings and code/resource counts. Keep developer-advertised characters/stages/variants separate from measured denominators",
+        "Reconcile existing exports by bytes/resource IDs, do not assume their Power version from filenames or directory labels"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -157,14 +178,16 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 476,
       "provenance": "reference-research",
       "title": "Inventory Power items and combination rules",
       "acceptance": [
         "Enumerate the pinned item-help entries and interactions",
         "record mutually exclusive equipment and action priorities",
-        "split confirmed mechanics into bounded children"
+        "split confirmed mechanics into bounded children",
+        "Join observed item/bomb/illness/mount rules with #499 events/functions, #503 timers/RNG and #501 sounds/UI. Include stack/expiry, owner/collision, hazards, mode-specific overrides and simultaneous outcomes",
+        "Use full #407 interaction matrix per pinned Power release, retain unsupported instrumentation and uncertainty. Create bounded per-item/variant tasks from evidence, not guessed names"
       ],
       "depends_on": [
         "REF-007"
@@ -179,14 +202,16 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 476,
       "provenance": "reference-research",
       "title": "Inventory Power stages and variant restrictions",
       "acceptance": [
         "Record every selectable variant, seat limit, mode constraint and hazard",
         "distinguish advertised totals from measured entries",
-        "generate per-variant tasks"
+        "generate per-variant tasks",
+        "Expand each discovered stage/variant with #502 room/layer/object data, procedural setup and event consumers, include collisions/spawns/hazards/wrap/elevation/sudden-death/settings/player eligibility where observed",
+        "Require a replayable local scenario and geometry/state comparison for each semantic family. Static texture extraction alone does not recover map behaviour or prove all variants"
       ],
       "depends_on": [
         "REF-007"
@@ -201,14 +226,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 476,
       "provenance": "reference-research",
       "title": "Inventory Power characters and presentation metadata",
       "acceptance": [
         "Record animation requirements, portraits, palette variants and credits",
         "distinguish cosmetic identity from mechanics",
-        "do not treat availability as redistribution permission"
+        "do not treat availability as redistribution permission",
+        "Match every discovered character/resource ID to #500 texture pages, origins/masks, animation states/durations, variants, credits and source build",
+        "Separate cosmetic differences from actual ability/collision/gameplay code and aliases. #507 examines authoring/custom-data support without assuming existing mods imply a supported public API",
+        "Expand measured missing animation/variant cases idempotently, preserve exact duplicate aliases and unverified provenance rather than destructively deduplicating the repository"
       ],
       "depends_on": [
         "REF-007"
@@ -223,19 +251,19 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 477,
       "provenance": "reference-research",
       "title": "Create a reference interaction experiment matrix",
       "acceptance": [
         "Cover item-item, bomb-hazard, mount-status and simultaneous-event pairs",
         "prioritise high-risk combinations",
-        "retain replayable counterexamples"
+        "retain replayable counterexamples",
+        "Run independent Saturn and Power matrices as their inputs become available, completing both REF-005 and REF-008 inventories is not a prerequisite to a bounded single-game experiment. Catalogue mandatory dependencies become empty, each experiment declares its actual source contracts",
+        "Define factors for bomb/item/illness/mount/mode/terrain/player state, pairwise coverage plus targeted higher-order interactions, simultaneous event ordering and boundary sweeps",
+        "Compare code-derived predictions to repeated original runs via #493/#503, publish canonical input/expected-event traces, counterexamples and one-tick/one-unit mutants. Do not merge differing game semantics into one default"
       ],
-      "depends_on": [
-        "REF-005",
-        "REF-008"
-      ],
+      "depends_on": [],
       "existing_issue": null,
       "implementation_status": "needs-code-and-evidence-audit",
       "issue_number": 407,
@@ -246,14 +274,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 477,
       "provenance": "reference-research",
       "title": "Reconcile video claims with playable references",
       "acceptance": [
         "Catalogue claims and timestamps from the supplied video when retrievable",
         "mark unavailable footage explicitly",
-        "verify gameplay claims against pinned builds"
+        "verify gameplay claims against pinned builds",
+        "Keep the supplied https://www.youtube.com/watch?v=S1xMwFb_jGg as a discovery lead. Obtain actual accessible frames/transcript/timestamps before asserting contents, previous retrieval failure is not viewing",
+        "Map each evidenced mechanic/content/UI observation to exact release confidence and an existing/new deduplicated experiment. Footage timing and edits cannot substitute for pinned executable measurements",
+        "Use #509 primary-source registry, capture quotation/attribution and availability limits without uncontrolled scraping"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -266,14 +297,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 477,
       "provenance": "reference-research",
       "title": "Maintain evidence confidence and coverage reports",
       "acceptance": [
         "Separate documented, observed, implemented and verified states",
         "reject missing capture/build IDs",
-        "report gaps per release and feature family"
+        "report gaps per release and feature family",
+        "Connect #515's distinct static-byte/code/function/dynamic-target, route/mode, graphics/audio/map and behaviour ledgers to the current inventory and all new research jobs",
+        "Track unknown/hypothesis/observed/cross-checked status and separate decode/publication/Neptune parity evidence. Denominators can be unknown or expand, never call 100% of discovered entities total game completeness",
+        "Include reference release, source ranges, tool/core/settings, checkpoint/input, hash/evidence/asset commit, discrepancy and next experiment, preserve rejected hypotheses and forced-only states"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -286,14 +320,17 @@
       "domain": "REF",
       "domain_name": "Reference research and exhaustive inventories",
       "priority": "P1",
-      "phase": 5,
-      "parent_issue": 41,
+      "phase": 1,
+      "parent_issue": 477,
       "provenance": "reference-research",
       "title": "Generate bounded tasks from verified content inventories",
       "acceptance": [
         "Produce one idempotent child per observed entity/version",
         "retain parent dependencies and evidence",
-        "never create invented assets or mark generated tasks complete"
+        "never create invented assets or mark generated tasks complete",
+        "Generate bounded children from verified entity/function/resource/variant IDs discovered by #477 research, including campaigns, co-op/Master/Battle, source-code modules and all asset categories",
+        "Deduplicate by game/release/source ID/semantic question, dry-run proposed issue edits, reconcile uncertain publication and preserve owner/active PR/history",
+        "Each child needs first slice, role/capabilities, dependencies, acceptance, real evidence and applicable gates. Maintain canonical issue links and close only evidenced acceptance, no speculative thousands of names"
       ],
       "depends_on": [
         "REF-013"
@@ -8506,6 +8543,878 @@
       "implementation_status": "needs-code-and-evidence-audit",
       "issue_number": 441,
       "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/441"
+    },
+    {
+      "id": "RSAT-001",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Evaluate and reuse the existing AI-assisted Saturn Bomberman recompilation",
+      "acceptance": [
+        "Pin pc-saturnbomberman c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3 and its actual saturn-recomp submodule, record licences, build identity and supported-disc checks",
+        "Reproduce selected upstream comparisons against Neptune's accepted original bridge and report every timing/state/render mismatch",
+        "Deliver a reuse map for symbols, routes, extraction tools and unresolved code rather than silently replacing the trusted reference",
+        "Keep upstream forced-state/invincibility runs distinct from unmodified play and preserve known loading/audio/CPU timing limitations"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 478,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/478"
+    },
+    {
+      "id": "RSAT-002",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Benchmark emulator debugging and extraction capabilities",
+      "acceptance": [
+        "Evaluate RetroArch/Beetle, standalone Mednafen, Yabause/Qt and Kronos by pinned build and actual available hooks",
+        "Prove frame/input control, memory read/write/watchpoints, CPU traces, VDP exports, audio access and fresh-process save restore individually",
+        "Record unsupported capabilities, exact timebases, state incompatibilities, correctness differences and measured resource cost",
+        "Select tools per experiment and retain the established reference instead of declaring all emulators interchangeable"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 479,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/479"
+    },
+    {
+      "id": "RSAT-003",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Map every Saturn executable module, overlay and code-bearing bank",
+      "acceptance": [
+        "Reuse #473's 430 USA and 25 Japan file inventories and 236/240 bank observations as measured starting points",
+        "Record master/slave SH-2 code, loaded overlays, sound 68000 code and any observed DSP programs with addresses, relocation, lifetime and source ranges",
+        "Classify every discovered range as code, data, mixed, padding or unresolved and verify computed targets/dynamic loads using traces",
+        "Separate discovered, executed, disassembled, decompiled and semantically validated code coverage, unknown denominators remain unknown"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 480,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/480"
+    },
+    {
+      "id": "RSAT-004",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Create reproducible Ghidra projects and validated Saturn symbols",
+      "acceptance": [
+        "Pin Ghidra/JDK/loader and headless import recipe, CPU/endianness, memory maps, overlays and entry points",
+        "Validate Sega-library signatures, function boundaries, jump tables, structures and cross-region matches against bytes and runtime evidence",
+        "Keep inferred names/types confidence-labelled and support repeatable project export/import without raw binaries in Git",
+        "Demonstrate a deliberately wrong load address/type is detected, do not equate plausible decompiler output with recovered original source"
+      ],
+      "depends_on": [
+        "RSAT-003"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 481,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/481"
+    },
+    {
+      "id": "RSAT-005",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Instrument bounded instruction, memory, DMA and resource-load traces",
+      "acceptance": [
+        "Expose versioned bounded traces with CPU/address/opcode/timestamp and reads/writes, interrupts, DMA and CD load correlations as actually supported",
+        "Measure trace overhead and prove instrumentation-disabled/enabled runs agree on defined observations",
+        "Reject truncated/overflowed traces or identity mismatch and retain dropped-event counters",
+        "Link resource offsets through load/decompression/copy to runtime consumers without committing full RAM or disc dumps"
+      ],
+      "depends_on": [
+        "RSAT-003"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 482,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/482"
+    },
+    {
+      "id": "RSAT-006",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Validate recovered Saturn functions through decompilation and recompilation",
+      "acceptance": [
+        "Generate annotated disassembly and reproducible higher-level reconstruction with source range and symbol identities",
+        "Compare registers, relevant memory, events and timing contracts on reference-derived and adversarial input vectors",
+        "Handle delay slots, indirect targets, self-modification/overlays, task yields and CPU/device boundaries explicitly",
+        "Distinguish instruction coverage, recompilation success, equivalent function behaviour and whole-game fidelity, never promise lost names/comments are recovered"
+      ],
+      "depends_on": [
+        "RSAT-004",
+        "RSAT-005"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 483,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/483"
+    },
+    {
+      "id": "RSAT-007",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Decode PROGRAM.BIN banks against their resident memory images",
+      "acceptance": [
+        "Confirm or falsify verbatim load, relocation and compression hypotheses using bounded private memory capture from accepted original inputs",
+        "Explain the out-of-range voice bank placements and overlapping ranges without treating header labels as proven semantics",
+        "Implement lossless section/container decoders with offset/length checks and round-trip or reference-byte comparison",
+        "Test truncated/corrupt/overlapping sections and publish verified decoded content incrementally with release-specific manifests"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 484,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/484"
+    },
+    {
+      "id": "RSAT-008",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Capture and reconstruct VDP1 textures, palettes and draw commands",
+      "acceptance": [
+        "Export indexed/native texels, palettes, command order, coordinates, pivots, transforms, clipping, mesh/end-code/transparency and colour modes where observed",
+        "Correlate commands to source bank/resource and animation state without treating screenshots as spritesheets",
+        "Reconstruct selected draw regions against the reference and detect deliberate palette/order/transparency mistakes",
+        "Cover rare and mode-dependent resource loads through the content ledger and publish extracted outputs with reproducible recipes"
+      ],
+      "depends_on": [
+        "RSAT-005"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 485,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/485"
+    },
+    {
+      "id": "RSAT-009",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Capture and reconstruct VDP2 tiles, maps and backgrounds",
+      "acceptance": [
+        "Export character patterns, map/plane layouts, palettes, scroll/line effects, rotation, windows, priorities and colour calculation as observed",
+        "Preserve raw coordinates and composition independently of gameplay collision",
+        "Compare reconstruction at multiple frames including palette/scroll changes and deliberate wrong-layer mutants",
+        "Link each decoded tile/map to its region, source range and capture identity"
+      ],
+      "depends_on": [
+        "RSAT-005"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 486,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/486"
+    },
+    {
+      "id": "RSAT-010",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Compile faithful sprite atlases and animation state metadata",
+      "acceptance": [
+        "Recover frame ordering/duration, state transitions, direction, anchors, component layers and palette variants from actual state changes",
+        "Produce deterministic lossless frames and packed sheets without repainting or inventing unseen frames",
+        "Deduplicate exact bytes while preserving aliases, regional differences and usage contexts",
+        "Validate regeneration and animated reconstruction against source captures, report missing or forced-only states"
+      ],
+      "depends_on": [
+        "RSAT-008"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 487,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/487"
+    },
+    {
+      "id": "RSAT-011",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Recover SCSP samples, sequences, sound drivers and trigger semantics",
+      "acceptance": [
+        "Map actual 68000 driver/bank interfaces and any observed DSP use, sample formats, instruments, sequences and envelopes",
+        "Capture source samples separately from synthesised playback/mixes, including pitch, looping, volume, panning and channel priorities",
+        "Connect game events to sound commands and verify rendered output and interruption behaviour",
+        "Inventory all discovered banks/voices with hashes, decoder recipes and unknown formats, a mixed WAV count cannot establish completeness"
+      ],
+      "depends_on": [
+        "RSAT-003",
+        "RSAT-005"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 488,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/488"
+    },
+    {
+      "id": "RSAT-012",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Decode CD audio, FILM movies and streamed audio with exact timing",
+      "acceptance": [
+        "Reuse #473's sector/track inventory and AIF provenance, distinguish unknown mastering differences and unverified PAL-rip hypothesis",
+        "Decode losslessly where the format permits, retaining timebase, sample rate, channels, loop/cue points and stream packet timing",
+        "Map track/movie/stream selection to game states and compare A/V synchronisation against the original",
+        "Reject truncated tables/streams and keep regional outputs separate, do not infer every soundtrack source is CD-DA"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 489,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/489"
+    },
+    {
+      "id": "RSAT-013",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Build autonomous original-game navigation and campaign/battle exploration",
+      "acceptance": [
+        "Navigate every discovered menu/mode and independently control players through death/retry, co-op, round transitions and endings",
+        "Maintain checkpoints, replayable input recordings, stuck detection and novelty-driven exploration across discovered content",
+        "Label memory-assisted/forced exploration separately and require unmodified demonstrations for reachability claims",
+        "Measure held-out completion and failure recovery, scripts own fast loops and no model call is required every frame"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 490,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/490"
+    },
+    {
+      "id": "RSAT-014",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Expose validated typed observations from Saturn game state",
+      "acceptance": [
+        "Validate addresses, endian/width/scale, lifetime, slot reuse and region mapping through controlled writes and natural transitions",
+        "Export versioned canonical observations with input/build/state identity and confidence",
+        "Reject unknown symbols and stale region/checkpoint mappings instead of substituting zero values",
+        "Feed reference comparators and research controllers while keeping Neptune competitive bots limited to their public observation contract"
+      ],
+      "depends_on": [
+        "RSAT-004",
+        "RSAT-005"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 491,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/491"
+    },
+    {
+      "id": "RSAT-015",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Recover Saturn RNG, task scheduling and timing domains",
+      "acceptance": [
+        "Recover RNG state/algorithm/call ordering and correlate calls to tasks, interrupts and gameplay updates",
+        "Measure VBlank versus game tick, CD seek/read latency, audio-completion gates, pause and slowdown using observed units",
+        "Test event ordering and simultaneous boundaries across repeats and releases without hidden time warping",
+        "Retain unexplained drift and compare instrumented/unmodified paths, synthetic seeded randomness is not parity"
+      ],
+      "depends_on": [
+        "RSAT-005",
+        "RSAT-014"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 492,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/492"
+    },
+    {
+      "id": "RSAT-016",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Measure exact Saturn movement, bomb and collision contracts",
+      "acceptance": [
+        "Measure subpixels, speed, corners, collision shapes, input buffering and placement/owner-overlap rules",
+        "Sweep fuse/explosion/chain timing, blast obstruction, damage/invulnerability, kick/throw/landing and simultaneous action boundaries",
+        "Link observations to relevant routines/data and generate executable expected traces with explicit units/timebases",
+        "Detect deliberate one-unit/one-tick mutations and extend item/mount interactions through #398/#407"
+      ],
+      "depends_on": [
+        "RSAT-014"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 493,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/493"
+    },
+    {
+      "id": "RSAT-017",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Recover Saturn save, continue and campaign persistence formats",
+      "acceptance": [
+        "Identify backup records, checksums, fields, progression/flags, slot allocation and regional/schema differences",
+        "Compare save/load across uninterrupted and restarted runs, including failure and corrupt-copy behaviour",
+        "Map game-over/continue/retry/co-op retained state to recovered routines and observed transitions",
+        "Keep original player saves unchanged and publish parsers/specifications with synthetic test vectors plus private real evidence"
+      ],
+      "depends_on": [
+        "RSAT-004",
+        "RSAT-013"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 494,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/494"
+    },
+    {
+      "id": "RSAT-018",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Recover UI, text, fonts, camera and presentation state machines",
+      "acceptance": [
+        "Recover encodings, glyph maps, string tables, menu graph, selection repeat/delay and screen transition timing",
+        "Measure camera/viewport/scroll/HUD layout for standard, wide and campaign scenes with state-linked coordinates",
+        "Inventory regional text/voice/menu changes, cutscenes, ending/credits and hidden selections with evidence",
+        "Reconstruct representative screens and detect wrong glyph/anchor/timing, UI screenshots are not code/data recovery"
+      ],
+      "depends_on": [
+        "RSAT-008",
+        "RSAT-009",
+        "RSAT-013"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 495,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/495"
+    },
+    {
+      "id": "RSAT-019",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Reverse-engineer Saturn NetLink and XBAND code and resources offline",
+      "acceptance": [
+        "Account for the USA-only modules/assets, protocol state machines, configuration and shared-game integration",
+        "Use only owned emulated endpoints/recorded fixtures for call/setup, synchronisation and failure experiments",
+        "Distinguish original local multiplayer, historical modem play and Neptune internet transport",
+        "Deliver tested parser/state specifications and explicit unavailable-service limitations without contacting public legacy endpoints"
+      ],
+      "depends_on": [
+        "RSAT-003",
+        "RSAT-004"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 496,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/496"
+    },
+    {
+      "id": "RSAT-020",
+      "domain": "RSAT",
+      "domain_name": "Saturn code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 464,
+      "provenance": "reference-research",
+      "title": "Account for hidden, unused and dynamically discovered Saturn code/content",
+      "acceptance": [
+        "Join static range inventory, runtime code/resource coverage and route/state graph with stable identities",
+        "Search hidden/debug/unused paths and rare transitions through bounded analysis, guided fuzzing and forced-state exploration",
+        "Keep unmodified reachability, debug-only behaviour, dead code, shared libraries and unknown areas separate",
+        "Generate idempotent bounded follow-ups and require denominator evidence before any total-code or total-content claim"
+      ],
+      "depends_on": [
+        "RSAT-003",
+        "RSAT-013"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 497,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/497"
+    },
+    {
+      "id": "RPWR-001",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Identify Power binaries and reconcile existing GameMaker exports",
+      "acceptance": [
+        "Use #41's developer-linked exact build and record platform/container/engine version and hashes",
+        "Determine VM bytecode versus native YYC or other code empirically before choosing tools",
+        "Match existing data.win/GameMaker exports by resource IDs/bytes without assuming their release or complete provenance",
+        "Produce a code/resource inventory with unresolved records and platform differences"
+      ],
+      "depends_on": [
+        "REF-007"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 498,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/498"
+    },
+    {
+      "id": "RPWR-002",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Recover Power gameplay code, object events and call graphs",
+      "acceptance": [
+        "Use a pinned compatible GameMaker parser/decompiler for VM code or native disassembly for observed YYC components",
+        "Map objects, creation/step/draw/collision events, alarms, scripts, globals, resource references and indirect dispatch",
+        "Validate selected recovered functions/events against actual runtime traces and differential mutants",
+        "Maintain discovered/decompiled/executed/validated code coverage separately and preserve unknown bytecode/unsupported features"
+      ],
+      "depends_on": [
+        "RPWR-001"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 499,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/499"
+    },
+    {
+      "id": "RPWR-003",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Extract Power texture pages, characters and animation metadata",
+      "acceptance": [
+        "Recover atlas regions, trim/origin offsets, masks, frame ordering, speeds, palettes/variants and referenced objects",
+        "Reconstruct source frames from texture pages and compare runtime drawing/animation timing",
+        "Inventory all discovered resources with deterministic export and version mapping, preserving credits and gaps",
+        "Reconcile existing exports non-destructively and publish validated private research content through the shared asset gate"
+      ],
+      "depends_on": [
+        "RPWR-001"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 500,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/500"
+    },
+    {
+      "id": "RPWR-004",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Extract Power audio, fonts, text and interface resources",
+      "acceptance": [
+        "Recover sounds/music/stream files, format/rates/loops, fonts/glyph metrics, strings and interface metadata",
+        "Trace event triggers, layering/pan/volume/interruptions and locale selection in actual execution",
+        "Validate lossless exports and representative playback/rendering, track unsupported/unknown container types",
+        "Retain per-resource provenance and prevent duplicate or wrong-release uploads"
+      ],
+      "depends_on": [
+        "RPWR-001"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 501,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/501"
+    },
+    {
+      "id": "RPWR-005",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Recover Power room layouts, stages, hazards and variant data",
+      "acceptance": [
+        "Decode room/tile/layer/object placement, spawns, collisions, hazard parameters and creation scripts",
+        "Separate static room data from procedural/runtime-generated layouts and options",
+        "Compare extracted geometry/state transitions to controlled play and source event consumers",
+        "Expand #405 into per-stage/variant measured children with eligibility/player-count restrictions"
+      ],
+      "depends_on": [
+        "RPWR-001",
+        "RPWR-002"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 502,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/502"
+    },
+    {
+      "id": "RPWR-006",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Instrument Power updates, inputs, RNG and deterministic experiment boundaries",
+      "acceptance": [
+        "Measure actual step/input/timer clock domains and scheduling with a pinned owned process/debugger",
+        "Recover or observe RNG/state where possible and report unsupported seed/state controls and timing uncertainty",
+        "Compare instrumentation-enabled/disabled results and reject drift/truncated samples instead of calling wall-clock input frame-exact",
+        "Build canonical observation/input adapters for #42 and #407 without modifying public multiplayer clients/services"
+      ],
+      "depends_on": [
+        "RPWR-002"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 503,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/503"
+    },
+    {
+      "id": "RPWR-007",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Recover Power mode, scoring, progression and reset state machines",
+      "acceptance": [
+        "Correlate actual manual/menu options with source events for survival, team and other observed battle rules plus Score/Turbo",
+        "Measure setup, win/draw/scoring/timers, sudden death, continues/progression and reset behaviour",
+        "Create independent reference fixtures for each supported mode/options combination, including failures and simultaneous outcomes",
+        "Keep #44 Reversi and #411–#416 implementation tasks consuming measured contracts rather than assumed semantics"
+      ],
+      "depends_on": [
+        "RPWR-002",
+        "RPWR-006"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 504,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/504"
+    },
+    {
+      "id": "RPWR-008",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Recover Power CPU policies and difficulty behaviour",
+      "acceptance": [
+        "Locate policy/event cadence, perception, navigation, bomb/escape/item decisions and RNG dependence",
+        "Compare recovered control flow with repeated actual local CPU scenarios and difficulty settings",
+        "Distinguish deterministic algorithm evidence from statistical quality measurements and hidden-state access",
+        "Publish replayable observations/action traces and counterexamples without calling a renamed Neptune bot faithful"
+      ],
+      "depends_on": [
+        "RPWR-002",
+        "RPWR-006"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 505,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/505"
+    },
+    {
+      "id": "RPWR-009",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Recover the Power local client/server protocol and synchronisation",
+      "acceptance": [
+        "Pin client and matching server, map messages/state transitions and correlate wire captures with code paths",
+        "Exercise reconnect, version mismatch, ordering, loss/jitter and desynchronisation using isolated owned endpoints",
+        "Recover transport versus simulation responsibilities, RNG/state synchronisation and error handling with bounded captures",
+        "Deliver protocol/spec tests for #45 comparisons, do not probe public servers or infer security from silence"
+      ],
+      "depends_on": [
+        "RPWR-002",
+        "RPWR-006"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 506,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/506"
+    },
+    {
+      "id": "RPWR-010",
+      "domain": "RPWR",
+      "domain_name": "Power code, extraction and original execution",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 476,
+      "provenance": "reference-research",
+      "title": "Reverse-engineer Power custom-content formats and authoring workflows",
+      "acceptance": [
+        "Inventory bundled editor/help/config formats and discover resource IDs, metadata, validation and compatibility checks",
+        "Trace how custom assets/settings affect code, collision, animation and online consistency",
+        "Build format documentation and tested converters only for observed supported data, distinguish history from current workflows",
+        "Feed Neptune's public pack API design while keeping game-specific formats and behaviour profiles separate"
+      ],
+      "depends_on": [
+        "RPWR-001",
+        "RPWR-003"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 507,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/507"
+    },
+    {
+      "id": "RLAB-001",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Build tested reusable research skills and local analysis adapters",
+      "acceptance": [
+        "Evaluate GhidraMCP/PyGhidra and native agent interfaces against pinned versions using an isolated project",
+        "Expose bounded read/analysis actions and explicit writes, with source/input/output identities and no secrets or bulk raw binary submission to models",
+        "Create version-controlled skills/runbooks from actual tested commands, fixtures and negative cases rather than speculative tool recipes",
+        "Verify resumption and use by a second supported agent, follow skill-creator instructions when implementing/installing skills"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 508,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/508"
+    },
+    {
+      "id": "RLAB-002",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Maintain a verified prior-art and research-source registry",
+      "acceptance": [
+        "Research primary repos/manuals/developer threads and firsthand ripping notes with retrieval date, pinned revision and evidence links",
+        "Separate AI-assisted projects, emulator tooling, decompilation, static recompilation and unverified claims",
+        "Record compatible releases, licences, tested capabilities, known failures and reusable artifacts, verify claims locally before adoption",
+        "Turn new evidence into deduplicated bounded issues, no unsolicited external messages or massive unfocused scraping"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 509,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/509"
+    },
+    {
+      "id": "RLAB-003",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Route Saturn and Power research jobs through the existing Repo Factory",
+      "acceptance": [
+        "Reuse #474/#475 offline verification integration, existing provider broker, shared quotas/health and Neptune tests-only lifecycle work",
+        "Add capability-based queues for code analysis, assets/audio, emulator/play, Power experiments and independent validation with owned paths/resources",
+        "Select ready bounded jobs from evidence/dependencies, reconcile manual Gemini sessions and prevent duplicate publication across repositories",
+        "Prove interruption/resumption, quota backoff and selection of independent work when a private-input job is blocked, do not start a second scheduler"
+      ],
+      "depends_on": [
+        "FACTORY-003",
+        "FACTORY-004",
+        "FACTORY-005"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 510,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/510"
+    },
+    {
+      "id": "RLAB-004",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Verify private reference experiments through trusted reproducible receipts",
+      "acceptance": [
+        "Bind receipts to source/core/settings/input/capture hashes, exact task revision/head/base, command and resource owner",
+        "Run authorised private fixtures without exposing ROM/BIOS/state credentials to ordinary CI or model prompts",
+        "Separate tool-only CI, real reference observation, extracted-content validation and Neptune runtime parity gates",
+        "Reject forged/stale/missing/truncated/skipped receipts and demonstrate deliberate regression detection via #76's existing verifier"
+      ],
+      "depends_on": [
+        "FACTORY-005",
+        "FACTORY-006"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 511,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/511"
+    },
+    {
+      "id": "RLAB-005",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P0",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Publish extracted content to the private assets repository with regeneration gates",
+      "acceptance": [
+        "Preserve existing repository/history and separate Saturn/Power/release namespaces with immutable manifests, recipes, hashes and provenance",
+        "Validate decoded formats, deterministic regeneration, dependency completeness and accidental disc/BIOS/state/dump exclusion",
+        "Use bounded branches/PRs and current-head publication checks, reconcile uncertain upload outcomes and avoid duplicate gigabytes",
+        "Keep underlying reference content separate from engine licences/default public packs and measure storage/LFS policy before large uploads"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 512,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/512"
+    },
+    {
+      "id": "RLAB-006",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Reproduce reference results across independent engines and measurement methods",
+      "acceptance": [
+        "Compare original emulation, native recompilation and available hardware recordings with explicit clock/input/crop/state alignment",
+        "Identify shared code lineage and correlated errors, two copies of one emulator are not independent confirmation",
+        "Retain disagreement, loading/audio gate drift and precision limits, prohibit silent resampling/masking/tolerance inflation",
+        "Demonstrate a seeded implementation or extraction defect is detected and publish minimal replayable counterexamples"
+      ],
+      "depends_on": [],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 513,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/513"
+    },
+    {
+      "id": "RLAB-007",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Recover long-running research safely within disk and provider budgets",
+      "acceptance": [
+        "Measure actual free space, artifact growth, capture retention and shared provider/session usage before work",
+        "Persist checkpoint/task/claim/evidence identities outside disposable worktrees and resume idempotently after interruption",
+        "Use configured encrypted backup/restore and retention contracts without deleting unique source media or expanding paid storage",
+        "Prove disk-full, quota, killed worker and stale publication recovery while preserving other repositories' services"
+      ],
+      "depends_on": [
+        "FACTORY-002",
+        "FACTORY-012"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 514,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/514"
+    },
+    {
+      "id": "RLAB-008",
+      "domain": "RLAB",
+      "domain_name": "Research tooling, evidence and factory integration",
+      "priority": "P1",
+      "phase": 1,
+      "parent_issue": 477,
+      "provenance": "reference-research",
+      "title": "Prove whole-program and content reconstruction coverage without false completeness",
+      "acceptance": [
+        "Maintain distinct denominators for static bytes, executable ranges, functions, dynamic targets, modes/routes, assets and observed behaviours",
+        "Cross-link research ledgers, private source identities, asset commits and Neptune comparison fixtures",
+        "Reject conclusions based solely on all bytes classified, all instructions translated, all tests passing or no new discoveries",
+        "Produce completion dossiers with unresolved risks and mutation checks, grow bounded tasks idempotently through #410"
+      ],
+      "depends_on": [
+        "REF-013"
+      ],
+      "existing_issue": null,
+      "implementation_status": "needs-code-and-evidence-audit",
+      "issue_number": 515,
+      "issue_url": "https://github.com/elgansayer/Neptune-Bomberman/issues/515"
     }
   ],
   "publication_order": [
@@ -8524,6 +9433,58 @@
     "FACTORY-014",
     "FACTORY-015",
     "FACTORY-016",
+    "RLAB-003",
+    "RLAB-004",
+    "RLAB-005",
+    "RSAT-001",
+    "RSAT-007",
+    "REF-001",
+    "REF-002",
+    "REF-003",
+    "REF-004",
+    "REF-005",
+    "REF-006",
+    "REF-007",
+    "RPWR-001",
+    "REF-008",
+    "REF-009",
+    "REF-010",
+    "REF-011",
+    "REF-012",
+    "REF-013",
+    "REF-014",
+    "RLAB-001",
+    "RLAB-002",
+    "RLAB-006",
+    "RLAB-007",
+    "RLAB-008",
+    "RPWR-002",
+    "RPWR-003",
+    "RPWR-004",
+    "RPWR-005",
+    "RPWR-006",
+    "RPWR-007",
+    "RPWR-008",
+    "RPWR-009",
+    "RPWR-010",
+    "RSAT-002",
+    "RSAT-003",
+    "RSAT-004",
+    "RSAT-005",
+    "RSAT-008",
+    "RSAT-006",
+    "RSAT-009",
+    "RSAT-010",
+    "RSAT-011",
+    "RSAT-012",
+    "RSAT-013",
+    "RSAT-014",
+    "RSAT-015",
+    "RSAT-016",
+    "RSAT-017",
+    "RSAT-018",
+    "RSAT-019",
+    "RSAT-020",
     "SIM-001",
     "SIM-002",
     "SIM-003",
@@ -8606,7 +9567,9 @@
     "BOMB-010",
     "BOMB-011",
     "BOMB-012",
+    "BOMB-013",
     "BOMB-014",
+    "BOMB-015",
     "BOMB-016",
     "BOMB-017",
     "BOMB-018",
@@ -8746,6 +9709,7 @@
     "MOUNT-006",
     "MOUNT-007",
     "MOUNT-008",
+    "MOUNT-009",
     "MOUNT-010",
     "EDITOR-001",
     "EDITOR-002",
@@ -8839,23 +9803,6 @@
     "STATS-010",
     "STATS-011",
     "STATS-012",
-    "REF-001",
-    "REF-002",
-    "REF-003",
-    "REF-004",
-    "REF-005",
-    "REF-006",
-    "REF-007",
-    "MOUNT-009",
-    "REF-008",
-    "BOMB-013",
-    "BOMB-015",
-    "REF-009",
-    "REF-010",
-    "REF-011",
-    "REF-012",
-    "REF-013",
-    "REF-014",
     "POWER-001",
     "POWER-002",
     "POWER-003",
