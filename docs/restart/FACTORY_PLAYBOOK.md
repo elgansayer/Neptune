@@ -37,6 +37,11 @@ the two laboratories' contracts and can proceed on independent eligible work.
 
 ## Automatic tool provisioning
 
+Apply [the dependency policy](DEPENDENCY_POLICY.md) during task intake and regular
+intake sweeps: check current stable releases, deduplicate upgrade tasks, refresh
+reproducible pins and verify compatibility. This includes Godot and its native
+addons/export templates. Report temporary compatibility blockers and next actions.
+
 Routine required free tool installation is authorised. Follow
 [PROVISIONING.md](../../tools/factory/PROVISIONING.md) and #518 / FACTORY-017:
 missing capability -> durable preparation job -> pinned install/build -> real

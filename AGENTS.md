@@ -38,6 +38,12 @@ claims to verify against code and actual execution, not evidence of correctness.
 
 ## Work and evidence
 
+- Finish authorised changes by committing and pushing them; never leave completed
+  work only in a local checkout. When using a PR, open it and merge after the
+  applicable tests-gated merge requirements pass, or enable auto-merge while
+  checks run. Routine commit, push, PR creation and eligible merge need no further
+  confirmation. Report the remote branch/PR and any concrete merge blocker.
+  Include only task changes; preserve unrelated local work.
 - GitHub issues define scope, dependencies, acceptance checks and evidence.
 - `docs/restart/feature-catalogue.json` separates reference claims and implementation
   status. Its validator checks metadata only; it cannot certify gameplay or evidence.
@@ -62,6 +68,16 @@ claims to verify against code and actual execution, not evidence of correctness.
 - Tests must fail on missing fixtures, no discovered tests and execution errors.
 - For actual gameplay changes, run bounded server/client tests and inspect
   `server.log` when available. Report missing tools or logs rather than fabricating results.
+
+## Dependency freshness
+
+Follow `docs/restart/DEPENDENCY_POLICY.md`: always adopt the latest stable
+packages, tooling and Godot, including major/minor releases. Check official
+upstream versions at task intake; update exact pins, hashes, native addons,
+export templates, CI and setup guidance together and run applicable checks.
+Existing pins ensure reproducibility, not permission to stay outdated. Track any
+concrete compatibility blocker with an owner, next action and recheck; preserve
+historical reference versions and evidence separately.
 
 ## Automatic tool preparation
 

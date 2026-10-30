@@ -1,7 +1,10 @@
 # Trustworthy native test execution
 
-These tools pin the existing Godot 4.5 Linux x86_64 baseline and test the runner's
-failure boundaries. They do not implement emulation, extraction, cross-play or a
+These tools currently pin Godot 4.5 Linux x86_64 and test the runner's
+failure boundaries. Development must adopt the latest stable Godot under the
+[dependency policy](../../docs/restart/DEPENDENCY_POLICY.md); update these pins,
+native addons, export templates and examples together after compatibility checks.
+The commands below describe the existing recorded pin. These tools do not implement emulation, extraction, cross-play or a
 factory. No API model calls are made.
 
 ```sh
