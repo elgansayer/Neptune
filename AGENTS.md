@@ -49,8 +49,11 @@ claims to verify against code and actual execution, not evidence of correctness.
 
 ## Work and evidence
 
-- Always commit completed task changes before ending a work session and report
-  the commit SHA. Stage only task-owned files; preserve unrelated work.
+- Always commit and push completed task changes before ending a work session;
+  never leave completed work only locally. For integration, create or update a PR
+  and merge once applicable exact-head/current-base checks pass. Report the commit,
+  pushed branch and PR/merge state, or the concrete blocker. Stage only task-owned
+  files and preserve unrelated work; never bypass failing merge gates.
 - GitHub issues define scope, dependencies, acceptance checks and evidence.
 - `docs/restart/feature-catalogue.json` separates reference claims and implementation
   status. Its validator checks metadata only; it cannot certify gameplay or evidence.

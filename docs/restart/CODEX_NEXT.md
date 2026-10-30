@@ -165,8 +165,10 @@ and local tests do not require purchasing a domain or publishing production serv
 ## Execution loop and continuity
 
 Audit overlap -> claim -> implement -> applicable real tests -> inspect logs ->
-attach evidence -> focused PR -> required current-base checks -> merge -> reconcile
+attach evidence -> commit and push -> focused PR -> required current-base checks -> merge -> reconcile
 the issue -> next eligible task. No mandatory AI/human approving review is required.
+Always publish completed changes before ending a session; do not leave them only
+in a local checkout. Report the pushed commit and PR/merge state or a concrete blocker.
 Never bypass failing gates, weaken assertions/tolerances, fabricate reference
 captures or treat missing/skipped/empty checks as passing.
 
