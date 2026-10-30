@@ -92,8 +92,8 @@
         "19 AIFF audio files (M_007.AIF..M_067.AIF, 44100 Hz) requiring byte/sector comparison against disc tracks/files."
       ],
       "open_unknowns": [
-        "Internal section layout and compression of every PROGRAM.BIN bank (236 USA / 240 Japan); entropy ~7.03 bits/byte suggests compressed payloads (hypothesis).",
-        "Loader code path in the boot executable that maps bank names to Low-WRAM loads at runtime.",
+        "Slots 3, 4, 5, 6, 9 and 0x060095E0 SCSP binary command records (Slot 10 and stage Slot 2) inside PROGRAM.BIN banks remain open beyond pointer-table bounds; 0KRNL.BIN live bank directory (72 USA / 66 Japan entries), verbatim WorkRAML staging, and Hudson predictive ring/delta unpacking for Slots 0, 1, 2 (tilemaps), 7 (stage grids), and 8 (VDP1 sprites) are verified in EXP-SAT-ARCHIVE-002 (#484).",
+        "Semantics of the 4 headerless USA kernel directory entries (bank_id=23 21-pointer overlay at 0x002da000 and bank_id=41..43 raw 8-sector slots at 0x002fb000).",
         "Format of the 56 USA unclassified binaries (NetLink/XBAND support files); low priority for game rules.",
         "Whether a PAL (MK-81070-50) disc is available; the asset repo CPK files are PAL-rate and have no NTSC match."
       ],
@@ -554,7 +554,7 @@
     },
     {
       "experiment_id": "EXP-SAT-ARCHIVE-002",
-      "status": "next",
+      "status": "completed_resident_verified",
       "backlog_ids": [
         "REF-006",
         "REF-002",
@@ -564,7 +564,8 @@
         28,
         394,
         399,
-        464
+        464,
+        484
       ],
       "hypothesis": "Each PROGRAM.BIN bank's 11 header pointers delimit sections whose payloads use one or more Hudson compression schemes; a decoder validated by byte-exact comparison with the bank image the game itself places in Low-WRAM will recover raw code, graphics, palettes, maps and SCSP data.",
       "controlled_initial_state": "Pinned USA disc (static) plus a #27 checkpoint at a known screen, read through a separate forked core build with read-only memory export (coordinated heavy slot).",
@@ -578,7 +579,9 @@
         "Any decoded section differs from the runtime-resident bytes.",
         "Section types are asserted from bank names without structural or runtime evidence.",
         "Raw ROM, RAM or state bytes are committed or sent to a model provider."
-      ]
+      ],
+      "result_summary": "0KRNL.BIN live directory decoded (72 USA / 66 Japan entries, 100% fitting WorkRAML 0x00200000..0x00300000; static 236/240 counts partitioned into active starts, mid-slot residuals, and unreferenced build-container tail, resolving 0x002fb000..0x00325000 and 0x00250000). base1 (344,064 B) and byte-identical USA/Japan normal2 (573,440 B) proven 100% verbatim in MAIN.WorkRAML with zero pointer relocation; Hudson predictive ring/delta codec (0x0603443C / 0x0603461C) decoded and verified against resident VDP1.VRAM, VDP2.VRAM, VDP2.CRAM, and WorkRAMH with 6 negative controls.",
+      "evidence": "docs/restart/evidence/2026-10-30-gemini-program-bin-archive-002.md"
     },
     {
       "experiment_id": "EXP-SAT-VDP-002",
@@ -640,6 +643,11 @@
       "milestone": "EXP-SAT-DISC-001 static disc inventory",
       "status": "measured_static",
       "evidence": "docs/restart/evidence/2026-10-30-gemini-saturn-disc-inventory.md"
+    },
+    {
+      "milestone": "EXP-SAT-ARCHIVE-002 PROGRAM.BIN bank decode and resident verification (#484)",
+      "status": "verified_resident",
+      "evidence": "docs/restart/evidence/2026-10-30-gemini-program-bin-archive-002.md"
     }
   ]
 }

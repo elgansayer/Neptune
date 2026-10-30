@@ -5,16 +5,20 @@ on:
     paths:
       - 'tools/asset_audit/**'
       - 'tools/saturn_disc/**'
+      - 'tools/saturn_archive/**'
       - 'docs/restart/asset-audit/**'
       - 'docs/restart/saturn-disc/**'
+      - 'docs/restart/saturn-archive/**'
       - '.github/workflows/saturn-research.yml'
   push:
     branches: [main]
     paths:
       - 'tools/asset_audit/**'
       - 'tools/saturn_disc/**'
+      - 'tools/saturn_archive/**'
       - 'docs/restart/asset-audit/**'
       - 'docs/restart/saturn-disc/**'
+      - 'docs/restart/saturn-archive/**'
       - '.github/workflows/saturn-research.yml'
   workflow_dispatch:
 
@@ -45,3 +49,13 @@ jobs:
           --summary docs/restart/saturn-disc/usa-mk81070-v1003.summary.json
           --summary docs/restart/saturn-disc/japan-t14302g-v1000.summary.json
           --diff docs/restart/saturn-disc/usa-vs-japan.diff.json
+      - name: PROGRAM.BIN archive and codec synthetic tests
+        run: python3 tools/saturn_archive/check.py
+      - name: Validate committed PROGRAM.BIN archive and resident comparison receipts
+        run: >-
+          python3 tools/saturn_archive/cli.py verify
+          --directory docs/restart/saturn-archive/usa-mk81070-v1003.kernel-directory.json
+          --directory docs/restart/saturn-archive/japan-t14302g-v1000.kernel-directory.json
+          --bank docs/restart/saturn-archive/usa-mk81070-v1003.base1-decode.json
+          --bank docs/restart/saturn-archive/cross-region.normal2-decode.json
+          --comparison docs/restart/saturn-archive/base1-normal2-resident-comparison.json

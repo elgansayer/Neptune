@@ -1,0 +1,1598 @@
+{
+  "comparisons": [
+    {
+      "bank": {
+        "bank_id": 1,
+        "byte_length": 344064,
+        "header_name": "base1",
+        "load_base_hex": "0x00200000",
+        "load_end_hex": "0x00254000",
+        "sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f",
+        "slot_table_ptrs_hex": [
+          "0x00200034",
+          "0x00204270",
+          "0x00204ad0",
+          "0x00204b5c",
+          "0x00204c08",
+          "0x0020b8a4",
+          "0x0020c6b8",
+          "0x00000000",
+          "0x0020c880",
+          "0x0024b288",
+          "0x0024db88"
+        ],
+        "source_byte_offset_hex": "0x0008000",
+        "source_sector_offset": 16
+      },
+      "checkpoint": {
+        "checkpoint_json_sha256": "e1021ae4366324f62404d12710ca58bc7f62765351e7db1875971fb0f7662cb3",
+        "frame": 10800,
+        "identity": {
+          "core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+          "frontend_sha256": "84b29f26338d31a0a4f546e75ecca88460f457f5463ae20dbb4a135ca7f1c8da",
+          "lock_sha256": "c3c92ca36aff56f96369efa7b70c19bd0b75ce90f1454746352e4a6076eedb99",
+          "python_sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+          "settings_sha256": "ff02611733c33ed14ee22b6d2821114434d964320b9d59e77e68212f08912f25"
+        },
+        "kernel_vars": {
+          "bank_mode_0x26006158": 1,
+          "stage_grid_ptr_0x060d7e94_hex": "0x060f48b0",
+          "stage_idx_0x060c029d": 0,
+          "world_idx_0x060c029c": 0
+        },
+        "label": "accepted-27-menu-release",
+        "state_bytes": 6323674,
+        "state_sha256": "e5bd5164193db6b7af59ecd1b1705b4a794debd8e8b1496c8406c47d21f33506"
+      },
+      "decoded_subresource_comparisons": {
+        "slot0_vdp2_patterns": [
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15,
+                19,
+                18
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 6924,
+            "decoded_bytes": 16352,
+            "decoded_sha256": "4b3dacd782ccc691dd5c27ddf5142dc4b464f7523d6fe2767dda00fe348a509e",
+            "default_dest_hex": "0x25e50000",
+            "entry_ptr_hex": "0x00200040",
+            "equal_bytes": 16352,
+            "exact_match": true,
+            "index_1based": 1,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x50000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15,
+                1,
+                19
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 7733,
+            "decoded_bytes": 13312,
+            "decoded_sha256": "d3f6c992a2bd12bb432264cb38b3804ddef9378e8e502ccd76ca80c8a6b449ad",
+            "default_dest_hex": "0x25e40000",
+            "entry_ptr_hex": "0x00201b5c",
+            "equal_bytes": 13312,
+            "exact_match": true,
+            "index_1based": 2,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x40000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15
+              ],
+              "selector_bits": 1,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 2236,
+            "decoded_bytes": 6368,
+            "decoded_sha256": "67b1f052b17d9d1e80360c1d7edb3547c403a047a39ca1ae6ccb810c6b20a124",
+            "default_dest_hex": "0x25e4e000",
+            "entry_ptr_hex": "0x002039a4",
+            "equal_bytes": 6368,
+            "exact_match": true,
+            "index_1based": 3,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x4e000"
+          }
+        ],
+        "slot1_cram_palettes": {
+          "exact_matches_in_shadow_cram": 1,
+          "exact_matches_in_vdp2_cram": 3,
+          "total_palettes": 36
+        },
+        "slot2_vdp2_tilemap_count": 1,
+        "slot7_stage_grids": [],
+        "slot8_vdp1_sprites": {
+          "exact_vdp1_vram_block_matches": 623,
+          "exact_vdp1_vram_matched_bytes": 155200,
+          "sample_vdp1_matches": [
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 97,
+              "decoded_bytes": 128,
+              "decoded_sha256": "a1e51c6168b47dab1c36d2608273e60302fd3ed061ae09ed7ced8b815aa770c6",
+              "pixel_ptr_hex": "0x00210028",
+              "vdp1_vram_offset_hex": "0x7f280"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 99,
+              "decoded_bytes": 128,
+              "decoded_sha256": "9467ed831cf0c1fd3e549370af396fb9eb8d1159a3be22c270b2390400a5a64d",
+              "pixel_ptr_hex": "0x00210090",
+              "vdp1_vram_offset_hex": "0x7f200"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 103,
+              "decoded_bytes": 128,
+              "decoded_sha256": "6ba1f99a5462c37120b69dab8b14d6bd47e0f8976087a8969f64a87ed16a3cf0",
+              "pixel_ptr_hex": "0x002100f8",
+              "vdp1_vram_offset_hex": "0x7f180"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 108,
+              "decoded_bytes": 128,
+              "decoded_sha256": "d9632d47593e518b0fa2aa49be0cf3a345617321b7130cc41e22ee9ab907da0d",
+              "pixel_ptr_hex": "0x00210164",
+              "vdp1_vram_offset_hex": "0x7f100"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 104,
+              "decoded_bytes": 128,
+              "decoded_sha256": "acd1bf9573f2cdee4466220ca15094adbe4dc6b070677b80da049c75eb51c97b",
+              "pixel_ptr_hex": "0x002101d4",
+              "vdp1_vram_offset_hex": "0x7f080"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 83,
+              "decoded_bytes": 128,
+              "decoded_sha256": "d25f3c40f457155565285c269f638c4deabb6ebf0122947ad64cc13e90bc42f8",
+              "pixel_ptr_hex": "0x00210240",
+              "vdp1_vram_offset_hex": "0x7f000"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 72,
+              "decoded_bytes": 128,
+              "decoded_sha256": "ca102915e6a19c9f7a98b00b99a972fe8bb9373538e1248cae61c1dcb8ad0995",
+              "pixel_ptr_hex": "0x00210298",
+              "vdp1_vram_offset_hex": "0x7ef80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 98,
+              "decoded_bytes": 128,
+              "decoded_sha256": "ad39fa63e6e1c1d24b57de182d9dc3953c032054a9f0e5e5f6972dae80ce0b27",
+              "pixel_ptr_hex": "0x002102e4",
+              "vdp1_vram_offset_hex": "0x7ef00"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 89,
+              "decoded_bytes": 128,
+              "decoded_sha256": "13e087cf972e68b45766316611df86a80795dc0edd5d175a66335239273b93d2",
+              "pixel_ptr_hex": "0x0021034c",
+              "vdp1_vram_offset_hex": "0x7ee80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 85,
+              "decoded_bytes": 128,
+              "decoded_sha256": "b300a082aeb2b2167391d7697b63111d7e7dbbf9fd10a4377a7c6f067e6dbc40",
+              "pixel_ptr_hex": "0x002103ac",
+              "vdp1_vram_offset_hex": "0x7ee00"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 110,
+              "decoded_bytes": 128,
+              "decoded_sha256": "9071832d58b4020bac694456abedc348c55a1cee4a04997aff0f2c8027f666ea",
+              "pixel_ptr_hex": "0x00210408",
+              "vdp1_vram_offset_hex": "0x7ed80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 96,
+              "decoded_bytes": 128,
+              "decoded_sha256": "538f365df8db233e23f0b455e996a28ba243433183c1f92aaf5bb7f247a862cb",
+              "pixel_ptr_hex": "0x0021047c",
+              "vdp1_vram_offset_hex": "0x7ed00"
+            }
+          ],
+          "scratchpad_0x002fb000_prefix_matches": 1,
+          "tested_nonempty_blocks_ge_32b": 841,
+          "unique_pixel_blocks": 841
+        }
+      },
+      "hypothesis_verdicts": {
+        "pointer_relocation_at_load_time": false,
+        "subresources_stored_hudson_compressed_and_unpacked_to_vram_wram": true,
+        "verbatim_cd_staging_into_workram_l": true
+      },
+      "raw_workram_l_comparison": {
+        "bank_bytes": 344064,
+        "equal_bytes": 344064,
+        "exact_match": true,
+        "header_0x34_verbatim_unrelocated": true,
+        "match_ratio": 1.0,
+        "mismatch_bytes": 0,
+        "mismatch_intervals_sample": [],
+        "region": "MAIN.WorkRAML",
+        "region_offset_hex": "0x000000",
+        "resident_slice_sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f",
+        "saturn_addr_range_hex": "0x00200000..0x00254000"
+      }
+    },
+    {
+      "bank": {
+        "bank_id": 1,
+        "byte_length": 344064,
+        "header_name": "base1",
+        "load_base_hex": "0x00200000",
+        "load_end_hex": "0x00254000",
+        "sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f",
+        "slot_table_ptrs_hex": [
+          "0x00200034",
+          "0x00204270",
+          "0x00204ad0",
+          "0x00204b5c",
+          "0x00204c08",
+          "0x0020b8a4",
+          "0x0020c6b8",
+          "0x00000000",
+          "0x0020c880",
+          "0x0024b288",
+          "0x0024db88"
+        ],
+        "source_byte_offset_hex": "0x0008000",
+        "source_sector_offset": 16
+      },
+      "checkpoint": {
+        "checkpoint_json_sha256": "b42afe2585c40a40dfcf330ec2f62344aca0e1e3f311f57a7005aca651b5f848",
+        "frame": 10200,
+        "identity": {
+          "core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+          "frontend_sha256": "84b29f26338d31a0a4f546e75ecca88460f457f5463ae20dbb4a135ca7f1c8da",
+          "lock_sha256": "c3c92ca36aff56f96369efa7b70c19bd0b75ce90f1454746352e4a6076eedb99",
+          "python_sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+          "settings_sha256": "ff02611733c33ed14ee22b6d2821114434d964320b9d59e77e68212f08912f25"
+        },
+        "kernel_vars": {
+          "bank_mode_0x26006158": 2,
+          "stage_grid_ptr_0x060d7e94_hex": "0x060f48b0",
+          "stage_idx_0x060c029d": 0,
+          "world_idx_0x060c029c": 0
+        },
+        "label": "accepted-27-navigation-release-late",
+        "state_bytes": 6323674,
+        "state_sha256": "7049c38909dcd57a1aa84248cf3a531fdefef9f6d1150fff3f2822d4f70cef10"
+      },
+      "decoded_subresource_comparisons": {
+        "slot0_vdp2_patterns": [
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15,
+                19,
+                18
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 6924,
+            "decoded_bytes": 16352,
+            "decoded_sha256": "4b3dacd782ccc691dd5c27ddf5142dc4b464f7523d6fe2767dda00fe348a509e",
+            "default_dest_hex": "0x25e50000",
+            "entry_ptr_hex": "0x00200040",
+            "equal_bytes": 16352,
+            "exact_match": true,
+            "index_1based": 1,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x50000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15,
+                1,
+                19
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 7733,
+            "decoded_bytes": 13312,
+            "decoded_sha256": "d3f6c992a2bd12bb432264cb38b3804ddef9378e8e502ccd76ca80c8a6b449ad",
+            "default_dest_hex": "0x25e40000",
+            "entry_ptr_hex": "0x00201b5c",
+            "equal_bytes": 13312,
+            "exact_match": true,
+            "index_1based": 2,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x40000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15
+              ],
+              "selector_bits": 1,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 2236,
+            "decoded_bytes": 6368,
+            "decoded_sha256": "67b1f052b17d9d1e80360c1d7edb3547c403a047a39ca1ae6ccb810c6b20a124",
+            "default_dest_hex": "0x25e4e000",
+            "entry_ptr_hex": "0x002039a4",
+            "equal_bytes": 6368,
+            "exact_match": true,
+            "index_1based": 3,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x4e000"
+          }
+        ],
+        "slot1_cram_palettes": {
+          "exact_matches_in_shadow_cram": 8,
+          "exact_matches_in_vdp2_cram": 8,
+          "total_palettes": 36
+        },
+        "slot2_vdp2_tilemap_count": 1,
+        "slot7_stage_grids": [],
+        "slot8_vdp1_sprites": {
+          "exact_vdp1_vram_block_matches": 623,
+          "exact_vdp1_vram_matched_bytes": 155200,
+          "sample_vdp1_matches": [
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 97,
+              "decoded_bytes": 128,
+              "decoded_sha256": "a1e51c6168b47dab1c36d2608273e60302fd3ed061ae09ed7ced8b815aa770c6",
+              "pixel_ptr_hex": "0x00210028",
+              "vdp1_vram_offset_hex": "0x7f280"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 99,
+              "decoded_bytes": 128,
+              "decoded_sha256": "9467ed831cf0c1fd3e549370af396fb9eb8d1159a3be22c270b2390400a5a64d",
+              "pixel_ptr_hex": "0x00210090",
+              "vdp1_vram_offset_hex": "0x7f200"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 103,
+              "decoded_bytes": 128,
+              "decoded_sha256": "6ba1f99a5462c37120b69dab8b14d6bd47e0f8976087a8969f64a87ed16a3cf0",
+              "pixel_ptr_hex": "0x002100f8",
+              "vdp1_vram_offset_hex": "0x7f180"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 108,
+              "decoded_bytes": 128,
+              "decoded_sha256": "d9632d47593e518b0fa2aa49be0cf3a345617321b7130cc41e22ee9ab907da0d",
+              "pixel_ptr_hex": "0x00210164",
+              "vdp1_vram_offset_hex": "0x7f100"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 104,
+              "decoded_bytes": 128,
+              "decoded_sha256": "acd1bf9573f2cdee4466220ca15094adbe4dc6b070677b80da049c75eb51c97b",
+              "pixel_ptr_hex": "0x002101d4",
+              "vdp1_vram_offset_hex": "0x7f080"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 83,
+              "decoded_bytes": 128,
+              "decoded_sha256": "d25f3c40f457155565285c269f638c4deabb6ebf0122947ad64cc13e90bc42f8",
+              "pixel_ptr_hex": "0x00210240",
+              "vdp1_vram_offset_hex": "0x7f000"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 72,
+              "decoded_bytes": 128,
+              "decoded_sha256": "ca102915e6a19c9f7a98b00b99a972fe8bb9373538e1248cae61c1dcb8ad0995",
+              "pixel_ptr_hex": "0x00210298",
+              "vdp1_vram_offset_hex": "0x7ef80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 98,
+              "decoded_bytes": 128,
+              "decoded_sha256": "ad39fa63e6e1c1d24b57de182d9dc3953c032054a9f0e5e5f6972dae80ce0b27",
+              "pixel_ptr_hex": "0x002102e4",
+              "vdp1_vram_offset_hex": "0x7ef00"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 89,
+              "decoded_bytes": 128,
+              "decoded_sha256": "13e087cf972e68b45766316611df86a80795dc0edd5d175a66335239273b93d2",
+              "pixel_ptr_hex": "0x0021034c",
+              "vdp1_vram_offset_hex": "0x7ee80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 85,
+              "decoded_bytes": 128,
+              "decoded_sha256": "b300a082aeb2b2167391d7697b63111d7e7dbbf9fd10a4377a7c6f067e6dbc40",
+              "pixel_ptr_hex": "0x002103ac",
+              "vdp1_vram_offset_hex": "0x7ee00"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 110,
+              "decoded_bytes": 128,
+              "decoded_sha256": "9071832d58b4020bac694456abedc348c55a1cee4a04997aff0f2c8027f666ea",
+              "pixel_ptr_hex": "0x00210408",
+              "vdp1_vram_offset_hex": "0x7ed80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 96,
+              "decoded_bytes": 128,
+              "decoded_sha256": "538f365df8db233e23f0b455e996a28ba243433183c1f92aaf5bb7f247a862cb",
+              "pixel_ptr_hex": "0x0021047c",
+              "vdp1_vram_offset_hex": "0x7ed00"
+            }
+          ],
+          "scratchpad_0x002fb000_prefix_matches": 1,
+          "tested_nonempty_blocks_ge_32b": 841,
+          "unique_pixel_blocks": 841
+        }
+      },
+      "hypothesis_verdicts": {
+        "pointer_relocation_at_load_time": false,
+        "subresources_stored_hudson_compressed_and_unpacked_to_vram_wram": true,
+        "verbatim_cd_staging_into_workram_l": true
+      },
+      "raw_workram_l_comparison": {
+        "bank_bytes": 344064,
+        "equal_bytes": 344064,
+        "exact_match": true,
+        "header_0x34_verbatim_unrelocated": true,
+        "match_ratio": 1.0,
+        "mismatch_bytes": 0,
+        "mismatch_intervals_sample": [],
+        "region": "MAIN.WorkRAML",
+        "region_offset_hex": "0x000000",
+        "resident_slice_sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f",
+        "saturn_addr_range_hex": "0x00200000..0x00254000"
+      }
+    },
+    {
+      "bank": {
+        "bank_id": 1,
+        "byte_length": 344064,
+        "header_name": "base1",
+        "load_base_hex": "0x00200000",
+        "load_end_hex": "0x00254000",
+        "sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f",
+        "slot_table_ptrs_hex": [
+          "0x00200034",
+          "0x00204270",
+          "0x00204ad0",
+          "0x00204b5c",
+          "0x00204c08",
+          "0x0020b8a4",
+          "0x0020c6b8",
+          "0x00000000",
+          "0x0020c880",
+          "0x0024b288",
+          "0x0024db88"
+        ],
+        "source_byte_offset_hex": "0x0008000",
+        "source_sector_offset": 16
+      },
+      "checkpoint": {
+        "checkpoint_json_sha256": "f234f645eb25c847d8f49d6d207f4049fb922de391a6dc97f57ac2dae0fd61db",
+        "frame": 30360,
+        "identity": {
+          "core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+          "frontend_sha256": "84b29f26338d31a0a4f546e75ecca88460f457f5463ae20dbb4a135ca7f1c8da",
+          "lock_sha256": "c3c92ca36aff56f96369efa7b70c19bd0b75ce90f1454746352e4a6076eedb99",
+          "python_sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+          "settings_sha256": "ff02611733c33ed14ee22b6d2821114434d964320b9d59e77e68212f08912f25"
+        },
+        "kernel_vars": {
+          "bank_mode_0x26006158": 2,
+          "stage_grid_ptr_0x060d7e94_hex": "0x060f68b0",
+          "stage_idx_0x060c029d": 0,
+          "world_idx_0x060c029c": 1
+        },
+        "label": "captured-484-normal2-stage-2-1-run1",
+        "state_bytes": 6323674,
+        "state_sha256": "311c886c5bc2b0dc78d0d4ccdeb41044939b10ff334848f1691adf86b6d0e601"
+      },
+      "decoded_subresource_comparisons": {
+        "slot0_vdp2_patterns": [
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15,
+                19,
+                18
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 6924,
+            "decoded_bytes": 16352,
+            "decoded_sha256": "4b3dacd782ccc691dd5c27ddf5142dc4b464f7523d6fe2767dda00fe348a509e",
+            "default_dest_hex": "0x25e50000",
+            "entry_ptr_hex": "0x00200040",
+            "equal_bytes": 16352,
+            "exact_match": true,
+            "index_1based": 1,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x50000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15,
+                1,
+                19
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 7733,
+            "decoded_bytes": 13312,
+            "decoded_sha256": "d3f6c992a2bd12bb432264cb38b3804ddef9378e8e502ccd76ca80c8a6b449ad",
+            "default_dest_hex": "0x25e40000",
+            "entry_ptr_hex": "0x00201b5c",
+            "equal_bytes": 13312,
+            "exact_match": true,
+            "index_1based": 2,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x40000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15
+              ],
+              "selector_bits": 1,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 2236,
+            "decoded_bytes": 6368,
+            "decoded_sha256": "67b1f052b17d9d1e80360c1d7edb3547c403a047a39ca1ae6ccb810c6b20a124",
+            "default_dest_hex": "0x25e4e000",
+            "entry_ptr_hex": "0x002039a4",
+            "equal_bytes": 6368,
+            "exact_match": true,
+            "index_1based": 3,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x4e000"
+          }
+        ],
+        "slot1_cram_palettes": {
+          "exact_matches_in_shadow_cram": 8,
+          "exact_matches_in_vdp2_cram": 8,
+          "total_palettes": 36
+        },
+        "slot2_vdp2_tilemap_count": 1,
+        "slot7_stage_grids": [],
+        "slot8_vdp1_sprites": {
+          "exact_vdp1_vram_block_matches": 623,
+          "exact_vdp1_vram_matched_bytes": 155200,
+          "sample_vdp1_matches": [
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 97,
+              "decoded_bytes": 128,
+              "decoded_sha256": "a1e51c6168b47dab1c36d2608273e60302fd3ed061ae09ed7ced8b815aa770c6",
+              "pixel_ptr_hex": "0x00210028",
+              "vdp1_vram_offset_hex": "0x7f280"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 99,
+              "decoded_bytes": 128,
+              "decoded_sha256": "9467ed831cf0c1fd3e549370af396fb9eb8d1159a3be22c270b2390400a5a64d",
+              "pixel_ptr_hex": "0x00210090",
+              "vdp1_vram_offset_hex": "0x7f200"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 103,
+              "decoded_bytes": 128,
+              "decoded_sha256": "6ba1f99a5462c37120b69dab8b14d6bd47e0f8976087a8969f64a87ed16a3cf0",
+              "pixel_ptr_hex": "0x002100f8",
+              "vdp1_vram_offset_hex": "0x7f180"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 108,
+              "decoded_bytes": 128,
+              "decoded_sha256": "d9632d47593e518b0fa2aa49be0cf3a345617321b7130cc41e22ee9ab907da0d",
+              "pixel_ptr_hex": "0x00210164",
+              "vdp1_vram_offset_hex": "0x7f100"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 104,
+              "decoded_bytes": 128,
+              "decoded_sha256": "acd1bf9573f2cdee4466220ca15094adbe4dc6b070677b80da049c75eb51c97b",
+              "pixel_ptr_hex": "0x002101d4",
+              "vdp1_vram_offset_hex": "0x7f080"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 83,
+              "decoded_bytes": 128,
+              "decoded_sha256": "d25f3c40f457155565285c269f638c4deabb6ebf0122947ad64cc13e90bc42f8",
+              "pixel_ptr_hex": "0x00210240",
+              "vdp1_vram_offset_hex": "0x7f000"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 72,
+              "decoded_bytes": 128,
+              "decoded_sha256": "ca102915e6a19c9f7a98b00b99a972fe8bb9373538e1248cae61c1dcb8ad0995",
+              "pixel_ptr_hex": "0x00210298",
+              "vdp1_vram_offset_hex": "0x7ef80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 98,
+              "decoded_bytes": 128,
+              "decoded_sha256": "ad39fa63e6e1c1d24b57de182d9dc3953c032054a9f0e5e5f6972dae80ce0b27",
+              "pixel_ptr_hex": "0x002102e4",
+              "vdp1_vram_offset_hex": "0x7ef00"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 89,
+              "decoded_bytes": 128,
+              "decoded_sha256": "13e087cf972e68b45766316611df86a80795dc0edd5d175a66335239273b93d2",
+              "pixel_ptr_hex": "0x0021034c",
+              "vdp1_vram_offset_hex": "0x7ee80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 85,
+              "decoded_bytes": 128,
+              "decoded_sha256": "b300a082aeb2b2167391d7697b63111d7e7dbbf9fd10a4377a7c6f067e6dbc40",
+              "pixel_ptr_hex": "0x002103ac",
+              "vdp1_vram_offset_hex": "0x7ee00"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 110,
+              "decoded_bytes": 128,
+              "decoded_sha256": "9071832d58b4020bac694456abedc348c55a1cee4a04997aff0f2c8027f666ea",
+              "pixel_ptr_hex": "0x00210408",
+              "vdp1_vram_offset_hex": "0x7ed80"
+            },
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 96,
+              "decoded_bytes": 128,
+              "decoded_sha256": "538f365df8db233e23f0b455e996a28ba243433183c1f92aaf5bb7f247a862cb",
+              "pixel_ptr_hex": "0x0021047c",
+              "vdp1_vram_offset_hex": "0x7ed00"
+            }
+          ],
+          "scratchpad_0x002fb000_prefix_matches": 1,
+          "tested_nonempty_blocks_ge_32b": 841,
+          "unique_pixel_blocks": 841
+        }
+      },
+      "hypothesis_verdicts": {
+        "pointer_relocation_at_load_time": false,
+        "subresources_stored_hudson_compressed_and_unpacked_to_vram_wram": true,
+        "verbatim_cd_staging_into_workram_l": true
+      },
+      "raw_workram_l_comparison": {
+        "bank_bytes": 344064,
+        "equal_bytes": 344064,
+        "exact_match": true,
+        "header_0x34_verbatim_unrelocated": true,
+        "match_ratio": 1.0,
+        "mismatch_bytes": 0,
+        "mismatch_intervals_sample": [],
+        "region": "MAIN.WorkRAML",
+        "region_offset_hex": "0x000000",
+        "resident_slice_sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f",
+        "saturn_addr_range_hex": "0x00200000..0x00254000"
+      }
+    },
+    {
+      "bank": {
+        "bank_id": 5,
+        "byte_length": 573440,
+        "header_name": "normal2",
+        "load_base_hex": "0x00254000",
+        "load_end_hex": "0x002e0000",
+        "sha256": "6c662d2cf24d8a2548a4b4982a9b780de0207cec227f5cfdf4dcf394300ac9e3",
+        "slot_table_ptrs_hex": [
+          "0x00254034",
+          "0x00279378",
+          "0x00279ec8",
+          "0x00283be8",
+          "0x00284094",
+          "0x00287884",
+          "0x00292e50",
+          "0x00294518",
+          "0x00298d88",
+          "0x00000000",
+          "0x002d6bc8"
+        ],
+        "source_byte_offset_hex": "0x01c8000",
+        "source_sector_offset": 912
+      },
+      "checkpoint": {
+        "checkpoint_json_sha256": "f234f645eb25c847d8f49d6d207f4049fb922de391a6dc97f57ac2dae0fd61db",
+        "frame": 30360,
+        "identity": {
+          "core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+          "frontend_sha256": "84b29f26338d31a0a4f546e75ecca88460f457f5463ae20dbb4a135ca7f1c8da",
+          "lock_sha256": "c3c92ca36aff56f96369efa7b70c19bd0b75ce90f1454746352e4a6076eedb99",
+          "python_sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+          "settings_sha256": "ff02611733c33ed14ee22b6d2821114434d964320b9d59e77e68212f08912f25"
+        },
+        "kernel_vars": {
+          "bank_mode_0x26006158": 2,
+          "stage_grid_ptr_0x060d7e94_hex": "0x060f68b0",
+          "stage_idx_0x060c029d": 0,
+          "world_idx_0x060c029c": 1
+        },
+        "label": "captured-484-normal2-stage-2-1-run1",
+        "state_bytes": 6323674,
+        "state_sha256": "311c886c5bc2b0dc78d0d4ccdeb41044939b10ff334848f1691adf86b6d0e601"
+      },
+      "decoded_subresource_comparisons": {
+        "slot0_vdp2_patterns": [
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15
+              ],
+              "selector_bits": 1,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 71495,
+            "decoded_bytes": 107264,
+            "decoded_sha256": "76dc9cb0ac3bb34a083e3cddc38d63e91d0d26c0fb621ae03a73173ff5d45c1f",
+            "default_dest_hex": "0x25e20000",
+            "entry_ptr_hex": "0x00254040",
+            "equal_bytes": 107264,
+            "exact_match": true,
+            "index_1based": 1,
+            "match_ratio": 1.0,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x20000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                1,
+                15,
+                18
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 52015,
+            "decoded_bytes": 109376,
+            "decoded_sha256": "71f0700fa6b34a9671e2a1ddadecf46ed1cc6c07378f56aab436053de56a4735",
+            "default_dest_hex": "0x25e20000",
+            "entry_ptr_hex": "0x00265798",
+            "equal_bytes": 26150,
+            "exact_match": false,
+            "index_1based": 2,
+            "match_ratio": 0.239084,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x20000"
+          },
+          {
+            "codec": {
+              "dual_ring": false,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                15,
+                1,
+                19
+              ],
+              "selector_bits": 2,
+              "stream_mode": 0
+            },
+            "compressed": true,
+            "compressed_stream_bytes": 28815,
+            "decoded_bytes": 59776,
+            "decoded_sha256": "2a99b638f536e3091d583dab38b2b6002b4fea8877d1050ea0c0645c89cdcb43",
+            "default_dest_hex": "0x25e20000",
+            "entry_ptr_hex": "0x002722d8",
+            "equal_bytes": 2475,
+            "exact_match": false,
+            "index_1based": 3,
+            "match_ratio": 0.041405,
+            "matched_region": "VDP2.VRAM",
+            "matched_region_offset_hex": "0x20000"
+          }
+        ],
+        "slot1_cram_palettes": {
+          "exact_matches_in_shadow_cram": 4,
+          "exact_matches_in_vdp2_cram": 4,
+          "total_palettes": 18
+        },
+        "slot2_vdp2_tilemap_count": 0,
+        "slot7_stage_grids": [
+          {
+            "active_grid_match_ratio": 0.272827,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                14,
+                2,
+                19
+              ],
+              "selector_bits": 2,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 4257,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "1f59e04700036b5bc0f730a377d6e250bbe89bbca8761972084fa5fc1109d5c5",
+            "entry_ptr_hex": "0x0029453c",
+            "equal_bytes_at_active_grid_ptr": 2235,
+            "exact_contiguous_offset_in_workram_h_hex": "0x0f28b0",
+            "index_1based": 1,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 0.30542,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                1,
+                2,
+                19
+              ],
+              "selector_bits": 2,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 3462,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "d543d9d275d4e40cc774453afd5bf201f97eb60773ea37046a1e6b0c990a5765",
+            "entry_ptr_hex": "0x002955e0",
+            "equal_bytes_at_active_grid_ptr": 2502,
+            "exact_contiguous_offset_in_workram_h_hex": "0x0f48b0",
+            "index_1based": 2,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 0.998291,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                1
+              ],
+              "selector_bits": 1,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 1547,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "091b9d3954c449ea3e3ce1042a08609311ef464f13cbc42203225dfa81107bdf",
+            "entry_ptr_hex": "0x00296368",
+            "equal_bytes_at_active_grid_ptr": 8178,
+            "exact_contiguous_offset_in_workram_h_hex": null,
+            "index_1based": 3,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 1.0,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                1
+              ],
+              "selector_bits": 1,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 1537,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "caad07f8ac873bee316700912520ea6b89106d826b8c1e9f712c741d729d0308",
+            "entry_ptr_hex": "0x00296974",
+            "equal_bytes_at_active_grid_ptr": 8192,
+            "exact_contiguous_offset_in_workram_h_hex": "0x0f68b0",
+            "index_1based": 4,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 0.767456,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                19
+              ],
+              "selector_bits": 1,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 1785,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "f16accd1dad3b17b0991716b5ef4cba9d69bd7854c59f9497e9c8b54c5b24f60",
+            "entry_ptr_hex": "0x00296f78",
+            "equal_bytes_at_active_grid_ptr": 6287,
+            "exact_contiguous_offset_in_workram_h_hex": null,
+            "index_1based": 5,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 0.87207,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                19
+              ],
+              "selector_bits": 1,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 1117,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "4d802751e2089576d8a6b9d58f1a2ffb04a14cd472a3f4ecc88407474ede9ef4",
+            "entry_ptr_hex": "0x00297674",
+            "equal_bytes_at_active_grid_ptr": 7144,
+            "exact_contiguous_offset_in_workram_h_hex": null,
+            "index_1based": 6,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 0.77124,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                1
+              ],
+              "selector_bits": 1,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 1257,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "a3e1ee22d81a7266fd46ff6b85de52038d5eded960b35a4326b7006252a9a754",
+            "entry_ptr_hex": "0x00297ad4",
+            "equal_bytes_at_active_grid_ptr": 6318,
+            "exact_contiguous_offset_in_workram_h_hex": null,
+            "index_1based": 7,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 0.674561,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                19
+              ],
+              "selector_bits": 1,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 2251,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "5e82ce534e804a2b3161104bad7b23a3ccf5211ee3a99d789899ee2af086581d",
+            "entry_ptr_hex": "0x00297fc0",
+            "equal_bytes_at_active_grid_ptr": 5526,
+            "exact_contiguous_offset_in_workram_h_hex": null,
+            "index_1based": 8,
+            "rows": 64
+          },
+          {
+            "active_grid_match_ratio": 0.837524,
+            "codec": {
+              "dual_ring": true,
+              "elem_bytes": 1,
+              "methods": [
+                0,
+                19
+              ],
+              "selector_bits": 1,
+              "stream_mode": 1
+            },
+            "cols": 64,
+            "compressed_stream_bytes": 1272,
+            "decoded_bytes": 8192,
+            "decoded_sha256": "eac56a185ae80d32421bebd0dcc3de29778e69054040a782b2f349f50edee825",
+            "entry_ptr_hex": "0x0029888c",
+            "equal_bytes_at_active_grid_ptr": 6861,
+            "exact_contiguous_offset_in_workram_h_hex": null,
+            "index_1based": 9,
+            "rows": 64
+          }
+        ],
+        "slot8_vdp1_sprites": {
+          "exact_vdp1_vram_block_matches": 150,
+          "exact_vdp1_vram_matched_bytes": 70144,
+          "sample_vdp1_matches": [
+            {
+              "codec": {
+                "selector_bits": 2,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 105,
+              "decoded_bytes": 128,
+              "decoded_sha256": "a179588498872327c3404f062c801fdcd094d95ddacd9d0826c3e47e8dbef99c",
+              "pixel_ptr_hex": "0x0029bc14",
+              "vdp1_vram_offset_hex": "0x5fd40"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 139,
+              "decoded_bytes": 384,
+              "decoded_sha256": "911ac2bc8ab759fd57c645ef45862bd5c38039ac9412e7cac74fb5dfffcbb9a3",
+              "pixel_ptr_hex": "0x0029bc84",
+              "vdp1_vram_offset_hex": "0x5fbc0"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 151,
+              "decoded_bytes": 384,
+              "decoded_sha256": "41b3b30bb2330a75e41e1a3956a1a6944bd5c52804355d4c578da13dad62001c",
+              "pixel_ptr_hex": "0x0029bd14",
+              "vdp1_vram_offset_hex": "0x5fa40"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 120,
+              "decoded_bytes": 384,
+              "decoded_sha256": "a705a06de27ecefaa041f2ba2dfe3ad16e47098832d3eb4735d4910e028a4bb2",
+              "pixel_ptr_hex": "0x0029bdb0",
+              "vdp1_vram_offset_hex": "0x5f8c0"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 180,
+              "decoded_bytes": 448,
+              "decoded_sha256": "f62e968d5acb4518ad0952f07a3f4415c7def38a071c8f14609038e2c6334900",
+              "pixel_ptr_hex": "0x0029be2c",
+              "vdp1_vram_offset_hex": "0x4e1c0"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 0
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 40,
+              "decoded_bytes": 128,
+              "decoded_sha256": "b186369c9746ce41289ff54a3110e6108df18f21ef77a2dde17191395eaae1ec",
+              "pixel_ptr_hex": "0x0029bee4",
+              "vdp1_vram_offset_hex": "0x4e140"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 3
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 79,
+              "decoded_bytes": 192,
+              "decoded_sha256": "ec7b1499af0fbc8262dc271057aeb4177136b3300e501724fe35febe7ab27d71",
+              "pixel_ptr_hex": "0x0029c098",
+              "vdp1_vram_offset_hex": "0x4dd60"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 2
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 17,
+              "decoded_bytes": 64,
+              "decoded_sha256": "e57b2f286bd79bff1c7714309c5277f5f6498c8f51ff8fcc06b9cf6c7e5e9635",
+              "pixel_ptr_hex": "0x0029d8a4",
+              "vdp1_vram_offset_hex": "0x4dd20"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 2
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 19,
+              "decoded_bytes": 128,
+              "decoded_sha256": "e2ce99f2e841744de85725469a945aa9342227c7fb5c1bc8df8cc4441986ca27",
+              "pixel_ptr_hex": "0x002a09c0",
+              "vdp1_vram_offset_hex": "0x4dca0"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 2
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 23,
+              "decoded_bytes": 128,
+              "decoded_sha256": "6c95bbe66e6eb16f8787859cb7d886e87f70ed4b1e12dceb95d46e70dce3af04",
+              "pixel_ptr_hex": "0x002a09d8",
+              "vdp1_vram_offset_hex": "0x4d9a0"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 1
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 28,
+              "decoded_bytes": 128,
+              "decoded_sha256": "90d68d0deabf9395c28914396fbbad0d5336421adca684e314971a343ff57915",
+              "pixel_ptr_hex": "0x002a09f4",
+              "vdp1_vram_offset_hex": "0x4dc20"
+            },
+            {
+              "codec": {
+                "selector_bits": 1,
+                "stream_mode": 2
+              },
+              "compressed": true,
+              "compressed_stream_bytes": 25,
+              "decoded_bytes": 128,
+              "decoded_sha256": "b6b9d9e5add7d126a134e87ef0dd8608c07c1ff038d3126a1790404606840999",
+              "pixel_ptr_hex": "0x002a0a14",
+              "vdp1_vram_offset_hex": "0x4dba0"
+            }
+          ],
+          "scratchpad_0x002fb000_prefix_matches": 0,
+          "tested_nonempty_blocks_ge_32b": 560,
+          "unique_pixel_blocks": 566
+        }
+      },
+      "hypothesis_verdicts": {
+        "pointer_relocation_at_load_time": false,
+        "subresources_stored_hudson_compressed_and_unpacked_to_vram_wram": true,
+        "verbatim_cd_staging_into_workram_l": true
+      },
+      "raw_workram_l_comparison": {
+        "bank_bytes": 573440,
+        "equal_bytes": 573440,
+        "exact_match": true,
+        "header_0x34_verbatim_unrelocated": true,
+        "match_ratio": 1.0,
+        "mismatch_bytes": 0,
+        "mismatch_intervals_sample": [],
+        "region": "MAIN.WorkRAML",
+        "region_offset_hex": "0x054000",
+        "resident_slice_sha256": "6c662d2cf24d8a2548a4b4982a9b780de0207cec227f5cfdf4dcf394300ac9e3",
+        "saturn_addr_range_hex": "0x00254000..0x002e0000"
+      }
+    }
+  ],
+  "cross_region_bank_identity": {
+    "base1": {
+      "byte_identical_usa_vs_japan": false,
+      "byte_length": 344064,
+      "equal_bytes_usa_vs_japan": 106249,
+      "japan_sha256": "4faef92bcc8f17a95943bf33a1e5a4e5f6fac722d118bcef36dfc88b1f637345",
+      "sector_count": 168,
+      "sector_offset": 16,
+      "usa_sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f"
+    },
+    "normal2": {
+      "byte_identical_usa_vs_japan": true,
+      "byte_length": 573440,
+      "equal_bytes_usa_vs_japan": 573440,
+      "japan_sha256": "6c662d2cf24d8a2548a4b4982a9b780de0207cec227f5cfdf4dcf394300ac9e3",
+      "sector_count": 280,
+      "sector_offset": 912,
+      "usa_sha256": "6c662d2cf24d8a2548a4b4982a9b780de0207cec227f5cfdf4dcf394300ac9e3"
+    }
+  },
+  "experiment_id": "EXP-SAT-ARCHIVE-002",
+  "explicit_unknowns": [
+    "Slots 3, 4, 5, 6, and 9 record layouts inside base1 and normal2 remain open beyond pointer-table bounds.",
+    "Slot 10 sound/sequence binary record headers (0x060095E0 -> SCSP.RAM) remain open for RSAT-008.",
+    "Dynamic VDP2 plane destination selection for Slot 0 entries with default_dest=0x00000000 and Slot 2 tilemaps is driven by per-scene SH-2 callers rather than bank headers."
+  ],
+  "issue": 484,
+  "negative_controls": [
+    {
+      "control_id": "NC-01-wrong-checkpoint-normal2-vs-menu-release",
+      "description": "Compare normal2 (0x00254000..0x002e0000) against menu-release where openning occupies 0x00254000.",
+      "observed_match_ratio": 0.017779,
+      "observed_vdp1_sprite_matches": 1,
+      "rejected_as_expected": true
+    },
+    {
+      "control_id": "NC-02-wrong-bank-normal1-vs-normal2-checkpoint",
+      "description": "Compare normal1 (id=4) against resident normal2 (id=5) WorkRAML.",
+      "observed_match_ratio": 0.042324,
+      "rejected_as_expected": true
+    },
+    {
+      "control_id": "NC-03-nonplanar-3bit-selector-falsification",
+      "description": "Decode real normal2 Slot 8 sb=3 block (0x0029f804) with contiguous 24-bit packing instead of 0x0603434C's 3-byte bit-planar reader.",
+      "differing_bytes": 832,
+      "rejected_as_expected": true,
+      "true_sha256": "ebc3cc69917cc64f01012cca2e52d4ff6bcd990e2f12dbf8dd462e34656a9214",
+      "wrong_nonplanar_sha256": "9c810e37cc9c136138973d79b727f3c81388b2c93f4a9f841ab22c791198391c"
+    },
+    {
+      "control_id": "NC-04-dual-ring-mode1-falsification",
+      "description": "Decode real normal2 Slot 7 stage grid #1 (0x0029453c, sm=1) with single 512-byte ring and with 2-element pair interleaving instead of 1-element stride-2 rings.",
+      "differing_bytes_pair_interleave": 1115,
+      "differing_bytes_single_ring": 3711,
+      "rejected_as_expected": true
+    },
+    {
+      "control_id": "NC-05-invalid-predictor-and-truncated-stream",
+      "description": "Mutate base1 Slot 0 #1 predictor code to 20 (>19) and truncate compressed payload to 24 bytes.",
+      "invalid_predictor_rejected": true,
+      "rejected_as_expected": true,
+      "truncated_stream_rejected": true
+    },
+    {
+      "control_id": "NC-06-single-byte-resident-memory-tamper",
+      "description": "Flip 1 bit in resident WorkRAML+0x00100 and VDP2.VRAM+0x50010 and verify exact-match rejection.",
+      "rejected_as_expected": true,
+      "vdp2_slot0_1_mismatch_bytes": 1,
+      "workram_l_mismatch_bytes": 1
+    }
+  ],
+  "normal2_checkpoint_replay_determinism": {
+    "capture_protocol": {
+      "actions": [
+        {
+          "buttons": [
+            "start"
+          ],
+          "end": 195,
+          "port": 0,
+          "start": 180
+        },
+        {
+          "buttons": [
+            "start"
+          ],
+          "end": 3195,
+          "port": 0,
+          "start": 3180
+        },
+        {
+          "buttons": [
+            "start"
+          ],
+          "end": 5595,
+          "port": 0,
+          "start": 5580
+        },
+        {
+          "buttons": [
+            "start"
+          ],
+          "end": 10395,
+          "port": 0,
+          "start": 10380
+        },
+        {
+          "buttons": [
+            "start"
+          ],
+          "end": 12795,
+          "port": 0,
+          "start": 12780
+        },
+        {
+          "buttons": [
+            "start"
+          ],
+          "end": 16995,
+          "port": 0,
+          "start": 16980
+        }
+      ],
+      "actions_sha256": "e09a07eb4b988a6c2b5a28cf7fbbca910d21713d83ab324ab01817772fae77ed",
+      "final_frame": 30360,
+      "frames_advanced": 20160,
+      "mechanism": "Advance from accepted navigation-release-late (Attract Demo idx=2, normal1) across 6 bounded START skips so Title Screen timeout (0x06052E54, 0x0384 ticks -> 0x06052A00) steps *(u8*)0x060C17DA through 0x060B6BC0 to idx=12 ((1, 1) = Normal Game World 2 Stage 1), where 0x0600AF4C/0x0600AE58 transiently stages s_nor2 (bank_id=15) into SCSP.RAM and then loads normal2 (bank_id=5) into 0x00254000..0x002e0000 alongside resident base1 (bank_id=1).",
+      "restored_from_checkpoint_label": "accepted-27-navigation-release-late",
+      "restored_from_frame": 10200
+    },
+    "memory_regions": {
+      "SCSP.RAM": {
+        "bytes": 524288,
+        "identical_across_two_runs": true,
+        "sha256": "12318ca296702452899aa6dc21931973429e7b70dcfcf33e412e1e0983a5f3b4"
+      },
+      "VDP1.VRAM": {
+        "bytes": 524288,
+        "identical_across_two_runs": true,
+        "sha256": "c3b549e283a75e7e442905666708ba9623c0a6ab19ae84c523b15c123c281ead"
+      },
+      "VDP2.CRAM": {
+        "bytes": 4096,
+        "identical_across_two_runs": true,
+        "sha256": "7158f81c4981f9e2d2de8eaacba68e135a61c72a01cd7e85c2d3f29a7e14edab"
+      },
+      "VDP2.VRAM": {
+        "bytes": 524288,
+        "identical_across_two_runs": true,
+        "sha256": "30dd3e79fa455e031a35eb90afba12db3b1cda4dd58bf0650aa01af108ce72d0"
+      },
+      "WorkRAMH": {
+        "bytes": 1048576,
+        "identical_across_two_runs": true,
+        "sha256": "03fdb2c3b68beeea47df06462c9cd64bcdedd9a3c9d2fdedaf89269c750c8f9f"
+      },
+      "WorkRAML": {
+        "bytes": 1048576,
+        "identical_across_two_runs": true,
+        "sha256": "28dd2cb2a3b62cab7518ea383b85d3087be97f465d99be5c2668466cc2c00ba4"
+      }
+    },
+    "run1_state_sha256": "311c886c5bc2b0dc78d0d4ccdeb41044939b10ff334848f1691adf86b6d0e601",
+    "run2_state_sha256": "311c886c5bc2b0dc78d0d4ccdeb41044939b10ff334848f1691adf86b6d0e601",
+    "state_sha256_identical": true
+  },
+  "schema": "neptune.saturn-archive.resident-comparison.v1",
+  "tool_version": "0.1.0",
+  "transient_sound_overlay_proof": {
+    "overwritten_in_workram_l_by_normal2": true,
+    "scsp_ram_256b_payload_probe_offset_hex": "0x0b006",
+    "scsp_ram_retained_after_overwrite": true,
+    "sound_bank_byte_length": 425984,
+    "sound_bank_id": 15,
+    "sound_bank_name": "s_nor2",
+    "sound_bank_sector_offset": 3496,
+    "sound_bank_sha256": "575f727a9964869040d491265fed905b6fed2667126b15a8f4374a2559816a7b",
+    "staging_addr_hex": "0x00254000"
+  }
+}

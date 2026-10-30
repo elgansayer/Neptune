@@ -1,0 +1,2688 @@
+{
+  "entries": [
+    {
+      "bank_id": 0,
+      "byte_length": 32768,
+      "byte_offset": 0,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 0,
+      "header_name": "s_init",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x0025c000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 16,
+      "sector_offset": 0,
+      "sha256": "47d296dc03d99ecadf3e4dca38f90dc6dcfd8f21e246797e8fccd94a47e79389"
+    },
+    {
+      "bank_id": 1,
+      "byte_length": 344064,
+      "byte_offset": 32768,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 1,
+      "header_name": "base1",
+      "headerless_pointer_count": null,
+      "load_dest": 2097152,
+      "load_dest_hex": "0x00200000",
+      "load_end_hex": "0x00254000",
+      "role": "resident_base_bank",
+      "sector_count": 168,
+      "sector_offset": 16,
+      "sha256": "b4c9328f3cdf576d3efe07d61ec9fbd6b27d0b6e7fa4e2243c00b8e8ceee7a9f"
+    },
+    {
+      "bank_id": 2,
+      "byte_length": 344064,
+      "byte_offset": 376832,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 2,
+      "header_name": "base2",
+      "headerless_pointer_count": null,
+      "load_dest": 2097152,
+      "load_dest_hex": "0x00200000",
+      "load_end_hex": "0x00254000",
+      "role": "resident_base_bank",
+      "sector_count": 168,
+      "sector_offset": 184,
+      "sha256": "64b131efbe718683226d1362017476584015771f571268c1b331179feb22a5b6"
+    },
+    {
+      "bank_id": 3,
+      "byte_length": 573440,
+      "byte_offset": 720896,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 3,
+      "header_name": "openning",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002e0000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 280,
+      "sector_offset": 352,
+      "sha256": "d7bf1bf3e3a2eee0c1c6bc75215c55de500b89190e05c6f0b36a28d38bba5ca5"
+    },
+    {
+      "bank_id": 4,
+      "byte_length": 573440,
+      "byte_offset": 1294336,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 4,
+      "header_name": "normal1",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002e0000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 280,
+      "sector_offset": 632,
+      "sha256": "151cfb52a13e91278371ec62795f3faa36066e641a90b8693e7432b5ca083fc0"
+    },
+    {
+      "bank_id": 5,
+      "byte_length": 573440,
+      "byte_offset": 1867776,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 5,
+      "header_name": "normal2",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002e0000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 280,
+      "sector_offset": 912,
+      "sha256": "6c662d2cf24d8a2548a4b4982a9b780de0207cec227f5cfdf4dcf394300ac9e3"
+    },
+    {
+      "bank_id": 6,
+      "byte_length": 704512,
+      "byte_offset": 2441216,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 6,
+      "header_name": "normal3",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x00300000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 344,
+      "sector_offset": 1192,
+      "sha256": "5ffed8258c377272f8fae13421dba35e8be87fe7196738625b66eb6fffc3cf64"
+    },
+    {
+      "bank_id": 7,
+      "byte_length": 573440,
+      "byte_offset": 3145728,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 7,
+      "header_name": "normal4",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002e0000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 280,
+      "sector_offset": 1536,
+      "sha256": "fc73c81f9d7290e3ab2d3f9ab5fa9897eca424efb47e96c50f5b15f18f49bc6f"
+    },
+    {
+      "bank_id": 8,
+      "byte_length": 704512,
+      "byte_offset": 3719168,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 8,
+      "header_name": "normal5",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x00300000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 344,
+      "sector_offset": 1816,
+      "sha256": "c755c49b37dfa6c0cc216210670806511457e7dc3e5ad2b5ad2fa159fcfd0cc4"
+    },
+    {
+      "bank_id": 9,
+      "byte_length": 638976,
+      "byte_offset": 4423680,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 9,
+      "header_name": "battle1",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002f0000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 312,
+      "sector_offset": 2160,
+      "sha256": "8a7c27e10c1dc34d9c4932dde94377d9cc7985f1a39bd1c29b576deb50741697"
+    },
+    {
+      "bank_id": 10,
+      "byte_length": 573440,
+      "byte_offset": 5062656,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 10,
+      "header_name": "master1",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002e0000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 280,
+      "sector_offset": 2472,
+      "sha256": "30e07356e95eb7bb30fff7832170442a08efc716a3c0d34826fe81dcdb4da1c0"
+    },
+    {
+      "bank_id": 11,
+      "byte_length": 131072,
+      "byte_offset": 5636096,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 11,
+      "header_name": "staff",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x00274000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 64,
+      "sector_offset": 2752,
+      "sha256": "590af40f7264afc76f16791933f4131016a1f0cfeef04920a2aa637e5ec81fe9"
+    },
+    {
+      "bank_id": 12,
+      "byte_length": 540672,
+      "byte_offset": 5767168,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 12,
+      "header_name": "xband1",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002d8000",
+      "role": "world_or_mode_overlay",
+      "sector_count": 264,
+      "sector_offset": 2816,
+      "sha256": "b5428dc48a0730168b8281e20b0e73b8ce6d580bc2e924b2fbbc22e8d7fa7a63"
+    },
+    {
+      "bank_id": 13,
+      "byte_length": 425984,
+      "byte_offset": 6307840,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 13,
+      "header_name": "s_open",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 3080,
+      "sha256": "078a0c8d3c4df082ca51996b26fcaa59203cec96d602255f609f92c3a182909d"
+    },
+    {
+      "bank_id": 14,
+      "byte_length": 425984,
+      "byte_offset": 6733824,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 14,
+      "header_name": "s_nor1",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 3288,
+      "sha256": "553a2edee4afbdad130f40422368d31ec6fca4fe745664765a58536ca7628965"
+    },
+    {
+      "bank_id": 15,
+      "byte_length": 425984,
+      "byte_offset": 7159808,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 15,
+      "header_name": "s_nor2",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 3496,
+      "sha256": "575f727a9964869040d491265fed905b6fed2667126b15a8f4374a2559816a7b"
+    },
+    {
+      "bank_id": 16,
+      "byte_length": 425984,
+      "byte_offset": 7585792,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 16,
+      "header_name": "s_nor3",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 3704,
+      "sha256": "5d99f31127dba1e0223ff9a2d89c248f87831ac1bf0250293272ad26b4d6d718"
+    },
+    {
+      "bank_id": 17,
+      "byte_length": 425984,
+      "byte_offset": 8011776,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 8396800,
+          "header_index": 18,
+          "inferred_load_base_hex": "0x002ee000",
+          "name": "s_nor5c",
+          "sector_offset": 4100
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 17,
+      "header_name": "s_nor4",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 3912,
+      "sha256": "abaf14bdcded6231293e3c722df7946fe3df90448d21cc2fe49a03c2611a3a34"
+    },
+    {
+      "bank_id": 18,
+      "byte_length": 425984,
+      "byte_offset": 8437760,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 19,
+      "header_name": "s_nor5",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 4120,
+      "sha256": "a12319e3a10ac7a23f7797bfd6764ae118c03d775a76ef9f5bb64ae2da7a739b"
+    },
+    {
+      "bank_id": 19,
+      "byte_length": 73728,
+      "byte_offset": 8863744,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 20,
+      "header_name": "s_nor5b",
+      "headerless_pointer_count": null,
+      "load_dest": 3072000,
+      "load_dest_hex": "0x002ee000",
+      "load_end_hex": "0x00300000",
+      "role": "upper_wram_sub_overlay",
+      "sector_count": 36,
+      "sector_offset": 4328,
+      "sha256": "39c080927d58e1d7d66aa97a2c9592c7e07cb862ab2164f0d0d6dbcc7939ff21"
+    },
+    {
+      "bank_id": 20,
+      "byte_length": 73728,
+      "byte_offset": 8937472,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 21,
+      "header_name": "s_nor5c",
+      "headerless_pointer_count": null,
+      "load_dest": 3072000,
+      "load_dest_hex": "0x002ee000",
+      "load_end_hex": "0x00300000",
+      "role": "upper_wram_sub_overlay",
+      "sector_count": 36,
+      "sector_offset": 4364,
+      "sha256": "adce9b8b8d7f3caca843650967081702159624ad407a718c05d234d04918b36a"
+    },
+    {
+      "bank_id": 21,
+      "byte_length": 425984,
+      "byte_offset": 9011200,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 9306112,
+          "header_index": 23,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo39",
+          "sector_offset": 4544
+        },
+        {
+          "byte_offset": 9322496,
+          "header_index": 24,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo17",
+          "sector_offset": 4552
+        },
+        {
+          "byte_offset": 9338880,
+          "header_index": 25,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo19",
+          "sector_offset": 4560
+        },
+        {
+          "byte_offset": 9355264,
+          "header_index": 26,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo20",
+          "sector_offset": 4568
+        },
+        {
+          "byte_offset": 9371648,
+          "header_index": 27,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo21",
+          "sector_offset": 4576
+        },
+        {
+          "byte_offset": 9388032,
+          "header_index": 28,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo22",
+          "sector_offset": 4584
+        },
+        {
+          "byte_offset": 9404416,
+          "header_index": 29,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo23",
+          "sector_offset": 4592
+        },
+        {
+          "byte_offset": 9420800,
+          "header_index": 30,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo24",
+          "sector_offset": 4600
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 22,
+      "header_name": "s_mst1",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 4400,
+      "sha256": "e0156f05cd207dc6c9e8b1cafa2f5d29eef55029e8b243fefc051e304d079d62"
+    },
+    {
+      "bank_id": 22,
+      "byte_length": 425984,
+      "byte_offset": 9437184,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 9748480,
+          "header_index": 32,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo44",
+          "sector_offset": 4760
+        },
+        {
+          "byte_offset": 9764864,
+          "header_index": 33,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo45",
+          "sector_offset": 4768
+        },
+        {
+          "byte_offset": 9781248,
+          "header_index": 34,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo46",
+          "sector_offset": 4776
+        },
+        {
+          "byte_offset": 9797632,
+          "header_index": 35,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo47",
+          "sector_offset": 4784
+        },
+        {
+          "byte_offset": 9814016,
+          "header_index": 36,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo48",
+          "sector_offset": 4792
+        },
+        {
+          "byte_offset": 9830400,
+          "header_index": 37,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo49",
+          "sector_offset": 4800
+        },
+        {
+          "byte_offset": 9846784,
+          "header_index": 38,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo50",
+          "sector_offset": 4808
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 31,
+      "header_name": "s_bat1",
+      "headerless_pointer_count": null,
+      "load_dest": 2441216,
+      "load_dest_hex": "0x00254000",
+      "load_end_hex": "0x002bc000",
+      "role": "transient_scsp_sound_staging",
+      "sector_count": 208,
+      "sector_offset": 4608,
+      "sha256": "ded42358df277026f81253b262aa6906eafd19533ee5d18a89677e94fbb04d86"
+    },
+    {
+      "bank_id": 23,
+      "byte_length": 155648,
+      "byte_offset": 9863168,
+      "embedded_residual_headers": [],
+      "entry_format": "headerless_pointer_table",
+      "fits_workram_l": true,
+      "header_index": null,
+      "header_name": null,
+      "headerless_pointer_count": 21,
+      "load_dest": 2990080,
+      "load_dest_hex": "0x002da000",
+      "load_end_hex": "0x00300000",
+      "role": "upper_wram_sub_overlay",
+      "sector_count": 76,
+      "sector_offset": 4816,
+      "sha256": "22d6d4f557d229e18fabab8faacd87cd3f0bc99ff74a8e9ac506cb4606ba9523"
+    },
+    {
+      "bank_id": 24,
+      "byte_length": 16384,
+      "byte_offset": 10018816,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 39,
+      "header_name": "s_vo17",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4892,
+      "sha256": "ed202e6d6b8177adfe57cb7147b33ebc2258b262e84ec4dee2263416605fb96d"
+    },
+    {
+      "bank_id": 25,
+      "byte_length": 16384,
+      "byte_offset": 10035200,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 40,
+      "header_name": "s_vo19",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4900,
+      "sha256": "2897fcfd00435465dc6224333f6119122188099eb27b2509a9b76e29ee5c0650"
+    },
+    {
+      "bank_id": 26,
+      "byte_length": 16384,
+      "byte_offset": 10051584,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10059776,
+          "header_index": 42,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo22",
+          "sector_offset": 4912
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 41,
+      "header_name": "s_vo20",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4908,
+      "sha256": "3a2cbb251246d7b60ca8047cd6c766df3eefdf2fb42aa6f3c75f7bea98a4c6d7"
+    },
+    {
+      "bank_id": 27,
+      "byte_length": 16384,
+      "byte_offset": 10067968,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 43,
+      "header_name": "s_vo21",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4916,
+      "sha256": "a432ecada26bf3219bda22c3ae29e5d29ffbe3d5ec5af0df587558a45a8bf7f9"
+    },
+    {
+      "bank_id": 28,
+      "byte_length": 16384,
+      "byte_offset": 10084352,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10092544,
+          "header_index": 45,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo24",
+          "sector_offset": 4928
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 44,
+      "header_name": "s_vo22",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4924,
+      "sha256": "593e8986bda2b4a4fc37f225a32790acff0829f87f68b55ca8005f2537957087"
+    },
+    {
+      "bank_id": 29,
+      "byte_length": 16384,
+      "byte_offset": 10100736,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10108928,
+          "header_index": 47,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo25",
+          "sector_offset": 4936
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 46,
+      "header_name": "s_vo23",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4932,
+      "sha256": "7263e0d5d1275f41f675ebfeb7e36210ec2f49e69a340f930f4308ae1bf31629"
+    },
+    {
+      "bank_id": 30,
+      "byte_length": 16384,
+      "byte_offset": 10117120,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10125312,
+          "header_index": 49,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo26",
+          "sector_offset": 4944
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 48,
+      "header_name": "s_vo24",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4940,
+      "sha256": "98ab0dd352eb4de93d60140c21dba4b9fffda6285f5847a8c1a3b31373bae22e"
+    },
+    {
+      "bank_id": 31,
+      "byte_length": 16384,
+      "byte_offset": 10133504,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10141696,
+          "header_index": 51,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo27",
+          "sector_offset": 4952
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 50,
+      "header_name": "s_vo25",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4948,
+      "sha256": "cf624022e873d145d04612b9e88c2a9c4d91afb7fecc6989aa072bc723d21228"
+    },
+    {
+      "bank_id": 32,
+      "byte_length": 16384,
+      "byte_offset": 10149888,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10158080,
+          "header_index": 53,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo28",
+          "sector_offset": 4960
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 52,
+      "header_name": "s_vo26",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4956,
+      "sha256": "f586017295c0ad8c45345f1499d6e1abec607b501cc6e6d2d9eaa244de5914c5"
+    },
+    {
+      "bank_id": 33,
+      "byte_length": 16384,
+      "byte_offset": 10166272,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10174464,
+          "header_index": 55,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo17",
+          "sector_offset": 4968
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 54,
+      "header_name": "s_vo27",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4964,
+      "sha256": "6f34798f71f2c7c44fd19d082a52bc895f5a4793b5b56719065f2d5cae2a87ff"
+    },
+    {
+      "bank_id": 34,
+      "byte_length": 16384,
+      "byte_offset": 10182656,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 56,
+      "header_name": "s_vo28",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4972,
+      "sha256": "ee409b0c40424fa42c026381c6409caf9ab5979a56562de928ee047980e0b8c6"
+    },
+    {
+      "bank_id": 35,
+      "byte_length": 16384,
+      "byte_offset": 10199040,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10207232,
+          "header_index": 58,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo20",
+          "sector_offset": 4984
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 57,
+      "header_name": "s_vo29",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4980,
+      "sha256": "461ae3c7d8be390a41cf2d15a0e3b40179cc03df300a950577d95efdd16900da"
+    },
+    {
+      "bank_id": 36,
+      "byte_length": 16384,
+      "byte_offset": 10215424,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 59,
+      "header_name": "s_vo30",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4988,
+      "sha256": "2dd7b8d8b6654666e5b1634c71c15c8907d284641e0179cd749c1a72351b43c7"
+    },
+    {
+      "bank_id": 37,
+      "byte_length": 16384,
+      "byte_offset": 10231808,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10240000,
+          "header_index": 61,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo22",
+          "sector_offset": 5000
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 60,
+      "header_name": "s_vo31",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 4996,
+      "sha256": "bcc17156cc61749c9b03eaa56859932d485787d04fc4b5d3c466293181a30e4d"
+    },
+    {
+      "bank_id": 38,
+      "byte_length": 16384,
+      "byte_offset": 10248192,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10256384,
+          "header_index": 63,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo23",
+          "sector_offset": 5008
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 62,
+      "header_name": "s_vo32",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5004,
+      "sha256": "dbebafe3bf2401f5913d78944e1ffcd16a40a5a83582aef036c1e10268dc80e7"
+    },
+    {
+      "bank_id": 39,
+      "byte_length": 16384,
+      "byte_offset": 10264576,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 64,
+      "header_name": "s_vo33",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5012,
+      "sha256": "5f1ecfa1f0535549e3efc43a2013f80be02e66aecc855583a190432c8348577b"
+    },
+    {
+      "bank_id": 40,
+      "byte_length": 16384,
+      "byte_offset": 10280960,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 65,
+      "header_name": "s_vo34",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5020,
+      "sha256": "5c14de2847b1c6b1c249d6a265a6395970ed437c98c0eed756b10deae6a7faef"
+    },
+    {
+      "bank_id": 41,
+      "byte_length": 16384,
+      "byte_offset": 10297344,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10305536,
+          "header_index": 66,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo26",
+          "sector_offset": 5032
+        }
+      ],
+      "entry_format": "headerless_raw_sectors",
+      "fits_workram_l": true,
+      "header_index": null,
+      "header_name": null,
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_headerless_slot",
+      "sector_count": 8,
+      "sector_offset": 5028,
+      "sha256": "0ead7cd1de1df75811418a7576d0bae0820cf2d8f84bf4862ee25d92b1094a4b"
+    },
+    {
+      "bank_id": 42,
+      "byte_length": 16384,
+      "byte_offset": 10313728,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10321920,
+          "header_index": 67,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo27",
+          "sector_offset": 5040
+        }
+      ],
+      "entry_format": "headerless_raw_sectors",
+      "fits_workram_l": true,
+      "header_index": null,
+      "header_name": null,
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_headerless_slot",
+      "sector_count": 8,
+      "sector_offset": 5036,
+      "sha256": "18cf8ae012a11117544a1c6fed445a1d71f7ac819041f77f839d95a86f84e25b"
+    },
+    {
+      "bank_id": 43,
+      "byte_length": 16384,
+      "byte_offset": 10330112,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10338304,
+          "header_index": 68,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo28",
+          "sector_offset": 5048
+        }
+      ],
+      "entry_format": "headerless_raw_sectors",
+      "fits_workram_l": true,
+      "header_index": null,
+      "header_name": null,
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_headerless_slot",
+      "sector_count": 8,
+      "sector_offset": 5044,
+      "sha256": "50d6177df1a727658f9f701adbdf9c6e519d0c7c17ee67ea2550666945fe7336"
+    },
+    {
+      "bank_id": 44,
+      "byte_length": 16384,
+      "byte_offset": 10346496,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10354688,
+          "header_index": 70,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo29",
+          "sector_offset": 5056
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 69,
+      "header_name": "s_vo38",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5052,
+      "sha256": "253d04d3d04e375ac094826af9cbb9d862db35a18a2aa8ef572dcc1318882d6f"
+    },
+    {
+      "bank_id": 45,
+      "byte_length": 16384,
+      "byte_offset": 10362880,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10371072,
+          "header_index": 72,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo30",
+          "sector_offset": 5064
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 71,
+      "header_name": "s_vo39",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5060,
+      "sha256": "959dfa0b99bbd7482bdf7c5c3800b9da8b7c6496e2e30599e1db5c65cf14a6b1"
+    },
+    {
+      "bank_id": 46,
+      "byte_length": 16384,
+      "byte_offset": 10379264,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10387456,
+          "header_index": 74,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo31",
+          "sector_offset": 5072
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 73,
+      "header_name": "s_vo40",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5068,
+      "sha256": "b247ff02139481c2b771e63f45df9bfb3e15f9e86d84b9d949ad6de559a2d580"
+    },
+    {
+      "bank_id": 47,
+      "byte_length": 16384,
+      "byte_offset": 10395648,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 75,
+      "header_name": "s_vo41",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5076,
+      "sha256": "7fa974ee0ca19fe2bde2d225fd3965fa577c16baaac95f93c256325351e10dcf"
+    },
+    {
+      "bank_id": 48,
+      "byte_length": 16384,
+      "byte_offset": 10412032,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10420224,
+          "header_index": 77,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo33",
+          "sector_offset": 5088
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 76,
+      "header_name": "s_vo42",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5084,
+      "sha256": "5a322e86c83ec52cbc94903e7e83c02345bb2f929b6293f9513b37b3302bd872"
+    },
+    {
+      "bank_id": 49,
+      "byte_length": 16384,
+      "byte_offset": 10428416,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10436608,
+          "header_index": 79,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo34",
+          "sector_offset": 5096
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 78,
+      "header_name": "s_vo43",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5092,
+      "sha256": "8d6586c53ffa9cde37d6b02ffb8d4fd609f7e516cc71bbea86e01bb10495f265"
+    },
+    {
+      "bank_id": 50,
+      "byte_length": 16384,
+      "byte_offset": 10444800,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 80,
+      "header_name": "s_vo44",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5100,
+      "sha256": "b1ff6c8d00a9b344d769b267f0d7241505663add4be652f1cd98c114ba3d3664"
+    },
+    {
+      "bank_id": 51,
+      "byte_length": 16384,
+      "byte_offset": 10461184,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10469376,
+          "header_index": 82,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo47",
+          "sector_offset": 5112
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 81,
+      "header_name": "s_vo45",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5108,
+      "sha256": "9d9cda133367eb152ff52f3e25533a9aca1fea096f275debbb3a9f3e8d8a5fb4"
+    },
+    {
+      "bank_id": 52,
+      "byte_length": 16384,
+      "byte_offset": 10477568,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10485760,
+          "header_index": 84,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo48",
+          "sector_offset": 5120
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 83,
+      "header_name": "s_vo46",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5116,
+      "sha256": "d6b5368875c52a52caa2dcb211917a304e199610253bce9b68f3add156de7653"
+    },
+    {
+      "bank_id": 53,
+      "byte_length": 16384,
+      "byte_offset": 10493952,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10502144,
+          "header_index": 86,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo38",
+          "sector_offset": 5128
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 85,
+      "header_name": "s_vo47",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5124,
+      "sha256": "2054b30c4b9ca48bf384ec22bec3601a9c0059a898313e23e169b896a916cfbc"
+    },
+    {
+      "bank_id": 54,
+      "byte_length": 16384,
+      "byte_offset": 10510336,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 87,
+      "header_name": "s_vo48",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5132,
+      "sha256": "8beddd27774afaae093478b828daef52696892f05aed21b085bb44e51f18a8e9"
+    },
+    {
+      "bank_id": 55,
+      "byte_length": 16384,
+      "byte_offset": 10526720,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10534912,
+          "header_index": 89,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo40",
+          "sector_offset": 5144
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 88,
+      "header_name": "s_vo49",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5140,
+      "sha256": "d44e1fc0aeb0bc7f8af6d30224e34eb2a69c6a16ebc8bcacf50761115fe2e3be"
+    },
+    {
+      "bank_id": 56,
+      "byte_length": 16384,
+      "byte_offset": 10543104,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 90,
+      "header_name": "s_vo50",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5148,
+      "sha256": "fe52ffdeb356c7691c9d2f62628b92fdaeaa1bcd365915c199053b9e1dd5596f"
+    },
+    {
+      "bank_id": 57,
+      "byte_length": 16384,
+      "byte_offset": 10559488,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 91,
+      "header_name": "s_vo51",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5156,
+      "sha256": "d4254e829879de29b6e3fb55add195613dff83c9ccce5bdf14c02c42e4d19dd9"
+    },
+    {
+      "bank_id": 58,
+      "byte_length": 16384,
+      "byte_offset": 10575872,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 92,
+      "header_name": "s_vo52",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5164,
+      "sha256": "cfe3ef905a94b7a48b531281a0c4f71cbb04929cfbb0ece2361fe1122cedbd2d"
+    },
+    {
+      "bank_id": 59,
+      "byte_length": 16384,
+      "byte_offset": 10592256,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 93,
+      "header_name": "s_vo53",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5172,
+      "sha256": "4a9f39353711f5babcce9681570edbdbc05243ef7a7f59012e85f5f605dafb53"
+    },
+    {
+      "bank_id": 60,
+      "byte_length": 16384,
+      "byte_offset": 10608640,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10616832,
+          "header_index": 95,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo45",
+          "sector_offset": 5184
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 94,
+      "header_name": "s_vo54",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5180,
+      "sha256": "f7c2063a7f70eeb9c6df33f95a800a1da5c0bea7d8bba3537e6f15b09e071810"
+    },
+    {
+      "bank_id": 61,
+      "byte_length": 16384,
+      "byte_offset": 10625024,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10633216,
+          "header_index": 97,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo46",
+          "sector_offset": 5192
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 96,
+      "header_name": "s_vo55",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5188,
+      "sha256": "7bcff21d0583ac7109b6a2086f35ca6d249975d450e14095718d85739082b9ba"
+    },
+    {
+      "bank_id": 62,
+      "byte_length": 16384,
+      "byte_offset": 10641408,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10649600,
+          "header_index": 99,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo47",
+          "sector_offset": 5200
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 98,
+      "header_name": "s_vo56",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5196,
+      "sha256": "da4da1162fe2be4a95e71d803b7271047919b1537de33f2ebb2c84df12a20e36"
+    },
+    {
+      "bank_id": 63,
+      "byte_length": 16384,
+      "byte_offset": 10657792,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 100,
+      "header_name": "s_vo57",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5204,
+      "sha256": "5f82e77d4f948d27485df0b5c0cc180f1dd7c9d60ccd2731559f83f71bf35eca"
+    },
+    {
+      "bank_id": 64,
+      "byte_length": 16384,
+      "byte_offset": 10674176,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 101,
+      "header_name": "s_vo91",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5212,
+      "sha256": "1e77cb2525ce601ca000dc97b23fa6c6bb6ceb2619075380fb569d952bf32185"
+    },
+    {
+      "bank_id": 65,
+      "byte_length": 18432,
+      "byte_offset": 10690560,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 102,
+      "header_name": "s_vo101",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff800",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 9,
+      "sector_offset": 5220,
+      "sha256": "4036c0ba118018e3abd6d03c08f4a1792846e0c5ac3ad184a93671ad7645b531"
+    },
+    {
+      "bank_id": 66,
+      "byte_length": 16384,
+      "byte_offset": 10708992,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 103,
+      "header_name": "s_voko",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5229,
+      "sha256": "9accbcc6c6483d5baf1d83dc49981f9503eb4f7a520b4dbfaae588bf7f284975"
+    },
+    {
+      "bank_id": 67,
+      "byte_length": 16384,
+      "byte_offset": 10725376,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 104,
+      "header_name": "s_voha",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5237,
+      "sha256": "e724e5e8a135335f1a81c18aa2db92b134b6a310c0d7e81c9525a1720b530282"
+    },
+    {
+      "bank_id": 68,
+      "byte_length": 16384,
+      "byte_offset": 10741760,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10747904,
+          "header_index": 106,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo53",
+          "sector_offset": 5248
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 105,
+      "header_name": "s_vo102",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5245,
+      "sha256": "92bfa386d4896fc599139bd6250945ed67528db5f21fbe82c2673d41b0d9617e"
+    },
+    {
+      "bank_id": 69,
+      "byte_length": 16384,
+      "byte_offset": 10758144,
+      "embedded_residual_headers": [
+        {
+          "byte_offset": 10764288,
+          "header_index": 108,
+          "inferred_load_base_hex": "0x002fb000",
+          "name": "s_vo54",
+          "sector_offset": 5256
+        }
+      ],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 107,
+      "header_name": "s_vo103",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5253,
+      "sha256": "e8559d5409f53822d35d89128f3f8c55115a49ece1b3bbdb328ec2a37070cfee"
+    },
+    {
+      "bank_id": 70,
+      "byte_length": 16384,
+      "byte_offset": 10774528,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 109,
+      "header_name": "s_vo105",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5261,
+      "sha256": "f5f748232bfd85ba4d7e98c2a75b35ddeb53eb36385f084b37f2da837c87dd77"
+    },
+    {
+      "bank_id": 71,
+      "byte_length": 16384,
+      "byte_offset": 10790912,
+      "embedded_residual_headers": [],
+      "entry_format": "hudson_0x34_bank",
+      "fits_workram_l": true,
+      "header_index": 110,
+      "header_name": "s_vo106",
+      "headerless_pointer_count": null,
+      "load_dest": 3125248,
+      "load_dest_hex": "0x002fb000",
+      "load_end_hex": "0x002ff000",
+      "role": "voice_scratchpad_overlay",
+      "sector_count": 8,
+      "sector_offset": 5269,
+      "sha256": "f7a35ad85e8c42667f7656cb11725192e31651266e150bb12bbd4e0db0353d2d"
+    }
+  ],
+  "inputs": {
+    "krnl_bytes": 786432,
+    "krnl_iso_path": "BOMSS/0KRNL.BIN",
+    "krnl_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+    "program_bytes": 12976962,
+    "program_iso_path": "BOMSS/PROGRAM.BIN",
+    "program_sha256": "f5154d4aabdf9f3434b966a0d09fe5d08aa1ddabfa8848b836be630f506596d5"
+  },
+  "kernel_directory": {
+    "all_entries_fit_workram_l": true,
+    "destination_counts": {
+      "0x00200000": 2,
+      "0x00254000": 19,
+      "0x002da000": 1,
+      "0x002ee000": 2,
+      "0x002fb000": 48
+    },
+    "entry_count": 72,
+    "krnl_load_base_hex": "0x06006000",
+    "literal_pool_addr_hex": "0x06008c28",
+    "load_dest_table_addr_hex": "0x06093fec",
+    "max_workram_l_end_hex": "0x00300000",
+    "role_counts": {
+      "resident_base_bank": 2,
+      "transient_scsp_sound_staging": 9,
+      "upper_wram_sub_overlay": 3,
+      "voice_scratchpad_headerless_slot": 3,
+      "voice_scratchpad_overlay": 45,
+      "world_or_mode_overlay": 10
+    },
+    "sector_count_table_addr_hex": "0x06093f5c",
+    "sector_offset_table_addr_hex": "0x06093ecc"
+  },
+  "program_bin_accounting": {
+    "active_entry_start_headers": 68,
+    "embedded_mid_slot_residual_headers": 43,
+    "inter_entry_gap_sector_count": 0,
+    "inter_entry_gap_sectors": [],
+    "max_referenced_end_byte_hex": "0x0a4e800",
+    "max_referenced_end_sector": 5277,
+    "referenced_bytes": 10807296,
+    "referenced_sector_count": 5277,
+    "static_header_total": 236,
+    "total_bytes": 12976962,
+    "total_full_sectors": 6336,
+    "trailing_subsector_bytes": 834,
+    "unreferenced_headers_count": 125,
+    "unreferenced_tail_bytes": 2169666,
+    "unreferenced_tail_sector_count": 1059,
+    "unreferenced_tail_sha256": "5d2fc11230c2b7135a994420a638ed9d13aaf27ca3c76090ed7ae1e4fda2d04f",
+    "unreferenced_tail_start_sector": 5277
+  },
+  "release_id": "usa-mk81070-v1003",
+  "schema": "neptune.saturn-archive.kernel-directory.v1",
+  "tool_version": "0.1.0",
+  "unreferenced_static_headers": [
+    {
+      "byte_offset": 10813440,
+      "header_index": 111,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo57",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5280
+    },
+    {
+      "byte_offset": 10829824,
+      "header_index": 112,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo91",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5288
+    },
+    {
+      "byte_offset": 10846208,
+      "header_index": 113,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo101",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5296
+    },
+    {
+      "byte_offset": 10862592,
+      "header_index": 114,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo52",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5304
+    },
+    {
+      "byte_offset": 10864640,
+      "header_index": 115,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_voko",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5305
+    },
+    {
+      "byte_offset": 10878976,
+      "header_index": 116,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo53",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5312
+    },
+    {
+      "byte_offset": 10881024,
+      "header_index": 117,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_voha",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5313
+    },
+    {
+      "byte_offset": 10895360,
+      "header_index": 118,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo54",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5320
+    },
+    {
+      "byte_offset": 10897408,
+      "header_index": 119,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo102",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5321
+    },
+    {
+      "byte_offset": 10911744,
+      "header_index": 120,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo55",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5328
+    },
+    {
+      "byte_offset": 10913792,
+      "header_index": 121,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo103",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5329
+    },
+    {
+      "byte_offset": 10928128,
+      "header_index": 122,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo56",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5336
+    },
+    {
+      "byte_offset": 10930176,
+      "header_index": 123,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo105",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5337
+    },
+    {
+      "byte_offset": 10944512,
+      "header_index": 124,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo57",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5344
+    },
+    {
+      "byte_offset": 10946560,
+      "header_index": 125,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo106",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5345
+    },
+    {
+      "byte_offset": 10960896,
+      "header_index": 126,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo91",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5352
+    },
+    {
+      "byte_offset": 10979328,
+      "header_index": 127,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo101",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5361
+    },
+    {
+      "byte_offset": 11010048,
+      "header_index": 128,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo52",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5376
+    },
+    {
+      "byte_offset": 11026432,
+      "header_index": 129,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo53",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5384
+    },
+    {
+      "byte_offset": 11042816,
+      "header_index": 130,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo54",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5392
+    },
+    {
+      "byte_offset": 11059200,
+      "header_index": 131,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo55",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5400
+    },
+    {
+      "byte_offset": 11075584,
+      "header_index": 132,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo56",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5408
+    },
+    {
+      "byte_offset": 11091968,
+      "header_index": 133,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo57",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5416
+    },
+    {
+      "byte_offset": 11108352,
+      "header_index": 134,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo101",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5424
+    },
+    {
+      "byte_offset": 11149312,
+      "header_index": 135,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_bat1",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5444
+    },
+    {
+      "byte_offset": 11575296,
+      "header_index": 136,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_bat1b",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5652
+    },
+    {
+      "byte_offset": 11747328,
+      "header_index": 137,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo31",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5736
+    },
+    {
+      "byte_offset": 11763712,
+      "header_index": 138,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo32",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5744
+    },
+    {
+      "byte_offset": 11780096,
+      "header_index": 139,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo33",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5752
+    },
+    {
+      "byte_offset": 11796480,
+      "header_index": 140,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo34",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5760
+    },
+    {
+      "byte_offset": 11812864,
+      "header_index": 141,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo49",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5768
+    },
+    {
+      "byte_offset": 11829248,
+      "header_index": 142,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_bat1b",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5776
+    },
+    {
+      "byte_offset": 11894784,
+      "header_index": 143,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo40",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5808
+    },
+    {
+      "byte_offset": 11911168,
+      "header_index": 144,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo41",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5816
+    },
+    {
+      "byte_offset": 11927552,
+      "header_index": 145,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo42",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5824
+    },
+    {
+      "byte_offset": 11943936,
+      "header_index": 146,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo43",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5832
+    },
+    {
+      "byte_offset": 11960320,
+      "header_index": 147,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo44",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5840
+    },
+    {
+      "byte_offset": 11968512,
+      "header_index": 148,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo17",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5844
+    },
+    {
+      "byte_offset": 11986944,
+      "header_index": 149,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo19",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5853
+    },
+    {
+      "byte_offset": 12005376,
+      "header_index": 150,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo20",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5862
+    },
+    {
+      "byte_offset": 12023808,
+      "header_index": 151,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo21",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5871
+    },
+    {
+      "byte_offset": 12042240,
+      "header_index": 152,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo22",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5880
+    },
+    {
+      "byte_offset": 12058624,
+      "header_index": 153,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo20",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5888
+    },
+    {
+      "byte_offset": 12060672,
+      "header_index": 154,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo23",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5889
+    },
+    {
+      "byte_offset": 12075008,
+      "header_index": 155,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo21",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5896
+    },
+    {
+      "byte_offset": 12079104,
+      "header_index": 156,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo24",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5898
+    },
+    {
+      "byte_offset": 12091392,
+      "header_index": 157,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo22",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5904
+    },
+    {
+      "byte_offset": 12097536,
+      "header_index": 158,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo25",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5907
+    },
+    {
+      "byte_offset": 12107776,
+      "header_index": 159,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo23",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5912
+    },
+    {
+      "byte_offset": 12115968,
+      "header_index": 160,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo26",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5916
+    },
+    {
+      "byte_offset": 12124160,
+      "header_index": 161,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo24",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5920
+    },
+    {
+      "byte_offset": 12134400,
+      "header_index": 162,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo27",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5925
+    },
+    {
+      "byte_offset": 12140544,
+      "header_index": 163,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo25",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5928
+    },
+    {
+      "byte_offset": 12152832,
+      "header_index": 164,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo28",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5934
+    },
+    {
+      "byte_offset": 12171264,
+      "header_index": 165,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo29",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5943
+    },
+    {
+      "byte_offset": 12189696,
+      "header_index": 166,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo30",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5952
+    },
+    {
+      "byte_offset": 12206080,
+      "header_index": 167,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo29",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5960
+    },
+    {
+      "byte_offset": 12208128,
+      "header_index": 168,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo31",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5961
+    },
+    {
+      "byte_offset": 12222464,
+      "header_index": 169,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo17",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5968
+    },
+    {
+      "byte_offset": 12226560,
+      "header_index": 170,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo32",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5970
+    },
+    {
+      "byte_offset": 12238848,
+      "header_index": 171,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo19",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5976
+    },
+    {
+      "byte_offset": 12240896,
+      "header_index": 172,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo19",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5977
+    },
+    {
+      "byte_offset": 12244992,
+      "header_index": 173,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo33",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5979
+    },
+    {
+      "byte_offset": 12259328,
+      "header_index": 174,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo20",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5986
+    },
+    {
+      "byte_offset": 12263424,
+      "header_index": 175,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo34",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5988
+    },
+    {
+      "byte_offset": 12277760,
+      "header_index": 176,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo21",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 5995
+    },
+    {
+      "byte_offset": 12296192,
+      "header_index": 177,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo22",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6004
+    },
+    {
+      "byte_offset": 12304384,
+      "header_index": 178,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo23",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6008
+    },
+    {
+      "byte_offset": 12314624,
+      "header_index": 179,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo23",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6013
+    },
+    {
+      "byte_offset": 12333056,
+      "header_index": 180,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo24",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6022
+    },
+    {
+      "byte_offset": 12337152,
+      "header_index": 181,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo38",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6024
+    },
+    {
+      "byte_offset": 12351488,
+      "header_index": 182,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo25",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6031
+    },
+    {
+      "byte_offset": 12355584,
+      "header_index": 183,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo39",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6033
+    },
+    {
+      "byte_offset": 12369920,
+      "header_index": 184,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo26",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6040
+    },
+    {
+      "byte_offset": 12374016,
+      "header_index": 185,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo40",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6042
+    },
+    {
+      "byte_offset": 12386304,
+      "header_index": 186,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo28",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6048
+    },
+    {
+      "byte_offset": 12388352,
+      "header_index": 187,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo27",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6049
+    },
+    {
+      "byte_offset": 12392448,
+      "header_index": 188,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo41",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6051
+    },
+    {
+      "byte_offset": 12406784,
+      "header_index": 189,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo28",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6058
+    },
+    {
+      "byte_offset": 12410880,
+      "header_index": 190,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo42",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6060
+    },
+    {
+      "byte_offset": 12425216,
+      "header_index": 191,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo29",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6067
+    },
+    {
+      "byte_offset": 12429312,
+      "header_index": 192,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo43",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6069
+    },
+    {
+      "byte_offset": 12443648,
+      "header_index": 193,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo30",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6076
+    },
+    {
+      "byte_offset": 12447744,
+      "header_index": 194,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo44",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6078
+    },
+    {
+      "byte_offset": 12462080,
+      "header_index": 195,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo31",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6085
+    },
+    {
+      "byte_offset": 12466176,
+      "header_index": 196,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo45",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6087
+    },
+    {
+      "byte_offset": 12480512,
+      "header_index": 197,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo32",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6094
+    },
+    {
+      "byte_offset": 12484608,
+      "header_index": 198,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo46",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6096
+    },
+    {
+      "byte_offset": 12498944,
+      "header_index": 199,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo33",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6103
+    },
+    {
+      "byte_offset": 12503040,
+      "header_index": 200,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo47",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6105
+    },
+    {
+      "byte_offset": 12517376,
+      "header_index": 201,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo34",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6112
+    },
+    {
+      "byte_offset": 12521472,
+      "header_index": 202,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo48",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6114
+    },
+    {
+      "byte_offset": 12533760,
+      "header_index": 203,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo49",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6120
+    },
+    {
+      "byte_offset": 12539904,
+      "header_index": 204,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo49",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6123
+    },
+    {
+      "byte_offset": 12550144,
+      "header_index": 205,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo38",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6128
+    },
+    {
+      "byte_offset": 12558336,
+      "header_index": 206,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo50",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6132
+    },
+    {
+      "byte_offset": 12576768,
+      "header_index": 207,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo51",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6141
+    },
+    {
+      "byte_offset": 12591104,
+      "header_index": 208,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo38",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6148
+    },
+    {
+      "byte_offset": 12595200,
+      "header_index": 209,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo52",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6150
+    },
+    {
+      "byte_offset": 12609536,
+      "header_index": 210,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo39",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6157
+    },
+    {
+      "byte_offset": 12613632,
+      "header_index": 211,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo53",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6159
+    },
+    {
+      "byte_offset": 12627968,
+      "header_index": 212,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo40",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6166
+    },
+    {
+      "byte_offset": 12632064,
+      "header_index": 213,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo54",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6168
+    },
+    {
+      "byte_offset": 12646400,
+      "header_index": 214,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo41",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6175
+    },
+    {
+      "byte_offset": 12650496,
+      "header_index": 215,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo55",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6177
+    },
+    {
+      "byte_offset": 12664832,
+      "header_index": 216,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo42",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6184
+    },
+    {
+      "byte_offset": 12668928,
+      "header_index": 217,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo56",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6186
+    },
+    {
+      "byte_offset": 12681216,
+      "header_index": 218,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo46",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6192
+    },
+    {
+      "byte_offset": 12683264,
+      "header_index": 219,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo43",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6193
+    },
+    {
+      "byte_offset": 12687360,
+      "header_index": 220,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo57",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6195
+    },
+    {
+      "byte_offset": 12705792,
+      "header_index": 221,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo101",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6204
+    },
+    {
+      "byte_offset": 12738560,
+      "header_index": 222,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo46",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6220
+    },
+    {
+      "byte_offset": 12756992,
+      "header_index": 223,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo47",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6229
+    },
+    {
+      "byte_offset": 12775424,
+      "header_index": 224,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo48",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6238
+    },
+    {
+      "byte_offset": 12793856,
+      "header_index": 225,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo49",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6247
+    },
+    {
+      "byte_offset": 12812288,
+      "header_index": 226,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo50",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6256
+    },
+    {
+      "byte_offset": 12828672,
+      "header_index": 227,
+      "inferred_load_base_hex": "0x00250000",
+      "name": "s_vo55",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6264
+    },
+    {
+      "byte_offset": 12830720,
+      "header_index": 228,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo51",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6265
+    },
+    {
+      "byte_offset": 12849152,
+      "header_index": 229,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo52",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6274
+    },
+    {
+      "byte_offset": 12867584,
+      "header_index": 230,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo53",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6283
+    },
+    {
+      "byte_offset": 12886016,
+      "header_index": 231,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo54",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6292
+    },
+    {
+      "byte_offset": 12904448,
+      "header_index": 232,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo55",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6301
+    },
+    {
+      "byte_offset": 12922880,
+      "header_index": 233,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo56",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6310
+    },
+    {
+      "byte_offset": 12941312,
+      "header_index": 234,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo57",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6319
+    },
+    {
+      "byte_offset": 12959744,
+      "header_index": 235,
+      "inferred_load_base_hex": "0x002fb000",
+      "name": "s_vo101",
+      "reason": "unreferenced_build_container_tail",
+      "sector_offset": 6328
+    }
+  ]
+}
