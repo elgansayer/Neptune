@@ -14,3 +14,6 @@ SBomberman-main/
 !.env.example
 **/__pycache__/
 *.py[cod]
+
+# Coordinator-provisioned offline verification dependencies, including symlinks.
+/.factory-tools

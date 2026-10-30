@@ -1,5 +1,48 @@
 # Factory intake and durable ownership
 
+## Existing Repo Factory integration
+
+`verify.py` is the local entrypoint for the existing Elgl Repo Factory's Neptune
+verification planner. It imports the same classifier, command builder and result
+validator as `tools/merge_gate/run.py`; it does not introduce another scheduler.
+
+```sh
+python3 tools/factory/verify.py --changed-path game_instance.gd \
+  --toolchain .factory-tools/godot --evidence .godot/factory-verification/run-001
+```
+
+Repeat `--changed-path` for every changed file. Empty, malformed and unbounded
+selections fail. Metadata, runner and gameplay selections require the same 5/8/10
+checks as CI. An offline pinned Godot binary plus matching native addons is
+required before any native selection executes; this command never provisions a
+missing cache. The existing install helper may provision it on the coordinator
+before entering the no-network verifier. Missing, failed, timed-out or incomplete
+results fail; source changes during a run and stale evidence directories fail.
+
+The coordinator owns a primary Git clone with `.git` inside that canonical root
+and `.factory-tools/godot` below it. Worker worktrees must belong to that clone,
+so their Git common directory remains accessible through the sandbox's read-only
+canonical mount. The factory links the ignored `.factory-tools` cache into each
+worktree, as it already links other dependency caches. Do not point a worker at an
+unrelated canonical checkout or a cache symlink outside the restored roots.
+
+The existing factory must run this command inside its hardened verification
+namespace: host login homes, coordinator configuration/state, sibling workspaces
+and runtime sockets hidden; only the task worktree writable, canonical dependencies
+read-only, private temporary storage and loopback networking. The CLI alone is not
+a sandbox. Its one structured receipt includes source identity, plan and every
+literal successful command result; exit zero without that receipt is rejected by
+the factory planner. This local report never impersonates required GitHub CI.
+
+This preparatory integration does not enable the Neptune daemon profile. The
+shared factory still rejects live `neptune` configuration until the separate
+tests-only lifecycle/merge path is implemented. Elgl/workout reviews and running
+services remain unchanged. One actual issue, quota/failure handling, restart
+recovery and continuity still require #33 acceptance. Raw research inputs and
+other projects' credentials must never be mounted into ordinary game workers.
+
+## Local ownership foundations
+
 Implements the local foundations of #71/#72. No scheduler, provider, remote GitHub
 adapter or supervised VPS service is started by these tools. A green suite proves
 these contracts; it does not close #33's live issue-to-merge/restart gate.
