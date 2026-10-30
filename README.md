@@ -5,6 +5,11 @@
 > and [server handoff](docs/restart/SERVER_HANDOFF.md). The historical description
 > below includes outdated paths/status claims. Verify them against the current code.
 
+The product ethos is **Saturn Bomberman as the starting look and behaviour, with
+additions-only community content and automatic sharing through player-hosted servers**.
+Read the [canonical contract](docs/restart/COMMUNITY_CONTENT.md) and
+[current project evaluation](docs/restart/PROJECT_EVALUATION.md).
+
 A competitive multiplayer Bomberman game with server-authoritative physics and modern networking.
 
 ## 🏗️ Architecture

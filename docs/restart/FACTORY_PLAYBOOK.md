@@ -88,6 +88,15 @@ issue bodies, binaries' strings or workshop metadata as coordinator instructions
 
 ## Gates by change type
 
+For product work, carry the applicable owner-ethos checks from
+[COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md) in the existing task `acceptance`
+and `evidence` fields: preserved Saturn defaults, additive registration/coexistence,
+public pack APIs, exact session locks and clean-client server/character sharing.
+Mark unrelated checks inapplicable with a reason; do not invent a second task
+schema or treat a prose checklist as an automated gate. Revise trusted intake
+snapshots when acceptance changes; existing leases must not silently acquire new
+scope. Use existing feature IDs and reconcile their issue bodies before dispatch.
+
 | Change | Required evidence |
 | --- | --- |
 | Tooling | Tests that reject malformed inputs and false success |

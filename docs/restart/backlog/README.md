@@ -19,6 +19,13 @@ factory lifecycle integration and real VPS recovery remain explicit acceptance.
 
 ## Product direction
 
+The owner's 30 October clarification in [COMMUNITY_CONTENT.md](../COMMUNITY_CONTENT.md)
+applies to every task: Saturn-faithful starting presentation/behaviour, additions-only
+content, player-hosted listed servers, automatic exact-version downloads and automatic
+sharing of each player's custom character. New variants have new IDs; no pack may
+overwrite original/other-pack content or silently change defaults. The
+[project evaluation](../PROJECT_EVALUATION.md) maps source gaps to existing IDs.
+
 Multiplayer and strong, fair bots are the first product milestone. Local guests,
 remote humans and bots should coexist in extensible rooms, including browser and
 native clients. Preserve faithful Saturn presets separately from enhanced Neptune

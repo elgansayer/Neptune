@@ -14,6 +14,17 @@ claims to verify against code and actual execution, not evidence of correctness.
 
 ## Product
 
+- The owner's 30 October ethos is binding: start with the look and behaviour of
+  Sega Saturn Bomberman, then grow a fully extensible engine through additions.
+  Read the default-experience, additions-only and sharing rules in
+  `docs/restart/COMMUNITY_CONTENT.md`; use
+  `docs/restart/PROJECT_EVALUATION.md` for the source-backed gap assessment.
+- Mods register new namespaced content; never overwrite base/other-pack files,
+  IDs or defaults. New variants/profiles are explicit selections. Preserve old
+  versions for matches, saves and replays; reject collisions, never last-load-wins.
+- Player-hosted servers, discovery and automatic exact-version downloads are core.
+  A joining player's custom character must reach other clients automatically.
+  Prove these journeys with clean clients, not only preinstalled developer assets.
 - Multiplayer and strong bots are the product priority. Support creator-authored
   power-ups, complete solo stories and explicitly authored co-op campaigns.
 - Separate bot role (opponent/companion/enemy) from policy (Saturn/Neptune/authored).
@@ -38,12 +49,13 @@ claims to verify against code and actual execution, not evidence of correctness.
 
 ## Work and evidence
 
-- Finish authorised changes by committing and pushing them; never leave completed
-  work only in a local checkout. When using a PR, open it and merge after the
-  applicable tests-gated merge requirements pass, or enable auto-merge while
-  checks run. Routine commit, push, PR creation and eligible merge need no further
-  confirmation. Report the remote branch/PR and any concrete merge blocker.
-  Include only task changes; preserve unrelated local work.
+- Always commit and push completed task changes before ending a work session;
+  never leave completed work only locally. When using a PR, create or update it
+  and merge once applicable exact-head/current-base checks pass, or enable
+  auto-merge while checks run. Routine commit, push, PR creation and eligible
+  merge need no further confirmation. Report the commit, pushed branch and
+  PR/merge state, or the concrete blocker. Stage only task-owned files, preserve
+  unrelated work and never bypass failing merge gates.
 - GitHub issues define scope, dependencies, acceptance checks and evidence.
 - `docs/restart/feature-catalogue.json` separates reference claims and implementation
   status. Its validator checks metadata only; it cannot certify gameplay or evidence.
@@ -59,6 +71,10 @@ claims to verify against code and actual execution, not evidence of correctness.
   emulator compatibility, gameplay parity, deployment or browser support.
 - A claimed Saturn behaviour must link to a pinned reference capture/trace and an
   executable comparison. Track unknowns and confidence explicitly.
+- For relevant tasks, include unchanged Saturn baseline, additive coexistence and
+  clean-client sharing acceptance in the existing task contract. Implement public
+  extension points, not one-off branches for a sample mod. Documentation of these
+  rules is not an implemented registry, download service or parity result.
 - Power Bomberman desktop input is not frame-stepped emulation. Record timing
   uncertainty and reference versions; never infer missing features from silence.
 - Netplay improvement claims need comparable measurements under

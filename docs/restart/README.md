@@ -12,6 +12,13 @@ compatibility as part of adopting current releases.
 
 ## Goal
 
+The owner's clarified ethos is [Saturn first, additions only, automatic sharing](COMMUNITY_CONTENT.md#owners-ethos-saturn-first-everything-extensible-additions-only).
+The initial game should look and act like Saturn Bomberman; creators then extend
+every supported content category without replacing original content. Player-hosted
+servers and automatic server/character downloads are central to this goal.
+Read the [30 October project evaluation and build recommendations](PROJECT_EVALUATION.md)
+for implementation gaps and the first end-to-end acceptance slice.
+
 Build a multiplayer-first platform with strong bots, desktop/browser cross-play,
 community-authored characters, maps, power-ups and complete solo/co-op stories,
 player profiles, detailed stats and a creator workshop. Support both standard
@@ -31,6 +38,7 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 
 ## Documents
 
+- [Source-backed project evaluation and build recommendations](PROJECT_EVALUATION.md)
 - [Latest stable dependencies and Godot policy](DEPENDENCY_POLICY.md)
 - [Tests-only automatic merge policy and setup](MERGE_POLICY.md)
 - [Multiplayer, power-ups, campaigns and co-op contract](COMMUNITY_CONTENT.md)

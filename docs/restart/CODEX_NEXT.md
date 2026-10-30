@@ -12,6 +12,14 @@ measured Saturn/Power mechanics, browser/native cross-play, portable community
 characters/maps/power-ups/modes, complete solo and explicitly authored co-op
 stories, and shared player/mod services available in-game and on a website.
 
+Follow the owner's 30 October clarification in `COMMUNITY_CONTENT.md`: the starting
+look and behaviour target is Saturn Bomberman; all mods are additions, never file/ID
+replacements or silent default changes. Support player-hosted listed servers with
+automatic exact-version downloads and per-participant custom-character sharing.
+Read `PROJECT_EVALUATION.md` and reuse existing PACK/ROOM/WORKSHOP tasks for these
+gaps. Prove a small creator-to-server-to-clean-client journey before UI breadth;
+advance measured Saturn fidelity alongside it without blocking original fixtures.
+
 This is an execution request. Make tested implementation progress, not another
 broad roadmap. Use long-lived goals and small verifiable changes. Continue through
 eligible tasks until the current milestone is demonstrated or all remaining work
@@ -157,8 +165,10 @@ and local tests do not require purchasing a domain or publishing production serv
 ## Execution loop and continuity
 
 Audit overlap -> claim -> implement -> applicable real tests -> inspect logs ->
-attach evidence -> focused PR -> required current-base checks -> merge -> reconcile
+attach evidence -> commit and push -> focused PR -> required current-base checks -> merge -> reconcile
 the issue -> next eligible task. No mandatory AI/human approving review is required.
+Always publish completed changes before ending a session; do not leave them only
+in a local checkout. Report the pushed commit and PR/merge state or a concrete blocker.
 Never bypass failing gates, weaken assertions/tolerances, fabricate reference
 captures or treat missing/skipped/empty checks as passing.
 
