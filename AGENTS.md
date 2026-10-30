@@ -5,6 +5,8 @@ Read `docs/restart/README.md`, `docs/restart/REQUIREMENTS.md`, and
 `docs/restart/POWER_BOMBERMAN.md` and `docs/restart/FACTORY_PLAYBOOK.md`.
 Read `docs/restart/BOTS.md` for all AI/gameplay work and
 `docs/restart/COMMUNITY_CONTENT.md` for the multiplayer-first product contract.
+Read `docs/restart/RESEARCH_EXECUTION.md` and issue #477 for the current research
+expansion, accepted inputs and authorised existing Elgl factory integration.
 Read `docs/restart/MERGE_POLICY.md`: Elgan authorised tests-gated auto-merge without
 a mandatory AI/human approving review; this supersedes older review requirements.
 These define the October 2026 scope. Earlier root plans and completion reports are historical

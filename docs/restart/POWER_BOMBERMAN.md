@@ -1,5 +1,12 @@
 # Power Bomberman research and feature parity
 
+30 October expansion: [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476)
+and RPWR-001–010 explicitly cover full code/event/resource recovery alongside
+controlled original execution. [Research execution](RESEARCH_EXECUTION.md) gives
+the current scope. The targeted internals route below is the first bounded slice,
+not a cap on eventual recovery. #498 must establish actual VM/native/container and
+release identity, including the existing exports, before choosing a decompiler.
+
 Checked 2026-10-29. This is a second reference programme, alongside the Saturn
 research lab. Neptune should combine faithful Saturn campaign/battle play with
 Power Bomberman's breadth and an open creator ecosystem. These are proposed

@@ -1,0 +1,160 @@
+{
+  "checked_at": "2026-10-30T04:20:19.937Z",
+  "scope": "Live readback of the 38 research-expansion issues only. Existing 379 mappings retain their historical audit; local catalogue validation covers all 417 links. This does not certify implementation or a running worker.",
+  "feature_count": 38,
+  "issues": [
+    {
+      "id": "RSAT-001",
+      "issue": 478
+    },
+    {
+      "id": "RSAT-002",
+      "issue": 479
+    },
+    {
+      "id": "RSAT-003",
+      "issue": 480
+    },
+    {
+      "id": "RSAT-004",
+      "issue": 481
+    },
+    {
+      "id": "RSAT-005",
+      "issue": 482
+    },
+    {
+      "id": "RSAT-006",
+      "issue": 483
+    },
+    {
+      "id": "RSAT-007",
+      "issue": 484
+    },
+    {
+      "id": "RSAT-008",
+      "issue": 485
+    },
+    {
+      "id": "RSAT-009",
+      "issue": 486
+    },
+    {
+      "id": "RSAT-010",
+      "issue": 487
+    },
+    {
+      "id": "RSAT-011",
+      "issue": 488
+    },
+    {
+      "id": "RSAT-012",
+      "issue": 489
+    },
+    {
+      "id": "RSAT-013",
+      "issue": 490
+    },
+    {
+      "id": "RSAT-014",
+      "issue": 491
+    },
+    {
+      "id": "RSAT-015",
+      "issue": 492
+    },
+    {
+      "id": "RSAT-016",
+      "issue": 493
+    },
+    {
+      "id": "RSAT-017",
+      "issue": 494
+    },
+    {
+      "id": "RSAT-018",
+      "issue": 495
+    },
+    {
+      "id": "RSAT-019",
+      "issue": 496
+    },
+    {
+      "id": "RSAT-020",
+      "issue": 497
+    },
+    {
+      "id": "RPWR-001",
+      "issue": 498
+    },
+    {
+      "id": "RPWR-002",
+      "issue": 499
+    },
+    {
+      "id": "RPWR-003",
+      "issue": 500
+    },
+    {
+      "id": "RPWR-004",
+      "issue": 501
+    },
+    {
+      "id": "RPWR-005",
+      "issue": 502
+    },
+    {
+      "id": "RPWR-006",
+      "issue": 503
+    },
+    {
+      "id": "RPWR-007",
+      "issue": 504
+    },
+    {
+      "id": "RPWR-008",
+      "issue": 505
+    },
+    {
+      "id": "RPWR-009",
+      "issue": 506
+    },
+    {
+      "id": "RPWR-010",
+      "issue": 507
+    },
+    {
+      "id": "RLAB-001",
+      "issue": 508
+    },
+    {
+      "id": "RLAB-002",
+      "issue": 509
+    },
+    {
+      "id": "RLAB-003",
+      "issue": 510
+    },
+    {
+      "id": "RLAB-004",
+      "issue": 511
+    },
+    {
+      "id": "RLAB-005",
+      "issue": 512
+    },
+    {
+      "id": "RLAB-006",
+      "issue": 513
+    },
+    {
+      "id": "RLAB-007",
+      "issue": 514
+    },
+    {
+      "id": "RLAB-008",
+      "issue": 515
+    }
+  ],
+  "errors": []
+}

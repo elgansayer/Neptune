@@ -9,6 +9,9 @@ ROOT = Path(__file__).resolve().parent
 REPO = "elgansayer/Neptune-Bomberman"
 URL = f"https://github.com/{REPO}"
 GROUPS = {
+    "RSAT": "Saturn code, extraction and original execution",
+    "RPWR": "Power code, extraction and original execution",
+    "RLAB": "Research tooling, evidence and factory integration",
     "REF": "Reference research and exhaustive inventories",
     "SIM": "Authoritative simulation",
     "BOMB": "Bomb mechanics",
@@ -45,6 +48,7 @@ REUSE = {"BATTLE-003": 44, "BOT-018": 32, "ROOM-003": 31,
 # These are concrete deliverable dependencies, not entire parent epics.
 # Phase is a suggested delivery wave; dependencies always take precedence.
 BASE_DEPS = {
+    "RSAT": [], "RPWR": [], "RLAB": [],
     "REF": [], "SIM": ["SIM-001"], "BOMB": ["SIM-004", "SIM-006"],
     "ITEM": ["SIM-003", "SIM-009"], "MOUNT": ["SIM-006", "SIM-010"],
     "ARENA": ["SIM-006"], "BATTLE": ["SIM-011", "SIM-012"],
@@ -59,10 +63,48 @@ BASE_DEPS = {
     "EXP": ["PACK-012", "BOT-014"],
 }
 DEPS = {
+    "RSAT-001": [],
+    "RSAT-002": [],
+    "RSAT-003": [],
+    "RSAT-004": ["RSAT-003"],
+    "RSAT-005": ["RSAT-003"],
+    "RSAT-006": ["RSAT-004","RSAT-005"],
+    "RSAT-007": [],
+    "RSAT-008": ["RSAT-005"],
+    "RSAT-009": ["RSAT-005"],
+    "RSAT-010": ["RSAT-008"],
+    "RSAT-011": ["RSAT-003","RSAT-005"],
+    "RSAT-012": [],
+    "RSAT-013": [],
+    "RSAT-014": ["RSAT-004","RSAT-005"],
+    "RSAT-015": ["RSAT-005","RSAT-014"],
+    "RSAT-016": ["RSAT-014"],
+    "RSAT-017": ["RSAT-004","RSAT-013"],
+    "RSAT-018": ["RSAT-008","RSAT-009","RSAT-013"],
+    "RSAT-019": ["RSAT-003","RSAT-004"],
+    "RSAT-020": ["RSAT-003","RSAT-013"],
+    "RPWR-001": ["REF-007"],
+    "RPWR-002": ["RPWR-001"],
+    "RPWR-003": ["RPWR-001"],
+    "RPWR-004": ["RPWR-001"],
+    "RPWR-005": ["RPWR-001","RPWR-002"],
+    "RPWR-006": ["RPWR-002"],
+    "RPWR-007": ["RPWR-002","RPWR-006"],
+    "RPWR-008": ["RPWR-002","RPWR-006"],
+    "RPWR-009": ["RPWR-002","RPWR-006"],
+    "RPWR-010": ["RPWR-001","RPWR-003"],
+    "RLAB-001": [],
+    "RLAB-002": [],
+    "RLAB-003": ["FACTORY-003","FACTORY-004","FACTORY-005"],
+    "RLAB-004": ["FACTORY-005","FACTORY-006"],
+    "RLAB-005": [],
+    "RLAB-006": [],
+    "RLAB-007": ["FACTORY-002","FACTORY-012"],
+    "RLAB-008": ["REF-013"],
     "REF-002": ["REF-001"], "REF-003": ["REF-001"], "REF-004": ["REF-001"],
     "REF-005": ["REF-001"], "REF-006": ["REF-001"], "REF-008": ["REF-007"],
     "REF-009": ["REF-007"], "REF-010": ["REF-007"],
-    "REF-011": ["REF-005", "REF-008"], "REF-014": ["REF-013"],
+    "REF-011": [], "REF-014": ["REF-013"],
     "SIM-001": [], "SIM-004": ["SIM-001", "SIM-006"],
     "SIM-009": ["SIM-003", "SIM-008"], "SIM-010": ["SIM-009"],
     "SIM-012": ["SIM-003", "SIM-009"], "SIM-013": ["SIM-002", "SIM-008"],
@@ -183,6 +225,9 @@ DEPS = {
 }
 
 INTEGRATION = {
+    "RSAT": "Follow research index #477 and the bounded role/slice in the linked issue. Pin real source/core/settings/input identities, preserve original media, validate decoding/code hypotheses against original execution, retain uncertainty and meaningful negative controls. Publish authorised decoded content through #512; full discs/BIOS/states/dumps stay host-private.",
+    "RPWR": "Follow Power parent #476 and research index #477. Pin actual client/server/manual and VM/native identity, validate recovered resources/code against controlled local execution and quantify desktop timing uncertainty. Keep each game/release and private/public deliverable separate.",
+    "RLAB": "Follow research index #477 and reuse the existing Elgl Repo Factory. Demonstrate one bounded real workflow with resumption, identity, negative controls and configured resource/provider limits. Tool-only tests do not certify reference extraction, parity or continuous operation.",
     "REF": "Deliver a pinned source manifest, bounded measurement/capture procedure, evidence paths, uncertainty and reproducible comparison. Metadata validation is not gameplay proof.",
     "BOT": "Use the production simulation and public observations. Include seeded adversarial scenarios, failure traces, CPU bounds and the existing native suite. Never weaken survival assertions to accept a policy.",
     "NET": "Exercise actual supported native and browser clients against the authoritative server. Record RTT/loss/jitter, versions and exact content locks. Local serialisation tests alone do not prove cross-play.",
@@ -262,7 +307,7 @@ def issue_body(feature, numbers):
     source = feature["provenance"]
     reference = ""
     if source in ("reference-candidate", "reference-research") or feature["domain"] in ("POWER", "SATURN"):
-        reference = "\nReference semantics must be measured against a pinned release before a fidelity claim. This title is a research/implementation target, not proof that every named behaviour exists in every reference. An original Neptune fixture may proceed independently and must be labelled as such. See [source and confidence policy](" + URL + "/blob/roadmap/comprehensive-feature-backlog/docs/restart/backlog/README.md#reference-evidence).\n"
+        reference = "\nReference semantics must be measured against a pinned release before a fidelity claim. This title is a research/implementation target, not proof that every named behaviour exists in every reference. An original Neptune fixture may proceed independently and must be labelled as such. See [source and confidence policy](" + URL + "/blob/main/docs/restart/backlog/README.md#reference-evidence).\n"
     elif source == "neptune-experiment":
         reference = "\nThis is an optional original Neptune experiment, not a Saturn or Power parity claim.\n"
     else:

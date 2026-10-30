@@ -1,15 +1,21 @@
 # Operating the three-track AI factory
 
-This is the implementation contract for #33, not a deployed scheduler. Use the
-current working host services if present; first inspect them. Keep one coordinator
-with a supported Codex worker or a configured OpenHands adapter. Existing supported
-VPS Codex access can be reused within its configured limits; a cloud environment
-is optional. Do not repurpose another repository's provider credentials/policy.
+This is the implementation contract for #33. The 30 October operator direction is
+to reuse the deployed `elgansayer/elgl` Repo Factory and its supported shared
+Codex/Claude/Gemini provider broker. Preserve existing services, configured shared
+limits/health, manual sessions and each repository's own merge policy. This
+supersedes the older blanket prohibition on authorised shared provider reuse;
+it does not authorise credential copying or a competing scheduler. A cloud
+environment is optional. Inspect current live state before claiming operation.
 
 PR #453 adds [local intake and durable ownership](../../tools/factory/README.md)
 with executable concurrency/recovery tests. Remote intake/publication adapters,
 provider execution and supervised live-job recovery remain integration work.
-A Codex session or successful local store test is not a running factory.
+#474/#475 subsequently merged Neptune offline verification in that existing
+control plane. Live Neptune unattended intake/merge/restart recovery is still a
+separate acceptance gate. A Codex session or successful local store test is not
+a running Neptune factory. Research queues and receipts are #510/#511; see
+[research execution](RESEARCH_EXECUTION.md) and the live index #477.
 
 [MERGE_POLICY.md](MERGE_POLICY.md) supersedes the earlier mandatory review gate:
 merge automatically after applicable exact-head/current-base tests succeed.
