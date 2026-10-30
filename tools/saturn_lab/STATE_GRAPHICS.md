@@ -30,6 +30,13 @@ the adapter does not possess every locked component or authenticate host executi
 Use the accepted host's verified input-lock/profile and retain its receipt. The
 kernel witness is not proof that all labels, graphics or media are authentic.
 
+The pinned full core serializes the one-byte VDP1 registers as `VDP1_TVMR` and
+`VDP1_FBCR`. Its two-stage `SFVAR` dispatch expands the aliases before inner
+stringification, despite the contrary comment in `vdp1.c`. The adapter requires
+those exact record keys and normalizes their context labels to `TVMR`/`FBCR`.
+Short-name-only records cannot satisfy this pinned format. The array's `VRAM`
+record is explicitly named through a different macro and remains unprefixed.
+
 ## Host command
 
 Choose an existing accepted post-load checkpoint and a fresh private output path:
@@ -77,16 +84,20 @@ command traversal, animation association and sheet packing remain separate work.
 
 ## Tests and pinned-source interoperability
 
-`python3 tools/saturn_lab/check.py` includes nine new synthetic contract tests:
+`python3 tools/saturn_lab/check.py` includes eleven adapter contract tests:
 framing failures, duplicates/names/bounds, both producer orders, required layouts,
 kernel-witness comparison, sidecar/path/digest controls, deterministic exporter
-input, word-to-byte conversion and failure cleanup. Existing tests retain the
+input, actual expanded alias keys, rejection of invented short aliases,
+word-to-byte conversion and failure cleanup. The fixture declares producer
+fields independently of the adapter's lookup table. Existing tests retain the
 real original-kernel hash rejection contract. Mock witness tests are explicitly
 synthetic; no original bytes are bundled.
 
 An additional optional smoke compiles the **actual pinned `mednafen/state.c`**
 writer against a Neptune-owned synthetic producer. It verifies all 526592 uint16
 elements, signed context and command-index conversion, and detects wrong order.
+The producer now invokes `SFVAR(TVMR)` and `SFVAR(FBCR)` with the original alias
+definitions, rather than hard-coding a guessed serialized name.
 It supplies only the logging declaration used by the writer; no emulator is
 implemented by the fixture. The upstream GPL source is compiled temporarily,
 not vendored or linked into Neptune game code. The optional check downloads
@@ -110,16 +121,25 @@ python3 tools/saturn_lab/check_state_serializer.py --sources "$PINNED_SOURCE_DIR
 
 All five source SHA-256 values are enforced by the script. On this investigation's
 little-endian host the actual source-writer smoke passed, emitting synthetic state
-SHA-256 `82fb3aad96d69c9ee6548b61b1a5596c72b0fd816b3012e26690b56f055f52c3`.
+SHA-256 `e417ece0b5b18feef4f141df944d85ed6f7e61e80a771eccb103d5bf944c50e2`.
 An appended-byte source mutation was rejected before compilation. This establishes
 serializer/adapter interoperability for constructed arrays, not compatibility
 with a complete running core or extraction from an original-game checkpoint.
 
-## Remaining original-host check
+## Original-host evidence and remaining work
 
-Run the command on one accepted real checkpoint, retain the original kernel
-witness, compare selected VRAM/CRAM spans with another independently obtained
-memory/export view, and regenerate a selected pattern. Record mid-draw phase,
+The [first real-checkpoint result](../../docs/restart/research/2026-10-30-saturn-state-host-proof.md)
+records the failed short-name lookup, its exact-name repair, two byte-identical
+original checkpoint adaptations and two independently started accepted-core memory
+reads. All four normalized arrays matched the direct memory view in full. The
+wrong-order original-code witness and changed graphics-byte controls failed as
+required. Both acquisition paths use the same core lineage; this is not separate
+emulator correctness evidence. No new spritesheet or identified player/effect is
+claimed by that result.
+
+For a new selected scene, run the command on its accepted real checkpoint, retain
+the original kernel witness, compare VRAM/CRAM with a separate memory/export view,
+and regenerate an observed pattern. Record mid-draw phase,
 core/settings/input lock, checkpoint/frame and output hashes. Do not publish raw
 states or memory dumps. A real sheet is a later derived artifact with its own
 preview and reproducible frame/palette/source mapping; see the

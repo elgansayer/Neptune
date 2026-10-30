@@ -56,6 +56,10 @@ def run(source, compiler="cc"):
                     raise ValueError("Serializer/adapter mismatch in " + filename)
         if report["context"]["VDP1"]["current_command_byte_offset"] != 0x240:
             raise ValueError("Word-index conversion mismatch")
+        if (report["context"]["VDP1"]["TVMR"], report["context"]["VDP1"]["FBCR"]) != (3, 16):
+            raise ValueError("Actual SFVAR alias-name/context mismatch")
+        if not {"VDP1_TVMR", "VDP1_FBCR"} <= report["fields"]["VDP1"].keys():
+            raise ValueError("Synthetic producer did not exercise the actual alias keys")
         wrong = "big" if sys.byteorder == "little" else "little"
         _, wrong_files = sg.graphics(data, wrong, synthetic=True)
         if wrong_files["vram.bin"] == files["vram.bin"]:

@@ -1,0 +1,196 @@
+{
+  "account_wide_spend": "not independently metered; no cap change",
+  "adapter_runs": {
+    "byte_order_witness": {
+      "bytes": 64,
+      "cpu_address": "0x0600A4B0",
+      "kernel_offset": "0x44B0",
+      "sha256": "4094a11659922a5ec8fc72a346db13f94b656df341fe426412ddae81fae01c21",
+      "status": "original-code-span-matched"
+    },
+    "count": 2,
+    "exit_codes": [
+      0,
+      0
+    ],
+    "outputs_byte_identical": true
+  },
+  "adapter_sha256": "bda2cf73a485c19a67a68074f650a936aa6b9de61e4caf12e723c5b8ee9c6e87",
+  "base": "ba99bf1f37fd78189b98884bd06e95ca2a79b78a",
+  "checkpoint_frame": 3000,
+  "checkpoint_identity": {
+    "core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+    "frontend_sha256": "66d1a7a57a8d05a6ec102f913615f4c3a875bd65feead162225c9f95f7fddc51",
+    "lock_sha256": "56e594393834c99e782d83551cbf85313d7dbf5e8ed22c17006a672ce1a9beeb",
+    "python_sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+    "settings_sha256": "475ef8f3cdd04fdc42f808269e48bc735729a326fe4a75b9834dee6c6cc24bd5"
+  },
+  "checkpoint_state_sha256": "a6f7f4adb7709b6f16584a54c2f87a3ce32d9f4cf170ed0bf1a5c88e23d5e2a9",
+  "direct_memory": {
+    "arrays": {
+      "vdp2-cram.bin": {
+        "compared_bytes": 4096,
+        "elf_offset": "0xbcafe0",
+        "match": true,
+        "normalized_sha256": "dc21279842c23cc79ccdfa2ef69d52bec765781109a78bed0287201ef5b2b08c",
+        "symbol": "CRAM",
+        "symbol_bytes": 4096
+      },
+      "vdp2-registers.bin": {
+        "compared_bytes": 512,
+        "elf_offset": "0xc4c060",
+        "match": true,
+        "normalized_sha256": "0d63074b0d24c2b9bc01e778de1b9b3198f11fdb7e5c62197395d1ba2a7d9425",
+        "symbol": "RawRegs",
+        "symbol_bytes": 512
+      },
+      "vdp2-vram.bin": {
+        "compared_bytes": 524288,
+        "elf_offset": "0xbcbfe0",
+        "match": true,
+        "normalized_sha256": "4919db561bcc20bbea9db169a1effab12c15df631b27b55e837d5775a6789bfc",
+        "symbol": "VRAM",
+        "symbol_bytes": 524288
+      },
+      "vram.bin": {
+        "compared_bytes": 524288,
+        "elf_offset": "0x1c03560",
+        "match": true,
+        "normalized_sha256": "c8aa5050af405ef57b90a355d9cd1b1a59bc1218b6121e15e178173a1e65c0f5",
+        "symbol": "VDP1_VRAM",
+        "symbol_bytes": 524288
+      }
+    },
+    "bytes_compared": 1053184,
+    "core_file_unchanged": true,
+    "exit_codes": [
+      0,
+      0
+    ],
+    "frames_executed": 0,
+    "method": "same accepted core restored from original checkpoint; independent ELF-backed direct memory acquisition, not independent emulation",
+    "negative_controls": {
+      "vdp2-cram.bin": {
+        "changed_first_byte_detected": true,
+        "whole_word_order_swap_detected": true
+      },
+      "vdp2-registers.bin": {
+        "changed_first_byte_detected": true,
+        "whole_word_order_swap_detected": true
+      },
+      "vdp2-vram.bin": {
+        "changed_first_byte_detected": true,
+        "whole_word_order_swap_detected": true
+      },
+      "vram.bin": {
+        "changed_first_byte_detected": true,
+        "whole_word_order_swap_detected": true
+      }
+    },
+    "receipt_sha256": "1dc8292fe3b74ece8c86a15cdbbb2716c44f8fe14cd493f6732eb84b9d788135",
+    "receipts_identical": true,
+    "runs": 2,
+    "script_sha256": "550cd8f69fe96a825424611f72592921da36e2664d14e3448b7e940a6fde1006"
+  },
+  "experiment": "SATURN-GFX-REAL-001",
+  "first_failure": {
+    "actual_fields": {
+      "VDP1_FBCR": 1,
+      "VDP1_TVMR": 1
+    },
+    "before_fix": "Missing/wrong-sized field: VDP1.TVMR",
+    "cause": "SFVAR alias expansion in full-core record declarations; synthetic producer used literal guessed short names",
+    "preserved": true
+  },
+  "game": "USA MK-81070 V1.003",
+  "host_resource_gate": {
+    "exclusive_lease_pid": 3321400,
+    "released": true,
+    "shared_gate_used_for_native_processes": true
+  },
+  "issue": 527,
+  "limitations": [
+    "Same core lineage as serializer, not a separate emulator oracle",
+    "No new frame or timing/caller result",
+    "No player identification, palette preview, sheet or composition validation",
+    "No new emulated frame: restored accepted frame3000 checkpoint",
+    "DrawingActive=0 at checkpoint; source arrays do not prove current display composition"
+  ],
+  "new_variable_spend_usd": 0,
+  "observed_context": {
+    "VDP1": {
+      "CommandPhase": 6,
+      "CurCommandAddr": 64,
+      "DrawingActive": 0,
+      "EDSR": 3,
+      "FBCR": 3,
+      "FBDrawWhich": 0,
+      "PTMR": 2,
+      "RetCommandAddr": -1,
+      "TVMR": 0,
+      "current_command_byte_offset": 128
+    },
+    "VDP2": {
+      "CRAM_Mode": 0,
+      "HRes": 0,
+      "InterlaceMode": 0,
+      "RAMCTL_Raw": 768,
+      "VRes": 0
+    }
+  },
+  "outputs": {
+    "capture.json": {
+      "bytes": 559,
+      "sha256": "bbc4ebe24f62af438667c346b103e9775c57d3a4c2aad2590ad405f198369b34"
+    },
+    "context.json": {
+      "bytes": 353,
+      "sha256": "46c88e3763e66af32c568fd2d3388abdf4fb08ab47a5096a2458ac4de9f19c87"
+    },
+    "vdp2-cram.bin": {
+      "bytes": 4096,
+      "sha256": "dc21279842c23cc79ccdfa2ef69d52bec765781109a78bed0287201ef5b2b08c"
+    },
+    "vdp2-registers.bin": {
+      "bytes": 512,
+      "sha256": "0d63074b0d24c2b9bc01e778de1b9b3198f11fdb7e5c62197395d1ba2a7d9425"
+    },
+    "vdp2-state.bin": {
+      "bytes": 530343,
+      "sha256": "130b877f95ef4e8b9b04b4859133e8b0ad4bc01b69a8aaf5b5c488d5322b2388"
+    },
+    "vdp2-vram.bin": {
+      "bytes": 524288,
+      "sha256": "4919db561bcc20bbea9db169a1effab12c15df631b27b55e837d5775a6789bfc"
+    },
+    "vram.bin": {
+      "bytes": 524288,
+      "sha256": "c8aa5050af405ef57b90a355d9cd1b1a59bc1218b6121e15e178173a1e65c0f5"
+    }
+  },
+  "provider_jobs_started": 0,
+  "schema": "neptune.original-state-graphics-host-evidence.v1",
+  "source_serializer_alias_smoke": {
+    "core_source_revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+    "fixture_sha256": "d4e4a853ea2ea71fc3d638d18b4813e19ec87e562951f772efcebf36b59185da",
+    "producer_byte_order": "little",
+    "scope": "Actual pinned state.c writer, constructed arrays; no full core or original game",
+    "source_sha256": {
+      "boolean.h": "9ae2871b702c3c7d89b5e0e40de28895e72bd0177e1d6da32cde6f59e46bb36e",
+      "general.h": "683f45cc9a9947826b81b35bffb99a3a1399ec457dca10c96fda68a22a0dc431",
+      "retro_inline.h": "7543242f56677091d46e3bc9a8b7d567a0df631cb8cdb1878970feaa53f77403",
+      "state.c": "60c6aeb596154ad04a5e20abda7d563148b67fd92899d15b69bbc192b59254a8",
+      "state.h": "af8d99457f565d238aa8ad5f2f8d7e1a18e5f7adc7dc35fa3c7b674b41be717f"
+    },
+    "state_sha256": "e417ece0b5b18feef4f141df944d85ed6f7e61e80a771eccb103d5bf944c50e2",
+    "status": "serializer-interop-passed",
+    "synthetic": true,
+    "verified_uint16_words": 526592,
+    "wrong_byte_order_detected": true
+  },
+  "wrong_order_control": {
+    "diagnostic": "USA original code witness mismatch; wrong order/build/load phase",
+    "exit": 1,
+    "no_output_created": true
+  }
+}
