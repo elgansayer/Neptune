@@ -1,13 +1,18 @@
 {
-  "godot_version": "4.5.stable.official.876b29033",
-  "archive_url": "https://github.com/godotengine/godot/releases/download/4.5-stable/Godot_v4.5-stable_linux.x86_64.zip",
-  "archive_sha256": "c7316e1fd782ad276a4d985a7673b5976eaaa8d90561a2bea5289210dc53e9ba",
-  "binary_name": "Godot_v4.5-stable_linux.x86_64",
-  "binary_sha256": "cd8bb15130f92aad58a4e9fdd10117172b14c703edec8819c97ec6cdd45691b8",
+  "godot_version": "4.7.2.stable.official.ed1daf0bf",
+  "archive_url": "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip",
+  "archive_sha256": "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4",
+  "binary_name": "Godot_v4.7.2-stable_linux.x86_64",
+  "binary_sha256": "8d106cbe6144c2dc7e881d61d2429c1a8a76e6b22ef48bd5e48dcf934953f71e",
   "addons": {
-    "addons/limboai/bin/liblimboai.linux.editor.x86_64.so": "4b658aacd24c9bd62c3d5e5b8e7aece5f0ba5ac7b33e8e690150e274af841ffa",
-    "addons/limboai/bin/liblimboai.linux.template_release.x86_64.so": "12e0727521f717a326a175ff1e7b7e34b234b809a249b7318db732b3d05c0dff",
-    "addons/godot-sqlite/bin/libgdsqlite.linux.template_debug.x86_64.so": "3436c70c74bd427090ccce8a52dba3b2fe4c87109caa811ac3b97eb2c66409d5",
-    "addons/godot-sqlite/bin/libgdsqlite.linux.template_release.x86_64.so": "6282d16585df84c44f530d7810d4cb024369781456ec4968f2853aac31f88762"
+    "addons/limboai/bin/liblimboai.linux.editor.x86_64.so": "48bf57a5b1c05288ea07e7809bfafd8fe77534ccd432b38167829235b1c3585c",
+    "addons/limboai/bin/liblimboai.linux.template_release.x86_64.so": "693c244c66d41c2d5c073a557b67ed2b267013fd0b3728c01754cf9c1f74b405",
+    "addons/godot-sqlite/bin/libgdsqlite.linux.template_debug.x86_64.so": "a2fa1dddab744135a3ce0f16da6a84d41ec981ffc85560ecb3abf54d9ad4c393",
+    "addons/godot-sqlite/bin/libgdsqlite.linux.template_release.x86_64.so": "6bc7d4f045ba1903c08931a4f8f39be6a5424d37971d3f3a068f618846fc21ec"
+  },
+  "export_templates": {
+    "version": "4.7.2.stable",
+    "archive_url": "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz",
+    "archive_sha256": "f298490b8d44d934be425a5a65a51bf15f422428b229a06a6e11d9ffea248011"
   }
 }

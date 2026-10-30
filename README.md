@@ -126,7 +126,7 @@ See `docs/SBOMBERMAN_REFERENCE.md` for detailed comparison.
 
 ## 🛠️ Tech Stack
 
-- **Engine**: Godot (latest stable target; recorded toolchain currently pins 4.5)
+- **Engine**: Godot (latest stable target; recorded toolchain currently pins 4.7.2)
 - **Language**: GDScript
 - **Networking**: ENet (client-server RPC)
 - **Database**: SQLite (local), PlayFab (future)

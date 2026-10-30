@@ -6,8 +6,7 @@ Real input, bridge and static disc/regional inventory work is accepted through
 operation remain unverified. Start with [research execution](RESEARCH_EXECUTION.md)
 and [issue #477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
 Development must stay on the latest stable packages and Godot, following the
-[dependency policy](DEPENDENCY_POLICY.md). Existing Godot 4.5 pins record the
-current toolchain, not the preferred ongoing target. Refresh pins and validate
+[dependency policy](DEPENDENCY_POLICY.md). The recorded toolchain uses Godot 4.7.2 with current stable native addons. Refresh pins and validate
 compatibility as part of adopting current releases.
 
 ## Goal

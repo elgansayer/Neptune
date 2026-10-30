@@ -8,10 +8,31 @@ import subprocess
 import tempfile
 import unittest
 
-from run import assert_pass, checkout_identity, commands, git, plan
+from run import assert_pass, checkout_identity, commands, git, godot_binary_name, plan
+from unittest.mock import patch
 
 
 class GateContracts(unittest.TestCase):
+    def test_updated_lock_selects_engine_without_changing_consumers(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            lock = root / "tools/godot/toolchain.json"
+            lock.parent.mkdir(parents=True)
+            for version in ("4.7.2", "4.8"):
+                name = f"Godot_v{version}-stable_linux.x86_64"
+                lock.write_text(json.dumps({"binary_name": name}))
+                with patch("run.ROOT", root):
+                    checks = commands("gameplay", root / "evidence", root / "cache")
+                for _, command, _ in checks:
+                    if "--godot" in command:
+                        self.assertEqual(command[command.index("--godot") + 1], str(root / "cache" / name))
+
+    def test_engine_lock_rejects_paths_prereleases_and_other_platforms(self):
+        for name in (None, 7, "../Godot_v4.7.2-stable_linux.x86_64", "/tmp/godot",
+                     "Godot_v4.7.2-rc1_linux.x86_64", "Godot_v4.7.2-stable_windows.exe"):
+            with self.subTest(name=name), self.assertRaises(ValueError):
+                godot_binary_name({"binary_name": name})
+
     def test_empty_or_unsafe_selection_fails(self):
         for paths in ([], [""], ["../game.gd"], ["/game.gd"], ["docs/../game.gd"]):
             with self.subTest(paths=paths), self.assertRaises(ValueError):
