@@ -19,11 +19,15 @@ var refused := false
 var finished := false
 var policy_identity := {}
 var auto_fill := false
+var expected_width := 17
+var expected_height := 13
 
 func _ready() -> void:
 	port = preload("res://shared/runtime_config.gd").read().port
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--probe-auto-fill": auto_fill = true
+		if arg.begins_with("--probe-map-width="): expected_width = arg.get_slice("=", 1).to_int()
+		if arg.begins_with("--probe-map-height="): expected_height = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-humans="): humans = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-bots="): bots = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-preset="): preset = arg.get_slice("=", 1).to_int()
@@ -93,7 +97,7 @@ func map_received(index: int, data: Dictionary) -> void:
 	if index == humans:
 		fail("refused peer received a map")
 		return
-	if data.get("room", {}).get("seats", 0) != seats or data.get("map_width", 0) != 17 or data.get("map_height", 0) != 13:
+	if data.get("room", {}).get("seats", 0) != seats or data.get("map_width", 0) != expected_width or data.get("map_height", 0) != expected_height or data.get("map_config", {}).get("render_geometry", false) != true:
 		fail("initial map/capacity contract mismatch")
 		return
 	maps[index] = true

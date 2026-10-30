@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://churryblkshad1"]
 
 [ext_resource type="Script" path="res://client/effects/hurry_block_shadow.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://c1vjh06j8m8bv" path="res://res/items/sbomberman/shadow.png" id="2_shadow"]
+[ext_resource type="Texture2D" path="res://res/items/sbomberman/shadow.png" id="2_shadow"]
 
 [sub_resource type="Animation" id="Animation_warning"]
 resource_name = "warning"

@@ -40,6 +40,8 @@ var hurry_falling_blocks = {} # tile_key -> FallingHurryBlock (blocks currently 
 var debug_tiles = {} # tile_key -> ColorRect for debugging
 var my_player_id = ""
 var map_rendered = false
+var arena_pixel_size := Vector2.ZERO
+var render_geometry := false
 var map_scene_instance = null # Hold reference to loaded PCK map scene
 var removed_dead_players = {} # peer_id -> bool when death animation has finished and node was removed
 var hud: CanvasLayer # Reference to HUD
@@ -168,9 +170,10 @@ func _setup_canvas_layers() -> void:
 	hud = GameHUDScene.instantiate()
 	hud.layer = RenderingLayers.CANVAS_UI
 	# HUD must stay pinned to the screen
-	hud.follow_viewport_enabled = true
+	hud.follow_viewport_enabled = false
 	# HUD lives on CANVAS_UI; players are rendered on CANVAS_PLAYERS above it.
 	add_child(hud)
+	_connect_arena_framing()
 	
 	# Set player name in HUD once we know it
 	if ClientMain.username:
@@ -374,6 +377,7 @@ func update_game_state(state: Dictionary):
 	# Load map_config first if present (must happen before rendering)
 	if state.has("map_config") and not map_rendered:
 		GameConfig.load_map_config(state.map_config)
+		render_geometry = state.map_config.get("render_geometry", false)
 		print("[GameView] Loaded map config: TILE_SIZE=", GameConfig.TILE_SIZE)
 	
 	# Handle packed map (compressed format for first sync)
@@ -1565,7 +1569,7 @@ func render_map(map_data):
 	var pck_path = "res://maps/stage1.pck"
 	var pck_loaded = false
 	
-	if FileAccess.file_exists(pck_path):
+	if not render_geometry and FileAccess.file_exists(pck_path):
 		var success = ProjectSettings.load_resource_pack(pck_path)
 		if success:
 			print("[GameView] Mounted PCK: ", pck_path)
@@ -1638,24 +1642,6 @@ func render_map(map_data):
 					wall.z_index = 0
 					add_child(wall)
 					
-					# Add hitbox visualization (green circle to match actual collision)
-					var hitbox = Line2D.new()
-					hitbox.width = 2.0
-					hitbox.default_color = Color(0, 1, 0, 0.6) # Semi-transparent green
-					hitbox.z_index = 101
-					# Draw circle
-					var radius = GameConfig.TILE_SIZE / 2.0
-					var num_points = 32
-					for i in range(num_points + 1):
-						var angle = (i / float(num_points)) * TAU
-						var point = Vector2(cos(angle), sin(angle)) * radius
-						hitbox.add_point(point)
-					hitbox.position = Vector2(
-						col * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-						row * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-					)
-					add_child(hitbox)
-					
 				elif tile_type == 2:
 					# Destructible block - lighter brown/tan
 					var block = ColorRect.new()
@@ -1664,30 +1650,25 @@ func render_map(map_data):
 					block.position = Vector2(col * GameConfig.TILE_SIZE, row * GameConfig.TILE_SIZE)
 					block.z_index = 0
 					add_child(block)
+					block_nodes["%d,%d" % [col, row]] = {"block": block}
 					
 					
 					# Hitbox visualization removed
 	
-	# Calculate camera position for 320x224 viewport
-	# Map may be larger than viewport - center it
-	var viewport_size = get_viewport().get_visible_rect().size
-	if viewport_size.x <= 0 or viewport_size.y <= 0:
-		viewport_size = Vector2(320, 224) # Fallback to expected size
-	
-	var map_pixel_width = map_width * GameConfig.TILE_SIZE
-	var map_pixel_height = map_height * GameConfig.TILE_SIZE
-	
-	# No zoom - 1:1 pixel mapping
-	camera.zoom = Vector2(1.0, 1.0)
-	
-	# Center camera on map center (map fills/exceeds viewport)
-	var map_center_x = map_pixel_width / 2.0
-	var map_center_y = map_pixel_height / 2.0
-	
-	camera.position = Vector2(map_center_x, map_center_y)
-	
-	print("[GameView] Viewport: ", viewport_size, " Map: ", map_pixel_width, "x", map_pixel_height)
-	print("[GameView] Camera positioned at ", camera.position, " with zoom ", camera.zoom)
+	arena_pixel_size = Vector2(map_width, map_height) * GameConfig.TILE_SIZE
+	_update_arena_framing()
+
+func _connect_arena_framing() -> void:
+	get_viewport().size_changed.connect(_update_arena_framing)
+	hud.arena_inset_changed.connect(_update_arena_framing)
+
+func _update_arena_framing() -> void:
+	if arena_pixel_size == Vector2.ZERO or not is_instance_valid(camera): return
+	var top_inset: float = hud.get_node("TopBar").offset_bottom if is_instance_valid(hud) else 24.0
+	var layout: Dictionary = preload("res://client/arena_framing.gd").fit(arena_pixel_size, get_viewport().get_visible_rect().size, top_inset)
+	if not layout.accepted: return # A minimized/zero-size viewport cannot be framed yet.
+	camera.position = layout.position
+	camera.zoom = layout.zoom
 
 func show_debug_tile(tile_pos: Vector2i, color: Color):
 	"""Show a colored overlay on a tile for debugging"""
