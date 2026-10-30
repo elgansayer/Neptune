@@ -48,6 +48,8 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 - [Ordered backlog](BACKLOG.md)
 - [Runnable inventory and input lock tools](../../tools/saturn_lab/README.md)
 - [Catalogue validation and report tools](../../tools/research_catalog/README.md)
+- [Static Saturn disc inventories and regional diff](saturn-disc/README.md)
+- [Saturn coverage and unknowns ledger](asset-audit/saturn-coverage-ledger.json)
 
 ## Current evidence
 

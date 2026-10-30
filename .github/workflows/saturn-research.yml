@@ -1,0 +1,47 @@
+name: Saturn research tooling
+
+on:
+  pull_request:
+    paths:
+      - 'tools/asset_audit/**'
+      - 'tools/saturn_disc/**'
+      - 'docs/restart/asset-audit/**'
+      - 'docs/restart/saturn-disc/**'
+      - '.github/workflows/saturn-research.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'tools/asset_audit/**'
+      - 'tools/saturn_disc/**'
+      - 'docs/restart/asset-audit/**'
+      - 'docs/restart/saturn-disc/**'
+      - '.github/workflows/saturn-research.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  research-tooling-tests:
+    name: Asset audit and disc inventory tooling (not game parity)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Asset audit synthetic tests
+        run: python3 tools/asset_audit/check.py
+      - name: Validate committed asset-audit summary and coverage ledger
+        run: |
+          python3 tools/asset_audit/cli.py verify-summary docs/restart/asset-audit/saturn-assets-b55b5a55.summary.json
+          python3 tools/asset_audit/cli.py verify-ledger docs/restart/asset-audit/saturn-coverage-ledger.json
+      - name: Disc inventory synthetic tests
+        run: python3 tools/saturn_disc/check.py
+      - name: Validate committed disc summaries and regional diff
+        run: >-
+          python3 tools/saturn_disc/cli.py verify
+          --summary docs/restart/saturn-disc/usa-mk81070-v1003.summary.json
+          --summary docs/restart/saturn-disc/japan-t14302g-v1000.summary.json
+          --diff docs/restart/saturn-disc/usa-vs-japan.diff.json
