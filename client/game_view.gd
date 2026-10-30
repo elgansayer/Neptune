@@ -488,15 +488,11 @@ func update_game_state(state: Dictionary):
 	# Update player faces in HUD and count alive players
 	if state.has("players") and hud:
 		var alive_count = 0
+		var participants: Dictionary = state.get("room", {}).get("participants", {})
+		hud.update_player_roster(state.players, participants)
 		for peer_id_str in state.players:
 			var pdata = state.players[peer_id_str]
 			var is_dead = pdata.get("is_dead", false)
-			var username = pdata.get("username", "Player")
-			var score = pdata.get("wins", 0)
-			
-			# Add face if not exists
-			if hud.has_method("add_player_face"):
-				hud.add_player_face(peer_id_str, username, score)
 			
 			# Update face state based on player status
 			if hud.has_method("update_player_face_state"):
@@ -509,9 +505,6 @@ func update_game_state(state: Dictionary):
 				if not is_dead:
 					alive_count += 1
 			
-			# Update score
-			if hud.has_method("update_player_score"):
-				hud.update_player_score(peer_id_str, score)
 		
 		hud.update_players_alive(alive_count, state.players.size())
 
