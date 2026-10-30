@@ -1,0 +1,536 @@
+{
+  "schema": "neptune.saturn-vps-experiment-queue.v1",
+  "date": "2026-10-30",
+  "scope": "Saturn Bomberman only",
+  "baseline_neptune_revision": "b4cc6de97976ac247ca3f77d73acaa6c4380257f",
+  "status": "proposed-source-informed-handoff",
+  "dispatch": {
+    "system": "Existing Elgl factory only",
+    "preserve_owner": "Gemini EXP-SAT-ARCHIVE-002 / #484",
+    "first_sequence": [
+      "S06",
+      "S07",
+      "S09"
+    ],
+    "budget": "Use existing configured limits. Attempt bounds are proposed stop conditions, not new spending or concurrency authority.",
+    "notification": "Do not reset or duplicate previously delivered first-success email automation.",
+    "code_followups": [
+      "S01",
+      "S02",
+      "S04"
+    ]
+  },
+  "experiments": [
+    {
+      "id": "S01",
+      "priority": "P0",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/483"
+      ],
+      "depends_on": [],
+      "title": "Independent original-emulator caller validation of reproduced helper",
+      "source_ids": [
+        "repo-probe",
+        "gameconfig",
+        "saturn-result",
+        "saturn-host",
+        "saturn-probe-result"
+      ],
+      "method": "Reuse merged #524's two 256-case original-file runs and actual instruction mutation result. Next capture one natural original-emulator caller/return and compare argument, result and executed instruction identities; do not rerun unchanged probe as progress.",
+      "attempt_bound": "One natural caller sequence; if hooks unavailable, produce bounded capability gap and continue graphics independently.",
+      "validation": "Changed result or bit priority must fail; original kernel/hash mismatch must reject.",
+      "status": "original-cpu-baseline-reproduced-by-vps-caller-validation-pending",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S02",
+      "priority": "P1",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/483",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/492"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "title": "RNG state transition and bounded draw at candidate 0x0600A0EC",
+      "source_ids": [
+        "gameconfig",
+        "gameresearch"
+      ],
+      "method": "Recover widths, taps, bound handling and seeding; compare outputs and touched state with natural caller trace.",
+      "attempt_bound": "One generator and one caller, not all RNG consumers.",
+      "validation": "Wrong tap, signedness and wrap cases must be detected.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S03",
+      "priority": "P1",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/484",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/483"
+      ],
+      "depends_on": [],
+      "title": "One actual archive decompression/load path",
+      "source_ids": [
+        "gameresearch",
+        "disc"
+      ],
+      "method": "Coordinate EXP-SAT-ARCHIVE-002 owner; trace store anchor 0x06033E0C and loader 0x06009470; prove original resident bytes.",
+      "attempt_bound": "One reserved base1/normal2 resource; preserve current owner.",
+      "validation": "Truncation, invalid references and wrong ring semantics; compare resident original bytes, not only round trip.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S04",
+      "priority": "P1",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/483",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/485"
+      ],
+      "depends_on": [
+        "S01"
+      ],
+      "title": "Sprite-sort append/traverse/reset candidates",
+      "source_ids": [
+        "memorynotes"
+      ],
+      "method": "Recover one operation around 0x060AA50C/0x060AA57C and compare an original frame's ordering.",
+      "attempt_bound": "One operation and small bucket/node set.",
+      "validation": "Reverse equal-key order or omit head reset; prove stale excluded tails are unread.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S05",
+      "priority": "P2",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/483",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/493"
+      ],
+      "depends_on": [
+        "S11"
+      ],
+      "title": "Score/dino growth update candidate 0x06021604",
+      "source_ids": [
+        "gameconfig",
+        "gameresearch"
+      ],
+      "method": "Recover arithmetic and state effects for natural pickup and threshold crossing.",
+      "attempt_bound": "One scoring transition with rider/no-rider and second-player controls.",
+      "validation": "Wrong threshold, width or player selection must fail.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S06",
+      "priority": "P0",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/485",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/482"
+      ],
+      "depends_on": [],
+      "title": "Read-only Beetle named save-state adapter",
+      "source_ids": [
+        "core-libretro",
+        "core-state",
+        "core-state-h",
+        "core-ss",
+        "core-vdp1",
+        "core-vdp2"
+      ],
+      "method": "Parse real serialized checkpoint, normalize producer word order and retain coherent VDP1/VDP2 arrays.",
+      "attempt_bound": "One accepted real checkpoint and one independent span comparison before extending formats.",
+      "validation": "Truncated/duplicate/oversized fields and swapped payload reject or differ; synthetic parser tests do not qualify as game extraction.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S07",
+      "priority": "P0",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/485",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/487"
+      ],
+      "depends_on": [
+        "S06"
+      ],
+      "title": "One original pattern with verified colour interpretation",
+      "source_ids": [
+        "core-vdp2render",
+        "core-vdp2",
+        "repo-vdp1"
+      ],
+      "method": "Reuse export_vdp1; select actually observed RGB or implement the observed indexed sprite/CRAM mode.",
+      "attempt_bound": "One observed command/mode; unsupported modes explicit.",
+      "validation": "Palette/nibble/CRAM-offset/type mutations must be detected by applicable comparison.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S08",
+      "priority": "P1",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/485"
+      ],
+      "depends_on": [
+        "S06"
+      ],
+      "title": "Actual VDP1 command-flow discovery",
+      "source_ids": [
+        "core-vdp1"
+      ],
+      "method": "Reconstruct next/assign/call/return, skips/end and word-to-byte addressing; compare bounded trace.",
+      "attempt_bound": "One original list; finite visit budget and explicit mid-draw phase.",
+      "validation": "Cycle, out-of-range link and incorrect return semantics must reject or mismatch.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S09",
+      "priority": "P0",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/487",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/512"
+      ],
+      "depends_on": [
+        "S07"
+      ],
+      "title": "One newly extracted useful spritesheet",
+      "source_ids": [
+        "repo-vdp1",
+        "core-vdp1"
+      ],
+      "method": "Capture short idle/walk/effect sequence, retain patterns/palettes/anchors and pack deterministic PNG+JSON with concrete private preview.",
+      "attempt_bound": "One useful sheet; no complete game atlas or Godot integration prerequisite.",
+      "validation": "Fresh-directory regeneration and native/pixel comparison; address-only dedupe and source-orientation mistakes must be detectable.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S10",
+      "priority": "P2",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/486"
+      ],
+      "depends_on": [
+        "S06"
+      ],
+      "title": "One VDP2 cell plane patch",
+      "source_ids": [
+        "core-vdp2",
+        "core-vdp2render"
+      ],
+      "method": "Derive actual enabled simple plane format and decode one cell plus small map.",
+      "attempt_bound": "One simple mode; explicitly reject unsupported rotation/scroll/bitmap paths.",
+      "validation": "Wrong pattern-name entry/palette/flip must be visible in comparison.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S11",
+      "priority": "P1",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/480",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/493"
+      ],
+      "depends_on": [
+        "S06"
+      ],
+      "title": "Validate original object/map/item layout",
+      "source_ids": [
+        "gameconfig",
+        "gamestate",
+        "game-lab",
+        "gameresearch"
+      ],
+      "method": "Resolve 0x7C stride versus fields crossing record boundary and contradictory bomb/object notes with original writer/allocation evidence.",
+      "attempt_bound": "Player1/player2/enemy plus one bomb/item lifecycle.",
+      "validation": "Field/stride or item-kind substitutions must fail observations; never write cross-record offsets on comment authority.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S12",
+      "priority": "P1",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/492",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/513"
+      ],
+      "depends_on": [
+        "S06"
+      ],
+      "title": "Separate frame/poll/stage/timer timebases",
+      "source_ids": [
+        "gameconfig",
+        "gameresearch",
+        "memorynotes"
+      ],
+      "method": "Capture load/menu/pause/match/restart counter progress and consuming routines.",
+      "attempt_bound": "One short route through named transitions.",
+      "validation": "Compare event order plus declared clock; deliberate one-update offset must be detected.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S13",
+      "priority": "P2",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/490",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/493"
+      ],
+      "depends_on": [
+        "S11",
+        "S12",
+        "S02"
+      ],
+      "title": "One original CPU decision branch",
+      "source_ids": [
+        "gameconfig",
+        "gamestate"
+      ],
+      "method": "Locate actual original CPU callback; compare natural behaviour and one-factor forced-state pairs with recorded RNG.",
+      "attempt_bound": "One decision branch and controlled map differences.",
+      "validation": "Wrong danger/escape condition must fail; forced states are labelled.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S14",
+      "priority": "P2",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/493"
+      ],
+      "depends_on": [
+        "S11",
+        "S12"
+      ],
+      "title": "Measured item/bomb interaction matrix",
+      "source_ids": [
+        "gameconfig",
+        "gameresearch",
+        "game-lab"
+      ],
+      "method": "Record bounded setup/stimulus/cells/damage/timing; anchor forced setups in naturally reached events.",
+      "attempt_bound": "A small named interaction set; unknowns remain unknown.",
+      "validation": "Boundary and counterexample cases; distinguish invincible/forced clears from ordinary damage.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S15",
+      "priority": "P2",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/480",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/488",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/489"
+      ],
+      "depends_on": [],
+      "title": "Retail TEST OPTION dispatcher",
+      "source_ids": [
+        "prototype-menu",
+        "gameconfig"
+      ],
+      "method": "Find retail strings and CFG homologues; prototype flag 0x060C1464 is only a lead, never a retail patch instruction.",
+      "attempt_bound": "One dispatcher and one media resource; preserve separate test save/profile.",
+      "validation": "Verify supplied build and unmodified guard/flow before patch; menu alone is not recovery.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S16",
+      "priority": "P2",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/488"
+      ],
+      "depends_on": [],
+      "title": "One sound-driver/sample resource mapping",
+      "source_ids": [
+        "gameconfig",
+        "gameresearch"
+      ],
+      "method": "Verify PROGRAM.BIN driver 0x44+0x63D4, runtime self-patching and one SE event's SCSP sample/pitch/loop.",
+      "attempt_bound": "One original sound/sample; no entire archive interpreted as PCM.",
+      "validation": "Wrong boundaries/pitch/driver-versus-sample classification must be detected.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S17",
+      "priority": "P2",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/480",
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/481"
+      ],
+      "depends_on": [],
+      "title": "Validated Ghidra import and library classification",
+      "source_ids": [
+        "loader",
+        "recomp-match",
+        "recomp-readme"
+      ],
+      "method": "Load actual kernel/base or verified state format; retain signature/cross-region match confidence and original-byte comparison.",
+      "attempt_bound": "One kernel/function slice; Ghidra completion never blocks S01.",
+      "validation": "Wrong base/build/function match must fail; classify generic SDK separately from game logic.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    },
+    {
+      "id": "S18",
+      "priority": "P3",
+      "issues": [
+        "https://github.com/elgansayer/Neptune-Bomberman/issues/479"
+      ],
+      "depends_on": [],
+      "title": "Ymir headless capability audit",
+      "source_ids": [
+        "headless-main",
+        "headless-command",
+        "headless-protocol",
+        "headless-config"
+      ],
+      "method": "At inspected pin main only parses config/prints/exits; only adopt a new pin after real emulation, transport and memory-read proof.",
+      "attempt_bound": "Stop after capability result; do not spend a full adapter build against a scaffold.",
+      "validation": "Successful config parsing is explicitly not BIOS/game/debugger execution.",
+      "status": "not-run-by-this-investigation",
+      "artifact_requirements": [
+        "original build/hash and range/resource",
+        "reproduction command/tool revision",
+        "real host receipt and outputs",
+        "negative control",
+        "readable analysis and uncertainty",
+        "private preview for a sheet"
+      ]
+    }
+  ],
+  "integration_base_revision": "77e78f02e30e098390a0b033aa8120aad83bde3e",
+  "observed_original_baseline": {
+    "pr": 524,
+    "revision": "77e78f02e30e098390a0b033aa8120aad83bde3e",
+    "scope": "CPU-only original helper; no independent emulator/caller/timing validation or spritesheet",
+    "cases_per_run": 256,
+    "fresh_runs": 2,
+    "results_sha256": "76c3b831d03cbe47a27db58ca6321e5b9f788396b3a8fc70119a69a8f6fa047b",
+    "original_return_mutation_mismatches": 128
+  }
+}

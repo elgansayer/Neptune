@@ -1,0 +1,327 @@
+{
+  "schema": "neptune.saturn-vps-source-investigation.v1",
+  "date": "2026-10-30",
+  "scope": "Saturn Bomberman original-game research",
+  "baseline_neptune_revision": "b4cc6de97976ac247ca3f77d73acaa6c4380257f",
+  "evidence_level": "source-inspection-and-review-of-published-vps-original-result",
+  "sources": [
+    {
+      "id": "core-libretro",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "libretro.c",
+      "git_blob_sha1": "cf9f33c079154b5db2f7fbd7b2cc689a1531dd19",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/libretro.c",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "core-state",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "mednafen/state.c",
+      "git_blob_sha1": "00f2350b8064e175915fc9451452265ac03da5aa",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/mednafen/state.c",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "core-state-h",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "mednafen/state.h",
+      "git_blob_sha1": "d73c20d76f1e73a19157d92b2a10e41e7f34a735",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/mednafen/state.h",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "core-ss",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "mednafen/ss/ss.c",
+      "git_blob_sha1": "2a72b718b935027fe8b543c0b6dfae55474ea389",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/mednafen/ss/ss.c",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "core-vdp1",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "mednafen/ss/vdp1.c",
+      "git_blob_sha1": "9a603f5e30ee982079edb7b45a3d4d4583b71761",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/mednafen/ss/vdp1.c",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "core-vdp2",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "mednafen/ss/vdp2.c",
+      "git_blob_sha1": "53334ec2e438dcebb1d5837ed44741f1ab264631",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/mednafen/ss/vdp2.c",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "core-vdp2render",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "mednafen/ss/vdp2_render.c",
+      "git_blob_sha1": "432aaf5611089973cdd58d2303fb4111d2dc2439",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/mednafen/ss/vdp2_render.c",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "core-ss-state",
+      "kind": "primary-repository-file",
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "path": "mednafen/ss/ss_state.h",
+      "git_blob_sha1": "b2ba17a4684648b8ac1861592b1be40544c64aef",
+      "url": "https://github.com/libretro/beetle-saturn-libretro/blob/01bc063fdd0fb5fc208850c9ecc658834df762ab/mednafen/ss/ss_state.h",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "gameconfig",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/pc-saturnbomberman",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "path": "game.toml",
+      "git_blob_sha1": "0ec8d923776c90935d415f4e9209612e55c401a9",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/game.toml",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "gamestate",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/pc-saturnbomberman",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "path": "src/bomberman/state.py",
+      "git_blob_sha1": "1b097bce32ad73bc2de02a2408095207a8bf622d",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/src/bomberman/state.py",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "game-lab",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/pc-saturnbomberman",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "path": "src/bomberman/lab.py",
+      "git_blob_sha1": "1a005ad9d8c2a1ce129c6dce3f6ff46a63033ead",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/src/bomberman/lab.py",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "gameresearch",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/pc-saturnbomberman",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "path": "docs/RESEARCH.md",
+      "git_blob_sha1": "003ada9befbccc95b70adbc121bb538e7fccbe16",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/docs/RESEARCH.md",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "memorynotes",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/pc-saturnbomberman",
+      "revision": "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3",
+      "path": "memory-notes.tsv",
+      "git_blob_sha1": "ec094582a70886243a96037a1827fedee326aeaf",
+      "url": "https://github.com/callumjenkins/pc-saturnbomberman/blob/c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3/memory-notes.tsv",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "disc",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/saturn-recomp",
+      "revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "path": "src/saturnrecomp/disc.py",
+      "git_blob_sha1": "43309581543738522eba6ca3214a658773b25032",
+      "url": "https://github.com/callumjenkins/saturn-recomp/blob/f20de940e8013fc84103a5b39c4069ed8071b1f9/src/saturnrecomp/disc.py",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "recomp-readme",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/saturn-recomp",
+      "revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "path": "README.md",
+      "git_blob_sha1": "62e1fc2afb35b0ba70936ea013a044613d80cc5a",
+      "url": "https://github.com/callumjenkins/saturn-recomp/blob/f20de940e8013fc84103a5b39c4069ed8071b1f9/README.md",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "recomp-config",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/saturn-recomp",
+      "revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "path": "src/saturnrecomp/config.py",
+      "git_blob_sha1": "f675afdde6081ce6c4183d0822d866406149f59e",
+      "url": "https://github.com/callumjenkins/saturn-recomp/blob/f20de940e8013fc84103a5b39c4069ed8071b1f9/src/saturnrecomp/config.py",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "recomp-match",
+      "kind": "primary-repository-file",
+      "repository": "callumjenkins/saturn-recomp",
+      "revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "path": "src/saturnrecomp/recomp/match.py",
+      "git_blob_sha1": "b72361e61803f2050afbc4abd7432708a69b10ea",
+      "url": "https://github.com/callumjenkins/saturn-recomp/blob/f20de940e8013fc84103a5b39c4069ed8071b1f9/src/saturnrecomp/recomp/match.py",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "headless-main",
+      "kind": "primary-repository-file",
+      "repository": "ymir-emu/ymir-headless",
+      "revision": "023d351aa172213c7a320817214368f47ac14125",
+      "path": "apps/ymir-headless/src/main.cpp",
+      "git_blob_sha1": "8b49c521e94be5d250036fced2171169457553f4",
+      "url": "https://github.com/ymir-emu/ymir-headless/blob/023d351aa172213c7a320817214368f47ac14125/apps/ymir-headless/src/main.cpp",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "headless-config",
+      "kind": "primary-repository-file",
+      "repository": "ymir-emu/ymir-headless",
+      "revision": "023d351aa172213c7a320817214368f47ac14125",
+      "path": "apps/ymir-headless/src/config_parser.hpp",
+      "git_blob_sha1": "be0f2f3fa5d5776ac1d4343cc24535d4ac588655",
+      "url": "https://github.com/ymir-emu/ymir-headless/blob/023d351aa172213c7a320817214368f47ac14125/apps/ymir-headless/src/config_parser.hpp",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "headless-command",
+      "kind": "primary-repository-file",
+      "repository": "ymir-emu/ymir-headless",
+      "revision": "023d351aa172213c7a320817214368f47ac14125",
+      "path": "libs/ymir-dbg-commons/include/ymir/debug/protocol/debug_command.hpp",
+      "git_blob_sha1": "d87e52e3336a57dc1e43d674a5247b8aff5926e1",
+      "url": "https://github.com/ymir-emu/ymir-headless/blob/023d351aa172213c7a320817214368f47ac14125/libs/ymir-dbg-commons/include/ymir/debug/protocol/debug_command.hpp",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "headless-types",
+      "kind": "primary-repository-file",
+      "repository": "ymir-emu/ymir-headless",
+      "revision": "023d351aa172213c7a320817214368f47ac14125",
+      "path": "libs/ymir-dbg-commons/include/ymir/debug/protocol/debug_types.hpp",
+      "git_blob_sha1": "933b1ad78e9165522192e347b30fb3cf41503ea0",
+      "url": "https://github.com/ymir-emu/ymir-headless/blob/023d351aa172213c7a320817214368f47ac14125/libs/ymir-dbg-commons/include/ymir/debug/protocol/debug_types.hpp",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "headless-protocol",
+      "kind": "primary-repository-file",
+      "repository": "ymir-emu/ymir-headless",
+      "revision": "023d351aa172213c7a320817214368f47ac14125",
+      "path": "tests/ymir-headless-tests/src/protocol_tests.cpp",
+      "git_blob_sha1": "5733399f88583ac53f181f77349abbd974f0a252",
+      "url": "https://github.com/ymir-emu/ymir-headless/blob/023d351aa172213c7a320817214368f47ac14125/tests/ymir-headless-tests/src/protocol_tests.cpp",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "loader",
+      "kind": "primary-repository-file",
+      "repository": "VGKintsugi/Ghidra-SegaSaturn-Loader",
+      "revision": "c489a190a79d2634b9ecf82e2c0dcec8fd999cf5",
+      "path": "README.md",
+      "git_blob_sha1": "8dc0dd06895d884508bbf882c2464397328e16a6",
+      "url": "https://github.com/VGKintsugi/Ghidra-SegaSaturn-Loader/blob/c489a190a79d2634b9ecf82e2c0dcec8fd999cf5/README.md",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "repo-probe",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "b4cc6de97976ac247ca3f77d73acaa6c4380257f",
+      "path": "tools/saturn_lab/probe_kernel.py",
+      "git_blob_sha1": "24f5a2405169ec801ff923726355ed6d9c43eaa2",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/b4cc6de97976ac247ca3f77d73acaa6c4380257f/tools/saturn_lab/probe_kernel.py",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "repo-vdp1",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "b4cc6de97976ac247ca3f77d73acaa6c4380257f",
+      "path": "tools/saturn_lab/VDP1_EXPORT.md",
+      "git_blob_sha1": "6b23b5d888e939b3f0449d16ab865e99f894c293",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/b4cc6de97976ac247ca3f77d73acaa6c4380257f/tools/saturn_lab/VDP1_EXPORT.md",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "repo-execution",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "b4cc6de97976ac247ca3f77d73acaa6c4380257f",
+      "path": "docs/restart/RESEARCH_EXECUTION.md",
+      "git_blob_sha1": "727a5d37b843dc0dfc29eb868ef04b0dc91c9c5c",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/b4cc6de97976ac247ca3f77d73acaa6c4380257f/docs/restart/RESEARCH_EXECUTION.md",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "repo-merge",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "b4cc6de97976ac247ca3f77d73acaa6c4380257f",
+      "path": "docs/restart/MERGE_POLICY.md",
+      "git_blob_sha1": "7880694f483d2c0c1eeebe151b299b887d974c3e",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/b4cc6de97976ac247ca3f77d73acaa6c4380257f/docs/restart/MERGE_POLICY.md",
+      "inspection": "Full UTF-8 source retrieved and relevant definitions inspected; no original-game host experiment implied."
+    },
+    {
+      "id": "prototype-menu",
+      "kind": "firsthand-research",
+      "url": "https://32bits.substack.com/p/the-longest-fuse",
+      "title": "The longest fuse",
+      "author": "Bo",
+      "published": "2024-01-12",
+      "scope": "Flash Sega Saturn prototype patches and retail menu lead; addresses are not validated for supplied retail builds.",
+      "inspection": "Full article opened; source facts paraphrased briefly."
+    },
+    {
+      "id": "sega-vdp1-manual",
+      "kind": "original-hardware-manual",
+      "url": "https://antime.kapsi.fi/sega/files/ST-013-R3-061694.pdf",
+      "title": "Sega VDP1 User's Manual ST-013-R3-061694",
+      "inspection": "Existing accepted exporter format basis; this task inspected the exporter contract and emulator source, not a fresh hardware validation."
+    },
+    {
+      "id": "saturn-result",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "77e78f02e30e098390a0b033aa8120aad83bde3e",
+      "path": "docs/restart/research/2026-10-30-saturn-original-kernel-result.md",
+      "git_blob_sha1": "6b9af8ff428f2f294b81b9b552c8d4b089177cac",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/77e78f02e30e098390a0b033aa8120aad83bde3e/docs/restart/research/2026-10-30-saturn-original-kernel-result.md",
+      "inspection": "Actual merged VPS report/receipt read; derived numerical consistency checked here, original execution not independently repeated."
+    },
+    {
+      "id": "saturn-host",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "77e78f02e30e098390a0b033aa8120aad83bde3e",
+      "path": "docs/restart/evidence/2026-10-30-saturn-original-kernel-host.json",
+      "git_blob_sha1": "09643e2542bce59cd9a2408f823d0b08741bd727",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/77e78f02e30e098390a0b033aa8120aad83bde3e/docs/restart/evidence/2026-10-30-saturn-original-kernel-host.json",
+      "inspection": "Actual merged VPS report/receipt read; derived numerical consistency checked here, original execution not independently repeated."
+    },
+    {
+      "id": "saturn-probe-result",
+      "kind": "primary-repository-file",
+      "repository": "elgansayer/Neptune-Bomberman",
+      "revision": "77e78f02e30e098390a0b033aa8120aad83bde3e",
+      "path": "docs/restart/evidence/2026-10-30-saturn-original-kernel-probe.json",
+      "git_blob_sha1": "0cad5851ebd10f3ccfed155e75dc891395b36540",
+      "url": "https://github.com/elgansayer/Neptune-Bomberman/blob/77e78f02e30e098390a0b033aa8120aad83bde3e/docs/restart/evidence/2026-10-30-saturn-original-kernel-probe.json",
+      "inspection": "Actual merged VPS report/receipt read; derived numerical consistency checked here, original execution not independently repeated."
+    }
+  ],
+  "integration_base_revision": "77e78f02e30e098390a0b033aa8120aad83bde3e"
+}
