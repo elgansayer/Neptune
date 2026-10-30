@@ -63,6 +63,7 @@ BASE_DEPS = {
     "EXP": ["PACK-012", "BOT-014"],
 }
 DEPS = {
+    "FACTORY-017": ["FACTORY-001", "FACTORY-002"],
     "RSAT-001": [],
     "RSAT-002": [],
     "RSAT-003": [],

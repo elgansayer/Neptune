@@ -35,6 +35,17 @@ and model budgets. Native builds, desktop capture and emulator runs must not sta
 each other or the production game. Bots, packs and community implementation consume
 the two laboratories' contracts and can proceed on independent eligible work.
 
+## Automatic tool provisioning
+
+Routine required free tool installation is authorised. Follow
+[PROVISIONING.md](../../tools/factory/PROVISIONING.md) and #518 / FACTORY-017:
+missing capability -> durable preparation job -> pinned install/build -> real
+smoke/identity check -> refreshed environment manifest -> resume original task.
+Missing recipes create/reuse bounded implementation jobs rather than ask Elgan
+for manual setup. Preserve original reference versions and existing shared
+resources. The preparation CLI is implemented separately from the remaining
+Elgl lifecycle adapter; its existence does not establish live unattended recovery.
+
 ## Minimum durable job record
 
 Store repository/issue, track, priority, dependency IDs, acceptance revision,

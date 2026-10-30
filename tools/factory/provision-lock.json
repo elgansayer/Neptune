@@ -1,0 +1,17 @@
+{
+  "schema": "neptune.tool-recipes.v1",
+  "tools": {
+    "godot": {
+      "kind": "godot-locked",
+      "platform": "linux-x86_64",
+      "minimum_free_bytes": 536870912
+    },
+    "beetle-saturn": {
+      "kind": "beetle-source",
+      "platform": "linux-x86_64",
+      "repository": "https://github.com/libretro/beetle-saturn-libretro.git",
+      "commit": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "minimum_free_bytes": 2147483648
+    }
+  }
+}

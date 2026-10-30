@@ -3,7 +3,7 @@
 Execution index: [#477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
 Saturn mission: [#464](https://github.com/elgansayer/Neptune-Bomberman/issues/464).
 Power mission: [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476).
-The [catalogue](backlog/catalogue.json) has 417 desired features, including 38 new
+The [catalogue](backlog/catalogue.json) has 418 desired features, including 38 new
 research jobs. This document records the 30 October 2026 evidence and dispatch
 contract, not completed reconstruction.
 
@@ -114,6 +114,15 @@ Require representative real runs, replay/regeneration, relevant corrupt/missing/
 stale controls, and deliberate semantic or rendering mutations. Independent
 comparison #513 must disclose common emulator lineage and timing precision.
 Never silently alter fixtures, mask drift or inflate tolerances.
+
+## Automatic tool setup
+
+Routine free emulator/analysis/dependency setup is authorised factory work.
+[FACTORY-017 / #518](https://github.com/elgansayer/Neptune-Bomberman/issues/518)
+adds pinned preparation recipes, actual smoke checks, cache recovery and automatic
+missing-recipe follow-ups. See [the runnable installer contract](../../tools/factory/PROVISIONING.md).
+Keep preparation separate from offline verification and preserve accepted
+reference binaries. Live job provisioning/resumption needs its own VPS evidence.
 
 ## Factory, assets and continuity
 
