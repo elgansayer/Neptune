@@ -34,6 +34,10 @@ SCALARS = {
     "VDP2": {"CRAM_Mode": 1, "HRes": 1, "VRes": 1, "InterlaceMode": 1,
              "RAMCTL_Raw": 2},
 }
+# SFVAR dispatch expands these vdp1_common.h aliases before stringification at
+# the pinned core revision. Context names stay stable; serialized names do not.
+SCALAR_SOURCE_NAMES = {("VDP1", "TVMR"): "VDP1_TVMR",
+                       ("VDP1", "FBCR"): "VDP1_FBCR"}
 
 
 def sha(data):
@@ -147,7 +151,8 @@ def graphics(data, order, *, synthetic, kernel=None):
              for (section, key), (size, filename) in ARRAYS.items()}
     context = {}
     for section, layout in SCALARS.items():
-        context[section] = {key: int.from_bytes(field(state, section, key, size), order,
+        context[section] = {key: int.from_bytes(field(state, section,
+                               SCALAR_SOURCE_NAMES.get((section, key), key), size), order,
                                signed=key in ("RetCommandAddr", "CommandPhase"))
                             for key, size in layout.items()}
     context["VDP1"]["current_command_byte_offset"] = context["VDP1"]["CurCommandAddr"] * 2

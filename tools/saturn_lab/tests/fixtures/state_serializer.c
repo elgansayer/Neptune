@@ -7,19 +7,23 @@
 
 retro_log_printf_t log_cb = NULL;
 static uint16_t v1[0x40000], v2[0x40000], cram[2048], regs[256];
+/* Match the actual vdp1_common.h aliases and SFVAR calls. The dispatch macro
+ * expands aliases before its inner stringification, producing prefixed keys. */
+#define TVMR VDP1_TVMR
+#define FBCR VDP1_FBCR
 
 int LibRetro_StateAction(StateMem *sm, const unsigned load) {
     uint32_t cur = 0x120;
     int32_t ret = -1, phase = 2;
     uint8_t active = 1, draw = 0, mode = 0, hres = 0, vres = 0, interlace = 0;
-    uint8_t tvmr = 0, fbcr = 0, ptmr = 1, edsr = 2;
+    uint8_t VDP1_TVMR = 3, VDP1_FBCR = 16, ptmr = 1, edsr = 2;
     uint16_t ramctl = 0;
     SFORMAT one[] = {
         SFPTR16N(v1, 0x40000, "VRAM"),
         SFVARN(cur, "CurCommandAddr"), SFVARN(ret, "RetCommandAddr"),
         SFVARN(phase, "CommandPhase"), SFVARN(active, "DrawingActive"),
-        SFVARN(draw, "FBDrawWhich"), SFVARN(tvmr, "TVMR"),
-        SFVARN(fbcr, "FBCR"), SFVARN(ptmr, "PTMR"), SFVARN(edsr, "EDSR"), SFEND
+        SFVARN(draw, "FBDrawWhich"), SFVAR(TVMR),
+        SFVAR(FBCR), SFVARN(ptmr, "PTMR"), SFVARN(edsr, "EDSR"), SFEND
     };
     SFORMAT two[] = {
         SFPTR16N(v2, 0x40000, "VRAM"), SFPTR16N(cram, 2048, "CRAM"),

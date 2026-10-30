@@ -34,10 +34,17 @@ def fixture(order="little"):
     sections = {"VDP1": {"VRAM": encode(bytes(vram))},
                 "VDP2": {"VRAM": bytes(0x80000), "CRAM": encode(bytes.fromhex("001f03e0") + bytes(4092)),
                          "RawRegs": bytes(0x200)}}
-    for section, fields in sg.SCALARS.items():
-        for key, size in fields.items():
-            value = -1 if key == "RetCommandAddr" else 0
-            sections[section][key] = value.to_bytes(size, order, signed=value < 0)
+    # Declare the producer's layout independently of the adapter's lookup table.
+    # These names match the actual pinned full-core checkpoint, including aliases.
+    sections["VDP1"].update({
+        "CurCommandAddr": (0).to_bytes(4, order),
+        "RetCommandAddr": (-1).to_bytes(4, order, signed=True),
+        "CommandPhase": (0).to_bytes(4, order),
+        "DrawingActive": b"\0", "FBDrawWhich": b"\0",
+        "VDP1_TVMR": b"\0", "VDP1_FBCR": b"\0", "PTMR": b"\0", "EDSR": b"\0",
+    })
+    sections["VDP2"].update({"CRAM_Mode": b"\0", "HRes": b"\0", "VRes": b"\0",
+                             "InterlaceMode": b"\0", "RAMCTL_Raw": bytes(2)})
     return sections, bytes(vram)
 
 
@@ -63,6 +70,23 @@ class StateGraphicsTests(unittest.TestCase):
         sections["VDP1"]["CurCommandAddr"] = (0x120).to_bytes(4, "little")
         result, _ = sg.graphics(pack(sections), "little", synthetic=True)
         self.assertEqual(result["context"]["VDP1"]["current_command_byte_offset"], 0x240)
+
+    def test_actual_core_alias_names_keep_normalized_context(self):
+        sections, _ = fixture()
+        sections["VDP1"]["VDP1_TVMR"] = b"\x03"
+        sections["VDP1"]["VDP1_FBCR"] = b"\x10"
+        info, _ = sg.graphics(pack(sections), "little", synthetic=True)
+        self.assertEqual(info["context"]["VDP1"]["TVMR"], 3)
+        self.assertEqual(info["context"]["VDP1"]["FBCR"], 16)
+        self.assertIn("VDP1_TVMR", info["fields"]["VDP1"])
+        self.assertNotIn("TVMR", info["fields"]["VDP1"])
+
+    def test_invented_short_alias_records_do_not_satisfy_required_context(self):
+        for key in ("TVMR", "FBCR"):
+            sections, _ = fixture()
+            sections["VDP1"][key] = sections["VDP1"].pop("VDP1_" + key)
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "VDP1_" + key):
+                sg.graphics(pack(sections), "little", synthetic=True)
 
     def test_padding_unknown_fields_and_reordering(self):
         sections, _ = fixture()
@@ -104,7 +128,7 @@ class StateGraphicsTests(unittest.TestCase):
 
     def test_required_fields_and_sizes(self):
         sections, _ = fixture()
-        for s, k in [("VDP1", "VRAM"), ("VDP2", "CRAM"), ("VDP1", "TVMR")]:
+        for s, k in [("VDP1", "VRAM"), ("VDP2", "CRAM"), ("VDP1", "VDP1_TVMR")]:
             bad = copy.deepcopy(sections); bad[s][k] = b""
             with self.assertRaises(ValueError): sg.graphics(pack(bad), "little", synthetic=True)
         with self.assertRaises(ValueError): sg.cpu_words(b"abc", "little")
