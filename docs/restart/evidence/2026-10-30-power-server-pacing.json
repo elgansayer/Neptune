@@ -1,0 +1,120 @@
+{
+  "assembly_sha256": "9e435a445cef37cf4d3f8911099caeb074feb24a455cc3656d95d75d88a199e1",
+  "build": "0.7.8c optional server; developer Drive mirror",
+  "dependencies": {
+    "dncil": "1.0.2",
+    "dnfile": "0.17.0",
+    "pefile": "2024.8.26"
+  },
+  "game": "Power Bomberman",
+  "limitations": [
+    "Original server CIL interpreted, not CLR or client execution",
+    "External synchronization/LINQ calls modelled; single-thread cases only",
+    "No network latency, gameplay timing, Saturn code or spritesheet claimed",
+    "Readme/build label plus exact archive/assembly identity; hotfix uniqueness unknown"
+  ],
+  "methods": {
+    "EndPhase": {
+      "body_bytes": 136,
+      "body_sha256": "97f890aaa4e191248e09b10ac1ee056e1395c6c7fe1e3f2cacff626e7471f185",
+      "code_bytes": 105,
+      "code_rva": "0x34e8",
+      "file_offset": 5852,
+      "rva": "0x34dc",
+      "token": "0x6000054"
+    },
+    "GetMax": {
+      "body_bytes": 68,
+      "body_sha256": "d28c2bca5028e84e62ac721369d4919e7d2ebf4e41da8963c6ff251719c9b3a1",
+      "code_bytes": 38,
+      "code_rva": "0x34a4",
+      "file_offset": 5784,
+      "rva": "0x3498",
+      "token": "0x6000053"
+    },
+    "IncreaseCount": {
+      "body_bytes": 14,
+      "body_sha256": "d5ae830811da2915f941f06b92e39623946d5cafef7dc6563352dad2270de824",
+      "code_bytes": 13,
+      "code_rva": "0x3489",
+      "file_offset": 5768,
+      "rva": "0x3488",
+      "token": "0x6000052"
+    },
+    "Reset": {
+      "body_bytes": 100,
+      "body_sha256": "7068ce85e22aa2ccc0c8ac847ce8fcd856b62d7d71ee783f1cb2fdb158bc60ad",
+      "code_bytes": 72,
+      "code_rva": "0x3430",
+      "file_offset": 5668,
+      "rva": "0x3424",
+      "token": "0x6000051"
+    }
+  },
+  "probe_sha256": "0f9f03a3a0c90aa14cf8d6c4c16282bb3be9d4c70b617fe5a728d748e7287874",
+  "result": {
+    "control_observations": {
+      "after_five_empty_phases": 9,
+      "after_reset": 9
+    },
+    "controls": {
+      "age_on_idle_alternative_rejected": true,
+      "original_cil_ble_to_blt_mutation_rejected": true,
+      "reset_cached_max_alternative_rejected": true
+    },
+    "sample": [
+      [
+        1,
+        0,
+        9,
+        9
+      ],
+      [
+        1,
+        1,
+        0,
+        9
+      ],
+      [
+        1,
+        2,
+        0,
+        9
+      ],
+      [
+        1,
+        3,
+        2,
+        2
+      ],
+      [
+        1,
+        4,
+        1,
+        1
+      ],
+      [
+        1,
+        5,
+        1,
+        1
+      ],
+      [
+        1,
+        6,
+        7,
+        7
+      ],
+      [
+        1,
+        7,
+        10,
+        10
+      ]
+    ],
+    "trace_sha256": "107b1a356dd19b0d65d3b344b58beb9035abdeffec2aa846fa2af048c764960b",
+    "transitions": 4058
+  },
+  "schema": "neptune.power-pacing.v1",
+  "status": "original-cil-analysis-pass"
+}
