@@ -335,14 +335,14 @@ func test_forged_unknown_or_mismatched_selection_receipts_fail_atomically() -> V
 		if registry.select_pack(values[0], values[1], values[2]).accepted or not registry.selection().is_empty(): return "Forged or unavailable release changed the selected session"
 	return true
 
-func test_nonempty_dependencies_cannot_silently_start_without_a_resolver() -> Variant:
+func test_missing_dependency_cannot_silently_start_an_incomplete_selection() -> Variant:
 	var registry = Registry.new()
 	var data := _manifest()
 	data.dependencies = [{"pack_id": "other.creator:pack", "version": "1.0.0", "manifest_sha256": "1".repeat(64)}]
 	var receipt := _register(registry, data)
 	if not receipt.accepted: return "Metadata inventory must retain a valid unresolved dependency declaration"
 	var selected := _select(registry, receipt)
-	return assert_true(not selected.accepted and not str(selected.get("reason", "")).is_empty() and registry.selection().is_empty(), "Deferred dependency support must fail clearly rather than run incomplete content")
+	return assert_true(not selected.accepted and not str(selected.get("reason", "")).is_empty() and registry.selection().is_empty(), "A missing exact dependency must fail clearly rather than run incomplete content")
 
 func test_registry_outputs_and_receipts_do_not_alias_authoritative_metadata() -> Variant:
 	var registry = Registry.new()

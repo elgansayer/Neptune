@@ -1,0 +1,27 @@
+{
+  "schema": "neptune.pack.v1",
+  "pack_id": "example.linked:pack",
+  "version": "1.0.0",
+  "author": "Neptune contributors",
+  "license": "Apache-2.0",
+  "dependencies": [
+    {
+      "pack_id": "example.standard:pack",
+      "version": "1.0.0",
+      "manifest_sha256": "74983186193ae6af9ecd656568cf8c730180ee29afe004522c4c93ebd6d174b3"
+    },
+    {
+      "pack_id": "example.wide:pack",
+      "version": "1.0.0",
+      "manifest_sha256": "fbe4eb8cd1ee0f1008a71d8f1e8c3c81fb20f8f158db776aac7ef0185845ec6b"
+    }
+  ],
+  "content": [
+    {
+      "id": "example.linked:arena",
+      "kind": "arena",
+      "path": "arena.json",
+      "sha256": "0bbf173ec493c72be4aed8c2a90bb85ebff025280fac6e11e4f4e0b74f6c26d4"
+    }
+  ]
+}

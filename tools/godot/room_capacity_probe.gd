@@ -22,6 +22,9 @@ var auto_fill := false
 var expected_width := 17
 var expected_height := 13
 var expected_content: Dictionary = {}
+var expected_selection_count := 2
+var expected_lock: Dictionary = {}
+var expected_lock_sha256 := ""
 
 func _ready() -> void:
 	port = preload("res://shared/runtime_config.gd").read().port
@@ -32,12 +35,26 @@ func _ready() -> void:
 				fail("invalid expected content descriptor")
 				return
 			expected_content = parsed
+		if arg.begins_with("--probe-lock-json="):
+			var parsed = JSON.parse_string(arg.trim_prefix("--probe-lock-json="))
+			if not parsed is Dictionary or parsed.is_empty():
+				fail("invalid expected manifest lock")
+				return
+			expected_lock = parsed
+		if arg.begins_with("--probe-lock-sha256="):
+			expected_lock_sha256 = arg.trim_prefix("--probe-lock-sha256=")
+		if arg.begins_with("--probe-selection-count="):
+			expected_selection_count = arg.get_slice("=", 1).to_int()
 		if arg == "--probe-auto-fill": auto_fill = true
 		if arg.begins_with("--probe-map-width="): expected_width = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-map-height="): expected_height = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-humans="): humans = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-bots="): bots = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-preset="): preset = arg.get_slice("=", 1).to_int()
+	if not expected_content.is_empty() and (expected_lock.is_empty() or expected_lock_sha256.length() != 64
+		or expected_selection_count < 1 or expected_selection_count > 32):
+		fail("registered arena probe requires its complete expected manifest lock")
+		return
 	seats = humans + bots
 	var timeout := Timer.new()
 	timeout.one_shot = true
@@ -109,12 +126,22 @@ func map_received(index: int, data: Dictionary) -> void:
 		return
 	if not expected_content.is_empty():
 		var config: Dictionary = data.get("map_config", {})
-		if config.get("content", {}) != expected_content or config.get("selection", []).size() != 2:
+		var selection = config.get("selection", [])
+		if config.get("content", {}) != expected_content or not selection is Array or selection.size() != expected_selection_count:
 			fail("initial map did not carry the selected additive arena identity")
+			return
+		if config.get("lock", {}) != expected_lock or config.get("lock_sha256", "") != expected_lock_sha256 or selection != expected_lock.get("packs", []):
+			fail("initial map did not carry the exact portable manifest lock and selected identities")
+			return
+		if JSON.stringify(config.lock, "", true).sha256_text() != expected_lock_sha256:
+			fail("received manifest lock digest disagrees with its canonical bytes")
 			return
 		if "res://" in JSON.stringify(config) or "user://" in JSON.stringify(config):
 			fail("public content descriptor leaked local source paths")
 			return
+	elif data.get("map_config", {}).has("lock") or data.get("map_config", {}).has("lock_sha256"):
+		fail("legacy room unexpectedly acquired a pack lock")
+		return
 	maps[index] = true
 	_check_complete()
 
@@ -167,7 +194,11 @@ func _check_complete() -> void:
 	var receipt := {"seats": seats, "humans": humans, "bots": bots, "preset_limit": preset, "protocol_limit": 12, "accepted": accepted.size(), "refused": 1, "snapshots": snapshots.size(), "maps": maps.size(), "active": true}
 	receipt.merge(policy_identity)
 	if auto_fill: receipt["auto_fill"] = true
-	if not expected_content.is_empty(): receipt["content"] = expected_content.duplicate(true)
+	if not expected_content.is_empty():
+		receipt["content"] = expected_content.duplicate(true)
+		receipt["selection"] = expected_lock.packs.duplicate(true)
+		receipt["lock"] = expected_lock.duplicate(true)
+		receipt["lock_sha256"] = expected_lock_sha256
 	print("NEPTUNE_ROOM_CAPACITY=", JSON.stringify(receipt))
 	for entry in peers: entry.api.multiplayer_peer.close()
 	get_tree().quit(0)
