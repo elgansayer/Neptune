@@ -8,6 +8,10 @@ static func read() -> Dictionary:
 	for arg in OS.get_cmdline_args():
 		if arg.ends_with(".tscn"):
 			scene = arg
+	return parse_arguments(OS.get_cmdline_user_args(), scene)
+
+## Kept separate from process arguments so the real startup contract is testable.
+static func parse_arguments(arguments: Array, scene: String = "") -> Dictionary:
 	var role := "client"
 	if scene.get_file() == "main_server.tscn":
 		role = "server"
@@ -19,17 +23,37 @@ static func read() -> Dictionary:
 	var room_seats := 0 # Omitted means choose the supported map/preset capacity.
 	var preset_limit := Defaults.MAX_MATCH_SEATS
 	var room_map := ""
+	var room_pack_paths: Array = []
+	var room_arena := ""
 	var fill_to := 0
 	var bot_personality := "BALANCED"
 	var room_options := {}
-	for arg in OS.get_cmdline_user_args():
+	for arg in arguments:
+		if not arg is String:
+			return {"error": "Runtime arguments must be strings"}
 		var option: String = arg.get_slice("=", 0)
-		if option in ["--room-seats", "--room-preset-limit", "--room-map", "--room-fill-to", "--room-bot-personality"]:
+		if option == "--room-pack":
+			if not "=" in arg:
+				return {"error": "Missing value for --room-pack"}
+			var path: String = arg.substr(option.length() + 1)
+			if not _valid_pack_manifest_path(path):
+				return {"error": "Invalid --room-pack; use a normalized local res:// or user:// JSON manifest"}
+			if path in room_pack_paths:
+				return {"error": "Duplicate --room-pack manifest: " + path}
+			if room_pack_paths.size() >= 32:
+				return {"error": "Too many --room-pack manifests; maximum is 32"}
+			room_pack_paths.append(path)
+			continue
+		if option in ["--room-seats", "--room-preset-limit", "--room-map", "--room-fill-to", "--room-bot-personality", "--room-arena"]:
 			if not "=" in arg or room_options.has(option):
 				return {"error": "Duplicate or missing value for " + option}
 			room_options[option] = true
-			var value := arg.substr(option.length() + 1)
-			if option == "--room-bot-personality":
+			var value: String = arg.substr(option.length() + 1)
+			if option == "--room-arena":
+				if not _valid_content_id(value):
+					return {"error": "Invalid --room-arena; use a namespaced namespace:name identifier"}
+				room_arena = value
+			elif option == "--room-bot-personality":
 				if value.is_empty() or value.length() > 32:
 					return {"error": "Invalid --room-bot-personality"}
 				bot_personality = value # Authority validates actual supported profiles.
@@ -66,4 +90,14 @@ static func read() -> Dictionary:
 			return {"error": "Runtime options require =value"}
 	if room_seats > preset_limit:
 		return {"error": "Room seats exceed preset limit"}
-	return {"role": role, "port": port, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}
+	if room_pack_paths.is_empty() != room_arena.is_empty():
+		return {"error": "--room-pack and --room-arena must be supplied together"}
+	if not room_pack_paths.is_empty() and not room_map.is_empty():
+		return {"error": "Choose --room-map or --room-pack/--room-arena, not both"}
+	return {"role": role, "port": port, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack_paths": room_pack_paths, "room_arena": room_arena, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}
+
+static func _valid_pack_manifest_path(path: String) -> bool:
+	return preload("res://shared/content/pack_manifest.gd").valid_manifest_path(path)
+
+static func _valid_content_id(value: String) -> bool:
+	return preload("res://shared/content/pack_manifest.gd").valid_id(value)

@@ -46,6 +46,10 @@ var _spawn_plan: RefCounted
 var _spawn_signature := ""
 var _spawn_bindings: Dictionary = {}
 var room_map_path := "" # Trusted local JSON selection; public pack loading is separate.
+var room_pack_paths: Array = [] # Explicit local data-only manifests; never PCK mounts.
+var room_arena_id: String = ""
+var room_content_descriptor: Dictionary = {}
+var room_content_selection: Array = []
 var room_capacity_request := {} # Set before _ready by the authority, not clients.
 var room_setup_result := {"accepted": false, "reason": "authority_not_ready"}
 var last_room_start_result := {}
@@ -151,8 +155,25 @@ func _ready():
 	# Load map from PCK file
 	var map_data: Dictionary
 	
-	# Try to load PCK map first
-	if not room_map_path.is_empty():
+	# An explicit registered arena must resolve before legacy local map routes.
+	if not room_pack_paths.is_empty() or not room_arena_id.is_empty():
+		if not room_map_path.is_empty():
+			room_setup_result = {"accepted": false, "reason": "conflicting_room_map_selection", "field": "room_map", "source": ""}
+		elif room_pack_paths.is_empty() or room_arena_id.is_empty():
+			room_setup_result = {"accepted": false, "reason": "incomplete_room_pack_selection", "field": "room_pack" if room_pack_paths.is_empty() else "room_arena", "source": ""}
+		else:
+			var pack_result: Dictionary = preload("res://shared/content/arena_pack_loader.gd").load_arena(room_pack_paths, room_arena_id)
+			if pack_result.accepted:
+				map_data = pack_result.map
+				room_content_descriptor = pack_result.descriptor.duplicate(true)
+				room_content_selection = pack_result.selection.duplicate(true)
+			else:
+				room_setup_result = pack_result.duplicate(true)
+		if map_data.is_empty():
+			countdown_time = 0.0
+			set_physics_process(false)
+			return # Explicit failures cannot select the legacy PCK/procedural default.
+	elif not room_map_path.is_empty():
 		map_data = MapLoader.load_map_from_file(room_map_path)
 		if map_data.is_empty():
 			room_setup_result = SpawnReservations.failure("invalid_room_map")
@@ -1439,6 +1460,20 @@ func _pack_explosion_tiles(tiles: Array) -> Array:
 		packed.append([pos_packed, data_packed])
 	return packed
 
+## Detached public metadata: manifest source paths never enter the wire snapshot.
+func get_room_map_config() -> Dictionary:
+	var config := {
+		"tile_size": GameConfig.TILE_SIZE,
+		"width": GameConfig.map_width,
+		"height": GameConfig.map_height,
+		"name": GameConfig.map_name,
+		"render_geometry": not room_map_path.is_empty() or not room_content_descriptor.is_empty()
+	}
+	if not room_content_descriptor.is_empty():
+		config["content"] = room_content_descriptor.duplicate(true)
+		config["selection"] = room_content_selection.duplicate(true)
+	return config
+
 func sync_state_to_clients():
 	# Clean up old explosions (keep for progressive display duration)
 	var current_time = get_simulation_time_sec()
@@ -1599,13 +1634,7 @@ func sync_state_to_clients():
 				"map_packed": packed_map,
 				"map_width": game_map[0].size() if game_map.size() > 0 else 0,
 				"map_height": game_map.size(),
-				"map_config": {
-					"tile_size": GameConfig.TILE_SIZE,
-					"width": GameConfig.map_width,
-					"height": GameConfig.map_height,
-					"name": GameConfig.map_name,
-					"render_geometry": not room_map_path.is_empty()
-				}
+				"map_config": get_room_map_config()
 			}
 			# Send map reliably (TCP) to avoid MTU issues on first sync
 			get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_initial_map", map_data)
