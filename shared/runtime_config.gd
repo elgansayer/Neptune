@@ -19,17 +19,27 @@ static func read() -> Dictionary:
 	var room_seats := 0 # Omitted means choose the supported map/preset capacity.
 	var preset_limit := Defaults.MAX_MATCH_SEATS
 	var room_map := ""
+	var room_pack := ""
+	var room_map_id := ""
 	var fill_to := 0
 	var bot_personality := "BALANCED"
 	var room_options := {}
 	for arg in OS.get_cmdline_user_args():
 		var option: String = arg.get_slice("=", 0)
-		if option in ["--room-seats", "--room-preset-limit", "--room-map", "--room-fill-to", "--room-bot-personality"]:
+		if option in ["--room-seats", "--room-preset-limit", "--room-map", "--room-pack", "--room-map-id", "--room-fill-to", "--room-bot-personality"]:
 			if not "=" in arg or room_options.has(option):
 				return {"error": "Duplicate or missing value for " + option}
 			room_options[option] = true
 			var value := arg.substr(option.length() + 1)
-			if option == "--room-bot-personality":
+			if option == "--room-pack":
+				if value.is_empty() or value.length() > 512 or ".." in value or "\\" in value or not value.is_absolute_path():
+					return {"error": "Invalid --room-pack; use an absolute, res:// or user:// local directory"}
+				room_pack = value
+			elif option == "--room-map-id":
+				if value.is_empty() or value.length() > 161:
+					return {"error": "Invalid --room-map-id"}
+				room_map_id = value
+			elif option == "--room-bot-personality":
 				if value.is_empty() or value.length() > 32:
 					return {"error": "Invalid --room-bot-personality"}
 				bot_personality = value # Authority validates actual supported profiles.
@@ -66,4 +76,6 @@ static func read() -> Dictionary:
 			return {"error": "Runtime options require =value"}
 	if room_seats > preset_limit:
 		return {"error": "Room seats exceed preset limit"}
-	return {"role": role, "port": port, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}
+	if room_pack.is_empty() != room_map_id.is_empty() or (not room_pack.is_empty() and not room_map.is_empty()):
+		return {"error": "Use --room-pack and --room-map-id together, without --room-map"}
+	return {"role": role, "port": port, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack": room_pack, "room_map_id": room_map_id, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}

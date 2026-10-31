@@ -21,6 +21,7 @@ var policy_identity := {}
 var auto_fill := false
 var expected_width := 17
 var expected_height := 13
+var expected_content_id := ""
 
 func _ready() -> void:
 	port = preload("res://shared/runtime_config.gd").read().port
@@ -28,6 +29,7 @@ func _ready() -> void:
 		if arg == "--probe-auto-fill": auto_fill = true
 		if arg.begins_with("--probe-map-width="): expected_width = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-map-height="): expected_height = arg.get_slice("=", 1).to_int()
+		if arg.begins_with("--probe-content-id="): expected_content_id = arg.get_slice("=", 1)
 		if arg.begins_with("--probe-humans="): humans = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-bots="): bots = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-preset="): preset = arg.get_slice("=", 1).to_int()
@@ -100,6 +102,11 @@ func map_received(index: int, data: Dictionary) -> void:
 	if data.get("room", {}).get("seats", 0) != seats or data.get("map_width", 0) != expected_width or data.get("map_height", 0) != expected_height or data.get("map_config", {}).get("render_geometry", false) != true:
 		fail("initial map/capacity contract mismatch")
 		return
+	if not expected_content_id.is_empty():
+		var identity: Dictionary = data.get("map_config", {}).get("content_identity", {})
+		if identity.get("id", "") != expected_content_id or identity.get("version", "") != "1.0.0" or str(identity.get("sha256", "")).length() != 64 or str(identity.get("manifest_sha256", "")).length() != 64:
+			fail("missing exact registered map identity in the real client payload")
+			return
 	maps[index] = true
 	_check_complete()
 

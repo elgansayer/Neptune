@@ -1,0 +1,91 @@
+{
+  "schema": "neptune.map/1",
+  "name": "River Test Arena",
+  "grid": [
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      2,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  ],
+  "spawn_points": [
+    {
+      "x": 1,
+      "y": 1
+    },
+    {
+      "x": 5,
+      "y": 1
+    },
+    {
+      "x": 1,
+      "y": 5
+    },
+    {
+      "x": 5,
+      "y": 5
+    }
+  ],
+  "metadata": {
+    "author": "Neptune test authors",
+    "description": "Original Apache-2.0 test geometry; no reference art or fidelity claim."
+  }
+}

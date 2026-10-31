@@ -14,16 +14,21 @@ def run_capacity_checks(base, env, evidence, bounded):
                                        ("auto-fill-four", 1, 3, 4, True),
                                        ("auto-fill-twelve", 2, 10, 12, True),
                                        ("standard-arena", 2, 2, 4, True),
-                                       ("wide-arena", 2, 2, 4, True)]:
+                                       ("wide-arena", 2, 2, 4, True),
+                                       ("data-only-pack", 2, 2, 4, True)]:
         map_name, width, height = {"standard-arena": ("neptune_standard", 15, 13),
-                                   "wide-arena": ("neptune_wide", 27, 13)}.get(name, ("neptune_twelve", 17, 13))
+                                   "wide-arena": ("neptune_wide", 27, 13),
+                                   "data-only-pack": ("", 7, 7)}.get(name, ("neptune_twelve", 17, 13))
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as port_reservation:
             port_reservation.bind(("127.0.0.1", 0))
             port = port_reservation.getsockname()[1]
         seats = humans + bots
         options = ["--server-port=" + str(port), "--room-seats=" + str(seats),
-                   "--room-preset-limit=" + str(preset),
-                   "--room-map=res://maps/" + map_name + ".json"]
+                   "--room-preset-limit=" + str(preset)]
+        if name == "data-only-pack":
+            options += ["--room-pack=res://tests/fixtures/content/orchard", "--room-map-id=example.orchard:arena"]
+        else:
+            options += ["--room-map=res://maps/" + map_name + ".json"]
         if auto_fill:
             options += ["--room-fill-to=" + str(seats), "--room-bot-personality=DEFENSIVE"]
         command = base + ["res://main_server.tscn", "--", *options]
@@ -47,6 +52,7 @@ def run_capacity_checks(base, env, evidence, bounded):
                                   "--probe-preset=" + str(preset),
                                   "--probe-map-width=" + str(width), "--probe-map-height=" + str(height)]
                 if auto_fill: command.append("--probe-auto-fill")
+                if name == "data-only-pack": command.append("--probe-content-id=example.orchard:arena")
                 code, text = bounded("room-" + name + "-clients", command)
                 markers = [line.split("=", 1)[1] for line in text.splitlines()
                            if line.startswith("NEPTUNE_ROOM_CAPACITY=")]
@@ -77,6 +83,14 @@ def run_capacity_checks(base, env, evidence, bounded):
                     server.kill()
                     server.wait(timeout=3)
 
+    for label, directory, content_id, reason in [
+            ("unknown-pack-content", "res://tests/fixtures/content/orchard", "example.orchard:missing", "unknown_room_map_id"),
+            ("missing-pack", "res://tests/fixtures/content/absent", "example.orchard:arena", "invalid_room_pack")]:
+        command = base + ["res://main_server.tscn", "--", "--room-pack=" + directory, "--room-map-id=" + content_id]
+        code, text = bounded(label, command)
+        if code != 2 or "Room setup refused: " + reason not in text or "Server listening" in text or ERROR.search(text):
+            raise SystemExit("FAIL: invalid explicit pack selection did not refuse before listening")
+
     # Valid map with four declared starts, explicitly requested twelve seats:
     # fail before listening/starting, with no fallback to a smaller room.
     command = base + ["res://main_server.tscn", "--", "--room-seats=12",
@@ -88,7 +102,11 @@ def run_capacity_checks(base, env, evidence, bounded):
     for name, options in [("over-protocol", ["--room-seats=13"]),
                           ("over-preset", ["--room-seats=5", "--room-preset-limit=4"]),
                           ("duplicate", ["--room-seats=4", "--room-seats=4"]),
-                          ("zero", ["--room-seats=0"])]:
+                          ("zero", ["--room-seats=0"]),
+                          ("pack-alone", ["--room-pack=res://tests/fixtures/content/orchard"]),
+                          ("pack-id-alone", ["--room-map-id=example.orchard:arena"]),
+                          ("pack-conflict", ["--room-pack=res://tests/fixtures/content/orchard", "--room-map-id=example.orchard:arena", "--room-map=res://maps/classic_arena.json"]),
+                          ("pack-duplicate", ["--room-pack=res://tests/fixtures/content/orchard", "--room-pack=res://tests/fixtures/content/orchard", "--room-map-id=example.orchard:arena"])]:
         code, text = bounded("room-invalid-" + name, base + ["res://main_server.tscn", "--", *options])
         if code != 2 or "Server listening" in text:
             raise SystemExit("FAIL: invalid room options accepted: " + name)

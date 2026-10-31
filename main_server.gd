@@ -244,6 +244,8 @@ func _prepare_shared_game(runtime: Dictionary = {}) -> Dictionary:
 		new_game.name = shared_game_id
 		new_game.countdown_time = 0.0
 		new_game.room_map_path = runtime.get("room_map", "")
+		new_game.room_pack_directory = runtime.get("room_pack", "")
+		new_game.room_map_id = runtime.get("room_map_id", "")
 		new_game.room_capacity_request = {"seats": runtime.get("room_seats", 0), "preset_limit": runtime.get("room_preset_limit", Constants.MAX_MATCH_SEATS)}
 		new_game.room_bot_fill_request = {"target": runtime.get("room_fill_to", 0), "personality": runtime.get("room_bot_personality", "BALANCED")}
 		add_child(new_game)

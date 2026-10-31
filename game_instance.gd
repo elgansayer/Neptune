@@ -46,6 +46,9 @@ var _spawn_plan: RefCounted
 var _spawn_signature := ""
 var _spawn_bindings: Dictionary = {}
 var room_map_path := "" # Trusted local JSON selection; public pack loading is separate.
+var room_pack_directory := "" # Explicit local data-only pack selection; never a raw PCK.
+var room_map_id := ""
+var room_content_identity := {}
 var room_capacity_request := {} # Set before _ready by the authority, not clients.
 var room_setup_result := {"accepted": false, "reason": "authority_not_ready"}
 var last_room_start_result := {}
@@ -152,7 +155,21 @@ func _ready():
 	var map_data: Dictionary
 	
 	# Try to load PCK map first
-	if not room_map_path.is_empty():
+	if not room_pack_directory.is_empty():
+		var registry := PackRegistry.new()
+		var registered := registry.register_directory(room_pack_directory)
+		if registered.ok:
+			map_data = map_manager.load_registered_map(registry, room_map_id)
+		if not registered.ok or map_data.is_empty():
+			room_setup_result = SpawnReservations.failure("invalid_room_pack" if not registered.ok else "unknown_room_map_id")
+			if not registered.ok:
+				room_setup_result["diagnostic"] = registered.error
+				print("[GameInstance] Pack refused: ", JSON.stringify(registered.error))
+			countdown_time = 0.0
+			set_physics_process(false)
+			return
+		room_content_identity = map_data.metadata.content_identity.duplicate(true)
+	elif not room_map_path.is_empty():
 		map_data = MapLoader.load_map_from_file(room_map_path)
 		if map_data.is_empty():
 			room_setup_result = SpawnReservations.failure("invalid_room_map")
@@ -1604,7 +1621,8 @@ func sync_state_to_clients():
 					"width": GameConfig.map_width,
 					"height": GameConfig.map_height,
 					"name": GameConfig.map_name,
-					"render_geometry": not room_map_path.is_empty()
+					"render_geometry": not room_map_path.is_empty() or not room_pack_directory.is_empty(),
+					"content_identity": room_content_identity.duplicate(true)
 				}
 			}
 			# Send map reliably (TCP) to avoid MTU issues on first sync

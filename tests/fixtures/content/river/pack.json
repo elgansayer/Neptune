@@ -1,0 +1,17 @@
+{
+  "schema": "neptune.pack/1",
+  "id": "example.river",
+  "version": "1.0.0",
+  "author": "Neptune test authors",
+  "license": "Apache-2.0",
+  "provenance": "Original test geometry authored for Neptune; no reference content.",
+  "dependencies": [],
+  "content": [
+    {
+      "id": "example.river:arena",
+      "type": "map",
+      "path": "arena.json",
+      "sha256": "44ddf5362652723215f5fc47437faf8451201e98cba1dfc51259f863bfeab039"
+    }
+  ]
+}

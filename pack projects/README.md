@@ -3,6 +3,10 @@
 These projects are the starting point for the mod/customisation engine. Extend
 their useful authoring and rendering work before proposing replacements.
 
+The [local data-only map pack workflow](../docs/restart/DATA_ONLY_MAP_PACKS.md)
+now adapts the trusted stage converter into validated namespaced JSON packs and
+explicit host selection. Existing PCKs and authoring projects remain intact.
+
 | Project | Existing workflow |
 | --- | --- |
 | [Robin Hood](characters/bomberman-player-robin-hood/player.tscn) | TexturePacker sheet/PNG, atlas regions and trim margins, 36 named animations, frame timing and sprite anchor. The visual scene is separate from server collision/abilities. |
