@@ -1,8 +1,10 @@
 extends "res://tests/bot_test_suite.gd"
 
 const Runtime = preload("res://shared/runtime_config.gd")
+const Arena = preload("res://shared/content/arena_pack_loader.gd")
 const STANDARD := "res://demo/packs/standard/manifest.json"
 const WIDE := "res://demo/packs/wide/manifest.json"
+const LINKED := "res://demo/packs/linked/manifest.json"
 var room: GameInstance
 var previous_config: Dictionary
 
@@ -29,6 +31,15 @@ func _room(paths: Array, arena: String, local_map: String = "") -> GameInstance:
 	room.set_physics_process(false)
 	if is_instance_valid(room.bot_manager): room.bot_manager.set_physics_process(false)
 	return room
+
+func _expected_lock(paths: Array) -> Dictionary:
+	var identities: Array = []
+	for path in paths:
+		var text := FileAccess.get_file_as_string(path)
+		var manifest: Dictionary = JSON.parse_string(text)
+		identities.append({"pack_id": manifest.pack_id, "version": manifest.version, "manifest_sha256": text.sha256_text()})
+	identities.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.pack_id < b.pack_id)
+	return {"schema": "neptune.manifest-lock.v1", "roots": identities.duplicate(true), "packs": identities.duplicate(true)}
 
 func test_legacy_startup_defaults_and_explicit_json_selection_remain_available() -> Variant:
 	var defaults := Runtime.parse_arguments([], "res://main_server.tscn")
@@ -96,11 +107,76 @@ func test_public_map_configuration_is_detached_and_contains_no_source_paths() ->
 	var config := game.get_room_map_config()
 	if not config.render_geometry or config.width != 27 or config.content.content_id != "example.wide:arena":
 		return "Public map metadata did not identify selected geometry"
+	var expected := _expected_lock([STANDARD, WIDE])
+	if config.get("lock", {}) != expected or config.get("lock_sha256", "") != JSON.stringify(expected, "", true).sha256_text():
+		return "Public map metadata omitted the complete canonical manifest lock"
 	if "res://" in JSON.stringify(config) or "user://" in JSON.stringify(config): return "Local manifest path escaped into public metadata"
 	config.content["content_id"] = "changed:arena"
 	config.selection.clear()
-	return assert_true(game.room_content_descriptor.content_id == "example.wide:arena" and game.room_content_selection.size() == 2,
+	config.lock.roots[0]["manifest_sha256"] = "0".repeat(64)
+	config.lock.packs.clear()
+	config["lock_sha256"] = "0".repeat(64)
+	return assert_true(game.room_content_descriptor.content_id == "example.wide:arena" and game.room_content_selection.size() == 2
+		and game.room_content_lock == expected and game.room_content_lock_sha256 == JSON.stringify(expected, "", true).sha256_text(),
 		"Clients cannot mutate the authority's selected pack records through detached metadata")
+
+func test_dependent_pack_room_resolves_before_existing_collision_and_bot_setup() -> Variant:
+	var paths: Array = [LINKED, WIDE, STANDARD]
+	var game := _room(paths, "example.linked:arena")
+	if not game.room_setup_result.accepted: return "Dependent root could not prepare room: " + str(game.room_setup_result)
+	var original := MapLoader.load_map_from_file("res://demo/packs/linked/arena.json")
+	var expected := _expected_lock(paths)
+	var config := game.get_room_map_config()
+	if game.game_map != original.grid or game.spawn_points != original.spawn_points or game.map_tiles.is_empty():
+		return "Dependent arena bypassed existing map/collision paths"
+	var human := game.add_player(701, "LinkedCreator")
+	var bot := game.spawn_bot("BALANCED")
+	return assert_true(human.accepted and bot.accepted and human.cell != bot.cell
+		and config.content.content_id == "example.linked:arena" and config.selection == expected.packs
+		and config.lock == expected and config.lock_sha256 == JSON.stringify(expected, "", true).sha256_text(),
+		"Dependent root must preserve admission, explicit roots and the full resolved lock")
+
+func test_adapter_registration_order_and_offline_expected_lock_reuse() -> Variant:
+	var first := Arena.load_arena([LINKED, WIDE, STANDARD], "example.linked:arena")
+	if not first.accepted: return "Dependent-first arena load failed: " + str(first)
+	var reused := Arena.load_arena([STANDARD, LINKED, WIDE], "example.linked:arena", first.lock)
+	if not reused.accepted: return "Offline expected-lock reuse failed: " + str(reused)
+	return assert_true(first.lock == _expected_lock([STANDARD, WIDE, LINKED]) and first.lock == reused.lock
+		and first.lock_sha256 == reused.lock_sha256 and first.selection == reused.selection
+		and first.descriptor == reused.descriptor and first.map == reused.map,
+		"Input order must not alter pinned offline selection, lock identity or selected arena")
+
+func test_adapter_lock_mismatch_never_publishes_partial_arena_metadata() -> Variant:
+	var paths: Array = [STANDARD, WIDE, LINKED]
+	var loaded := Arena.load_arena(paths, "example.linked:arena")
+	if not loaded.accepted: return "Offline mismatch control failed to load"
+	var original := loaded.duplicate(true)
+	var stale: Dictionary = loaded.lock.duplicate(true)
+	stale.roots[0]["manifest_sha256"] = "0".repeat(64)
+	var missing_root: Dictionary = loaded.lock.duplicate(true)
+	missing_root.roots.pop_back()
+	for expected in [stale, missing_root]:
+		var failed := Arena.load_arena(paths, "example.linked:arena", expected)
+		if failed.accepted or failed.has("map") or failed.has("descriptor") or failed.has("selection"):
+			return "Mismatched offline lock exposed a partially loaded arena"
+		if not failed.has("field") or not failed.has("source"): return "Lock mismatch lost file/field diagnostics"
+	return assert_eq(loaded, original, "Rejected offline reuse must not mutate a previously accepted receipt")
+
+func test_missing_dependency_refuses_room_without_fallback_or_public_lock() -> Variant:
+	var game := _room([LINKED, STANDARD], "example.linked:arena")
+	return assert_true(not game.room_setup_result.accepted and game.game_map.is_empty()
+		and game.room_content_descriptor.is_empty() and game.room_content_selection.is_empty()
+		and game.room_content_lock.is_empty() and game.room_content_lock_sha256.is_empty()
+		and game.countdown_time == 0 and not game.is_physics_processing()
+		and game.room_setup_result.has("field") and game.room_setup_result.has("source"),
+		"A missing pinned dependency must fail before collision, bot setup or content publication")
+
+func test_local_json_room_keeps_legacy_snapshot_without_pack_lock_fields() -> Variant:
+	var game := _room([], "", "res://maps/neptune_standard.json")
+	if not game.room_setup_result.accepted: return "Existing local JSON room no longer loads"
+	var config := game.get_room_map_config()
+	return assert_true(config.render_geometry and not config.has("content") and not config.has("selection")
+		and not config.has("lock") and not config.has("lock_sha256"), "Legacy JSON rooms cannot acquire synthetic pack identities")
 
 func test_selected_arena_metadata_reaches_existing_client_geometry_renderer() -> Variant:
 	var game := _room([STANDARD], "example.standard:arena")

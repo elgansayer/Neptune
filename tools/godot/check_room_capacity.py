@@ -17,7 +17,8 @@ def run_capacity_checks(base, env, evidence, bounded):
                                        ("standard-arena", 2, 2, 4, True),
                                        ("wide-arena", 2, 2, 4, True),
                                        ("registered-standard", 2, 2, 4, True),
-                                       ("registered-wide", 2, 2, 4, True)]:
+                                       ("registered-wide", 2, 2, 4, True),
+                                       ("registered-linked", 2, 2, 4, True)]:
         map_name, width, height = {"standard-arena": ("neptune_standard", 15, 13),
                                    "wide-arena": ("neptune_wide", 27, 13),
                                    "registered-standard": ("neptune_standard", 15, 13),
@@ -29,6 +30,8 @@ def run_capacity_checks(base, env, evidence, bounded):
         options = ["--server-port=" + str(port), "--room-seats=" + str(seats),
                    "--room-preset-limit=" + str(preset)]
         expected_content = {}
+        expected_lock = {}
+        expected_lock_sha256 = ""
         if name.startswith("registered-"):
             variant = name.removeprefix("registered-")
             manifest_path = ROOT / "demo/packs" / variant / "manifest.json"
@@ -38,9 +41,23 @@ def run_capacity_checks(base, env, evidence, bounded):
             expected_content = {"pack_id": manifest["pack_id"], "version": manifest["version"],
                                 "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
                                 "content_id": entry["id"], "kind": "arena", "sha256": entry["sha256"]}
-            options += ["--room-pack=res://demo/packs/standard/manifest.json",
-                        "--room-pack=res://demo/packs/wide/manifest.json",
-                        "--room-arena=" + entry["id"]]
+            arena = json.loads((manifest_path.parent / entry["path"]).read_bytes())
+            width, height = len(arena["grid"][0]), len(arena["grid"])
+            # The dependent root deliberately precedes both dependencies. Every
+            # supplied manifest remains an explicit root, regardless of ordering.
+            variants = ["linked", "wide", "standard"] if variant == "linked" else ["standard", "wide"]
+            identities = []
+            for included in variants:
+                contents = (ROOT / "demo/packs" / included / "manifest.json").read_bytes()
+                metadata = json.loads(contents)
+                identities.append({"pack_id": metadata["pack_id"], "version": metadata["version"],
+                                   "manifest_sha256": hashlib.sha256(contents).hexdigest()})
+                options.append("--room-pack=res://demo/packs/" + included + "/manifest.json")
+            identities.sort(key=lambda identity: identity["pack_id"])
+            expected_lock = {"schema": "neptune.manifest-lock.v1", "roots": identities, "packs": identities}
+            lock_json = json.dumps(expected_lock, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+            expected_lock_sha256 = hashlib.sha256(lock_json.encode()).hexdigest()
+            options.append("--room-arena=" + entry["id"])
         else:
             options.append("--room-map=res://maps/" + map_name + ".json")
         if auto_fill:
@@ -68,6 +85,9 @@ def run_capacity_checks(base, env, evidence, bounded):
                 if auto_fill: command.append("--probe-auto-fill")
                 if expected_content:
                     command.append("--probe-content-json=" + json.dumps(expected_content, separators=(",", ":")))
+                    command.append("--probe-lock-json=" + lock_json)
+                    command.append("--probe-lock-sha256=" + expected_lock_sha256)
+                    command.append("--probe-selection-count=" + str(len(identities)))
                 code, text = bounded("room-" + name + "-clients", command)
                 markers = [line.split("=", 1)[1] for line in text.splitlines()
                            if line.startswith("NEPTUNE_ROOM_CAPACITY=")]
@@ -75,7 +95,9 @@ def run_capacity_checks(base, env, evidence, bounded):
                             "preset_limit": preset, "protocol_limit": 12,
                             "accepted": humans, "refused": 1, "snapshots": humans, "maps": humans, "active": True}
                 if auto_fill: expected["auto_fill"] = True
-                if expected_content: expected["content"] = expected_content
+                if expected_content:
+                    expected.update(content=expected_content, selection=identities,
+                                    lock=expected_lock, lock_sha256=expected_lock_sha256)
                 receipt = json.loads(markers[0]) if len(markers) == 1 else {}
                 policy = receipt.pop("bot_policy", "")
                 seed = receipt.pop("bot_policy_seed", "")

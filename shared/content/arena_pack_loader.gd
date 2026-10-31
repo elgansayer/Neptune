@@ -93,13 +93,14 @@ static func _check_map(data: Variant, source: String) -> Dictionary:
 			return Manifest.failure("invalid_arena_text", field, source)
 	return {"accepted": true}
 
-static func load_arena(manifest_paths: Array, content_id: String) -> Dictionary:
+static func load_arena(manifest_paths: Array, content_id: String, expected_lock: Dictionary = {}) -> Dictionary:
 	if manifest_paths.is_empty() or manifest_paths.size() > Registry.MAX_SELECTED:
 		return Manifest.failure("invalid_pack_selection", "room_pack_paths")
 	if not Manifest.valid_id(content_id):
 		return Manifest.failure("invalid_content_id", "room_arena")
 	var registry := Registry.new()
 	var seen := {}
+	var roots: Array = []
 	for path in manifest_paths:
 		if not Manifest.valid_manifest_path(path) or seen.has(path):
 			return Manifest.failure("invalid_or_duplicate_manifest_path", "room_pack_paths", str(path))
@@ -116,10 +117,12 @@ static func load_arena(manifest_paths: Array, content_id: String) -> Dictionary:
 		var registered := registry.register_manifest(document.text, path)
 		if not registered.accepted:
 			return registered
-		var identity: Dictionary = registered.identity
-		var selected := registry.select_pack(identity.pack_id, identity.version, identity.manifest_sha256)
-		if not selected.accepted:
-			return selected
+		roots.append(registered.identity.duplicate(true))
+	# Every supplied manifest remains an explicit root. Register all releases before
+	# resolving so a dependent manifest may precede its pinned dependencies.
+	var selected := registry.select_roots(roots, expected_lock)
+	if not selected.accepted:
+		return selected
 	var resolved := registry.resolve(content_id)
 	if not resolved.accepted:
 		return resolved
@@ -139,4 +142,5 @@ static func load_arena(manifest_paths: Array, content_id: String) -> Dictionary:
 		return checked
 	var map: Dictionary = MapLoader.parse_map_data(parsed.data, content_id)
 	return {"accepted": true, "reason": "arena_loaded", "map": map,
-		"descriptor": resolved.descriptor.duplicate(true), "selection": registry.selection()}
+		"descriptor": resolved.descriptor.duplicate(true), "selection": registry.selection(),
+		"lock": selected.lock.duplicate(true), "lock_sha256": selected.lock_sha256}
