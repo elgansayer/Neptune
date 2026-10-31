@@ -1,0 +1,16 @@
+{
+  "schema": "neptune.pack.v1",
+  "pack_id": "example.ruby:pack",
+  "version": "1.0.0",
+  "author": "Neptune fixture authors",
+  "license": "Apache-2.0",
+  "dependencies": [],
+  "content": [
+    {
+      "id": "example.ruby:character",
+      "kind": "character",
+      "path": "character.json",
+      "sha256": "5f4afab8ff87727ee490810b63e0ca445e4c8e037eb58a956c9ebd98a891f34f"
+    }
+  ]
+}
