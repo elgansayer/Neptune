@@ -20,6 +20,16 @@ Read `PROJECT_EVALUATION.md` and reuse existing PACK/ROOM/WORKSHOP tasks for the
 gaps. Prove a small creator-to-server-to-clean-client journey before UI breadth;
 advance measured Saturn fidelity alongside it without blocking original fixtures.
 
+Customisation is the main product advantage: players' own avatars and admins' own
+maps, game types and power-ups must work together and share automatically. Begin
+every relevant task by exploring the existing player/Tirra/stage pack projects,
+exported PCKs, loaders, map APIs and client integration; record reuse/adaptation
+decisions before adding a parallel system. Continue those authoring experiments,
+repair reproducibility defects and preserve compatible animation/map semantics.
+Use the existing-pack inventory in `PROJECT_EVALUATION.md`. A new manifest or
+registry should connect this work to additive selection and distribution, not
+restart character or map authoring from scratch.
+
 This is an execution request. Make tested implementation progress, not another
 broad roadmap. Use long-lived goals and small verifiable changes. Continue through
 eligible tasks until the current milestone is demonstrated or all remaining work
