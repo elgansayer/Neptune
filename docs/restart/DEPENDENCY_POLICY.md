@@ -37,8 +37,9 @@ Validate project import, native class registration, runner contracts, applicable
 gameplay/bot scenarios, client/server startup and desktop/browser exports. Report
 any checks that could not run and keep that gap visible in the upgrade task.
 
-The repository's existing 4.5 pins describe the currently recorded toolchain;
-this policy does not claim that an engine upgrade has already been completed.
+The current recorded toolchain is Godot 4.7.2. Release sources and verified
+archive hashes are recorded in [the release inventory](../../tools/godot/dependency-releases.json).
+Recheck upstream releases during maintenance; this version is not a permanent ceiling.
 
 ## Factory maintenance and reference evidence
 

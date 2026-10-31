@@ -15,6 +15,16 @@ import provision as p
 
 
 class ProvisionTests(unittest.TestCase):
+    def test_godot_recipe_accepts_new_stable_pin_but_rejects_paths(self):
+        path = self.root / "tools/godot/toolchain.json"
+        for name in ("Godot_v4.7.2-stable_linux.x86_64", "Godot_v4.8-stable_linux.x86_64"):
+            path.write_text(json.dumps({"binary_name": name}))
+            self.assertEqual(p.binary_name("godot", self.root), name)
+        for name in (None, 7, "../godot", "/tmp/godot", "Godot_v4.8-beta1_linux.x86_64"):
+            path.write_text(json.dumps({"binary_name": name}))
+            with self.subTest(name=name), self.assertRaises(p.ProvisionError):
+                p.binary_name("godot", self.root)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

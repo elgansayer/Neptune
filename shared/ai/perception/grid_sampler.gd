@@ -138,7 +138,10 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 		var p = _game_instance.players[peer_id]
 		if is_instance_valid(p) and (not is_instance_valid(ignore_player) or p.peer_id != ignore_player.peer_id) and not p.is_dead:
 			var p_pos = p.get_tile_position()
-			if is_in_bounds(p_pos) and p_pos != goal_tile:
+			# Players may overlap during movement. Occupancy cannot prevent
+			# departure from the current tile: Godot 4.7 rejects solid starts.
+			# Static terrain remains solid from the map pass above.
+			if is_in_bounds(p_pos) and p_pos != start_tile and p_pos != goal_tile:
 				_astar.set_point_solid(p_pos, true)
 	
 	

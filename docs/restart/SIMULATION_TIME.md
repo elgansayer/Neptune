@@ -14,7 +14,7 @@ durations in game time. A paused SceneTree stops the authority and its child act
 Disabling the authority's physics callback stops its clock; individually stepping
 or unpausing child nodes is a testing/debugging operation, not a complete room pause.
 
-The explicit Godot 4.5 physics phases are authority clock/status at priority -200,
+The explicit Godot physics phases are authority clock/status at priority -200,
 bombs at -150, bot hazard publication/decisions at -100, then player movement at
 default priority 0. This makes observed bomb elapsed time and danger deadlines
 agree at the decision boundary. BotManager refreshes AIManager and HazardPredictor

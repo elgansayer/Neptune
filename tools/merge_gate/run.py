@@ -30,6 +30,13 @@ def git(*args: str, root: Path = ROOT) -> str:
     return subprocess.check_output(["git", *args], cwd=root, text=True).strip()
 
 
+def godot_binary_name(lock: dict) -> str:
+    name = lock.get("binary_name")
+    if not isinstance(name, str) or not re.fullmatch(r"Godot_v[0-9]+\.[0-9]+(?:\.[0-9]+)?-stable_linux\.x86_64", name):
+        raise ValueError("Unsupported pinned Godot binary name")
+    return name
+
+
 def plan(paths: list[str]) -> dict:
     if not paths or any(not path or path.startswith("/") or ".." in path.split("/") for path in paths):
         raise ValueError("Changed-file selection must be non-empty and relative")
@@ -100,7 +107,8 @@ def commands(mode: str, evidence: Path, toolchain: Path) -> list[tuple[str, list
     ]
     if mode == "metadata":
         return checks
-    binary = str(toolchain / "Godot_v4.5-stable_linux.x86_64")
+    lock = json.loads((ROOT / "tools/godot/toolchain.json").read_text())
+    binary = str(toolchain / godot_binary_name(lock))
     checks.extend([
         ("native-install", [python, "tools/godot/install.py", "--directory", str(toolchain)], 180),
         ("native-runner", [python, "tools/godot/check_runner.py", "--godot", binary], 120),

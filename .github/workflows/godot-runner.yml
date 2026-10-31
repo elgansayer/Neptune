@@ -54,47 +54,49 @@ jobs:
           persist-credentials: false
           submodules: false
       - name: Install hash-pinned Godot and verify addon identities
-        run: python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
+        run: |
+          python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
+          python3 -c 'import json; print("GODOT_BINARY=" + json.load(open("tools/godot/toolchain.json"))["binary_name"])' >> "$GITHUB_ENV"
       - name: Exercise runner failure boundaries on real Godot
-        run: python3 tools/godot/check_runner.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
+        run: python3 tools/godot/check_runner.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY"
       - name: Verify actual suite null contract and native addon loading
-        run: python3 tools/godot/check_project_contracts.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
+        run: python3 tools/godot/check_project_contracts.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY"
       - name: Prove bounded server/client round trips and startup failures
-        run: python3 tools/godot/check_runtime.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --graphical
+        run: python3 tools/godot/check_runtime.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --graphical
       - name: Exercise actual collision and trapped-state regressions
         run: |
-          bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_collision_fix
-          bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_trapped_algo
+          bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_bomb_collision_fix
+          bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_trapped_algo
       - name: Verify native bot tick ownership at different idle cadences
         run: |
           for cadence in 30 60 144; do
-            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bot_physics_ticks --max-fps "$cadence"
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_bot_physics_ticks --max-fps "$cadence"
           done
       - name: Verify public fuse bounds and real chain forecasts
         run: |
           for cadence in 30 60 144; do
-            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_forecast --max-fps "$cadence" --timeout 30
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_bomb_forecast --max-fps "$cadence" --timeout 30
           done
       - name: Verify simulation time, pause and callback order at different cadences
         run: |
           for cadence in 30 60 144; do
-            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_simulation_clock --max-fps "$cadence" --timeout 40
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_simulation_clock --max-fps "$cadence" --timeout 40
           done
       - name: Verify isolated native policy RNG and checkpoint restoration
         run: |
           for cadence in 30 60 144; do
-            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bot_policy_rng --max-fps "$cadence" --timeout 35
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_bot_policy_rng --max-fps "$cadence" --timeout 35
           done
       - name: Verify shared authoritative placement and native action results
         run: |
           for cadence in 30 60 144; do
-            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_bomb_commands --max-fps "$cadence" --timeout 40
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_bomb_commands --max-fps "$cadence" --timeout 40
           done
       - name: Verify common movement and real ability commands
         run: |
           for cadence in 30 60 144; do
-            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_player_commands --max-fps "$cadence" --timeout 50
-            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64" --run-specific test_native_kick_command --max-fps "$cadence" --timeout 30
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_player_commands --max-fps "$cadence" --timeout 50
+            bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_native_kick_command --max-fps "$cadence" --timeout 30
           done
       - name: Preserve native startup diagnostics even when a check fails
         if: always()
