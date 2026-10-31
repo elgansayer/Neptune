@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-31",
+  "issue": 548,
+  "pr": 549,
+  "code_commit": "ba1607e48f20d40959cec43d1257669c888a506b",
+  "integrated_base": "ff3ea94af98fd7670d96ac2cb68f1d4e3b48a44d",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "freshness": "Official godotengine/godot latest stable release checked at task intake: 4.7.2-stable.",
+  "source_sha256": {
+    "client/game_view.gd": "ff6e27645ae7779edd348c26590988e01cf09956fa7a733f597508e7ee95b2b5",
+    "shared/content/character_pack_loader.gd": "25d9f74fd5db535b5bc68f9e7a60b6193553cc94105652e256e7cad94603ada2",
+    "shared/content/arena_pack_loader.gd": "c9f09696accc045854ac9b03a1392125de5a41bdaad296467f2cf277f7733826",
+    "tools/asset_audit/export_character_pack.gd": "e4ca52902f1d7d13d9caecd00be80d1ff6dd29bdb4ce1e487d098eb1a294ec18",
+    "tests/test_character_export.gd": "5fe12a7ceebf6780c14f6afe50aef87c012915792f2fdaf104b95c46ce5bb647",
+    "tests/test_character_packs.gd": "ac5e4610b8b970ba31ff60a6a57072b19de76e516bf26820075db556aa1aadfe",
+    "export_presets.cfg": "e0bc49538b9084da149f6b0e8f33d66b5b6b84a106a3d23f92c169f2d71db7cf"
+  },
+  "focused_runtime": {
+    "passed": 12,
+    "failed": 0,
+    "files": 1,
+    "log_sha256": "88bf1fd6bbb7bd494266625f716256b12d90cd568778c0fa1aa7cc148b8222b7"
+  },
+  "focused_trusted_export": {
+    "passed": 6,
+    "failed": 0,
+    "files": 1,
+    "log_sha256": "8f5d4fed43e0e44199fbb2909d1e9550ef10039f95d5277474897682dcef0f0b"
+  },
+  "full_before_base_merge": {
+    "passed": 298,
+    "failed": 0,
+    "files": 36,
+    "log_sha256": "db1da017f10d0319811a4c9262bc837848832d8516b19cff3166e724181d2e87"
+  },
+  "full_after_dependency_lock_merge": {
+    "passed": 329,
+    "failed": 0,
+    "files": 37,
+    "log_sha256": "440d88965d135c59ab5749717ceb7cf1f72489330c054e7bb4a6e22daebae334"
+  },
+  "native_contracts": {
+    "project_import": true,
+    "null_refuses": true,
+    "true_passes": true,
+    "native_addons": true
+  },
+  "native_runtime": {
+    "before_merge": "Production client negotiation, protocol refusals, bind/config errors, room auth/maps/active snapshots/full-room refusal including standard/wide registered arenas passed.",
+    "after_merge": "Same native checks pass including exact dependency-lock linked arena and client lock replay validation.",
+    "supervisor_sha256": "ae96f77471d5d84379811b4496d6b9175bec684b3bfd22d8dd1be9d309df422b"
+  },
+  "trusted_source": {
+    "path": "characters/player-robin-hood.pck",
+    "sha256": "d42ba3e093516448ada1f75f3cc0ac1623001393fedbe26684057b098112c83b",
+    "animations": 36,
+    "frame_uses": 77,
+    "raw_pixel_bytes": 139080,
+    "offset": [
+      0,
+      -8
+    ],
+    "presentation_sha256": "45aa601ba8d012906ad9ef4641b734b7f35e0408fcf64324876d05ed69697c28",
+    "oracle": "Existing independent check_character_pack.gd run in an empty project; original PCK unchanged before/after real export."
+  },
+  "observations": [
+    "Ruby and Jade coexist through existing registry and real GameView update path alongside the unchanged default; authoritative physics constants unchanged.",
+    "Native SpriteFrames API preserves source fractional FPS/duration, anchors, centering/flips and baked trim pixels; distinct fresh source colors yield distinct signatures.",
+    "Runtime rejects unknown executable fields, absent fallback/frames, duplicate JSON keys, traversal/symlink paths, oversized budgets, and missing/altered/truncated/oversized payloads before visual construction.",
+    "Exported Linux game PCK includes original JSON/manifests/RGBA and loads Ruby through the exported loader with Color.RED in an empty host project.",
+    "Current-base character lock probe accepts exact returned lock/hash and refuses an altered lock.",
+    "Existing output directory refused with recursive hashes unchanged; higher precision source images refused before writing."
+  ],
+  "exported_pack_probe_sha256": "a04881e9f85f41188f184a4f9cb6cf1697ab2cd3565b362f1268ce7a588a2dae",
+  "character_lock_probe_sha256": "8252f1e80df7c104990722524caef9ca7d19a9d108695e6868a5a40098081f66",
+  "limits": [
+    "Local world-visual API only; no lobby/wire selection, avatar picker, HUD portraits, palettes or voices.",
+    "No automatic exact-version downloads, archive installation or clean-client avatar sharing; parent PACK-006/PACK-007 remain incomplete.",
+    "Trusted author-time PCK conversion may execute source resources and must never process untrusted downloads. Runtime only reads strict JSON and raw pixels.",
+    "No reference-art export is committed; original tiny fixtures verify infrastructure only. No browser rendering, gameplay parity or Saturn-fidelity claim."
+  ],
+  "integration": "Required exact-head/current-base CI remains the merge gate; no bypass."
+}
