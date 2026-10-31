@@ -67,6 +67,10 @@ not certify a whole-game/native-addon/browser migration to Godot 4.7.2.
 
 ## Data-only arena packs
 
+Character authors can also [export data-only visuals and select them locally](../docs/restart/CHARACTER_PACKS.md)
+through the existing manifest/registry. That path preserves SpriteFrames timing,
+atlas trim margins and anchors; automatic multiplayer avatar sharing is pending.
+
 The first PACK-001 runtime slice connects a versioned manifest and additive
 registry to the existing JSON `MapLoader`, authoritative room, bots and geometry
 renderer. Administrators can select a local arena by content ID; existing default

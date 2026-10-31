@@ -93,7 +93,9 @@ static func _check_map(data: Variant, source: String) -> Dictionary:
 			return Manifest.failure("invalid_arena_text", field, source)
 	return {"accepted": true}
 
-static func load_arena(manifest_paths: Array, content_id: String, expected_lock: Dictionary = {}) -> Dictionary:
+static func load_definition(manifest_paths: Array, content_id: String, expected_kind: String, expected_lock: Dictionary = {}) -> Dictionary:
+	if expected_kind not in ["arena", "character"]:
+		return Manifest.failure("unsupported_runtime_kind", "content.kind")
 	if manifest_paths.is_empty() or manifest_paths.size() > Registry.MAX_SELECTED:
 		return Manifest.failure("invalid_pack_selection", "room_pack_paths")
 	if not Manifest.valid_id(content_id):
@@ -112,7 +114,7 @@ static func load_arena(manifest_paths: Array, content_id: String, expected_lock:
 		if not validated.accepted:
 			return validated
 		for entry in validated.manifest.content:
-			if entry.kind != "arena":
+			if entry.kind != expected_kind:
 				return Manifest.failure("unsupported_runtime_kind", "content.kind", path)
 		var registered := registry.register_manifest(document.text, path)
 		if not registered.accepted:
@@ -137,10 +139,17 @@ static func load_arena(manifest_paths: Array, content_id: String, expected_lock:
 	var parsed := Manifest.parse_json(definition.text, located.path)
 	if not parsed.accepted:
 		return parsed
-	var checked := _check_map(parsed.data, located.path)
+	return {"accepted": true, "data": parsed.data, "source": located.path,
+		"root": resolved.source.get_base_dir(), "descriptor": resolved.descriptor.duplicate(true), "selection": registry.selection(),
+		"lock": selected.lock.duplicate(true), "lock_sha256": selected.lock_sha256}
+
+static func load_arena(manifest_paths: Array, content_id: String, expected_lock: Dictionary = {}) -> Dictionary:
+	var definition := load_definition(manifest_paths, content_id, "arena", expected_lock)
+	if not definition.accepted: return definition
+	var checked := _check_map(definition.data, definition.source)
 	if not checked.accepted:
 		return checked
-	var map: Dictionary = MapLoader.parse_map_data(parsed.data, content_id)
+	var map: Dictionary = MapLoader.parse_map_data(definition.data, content_id)
 	return {"accepted": true, "reason": "arena_loaded", "map": map,
-		"descriptor": resolved.descriptor.duplicate(true), "selection": registry.selection(),
-		"lock": selected.lock.duplicate(true), "lock_sha256": selected.lock_sha256}
+		"descriptor": definition.descriptor, "selection": definition.selection,
+		"lock": definition.lock, "lock_sha256": definition.lock_sha256}

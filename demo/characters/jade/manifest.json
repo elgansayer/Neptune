@@ -1,0 +1,16 @@
+{
+  "schema": "neptune.pack.v1",
+  "pack_id": "example.jade:pack",
+  "version": "1.0.0",
+  "author": "Neptune fixture authors",
+  "license": "Apache-2.0",
+  "dependencies": [],
+  "content": [
+    {
+      "id": "example.jade:character",
+      "kind": "character",
+      "path": "character.json",
+      "sha256": "120234dbaf0271bb2ec30b5db4725f0b58fa00b044df9624476247524c406cbb"
+    }
+  ]
+}

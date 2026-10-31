@@ -1,0 +1,46 @@
+{
+  "schema": "neptune.character.v1",
+  "name": "Jade Fixture",
+  "offset": [
+    1,
+    -6
+  ],
+  "centered": true,
+  "flip_h": false,
+  "flip_v": false,
+  "fallback": "state_idle",
+  "provenance": {
+    "description": "Original Apache-2.0 test pixels; no reference art.",
+    "source_sha256": "92473e976b82a7533986f1b8aa449430293f8d8bc65d72157440abbaa543daa2"
+  },
+  "animations": [
+    {
+      "name": "state_idle",
+      "fps": 8.0,
+      "loop": true,
+      "frames": [
+        {
+          "path": "frames/idle.rgba",
+          "sha256": "92473e976b82a7533986f1b8aa449430293f8d8bc65d72157440abbaa543daa2",
+          "width": 2,
+          "height": 2,
+          "duration": 1.0
+        }
+      ]
+    },
+    {
+      "name": "down_walk",
+      "fps": 12.3456789,
+      "loop": true,
+      "frames": [
+        {
+          "path": "frames/idle.rgba",
+          "sha256": "92473e976b82a7533986f1b8aa449430293f8d8bc65d72157440abbaa543daa2",
+          "width": 2,
+          "height": 2,
+          "duration": 0.123456789
+        }
+      ]
+    }
+  ]
+}
