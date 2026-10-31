@@ -182,3 +182,53 @@ identity, active-round snapshots and full-room refusal, alongside the existing
 legacy capacity/layout cases. Unit scenarios also exercise the existing client
 geometry renderer. These checks do not establish a complete match, browser play,
 automatic downloads, per-player avatar sharing or Saturn fidelity.
+
+## Export a trusted stage into the existing arena format
+
+The existing TileMap authoring project and `MapPackLoader` scene-to-grid
+conversion can now produce a local data-only arena pack:
+
+```sh
+godot --headless --path . --script res://tools/asset_audit/export_map_pack.gd -- \
+  --trusted-pck=res://maps/stage1.pck \
+  --output=user://packs/stage-one/1.0.0 --id=example.stage-one:pack \
+  --version=1.0.0 --author=Neptune --license=LicenseRef-Private \
+  --provenance=Trusted-local-stage-conversion
+```
+
+All seven options are required. `--output` must be a new portable `user://` or
+`res://` directory, compatible with the merged arena loader. The tool reuses
+`MapLoader.save_map_to_file`, computes the exact arena digest, writes the existing
+`neptune.pack.v1` manifest, then loads it through `ArenaPackLoader` before reporting
+`NEPTUNE_MAP_EXPORT`. It refuses an existing output directory without changing
+its files. An incomplete authoring export is not an installed or selected pack.
+
+For the checked-in Stage 1, the conversion preserves the 21×14 grid, 147 hard
+blocks, 135 authored soft slots and four spawn points. Static exported soft slots
+become active soft blocks; random density, art, audio and full stage behaviour
+are outside this first arena format. The original source version `1.0` remains
+in map metadata while the caller explicitly selects public pack version `1.0.0`.
+Metadata also retains `authoring_source_sha256` over the original PCK and the
+caller-supplied `authoring_provenance`. The original PCK is never rewritten.
+
+Start a server using the generated pack through the existing runtime:
+
+```sh
+godot --headless --path . res://main_server.tscn -- \
+  --room-pack=user://packs/stage-one/1.0.0/manifest.json \
+  --room-arena=example.stage-one:arena --room-seats=4
+```
+
+This is a **trusted author-time** operation in a disposable process: legacy PCKs
+may contain executable scenes/scripts. Never use this converter on automatic
+downloads. Only its validated JSON output enters the data-only arena runtime.
+Supply actual author/licence/provenance; the private example label grants no
+distribution permission. This adds no second manifest, registry or host API.
+
+```sh
+python3 tools/godot/run_bot_tests.py --godot /absolute/path/to/godot --run-specific test_stage_pack_export --timeout 30
+```
+
+These checks execute the real exporter and merged loader, including exact
+identity/provenance, original/output preservation, input/option rejection and a
+mutated-byte negative. The existing full native/room checks remain required.
