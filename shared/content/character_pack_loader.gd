@@ -77,8 +77,8 @@ static func validate(data: Variant, source: String = "") -> Dictionary:
 	if not _name(data.fallback) or not names.has(data.fallback): return Manifest.failure("missing_fallback_animation", "fallback", source)
 	return {"accepted": true, "images": images, "frame_uses": count, "pixel_bytes": pixel_bytes}
 
-static func load_character(manifest_paths: Array, content_id: String) -> Dictionary:
-	var definition := Definitions.load_definition(manifest_paths, content_id, "character")
+static func load_character(manifest_paths: Array, content_id: String, expected_lock: Dictionary = {}) -> Dictionary:
+	var definition := Definitions.load_definition(manifest_paths, content_id, "character", expected_lock)
 	if not definition.accepted: return definition
 	var checked := validate(definition.data, definition.source)
 	if not checked.accepted: return checked
@@ -115,6 +115,7 @@ static func load_character(manifest_paths: Array, content_id: String) -> Diction
 		"centered": definition.data.centered, "flip_h": definition.data.flip_h, "flip_v": definition.data.flip_v,
 		"fallback": definition.data.fallback, "provenance": definition.data.provenance.duplicate(true),
 		"descriptor": definition.descriptor, "selection": definition.selection,
+		"lock": definition.lock, "lock_sha256": definition.lock_sha256,
 		"presentation_sha256": presentation_hash(frames)}
 
 static func create_visual(character: Dictionary) -> Node2D:

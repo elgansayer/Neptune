@@ -138,8 +138,10 @@ and an updated digest. Metadata is not proof of authorship or reuse permission.
   portable ASCII paths ending in `.json`; no absolute paths, traversal, URL,
   backslash, query or percent encoding. Manifest/payload paths reject symlinks.
 - Dependency descriptors have exactly `pack_id`, `version`, `manifest_sha256`;
-  at most 32 declarations are accepted. Dependency resolution is still #250:
-  the current runtime refuses a nonempty dependency list rather than guessing.
+  at most 32 declarations are accepted. The registry now resolves exact-pinned
+  dependency closures from registered local manifests. Missing releases, conflicting
+  versions/hashes, cycles and content-ID collisions fail without changing selection.
+  Version ranges and automatic latest-version fallback are unsupported.
 - The metadata validator recognizes `arena`, `character`, `powerup`, `mode`,
   `campaign` and `collection`. The current room adapter accepts arena packs only.
   Recognition is not implementation of the other kinds' gameplay or asset schemas.
@@ -162,8 +164,75 @@ installer or download cache.
 preflights grid/spawn/text types and budgets, then reuses the existing JSON map
 conversion. Selection metadata for other registered entries does not claim that
 their payloads have been installed or verified. The room sends a detached chosen
-content descriptor and selected-manifest identities with its initial map; local
-filesystem paths stay off the wire. This is not a client content-lock handshake.
+content descriptor, selected-manifest identities and portable manifest lock/hash
+with its initial map; local filesystem paths stay off the wire. This is not a
+client content-lock handshake or an assertion that every payload is installed.
+
+### Exact dependencies and portable manifest locks
+
+`demo/packs/linked/` is an original dependent example. Its arena bytes reuse
+`maps/neptune_standard.json`; its manifest pins the existing standard and wide
+manifest versions and their exact raw-byte hashes. The two existing immutable
+examples are preserved. Try a dependent-first input order:
+
+```sh
+godot --headless --path . res://main_server.tscn -- \
+  --room-pack=res://demo/packs/linked/manifest.json \
+  --room-pack=res://demo/packs/wide/manifest.json \
+  --room-pack=res://demo/packs/standard/manifest.json \
+  --room-arena=example.linked:arena --room-seats=4 --room-fill-to=4
+```
+
+The loader registers all supplied manifests before resolving them together. Each
+`--room-pack` remains an explicit selected root, preserving the original CLI
+meaning. It does not scan a cache or implicitly substitute a different release.
+A registry used directly can hold unrelated cached versions and resolve only the
+roots requested by its caller.
+
+The portable lock has exactly `schema`, `roots` and `packs`:
+
+```text
+schema: neptune.manifest-lock.v1
+roots: exact explicitly requested pack identities, sorted by pack_id
+packs: complete dependency closure, sorted by pack_id
+each identity: {pack_id, version, manifest_sha256}
+```
+
+Each list contains unique pack IDs and the closure is limited to 32 packs.
+Shared dependencies occur once. Dependencies do not become explicit roots merely
+because they were visited. The resolver checks bounded structural cycles, then
+verifies every exact hash constraint before returning success. It never invents
+trusted digests for a circular fixture or executes content while traversing a graph.
+Only registered metadata participates; publisher ownership and download authority
+are separate contracts.
+
+`shared/content/session_content_registry.gd` exposes:
+
+- `resolve_roots(identities)`: pure dependency/collision planning; selection is unchanged.
+- `select_roots(identities, expected_lock = {})`: atomically adds the requested
+  roots and their closure, preserving earlier explicit roots and selected versions.
+- `select_pack(id, version, manifest_sha256)`: the single-root compatibility wrapper.
+- `session_lock()`: a detached lock for the selected session, or `{}` before selection.
+- `apply_lock(text, source = "")`: parse a saved lock and recompute its exact closure
+  against locally registered raw manifests before committing. Extra, missing,
+  stale or altered members fail. Unrelated cached releases remain unselected.
+
+Successful planning/selection returns `lock`, `lock_json` and `lock_sha256`.
+`lock_json` is compact `JSON.stringify(lock, "", true)` with sorted object keys
+and canonical arrays; `lock_sha256` hashes those canonical UTF-8 bytes. The hash
+is independent of registration order, root input order or local file locations.
+Whitespace/key spelling in a parsed saved lock is normalized, but noncanonical
+member order or duplicate members is refused. This differs from `manifest_sha256`,
+which always identifies the original manifest bytes, including their whitespace.
+
+For offline arena reuse, call
+`ArenaPackLoader.load_arena(paths, content_id, expected_lock)`. It checks the exact
+explicit-root set and closure while retaining the existing selected-arena payload
+hash check. Every required manifest must already be supplied locally. Missing
+files or a stale lock refuse; there is no network fetch, archive installer, save
+migration or latest-version replacement. Applying a lock validates metadata,
+not every asset's bytes. Only the chosen arena definition is currently read and
+verified. Download/cache installation and peer readiness remain later work.
 
 Preserve the stage project's TileMap-to-grid conversion and metadata when adding
 an author-time exporter. Source stage version `1.0` must be explicitly normalized
@@ -177,12 +246,14 @@ does not replace those experiments or make their executable PCKs public packs.
 ```sh
 python3 tools/godot/run_bot_tests.py --godot /absolute/path/to/godot --run-specific test_pack_manifest --timeout 60
 python3 tools/godot/run_bot_tests.py --godot /absolute/path/to/godot --run-specific test_pack_room --timeout 60
+python3 tools/godot/run_bot_tests.py --godot /absolute/path/to/godot --run-specific test_pack_dependencies --timeout 60
 python3 tools/godot/check_runtime.py --godot /absolute/path/to/godot --room-only
 ```
 
 The final command uses real local servers and native clients. It includes both
-registered arenas with two humans, two bots, actual auth/admission, initial map
-identity, active-round snapshots and full-room refusal, alongside the existing
+registered arenas and the dependent linked example with two humans, two bots,
+actual auth/admission, initial map identity and exact lock/hash, active-round
+snapshots and full-room refusal, alongside the existing
 legacy capacity/layout cases. Unit scenarios also exercise the existing client
 geometry renderer. These checks do not establish a complete match, browser play,
 automatic downloads, per-player avatar sharing or Saturn fidelity.

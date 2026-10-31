@@ -50,6 +50,8 @@ var room_pack_paths: Array = [] # Explicit local data-only manifests; never PCK 
 var room_arena_id: String = ""
 var room_content_descriptor: Dictionary = {}
 var room_content_selection: Array = []
+var room_content_lock: Dictionary = {}
+var room_content_lock_sha256: String = ""
 var room_capacity_request := {} # Set before _ready by the authority, not clients.
 var room_setup_result := {"accepted": false, "reason": "authority_not_ready"}
 var last_room_start_result := {}
@@ -167,6 +169,8 @@ func _ready():
 				map_data = pack_result.map
 				room_content_descriptor = pack_result.descriptor.duplicate(true)
 				room_content_selection = pack_result.selection.duplicate(true)
+				room_content_lock = pack_result.lock.duplicate(true)
+				room_content_lock_sha256 = pack_result.lock_sha256
 			else:
 				room_setup_result = pack_result.duplicate(true)
 		if map_data.is_empty():
@@ -1472,6 +1476,8 @@ func get_room_map_config() -> Dictionary:
 	if not room_content_descriptor.is_empty():
 		config["content"] = room_content_descriptor.duplicate(true)
 		config["selection"] = room_content_selection.duplicate(true)
+		config["lock"] = room_content_lock.duplicate(true)
+		config["lock_sha256"] = room_content_lock_sha256
 	return config
 
 func sync_state_to_clients():

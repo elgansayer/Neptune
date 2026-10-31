@@ -84,9 +84,11 @@ RGBA8 order. Repeated paths must agree on hash and dimensions. All metadata and
 every pixel file's exact length/hash are checked before image textures are built.
 Paths reject traversal, absolute paths, URLs and symlinks. Existing manifest
 rules apply: 64 KiB JSON, 32 nesting levels, at most 32 selected manifests, exact
-versions, reserved namespaces, collision refusal and no unresolved dependencies.
+versions, reserved namespaces, collision refusal and exact local dependency resolution.
 The adapter currently accepts character-only manifest selections; mixed kinds
-and dependency resolution remain separate work.
+remain separate work. `load_character` also accepts an optional expected manifest
+lock and returns the resolved lock/hash, using the same registry as arenas.
+Manifest locks identify dependencies; only the chosen character payload is loaded.
 
 ## Explicit local selection
 

@@ -1,13 +1,16 @@
 extends RefCounted
 
-## An in-memory catalogue and explicitly selected session set; no downloads,
-## resource mounting, dependency solver or filesystem installation is performed.
+## An in-memory catalogue and explicitly selected exact-pinned dependency closure.
+## No downloads, resource mounting, version ranges or filesystem installation.
 const Manifest = preload("res://shared/content/pack_manifest.gd")
+const Dependencies = preload("res://shared/content/pack_dependency_resolver.gd")
 const MAX_RELEASES := 128
 const MAX_SELECTED := 32
 var _catalogue := {}
 var _selected := {}
 var _content := {}
+var _roots: Array = []
+var _lock := {}
 
 func register_manifest(text: String, source: String = "") -> Dictionary:
 	var parsed := Manifest.parse(text, source)
@@ -26,31 +29,51 @@ func register_manifest(text: String, source: String = "") -> Dictionary:
 	return {"accepted": true, "reason": "registered", "identity": identity.duplicate(true)}
 
 func select_pack(pack_id: String, version: String, manifest_sha256: String) -> Dictionary:
-	var key := pack_id + "@" + version
-	if not _catalogue.has(key):
-		return Manifest.failure("unknown_release", "pack_id")
-	var record: Dictionary = _catalogue[key]
-	if record.identity.manifest_sha256 != manifest_sha256:
-		return Manifest.failure("manifest_hash_mismatch", "manifest_sha256", record.source)
-	if _selected.has(pack_id):
-		if _selected[pack_id] == record.identity:
-			return {"accepted": true, "reason": "already_selected"}
-		return Manifest.failure("selected_version_conflict", "version", record.source)
-	if _selected.size() >= MAX_SELECTED:
-		return Manifest.failure("selection_budget_exceeded", "pack_id", record.source)
-	# Declarations are validated now; resolution is deliberately the next contract.
-	if not record.manifest.dependencies.is_empty():
-		return Manifest.failure("dependency_selection_not_supported", "dependencies", record.source)
-	for entry in record.manifest.content:
-		if _content.has(entry.id):
-			return Manifest.failure("content_id_collision", "content.id:" + entry.id, record.source)
-	# Commit the entire addition only after every registration has passed.
-	for entry in record.manifest.content:
-		var descriptor: Dictionary = record.identity.duplicate(true)
-		descriptor.merge({"content_id": entry.id, "kind": entry.kind, "sha256": entry.sha256})
-		_content[entry.id] = {"entry": entry.duplicate(true), "descriptor": descriptor, "source": record.source}
-	_selected[pack_id] = record.identity.duplicate(true)
-	return {"accepted": true, "reason": "selected"}
+	return select_roots([{"pack_id": pack_id, "version": version, "manifest_sha256": manifest_sha256}])
+
+func resolve_roots(roots: Array) -> Dictionary:
+	return Dependencies.resolve(_catalogue, roots)
+
+func select_roots(roots: Array, expected_lock: Dictionary = {}) -> Dictionary:
+	var requested: Array = _roots.duplicate(true)
+	requested.append_array(roots)
+	var plan := resolve_roots(requested)
+	if not plan.accepted: return plan
+	if not expected_lock.is_empty():
+		var checked := Dependencies.validate_lock(expected_lock)
+		if not checked.accepted: return checked
+		if checked.lock != plan.lock:
+			return Manifest.failure("manifest_lock_mismatch", "lock")
+	var selected := {}
+	var content := {}
+	for identity in plan.lock.packs:
+		if _selected.has(identity.pack_id) and _selected[identity.pack_id] != identity:
+			return Manifest.failure("selected_version_conflict", "version")
+		var key: String = identity.pack_id + "@" + identity.version
+		var record: Dictionary = _catalogue[key]
+		for entry in record.manifest.content:
+			if content.has(entry.id):
+				return Manifest.failure("content_id_collision", "content.id:" + entry.id, record.source)
+			var descriptor: Dictionary = identity.duplicate(true)
+			descriptor.merge({"content_id": entry.id, "kind": entry.kind, "sha256": entry.sha256})
+			content[entry.id] = {"entry": entry.duplicate(true), "descriptor": descriptor, "source": record.source}
+		selected[identity.pack_id] = identity.duplicate(true)
+	# Commit the complete graph only after every identity, edge and collision passed.
+	_selected = selected
+	_content = content
+	_roots = plan.lock.roots.duplicate(true)
+	_lock = plan.lock.duplicate(true)
+	return plan.duplicate(true)
+
+func apply_lock(text: String, source: String = "") -> Dictionary:
+	var parsed := Dependencies.parse_lock(text, source)
+	if not parsed.accepted: return parsed
+	var result := select_roots(parsed.lock.roots, parsed.lock)
+	if not result.accepted and result.get("source", "").is_empty(): result["source"] = source
+	return result
+
+func session_lock() -> Dictionary:
+	return _lock.duplicate(true)
 
 func resolve(content_id: String) -> Dictionary:
 	if not _content.has(content_id):
