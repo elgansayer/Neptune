@@ -21,15 +21,20 @@ var policy_identity := {}
 var auto_fill := false
 var expected_width := 17
 var expected_height := 13
-var expected_content_id := ""
+var expected_content: Dictionary = {}
 
 func _ready() -> void:
 	port = preload("res://shared/runtime_config.gd").read().port
 	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--probe-content-json="):
+			var parsed = JSON.parse_string(arg.trim_prefix("--probe-content-json="))
+			if not parsed is Dictionary or parsed.is_empty():
+				fail("invalid expected content descriptor")
+				return
+			expected_content = parsed
 		if arg == "--probe-auto-fill": auto_fill = true
 		if arg.begins_with("--probe-map-width="): expected_width = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-map-height="): expected_height = arg.get_slice("=", 1).to_int()
-		if arg.begins_with("--probe-content-id="): expected_content_id = arg.get_slice("=", 1)
 		if arg.begins_with("--probe-humans="): humans = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-bots="): bots = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-preset="): preset = arg.get_slice("=", 1).to_int()
@@ -102,10 +107,13 @@ func map_received(index: int, data: Dictionary) -> void:
 	if data.get("room", {}).get("seats", 0) != seats or data.get("map_width", 0) != expected_width or data.get("map_height", 0) != expected_height or data.get("map_config", {}).get("render_geometry", false) != true:
 		fail("initial map/capacity contract mismatch")
 		return
-	if not expected_content_id.is_empty():
-		var identity: Dictionary = data.get("map_config", {}).get("content_identity", {})
-		if identity.get("id", "") != expected_content_id or identity.get("version", "") != "1.0.0" or str(identity.get("sha256", "")).length() != 64 or str(identity.get("manifest_sha256", "")).length() != 64:
-			fail("missing exact registered map identity in the real client payload")
+	if not expected_content.is_empty():
+		var config: Dictionary = data.get("map_config", {})
+		if config.get("content", {}) != expected_content or config.get("selection", []).size() != 2:
+			fail("initial map did not carry the selected additive arena identity")
+			return
+		if "res://" in JSON.stringify(config) or "user://" in JSON.stringify(config):
+			fail("public content descriptor leaked local source paths")
 			return
 	maps[index] = true
 	_check_complete()
@@ -159,6 +167,7 @@ func _check_complete() -> void:
 	var receipt := {"seats": seats, "humans": humans, "bots": bots, "preset_limit": preset, "protocol_limit": 12, "accepted": accepted.size(), "refused": 1, "snapshots": snapshots.size(), "maps": maps.size(), "active": true}
 	receipt.merge(policy_identity)
 	if auto_fill: receipt["auto_fill"] = true
+	if not expected_content.is_empty(): receipt["content"] = expected_content.duplicate(true)
 	print("NEPTUNE_ROOM_CAPACITY=", JSON.stringify(receipt))
 	for entry in peers: entry.api.multiplayer_peer.close()
 	get_tree().quit(0)

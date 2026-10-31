@@ -17,12 +17,6 @@ enum MapSource {
 # Current loaded map data
 var current_map: Dictionary = {}
 
-func load_registered_map(registry: PackRegistry, content_id: String) -> Dictionary:
-	var candidate := registry.get_map(content_id)
-	if candidate.is_empty():
-		return {} # Explicit selection failure preserves the currently selected map.
-	return load_map(MapSource.CUSTOM, candidate)
-
 func load_map(source: MapSource, param: Variant = null) -> Dictionary:
 	"""
 	Load a map from various sources

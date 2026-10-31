@@ -170,6 +170,7 @@ static func _parse_tilemaps(wall_floor: TileMapLayer, spawn_soft: TileMapLayer, 
 			result.name = map_name
 		result.metadata = {
 			"id": metadata.get("map_id") if metadata.get("map_id") != null else "unknown",
+			"version": metadata.get("version") if metadata.get("version") != null else "",
 			"author": metadata.get("author") if metadata.get("author") != null else "Unknown",
 			"description": metadata.get("description") if metadata.get("description") != null else "",
 			"theme": metadata.get("theme") if metadata.get("theme") != null else "classic",

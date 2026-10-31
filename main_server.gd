@@ -62,6 +62,8 @@ func _start_server(runtime: Dictionary) -> void:
 	var prepared := _prepare_shared_game(runtime)
 	if not prepared.accepted:
 		print("[Server] Room setup refused: ", prepared.reason)
+		if prepared.has("field"):
+			print("[Server] Content diagnostic: ", JSON.stringify(prepared))
 		get_tree().quit(2)
 		return
 	
@@ -244,8 +246,8 @@ func _prepare_shared_game(runtime: Dictionary = {}) -> Dictionary:
 		new_game.name = shared_game_id
 		new_game.countdown_time = 0.0
 		new_game.room_map_path = runtime.get("room_map", "")
-		new_game.room_pack_directory = runtime.get("room_pack", "")
-		new_game.room_map_id = runtime.get("room_map_id", "")
+		new_game.room_pack_paths = runtime.get("room_pack_paths", []).duplicate()
+		new_game.room_arena_id = runtime.get("room_arena", "")
 		new_game.room_capacity_request = {"seats": runtime.get("room_seats", 0), "preset_limit": runtime.get("room_preset_limit", Constants.MAX_MATCH_SEATS)}
 		new_game.room_bot_fill_request = {"target": runtime.get("room_fill_to", 0), "personality": runtime.get("room_bot_personality", "BALANCED")}
 		add_child(new_game)

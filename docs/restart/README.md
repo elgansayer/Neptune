@@ -37,7 +37,6 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 
 ## Documents
 
-- [Additive local data-only map packs and host selection](DATA_ONLY_MAP_PACKS.md)
 - [Source-backed project evaluation and build recommendations](PROJECT_EVALUATION.md)
 - [Latest stable dependencies and Godot policy](DEPENDENCY_POLICY.md)
 - [Tests-only automatic merge policy and setup](MERGE_POLICY.md)

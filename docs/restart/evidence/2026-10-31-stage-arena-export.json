@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-31",
+  "issue": 545,
+  "runtime_pr": 546,
+  "runtime_base": "0d95588f5efeeb62523218a808aa71ee05620470",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "source_sha256": {
+    "tools/asset_audit/export_map_pack.gd": "bb9a97be69d5ec4b6fc6bbe2091b0a0edf1a965b941d05af6f94f5b5ac1ce40b",
+    "shared/maps/map_pack_loader.gd": "6711eb10083079300ea5165a70010f1af4601c23586afa3509211650665ee4c7",
+    "tests/test_stage_pack_export.gd": "53a28d63c95365cfe039015c2e51a821f81144730ea52ee4141b51ac330e5be2"
+  },
+  "focused_checks": {
+    "passed": 8,
+    "failed": 0,
+    "files": 1
+  },
+  "log_sha256": "552b259ea7ccf1069188636a9ceaf1eb6b6ab0ee2367a638ae73d11bb76b11ac",
+  "observations": {
+    "source_grid": [
+      21,
+      14
+    ],
+    "hard_blocks": 147,
+    "authored_soft_slots": 135,
+    "spawn_points": 4,
+    "source_version": "1.0",
+    "public_version": "1.0.0",
+    "source_bytes": "Original PCK digest unchanged before/after real export.",
+    "output_bytes": "Existing output refused; both JSON files retain exact prior hashes.",
+    "identity": "Generated manifest and arena hashes match the descriptor returned by the merged ArenaPackLoader.",
+    "native_room": "Generated user:// manifest starts an actual four-seat server with no engine/script errors.",
+    "negative_controls": [
+      "Missing explicit trusted input, missing file, reserved ID, invalid version, blank/oversized provenance, duplicate/unknown arguments and unsafe destination refuse.",
+      "Mutating exported arena bytes causes definition_hash_mismatch."
+    ]
+  },
+  "scope": "Trusted author-time conversion through existing MapPackLoader/MapLoader and merged neptune.pack.v1 runtime. Full native/current-base CI controls integration.",
+  "limits": [
+    "No automatic downloads, archive installation, character schema or per-player avatars.",
+    "Legacy PCK conversion can execute source scenes/scripts and must never process untrusted downloads.",
+    "Static JSON terrain export does not preserve random soft density, art/audio, or establish Saturn fidelity.",
+    "No reference PCK or generated reference geometry is changed/published by this source change."
+  ]
+}
