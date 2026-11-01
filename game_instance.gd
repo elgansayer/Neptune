@@ -5,6 +5,15 @@ class_name GameInstance
 # Manages one game match with multiple players
 
 const Constants = preload("res://shared/constants.gd")
+const MAX_RETAINED_ELIMINATIONS := 256
+
+signal elimination_recorded(event: Dictionary)
+
+var _combat_actor_serial := 0
+var _elimination_sequence := 0
+var _discarded_eliminations := 0
+var _elimination_events: Array[Dictionary] = []
+var _flame_damage_sources: Dictionary = {}
 
 # Entity scene files for instantiation
 const ServerPlayerScene = preload("res://shared/entities/ServerPlayer.tscn")
@@ -441,6 +450,81 @@ func get_simulation_time_sec() -> float:
 func get_clock_state() -> Dictionary:
 	return {"server_time": current_time_msec, "simulation_tick": simulation_tick}
 
+func get_elimination_event_state() -> Dictionary:
+	# Server-local diagnostic history, not durable statistics or a public RPC.
+	return {"schema": 1, "game_id": game_id, "last_sequence": _elimination_sequence,
+		"discarded": _discarded_eliminations, "events": _elimination_events.duplicate(true)}
+
+func _combat_actor_snapshot(player: ServerPlayer) -> Dictionary:
+	return {"peer_id": player.peer_id, "player_id": player.player_id,
+		"participant_id": _spawn_bindings.get(player.peer_id, ""),
+		"incarnation": int(player.get_meta("combat_incarnation", 0)),
+		"type": "bot" if player.is_ai_bot() else "human"}
+
+func _capture_bomb_damage_source(bomb: ServerBomb, player: ServerPlayer) -> void:
+	bomb.set_meta("combat_source", {"kind": "bomb", "bomb_id": bomb.bomb_id,
+		"owner": _combat_actor_snapshot(player)})
+
+func _bomb_damage_source(bomb: ServerBomb) -> Dictionary:
+	# Never resolve an old owner's peer ID against a potentially reused roster slot.
+	return bomb.get_meta("combat_source", {"kind": "bomb", "bomb_id": bomb.bomb_id,
+		"owner": {}}).duplicate(true)
+
+func _apply_player_damage(player: ServerPlayer, source: Dictionary) -> bool:
+	if not is_instance_valid(player) or player.is_dead or players.get(player.peer_id) != player:
+		return false
+	var victim := _combat_actor_snapshot(player)
+	var cell := player.get_tile_position()
+	player.die()
+	if not player.is_dead:
+		return false # Invincibility or a mount absorbed the hit.
+	var owner: Dictionary = source.get("owner", {})
+	var self_ko: Variant = null
+	if source.get("kind") == "bomb" and int(owner.get("incarnation", 0)) > 0 and victim.incarnation > 0:
+		self_ko = owner.incarnation == victim.incarnation
+	_elimination_sequence += 1
+	var event := {"schema": 1, "sequence": _elimination_sequence, "game_id": game_id,
+		"simulation_tick": simulation_tick, "server_time_msec": current_time_msec,
+		"tile": [cell.x, cell.y], "victim": victim,
+		"source": source.duplicate(true), "self_ko": self_ko}
+	if _elimination_events.size() >= MAX_RETAINED_ELIMINATIONS:
+		_elimination_events.pop_front()
+		_discarded_eliminations += 1
+	_elimination_events.append(event)
+	elimination_recorded.emit(event.duplicate(true))
+	return true
+
+func _retain_flame_source(key: String, source: Dictionary, expires_at_msec: float) -> void:
+	if not active_explosion_tiles.has(key):
+		_flame_damage_sources.erase(key)
+	var entries: Array = _flame_damage_sources.get(key, [])
+	for entry in entries:
+		if entry.source.bomb_id == source.bomb_id:
+			entry.expires_at_msec = maxf(entry.expires_at_msec, expires_at_msec)
+			return
+	entries.append({"source": source.duplicate(true), "expires_at_msec": expires_at_msec})
+	_flame_damage_sources[key] = entries
+
+func _prune_flame_sources() -> void:
+	for key in _flame_damage_sources.keys():
+		if not active_explosion_tiles.has(key):
+			_flame_damage_sources.erase(key)
+			continue
+		var live: Array[Dictionary] = []
+		for entry in _flame_damage_sources[key]:
+			if current_time_msec <= entry.expires_at_msec:
+				live.append(entry)
+		if live.is_empty():
+			_flame_damage_sources.erase(key)
+		else:
+			_flame_damage_sources[key] = live
+
+func _lingering_flame_source(key: String) -> Dictionary:
+	var entries: Array = _flame_damage_sources.get(key, [])
+	# Deterministic diagnostic convention: earliest observed source still burning.
+	# This is not a claim about Saturn's scoring or chain/assist rules.
+	return entries[0].source.duplicate(true) if not entries.is_empty() else {"kind": "unknown_flame", "owner": {}}
+
 func configure_room_capacity(seats: Variant, preset_limit: Variant = Constants.MAX_MATCH_SEATS) -> Dictionary:
 	# Trusted preset limits remain independent of the protocol maximum. This does
 	# not assign unmeasured limits to a named Saturn/Power reference preset.
@@ -692,6 +776,8 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 		print("[Game] Player spawned with 1 bomb (no items)")
 	
 	players[peer_id] = player
+	_combat_actor_serial += 1
+	player.set_meta("combat_incarnation", _combat_actor_serial)
 	add_child(player)
 	
 	# For bot players (negative peer_id), set multiplayer authority to server
@@ -875,7 +961,7 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 			for player in players_by_tile[pos]:
 				if is_instance_valid(player) and not player.is_dead:
 					print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-					player.die()
+					_apply_player_damage(player, {"kind": "hurry_block", "tile": [pos.x, pos.y], "owner": {}})
 					_check_alive_players()
 	else:
 		for peer_id in players:
@@ -886,7 +972,7 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 			var player_tile = player.get_tile_position()
 			if player_tile == pos:
 				print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-				player.die()
+				_apply_player_damage(player, {"kind": "hurry_block", "tile": [pos.x, pos.y], "owner": {}})
 
 				# Check for match end
 				_check_alive_players()
@@ -1164,6 +1250,7 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i) -> Str
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
+	_capture_bomb_damage_source(bomb, player)
 	bomb.explosion_range = player.get_effective_bomb_range() # SMALL_FLAME virus forces range to 1
 	bomb.bomb_type = player.bomb_type
 	
@@ -1206,6 +1293,7 @@ func _place_single_bomb(player: ServerPlayer) -> String:
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
+	_capture_bomb_damage_source(bomb, player)
 	bomb.explosion_range = player.get_effective_bomb_range() # SMALL_FLAME virus forces range to 1
 	bomb.bomb_type = player.bomb_type # Copy player's current bomb type
 	
@@ -1311,10 +1399,12 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 	# Calculate when this explosion tile expires (in milliseconds)
 	# Explosion lasts for EXPLOSION_DURATION (1.0 seconds by default)
 	var expiration_time = current_time_msec + GameConfig.EXPLOSION_DURATION * 1000.0
+	var source := _bomb_damage_source(bomb)
 	
 	for tile_pos in tiles:
 		# Track this tile as actively burning for continuous damage detection
 		var tile_key = "%d,%d" % [tile_pos.x, tile_pos.y]
+		_retain_flame_source(tile_key, source, expiration_time)
 		active_explosion_tiles[tile_key] = expiration_time
 		
 		# Check for player hits
@@ -1328,7 +1418,7 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 			var player_tile = player.get_tile_position()
 			
 			if player_tile == tile_pos:
-				player.die()
+				_apply_player_damage(player, source)
 				print("[Game] Player ", player.username, " killed by explosion at ", tile_pos)
 				
 				# Check if match should end (only 1 or 0 players left alive)
@@ -1373,6 +1463,7 @@ func _check_explosion_damage():
 	
 	for tile_key in expired_tiles:
 		active_explosion_tiles.erase(tile_key)
+	_prune_flame_sources()
 	
 	# Now check if any alive player is standing on a burning tile
 	for peer_id in players:
@@ -1386,7 +1477,7 @@ func _check_explosion_damage():
 		var tile_key = "%d,%d" % [player_tile.x, player_tile.y]
 		
 		if active_explosion_tiles.has(tile_key):
-			player.die()
+			_apply_player_damage(player, _lingering_flame_source(tile_key))
 			print("[Game] Player ", player.username, " walked into explosion at ", player_tile)
 			check_match_end_condition()
 

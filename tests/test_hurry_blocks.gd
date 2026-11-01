@@ -28,7 +28,10 @@ func player_at(cell: Vector2i) -> ServerPlayer:
 	var player := ServerPlayer.new()
 	player.position = BotTestHelpers.tile_to_world_center(cell)
 	owned_players.append(player)
-	game_instance.players[owned_players.size()] = player
+	# Keep the low-level fixture's actor identity consistent with its roster key.
+	player.peer_id = owned_players.size()
+	player.player_id = str(player.peer_id)
+	game_instance.players[player.peer_id] = player
 	return player
 
 func bomb_at(id: String, cell: Vector2i) -> ServerBomb:
