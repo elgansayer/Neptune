@@ -92,6 +92,12 @@ These are source-level findings at `6da6f5...`, not runtime-confirmed fixes:
 
 ## Evaluation contract
 
+The first server-local elimination stream is documented in
+[ELIMINATION_EVENTS.md](ELIMINATION_EVENTS.md). It retains direct/lingering bomb
+provenance and actor incarnations, with explicit unknown/environmental causes.
+Use those records rather than proximity or console messages for causal evidence;
+chain/assist rules, avoidability and a full tournament consumer remain separate.
+
 Each run records engine/build, policy version, difficulty, ruleset and map hashes,
 seed, participant types, replay/event evidence, result and CPU timing. Use held-out
 maps and seeds for promotion; a worker may not tune against all evaluation cases.
