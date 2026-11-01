@@ -1,5 +1,12 @@
 extends "res://tests/bot_test_suite.gd"
 
+func setup_test() -> void:
+	# These independent movement experiments reuse the suite authority, not a
+	# live round whose roster was removed by the preceding case's teardown.
+	game_instance.match_active = false
+	await super()
+	game_instance.match_active = true
+
 func _overlap_players() -> bool:
 	var center := BotTestHelpers.tile_to_world_center(Vector2i(3, 3))
 	await game_instance.add_player(-101, "Owner", center, true, "fixture")
