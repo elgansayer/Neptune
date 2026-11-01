@@ -11,6 +11,13 @@ compatibility as part of adopting current releases.
 
 ## Goal
 
+The owner's 1 November clarification requires exact maps/assets, timing, speeds,
+mechanics, effects, music and sound in the faithful profile. Apply
+[SATURN_FIDELITY.md](SATURN_FIDELITY.md) to task intake and completion: exact
+state/events, native pixels and sample-timed audio at the declared digital boundary.
+Existing metadata/native CI is not whole-game parity. Continue independent
+community work while #29/#76/#511 build the measured end-to-end acceptance slices.
+
 The owner's clarified ethos is [Saturn first, additions only, automatic sharing](COMMUNITY_CONTENT.md#owners-ethos-saturn-first-everything-extensible-additions-only).
 The initial game should look and act like Saturn Bomberman; creators then extend
 every supported content category without replacing original content. Player-hosted
@@ -36,6 +43,8 @@ are not prerequisites for a moddable multiplayer prototype. The current product
 contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 
 ## Documents
+
+- [Exact Saturn fidelity, tools and agent handoffs](SATURN_FIDELITY.md)
 
 - [Source-backed project evaluation and build recommendations](PROJECT_EVALUATION.md)
 - [Latest stable dependencies and Godot policy](DEPENDENCY_POLICY.md)

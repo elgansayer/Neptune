@@ -13,6 +13,16 @@ whether to implement, extend, or close an already-satisfied feature.
 
 The 30 October research expansion is coordinated by [#477](https://github.com/elgansayer/Neptune-Bomberman/issues/477), with Saturn [#464](https://github.com/elgansayer/Neptune-Bomberman/issues/464) and Power [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476). See [research execution](../RESEARCH_EXECUTION.md) for accepted inputs, tool candidates and next experiments. The 38 RSAT/RPWR/RLAB jobs add code recovery, complete media extraction and original execution; they do not replace the existing content inventories or community implementation backlog.
 
+The owner's 1 November accuracy requirement is defined in
+[SATURN_FIDELITY.md](../SATURN_FIDELITY.md). The faithful baseline requires exact
+state/event timing, native-resolution pixels and native-rate digital audio at
+declared comparison boundaries, with explicit mappings between input, game,
+display and sample clocks. Approximate screenshots or tolerated prototype checks
+cannot pass that contract. Unknowns remain incomplete or blocked. Apply these
+requirements through the existing feature IDs and acceptance/evidence fields,
+preserving issue history and active task revisions. Original creator fixtures
+remain independently eligible and cannot establish Saturn parity.
+
 Automatic tool preparation is [FACTORY-017 / #518](https://github.com/elgansayer/Neptune-Bomberman/issues/518).
 Its pinned installer CLI is documented in [PROVISIONING.md](../../../tools/factory/PROVISIONING.md);
 factory lifecycle integration and real VPS recovery remain explicit acceptance.

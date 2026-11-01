@@ -1,5 +1,10 @@
 # Project Plan: Competitive Bomberman
 
+> Historical plan: November 2025. Current execution follows
+> [the restart plan](docs/restart/README.md), [the product contract](docs/restart/COMMUNITY_CONTENT.md)
+> and [the 1 November 2026 exact Saturn fidelity contract](docs/restart/SATURN_FIDELITY.md).
+> The completion claims below require current runtime evidence.
+
 **Updated: November 2025**
 
 ## 🏗️ Current Architecture (v2.0)

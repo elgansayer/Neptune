@@ -2,11 +2,51 @@ name: Research or factory task
 description: A bounded task with dependencies, evidence and acceptance checks
 title: '[Research] '
 body:
+  - type: markdown
+    attributes:
+      value: >-
+        Follow docs/restart/SATURN_FIDELITY.md. These answers feed the existing
+        intake kind, acceptance and evidence fields; they do not define a second
+        machine task schema. Finish active work and reconcile leases before dispatch.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Task kind
+      description: Select the existing intake task kind. Split coordination epics into bounded children.
+      options:
+        - research
+        - implementation
+        - verification
+        - operations
+    validations:
+      required: true
   - type: textarea
     id: outcome
     attributes:
       label: Observable outcome
       description: What must demonstrably work? State the scope and exclusions.
+    validations:
+      required: true
+  - type: textarea
+    id: fidelity_applicability
+    attributes:
+      label: Saturn fidelity applicability
+      description: >-
+        State whether this task targets exact Saturn fidelity, exploratory/prototype
+        work or unrelated creator/factory work. Name applicable state, visual and
+        audio contracts; give an explicit N/A reason for each unrelated contract.
+        Prototype acceptance cannot establish exact fidelity.
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: Pinned scenario and comparison
+      description: >-
+        For applicable contracts, name reference release/profile, input/checkpoint,
+        controller/settings identity, timebase, observable scope and repeatable
+        comparison command. State unresolved precision and coverage. If no reference
+        scenario applies, explain N/A and name the bounded task fixture instead.
     validations:
       required: true
   - type: textarea
@@ -20,13 +60,23 @@ body:
     id: evidence
     attributes:
       label: Reference evidence
-      description: Catalogue feature IDs, source/version, input hashes, harness/core build, scenario, capture IDs, timing uncertainty and known unknowns. Distinguish documented from observed.
+      description: >-
+        Catalogue feature IDs, source/version, input hashes, harness/core/settings
+        identity, scenario, capture/output digests, task revision/head/base, timing
+        uncertainty and known unknowns. Distinguish documented, observed, implemented
+        and exactly verified. Keep original media private and oracle fixtures
+        independent of candidate outputs. Give N/A reasons where unrelated.
     validations:
       required: true
   - type: textarea
     id: acceptance
     attributes:
       label: Acceptance checks
-      description: Commands, expected observable results and failure cases. Missing evidence must fail.
+      description: >-
+        Commands, expected observable results and failure cases, including a
+        deliberate state/timing/pixel/audio mutation that the applicable verifier
+        must reject. Explain N/A checks. Missing, stale, skipped or truncated evidence
+        must fail. A trusted executable verifier supplies results; no mandatory
+        model approving review is required. Do not claim these gates already exist.
     validations:
       required: true
