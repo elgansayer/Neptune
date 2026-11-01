@@ -10,6 +10,11 @@ additions-only community content and automatic sharing through player-hosted ser
 Read the [canonical contract](docs/restart/COMMUNITY_CONTENT.md) and
 [current project evaluation](docs/restart/PROJECT_EVALUATION.md).
 
+The owner's 1 November target includes exact timings, speeds, mechanics, effects,
+music and sound. Follow the [Saturn fidelity acceptance contract](docs/restart/SATURN_FIDELITY.md)
+and its measured state, native-pixel and sample-timed audio gates. These remain
+implementation goals; tooling tests alone do not certify the original game rebuilt.
+
 A competitive multiplayer Bomberman game with server-authoritative physics and modern networking.
 
 ## 🏗️ Architecture

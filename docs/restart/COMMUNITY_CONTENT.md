@@ -1,6 +1,9 @@
 # Multiplayer, bots and community-created adventures
 
 Status: accepted product direction, clarified by the owner on 30 October 2026.
+The 1 November clarification in [SATURN_FIDELITY.md](SATURN_FIDELITY.md) requires
+exact timing, mechanics, speeds, native visuals, effects, music and sound for the
+faithful starting profile. Approximate prototypes remain separate evidence.
 This is an implementation contract, not a claim that these features exist.
 Tracker: [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23).
 

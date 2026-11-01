@@ -3,13 +3,16 @@
 Read `docs/restart/README.md`, `docs/restart/REQUIREMENTS.md`, and
 `docs/restart/REVERSE_ENGINEERING.md` before working on the restart. Also read
 `docs/restart/POWER_BOMBERMAN.md` and `docs/restart/FACTORY_PLAYBOOK.md`.
+Read `docs/restart/SATURN_FIDELITY.md` for the owner's 1 November exact timing,
+mechanics, native-pixel and sample-timed audio acceptance contract.
 Read `docs/restart/BOTS.md` for all AI/gameplay work and
 `docs/restart/COMMUNITY_CONTENT.md` for the multiplayer-first product contract.
 Read `docs/restart/RESEARCH_EXECUTION.md` and issue #477 for the current research
 expansion, accepted inputs and authorised existing Elgl factory integration.
 Read `docs/restart/MERGE_POLICY.md`: Elgan authorised tests-gated auto-merge without
 a mandatory AI/human approving review; this supersedes older review requirements.
-These define the October 2026 scope. Earlier root plans and completion reports are historical
+These define the current restart scope, including the 1 November fidelity clarification.
+Earlier root plans and completion reports are historical
 claims to verify against code and actual execution, not evidence of correctness.
 
 ## Product
@@ -53,6 +56,16 @@ claims to verify against code and actual execution, not evidence of correctness.
   native extensions or scene scripts. Design data-only packs first.
 
 ## Work and evidence
+
+- A faithful Saturn claim requires the applicable exact state/event, native-pixel
+  and native-rate audio comparisons under `SATURN_FIDELITY.md`. Approximate
+  prototypes and accepted tooling are separate progress. Track unmeasured or
+  mismatching systems as open; do not silently relax precision or regenerate
+  reference fixtures from candidate output. Carry scenario, source/candidate
+  identities, clock units and mutation controls in existing task fields.
+- Read live #33/#536 before scheduling continuous provider work. Preserve shared
+  manual-session leases, account-wide limits and existing workers. More agents
+  do not establish recovered semantics or passing fidelity evidence.
 
 - Always commit and push completed task changes before ending a work session;
   never leave completed work only locally. When using a PR, create or update it

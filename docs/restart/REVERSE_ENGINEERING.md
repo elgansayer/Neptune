@@ -11,6 +11,14 @@ The next executable research sequence is [SATURN_RECONSTRUCTION.md](SATURN_RECON
 The canonical comparison tool and its limits are documented in
 [TRACE_FORMAT.md](../../tools/saturn_lab/TRACE_FORMAT.md).
 
+The owner's 1 November requirement is [SATURN_FIDELITY.md](SATURN_FIDELITY.md).
+The faithful baseline must match measured timings, speeds, mechanics, effects,
+music and sound as well as every covered map and asset. Require exact state/events,
+native-resolution pixels and native-rate digital audio at declared boundaries.
+Approximate/prototype comparisons remain useful diagnostics and do not satisfy
+exact parity. Unknowns remain incomplete or blocked. Complete source reconstruction
+is not a prerequisite for the first measured Godot slice or original creator work.
+
 ## Input identity and repeatability
 
 The current `tools/saturn_lab/cli.py` inventories files and creates/verifies input
@@ -103,22 +111,40 @@ include boundary conditions and simultaneous events.
 
 Create equivalent initial conditions in Neptune through a scenario adapter;
 Saturn RAM addresses are not Neptune's state model. Compare canonical positions,
-events, outcomes and aligned rendered regions. Use exact equality where defined
-and explicit, justified tolerances for renderer differences. Match the reference
-timebase; do not silently assume every region is exactly 60 Hz.
+events, outcomes, native-resolution pixels and native-rate digital audio according
+to the declared faithful comparison contract. Map input polling, game ticks,
+VBlank/presentation, task ordering and audio sample indices explicitly. Match the
+reference timebase without assuming every region is exactly 60 Hz or using local
+render/wall-clock time as a substitute. Retain the original and candidate capture,
+adapter and content identities. Any tolerant renderer/audio comparison must be
+labelled diagnostic or approximate and cannot pass the exact baseline gate.
 
-Recover RNG behaviour when exact replay requires it; otherwise use controlled
-cases and labelled statistical comparisons. Local scripted controllers establish
-battle rules first; browser/native networking tests establish transport behaviour
-separately. Neither test substitutes for the other.
+Recover source samples separately from SCSP sequence/driver/mix behavior and
+CD/streamed audio. Preserve native formats, rates, channels, sample counts,
+trigger/loop boundaries, pitch/envelopes, pan/volume and interruption/priority
+semantics. Verify the resulting production Godot event and PCM timelines,
+including transitions, pause/slowdown and repeated loops. A successful WAV export
+or a correct soundtrack played at the wrong event/sample boundary is incomplete.
+
+Recover RNG behavior and call ordering for exact replay of affected systems.
+Controlled cases and labelled statistical comparisons may advance research while
+RNG remains unknown, but cannot establish the exact baseline. Local scripted
+controllers establish battle rules first; browser/native networking tests
+establish transport behavior separately. Neither test substitutes for the other.
 
 ## Completion gate for the first slice
 
 - Clean-checkout tooling can fingerprint the actual selected reference inputs.
 - Repeated recorded runs have identical canonical outputs in the pinned environment.
 - One real character's required animations are exported with palettes and timing evidence.
-- One campaign room and one battle arena have visual and behavioural fixtures.
-- A deliberate change to movement or fuse behaviour causes parity CI to fail.
+- One campaign room and one battle arena have production Godot comparisons for
+  state/events, visuals and representative triggered sound/music, with explicit
+  frame/sample clocks and native output boundaries.
+- Deliberate movement/fuse, animation/pixel and audio/sample/loop mutations each
+  cause the applicable faithful comparison to fail at a reproducible divergence.
+- Authentic real-source receipts identify reference and candidate inputs/builds,
+  adapters, captures and task revision/head/current base. Missing, stale,
+  truncated or forged evidence fails rather than becoming a passing placeholder.
 - A failure produces a reproducible GitHub issue with evidence IDs and the first divergence.
 
 ## Primary references checked during planning

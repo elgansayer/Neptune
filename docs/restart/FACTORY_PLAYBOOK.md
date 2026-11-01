@@ -17,9 +17,49 @@ separate acceptance gate. A Codex session or successful local store test is not
 a running Neptune factory. Research queues and receipts are #510/#511; see
 [research execution](RESEARCH_EXECUTION.md) and the live index #477.
 
+Current continuity work is #536 under #33. Its shared manual-session lease
+compatibility gate remains unresolved; unattended continuity is inactive. Finish
+active bounded tasks and reconcile existing owners before dispatch. This document
+does not authorise launching a competing scheduler or bypassing that gate.
+
 [MERGE_POLICY.md](MERGE_POLICY.md) supersedes the earlier mandatory review gate:
 merge automatically after applicable exact-head/current-base tests succeed.
 Optional AI review must not block the queue. GitHub auto-merge can run before #33.
+
+## 1 November fidelity contract and agent handoffs
+
+Read [the canonical Saturn fidelity contract](SATURN_FIDELITY.md). The owner now
+explicitly requires identical content and presentation, including maps, levels,
+assets, effects and music, with exact measured mechanics, timing and speeds for
+the chosen release. Complete source reconstruction is not a prerequisite; every
+claimed match still needs evidence. Prototype checks and exploratory observations
+cannot close an exact-fidelity milestone. Unrelated creator work can proceed with
+original fixtures and explicit applicability limits.
+
+Use the existing intake `acceptance`, `evidence`, `prerequisites`, `capabilities`
+and bounded `scope` fields; do not introduce a second task schema. Each relevant
+task names its reference release/profile and scenario, input/checkpoint and
+timebase, observable state/video/audio contract, exact comparison command,
+evidence identities and deliberately wrong result that the verifier must reject.
+State which checks do not apply and why. Track unresolved precision and coverage
+as unknown, rather than converting them into an exact result. Update trusted
+intake revisions deliberately; active leases retain their accepted scope.
+
+Capture/measurement workers produce pinned observations and reproducible fixtures;
+implementation workers consume those contracts; a trusted executable verifier
+replays comparisons and reports the first divergence. Keep oracle inputs separate
+from candidate outputs. A model's judgement or approving review is not the gate.
+Prioritise #76/#511 for this verification path and #29/#488/#489 for state, visual
+and audio comparisons. Those issue references describe remaining work, not gates
+already implemented by these instructions.
+
+Reuse the existing shared control plane and provider broker. Reserve code paths,
+reference processes and shared capture/build resources through existing leases;
+begin with one heavy job within configured host, retry and spend limits. Other
+agents may inspect bounded results or own disjoint eligible work within those
+limits. Do not interpret a new role or repository as an additional budget.
+Promote scripts/runbooks into reusable skills through #508 only after real
+commands, negative cases and a second supported agent establish reproducibility.
 
 ## Workstreams and handoffs
 
