@@ -92,7 +92,19 @@ var sent_explosions := {} # bomb_id -> bool (has this explosion been sent to cli
 # Match timer
 var match_duration := 180.0 # 3 minutes default
 var match_time_remaining := match_duration
-var match_active := false # Start false, set true after countdown
+var _round_end_check_pending := false
+var _round_timeout_pending := false
+var _round_result: Dictionary = {}
+var match_active := false: # Start false, set true after countdown.
+	set(value):
+		if value and not match_active:
+			# Trusted activation also supports isolated native fixtures. Configured
+			# rooms still refuse implicit restarts through start_room_countdown().
+			_round_end_check_pending = false
+			_round_timeout_pending = false
+			_round_result = {}
+			winner_id = ""
+		match_active = value
 var countdown_time := 1.0 # 1 second countdown before match starts
 var winner_id := ""
 
@@ -422,7 +434,8 @@ func _physics_process(delta):
 		
 		if match_time_remaining <= 0:
 			match_time_remaining = 0
-			end_match()
+			# Bombs and actors still own this final tick. Settle after their phase.
+			_round_timeout_pending = true
 	
 	last_sync_time += delta
 	
@@ -437,6 +450,7 @@ func _physics_process(delta):
 	# The late physics publisher sends state after actor movement has completed.
 
 func _publish_due_state() -> void:
+	_settle_round_end()
 	if last_sync_time >= SYNC_INTERVAL:
 		last_sync_time = 0.0
 		sync_state_to_clients()
@@ -471,7 +485,7 @@ func _bomb_damage_source(bomb: ServerBomb) -> Dictionary:
 		"owner": {}}).duplicate(true)
 
 func _apply_player_damage(player: ServerPlayer, source: Dictionary) -> bool:
-	if not is_instance_valid(player) or player.is_dead or players.get(player.peer_id) != player:
+	if not _round_result.is_empty() or not is_instance_valid(player) or player.is_dead or players.get(player.peer_id) != player:
 		return false
 	var victim := _combat_actor_snapshot(player)
 	var cell := player.get_tile_position()
@@ -491,6 +505,7 @@ func _apply_player_damage(player: ServerPlayer, source: Dictionary) -> bool:
 		_elimination_events.pop_front()
 		_discarded_eliminations += 1
 	_elimination_events.append(event)
+	check_match_end_condition()
 	elimination_recorded.emit(event.duplicate(true))
 	return true
 
@@ -790,6 +805,7 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	return {"accepted": true, "reason": "admitted", "peer_id": peer_id, "participant_id": identity, "cell": allocation.cell.duplicate(), "position": [spawn_position.x, spawn_position.y], "reused": allocation.reused}
 
 func remove_player(peer_id: int, retain_spawn: bool = false):
+	var was_present := players.has(peer_id)
 	if players.has(peer_id):
 		var player = players[peer_id]
 		if is_instance_valid(player):
@@ -805,14 +821,46 @@ func remove_player(peer_id: int, retain_spawn: bool = false):
 	_spawn_bindings.erase(peer_id)
 	if _spawn_plan != null and not retain_spawn: _spawn_plan.release(identity)
 	print("[Game] Player left: ", peer_id)
+	if was_present:
+		check_match_end_condition()
 
-func end_match():
-	"""End the match and determine winner"""
+func get_round_result() -> Dictionary:
+	# Server-local terminal snapshot; empty until settlement, never a live roster.
+	return _round_result.duplicate(true)
+
+func _alive_player_ids() -> Array[String]:
+	var alive: Array[String] = []
+	for peer_id in players:
+		if is_instance_valid(players[peer_id]) and not players[peer_id].is_dead:
+			alive.append(str(peer_id))
+	alive.sort()
+	return alive
+
+func _settle_round_end() -> void:
 	if not match_active:
+		return
+	var check_survivors := _round_end_check_pending
+	var timed_out := _round_timeout_pending
+	_round_end_check_pending = false
+	_round_timeout_pending = false
+	if timed_out:
+		end_match("timeout")
+	elif check_survivors and _alive_player_ids().size() <= 1:
+		end_match("survivors")
+
+func end_match(reason: String = "stopped"):
+	"""Trusted explicit stop; gameplay requests settle in the late physics phase."""
+	if not match_active or not _round_result.is_empty():
 		return # Already ended
 	
+	var survivors := _alive_player_ids()
+	winner_id = survivors[0] if survivors.size() == 1 else ""
+	_round_result = {"schema": 1, "game_id": game_id, "simulation_tick": simulation_tick,
+		"server_time_msec": current_time_msec, "reason": reason,
+		"winner_id": winner_id, "survivors": survivors}
+	_round_end_check_pending = false
+	_round_timeout_pending = false
 	match_active = false
-	winner_id = find_winner()
 	
 	print("[GameInstance] Match ended. Winner: ", winner_id if winner_id else "Draw")
 	game_ended.emit(winner_id)
@@ -823,10 +871,7 @@ func end_match():
 
 func find_winner() -> String:
 	"""Find the winner (last player alive)"""
-	var alive_players = []
-	for peer_id in players:
-		if not players[peer_id].is_dead:
-			alive_players.append(str(peer_id))
+	var alive_players := _alive_player_ids()
 	
 	# Return single survivor, or empty string if draw/no survivors
 	if alive_players.size() == 1:
@@ -962,7 +1007,6 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 				if is_instance_valid(player) and not player.is_dead:
 					print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
 					_apply_player_damage(player, {"kind": "hurry_block", "tile": [pos.x, pos.y], "owner": {}})
-					_check_alive_players()
 	else:
 		for peer_id in players:
 			var player = players[peer_id]
@@ -973,9 +1017,6 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 			if player_tile == pos:
 				print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
 				_apply_player_damage(player, {"kind": "hurry_block", "tile": [pos.x, pos.y], "owner": {}})
-
-				# Check for match end
-				_check_alive_players()
 	
 	# Destroy any bomb at this position
 	var bombs_to_remove = []
@@ -1031,14 +1072,7 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 	map_changes.append([pos.x, pos.y, 3])
 
 func _check_alive_players():
-	"""Check if match should end after a player death"""
-	var alive_count = 0
-	for peer_id in players:
-		if not players[peer_id].is_dead:
-			alive_count += 1
-	
-	if alive_count <= 1:
-		end_match()
+	check_match_end_condition()
 
 var _public_observation_source: RefCounted
 
@@ -1421,8 +1455,6 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 				_apply_player_damage(player, source)
 				print("[Game] Player ", player.username, " killed by explosion at ", tile_pos)
 				
-				# Check if match should end (only 1 or 0 players left alive)
-				check_match_end_condition()
 		
 		# Check for destructible blocks
 		if tile_pos.y >= 0 and tile_pos.y < game_map.size():
@@ -1479,21 +1511,11 @@ func _check_explosion_damage():
 		if active_explosion_tiles.has(tile_key):
 			_apply_player_damage(player, _lingering_flame_source(tile_key))
 			print("[Game] Player ", player.username, " walked into explosion at ", player_tile)
-			check_match_end_condition()
 
 func check_match_end_condition():
-	"""Check if the match should end based on alive players"""
-	if not match_active:
-		return
-	
-	var alive_count = 0
-	for peer_id in players:
-		if not players[peer_id].is_dead:
-			alive_count += 1
-	
-	# End match if 1 or fewer players alive
-	if alive_count <= 1:
-		end_match()
+	# Count only at the completed tick, after every damage/removal callback.
+	if match_active:
+		_round_end_check_pending = true
 
 func destroy_block(cell: Vector2i):
 	"""Destroy a destructible block and optionally spawn powerup (server-side only)"""

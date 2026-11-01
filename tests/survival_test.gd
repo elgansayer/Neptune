@@ -1,5 +1,12 @@
 extends "res://tests/bot_test_suite.gd"
 
+func setup_test() -> void:
+	# Prior-case roster cleanup can now settle an empty round. Each survival
+	# experiment explicitly activates its own fixture after setup completes.
+	game_instance.match_active = false
+	await super()
+	game_instance.match_active = true
+
 func test_escape_own_bomb_open_area() -> Variant:
 	# Setup: Bot in 7x7 clear area
 	# Clear 7x7 area around center
