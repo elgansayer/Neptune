@@ -173,6 +173,37 @@ Give other agents compact hashes/derived measurements and an explicit capture
 handoff. Standard libretro does not expose VDP1/VDP2 texture, palette or tracing
 hooks: those still require #28's separately pinned/instrumented core.
 
+## Optional lossless audio retention
+
+`frontend.py run --capture-audio` retains exact interleaved signed 16-bit stereo
+callback bytes in private `audio.s16le`, with an observations-bound `audio.json`
+manifest containing per-emulated-frame sample offsets/counts/hashes, exact reported
+sample rate and the capture/checkpoint origin. Existing observation and checkpoint
+schemas remain unchanged. Successful enabled runs include an `audio_capture`
+result. Use a newly configured pinned frontend bundle; preserve older bundles and
+locks for their accepted evidence.
+
+```sh
+python3 tools/saturn_lab/compare_pcm.py \
+  /private/evidence/audio-boot/audio.json \
+  /private/evidence/audio-restored/audio.json --reference-start 3000
+```
+
+The explicit reference index selects a video-frame suffix for a restored replay.
+The comparator validates retained observations and all raw PCM hashes/counts,
+requires matching component/AV identities, absolute frames and controller masks,
+and reports the first sample/channel or frame-boundary divergence. It never
+resamples, normalizes or infers alignment. Limits include 64 MiB of PCM and
+65,536 stereo sample frames per emulated frame. A wholly empty stream fails;
+nonempty digital silence is valid. Failed runs never publish a successful audio
+manifest. Raw PCM remains private alongside original captures.
+
+See [PCM_FORMAT.md](PCM_FORMAT.md) for the format, lifecycle, limits and exit codes.
+This is same-core replay tooling with synthetic validation only; real Saturn
+execution, trusted source authentication and production Godot audio parity remain
+separate, unverified work under #488/#511. The callback-output rate does not prove
+the original sound chip's internal rate or hardware accuracy.
+
 ## Tests and scope
 
 ```sh

@@ -23,6 +23,7 @@ import time
 
 from cli import LabError, confined_file, create_lock, disc_files, fingerprint, output_json, read_json, verify_lock
 from media import FIRMWARE, verify_media
+from pcm import MAX_FRAME_SAMPLES, PCMWriter
 
 SETTINGS = "neptune.libretro-settings.v1"
 CHECKPOINT = "neptune.libretro-checkpoint.v1"
@@ -88,7 +89,7 @@ def validate_actions(actions, frames, ports=12):
 
 
 class Core:
-    def __init__(self, path, system, save, options=None, log_shim=None):
+    def __init__(self, path, system, save, options=None, log_shim=None, retain_audio=False):
         if sys.byteorder != "little": raise LabError("This frontend currently requires a little-endian host")
         self.dll = C.CDLL(str(path))
         self.system = str(system).encode()
@@ -107,6 +108,9 @@ class Core:
         self.pixels = None
         self.audio = hashlib.sha256()
         self.audio_frames = 0
+        self.retain_audio = retain_audio
+        self.audio_pcm = bytearray() if retain_audio else None
+        self.audio_window = False
         self.loaded = False
         self.initialized = False
         self.frame = 0
@@ -207,6 +211,8 @@ class Core:
             if base == 47:
                 C.cast(data, C.POINTER(C.c_int))[0] = 3
                 return True
+            if base == 32 and self.retain_audio:
+                raise LabError("Dynamic AV timing changes are unsupported during PCM capture")
             if base in (51, 6, 8, 11, 18, 32, 35, 37, 44, 87): return True
             if base == 7: raise LabError("Core requested shutdown")
             return False # Optional unknown interfaces are explicitly unsupported.
@@ -229,17 +235,28 @@ class Core:
                           "sha256": hashlib.sha256(raw).hexdigest()}
         except Exception as error: self.errors.append(str(error))
 
+    def _record_audio(self, raw, frames):
+        if self.retain_audio:
+            if not self.audio_window:
+                raise LabError("Audio callback outside the captured retro_run window")
+            if self.audio_frames + frames > MAX_FRAME_SAMPLES:
+                raise LabError("PCM per-frame sample budget exceeded")
+            self.audio_pcm.extend(raw)
+        self.audio.update(raw)
+        self.audio_frames += frames
+
     def _audio(self, left, right):
         try:
-            self.audio.update(int(left).to_bytes(2, "little", signed=True) + int(right).to_bytes(2, "little", signed=True))
-            self.audio_frames += 1
+            self._record_audio(int(left).to_bytes(2, "little", signed=True) + int(right).to_bytes(2, "little", signed=True), 1)
         except Exception as error: self.errors.append(str(error))
 
     def _batch(self, data, frames):
         try:
             if frames > 65536: raise LabError("Unbounded audio batch")
-            self.audio.update(C.string_at(data, frames * 4))
-            self.audio_frames += frames
+            if frames and not data: raise LabError("Null audio batch pointer")
+            if self.retain_audio and self.audio_frames + frames > MAX_FRAME_SAMPLES:
+                raise LabError("PCM per-frame sample budget exceeded")
+            self._record_audio(C.string_at(data, frames * 4) if frames else b"", frames)
             return frames
         except Exception as error:
             self.errors.append(str(error))
@@ -272,8 +289,13 @@ class Core:
         self.masks = masks
         self.audio = hashlib.sha256()
         self.audio_frames = 0
+        if self.retain_audio: self.audio_pcm = bytearray()
         self.video_called = False
-        self.dll.retro_run()
+        self.audio_window = True
+        try:
+            self.dll.retro_run()
+        finally:
+            self.audio_window = False
         self.check()
         if not self.video_called or self.video is None: raise LabError("Frame execution produced no video callback")
         observation = {"frame": self.frame, "video": dict(self.video), "audio_sha256": self.audio.hexdigest(), "audio_frames": self.audio_frames, "inputs": list(masks)}
@@ -328,7 +350,7 @@ def configure(args):
     copy_checked(args.core, core_path)
     source = Path(__file__).resolve()
     frontend_sha = fingerprint(source)["sha256"]
-    module_hashes = {name: fingerprint(source.parent / name)["sha256"] for name in ("frontend.py", "cli.py", "media.py", "log_shim.c")}
+    module_hashes = {name: fingerprint(source.parent / name)["sha256"] for name in ("frontend.py", "cli.py", "media.py", "pcm.py", "log_shim.c")}
     bundle = "frontends/" + digest(module_hashes)
     for name in module_hashes: copy_checked(source.parent / name, root / bundle / name)
     shim_build = args.output / "log_shim.so"
@@ -377,7 +399,7 @@ def checkpoint_identity(root, lock, profile):
 
 def validate_profile(root, profile):
     """Verify executable components transitively pinned by the locked settings."""
-    modules = {"frontend.py", "cli.py", "media.py", "log_shim.c"}
+    modules = {"frontend.py", "cli.py", "media.py", "pcm.py", "log_shim.c"}
     if profile.get("schema") != SETTINGS or set(profile.get("source_modules", {})) != modules:
         raise LabError("Incomplete frontend settings/modules")
     if profile.get("frontend_sha256") != fingerprint(Path(__file__).resolve())["sha256"] or fingerprint(confined_file(root, profile["frontend_path"]))["sha256"] != profile["frontend_sha256"] or profile.get("python_sha256") != fingerprint(Path(sys.executable).resolve())["sha256"]:
@@ -446,13 +468,18 @@ def run(args):
     disc = confined_file(root, lock["inputs"]["disc"])
     for name in [disc.stem + ".smpc", "mednafen_saturn_libretro_shared.smpc"]:
         (save / name).write_bytes(bytes(expected_seed))
-    driver = Core(confined_file(root, lock["inputs"]["emulator"]), root / profile["system_directory"], save, profile["options"], confined_file(root, shim["path"]))
+    capture_audio = getattr(args, "capture_audio", False)
+    driver = Core(confined_file(root, lock["inputs"]["emulator"]), root / profile["system_directory"], save, profile["options"], confined_file(root, shim["path"]), retain_audio=capture_audio)
+    pcm_writer = None
+    restored_state_sha256 = None
     frames = []
     captures = set(args.capture)
     try:
+        if capture_audio: pcm_writer = PCMWriter(args.output)
         av = driver.load(disc, profile["controller_devices"])
         if args.restore:
             meta, state = read_checkpoint(args.restore, identity)
+            restored_state_sha256 = meta["state_sha256"]
             driver.restore(state)
             driver.frame = meta["frame"]
             driver.video = meta["last_video"]
@@ -461,16 +488,21 @@ def run(args):
             for action in actions:
                 if action["start"] <= relative < action["end"]: masks[action["port"]] |= action["mask"]
             frames.append(driver.step(masks))
+            if pcm_writer is not None: pcm_writer.append(frames[-1], bytes(driver.audio_pcm))
             if args.checkpoint_at == relative + 1 or (args.checkpoint and relative + 1 == args.frames):
                 state = driver.save_state()
                 (args.output / "checkpoint.state").write_bytes(state)
                 output_json({"schema": CHECKPOINT, "identity": identity, "state_path": "checkpoint.state", "state_sha256": hashlib.sha256(state).hexdigest(), "state_bytes": len(state), "frame": driver.frame, "last_video": driver.video}, args.output / "checkpoint.json")
             if relative in captures:
                 write_capture(driver, args.output / f"frame-{relative:06}.ppm")
-    finally: driver.close()
+    finally:
+        try:
+            driver.close()
+        finally:
+            if pcm_writer is not None: pcm_writer.close()
     observations = {"schema": "neptune.libretro-observations.v1", "identity": identity, "av": av, "frames": frames}
     output_json(observations, args.output / "observations.json")
-    return {"command": "run", "identity": identity, "frames": len(frames), "av": av,
+    result = {"command": "run", "identity": identity, "frames": len(frames), "av": av,
             "canonical_digest": digest(frames), "video_digest": digest([frame["video"] for frame in frames]),
             "audio_digest": digest([(frame["audio_sha256"], frame["audio_frames"]) for frame in frames]),
             "input_polls": driver.polls, "delivered_masks": [sorted(values) for values in driver.delivered],
@@ -478,6 +510,9 @@ def run(args):
             "core_logs": driver.log_messages,
             "save_files": [{"path": path.name, **fingerprint(path)} for path in sorted(save.iterdir()) if path.is_file()],
             "scope": "Observed outputs for this pinned experiment only; no extraction or game-wide parity claim"}
+    if pcm_writer is not None:
+        result["audio_capture"] = pcm_writer.finish(args.output / "observations.json", checkpoint_sha256=restored_state_sha256)
+    return result
 
 
 def compare_observations(reference, candidate, start=0):
@@ -528,6 +563,7 @@ def parser():
     p.add_argument("--checkpoint", action="store_true")
     p.add_argument("--checkpoint-at", type=int, help="Save after this many frames, then continue uninterrupted")
     p.add_argument("--capture", type=int, action="append", default=[])
+    p.add_argument("--capture-audio", action="store_true", help="Retain bounded native callback PCM for same-core replay comparison")
     p.add_argument("--reference", type=Path)
     p.add_argument("--candidate", type=Path)
     p.add_argument("--reference-start", type=int, default=0)
@@ -548,6 +584,8 @@ def worker(argv):
             raise LabError("configure requires actual media/report/core")
         if args.command == "run" and (args.lock is None or not 1 <= args.frames <= 60000):
             raise LabError("run requires a lock and 1..60000 frames")
+        if args.capture_audio and args.command != "run":
+            raise LabError("capture-audio applies only to run")
         if args.checkpoint_at is not None and (args.checkpoint or not 1 <= args.checkpoint_at <= args.frames):
             raise LabError("checkpoint-at must be in range and excludes checkpoint")
         if len(args.capture) > 32 or len(set(args.capture)) != len(args.capture) or any(not 0 <= f < args.frames for f in args.capture):
