@@ -113,11 +113,14 @@ def run(args):
         raise ValueError("Require 1..600 bounded original frames")
     if type(args.pairs) is not int or not 1 <= args.pairs <= 64:
         raise ValueError("Require a declared 1..64-pair observation limit")
+    if type(args.start_frames) is not int or not 0 <= args.start_frames <= args.frames:
+        raise ValueError("Require a bounded port-zero Start pulse")
     if args.output.exists():
         raise ValueError("Use fresh private experiment output; never overwrite reference evidence")
     args.output.mkdir(mode=0o700, parents=True)
-    result = {"schema": "neptune.explicit-call-trace-experiment.v1", "mode": args.mode,
+    result = {"schema": "neptune.explicit-call-trace-experiment.v2", "mode": args.mode,
               "status": "failure", "driver_sha256": sha(Path(__file__).read_bytes()),
+              "port_zero_start_frames": args.start_frames,
               "source_modules": {"observer": sha((ROOT / "tools/factory/provision_call_trace_abi.py").read_bytes()),
                                  "state_parser": sha(Path(state_graphics.__file__).read_bytes()),
                                  "kernel_identity": sha(Path(probe_kernel.__file__).read_bytes())},
@@ -169,10 +172,10 @@ def run(args):
         phase = "original_frame_execution"
         frames = []
         started = time.monotonic()
-        for _ in range(args.frames):
+        for relative in range(args.frames):
             if args.mode == "enabled":
                 tracer.frame(driver.frame)
-            frames.append(driver.step([0] * 12))
+            frames.append(driver.step([8 if relative < args.start_frames else 0] + [0] * 11))
         elapsed = time.monotonic() - started
         final = driver.save_state()
         witness = resident(final, kernel)
@@ -263,7 +266,7 @@ def compare(directories):
     runs = []
     for directory in directories:
         report = read_json(directory / "result.json")
-        if report.get("schema") != "neptune.explicit-call-trace-experiment.v1" or report.get("status") != "success":
+        if report.get("schema") != "neptune.explicit-call-trace-experiment.v2" or report.get("status") != "success":
             raise ValueError("A required real run is missing or failed")
         observations = read_json(directory / "observations.json")
         frames = observations.get("frames")
@@ -276,8 +279,12 @@ def compare(directories):
                 sum(frame["audio_frames"] for frame in frames) != report["audio_frames"] or
                 observations["av"] != report["av"]):
             raise ValueError("Original frame/video/audio artefact differs from its report")
+        pulse = report.get("port_zero_start_frames")
+        if type(pulse) is not int or not 0 <= pulse <= len(frames):
+            raise ValueError("Missing bounded controller pulse declaration")
         for index, frame in enumerate(frames):
-            if frame["frame"] != report["reference_frame"] + index or frame["inputs"] != [0] * 12:
+            masks = [8 if index < pulse else 0] + [0] * 11
+            if frame["frame"] != report["reference_frame"] + index or frame["inputs"] != masks:
                 raise ValueError("Nonconsecutive frame or unexpected controller input")
         state = probe_kernel.read_bounded(directory / "final.state", state_graphics.MAX_STATE)
         if sha(state) != report["final_state_sha256"]:
@@ -297,7 +304,7 @@ def compare(directories):
         raise ValueError("Require exactly two runs per declared mode")
     baseline = groups["reference"][0]
     equal = ("driver_sha256", "source_modules", "reference_identity", "reference_lock_file_sha256",
-             "reference_checkpoint_file_sha256", "reference_state_sha256", "reference_frame", "frames",
+             "reference_checkpoint_file_sha256", "reference_state_sha256", "reference_frame", "frames", "port_zero_start_frames",
              "av", "imported_state_bytes", "imported_state_sha256", "final_state_sha256",
              "frame_observations_sha256", "video_sha256", "audio_sha256", "audio_frames",
              "resident_code_before", "resident_code_after", "input_polls", "delivered_masks")
@@ -357,6 +364,8 @@ def main(argv=None):
     parser.add_argument("--mode", choices=("reference", "disabled", "enabled"), required=True)
     parser.add_argument("--frames", type=int, default=120)
     parser.add_argument("--pairs", type=int, default=64)
+    parser.add_argument("--start-frames", type=int, default=0,
+                        help="Press port-zero Start for this many initial frames, then release; no other inputs")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args(argv)
     result = run(args)
