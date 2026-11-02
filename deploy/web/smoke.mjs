@@ -15,10 +15,13 @@ page.on('response', response => {
 });
 try {
   await page.goto('http://127.0.0.1:8765/', { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => document.querySelector('#status')?.style.visibility === 'hidden', { timeout: 120000 });
+  await page.waitForFunction(() => document.querySelector('#status')?.style.display === 'none', null, { timeout: 120000 });
   await page.waitForTimeout(10000);
   if (!loaded.has('/index.wasm') || !loaded.has('/index.pck')) throw new Error('The browser did not load the Godot WASM and game pack');
   if (failures.length) throw new Error(failures.join('\n'));
   await page.screenshot({ path: 'browser-startup.png' });
   console.log('PASS: exported client loaded WASM/PCK and completed Godot startup.');
-} finally { await browser.close(); }
+} finally {
+  await page.screenshot({ path: 'browser-startup.png' }).catch(() => {});
+  await browser.close();
+}
