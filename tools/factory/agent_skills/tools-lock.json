@@ -1,0 +1,81 @@
+{
+  "schema": "neptune.research-dev-tools.v1",
+  "checked_at": "2026-11-02",
+  "platform": "linux-x86_64",
+  "tools": [
+    {
+      "name": "node",
+      "version": "26.13.0",
+      "url": "https://nodejs.org/dist/v26.13.0/node-v26.13.0-linux-x64.tar.xz",
+      "sha256": "d28a96af6c38596f6d9d97c0ee531c13d238d757742387d1928de822d959e997"
+    },
+    {
+      "name": "jdk",
+      "version": "25.0.5+8-LTS",
+      "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jdk_x64_linux_hotspot_25.0.5_8.tar.gz",
+      "sha256": "68982529869257d0ee6b824ec5aa270ff8b118bb438670da0b97ebdab178d7fb"
+    },
+    {
+      "name": "ghidra",
+      "version": "12.2",
+      "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.2_build/ghidra_12.2_PUBLIC_20261016.zip",
+      "sha256": "2c2cd776db3c1f6a097ba418922378ac3649cadd5e844a6f5f088ae628a7be67"
+    },
+    {
+      "name": "ghidra-rea-compatibility",
+      "version": "12.1.4",
+      "url": "https://github.com/NationalSecurityAgency/ghidra/releases/download/Ghidra_12.1.4_build/ghidra_12.1.4_PUBLIC_20260921.zip",
+      "sha256": "ddac49f903da9d5bac833e5cc79395098b9c33cfd3279be5f31bd00387d2d4db",
+      "compatibility_blocker": "Published rea-agents 6.8.0 doctor rejects Ghidra 12.2. Owner: #508; recheck next published REA release. Keep latest Ghidra 12.2 available for direct PyGhidra."
+    },
+    {
+      "name": "rea-agents",
+      "version": "6.8.0",
+      "url": "https://registry.npmjs.org/rea-agents/-/rea-agents-6.8.0.tgz",
+      "sha256": "8d542ec76a9cb350584b60a6c9c088706ff812d5bb5b094c20c95b6dc25698bb",
+      "integrity": "sha512-9QDeRnGqEDzABZyr04eLnBXBv/c6I9/TWu/6M0MD4pEfkySI/BIgwTODIbAReX3C1x6hjw9+Jlx4A2yUSPZ9ww==",
+      "dependency_overrides": {
+        "zod": "4.6.7",
+        "glob": "14.0.3",
+        "minimatch": "11.0.3"
+      },
+      "install_options": [
+        "--ignore-scripts",
+        "--omit=optional"
+      ],
+      "schema_profiles": {
+        "input": "compact",
+        "output": "off"
+      }
+    },
+    {
+      "name": "godot",
+      "version": "4.7.2",
+      "recipe": "tools/factory/provision.py --tool godot",
+      "lock": "tools/godot/toolchain.json"
+    },
+    {
+      "name": "python-development",
+      "version": "Python 3.12 environment",
+      "lock": "python-requirements.lock",
+      "packages": {
+        "playwright": "1.64.1",
+        "pillow": "13.0.0",
+        "gdtoolkit": "4.5.0",
+        "hypothesis": "6.170.14",
+        "pyghidra": "3.2.0",
+        "pytest": "9.2.0",
+        "ruff": "0.17.3",
+        "soundfile": "0.14.0"
+      }
+    }
+  ],
+  "reused_tools": {
+    "ffmpeg": "7.1.5",
+    "chromium": "154.0.8037.57"
+  },
+  "limits": [
+    "This is development-tool preparation, not a deployed factory capability or proof of Saturn/Power semantics.",
+    "Optional Frida, IDA, Hopper, Android/JADX and live protocol capture dependencies are not provisioned."
+  ]
+}

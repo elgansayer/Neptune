@@ -11,3 +11,6 @@ func receive_state(state: Dictionary):
 
 func receive_initial_map(data: Dictionary):
 	probe.map_received(index, data)
+
+func content_message(data: Dictionary):
+	probe.content_received(index, data)

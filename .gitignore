@@ -17,3 +17,11 @@ SBomberman-main/
 
 # Coordinator-provisioned offline verification dependencies, including symlinks.
 /.factory-tools
+
+# Generated local agent registrations; reviewed sources live in the skill lock.
+/.agents/skills/
+/.codex/config.toml
+/.claude/skills/
+/.mcp.json
+/.agents/mcp_config.json
+/agent/skills/

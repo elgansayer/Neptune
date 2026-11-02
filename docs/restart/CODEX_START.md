@@ -1,5 +1,17 @@
 # Server Codex starting prompt
 
+For the owner's latest **all-original-code** objective and transition to the
+existing VPS Codex session, use [CODEX_CODE_RECOVERY.md](CODEX_CODE_RECOVERY.md).
+Its bounded first command and complete programme supersede the older bootstrap
+task selection retained below. Do not repeat already accepted setup or media work.
+
+The owner's 2 November factory/Saturn-first goal is
+[FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md). Read it before choosing new work;
+it supersedes the historical feature-first order in the bootstrap prompt below.
+Preserve active claims and the full game scope. Develop the existing shared
+factory and real Saturn research pipeline, adding necessary tools through its
+tested preparation boundary.
+
 For the current post-bootstrap execution brief, start with [CODEX_NEXT.md](CODEX_NEXT.md).
 Read [SATURN_FIDELITY.md](SATURN_FIDELITY.md) for the owner's 1 November requirement:
 identical maps, levels, assets, effects and music, with exact measured timing,

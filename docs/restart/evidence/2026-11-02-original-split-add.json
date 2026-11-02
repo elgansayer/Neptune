@@ -1,0 +1,153 @@
+{
+  "adapter_sha256": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+  "cases": 1120,
+  "cases_per_function": 560,
+  "experiment": "EXP-SAT-CODE-004",
+  "function_instruction_counts": {
+    "0x600a25e": [
+      23
+    ],
+    "0x600a2d8": [
+      23
+    ]
+  },
+  "function_ranges": {
+    "0x600a25e": {
+      "exclusive_end": "0x600a28c",
+      "file_offset": "0x425e",
+      "sha256": "c6c000de72bf54e136efbc7e9c725909a83b69a902bce405091c51a2239feb22"
+    },
+    "0x600a2d8": {
+      "exclusive_end": "0x600a306",
+      "file_offset": "0x42d8",
+      "sha256": "0a36318628fd7f5a1256fb131cfe022ad6847199e06fbd2d6e8d7fce731597e7"
+    }
+  },
+  "game": "USA MK-81070 V1.003",
+  "host_supervision": {
+    "broker_authority_hidden": true,
+    "configured_host_shared_limit_observed": 3,
+    "existing_host_gate": true,
+    "provider_calls": 0,
+    "source_and_original_inputs_readonly": true,
+    "timeout_seconds_per_command": 60
+  },
+  "instruction_controls": {
+    "0x600a25e:add_to_subtract": {
+      "mutated_kernel_sha256": "4190b229771d4982298552f5cbbb27016cbf70667e1e51160299670e51203a56",
+      "pc": "0x600a27c",
+      "reasons": [
+        "Split-halfword result differs from independent 32-bit contract"
+      ],
+      "rejected": 45,
+      "tested": 63
+    },
+    "0x600a25e:missing_MACL_restore": {
+      "mutated_kernel_sha256": "db3069273684fa688a6f8c0850c36e0bf2bc9af0902643c185cf6427b5e5fef6",
+      "pc": "0x600a28a",
+      "reasons": [
+        "Register/stack restoration failed"
+      ],
+      "rejected": 63,
+      "tested": 63
+    },
+    "0x600a25e:missing_high_store": {
+      "mutated_kernel_sha256": "4075c4d7a169170a4e107ce3a6cf7eba0850144aebe0696553f9fca2f7a25da0",
+      "pc": "0x600a282",
+      "reasons": [
+        "Missing, repeated or extra output store"
+      ],
+      "rejected": 63,
+      "tested": 63
+    },
+    "0x600a25e:missing_index_truncation": {
+      "mutated_kernel_sha256": "65ded112b85a94febf2d653e0e895a5cc8e6240592e4b8117a993f1f3669ccdc",
+      "pc": "0x600a26c",
+      "reasons": [
+        "Read outside inspected code, literals and explicit data slots"
+      ],
+      "rejected": 31,
+      "tested": 63
+    },
+    "0x600a25e:missing_low_store": {
+      "mutated_kernel_sha256": "d2a168b9b149cc5570b5af252d4861954f52aeb9032c33fcffd00eace499e20c",
+      "pc": "0x600a286",
+      "reasons": [
+        "Missing, repeated or extra output store"
+      ],
+      "rejected": 63,
+      "tested": 63
+    },
+    "0x600a2d8:add_to_subtract": {
+      "mutated_kernel_sha256": "93d5018617300642e97ca088d488989646f71c16dd430a37f8bc70c1e30980fd",
+      "pc": "0x600a2f6",
+      "reasons": [
+        "Split-halfword result differs from independent 32-bit contract"
+      ],
+      "rejected": 45,
+      "tested": 63
+    },
+    "0x600a2d8:missing_MACL_restore": {
+      "mutated_kernel_sha256": "7176e96e2f1b48db9533e3becece30be9076a03549a700a431b0be4e5e2fbc4b",
+      "pc": "0x600a304",
+      "reasons": [
+        "Register/stack restoration failed"
+      ],
+      "rejected": 63,
+      "tested": 63
+    },
+    "0x600a2d8:missing_high_store": {
+      "mutated_kernel_sha256": "74429ad9b20ce15e30cb58f6762e896bf646c41b30e7aa101d32b8bdef80acfe",
+      "pc": "0x600a2fc",
+      "reasons": [
+        "Missing, repeated or extra output store"
+      ],
+      "rejected": 63,
+      "tested": 63
+    },
+    "0x600a2d8:missing_index_truncation": {
+      "mutated_kernel_sha256": "64c60abea9ea5fc3bb81b238e889e6c9f0e3532a2619b5390ab9bd6cb46aec34",
+      "pc": "0x600a2e6",
+      "reasons": [
+        "Read outside inspected code, literals and explicit data slots"
+      ],
+      "rejected": 31,
+      "tested": 63
+    },
+    "0x600a2d8:missing_low_store": {
+      "mutated_kernel_sha256": "a5f48cceecf3cc8d63949f568ffa5dc252b9cbe48bb63b0d3e202285f9f82e8c",
+      "pc": "0x600a300",
+      "reasons": [
+        "Missing, repeated or extra output store"
+      ],
+      "rejected": 63,
+      "tested": 63
+    }
+  },
+  "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+  "interpreter_sources": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "limitations": [
+    "No natural caller, gameplay role, timing, independent CPU oracle or whole-program completion",
+    "Sampled state preservation only; no return-value meaning established"
+  ],
+  "literal_range": {
+    "exclusive_end": "0x0600A360",
+    "sha256": "bf4608b39f41bb52bc9eccbab2896fe9e4eefc697df3598e9e3d76de69443c24",
+    "start": "0x0600A358"
+  },
+  "original_game_bytes_executed": true,
+  "private_report_sha256": "73d9c6a90cc4821c35c76c4d990854d74a66b12cab4b978a1eb5da81dd712d06",
+  "probe_sha256": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+  "results_sha256": "934cb468ee263210677308245ab5f2047cb702feefce1ba23c7b9168ce6f0666",
+  "schema": "neptune.split-add-probe.v1",
+  "scope": "Original instructions; initialized record/index/stack inputs; CPU-only",
+  "shared_constants_sha256": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+  "source_head": "3a69ec867fd8806fb3c58d11f03bd05fb56dc052",
+  "status": "success",
+  "two_complete_reports_equal": true
+}

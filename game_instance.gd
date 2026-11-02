@@ -61,6 +61,7 @@ var room_content_descriptor: Dictionary = {}
 var room_content_selection: Array = []
 var room_content_lock: Dictionary = {}
 var room_content_lock_sha256: String = ""
+var _content_waiters := {} # Pending verified transfers; never authoritative actors.
 var room_capacity_request := {} # Set before _ready by the authority, not clients.
 var room_setup_result := {"accepted": false, "reason": "authority_not_ready"}
 var last_room_start_result := {}
@@ -379,7 +380,7 @@ func _physics_process(delta):
 	_check_explosion_damage()
 	
 	# Handle countdown before match starts
-	if not match_active and countdown_time > 0.0:
+	if not match_active and countdown_time > 0.0 and _content_waiters.is_empty():
 		countdown_time -= delta
 		if countdown_time <= 0.0:
 			countdown_time = 0.0
@@ -607,6 +608,7 @@ func get_room_capacity() -> Dictionary:
 		"bot_policy_seed": str(bot_manager.get_policy_seed()) if bot_manager != null else "", "bot_policy": bot_manager.POLICY_VERSION if bot_manager != null else ""}
 
 func _validate_room_start() -> Dictionary:
+	if not _content_waiters.is_empty(): return SpawnReservations.failure("content_not_ready")
 	if _room_capacity.is_empty(): return SpawnReservations.failure("room_not_configured")
 	if players.is_empty(): return SpawnReservations.failure("empty_room")
 	if players.size() > _room_capacity.seats: return SpawnReservations.failure("room_full")
@@ -619,6 +621,18 @@ func start_room_countdown() -> Dictionary:
 	if not last_room_start_result.accepted: return last_room_start_result
 	if countdown_time <= 0.0: countdown_time = 1.0
 	return {"accepted": true, "reason": "countdown_started"}
+
+## Pending clients cannot consume a spawn or start the initial round. A late
+## cosmetic/content transfer never freezes an already active simulation.
+func set_content_waiting(peer_id: int, waiting: bool) -> Dictionary:
+	if peer_id <= 0: return SpawnReservations.failure("invalid_content_peer")
+	if waiting:
+		if not _content_waiters.has(peer_id) and _content_waiters.size() >= Constants.MAX_MATCH_SEATS:
+			return SpawnReservations.failure("content_waiter_budget_exceeded")
+		_content_waiters[peer_id] = true
+	else:
+		_content_waiters.erase(peer_id)
+	return {"accepted": true, "reason": "content_wait_updated", "waiting": _content_waiters.size()}
 
 func _spawn_definition() -> Dictionary:
 	if not is_finite(GameConfig.TILE_SIZE) or GameConfig.TILE_SIZE <= 0 or not is_finite(GameConfig.PLAYER_HALF_WIDTH) or GameConfig.PLAYER_HALF_WIDTH <= 0:
@@ -2070,6 +2084,13 @@ func _do_register_console_commands() -> void:
 		print("[GameInstance] Make sure LimboConsole addon is enabled in project settings")
 		return
 	
+	# Commands outlive a room. Keep their callables on the server autoload and
+	# update only the authority reference when a completed room is replaced.
+	var owner_node := get_node("/root/ServerMain")
+	var registered := owner_node.get_node_or_null("ConsoleCommands")
+	if registered != null:
+		registered.game_instance_ref = self
+		return
 	print("[GameInstance] 🎮 Loading console commands script...")
 	var script = load("res://scripts/console_commands.gd")
 	if not script:
@@ -2078,7 +2099,7 @@ func _do_register_console_commands() -> void:
 	
 	var console_commands = script.new()
 	console_commands.name = "ConsoleCommands"
-	add_child(console_commands)
+	owner_node.add_child(console_commands)
 	
 	print("[GameInstance] 📝 Registering console commands...")
 	console_commands.register_all_commands(self)

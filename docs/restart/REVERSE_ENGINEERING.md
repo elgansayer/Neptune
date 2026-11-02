@@ -1,5 +1,11 @@
 # Automated Saturn research lab
 
+This is now a primary delivery track under the owner's 2 November
+[factory/Saturn-first goal](FACTORY_FIRST_GOAL.md). Build the shared factory and
+necessary tool adapters to run these experiments, then implement and compare
+their measured outputs in Godot. Preserve existing owners and exact reference
+acceptance; routine feature breadth follows this critical path.
+
 The expanded code/content/behaviour programme is [RESEARCH_EXECUTION.md](RESEARCH_EXECUTION.md)
 and execution index #477. Existing input/bridge/disc inventory results remain
 accepted; complete static/dynamic code recovery, raw graphics/audio extraction and

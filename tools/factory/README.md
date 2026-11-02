@@ -80,7 +80,7 @@ and evidence arguments stay required, and a missing cache or failed check still 
 | `scope` | Starts `requirements only`: no check ran and no host, tool cache or engine was inspected |
 | `plan` | The shared classifier result: `mode` (`metadata`, `runner`, `gameplay`), sorted unique `paths` and the ordered `required` check names |
 | `baseline.checks` | Required checks that need no engine: the core checks every selection runs |
-| `baseline.python`, `baseline.executables` | Declared interpreter minimum and host tools those checks invoke (`cc`, `git`) |
+| `baseline.python`, `baseline.executables` | Declared interpreter minimum and host tools those checks invoke (`cc`, `git`, `openssl`) |
 | `native.required` | True for runner and gameplay selections: the test a real run applies before it demands the offline cache |
 | `native.checks` | Required engine checks; `baseline.checks` then `native.checks` equals `plan.required` |
 | `native.executables` | Host tools beyond the engine: `Xvfb` when `native-runtime` (a graphical client) is required, else empty |
@@ -141,6 +141,79 @@ merge through the adapter demonstrates publication, not a complete AI job,
 restart recovery or continuous operation. #33 still requires those live tests
 before enabling unattended continuity.
 
+## Named supplied-trace checks
+
+Actual pinned original experiment recording and public-key authentication use
+[`reference_receipt.py`](REFERENCE_RECEIPTS.md) (#579/#511). This separate trusted
+coordinator entrypoint reuses the existing sandbox/host gate; supplied traces and
+plausible hashes alone never establish source authenticity.
+
+The opt-in #576/#76 contract runs the existing exact behaviour-trace comparator
+in addition to the unchanged path-based checks. It uses the existing accepted
+task's string fields, without another intake or receipt schema. The coordinator
+adds the exact selector `check:behaviour-trace-exact-v1` to `task.acceptance`.
+In `task.evidence`, it supplies exactly one of each of these five records:
+
+```text
+trace-v1:contract:<sha256 of canonical trace contract>
+trace-v1:reference-source:<sha256 of canonical reference source object>
+trace-v1:candidate-source:<sha256 of canonical candidate source object>
+trace-v1:reference-file:<sha256 of raw reference.json bytes>
+trace-v1:candidate-file:<sha256 of raw candidate.json bytes>
+```
+
+Canonical object bytes use `tools/saturn_lab/compare_trace.py:canonical` encoded
+as UTF-8. The contract identifies the declared scenario, ruleset, observation
+units, input recording and rational clock. Source objects retain the existing
+build, content/input lock, capture and adapter identities; the required roles are
+`reference` and `implementation`. Source object hashes may differ. The comparator
+still requires an identical contract and exact ordered observations, with no
+alignment, tolerance, dropped samples or relaxed assertions.
+
+The coordinator captures and binds candidate artifacts after the relevant build
+and capture step, before verification. Ordinary issue prose or a worker's claimed
+hash must not establish those identities. These declarations are consistency
+requirements, **not source authentication**. #511 must supply independently
+authenticated original/candidate executions before any real fidelity claim.
+The accepted intake remains subject to its existing freshness/revision/full-Git-
+scope checks; replacing the task or artifacts invalidates the run.
+
+Place the declared artifacts on a separate coordinator-supplied read-only mount:
+
+```text
+/private/supplied-artifacts/behaviour-trace-exact-v1/reference.json
+/private/supplied-artifacts/behaviour-trace-exact-v1/candidate.json
+```
+
+```sh
+python3 tools/factory/verify.py --changed-path docs/owned-result.md \
+  --intake /private/accepted-task.json \
+  --feature-artifacts /private/supplied-artifacts \
+  --toolchain /prepared/godot --evidence /private/evidence/unique-run
+```
+
+The artifact mount must be outside candidate source and output evidence, without
+symlink components. The CLI checks identities, bounded strict JSON and trace
+semantics before baseline commands, then actually executes the comparator and
+checks that the files remained unchanged. Unknown `check:` selectors and malformed,
+duplicate, incomplete or orphaned `trace-v1:` requirements fail. Missing, replaced,
+truncated, skipped-summary or mismatching artifacts cannot become a successful
+feature result. Arbitrary commands from task strings are never executed.
+
+The same `neptune.factory-verification.v1` receipt gains optional
+`feature_requirements` and `feature_checks` objects. A feature result records the
+actual in-process comparator operation/code identity, artifact identities and
+existing comparison result, including first divergence. It is a supplied-observation
+check, not proof that original Saturn or production Godot ran. Legacy selections
+without the selector preserve their five/eight/ten checks and receipt fields.
+`--plan` still reads no intake or artifacts and rejects this execution option.
+
+This is a local verifier interface. The live shared Elgl adapter does not yet
+select, mount or enforce these optional fields. Keep #76/#511 open until that
+integration, authenticated private experiments and relevant mutation controls pass.
+Neither ordinary green CI nor this supplied-artifact contract establishes the
+whole game's state, native pixels or sample-timed audio parity.
+
 ## Local ownership foundations
 
 Implements the local foundations of #71/#72. No scheduler, provider, remote GitHub
@@ -153,6 +226,64 @@ inside a database transaction, restart recovery, stale-worker mutation rejection
 and an ambiguous publication that must remain blocked.
 
 ## Trusted intake boundary
+
+### Bind verification to the accepted task
+
+The opt-in `verify.py --intake` path implements the bounded source-scope portion
+of [#559](https://github.com/elgansayer/Neptune-Bomberman/issues/559) under #76.
+It consumes the existing `neptune.factory-intake.v1` snapshot; no new intake
+schema, scheduler or executable issue-text format is introduced.
+
+```sh
+python3 tools/factory/verify.py \
+  --intake /private/fresh-task-intake.json \
+  --changed-path tools/factory/example.py \
+  --toolchain /canonical/repo/.factory-tools/godot \
+  --evidence /private/verification/run-001
+```
+
+Repeat `--changed-path` for every actual changed file. The verifier reads the
+complete committed diff from the snapshot's exact base to current HEAD, with
+rename detection disabled so both old and new paths are checked. It requires
+that base to be an ancestor, the selection to equal the full diff, each path to
+be inside a literal accepted `task.scope.paths` boundary, and the number of paths
+to stay within `max_files`. Empty diffs fail. A prefix such as `tools/factory2`
+does not match an accepted `tools/factory` directory.
+
+Tracked, staged and untracked source must be clean. Assume-unchanged and
+skip-worktree index flags are rejected even on unselected files. Repository/index
+override environment variables are rejected. Keep the immutable intake, tool
+cache, logs and evidence outside candidate source or in explicitly ignored
+directories. The verifier does not discard changes or reset index flags.
+
+The snapshot must be a regular file of at most 256 KiB with unique JSON keys.
+Existing readiness checks enforce its freshness, prerequisite attestations,
+capabilities and active-work inventory. The coordinator supplies a fresh snapshot
+after reconciling ownership; its admitted job is not an overlapping external
+claim in that inventory. The snapshot is not proof of a live provider lease.
+Expired/future/not-ready snapshots and a different repository fail. Verification
+re-reads and revalidates the snapshot and candidate after all checks; a changed
+task/revision, snapshot bytes, HEAD, diff or working source prevents success.
+
+Opt-in reports and stdout receipts add `task_binding`: repository, issue, feature
+ID, revision, complete task and raw-intake SHA-256, base/head and actual changed
+paths. `identity` also records the accepted base. Existing path-only invocation,
+its receipt shape and the shared 5/8/10 check plan remain unchanged. `--plan`
+rejects `--intake` and remains requirements-only: it does not read Git or intake.
+Upgrade the existing factory consumer deliberately before opting into the added
+receipt fields; this CLI does not change a deployed coordinator.
+
+The coordinator still owns trusted policy, Git configuration/metadata, task
+revision and current-base selection. Run its trusted entrypoint in the existing
+credential-free verifier sandbox, derive paths independently and validate the
+returned binding against its accepted task and current protected branch. A
+candidate must not choose a narrower task or verify itself using its own edited
+policy. The local tool establishes consistency with supplied trusted intake;
+it does not authenticate GitHub state or private reference captures.
+
+Named native/browser/network/pack and exact state/pixel/audio acceptance contracts
+remain #76/#511 integration work. Passing this source-scope guard alone cannot
+establish an authentic reference experiment, Saturn parity or factory continuity.
 
 `readiness.py` consumes a coordinator-produced snapshot. It never executes issue
 text, model output or shell commands. The coordinator must obtain fresh issue/PR

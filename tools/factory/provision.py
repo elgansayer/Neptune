@@ -21,6 +21,8 @@ import sys
 import tempfile
 import time
 import uuid
+import provision_xvfb as xvfb
+import provision_ocr as ocr
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = "neptune.tool-install.v1"
@@ -54,17 +56,23 @@ def write_json(path, value):
 
 
 def identity(tool, root):
-    if tool not in ("godot", "beetle-saturn"):
+    if tool not in ("godot", "beetle-saturn", "xvfb", "tesseract"):
         raise ProvisionError("needs_recipe", "Create/reuse a bounded trusted recipe task for: " + tool)
     path = root / "tools/factory/provision-lock.json"
     lock = json.loads(path.read_text())
-    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn"}:
+    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn", "xvfb", "tesseract"}:
         raise ProvisionError("invalid_recipe", "Unsupported recipe registry")
     recipe = lock["tools"][tool]
     fields = {"kind", "platform", "minimum_free_bytes"}
     if tool == "beetle-saturn":
         fields |= {"repository", "commit"}
-    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source"}[tool]:
+    if tool == "xvfb":
+        xvfb.validate(recipe)
+        fields = xvfb.FIELDS
+    if tool == "tesseract":
+        ocr.validate(recipe)
+        fields = ocr.FIELDS
+    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source", "xvfb": "debian-xvfb", "tesseract": "tesseract-source"}[tool]:
         raise ProvisionError("invalid_recipe", "Unsupported installer/recipe fields")
     if recipe["platform"] != "linux-x86_64":
         raise ProvisionError("invalid_recipe", "Unsupported recipe platform")
@@ -76,6 +84,10 @@ def identity(tool, root):
     sources = ["tools/factory/provision.py", "tools/factory/provision_probe.py"]
     if tool == "godot":
         sources += ["tools/godot/install.py", "tools/godot/toolchain.json"]
+    if tool == "xvfb":
+        sources += ["tools/factory/provision_xvfb.py"]
+    if tool == "tesseract":
+        sources += ["tools/factory/provision_ocr.py"]
     record = {"tool": tool, "recipe": recipe, "installer_sources": {p: digest(root / p) for p in sources}}
     key = hashlib.sha256(json.dumps(record, sort_keys=True).encode()).hexdigest()
     return recipe, record, key
@@ -147,6 +159,10 @@ class Runner:
 
 
 def binary_name(tool, root):
+    if tool == "tesseract":
+        return "tesseract"
+    if tool == "xvfb":
+        return "Xvfb"
     if tool == "beetle-saturn":
         return "mednafen_saturn_libretro.so"
     lock = json.loads((root / "tools/godot/toolchain.json").read_text())
@@ -157,6 +173,18 @@ def binary_name(tool, root):
 
 
 def smoke(tool, binary, runner, root):
+    if tool == "tesseract":
+        return ocr.smoke(identity(tool, root)[0], binary, runner)
+    if tool == "xvfb":
+        recipe = identity(tool, root)[0]
+        xvfb.host_check(recipe)
+        if digest(binary) != recipe["binary_sha256"]:
+            raise ProvisionError("smoke_failed", "Xvfb binary differs from pinned upstream hash")
+        result = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_xvfb.py"),
+                                        "probe", str(binary), str(runner.evidence / "xvfb-server.log")], binary.parent, 20))
+        if result != {"scope": xvfb.SCOPE, "width": 640, "height": 480, "depth": 24, "pixel": 0x123456}:
+            raise ProvisionError("smoke_failed", "Missing actual X11 display/pixel observation")
+        return result
     if tool == "beetle-saturn":
         result = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_probe.py"), str(binary)], binary.parent, 30))
         if result.get("scope") != "no-media ABI smoke only" or result.get("api") != 1:
@@ -176,6 +204,15 @@ def smoke(tool, binary, runner, root):
 
 
 def install(tool, recipe, payload, work, runner, root):
+    if tool == "tesseract":
+        return ocr.install(recipe, payload, work, runner, root)
+    if tool == "xvfb":
+        xvfb.host_check(recipe)
+        recipe_path = work / "xvfb-recipe.json"
+        write_json(recipe_path, recipe)
+        runner.run([sys.executable, str(root / "tools/factory/provision_xvfb.py"),
+                    "install", str(recipe_path), str(payload)], work, 90)
+        return
     if tool == "godot":
         runner.run([sys.executable, str(root / "tools/godot/install.py"), "--directory", str(payload)], root, 180)
         return

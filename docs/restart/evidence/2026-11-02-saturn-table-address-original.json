@@ -1,0 +1,182 @@
+{
+  "case_domains": {
+    "constructed_32_bit_boundaries": 96,
+    "upstream_sample_domain": 100
+  },
+  "cases_per_run": 196,
+  "controls_in_both_original_reports": true,
+  "earlier_control_diagnostic_report_sha256": "77c25c4be644570bd9918cbeaa25a8da6c4c89caf4c3f9067fd7797c8f2d54e8",
+  "entry": "0x0600b934",
+  "executed_pcs": [
+    "0x0600b934",
+    "0x0600b936",
+    "0x0600b938",
+    "0x0600b93a",
+    "0x0600b93c",
+    "0x0600b93e",
+    "0x0600b940",
+    "0x0600b942",
+    "0x0600b944",
+    "0x0600b946",
+    "0x0600b948",
+    "0x0600b94a",
+    "0x0600b94c",
+    "0x0600b94e"
+  ],
+  "experiment": "EXP-SAT-CODE-002",
+  "first_strict_no_write_attempt": {
+    "error": "Unexpected write at 0x060fffec; pure-function hypothesis failed",
+    "retained_private_report_sha256": "411652a164ed99746dfb314edfe77d1b1a8ca53797c5a2cbc5f95f94e7b9b1a0",
+    "status": "failure"
+  },
+  "function_identity": {
+    "alternate_entry_boundaries": "unresolved",
+    "entry_to_return_span": "0x0600b934..0x0600b94f",
+    "id": "SAT-USA-MK81070-V1.003-KRNL-20109f506afd-0600B934",
+    "isolated_load_base": "0x06006000",
+    "master_slave_role": "unresolved",
+    "module": "KRNL USA",
+    "processor": "SH-2",
+    "runtime_load_observed_by_this_experiment": false
+  },
+  "game": "USA MK-81070 V1.003",
+  "hardware_cycles_measured": false,
+  "independent_cpu_oracle": false,
+  "input_adapter_sha256": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+  "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+  "interpreter_sources": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "issue": 590,
+  "kernel_bytes": 786432,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "limitations": [
+    "196 constructed register pairs, not exhaustive 64-bit pair space or natural arguments",
+    "Stack is constructed guarded RAM, not a captured original caller stack",
+    "Original PC set is observed on this entry and selected cases; other entry paths and module lifetimes remain open",
+    "Interpreter shares the upstream reconstruction lineage; no independent CPU/hardware oracle",
+    "Static BSR candidates may be data and have not been observed executing",
+    "No game state/pixel/audio parity, full ABI, RNG role or code-coverage completeness is established"
+  ],
+  "max_instructions": 14,
+  "memory_contract": {
+    "constructed_stack_base": "0x060fffb0",
+    "constructed_stack_bytes": 80,
+    "kernel": "read-only and unchanged",
+    "mode": "observed-macl-spill",
+    "only_stack_access": {
+      "address": "0x060fffec",
+      "bytes": 4,
+      "reads_per_case": 1,
+      "writes_per_case": 1
+    },
+    "other_stack_bytes_unchanged": true,
+    "sp_and_macl_preserved": true,
+    "validated_cases": 196,
+    "witnesses_sha256": "c2a6fb09f5e50f558ba9dcc6df84e40bc3bfe73b459295bf5d1c4e869c064694"
+  },
+  "model_calls_for_execution": 0,
+  "natural_emulator_calls_executed": false,
+  "observed_changed_registers": [
+    "r0",
+    "r2",
+    "r3",
+    "r6",
+    "sr"
+  ],
+  "original_copy_mutations": [
+    {
+      "address": "0x0600b96c",
+      "altered_sha256": "baf985635e7873e424720437bd35806bb877fa50b290ec899306b19f0827cc11",
+      "error_class": "ValueError",
+      "name": "stride150",
+      "reason": "Result mismatch for n=0x00000000, m=0x00000001",
+      "rejected": true,
+      "source": "explicitly altered private copy; never reference"
+    },
+    {
+      "address": "0x0600b984",
+      "altered_sha256": "ea3f2a827782250ced8417d34f099c6e90e87e30041b4fac1a83b58387fbad87",
+      "error_class": "ValueError",
+      "name": "base_plus4",
+      "reason": "Result mismatch for n=0x00000000, m=0x00000000",
+      "rejected": true,
+      "source": "explicitly altered private copy; never reference"
+    },
+    {
+      "address": "0x0600b94e",
+      "altered_sha256": "96c2945169956a7978f8f83d9ca99355c563926adcc909cec1ad5d740b1c1c34",
+      "error_class": "ValueError",
+      "name": "remove_macl_restore_delay_slot",
+      "reason": "Stack footprint or unchanged original-memory contract failed",
+      "rejected": true,
+      "source": "explicitly altered private copy; never reference"
+    },
+    {
+      "address": "0x0600b934",
+      "altered_sha256": "53213353ad08777ffbc0a74085b1372a7e19c95500b8a9a6f56559e6a0be7b46",
+      "error_class": "ValueError",
+      "name": "remove_macl_spill",
+      "reason": "Unexpected stack read; spill/restore contract failed",
+      "rejected": true,
+      "source": "explicitly altered private copy; never reference"
+    }
+  ],
+  "original_file_unchanged": true,
+  "original_game_bytes_executed": true,
+  "original_runs": 2,
+  "probe_sha256": "2d79f3284d006763ce30a78b60736fc51395ba48b55398a0ed86e6d3c0fc8435",
+  "report_bytes_identical": true,
+  "report_sha256": "8b543e26e1c84df6a1c1734794e4776cc62c6502b9e9031fac21b649ec3c621c",
+  "results_sha256": "9d82d210644407796b87db6e3009c4067873fc17240c2f9c94422811007dd8c6",
+  "scheduler_enabled": false,
+  "schema": "neptune.original-code-result.v1",
+  "semantic_negative_rejections": {
+    "changed_base": 196,
+    "changed_stride": 194,
+    "swapped_arguments": 174
+  },
+  "source_harness_commit": "01c9d5a04b1dfbe136a0dfd16b0a52c79ce7148c",
+  "source_regions": [
+    {
+      "bytes": 28,
+      "kind": "executed-routine",
+      "sha256": "b21ac10b8afa6e6eaec3014e2b410a2795d31673003e3c1f44ec522b843d2871",
+      "start": "0x600b934"
+    },
+    {
+      "bytes": 2,
+      "kind": "stride-literal",
+      "sha256": "672d13cb5d3858e576016b27050dfcd5b379ef4f1ce063ad9d2cbc86b172d4d2",
+      "start": "0x600b96c"
+    },
+    {
+      "bytes": 4,
+      "kind": "base-literal",
+      "sha256": "210ffcea9789e2caf64a8ade1e062ca522b3d4c2a64a9368b3d6e0f3b749785c",
+      "start": "0x600b984"
+    }
+  ],
+  "static_caller_leads": [
+    {
+      "code_classification": "candidate; disc data may resemble instructions",
+      "delay_slot": "0x600baec",
+      "kind": "static_bsr_candidate",
+      "pc": "0x600baea",
+      "runtime_validated": false,
+      "target": "0x600b934"
+    },
+    {
+      "code_classification": "candidate; disc data may resemble instructions",
+      "delay_slot": "0x600bc2a",
+      "kind": "static_bsr_candidate",
+      "pc": "0x600bc28",
+      "runtime_validated": false,
+      "target": "0x600b934"
+    }
+  ],
+  "whole_game_code_complete": false,
+  "whole_program_function_denominator": null
+}

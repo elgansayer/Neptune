@@ -53,6 +53,17 @@ class GateContracts(unittest.TestCase):
         with self.assertRaises(ValueError):
             assert_pass(report, identity)
 
+    def test_film_contracts_are_required_for_every_selection(self):
+        for paths in (["README.md"], ["tools/saturn_film/film.py"], ["game_instance.gd"]):
+            self.assertIn("film-contracts", plan(paths)["required"])
+        checks = dict((name, command) for name, command, _ in
+                      commands("metadata", Path("/tmp/evidence"), Path("/tmp/binary")))
+        self.assertEqual(checks["film-contracts"][-1], "tools/saturn_film/check.py")
+        report, identity = self.passing()
+        del report["checks"]["film-contracts"]
+        with self.assertRaises(ValueError):
+            assert_pass(report, identity)
+
     def test_gameplay_and_unknown_paths_require_runtime_and_full_bots(self):
         paths = ["shared/constants.gd", "game_config.gd", "new-gameplay/file.json",
                  "project.godot", "maps/new.pck", "characters/new.png", "assets/new.wav",

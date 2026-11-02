@@ -14,6 +14,7 @@ const ThreatMatrixVisualizerScene = preload("res://client/ui/threat_matrix_visua
 const BombSafetyVisualizerScript = preload("res://client/ui/bomb_safety_visualizer.gd")
 const HurryBlockShadowScene = preload("res://client/effects/HurryBlockShadow.tscn")
 const FallingHurryBlockScene = preload("res://client/effects/FallingHurryBlock.tscn")
+const ExplosionEventTimeline = preload("res://client/explosion_event_timeline.gd")
 
 # Canvas layers (Godot feature for major separation)
 var background_canvas: CanvasLayer
@@ -34,6 +35,7 @@ var powerup_nodes = {} # powerup_id -> Node2D
 var egg_nodes = {} # egg_id -> Node2D (Tirra eggs)
 var tirra_nodes = {} # tirra_id -> Node2D (hatched Tirra mounts)
 var explosion_nodes = {} # explosion_id -> ExplosionRenderer
+var _explosion_timeline := ExplosionEventTimeline.new()
 var block_nodes = {} # tile_key -> Node2D (for destructible blocks)
 var wall_nodes = {} # tile_key -> Node2D (for solid walls)
 var hurry_block_nodes = {} # tile_key -> Node2D (for hurry mode blocks - landed)
@@ -188,6 +190,17 @@ func _setup_canvas_layers() -> void:
 
 func update_game_state(state: Dictionary):
 	print("[GameView] State keys: ", state.keys())
+	# Observe clock headers even without an event batch. This guard applies only
+	# to presentation events; map/actor delta handling retains its existing flow.
+	var accept_effect_snapshot := _explosion_timeline.observe_snapshot(
+		state.get("simulation_tick"), state.get("server_time"), explosion_nodes)
+	var explosion_events: Array = []
+	if accept_effect_snapshot:
+		if state.has("explosions"):
+			if state.explosions is Array and state.explosions.size() <= ExplosionEventTimeline.MAX_SEEN_EVENTS:
+				explosion_events = state.explosions
+		elif state.has("e"):
+			explosion_events = _explosion_timeline.decode_compact(state.e)
 	# === COMPACT FORMAT CONVERSION ===
 	# Server now sends compact keys to reduce packet size
 	# Convert to legacy format for existing code compatibility
@@ -276,42 +289,6 @@ func update_game_state(state: Dictionary):
 			if bmin.has("z"):
 				bomb_state["z_height"] = bmin.z
 			state.bombs[bomb_id] = bomb_state
-	
-	if state.has("e") and not state.has("explosions"):
-		# Compact explosion format - expand to legacy format
-		# Format: [center_x, center_y, packed_tiles, bomb_id, start_time]
-		# packed_tiles = [[pos_packed, data_packed], ...] using bit packing:
-		#   pos_packed = (x << 8) | y
-		#   data_packed = (dir << 8) | (length << 1) | is_end
-		# dir_code: 0=middle, 1=up, 2=down, 3=left, 4=right, 5=vertical, 6=horizontal
-		state["explosions"] = []
-		var dir_names = ["middle", "up", "down", "left", "right", "vertical", "horizontal"]
-		for exp_arr in state.e:
-			# Unpack tiles from [[pos_packed, data_packed], ...] to enriched format
-			var packed_tiles = exp_arr[2]
-			var unpacked_pattern := []
-			for tile_data in packed_tiles:
-				if tile_data.size() >= 2:
-					var pos_packed = tile_data[0]
-					var data_packed = tile_data[1]
-					var x = (pos_packed >> 8) & 0xFF
-					var y = pos_packed & 0xFF
-					var dir_code = (data_packed >> 8) & 0x07
-					var length = (data_packed >> 1) & 0x7F
-					var is_end = data_packed & 0x01
-					var dir_name = dir_names[dir_code] if dir_code < dir_names.size() else "middle"
-					unpacked_pattern.append({
-						"grid_pos": {"x": x, "y": y},
-						"direction": dir_name,
-						"length": length,
-						"is_end": is_end == 1
-					})
-			state.explosions.append({
-				"center": {"x": exp_arr[0], "y": exp_arr[1]},
-				"pattern": unpacked_pattern,
-				"bomb_id": exp_arr[3],
-				"start_time": float(exp_arr[4]) / 100.0 # Convert from centiseconds
-			})
 	
 	if state.has("pu") and not state.has("powerups"):
 		# Compact powerup format - expand to legacy format
@@ -624,9 +601,9 @@ func update_game_state(state: Dictionary):
 				tirra_nodes[tirra_id].queue_free()
 				tirra_nodes.erase(tirra_id)
 
-	# Update explosions
-	if state.has("explosions"):
-		update_explosions(state.explosions)
+	# These are additive event batches, not a complete active-effect roster.
+	if accept_effect_snapshot:
+		update_explosions(explosion_events)
 
 func _on_latency_updated(latency_ms: int):
 	if hud and hud.has_method("update_latency"):
@@ -1344,54 +1321,44 @@ func update_bomb(bomb_id: String, data: Dictionary):
 			bomb_node.update_z_height(0.0) # Reset Z height for other states
 
 func update_explosions(explosions_data: Array):
-	"""Update progressive explosions with SBomberman sprites"""
-	# Track which explosions are still active in the server state
-	var active_explosion_ids = {}
-	
+	"""Accept delivered events once; each renderer owns its visual lifetime."""
 	for explosion_data in explosions_data:
-		var explosion_id = explosion_data["bomb_id"]
-		active_explosion_ids[explosion_id] = true
-		
-		# Create new explosion renderer if not exists
-		if not explosion_nodes.has(explosion_id):
-			var explosion_node = ExplosionRenderer.new()
-			explosion_node.explosion_id = explosion_id
-			explosion_node.name = "Explosion_" + explosion_id
-			explosion_node.z_index = RenderingLayers.EXPLOSIONS # Render explosions using RenderingLayers system
-			
-			# Pattern already in enriched format from compact expansion
-			var enriched_pattern = explosion_data["pattern"]
-			
-			# Initialize with pattern from server
-			explosion_node.initialize(
-				enriched_pattern,
-				explosion_data["start_time"]
-			)
-			
-			# Trigger the paired bomb's explode animation/audio the moment the explosion spawns
-			if bomb_nodes.has(explosion_id):
-				var linked_bomb = bomb_nodes[explosion_id]
-				if is_instance_valid(linked_bomb) and linked_bomb.has_method("explode"):
-					linked_bomb.explode()
-			
-			explosions_container.add_child(explosion_node)
-			explosion_nodes[explosion_id] = explosion_node
-			
-			print("[GameView] Created explosion renderer: ", explosion_id,
-				  " with ", explosion_data["pattern"].size(), " tiles")
-	
-	# Remove explosions no longer in server state
-	var explosions_to_remove: Array = []
-	for explosion_id in explosion_nodes.keys():
-		if not active_explosion_ids.has(explosion_id):
-			explosions_to_remove.append(explosion_id)
-	
-	for explosion_id in explosions_to_remove:
-		if explosion_nodes.has(explosion_id):
-			var node = explosion_nodes[explosion_id]
-			if is_instance_valid(node):
-				node.queue_free()
-			explosion_nodes.erase(explosion_id)
+		var event: Dictionary = _explosion_timeline.accept_event(explosion_data, explosion_nodes)
+		if not event.accepted:
+			continue
+		var explosion_id: String = event.bomb_id
+		var explosion_node := ExplosionRenderer.new()
+		explosion_node.explosion_id = explosion_id
+		explosion_node.name = "Explosion_%d" % explosion_node.get_instance_id()
+		explosion_node.z_index = RenderingLayers.EXPLOSIONS
+		explosion_nodes[explosion_id] = explosion_node
+		explosion_node.tree_exiting.connect(_on_explosion_tree_exiting.bind(explosion_id, explosion_node.get_instance_id()), Object.CONNECT_ONE_SHOT)
+		# Immediate late-event sampling needs ready child sprites.
+		explosions_container.add_child(explosion_node)
+		explosion_node.initialize(event.pattern, event.start_time, _explosion_timeline.server_time_msec / 1000.0)
+		# Preserve the existing linked-bomb dispatch, now guarded by event identity.
+		# This does not fix a missing bomb link or establish sample-accurate audio.
+		if bomb_nodes.has(explosion_id):
+			var linked_bomb = bomb_nodes[explosion_id]
+			if is_instance_valid(linked_bomb) and linked_bomb.has_method("explode"):
+				linked_bomb.explode()
+
+
+func _on_explosion_tree_exiting(explosion_id: String, instance_id: int) -> void:
+	var current = explosion_nodes.get(explosion_id)
+	if not is_instance_valid(current) or current.get_instance_id() == instance_id:
+		explosion_nodes.erase(explosion_id)
+
+
+func reset_explosion_timeline() -> void:
+	# Explicit view/room lifecycle boundary only. A decreasing network clock is
+	# never sufficient evidence of a new room or replay epoch.
+	for node in explosion_nodes.values():
+		if is_instance_valid(node):
+			node.set_physics_process(false)
+			node.queue_free()
+	explosion_nodes.clear()
+	_explosion_timeline.reset()
 
 func _expand_explosion_pattern(explosion_data: Dictionary) -> Array:
 	"""Convert direction counts pattern to enriched tile data for ExplosionRenderer

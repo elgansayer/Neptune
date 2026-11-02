@@ -12,7 +12,7 @@ import sys
 import time
 
 ROOT = Path(__file__).resolve().parents[2]
-CORE = ("input-tooling", "catalogue-tests", "catalogue-validation", "factory-contracts", "gate-contracts")
+CORE = ("input-tooling", "film-contracts", "catalogue-tests", "catalogue-validation", "factory-contracts", "gate-contracts")
 NATIVE = ("native-install", "native-runner", "native-project")
 RUNTIME = ("native-runtime", "native-bots")
 # An allowlist: new/unrecognised paths require the full native gameplay gate.
@@ -100,6 +100,7 @@ def commands(mode: str, evidence: Path, toolchain: Path) -> list[tuple[str, list
     python = sys.executable
     checks = [
         ("input-tooling", [python, "tools/saturn_lab/check.py"], 60),
+        ("film-contracts", [python, "tools/saturn_film/check.py"], 60),
         ("catalogue-tests", [python, "tools/research_catalog/check.py"], 60),
         ("catalogue-validation", [python, "tools/research_catalog/cli.py", "validate"], 30),
         ("factory-contracts", [python, "tools/factory/check.py"], 60),

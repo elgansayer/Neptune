@@ -15,6 +15,29 @@ These define the current restart scope, including the 1 November fidelity clarif
 Earlier root plans and completion reports are historical
 claims to verify against code and actual execution, not evidence of correctness.
 
+## Current work priority: factory and Saturn research
+
+The owner's 2 November direction is binding. Read
+`docs/restart/FACTORY_FIRST_GOAL.md` before choosing new work. Prioritise the
+existing shared AI factory and its Saturn reverse-engineering pipeline: usable
+supervision/accounting/recovery, trusted tool preparation, real original-game
+experiments, extraction and measured implementation/comparison. Add needed free
+tools/packages through #508/#518 and the existing provisioning boundary.
+Ordinary game/UI/workshop and Power expansion follow this critical path unless
+they remove a demonstrated blocker or test a named recovered scenario. Preserve
+active owners, finish bounded work in progress and retain the full moddable
+native/browser/community game scope. No competing scheduler, provider allowance
+or mandatory approving review is introduced.
+
+The owner's further 2 November clarification makes **all original Saturn game
+code** the primary research deliverable. Follow the code-first continuation in
+`docs/restart/FACTORY_FIRST_GOAL.md`: boot/kernel, both SH-2 CPUs, overlays and
+dynamic targets, libraries, 68000 sound code, observed DSP programs and regional
+network/menu/save paths. Select code analysis and original-byte/runtime validation;
+asset/tool work should unblock a named code question. Preserve active extraction
+owners. A module census, translated instructions or extracted audio is not
+complete code recovery. Keep unknown executable/function denominators explicit.
+
 ## Product
 
 - The owner's 30 October ethos is binding: start with the look and behaviour of
@@ -33,7 +56,8 @@ claims to verify against code and actual execution, not evidence of correctness.
   Prioritise extending creator workflows over adding more fixed stock content.
   Treat comparison with Power Bomberman as our product goal, not an unverified
   claim that its current build has no custom-content support.
-- Multiplayer and strong bots are the product priority. Support creator-authored
+- Multiplayer and strong bots remain central product requirements; current work
+  follows the factory/Saturn priority above. Support creator-authored
   power-ups, complete solo stories and explicitly authored co-op campaigns.
 - Separate bot role (opponent/companion/enemy) from policy (Saturn/Neptune/authored).
 - Full reference extraction is not a prerequisite for original community fixtures.

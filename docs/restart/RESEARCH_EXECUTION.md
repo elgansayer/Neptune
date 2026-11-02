@@ -1,11 +1,27 @@
 # Saturn and Power reverse-engineering execution
 
+Current owner priority, 2 November: [FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md).
+The shared AI development factory and Saturn reverse engineering are the primary
+new-work queues. Use recovered contracts to drive Godot implementation; defer
+independent Power/product breadth unless it removes a named pipeline blocker.
+Existing owners, research inputs, acceptance scope and full product goals remain.
+
+The owner subsequently clarified that **all original game code** is the primary
+research deliverable. Continue the [code module census](saturn-code/README.md) and
+[original-function probe](research/2026-11-02-saturn-code-probe.md) through
+#480–#483/#488/#492/#494–#497/#515. Asset work supports named code questions;
+finished media extraction cannot stand in for source/semantic recovery. Separate
+original modules from patched/derived analysis artifacts and keep unknown code,
+function and dynamic-target totals explicit. Preserve active #487 extraction.
+
 Execution index: [#477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
 Saturn mission: [#464](https://github.com/elgansayer/Neptune-Bomberman/issues/464).
 Power mission: [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476).
 The [catalogue](backlog/catalogue.json) has 418 desired features, including 38 new
-research jobs. This document records the 30 October 2026 evidence and dispatch
-contract, not completed reconstruction.
+research jobs. Status reconciled 2 November 2026 against accepted input, archive,
+state-acquisition and first-pattern evidence; complete reconstruction remains open.
+The [2 November deep dive](research/2026-11-02-saturn-reverse-engineering.md)
+connects measured counts, unresolved coverage and the next bounded experiments.
 
 The owner's 1 November requirement is the
 [Saturn fidelity contract](SATURN_FIDELITY.md): identical content and presentation,
@@ -32,26 +48,46 @@ fixtures or the first measured Godot slice.
   source revision alone, identify the actual executable, BIOS and settings.
   Repeated fresh checkpoint continuations are evidence of repeatability in that
   setup; they do not certify game fidelity or raw VDP hook availability.
-- #473 inventories 430 USA and 25 Japan files, 236/240 PROGRAM.BIN banks,
-  validated in-file header pointers and regional differences. Static inventory
-  is not semantic code recovery or decoded graphics. The existing movie files'
-  possible PAL provenance remains a hypothesis.
+- #473 inventories 430 USA and 25 Japan files and 236/240 static PROGRAM.BIN
+  headers. [EXP-SAT-ARCHIVE-002](evidence/2026-10-30-gemini-program-bin-archive-002.md)
+  subsequently reconciles these with 72 USA / 66 Japan live kernel entries,
+  residual headers and unreferenced tails. It verifies verbatim base1/normal2
+  staging and the Hudson ring/delta decoder against selected resident graphics,
+  palettes and grids. The [receipts](saturn-archive/README.md) decode 841 base1
+  and 566 normal2 unique pixel blocks; those counts are neither character-frame
+  totals nor whole-game semantic recovery. Slots 3–6/9, animation associations
+  and SCSP command payloads remain open. Existing movies' possible PAL provenance
+  remains a hypothesis; do not use them as an identified NTSC oracle.
+- [Real checkpoint acquisition](research/2026-10-30-saturn-state-host-proof.md)
+  normalizes VDP1/VDP2 VRAM, CRAM and registers and matches a separate memory
+  read of the accepted restored core. [One direct-RGB intro source pattern](research/2026-10-30-saturn-first-rgb-pattern.md)
+  was independently pixel-checked, regenerated and published privately. This is
+  partial graphics recovery; no complete player sheet or production-Godot parity
+  follows from that result.
+- [Three existing FILM movies](research/2026-11-02-saturn-reverse-engineering.md#3-current-film-recovery-result) now have exact packet timing, lossless PCM extraction and complete repeated FFmpeg video decoding. Their release remains unresolved; this is not a pinned USA/Japan runtime result.
 - Gemini's existing research workspace is `/home/dev/neptune-gemini-research`.
-  Preserve its active ownership and queued EXP-SAT-ARCHIVE-002 rather than starting
-  another worker on the same slice. An expired old lease is not proof of a stopped
-  process; reconcile live ownership first.
+  Preserve active #487 spritesheet work and reconcile live claims before extending
+  the completed archive slice or starting an overlapping extraction worker. An
+  expired old lease is not proof of a stopped process. Historical VPS media/state
+  paths are not mounted in the current cloud workspace; this limits new original
+  emulator experiments here, not the accepted evidence or other eligible work.
 - #474/#475 integrated Neptune offline verification into the existing Elgl Repo
-  Factory. Live Neptune unattended task/merge/restart recovery remains to be
-  demonstrated. Read current #33 evidence before scheduling.
+  Factory. #576/#578 add named supplied-trace checks; #579/#580 add a trusted
+  original-replay recorder and Ed25519 certificate verification through the
+  existing sandbox/host gate. Read the [receipt boundary and remaining acceptance](../../tools/factory/REFERENCE_RECEIPTS.md):
+  these implementations do not establish current production-Godot parity or
+  Neptune unattended task/merge/restart recovery. Read live #33/#536 before
+  scheduling provider work; preserve shared limits and manual sessions.
 
 ## Immediate experiments
 
 | Priority | Bounded result | Issue |
 | --- | --- | --- |
 | First | Reproduce one upstream normal route and one battle route against our original bridge; map useful code/tools and disagreements | #478 |
-| First | Continue EXP-SAT-ARCHIVE-002: base1/normal2 bank bytes versus resident memory | #484 |
-| Next | Bounded trace hooks, then one player/effect and background from VDP data | #482, #485, #486 |
-| Independent | Pin Power client/server/manual, VM/YYC/container identity and existing-export match | #498, #400 |
+| First | Preserve active spritesheet work; join one identified player/effect to recovered bank blocks, actual palette and observed frame order/durations | #487, #485, #484 |
+| Next | Extend the accepted archive/state results with one bounded command-flow or palette resolver and one VDP2 patch; compare with the original when private inputs are available | #482, #485, #486 |
+| Independent Saturn | Extend the verified three-container FILM/PCM result to pinned regional originals, CD-DA and runtime trigger/synchronization evidence | #489 |
+| Deferred independent breadth | Pin Power client/server/manual, VM/YYC/container identity and existing-export match after the Saturn/factory critical path; preserve active bounded owners | #498, #400 |
 | Independent | Verify one private decoded asset batch with regeneration and source manifest | #512 |
 | Factory | Route one bounded research job through existing intake, capabilities and trusted receipts | #510, #511 |
 
@@ -190,6 +226,11 @@ original USA kernel execution, named Beetle state extraction and one real sheet.
 New findings include native-order state payloads, coherent VDP2 palette context,
 a configuration-only Ymir headless executable, and conflicting upstream object
 layout notes requiring original validation. These are source findings and proposed
-experiments, reconciled with #524's existing original-kernel result. Preserve #484's active ownership and
-existing factory budgets; do not reset the delivered first-success email alert.
+experiments. Reconcile their historical status with the accepted archive,
+state-acquisition and first-RGB results above before dispatching: the kernel
+probe, state adapter and initial RGB pattern must not be repeated as if missing.
+Preserve active #487 ownership and existing factory budgets; do not reset the
+delivered first-success email alert. Use the
+[current deep dive](research/2026-11-02-saturn-reverse-engineering.md) for the
+remaining evidence boundaries and next bounded experiments.
 
