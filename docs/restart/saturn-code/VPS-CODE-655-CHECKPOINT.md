@@ -2,11 +2,12 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-first-task-init-655`, workspace
+`research/saturn-task-init-contracts-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
-every original/failure artifact. No provider dispatch or policy/continuity changes.
+every original/failure artifact. Preserve new coordinator657 intake/candidate
+identity integration. No provider dispatch or policy/continuity changes.
 
 ## Accepted fresh boot, then first-task initialization
 
@@ -107,6 +108,48 @@ dependencies through an actual full return before closing655. The stored
 00200000 pointer is not permission for arbitrary flat-RAM/device access.
 Startup6174 writes CPU-internalFFFFFF08;6372 has BIOS/IRQ-sample dependencies.
 Those require real side-effect/native evidence, not invented devices or ticks.
+
+## Prepared broader contracts; host admission pending
+
+Pushed source`1c3fd5dedb89e8d89d41e74a2f9a0c005fcf6910` adds
+`tools/saturn_lab/probe_task_init.py` and seven owned tests.305 research tests and
+14 catalogue tests pass. The selected constructed cases are1,920 each for89AC,
+89C8→89FC and623A→89FC;1,280 for95B04 parameter validation. Expected library
+outcomes are1,220 complete error returns and60 valid prefixes ending95B54 before
+the BIOS/library path. These are **model/test denominators, not new original
+execution evidence**.89C8,623A and the positive95B04 body remain incomplete.
+Kernel/interpreter identities and accepted128/1024 guards remain unchanged.
+
+The original job was actually requested through the shared3 gate and deferred
+at20:00:50 UTC on2 November. Foreign live daemonPID416766 holds exclusive
+`exclusive:416766:c039db2d6a4444dfa2bb4eea90c30dbf` while its existing shared
+implementation owner1827 drains. Do not clear, adopt or bypass those leases.
+The retained receipt is
+`/home/dev/neptune-research-private/655/contracts-leaf-7d8iae1q/supervisor.json`;
+it records`admitted:false` and`original_game_bytes_executed:false`.
+
+Frozen source adapter:
+`/home/dev/neptune-research-private/655/adapter-c433eccac63da0c14a2d77060e41784a7a4280a5233638211d6d0c2fa2a6ac6b`.
+The manifest hashes the seven committed source files and records source head.
+Private runner/worker are retained in`/home/dev/neptune-evidence/code655-20261102/`.
+Retry admission using the prepared runner; each attempt retains a new directory:
+
+```sh
+unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
+  /home/dev/neptune-evidence/code655-20261102/run-contract-family.py \
+  --adapter /home/dev/neptune-research-private/655/adapter-c433eccac63da0c14a2d77060e41784a7a4280a5233638211d6d0c2fa2a6ac6b \
+  --family leaf
+```
+
+After admission, retain two matching actual original reports per family, all
+semantic instruction controls and the actual caller128 refusal. Other families
+are`init-prefix`,`caller-prefix`,`library-validation`. Each admitted job keeps
+its own180-second lease,60-second/nice10/downward2GiB limit, offline namespace,
+readonly originals/source/dependencies and hidden broker/credential files.
+Inspect and retain any real mismatch before correcting the model. Do not relabel
+deferred admission as a failed CPU run or count source checks as original code.
+While the live reservation remains, continue source analysis of the positive
+95B04 dependencies without starting an unadmitted experiment.
 
 The initial allocator label for95B04 is withdrawn. Actual source checksR4 in
 1..24, pointer alignment and descriptor fields; no heap-size/API purpose is
