@@ -39,7 +39,8 @@ class ProvisionTests(unittest.TestCase):
         self.probes = 0
         for relative in ("tools/factory/provision.py", "tools/factory/provision_probe.py", "tools/factory/provision_xvfb.py", "tools/factory/provision_ocr.py",
                          "tools/factory/provision-lock.json", "tools/godot/install.py",
-                         "tools/godot/toolchain.json"):
+                         "tools/godot/toolchain.json", "tools/factory/provision_call_trace.py",
+                         "tools/factory/provision_call_trace.h", "tools/factory/provision_call_trace_abi.py"):
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(p.ROOT / relative, target)
@@ -94,6 +95,19 @@ class ProvisionTests(unittest.TestCase):
         self.assertTrue(again["reused"])
         self.assertEqual((self.installs, self.probes), (1, 2))
         self.assertEqual(Path(first["binary"]).name, "tesseract")
+
+    def test_trace_core_has_separate_identity_and_uses_the_existing_reuse_protocol(self):
+        regular = p.identity("beetle-saturn", self.root)
+        instrumented = p.identity("beetle-saturn-call-trace", self.root)
+        self.assertNotEqual(regular[2], instrumented[2])
+        self.assertIn("tools/factory/provision_call_trace.h", instrumented[1]["installer_sources"])
+        first = p.ensure("beetle-saturn-call-trace", self.cache, self.home / "first", root=self.root,
+                         installer=self.install, prober=self.probe)
+        again = p.ensure("beetle-saturn-call-trace", self.cache, self.home / "again", root=self.root,
+                         installer=self.install, prober=self.probe)
+        self.assertFalse(first["reused"])
+        self.assertTrue(again["reused"])
+        self.assertEqual((self.installs, self.probes), (1, 2))
 
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()

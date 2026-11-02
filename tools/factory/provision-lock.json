@@ -53,6 +53,13 @@
           "bytes": 4113088
         }
       }
+    },
+    "beetle-saturn-call-trace": {
+      "kind": "beetle-call-trace",
+      "platform": "linux-x86_64",
+      "repository": "https://github.com/libretro/beetle-saturn-libretro.git",
+      "commit": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "minimum_free_bytes": 2147483648
     }
   }
 }

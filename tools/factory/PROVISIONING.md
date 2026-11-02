@@ -37,6 +37,24 @@ options. It needs existing `git`, `make`, `cc` and `c++`. Its smoke loads the re
 library in a fresh bounded process and checks API symbols/version and Saturn/CUE
 identity without a BIOS or game. This is not a boot or compatibility test.
 
+### Matched original-call observer
+
+`--tool beetle-saturn-call-trace` prepares a separate instrumented generation.
+It deliberately matches the accepted historical Beetle revision so that the
+explicit cross-core import experiment can test compatibility; it never upgrades
+or overwrites a reference core. The patcher checks all inspected source hashes
+before writing, adds only the bounded master interpreter observer and exports,
+and records the patched source/header identities. The receipt identity includes
+the patcher, header and ABI binding. Source notices remain intact; the observer
+header follows Mednafen's GPL licence without changing Neptune's root licence.
+
+Actual install/reuse probes load the built library and exercise its exact-sized
+ABI, invalid entry/pair budgets and nonconsecutive frame rejection. The real
+provisioning workflow requires this build before its aggregate installation job
+can succeed. These probes run no game instructions. Natural-call and unmodified
+native-output acceptance are separate experiments described in
+[CALL_TRACING.md](../saturn_lab/CALL_TRACING.md).
+
 ### Local original-screen OCR
 
 The #583 recipe builds [Tesseract 5.5.4](https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.4)
