@@ -6,6 +6,61 @@ Machine-readable receipts: [`docs/restart/saturn-archive/`](../saturn-archive/RE
 Versioned tooling: [`tools/saturn_archive/`](../../../tools/saturn_archive/README.md) (reuses [`tools/saturn_disc/`](../../../tools/saturn_disc/README.md) and [`tools/saturn_lab/state_graphics.py`](../../../tools/saturn_lab/state_graphics.py) without modifying either package).
 No disc, BIOS, track, save-state, framebuffer, or raw RAM/VRAM bytes are committed or transmitted into model context.
 
+## Correction and supersession — 2 November 2026
+
+**The original format narrative below contradicts the merged implementation. Do
+not implement a decoder from Sections 4.1–4.3 or use the Section 2 prose CUE hashes
+as input identities.** Those passages are retained as historical reporting;
+this correction supersedes their conflicting technical claims. The execution
+receipts and their bytes/hashes are unchanged.
+
+This reconciliation compares [`codec.py`](../../../tools/saturn_archive/codec.py)
+(`hudson_decompress`, `STREAM_MODES`, `decode_slot0_entry` through
+`decode_slot8_sprites`) and
+[`compare.py`](../../../tools/saturn_archive/compare.py)
+(`compare_bank_to_checkpoint`) with the narrative. It is source inspection, not a
+new disassembly, original-host replay or independent emulator result. Preserve
+the reported resident byte comparisons while checking their scope against the
+[machine receipts](../saturn-archive/README.md).
+
+| Subject | Historical claim superseded | Merged implementation to reproduce |
+| --- | --- | --- |
+| Codec header | Selector width and mode packed into one byte; all methods explicit | Separate selector-width byte and mode byte; method 0 is implicit, followed by `2^selector_bits - 1` method bytes. Selector width 0 takes the raw-copy path. |
+| Selector order | MSB-first selectors and width codes | LSB-first selectors. The 3-bit selector combines the low bits of three bytes as `(b2&1)<<2 \| (b1&1)<<1 \| (b0&1)`, shifting each byte right after use. |
+| Predictors | Variable-width signed deltas and 16-entry lookbacks | Code 0 reads a literal element; codes 1–13 use the previous element plus `0,1,2,4,8,16,32,-1,-2,-4,-8,-16,-32`; codes 14–19 look back `2,4,8,16,32,64` elements. |
+| Ring sizes | Every ring has 16 entries | Modes 0–4 use, respectively, one 512-entry u8 ring, two 256-entry u8 rings, one 256-entry u16 ring, two 128-entry u16 rings, and one 128-entry u32 ring. Dual modes alternate every element. |
+| Slot 0 | Bit 31 means raw | Bit 31 means compressed; the other 31 bits give decoded byte length. |
+| Slot 1 | First u16 is a word offset to double | The parser records it as a byte offset directly. Resident comparison searches for palette bytes anywhere in CRAM; that search alone does not validate offset semantics. |
+| Shadow CRAM | Probe at `WorkRAMH+0x0ce260` | `compare.py` searches `WorkRAMH[0x0cbc60:0x0ccc60]` (CPU address `0x060cbc60`). This identifies the implemented probe, not a newly validated original shadow layout. |
+| Slot 2 tilemaps | Four-byte header, then pixels | Six-byte header: packed width/height u16, packed X/Y u16, flags u16; payload starts at +6. |
+| Slot 7 grids | u16 columns, u16 rows, payload at +4 | One dimension byte: columns `dims&0xf0`, rows `(dims&0x0f)<<4`; payload starts at +1. |
+| Slot 8 sprites | 12-byte descriptors with a pixel pointer at +0; u32 pixel length | Two table pointers; the first table points to descriptors. The decoder requires at least 20 readable bytes and reads the pixel-block pointer at descriptor +16. The block header is `(u16 byte_len, u16 format_code)` with payload at +4; code 5 copies raw bytes, others decompress. |
+
+Slot 8's minimum readable extent is **not a proven record stride**. Width,
+height, anchors, palette selection and animation fields still require the
+original consumer at `0x06068b86` / `0x06068bdc` and real draw evidence. The old
+listed descriptor fields sum to 14 bytes, not 12. Do not infer dimensions from
+decoded length or equate the block's format code with VDP1 colour depth.
+
+The [USA](../saturn-disc/usa-mk81070-v1003.summary.json) and
+[Japan](../saturn-disc/japan-t14302g-v1000.summary.json) disc summaries and
+[coverage ledger](../asset-audit/saturn-coverage-ledger.json) agree on the CUE
+digests below, but disagree with this report's historical table:
+
+| CUE | Historical prose SHA-256 — disputed | Disc-summary/ledger SHA-256 declaration |
+| --- | --- | --- |
+| USA | `785e6f9f98dfcfadbd1fa24eb87dfad20bc94173c88565d75c9616aa31e6e9da` | `785e6f9fbcb8639902e5239b3fb560555e17a3cb8c91a38cbdd8aaeed03ef9da` |
+| Japan | `ac6c34bb3d1ea689e0a0b748ac96444df5bf1152bd6e4d6c43e1cfcd9d0fbcdb` | `ac6c34bb6c9fb144b5794640b706a20f2cbe5d9f4f20ec71b2f7039ded1abcdb` |
+
+No original CUE was available in this workspace to rehash. This records the
+conflict without silently repairing an input lock or authenticating either
+declaration. Regeneration must verify the actual private media against its
+accepted lock and reconcile the disagreement on the original host.
+
+SCSP samples/sequences/driver recovery belongs to **RSAT-011 / #488**. Historical
+receipt text naming RSAT-008 for SCSP is a task-reference error; RSAT-008 / #485
+covers VDP1. Slots 3–6/9 remain under their relevant code/consumer research tasks.
+
 ---
 
 ## 1. Executive verdicts
@@ -25,6 +80,8 @@ No disc, BIOS, track, save-state, framebuffer, or raw RAM/VRAM bytes are committ
 ---
 
 ## 2. Locked inputs & emulator provenance
+
+**Historical CUE digests below are disputed; use the dated correction above.**
 
 USA and Japan discs remain strictly separated profiles; `normal2` (`bank_id=5`) was selected specifically because `#473` proved its 280 sectors (`573,440` B) are byte-for-byte identical across both regions.
 
@@ -88,6 +145,10 @@ Disassembly of `0KRNL.BIN` (`0x06008B26..0x06008C34` on USA; matching literal po
 ---
 
 ## 4. Hudson Predictive Ring/Delta Codec (`0x0603443C` / `0x0603461C`) & slot unpackers
+
+**Historical, superseded format narrative.** Sections 4.1–4.3 contain the
+contradictions enumerated in the 2 November correction above and must not be
+used as an extraction specification.
 
 ### 4.1 Compressed stream header & bit-stream width readers (`0x060B53B4`)
 
@@ -205,6 +266,6 @@ Full read-only regeneration commands from `/home/dev/Sega-Saturn-BIOS` and priva
 ## 8. Explicit remaining unknowns
 
 1. **Slots `3, 4, 5, 6, 9` inner record semantics**: Pointer-table bounds inside `base1` and `normal2` are indexed and verified in-bounds, but the per-scene SH-2 consumers (likely sprite animation scripts, object spawn lists, and stage event tables) are not yet decoded.
-2. **SCSP binary transfer headers (`0x060095E0`)**: `Slot 10` in `s_*` / world banks and polymorphic `Slot 2` in stage banks (`"DSP01e.EXB"`) transfer payloads into `SCSP.RAM` (`0x25A00000+`), proven via the 256-byte `s_nor2` probe at `SCSP.RAM+0x0b006`, but full sequence/tone/PCM record decoding remains open for `RSAT-008`.
+2. **SCSP binary transfer headers (`0x060095E0`)**: `Slot 10` in `s_*` / world banks and polymorphic `Slot 2` in stage banks (`"DSP01e.EXB"`) transfer payloads into `SCSP.RAM` (`0x25A00000+`), proven via the 256-byte `s_nor2` probe at `SCSP.RAM+0x0b006`, but full sequence/tone/PCM record decoding remains open for `RSAT-011` / #488 (corrected task reference).
 3. **USA-only headerless entries (`bank_id=23` at `0x002da000`, `bank_id=41..43` at `0x002fb000`)**: Bounded and hashed in the USA kernel directory receipt, but their runtime callers (likely USA NetLink/localization or voice sub-tables) were not exercised in Normal Game attract/stage flows.
 4. **Dynamic VDP2 plane destination selection**: `Slot 0` entries with `default_dest == 0x00000000` and `Slot 2` compressed tilemaps receive their target `VDP2.VRAM` plane addresses from scene-specific SH-2 callers rather than from the `0x34` bank header.
