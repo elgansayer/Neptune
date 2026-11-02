@@ -13,6 +13,16 @@ Fetch origin in the existing Neptune repository without resetting any work. Read
 
 ## Continuation prompt
 
+**VPS execution update under #590:** the existing coordinator received this
+handoff and ran the supplied original. The initial B934 no-write experiment failed
+on its real MACL push. Two runs with an explicit bounded stack contract then
+passed all 196 cases and four original-copy controls. Read
+[the actual result](research/2026-11-02-saturn-table-address-result.md) before
+repeating the historical first-action commands below. Continue natural caller
+validation and further functions; isolated CPU evidence does not complete this
+mission. The original host/media are available, so the earlier cloud access gap
+does not block this coordinator.
+
 Continue Elgan's Sega Saturn Bomberman reverse engineering on this VPS. **The
 primary objective is to reverse engineer all original game code.** Complete asset
 extraction remains a supporting objective. Preserve Neptune's wider product and
