@@ -18,6 +18,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import tarfile
 import tempfile
 import time
 import uuid
@@ -56,15 +57,15 @@ def write_json(path, value):
 
 
 def identity(tool, root):
-    if tool not in ("godot", "beetle-saturn", "beetle-saturn-call-trace", "xvfb", "tesseract"):
+    if tool not in ("godot", "beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace", "xvfb", "tesseract"):
         raise ProvisionError("needs_recipe", "Create/reuse a bounded trusted recipe task for: " + tool)
     path = root / "tools/factory/provision-lock.json"
     lock = json.loads(path.read_text())
-    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn", "beetle-saturn-call-trace", "xvfb", "tesseract"}:
+    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace", "xvfb", "tesseract"}:
         raise ProvisionError("invalid_recipe", "Unsupported recipe registry")
     recipe = lock["tools"][tool]
     fields = {"kind", "platform", "minimum_free_bytes"}
-    if tool in ("beetle-saturn", "beetle-saturn-call-trace"):
+    if tool in ("beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace"):
         fields |= {"repository", "commit"}
     if tool == "xvfb":
         xvfb.validate(recipe)
@@ -72,13 +73,13 @@ def identity(tool, root):
     if tool == "tesseract":
         ocr.validate(recipe)
         fields = ocr.FIELDS
-    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source", "beetle-saturn-call-trace": "beetle-call-trace", "xvfb": "debian-xvfb", "tesseract": "tesseract-source"}[tool]:
+    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source", "beetle-saturn-call-trace": "beetle-call-trace", "beetle-saturn-context-trace": "beetle-context-trace", "xvfb": "debian-xvfb", "tesseract": "tesseract-source"}[tool]:
         raise ProvisionError("invalid_recipe", "Unsupported installer/recipe fields")
     if recipe["platform"] != "linux-x86_64":
         raise ProvisionError("invalid_recipe", "Unsupported recipe platform")
     if type(recipe["minimum_free_bytes"]) is not int or not 256 * 1024**2 <= recipe["minimum_free_bytes"] <= 16 * 1024**3:
         raise ProvisionError("invalid_recipe", "Invalid disk budget")
-    if tool in ("beetle-saturn", "beetle-saturn-call-trace") and (recipe["repository"] != "https://github.com/libretro/beetle-saturn-libretro.git" or
+    if tool in ("beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace") and (recipe["repository"] != "https://github.com/libretro/beetle-saturn-libretro.git" or
                                     not re.fullmatch(r"[0-9a-f]{40}", recipe["commit"])):
         raise ProvisionError("invalid_recipe", "Require official repository and exact source commit")
     sources = ["tools/factory/provision.py", "tools/factory/provision_probe.py"]
@@ -91,6 +92,9 @@ def identity(tool, root):
     if tool == "beetle-saturn-call-trace":
         sources += ["tools/factory/provision_call_trace.py", "tools/factory/provision_call_trace.h",
                     "tools/factory/provision_call_trace_abi.py"]
+    if tool == "beetle-saturn-context-trace":
+        sources += ["tools/factory/provision_call_trace.py", "tools/factory/provision_context_trace.py",
+                    "tools/factory/provision_context_trace.h", "tools/factory/provision_context_trace_abi.py"]
     record = {"tool": tool, "recipe": recipe, "installer_sources": {p: digest(root / p) for p in sources}}
     key = hashlib.sha256(json.dumps(record, sort_keys=True).encode()).hexdigest()
     return recipe, record, key
@@ -166,7 +170,7 @@ def binary_name(tool, root):
         return "tesseract"
     if tool == "xvfb":
         return "Xvfb"
-    if tool in ("beetle-saturn", "beetle-saturn-call-trace"):
+    if tool in ("beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace"):
         return "mednafen_saturn_libretro.so"
     lock = json.loads((root / "tools/godot/toolchain.json").read_text())
     name = lock.get("binary_name")
@@ -188,7 +192,7 @@ def smoke(tool, binary, runner, root):
         if result != {"scope": xvfb.SCOPE, "width": 640, "height": 480, "depth": 24, "pixel": 0x123456}:
             raise ProvisionError("smoke_failed", "Missing actual X11 display/pixel observation")
         return result
-    if tool in ("beetle-saturn", "beetle-saturn-call-trace"):
+    if tool in ("beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace"):
         result = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_probe.py"), str(binary)], binary.parent, 30))
         if result.get("scope") != "no-media ABI smoke only" or result.get("api") != 1:
             raise ProvisionError("smoke_failed", "Missing real libretro probe result")
@@ -198,6 +202,13 @@ def smoke(tool, binary, runner, root):
             if (observer.get("abi") != 2 or observer.get("record_bytes") != 120 or
                     observer.get("rejected_invalid_entry_budget_and_frame") is not True):
                 raise ProvisionError("smoke_failed", "Missing actual bounded observer ABI/fence result")
+            return {"libretro": result, "observer": observer}
+        if tool == "beetle-saturn-context-trace":
+            observer = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_context_trace_abi.py"),
+                                              "--probe-core", str(binary)], binary.parent, 30))
+            if (observer.get("abi") != 1 or observer.get("record_bytes") != 1996 or
+                    observer.get("rejected_invalid_profile_budget_witness_and_frame") is not True):
+                raise ProvisionError("smoke_failed", "Missing actual bounded context observer ABI/fence result")
             return {"libretro": result, "observer": observer}
         return result
     lock = json.loads((root / "tools/godot/toolchain.json").read_text())
@@ -245,6 +256,21 @@ def install(tool, recipe, payload, work, runner, root):
         if patched.get("reference_revision") != actual or patched.get("observer_abi") != 2:
             raise ProvisionError("source_mismatch", "Observer patch identity mismatch")
         write_json(payload / "call-trace-build.json", patched)
+    if tool == "beetle-saturn-context-trace":
+        patched = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_context_trace.py"),
+                                        "--source", str(source)], work, 30))
+        if patched.get("reference_revision") != actual or patched.get("observer_abi") != 1:
+            raise ProvisionError("source_mismatch", "Context observer patch identity mismatch")
+        # CI may export this separate native payload. Include corresponding
+        # patched source and upstream notices, before any compilation products.
+        archive_path = payload / "corresponding-source.tar.gz"
+        with tarfile.open(archive_path, "w:gz") as archive:
+            archive.add(source, arcname="beetle-saturn", filter=lambda item:
+                        None if ".git" in Path(item.name).parts else item)
+        shutil.copy2(source / "COPYING", payload / "COPYING")
+        patched["corresponding_source_sha256"] = digest(archive_path)
+        patched["licence_sha256"] = digest(payload / "COPYING")
+        write_json(payload / "context-trace-build.json", patched)
     runner.run(["make", "-j1", "platform=unix", "LTO=0", "HAVE_OPENGL=0", "HAVE_CHD=1"], source, 1200)
     binary = safe_path(source / binary_name(tool, root))
     if not binary.is_file():

@@ -68,6 +68,43 @@ jobs:
           path: ${{ runner.temp }}/call-trace-evidence
           if-no-files-found: error
           retention-days: 14
+  context-trace:
+    needs: applicability
+    if: needs.applicability.outputs.required == 'true'
+    name: Real matched-core context observer preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Build the matched core and probe its actual bounded ABI
+        run: |
+          python3 tools/factory/provision.py --tool beetle-saturn-context-trace --cache "$RUNNER_TEMP/context-trace-tools" --evidence "$RUNNER_TEMP/context-trace-evidence/first" --timeout 1500
+          python3 tools/factory/provision.py --tool beetle-saturn-context-trace --cache "$RUNNER_TEMP/context-trace-tools" --evidence "$RUNNER_TEMP/context-trace-evidence/reuse" --timeout 60
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          first, again = [json.loads((Path(os.environ['RUNNER_TEMP']) / 'context-trace-evidence' / name / 'report.json').read_text()) for name in ('first', 'reuse')]
+          assert first['conclusion'] == again['conclusion'] == 'success'
+          assert first['reused'] is False and again['reused'] is True
+          assert first['binary_sha256'] == again['binary_sha256']
+          assert first['recipe_sha256'] == again['recipe_sha256']
+          assert first['smoke'] == again['smoke']
+          assert again['smoke']['observer']['rejected_invalid_profile_budget_witness_and_frame'] is True
+          assert len(again['commands']) == 2
+          PY
+      - name: Preserve matched-core preparation evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: context-trace-provisioning-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/context-trace-evidence
+            ${{ runner.temp }}/context-trace-tools/beetle-saturn-context-trace-*/
+          if-no-files-found: error
+          retention-days: 14
   ocr:
     needs: applicability
     if: needs.applicability.outputs.required == 'true'
@@ -148,7 +185,7 @@ jobs:
           retention-days: 14
   install:
     name: Pinned Godot and Saturn installation
-    needs: [applicability, xvfb, ocr, call-trace]
+    needs: [applicability, xvfb, ocr, call-trace, context-trace]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 30

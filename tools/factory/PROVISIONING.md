@@ -55,6 +55,39 @@ can succeed. These probes run no game instructions. Natural-call and unmodified
 native-output acceptance are separate experiments described in
 [CALL_TRACING.md](../saturn_lab/CALL_TRACING.md).
 
+### Matched original-context observer
+
+`--tool beetle-saturn-context-trace` is a separate generation and ABI, retaining
+the historical source pin, existing `B934` observer and immutable caches. It
+observes master interpreter boundaries for fresh `6BE4` selection, resumed
+`6C00` selection, or `6D36` yield. It records the original save/restore helper
+entries and actual transfers after their delay slots. VBR slots are data;
+they do not identify a physical CPU. No slave coverage is claimed.
+
+Limits are 16 complete cycles, 128 records and 4,096 dispatches per pending
+cycle. Source witnesses supplied from the independently identified private
+kernel must match all 339 inspected words before entry and every snapshot.
+Only fixed High Work RAM ranges and validated contexts/stacks are read directly;
+the observer never calls emulated bus/cache/device functions or writes game
+state. Unrecognised pointers, pipeline errors, source changes, frame gaps and
+overflow remain errors. Empty, partial or interrupted traces fail validation.
+
+The compiled owned-state fixture checks all profiles, nonmutation, argument
+fences, delay-slot distinctions, source mismatch/recovery and semantic controls.
+These tests and the actual no-media library smoke establish tooling only.
+Original capture still requires separate fresh reference/disabled/enabled runs,
+unchanged historical media/state identities, resident witnesses and exact native
+video/audio/input/canonical-state comparisons, repeated with private evidence.
+
+The real provisioning workflow builds and reuses this capability as a required
+child of the existing installation gate. Its artifact includes the native tool,
+receipt, patched-source identity, complete corresponding source archive and
+upstream licence. An exact-head CI artifact may be transferred to a private
+coordinator cache only after checking its run/head, artifact digest, recipe,
+receipt, binary and source-archive identities, then rerunning the existing real
+smoke/reuse path locally. This avoids another build when the VPS cannot retain
+its preparation reserve; it does not relax that reserve or certify game capture.
+
 ### Local original-screen OCR
 
 The #583 recipe builds [Tesseract 5.5.4](https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.4)
