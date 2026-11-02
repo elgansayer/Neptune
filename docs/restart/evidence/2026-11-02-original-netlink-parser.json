@@ -1,0 +1,129 @@
+{
+  "cases": 13690,
+  "complete_flag_cases": 3711,
+  "contract_adapter_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+  "cpu": "m68000",
+  "dispatch_cases": 9979,
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "experiment": "EXP-SAT-CODE-010",
+  "instruction_controls": {
+    "gate_uses_bit7": {
+      "address": "0x243c",
+      "mutated_driver_sha256": "81a1ac7a34d8fb4d58c7030fc2e57543c5689cc5609305d291bf815ede01b9c0",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 32,
+      "tested": 64
+    },
+    "group_mask_three": {
+      "address": "0x24aa",
+      "mutated_driver_sha256": "530e3a816ddbbebc79638ac7171341a6d18a6af813fe5adf6927c8564f37175f",
+      "reasons": [
+        "Native guard: instruction-access"
+      ],
+      "rejected": 32,
+      "tested": 64
+    },
+    "missing_read_index_increment": {
+      "address": "0x2420",
+      "mutated_driver_sha256": "8278b45d69bce97ccd433b2c2ce75b9e6b831daf8429404d6b77c739b4276b8a",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 64,
+      "tested": 64
+    },
+    "wrong_flag_bit": {
+      "address": "0x24d4",
+      "mutated_driver_sha256": "62681726f5e72a368b9bb70d7627df6ad8757a58c3d0246fd9987738043b00fa",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 4,
+      "tested": 64
+    },
+    "wrong_two_byte_threshold": {
+      "address": "0x245a",
+      "mutated_driver_sha256": "570ae07969f78e469409b64f489f69167f17c60ebe7882a6d3f0e73047d5680b",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 4,
+      "tested": 64
+    }
+  },
+  "instruction_counts": [
+    31,
+    33,
+    46,
+    47,
+    48,
+    49,
+    50
+  ],
+  "intake_base": "64a7429a47f9e40e236789fb5047a5b0a080e9ec",
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Constructed queues/registers; three returning flag paths only, other handlers stop at transfer",
+    "No natural sound protocol, SCSP/DSP/hardware timing or whole-program completion"
+  ],
+  "load_address": 0,
+  "model_cycle_counts": [
+    280,
+    316,
+    430,
+    432,
+    448,
+    466,
+    468,
+    484
+  ],
+  "module": "NLSND",
+  "native_identity": {
+    "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-DM68K_INSTRUCTION_HOOK=1",
+      "-DM68K_SEPARATE_READS=1",
+      "-Wl,-z,defs"
+    ],
+    "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+  },
+  "original_game_bytes_executed": true,
+  "owned_smoke": {
+    "failure_controls": {
+      "execution_escape": "instruction-access",
+      "forbidden_write": "forbidden-write",
+      "nonreturning": "instruction-budget",
+      "unmapped_read": "unmapped-data-read"
+    },
+    "fresh_after_failure": true,
+    "original_game_bytes_executed": false,
+    "positive_steps": 2
+  },
+  "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+  "private_report_sha256": "2a635184870c677e6a1dd5803ecbfc2d5b34edd03c8cc683f9cfde7d8bba7dc2",
+  "probe_sha256": "1ee96405445a599fc69a80008d933b25d41325dd1ccf19e42ca87b94a1310c1e",
+  "range_sha256": "5bd8fde8ebd1afca9911c3ece62603af8ad0a3776058a81129ed5c9917a833c1",
+  "release": "usa-mk81070-v1003",
+  "results_sha256": "325872c54a1533c3db4f1deb341d372f6b6cfd9222fbd7bcdd0910ac6d83ed1f",
+  "schema": "neptune.original-m68k-parser.v1",
+  "source_execution_head": "a00eb485b5e9531c97156684a1e575a4a5e0ef94",
+  "source_path": "NETLINK/SNDDRV.BIN",
+  "status": "success",
+  "targets": [
+    "0x3248",
+    "0x2bfc",
+    "0x24d2",
+    "0x24ea",
+    "0x1762",
+    "0x24da",
+    "0x2b08",
+    "0x24e2"
+  ],
+  "two_complete_reports_equal": true
+}
