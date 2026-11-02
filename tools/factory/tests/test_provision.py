@@ -40,7 +40,9 @@ class ProvisionTests(unittest.TestCase):
         for relative in ("tools/factory/provision.py", "tools/factory/provision_probe.py", "tools/factory/provision_xvfb.py", "tools/factory/provision_ocr.py",
                          "tools/factory/provision-lock.json", "tools/godot/install.py",
                          "tools/godot/toolchain.json", "tools/factory/provision_call_trace.py",
-                         "tools/factory/provision_call_trace.h", "tools/factory/provision_call_trace_abi.py"):
+                         "tools/factory/provision_call_trace.h", "tools/factory/provision_call_trace_abi.py",
+                         "tools/factory/provision_context_trace.py", "tools/factory/provision_context_trace.h",
+                         "tools/factory/provision_context_trace_abi.py"):
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(p.ROOT / relative, target)
@@ -108,6 +110,24 @@ class ProvisionTests(unittest.TestCase):
         self.assertFalse(first["reused"])
         self.assertTrue(again["reused"])
         self.assertEqual((self.installs, self.probes), (1, 2))
+
+    def test_context_core_is_separate_and_all_patch_dependencies_are_keyed(self):
+        tool = "beetle-saturn-context-trace"
+        recipe, inputs, key = p.identity(tool, self.root)
+        self.assertEqual(recipe["kind"], "beetle-context-trace")
+        self.assertNotEqual(key, p.identity("beetle-saturn-call-trace", self.root)[2])
+        self.assertIn("tools/factory/provision_call_trace.py", inputs["installer_sources"])
+        self.assertIn("tools/factory/provision_context_trace.h", inputs["installer_sources"])
+        first = p.ensure(tool, self.cache, self.home / "first", root=self.root,
+                         installer=self.install, prober=self.probe)
+        again = p.ensure(tool, self.cache, self.home / "again", root=self.root,
+                         installer=self.install, prober=self.probe)
+        self.assertFalse(first["reused"])
+        self.assertTrue(again["reused"])
+        self.assertEqual((self.installs, self.probes), (1, 2))
+        header = self.root / "tools/factory/provision_context_trace.h"
+        header.write_bytes(header.read_bytes() + b"\n/* owned identity mutation */\n")
+        self.assertNotEqual(key, p.identity(tool, self.root)[2])
 
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()
