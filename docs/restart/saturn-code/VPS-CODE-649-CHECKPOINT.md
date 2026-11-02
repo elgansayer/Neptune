@@ -57,6 +57,8 @@ restore contract. This is one preliminary capture, without six-run acceptance.
 Yield profile3 retained three entry/save/saved records before failing its
 restore pipeline guard; fresh profile1 retained an actual empty600-frame window.
 Neither failure is accepted as coverage.
+[Derived preliminary evidence](../evidence/2026-11-02-natural-context-preliminary.json)
+retains actual result/state/observation/trace digests and explicit acceptance gaps.
 
 The yield failure exposed real NOP delay fusion in the pinned core, rather than
 the ordinary delay path used by the initial owned fixture. ABI2 adds an actual

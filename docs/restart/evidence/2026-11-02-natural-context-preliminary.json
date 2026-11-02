@@ -1,0 +1,194 @@
+{
+  "driver_execution_head": "b0c09d50eb6530c8510cf6ee471e716176a8d368",
+  "driver_source_sha256": "89a0dfafe0a86f0ad17c06c3c3f8e0121a3376a158948793d10adea059148b92",
+  "finding": "Pinned core fuses NOP delay execution inside branch handlers, bypassing initial ordinary dispatch hook. Yield failed closed rather than accepting a missing delay. ABI2 adds actual master fused-NOP observation; new immutable native preparation and original repeats pending.",
+  "host_shared_limit": 3,
+  "input": "port0 Start10frames, then release; other11ports zero",
+  "isolation": {
+    "cancelled": false,
+    "exit": 0,
+    "timed_out": false,
+    "truncated": false
+  },
+  "issue": 649,
+  "native_core_sha256": "f1051af190fbed4a47eee2a4e4f7ddfeb7e82ece9986a5ae36c35fc35bd74c23",
+  "next": "Actual ABI2 native build/cache-only local reuse; fresh original windows; six-run comparisons; fresh6BE4 window and natural root/task continuity/caller expansion.",
+  "observer_abi": 1,
+  "private_output": "/home/dev/neptune-research-private/649/natural-windows-y2nruxhl",
+  "provider_calls": 0,
+  "recipe_sha256": "33653a6e1127726ee9c49cf47311e6e810ff1ad03a1c72cf00a16c607d16753f",
+  "reference_frame": 33960,
+  "reference_kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "reference_lock_sha256": "eb0d91e0bebd63af78181ce4d4d6af354554466b1f726bfe700e78eff6275cba",
+  "runs": [
+    {
+      "acceptance": "preliminary only; six-run acceptance pending",
+      "artifact_sha256": {
+        "context-trace.json": "797a3983096d0f34e845fd7b37c1110a3b9aecbf3195a41bc5ee1a89c74ffc89",
+        "final.state": "cdf803a1affd6e86eb29c07d0c33016d67237193aab158ff93e7aacfdae290e4",
+        "observations.json": "f55c4d097bb6e9a23c19caba73982d87e6d0c27bf71d9eeaa575b0610935b083",
+        "result.json": "430b8ab1667c2b8bed6b01661a8e451457f80f02d41e7f8fa24f84864d6a95c6"
+      },
+      "boundaries": [
+        {
+          "dispatch_steps": 1,
+          "frame": 33963,
+          "kind": 1,
+          "pc": "0x06006c00"
+        },
+        {
+          "dispatch_steps": 121,
+          "frame": 33963,
+          "kind": 4,
+          "pc": "0x060061e6"
+        },
+        {
+          "dispatch_steps": 139,
+          "frame": 33963,
+          "kind": 5,
+          "pc": "0x06006d86"
+        }
+      ],
+      "error": null,
+      "frames": 600,
+      "original_game_bytes_executed": true,
+      "profile": 2,
+      "status": "success",
+      "trace_status": {
+        "abi": 1,
+        "active": 0,
+        "capacity": 128,
+        "completed": 1,
+        "count": 3,
+        "dropped": 0,
+        "errors": 0,
+        "frame": 33963,
+        "frame_known": 1,
+        "last_address": 0,
+        "last_error": 0,
+        "last_pc": 0,
+        "master_dispatches": 920932,
+        "outside_inspected": 0,
+        "pending": 0,
+        "profile": 2,
+        "record_bytes": 1996,
+        "requested": 1,
+        "source_checks": 4,
+        "source_mismatch_candidates": 0,
+        "step_limit": 4096,
+        "steps": 139
+      }
+    },
+    {
+      "acceptance": "failed; no coverage acceptance",
+      "artifact_sha256": {
+        "failed-context-records.json": "2e14408bb2e36b640cedfc5ad0fa2f4f6efbdbf31e49e0b4098e005d6a2f4e0c",
+        "final.state": "cdf803a1affd6e86eb29c07d0c33016d67237193aab158ff93e7aacfdae290e4",
+        "observations.json": "f55c4d097bb6e9a23c19caba73982d87e6d0c27bf71d9eeaa575b0610935b083",
+        "result.json": "85b0d096cc3ed8b0fa60a7b9e1b69701e8f0f27a0664c90df4d85fa849c3db07"
+      },
+      "boundaries": [
+        {
+          "dispatch_steps": 1,
+          "frame": 33963,
+          "kind": 1,
+          "pc": "0x06006d36"
+        },
+        {
+          "dispatch_steps": 41,
+          "frame": 33963,
+          "kind": 2,
+          "pc": "0x060061c4"
+        },
+        {
+          "dispatch_steps": 58,
+          "frame": 33963,
+          "kind": 3,
+          "pc": "0x06006d86"
+        }
+      ],
+      "error": {
+        "phase": "bounded_original_context_validation",
+        "reason": "Empty, incomplete, interrupted, failed or overflowed context trace",
+        "type": "ValueError"
+      },
+      "frames": 600,
+      "original_game_bytes_executed": true,
+      "profile": 3,
+      "status": "failure",
+      "trace_status": {
+        "abi": 1,
+        "active": 0,
+        "capacity": 128,
+        "completed": 0,
+        "count": 3,
+        "dropped": 0,
+        "errors": 1,
+        "frame": 33963,
+        "frame_known": 1,
+        "last_address": 101437472,
+        "last_error": 2,
+        "last_pc": 100688358,
+        "master_dispatches": 920776,
+        "outside_inspected": 0,
+        "pending": 3,
+        "profile": 3,
+        "record_bytes": 1996,
+        "requested": 1,
+        "source_checks": 4,
+        "source_mismatch_candidates": 0,
+        "step_limit": 4096,
+        "steps": 63
+      }
+    },
+    {
+      "acceptance": "failed; no coverage acceptance",
+      "artifact_sha256": {
+        "failed-context-records.json": "c5a6951745d5ec6269f73cdd84c7449e667d2cc1ab3f1294906fefc2ab85b1ca",
+        "final.state": "cdf803a1affd6e86eb29c07d0c33016d67237193aab158ff93e7aacfdae290e4",
+        "observations.json": "f55c4d097bb6e9a23c19caba73982d87e6d0c27bf71d9eeaa575b0610935b083",
+        "result.json": "4efbfdcb14b87932a9bf4e7cb27934b8fc833ca706c4dbdaefca074b427422a3"
+      },
+      "boundaries": [],
+      "error": {
+        "phase": "bounded_original_context_validation",
+        "reason": "Empty, incomplete, interrupted, failed or overflowed context trace",
+        "type": "ValueError"
+      },
+      "frames": 600,
+      "original_game_bytes_executed": true,
+      "profile": 1,
+      "status": "failure",
+      "trace_status": {
+        "abi": 1,
+        "active": 0,
+        "capacity": 128,
+        "completed": 0,
+        "count": 0,
+        "dropped": 0,
+        "errors": 0,
+        "frame": 34559,
+        "frame_known": 1,
+        "last_address": 0,
+        "last_error": 0,
+        "last_pc": 0,
+        "master_dispatches": 146962965,
+        "outside_inspected": 0,
+        "pending": 0,
+        "profile": 1,
+        "record_bytes": 1996,
+        "requested": 1,
+        "source_checks": 0,
+        "source_mismatch_candidates": 0,
+        "step_limit": 4096,
+        "steps": 0
+      }
+    }
+  ],
+  "schema": "neptune.preliminary-natural-context-observer.v1",
+  "six_run_acceptance": false,
+  "supervisor_sha256": "90bbdee1b9d9434532145fdc518117a927eeb182cdce047734a8ce86e75afa43",
+  "tool_source_head": "8d3e391abf2ee26ec0589c7782d3707ab6a3bb15",
+  "unchanged": "Original game/media/state/lock, emulated state/timing/fusion choices, existingB934 observer/generation, configured host/provider limits and active foreign owners.",
+  "whole_program_status": "active; incomplete"
+}
