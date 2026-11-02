@@ -43,7 +43,8 @@ class ProvisionTests(unittest.TestCase):
                          "tools/factory/provision_call_trace.h", "tools/factory/provision_call_trace_abi.py",
                          "tools/factory/provision_context_trace.py", "tools/factory/provision_context_trace.h",
                          "tools/factory/provision_context_trace_abi.py", "tools/factory/provision_ghidra.py",
-                         "tools/factory/provision_ghidra_smoke.java"):
+                         "tools/factory/provision_ghidra_smoke.java", "tools/factory/provision_init_trace.py",
+                         "tools/factory/provision_init_trace.h", "tools/factory/provision_init_trace_abi.py"):
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(p.ROOT / relative, target)
@@ -139,6 +140,26 @@ class ProvisionTests(unittest.TestCase):
         self.assertTrue(again["reused"])
         self.assertEqual((self.installs, self.probes), (1, 2))
         self.assertEqual(Path(first["binary"]).name, "ghidra-headless")
+
+    def test_init_core_is_separate_and_reuses_without_adopting_other_observers(self):
+        tool = "beetle-saturn-init-trace"
+        recipe, inputs, key = p.identity(tool, self.root)
+        old_context = p.identity("beetle-saturn-context-trace", self.root)[2]
+        self.assertEqual(recipe["kind"], "beetle-init-trace")
+        self.assertNotEqual(key, old_context)
+        self.assertIn("tools/factory/provision_init_trace_abi.py", inputs["installer_sources"])
+        self.assertNotIn("tools/factory/provision_context_trace.h", inputs["installer_sources"])
+        first = p.ensure(tool, self.cache, self.home / "first", root=self.root,
+                         installer=self.install, prober=self.probe)
+        again = p.ensure(tool, self.cache, self.home / "again", root=self.root,
+                         installer=self.install, prober=self.probe)
+        self.assertFalse(first["reused"])
+        self.assertTrue(again["reused"])
+        self.assertEqual((self.installs, self.probes), (1, 2))
+        header = self.root / "tools/factory/provision_init_trace.h"
+        header.write_bytes(header.read_bytes()+b"\n/* owned identity mutation */\n")
+        self.assertNotEqual(key, p.identity(tool, self.root)[2])
+        self.assertEqual(old_context, p.identity("beetle-saturn-context-trace", self.root)[2])
 
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()
@@ -396,6 +417,25 @@ class XvfbRecipeTests(unittest.TestCase):
                     xvfb.probe(Path("/bin/false"))
         self.assertEqual(len(processes), 2)
         self.assertTrue(all(process.poll() is not None for process in processes))
+
+    def test_displayfd_readiness_line_can_arrive_in_separate_real_pipe_writes(self):
+        binary = self.root / "owned-display-producer"
+        binary.write_text("#!/usr/bin/python3\nimport os,sys,time\n"
+                          "fd=int(sys.argv[sys.argv.index('-displayfd')+1])\n"
+                          "os.write(fd,b'12')\ntime.sleep(0.1)\nos.write(fd,b'3\\n')\ntime.sleep(2)\n")
+        binary.chmod(0o755)
+        with patch.object(xvfb, "pixel_roundtrip", return_value={"owned": "protocol fixture"}) as pixel:
+            self.assertEqual(xvfb.probe(binary), {"owned": "protocol fixture"})
+        pixel.assert_called_once_with(":123")
+
+    def test_truncated_displayfd_never_reaches_pixel_check_and_retains_bytes(self):
+        binary = self.root / "owned-truncated-display"
+        binary.write_text("#!/usr/bin/python3\nimport os,sys\n"
+                          "os.write(int(sys.argv[sys.argv.index('-displayfd')+1]),b'12')\n")
+        binary.chmod(0o755)
+        with patch.object(xvfb, "pixel_roundtrip") as pixel, self.assertRaisesRegex(p.ProvisionError, "12"):
+            xvfb.probe(binary)
+        pixel.assert_not_called()
 
     def test_pixel_mutation_is_detected_and_connection_closed(self):
         library = MagicMock()

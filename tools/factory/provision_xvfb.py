@@ -15,6 +15,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import time
 import urllib.request
 
 SCOPE = "X11 displayfd and pixel roundtrip only"
@@ -153,12 +154,22 @@ def probe(binary, log_path=None):
                                    pass_fds=(write_fd,))
         os.close(write_fd)
         write_fd = None
-        if not select.select([read_fd], [], [], 8)[0]:
-            fail("smoke_failed", "Xvfb displayfd startup timed out")
-        display = os.read(read_fd, 32).decode("ascii")
-        if not re.fullmatch(r"[0-9]{1,5}\n", display) or process.poll() is not None:
-            fail("smoke_failed", "Xvfb failed before announcing a display")
-        return pixel_roundtrip(":" + display.strip())
+        # Pipe readiness means some bytes are available, not that the complete
+        # displayfd line has arrived. Retain one deadline and the existing cap.
+        deadline, display = time.monotonic() + 8, bytearray()
+        while b"\n" not in display and len(display) < 32:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0 or not select.select([read_fd], [], [], remaining)[0]:
+                fail("smoke_failed", "Xvfb displayfd startup timed out; bytes=" + repr(bytes(display)))
+            chunk = os.read(read_fd, 32 - len(display))
+            if not chunk:
+                break
+            display.extend(chunk)
+        status = process.poll()
+        if not re.fullmatch(rb"[0-9]{1,5}\n", display) or status is not None:
+            fail("smoke_failed", "Xvfb failed before announcing a display; bytes=" +
+                 repr(bytes(display)) + "; exit=" + str(status))
+        return pixel_roundtrip(":" + display.decode("ascii").strip())
     finally:
         os.close(read_fd)
         if write_fd is not None:
