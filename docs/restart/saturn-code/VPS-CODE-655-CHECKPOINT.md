@@ -2,7 +2,7 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-task-init-contracts-655`, workspace
+`research/saturn-library-status-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
@@ -182,6 +182,51 @@ The initial allocator label for95B04 is withdrawn. Actual source checksR4 in
 established. Recover its library contract and any device effects before modeling
 its successful path. Raw diagnostic reports remain unchanged; only this
 interpretation and next-target labels are corrected.
+
+## Accepted658 and next original library-status diagnostic
+
+PR658 merged normally at`27e44f1ae09501f86990f5c2a896ad68d1989667`, tested head
+`30d492fb7ee30456c0b469eeb773fbfb1819fd31`, base1cc016d. All27 exact-head checks
+finished; every applicable check succeeded. Three independent preparation
+selections bind all eight changed paths to that exact head/base; all five skipped
+native children were explicitly non-applicable and all required aggregates passed.
+Strict protection still requires both app15368 aggregates, with zero approving
+reviews required. Private gate/merge receipts are`.../code655-20261102/pr658-*`.
+655 remains open; complete successful95B04/full89C8 are not established.
+
+The existing owner continued on`research/saturn-library-status-655` at accepted
+main, preserving the other worktree's five untracked UID files. The next bounded
+diagnostic is original96C60 with a null callback, status wordFFFFFFF0(-16) and
+inputR4FFFFFFFB(-5). Source predicts resultFFFFFFE7(-25), stored at block+C0,
+restoredR13/R14/SP/PR/MAC and a complete24-instruction return with13 data events.
+This is **prepared source expectation, not an executed result**. Broader error
+mapping and nonnull callback behavior remain unresolved. No callback return,
+BIOS service or device RAM is fabricated.
+
+Private worker:
+`/home/dev/neptune-evidence/code655-20261102/probe-library-status-preliminary.py`,
+SHA2564494be473a8df69d6cb180615d0ea90ace0d70250c4a877cfd3920e1de107ff7.
+It reuses the immutable ff791d adapter and unchanged128 guard, actual read-only
+halfword literal96CE4, explicit status/pointer/block/stack regions and exact
+register/path/event/output/canary expectations. It retains two reports for the
+single state and a disposable original-copy status-mapping mutation. The
+prototype/runner compile; actual execution and broader reusable tests are pending.
+
+The20:19:47 admission receipt is
+`.../655/library-status-preliminary-c6soyrdg/supervisor.json`: no admission and no
+new original execution. Live daemon773373 held exclusive
+`exclusive:773373:163429a2010e4a339b707641280b4e4e`, draining existing job1811.
+Preserve foreign reservations. Next runnable command, with the same shared3,
+own180-second/60-second/nice10/downward2GiB/offline/read-only limits:
+
+```sh
+unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
+  /home/dev/neptune-evidence/code655-20261102/run-library-status-preliminary.py
+```
+
+Retain any real mismatch; broaden the closed-path contract and callback handoff
+without substituting callees, then recover95B04's actual BIOS/A6790/969E0 graph
+and89C8 through its real return. Do not rerun completed658 reports as new work.
 
 Then continue623A's complete body/roles, other libraries, slave/loader/overlays,
 remaining68000/DSP and regional network/menu/save code. Native caches/history
