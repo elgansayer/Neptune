@@ -210,6 +210,8 @@ def instruction_controls(data, emu):
         try:
             Experiment(bytes(changed), emu).run(category, slot)
         except ValueError as error:
+            if not str(error).startswith("Caller prefix "):
+                raise ValueError("Control did not reach a terminal semantic comparison: " + name) from error
             result.append({"name": name, "address": hex(address), "rejected": True,
                            "altered_sha256": pinned.digest(changed), "reason": str(error)})
         else:

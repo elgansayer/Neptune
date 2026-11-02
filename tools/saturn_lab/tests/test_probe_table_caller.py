@@ -7,6 +7,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import probe_table_caller as probe
@@ -96,6 +97,18 @@ class CallerContractTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 probe.main(args)
             self.assertEqual(report.read_bytes(), saved)
+
+    def test_negative_control_budget_failure_is_not_semantic_acceptance(self):
+        class BudgetFailure:
+            def __init__(self, *_):
+                pass
+
+            def run(self, *_):
+                raise ValueError("Original prefix exceeded instruction budget")
+
+        with patch.object(probe, "Experiment", BudgetFailure):
+            with self.assertRaisesRegex(ValueError, "terminal semantic comparison"):
+                probe.instruction_controls(bytes(probe.pinned.SIZE), None)
 
 
 if __name__ == "__main__":
