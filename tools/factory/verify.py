@@ -18,6 +18,8 @@ import subprocess
 import sys
 import time
 
+from readiness import digest as task_digest, evaluate as evaluate_intake
+
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("neptune_ci_plan", ROOT / "tools/merge_gate/run.py")
 gate = importlib.util.module_from_spec(spec)
@@ -31,6 +33,8 @@ TOOLCHAIN_LOCK = "tools/godot/toolchain.json"
 BASELINE_PYTHON = ">=3.11"
 BASELINE_EXECUTABLES = ("cc", "git")
 DISPLAY_EXECUTABLES = ("Xvfb",)
+REPOSITORY = "elgansayer/Neptune-Bomberman"
+MAX_INTAKE_BYTES = 256 * 1024
 
 
 def selection(paths):
@@ -63,6 +67,67 @@ def selected_contents(root, paths):
         else:
             raise ValueError("Selected source is not a regular file: " + relative)
     return hashlib.sha256(json.dumps(records, separators=(",", ":")).encode()).hexdigest()
+
+
+def read_intake(path):
+    """Read a bounded coordinator-supplied snapshot; hashes do not authenticate it."""
+    path = Path(path).absolute()
+    if path.is_symlink() or any(parent.is_symlink() for parent in path.parents) or not path.is_file():
+        raise ValueError("Intake must be a regular file without symlink components")
+    with path.open("rb") as stream:
+        raw = stream.read(MAX_INTAKE_BYTES + 1)
+    if len(raw) > MAX_INTAKE_BYTES:
+        raise ValueError("Intake snapshot exceeds its 256 KiB bound")
+
+    def unique(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Duplicate intake JSON key: " + key)
+            result[key] = value
+        return result
+
+    return json.loads(raw, object_pairs_hook=unique), hashlib.sha256(raw).hexdigest()
+
+
+def task_binding(intake_path, paths, root, now=time.time):
+    """Bind existing intake to the actual clean candidate, never issue commands."""
+    selectors = ("GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR", "GIT_OBJECT_DIRECTORY",
+                 "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_NAMESPACE")
+    if any(os.environ.get(name) for name in selectors):
+        raise ValueError("Intake verification rejects Git repository/index override variables")
+    snapshot, intake_sha256 = read_intake(intake_path)
+    evaluated = evaluate_intake(snapshot, now())
+    if not evaluated["ready"]:
+        raise ValueError("Intake is not ready: " + "; ".join(evaluated["reasons"]))
+    task = snapshot["task"]
+    if task["repository"].casefold() != REPOSITORY.casefold():
+        raise ValueError("Intake repository does not match Neptune")
+    head = gate.git("rev-parse", "HEAD", root=root)
+    base = snapshot["base_sha"]
+    gate.git("merge-base", "--is-ancestor", base, head, root=root)
+    tracked = subprocess.check_output(["git", "ls-files", "-v", "-z"], cwd=root, text=True).split("\0")
+    if any(entry and (entry[0] == "S" or entry[0].islower()) for entry in tracked):
+        raise ValueError("Candidate index contains assume-unchanged or skip-worktree source")
+    if gate.git("status", "--porcelain=v1", "--untracked-files=all", root=root):
+        raise ValueError("Intake verification requires clean tracked and untracked candidate source")
+    # gate.git strips whitespace for scalar results; NUL-delimited filenames
+    # must retain leading spaces so an actual changed file cannot disappear.
+    actual = subprocess.check_output(["git", "diff", "--no-renames", "--name-only", "-z", base, head],
+                                     cwd=root, text=True).split("\0")
+    actual = sorted(path for path in actual if path)
+    # Reuse path validation/classification even for deletions and rename sources.
+    selection(actual)
+    if selection(paths)["paths"] != actual:
+        raise ValueError("Selected paths differ from the complete intake base/head diff")
+    if len(actual) > task["scope"]["max_files"]:
+        raise ValueError("Candidate exceeds the accepted scope max_files")
+    for path in actual:
+        if not any(path == allowed or path.startswith(allowed + "/") for allowed in task["scope"]["paths"]):
+            raise ValueError("Candidate changed a path outside accepted scope: " + path)
+    return {"repository": task["repository"], "issue": task["issue"], "feature_id": task["feature_id"],
+            "revision": task["revision"], "task_sha256": task_digest(task), "intake_sha256": intake_sha256,
+            "base": base, "head": head, "changed_paths": actual}
 
 
 def offline_toolchain(root, directory):
@@ -125,7 +190,7 @@ def requirements(paths, *, root=ROOT):
                        "toolchain": pinned_toolchain(root) if needed else None}}
 
 
-def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run):
+def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run, intake=None, now=time.time):
     if evidence.exists():
         raise ValueError("Use a fresh verification evidence directory")
     evidence.mkdir(parents=True, mode=0o700)
@@ -135,6 +200,12 @@ def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run):
         plan = selection(paths)
         identity = {"head": gate.git("rev-parse", "HEAD", root=root),
                     "selected_contents_sha256": selected_contents(root, paths)}
+        if intake is not None:
+            binding = task_binding(intake, paths, root, now)
+            if binding["head"] != identity["head"]:
+                raise ValueError("Candidate head changed during intake binding")
+            identity["base"] = binding["base"]
+            report["task_binding"] = binding
         report.update(identity=identity, plan=plan)
         if plan["mode"] != "metadata":
             report["offline_toolchain"] = offline_toolchain(root, toolchain)
@@ -156,6 +227,8 @@ def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run):
                 raise ValueError("Required check failed: " + name)
         if selected_contents(root, paths) != identity["selected_contents_sha256"]:
             raise ValueError("Selected source changed during verification")
+        if intake is not None and task_binding(intake, paths, root, now) != binding:
+            raise ValueError("Accepted intake or candidate changed during verification")
         gate.assert_pass(report, identity)
         report["conclusion"] = "success"
         return report
@@ -173,23 +246,29 @@ def main(argv=None):
     parser.add_argument("--changed-path", action="append", required=True)
     parser.add_argument("--toolchain", type=Path, help="offline Godot cache directory (required unless --plan)")
     parser.add_argument("--evidence", type=Path, help="fresh evidence directory (required unless --plan)")
+    parser.add_argument("--intake", type=Path,
+                        help="fresh trusted coordinator snapshot; bind actual committed scope and task identity")
     args = parser.parse_args(argv)
     given = {"--toolchain": args.toolchain, "--evidence": args.evidence}
     if args.plan:
-        if any(value is not None for value in given.values()):
+        plan_forbidden = {**given, "--intake": args.intake}
+        if any(value is not None for value in plan_forbidden.values()):
             parser.error("--plan accepts only --changed-path (remove " +
-                         ", ".join(flag for flag, value in given.items() if value is not None) + ")")
+                         ", ".join(flag for flag, value in plan_forbidden.items() if value is not None) + ")")
     elif missing := [flag for flag, value in given.items() if value is None]:
         parser.error("the following arguments are required: " + ", ".join(missing))
     try:
         if args.plan:
             print("NEPTUNE_FACTORY_REQUIREMENTS=" + json.dumps(requirements(args.changed_path), sort_keys=True))
             return 0
-        report = verify(args.changed_path, args.evidence, args.toolchain)
+        report = verify(args.changed_path, args.evidence, args.toolchain, intake=args.intake)
     except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as error:
         print("FAIL: " + str(error), file=sys.stderr)
         return 1
-    print("NEPTUNE_FACTORY_VERIFICATION=" + json.dumps({key: report[key] for key in ("schema", "identity", "plan", "checks", "conclusion")}, sort_keys=True))
+    receipt = {key: report[key] for key in ("schema", "identity", "plan", "checks", "conclusion")}
+    if "task_binding" in report:
+        receipt["task_binding"] = report["task_binding"]
+    print("NEPTUNE_FACTORY_VERIFICATION=" + json.dumps(receipt, sort_keys=True))
     return 0
 
 
