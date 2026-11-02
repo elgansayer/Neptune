@@ -229,6 +229,34 @@ class TableAddressProbeTests(unittest.TestCase):
             with self.subTest(mode=mode), self.assertRaises(ValueError):
                 probe.execute(bytes(pinned.SIZE), stack_interpreter(mode), bounded_stack=True)
 
+    def test_copy_mutations_must_fail_semantically_without_modifying_source(self):
+        data = bytes(pinned.SIZE)
+        seen = []
+
+        def reject(altered, module, *, bounded_stack):
+            self.assertTrue(bounded_stack)
+            self.assertNotEqual(altered, data)
+            self.assertEqual(len(altered), len(data))
+            seen.append(altered)
+            raise ValueError("Owned semantic rejection, not original execution")
+
+        with patch.object(probe, "execute", side_effect=reject):
+            result = probe.instruction_controls(data, object())
+        self.assertEqual(len(seen), 4)
+        self.assertEqual(len({row["altered_sha256"] for row in result}), 4)
+        self.assertEqual(data, bytes(pinned.SIZE))
+        with patch.object(probe, "execute", return_value={}):
+            with self.assertRaisesRegex(ValueError, "was not detected"):
+                probe.instruction_controls(data, object())
+        with patch.object(probe, "execute", side_effect=RuntimeError("timeout is not semantic rejection")):
+            with self.assertRaisesRegex(RuntimeError, "timeout is not semantic rejection"):
+                probe.instruction_controls(data, object())
+
+    def test_cli_instruction_controls_require_explicit_stack_mode(self):
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            probe.main(["--kernel", "unused", "--saturn-recomp", "unused", "--report", "unused",
+                        "--instruction-controls"])
+
     def test_incomplete_kernel_is_not_executed(self):
         with self.assertRaisesRegex(ValueError, "complete kernel"):
             probe.execute(b"synthetic", synthetic_interpreter())

@@ -179,6 +179,35 @@ def execute(data: bytes, sh2emu, *, bounded_stack: bool = False) -> dict:
     return result
 
 
+def instruction_controls(data: bytes, sh2emu) -> list[dict]:
+    """Execute four explicitly altered private copies; never modify the original.
+
+    The CLI validates original identity before calling this experiment. A normal
+    result or a timeout is not a passing semantic/footprint negative control.
+    """
+    changes = (("stride150", 0x0600B96C, 2, 150),
+               ("base_plus4", 0x0600B984, 4, 0x00207F78),
+               ("remove_macl_restore_delay_slot", 0x0600B94E, 2, 0x0009),
+               ("remove_macl_spill", 0x0600B934, 2, 0x0009))
+    results = []
+    for name, address, size, value in changes:
+        altered = bytearray(data)
+        offset = address - pinned.BASE
+        altered[offset:offset + size] = value.to_bytes(size, "big")
+        if len(altered) != pinned.SIZE or altered == data:
+            raise ValueError("Invalid or ineffective original-copy mutation")
+        try:
+            execute(bytes(altered), sh2emu, bounded_stack=True)
+        except ValueError as error:
+            results.append({"name": name, "address": f"0x{address:08x}",
+                            "altered_sha256": pinned.digest(altered), "rejected": True,
+                            "error_class": type(error).__name__, "reason": str(error),
+                            "source": "explicitly altered private copy; never reference"})
+        else:
+            raise ValueError("Original-copy mutation was not detected: " + name)
+    return results
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--kernel", type=Path, required=True)
@@ -186,7 +215,11 @@ def main(argv=None) -> int:
     parser.add_argument("--report", type=Path, required=True, help="Fresh private report, never overwritten")
     parser.add_argument("--bounded-stack", action="store_true",
                         help="Explicit observed one-word MACL spill/restore; default rejects all writes")
+    parser.add_argument("--instruction-controls", action="store_true",
+                        help="Also reject four fixed private original-copy mutations; requires bounded stack")
     args = parser.parse_args(argv)
+    if args.instruction_controls and not args.bounded_stack:
+        parser.error("--instruction-controls requires --bounded-stack")
     report = {"schema": "neptune.table-address-probe.v1", "status": "failure",
               "experiment": EXPERIMENT, "entry": f"0x{ENTRY:08x}",
               "game": "USA MK-81070 V1.003", "kernel_sha256": pinned.KERNEL_SHA256,
@@ -214,6 +247,8 @@ def main(argv=None) -> int:
                 module = pinned.interpreter(args.saturn_recomp)
                 phase = "original_execution"
                 result = execute(data, module, bounded_stack=args.bounded_stack)
+                if args.instruction_controls:
+                    result["instruction_controls"] = instruction_controls(data, module)
                 report.update(status="success", **result)
             except Exception as error:
                 # Avoid embedding private paths, raw instructions or memory in a
