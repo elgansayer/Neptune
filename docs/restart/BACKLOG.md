@@ -1,5 +1,23 @@
 # Restart backlog
 
+## Current dispatch order: 2 November owner direction
+
+Follow [FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md). Finish active bounded work
+without reassigning another owner's scope, then prioritise:
+
+1. Shared factory supervision/accounting/recovery #33/#536; research routing #510;
+   tool/environment preparation #75/#518 and reusable adapters #508.
+2. Feature-specific executable acceptance #76 and authentic private receipts #511.
+3. Real Saturn research #477/#464: control/navigation, code/overlays, tracing,
+   graphics/animation/audio extraction and measured mechanics under existing RSAT tasks.
+4. Recovered Godot campaign/battle comparisons #29, then expand verified coverage #38.
+
+These are dependency-aware queues, not a barrier requiring whole epics to close.
+Game/build/bot work is eligible when it removes a demonstrated pipeline blocker
+or tests a named recovered scenario. Ordinary product/UI/workshop and independent
+Power expansion follow this priority. Full game requirements and existing issue
+IDs/history remain; metadata/tool tests do not certify a live factory or parity.
+
 Tracker: [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23).
 
 The multiplayer-first community expansion and dependency table for #52–#57 are in
@@ -38,7 +56,7 @@ when they exceed one reviewable implementation change.
 | [#45](https://github.com/elgansayer/Neptune-Bomberman/issues/45) | [P0] Netplay comparison and synchronisation decision | #42, #34 |
 | [#46](https://github.com/elgansayer/Neptune-Bomberman/issues/46) | [P1] Open-source/content release audit | Foundation PR |
 
-## First eligible server work
+## Historical initial server work
 
 1. #24: reproduce the actual Godot build and reconcile existing test PRs.
 2. #25: inspect/provision the supplied host and credential boundaries.
