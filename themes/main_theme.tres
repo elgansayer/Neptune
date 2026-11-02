@@ -1,4 +1,7 @@
 [gd_resource type="Theme" format=3]
 
 [resource]
+; ArcadeFontLocale assigns the imported font before game Controls enter the tree.
+; Project themes load before the editor's first asset import, so keep this
+; startup resource free of dependencies on imported font data.
 default_font_size = 16
