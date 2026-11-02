@@ -1,5 +1,12 @@
 # Codex execution handoff: community Bomberman
 
+**Latest owner continuation, 2 November:** transition the code-recovery work to
+the existing VPS Codex session using [CODEX_CODE_RECOVERY.md](CODEX_CODE_RECOVERY.md).
+It contains the complete-code objective, actual next original-byte experiment,
+source identities, ownership constraints and durable continuation protocol.
+That direction supersedes older task selection below; publishing a prompt does
+not establish that a VPS session received or executed it.
+
 ## Current primary goal: factory development and Saturn research
 
 Owner direction, 2 November: follow

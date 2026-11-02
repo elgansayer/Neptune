@@ -1,5 +1,10 @@
 # Server Codex starting prompt
 
+For the owner's latest **all-original-code** objective and transition to the
+existing VPS Codex session, use [CODEX_CODE_RECOVERY.md](CODEX_CODE_RECOVERY.md).
+Its bounded first command and complete programme supersede the older bootstrap
+task selection retained below. Do not repeat already accepted setup or media work.
+
 The owner's 2 November factory/Saturn-first goal is
 [FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md). Read it before choosing new work;
 it supersedes the historical feature-first order in the bootstrap prompt below.
