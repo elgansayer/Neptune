@@ -1,0 +1,159 @@
+{
+  "actual_derived_controls": {
+    "comparison_sha256": "5b3b5eea790e4e55fb69d3ede6077f73ba67ba926628885f19937be3b9eabd83",
+    "controls": {
+      "audio": {
+        "reason": "Reference/disabled/enabled repeatability or state import differs",
+        "rejected": true
+      },
+      "coverage": {
+        "reason": "Empty, incomplete, ambiguous or overflowed call trace",
+        "rejected": true
+      },
+      "empty": {
+        "reason": "Empty/oversized original-call records",
+        "rejected": true
+      },
+      "input": {
+        "reason": "Nonconsecutive frame or unexpected controller input",
+        "rejected": true
+      },
+      "macl": {
+        "reason": "Natural call SP/MACL/register/condition preservation mismatch",
+        "rejected": true
+      },
+      "result": {
+        "reason": "Natural call result/scratch-register mismatch",
+        "rejected": true
+      },
+      "sp": {
+        "reason": "Natural call SP/MACL/register/condition preservation mismatch",
+        "rejected": true
+      },
+      "state": {
+        "reason": "Reference/disabled/enabled repeatability or state import differs",
+        "rejected": true
+      },
+      "timing": {
+        "reason": "Missing real bounded timing observation",
+        "rejected": true
+      },
+      "video": {
+        "reason": "Reference/disabled/enabled repeatability or state import differs",
+        "rejected": true
+      }
+    },
+    "provider_calls": 0,
+    "schema": "neptune.actual-derived-call-observer-controls.v1",
+    "scope": "mutations of retained real experiment artefacts; not a gameplay-memory or Godot regression experiment",
+    "status": "success"
+  },
+  "comparison": {
+    "disabled_vs_reference_wall_ratio": 0.9656960716417108,
+    "enabled_vs_disabled_wall_ratio": 0.9805397330612208,
+    "equal_observations": [
+      "driver_sha256",
+      "source_modules",
+      "reference_identity",
+      "reference_lock_file_sha256",
+      "reference_checkpoint_file_sha256",
+      "reference_state_sha256",
+      "reference_frame",
+      "frames",
+      "port_zero_start_frames",
+      "av",
+      "imported_state_bytes",
+      "imported_state_sha256",
+      "final_state_sha256",
+      "frame_observations_sha256",
+      "video_sha256",
+      "audio_sha256",
+      "audio_frames",
+      "resident_code_before",
+      "resident_code_after",
+      "input_polls",
+      "delivered_masks"
+    ],
+    "frames_per_run": 600,
+    "instrumented_core_sha256": "0f14356da70ac8b88a8a1727e25acf6137be4ace453c37b1819d82222346faca",
+    "median_emulation_wall_seconds": {
+      "disabled": 7.045027626212686,
+      "enabled": 6.907929508015513,
+      "reference": 7.29528454458341
+    },
+    "pairs_per_enabled_run": 1,
+    "reference_core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+    "repeats_per_mode": 2,
+    "runs": 6,
+    "schema": "neptune.call-observer-comparison.v1",
+    "status": "success",
+    "timing_scope": "whole bounded run; recorder stops at its declared pair limit; not hardware cycles or steady-state full tracing",
+    "trace_sha256": "c8dda8b2cb04166b8ad96f54fd916299364bf046c25dd9ae3034a0ecac937194",
+    "whole_game_fidelity_established": false
+  },
+  "comparison_report_sha256": "5b3b5eea790e4e55fb69d3ede6077f73ba67ba926628885f19937be3b9eabd83",
+  "controls_report_sha256": "f39b9f59695e22886188da18279936e3dd0350293990afaf4b95f324e9b6c355",
+  "driver_sha256": "c93cf2fb9303417a5a8f29d10095a3b56a121899f249f45074d1793896d2a5a5",
+  "frames": 600,
+  "issue": 597,
+  "limits": [
+    "One natural argument pair and one observed return context, not all callers or full argument domain.",
+    "Static BSR at0600BAEA is consistent with observed PR0600BAEE; caller instruction was not separately traced.",
+    "Explicit matched-core imports validated only for the declared checkpoint and window.",
+    "Private capture scenario has not been authenticated as a campaign room or battle arena.",
+    "Native-output equivalence is core instrumentation acceptance, not Godot/gameplay/hardware parity.",
+    "No new model/provider process or allowance; current account/CI spend unknown."
+  ],
+  "observed_pairs": [
+    {
+      "dispatch_steps": 1,
+      "frame": 34213,
+      "kind": 1,
+      "macl": 10240,
+      "pc": "0x0600b934",
+      "pr": "0x0600baee",
+      "r0": "0x060090d8",
+      "r4": 0,
+      "r5": 0,
+      "sp": "0x060bfe4c",
+      "timestamp": 271179
+    },
+    {
+      "dispatch_steps": 14,
+      "frame": 34213,
+      "kind": 2,
+      "macl": 10240,
+      "pc": "0x0600baee",
+      "pr": "0x0600baee",
+      "r0": "0x00207f74",
+      "r4": 0,
+      "r5": 0,
+      "sp": "0x060bfe4c",
+      "timestamp": 271211
+    }
+  ],
+  "observer_status": {
+    "abi": 2,
+    "active": 0,
+    "capacity": 128,
+    "completed": 1,
+    "count": 2,
+    "dropped": 0,
+    "errors": 0,
+    "frame": 34213,
+    "frame_known": 1,
+    "master_dispatches": 54544479,
+    "pending": 0,
+    "record_bytes": 120,
+    "step_limit": 4096
+  },
+  "port_zero_start_frames": 10,
+  "prepared_recipe_sha256": "54cfecd0f16c98e1523854c8d293da4beb6a731dd09a9374c5cf0c43318ea2a2",
+  "reference_checkpoint_file_sha256": "98e71ed029475ecf76fbad1cbfb1f529b692a863ff5afac2fa85d8cf3bfcb571",
+  "reference_frame": 33960,
+  "reference_lock_file_sha256": "eb0d91e0bebd63af78181ce4d4d6af354554466b1f726bfe700e78eff6275cba",
+  "reference_state_sha256": "1a07d96674d1343358d860ee3b289941e33713832c5694ae7bddd072c38cf1fd",
+  "schema": "neptune.bounded-natural-call-result.v1",
+  "source_execution_commit": "0e24a91dd1407518e2fcc43d61985d240cac039c",
+  "status": "bounded-experiment-passed"
+}
