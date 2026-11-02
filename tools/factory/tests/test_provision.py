@@ -1,5 +1,7 @@
 """Installer contracts use synthetic outputs; no emulator download is claimed."""
 import fcntl
+import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -7,11 +9,13 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import tarfile
 import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import provision as p
+import provision_xvfb as xvfb
 
 
 class ProvisionTests(unittest.TestCase):
@@ -33,7 +37,7 @@ class ProvisionTests(unittest.TestCase):
         self.cache = self.home / "cache"
         self.installs = 0
         self.probes = 0
-        for relative in ("tools/factory/provision.py", "tools/factory/provision_probe.py",
+        for relative in ("tools/factory/provision.py", "tools/factory/provision_probe.py", "tools/factory/provision_xvfb.py",
                          "tools/factory/provision-lock.json", "tools/godot/install.py",
                          "tools/godot/toolchain.json"):
             target = self.root / relative
@@ -70,6 +74,16 @@ class ProvisionTests(unittest.TestCase):
         self.assertEqual(first["binary_sha256"], second["binary_sha256"])
         receipt = json.loads((Path(first["directory"]) / "receipt.json").read_text())
         self.assertEqual(receipt["recipe_sha256"], first["recipe_sha256"])
+
+    def test_xvfb_uses_existing_publication_lock_and_reuse_contract(self):
+        first = p.ensure("xvfb", self.cache, self.home / "first", root=self.root,
+                         installer=self.install, prober=self.probe)
+        again = p.ensure("xvfb", self.cache, self.home / "again", root=self.root,
+                         installer=self.install, prober=self.probe)
+        self.assertFalse(first["reused"])
+        self.assertTrue(again["reused"])
+        self.assertEqual((self.installs, self.probes), (1, 2))
+        self.assertEqual(Path(first["binary"]).name, "Xvfb")
 
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()
@@ -246,6 +260,102 @@ class ProvisionTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertNotIn("NEPTUNE_TOOL_READY=", result.stdout)
         self.assertEqual(json.loads((self.home / "cli/report.json").read_text())["kind"], "needs_recipe")
+
+
+class XvfbRecipeTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+        self.recipe = p.identity("xvfb", p.ROOT)[0]
+
+    def test_untrusted_sources_versions_and_commands_are_rejected(self):
+        for key, value in (("archive_url", "https://untrusted.invalid/tool.deb"),
+                           ("version", "latest"), ("archive_bytes", 0),
+                           ("binary_sha256", "missing"), ("commands", ["sudo"])):
+            with self.subTest(key=key), self.assertRaises(p.ProvisionError):
+                xvfb.validate(dict(self.recipe, **{key: value}))
+
+    def test_unsupported_distribution_and_missing_dependencies_are_explicit(self):
+        release = self.root / "os-release"
+        for body in ('ID=ubuntu\nVERSION_ID="24.04"\n', 'ID=debian\nVERSION_ID="12"\n'):
+            release.write_text(body)
+            with self.assertRaises(p.ProvisionError) as caught:
+                xvfb.host_check(self.recipe, release)
+            self.assertEqual(caught.exception.kind, "unsupported_platform")
+        release.write_text('ID=debian\nVERSION_ID="13"\n')
+        with patch.object(xvfb.shutil, "which", return_value=None), self.assertRaises(p.ProvisionError) as caught:
+            xvfb.host_check(self.recipe, release)
+        self.assertEqual(caught.exception.kind, "missing_host_dependency")
+
+    def test_corrupt_or_truncated_package_is_rejected_before_extraction(self):
+        payload = self.root / "payload"
+        payload.mkdir()
+        for archive in (b"truncated", bytes(self.recipe["archive_bytes"])):
+            with self.subTest(size=len(archive)), patch.object(xvfb.subprocess, "run") as command:
+                with self.assertRaises(p.ProvisionError) as caught:
+                    xvfb.unpack(archive, self.recipe, payload)
+                self.assertEqual(caught.exception.kind, "source_mismatch")
+                command.assert_not_called()
+                self.assertEqual(list(payload.iterdir()), [])
+
+    def test_only_pinned_regular_binary_can_be_extracted(self):
+        payload = self.root / "payload"
+        payload.mkdir()
+        archive = b"synthetic package"
+        recipe = dict(self.recipe, archive_bytes=len(archive),
+                      archive_sha256=hashlib.sha256(archive).hexdigest())
+        for kind in ("symlink", "wrong-hash", "valid"):
+            stream = io.BytesIO()
+            content = b"synthetic binary"
+            with tarfile.open(fileobj=stream, mode="w") as tar:
+                member = tarfile.TarInfo("./usr/bin/Xvfb")
+                member.size = len(content)
+                if kind == "symlink":
+                    member.type, member.linkname = tarfile.SYMTYPE, "/outside"
+                tar.addfile(member, io.BytesIO(content) if member.isfile() else None)
+            recipe["binary_sha256"] = hashlib.sha256(content).hexdigest() if kind == "valid" else "0" * 64
+            result = subprocess.CompletedProcess([], 0, stdout=stream.getvalue())
+            with self.subTest(kind=kind), patch.object(xvfb.subprocess, "run", return_value=result):
+                if kind == "valid":
+                    xvfb.unpack(archive, recipe, payload)
+                    self.assertEqual((payload / "Xvfb").read_bytes(), content)
+                    self.assertEqual((payload / "Xvfb").stat().st_mode & 0o777, 0o755)
+                else:
+                    with self.assertRaises(p.ProvisionError):
+                        xvfb.unpack(archive, recipe, payload)
+                    self.assertFalse((payload / "Xvfb").exists())
+
+    def test_failed_start_and_timeout_reap_real_processes(self):
+        processes = []
+        original = subprocess.Popen
+        def start(*args, **kwargs):
+            process = original(*args, **kwargs)
+            processes.append(process)
+            return process
+        with patch.object(xvfb.subprocess, "Popen", side_effect=start):
+            with self.assertRaises(p.ProvisionError):
+                xvfb.probe(Path("/bin/false"))
+            with patch.object(xvfb.select, "select", return_value=([], [], [])):
+                with self.assertRaises(p.ProvisionError):
+                    xvfb.probe(Path("/bin/false"))
+        self.assertEqual(len(processes), 2)
+        self.assertTrue(all(process.poll() is not None for process in processes))
+
+    def test_pixel_mutation_is_detected_and_connection_closed(self):
+        library = MagicMock()
+        library.XOpenDisplay.return_value = 1
+        library.XDefaultScreen.return_value = 0
+        library.XDisplayWidth.return_value = 640
+        library.XDisplayHeight.return_value = 480
+        library.XDefaultDepth.return_value = 24
+        library.XGetImage.return_value = 1
+        library.XGetPixel.return_value = 0x123457
+        with patch.object(xvfb.C, "CDLL", return_value=library):
+            with self.assertRaisesRegex(p.ProvisionError, "pixel roundtrip mismatch"):
+                xvfb.pixel_roundtrip(":0")
+        library.XDestroyImage.assert_called_once_with(1)
+        library.XCloseDisplay.assert_called_once_with(1)
 
 
 class NativeProbeTests(unittest.TestCase):
