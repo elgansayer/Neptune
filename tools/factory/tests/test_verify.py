@@ -17,11 +17,17 @@ import verify
 
 
 class VerificationTests(unittest.TestCase):
-    # Representative metadata/runner/gameplay selections and their existing 5/8/10-check classes.
-    SELECTIONS = [(["README.md"], "metadata", 5), (["docs/readme.md", "tools/factory/verify.py"], "metadata", 5),
-                  (["tools/godot/install.py"], "runner", 8), (["README.md", "tools/godot/toolchain.json"], "runner", 8),
-                  (["game.gd"], "gameplay", 10), (["unknown/new.file"], "gameplay", 10),
-                  (["tools/godot/install.py", "game.gd", "README.md"], "gameplay", 10)]
+    # Representative selections retain every baseline and applicable native check.
+    CORE_COUNT = len(verify.gate.CORE)
+    RUNNER_COUNT = CORE_COUNT + len(verify.gate.NATIVE)
+    GAMEPLAY_COUNT = RUNNER_COUNT + len(verify.gate.RUNTIME)
+    SELECTIONS = [(["README.md"], "metadata", CORE_COUNT),
+                  (["docs/readme.md", "tools/factory/verify.py"], "metadata", CORE_COUNT),
+                  (["tools/godot/install.py"], "runner", RUNNER_COUNT),
+                  (["README.md", "tools/godot/toolchain.json"], "runner", RUNNER_COUNT),
+                  (["game.gd"], "gameplay", GAMEPLAY_COUNT),
+                  (["unknown/new.file"], "gameplay", GAMEPLAY_COUNT),
+                  (["tools/godot/install.py", "game.gd", "README.md"], "gameplay", GAMEPLAY_COUNT)]
 
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -50,8 +56,10 @@ class VerificationTests(unittest.TestCase):
                                  root=self.root, runner=runner or self.runner)
 
     def test_selection_is_exactly_the_shared_ci_plan(self):
-        for paths, count in [(["docs/readme.md"], 5), (["tools/godot/install.py"], 8),
-                             (["game.gd"], 10), (["unknown/new.file"], 10)]:
+        for paths, count in [(["docs/readme.md"], self.CORE_COUNT),
+                             (["tools/godot/install.py"], self.RUNNER_COUNT),
+                             (["game.gd"], self.GAMEPLAY_COUNT),
+                             (["unknown/new.file"], self.GAMEPLAY_COUNT)]:
             self.assertEqual(verify.selection(paths), verify.gate.plan(paths))
             self.assertEqual(len(verify.selection(paths)["required"]), count)
 
@@ -64,13 +72,13 @@ class VerificationTests(unittest.TestCase):
     def test_metadata_does_not_require_offline_engine(self):
         report = self.run_checks(["docs/deleted.md"])
         self.assertEqual(report["conclusion"], "success")
-        self.assertEqual(len(report["checks"]), 5)
+        self.assertEqual(len(report["checks"]), self.CORE_COUNT)
         self.assertNotIn("offline_toolchain", report)
         self.assertEqual(report["schema"], verify.SCHEMA)
 
     def test_native_plan_requires_complete_success_and_records_cache(self):
         report = self.run_checks(["game.gd"])
-        self.assertEqual(len(self.calls), 10)
+        self.assertEqual(len(self.calls), self.GAMEPLAY_COUNT)
         self.assertEqual(report["offline_toolchain"]["addon_count"], 1)
         self.assertEqual(report["conclusion"], "success")
         self.assertNotIn("event", report["identity"])  # Never impersonate required CI.
@@ -284,7 +292,8 @@ class VerificationTests(unittest.TestCase):
         lock_path = verify.ROOT / "tools/godot/toolchain.json"
         lock = json.loads(lock_path.read_text())
         self.assertEqual(report["plan"]["paths"], ["README.md", "game_instance.gd"])
-        self.assertEqual((report["plan"]["mode"], len(report["plan"]["required"])), ("gameplay", 10))
+        self.assertEqual((report["plan"]["mode"], len(report["plan"]["required"])),
+                         ("gameplay", self.GAMEPLAY_COUNT))
         toolchain = report["native"]["toolchain"]
         self.assertEqual(toolchain["lock_sha256"], verify.sha(lock_path))
         for key in ("godot_version", "binary_name", "binary_sha256", "addons"):

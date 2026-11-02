@@ -10,7 +10,12 @@ Committed public-safe receipts of [`tools/saturn_archive`](../../../tools/saturn
 | `cross-region.normal2-decode.json` | `neptune.saturn-archive.bank-decode.v1` | `8fc054ab3c1d693fc31437e03e4539460cb5619ae87b8f056ce5a45e37182976` | Byte-identical USA/Japan `normal2` (`bank_id=5`, `0x00254000..0x002e0000`) decode manifest |
 | `base1-normal2-resident-comparison.json` | `neptune.saturn-archive.resident-comparison.v1` | `05c430723e1e39e3bb19c10ac99bb862e8021451493ee37973af494beed43319` | Resident `WorkRAML`/`WorkRAMH`/`VDP1`/`VDP2`/`SCSP` comparisons, two-run replay determinism & `NC-01..NC-06` |
 
-Full technical derivation and findings: [evidence report](../evidence/2026-10-30-gemini-program-bin-archive-002.md).
+Historical findings and the **2 November technical correction**:
+[evidence report](../evidence/2026-10-30-gemini-program-bin-archive-002.md#correction-and-supersession--2-november-2026).
+The original prose codec/layout specification and CUE digests conflict with the
+merged implementation and disc metadata. Use the correction, tools and receipts;
+do not copy the superseded layout into new extractors. No original-host replay or
+input rehash is claimed by that documentation reconciliation.
 
 ## Verify committed receipts (offline, no private media or states required)
 
@@ -31,5 +36,6 @@ Run `audit-directory`, `decode-bank`, and `compare-resident` from [`tools/saturn
 ## Limits
 
 - Synthetic tests in `tools/saturn_archive/check.py` validate parser/codec logic only; original-game claims rest on the real-disc decode receipts and resident memory comparisons.
-- Slots `3, 4, 5, 6, 9` record layouts and `0x060095E0` SCSP audio command payloads (`Slot 10` and stage `Slot 2`) remain open (`RSAT-008` / follow-up stage-script slices).
+- Slots `3, 4, 5, 6, 9` record layouts remain open under their code/consumer research tasks. `0x060095E0` SCSP audio command payloads (`Slot 10` and stage `Slot 2`) remain open under **RSAT-011 / #488**; the RSAT-008 references retained inside historical JSON receipt text are task-reference errors (RSAT-008 / #485 covers VDP1).
+- Slot 8's decoder reads a pixel pointer at descriptor +16 and requires 20 readable bytes. This is not a proven fixed stride or a recovered dimensions/palette/anchor/animation layout.
 - USA and Japan remain separate regional profiles (`base1` differs; `normal2` is `573,440 / 573,440` bytes identical across both discs).
