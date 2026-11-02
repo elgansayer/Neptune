@@ -1,6 +1,8 @@
 name: Private factory intake compatibility
 
 on:
+  pull_request:
+    paths: ['.github/workflows/private-factory-intake.yml']
   workflow_dispatch:
     inputs:
       control_revision:
@@ -13,12 +15,14 @@ permissions:
 
 jobs:
   compatibility:
+    name: Private Neptune/factory compatibility
+    if: github.event_name == 'workflow_dispatch' || (github.event.pull_request.head.repo.full_name == github.repository && github.actor == github.repository_owner)
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - name: Validate owner-selected immutable input
         env:
-          CONTROL_REVISION: ${{ inputs.control_revision }}
+          CONTROL_REVISION: ${{ inputs.control_revision || '87f582e99b25a0694cb933bdfc6990a0e153eb01' }}
           ACTOR: ${{ github.actor }}
           OWNER: ${{ github.repository_owner }}
         run: |
@@ -92,7 +96,7 @@ jobs:
           factory = Path(os.environ['RUNNER_TEMP']) / 'public-factory'
           assert subprocess.check_output(['git', '-C', str(factory), 'rev-parse', 'HEAD'], text=True).strip() == os.environ['CONTROL_REVISION']
           receipt = {'schema': 'neptune.private-intake-compatibility.v1', 'control_revision': os.environ['CONTROL_REVISION'],
-              'neptune_revision': '8e94003417435ef396192dbf25ee6882fc3567a2', 'run': os.environ['EXPERIMENT_RUN'],
+              'neptune_revision': '8e94003417435ef396192dbf25ee6882fc3567a2', 'run': os.environ['EXPERIMENT_RUN'], 'workflow_revision': os.environ['GITHUB_SHA'],
               'reports': {name: hashlib.sha256((evidence / (name + '.json')).read_bytes()).hexdigest() for name in reports},
               'scope': 'actual private parser/comparer with synthetic role-labelled observations; no original/Godot fidelity or continuity claim', 'model_calls': 0}
           (evidence / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
