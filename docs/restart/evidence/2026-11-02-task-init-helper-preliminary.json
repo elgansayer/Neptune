@@ -57,7 +57,7 @@
   "remaining": [
     "Reusable probe and broader ABI/data cases",
     "Original89C8 caller prefix before89FC, with actual89AC and honest incomplete status",
-    "Original95B04 allocator and all remaining89C8 calls through complete RTS",
+    "Original95B04 unresolved library call and all remaining89C8 calls through complete RTS",
     "Firsttask623A larger body/role,6372 BIOS/IRQ/device startup",
     "Unknown whole-code denominators; no hardware/Godot/gameplay parity"
   ],

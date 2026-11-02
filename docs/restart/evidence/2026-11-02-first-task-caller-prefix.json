@@ -55,7 +55,7 @@
   ],
   "reports_equal": true,
   "schema": "neptune.original-first-task-caller-prefix-evidence.v1",
-  "scope": "One original623A\u219289C8\u219289AC path to89FC, repeated twice; incomplete89C8; no later library call call executed",
+  "scope": "One original623A\u219289C8\u219289AC path to89FC, repeated twice; incomplete89C8; no later library call executed",
   "short_refusal": {
     "attempted_steps": 129,
     "error": {
