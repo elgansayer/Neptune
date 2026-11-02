@@ -14,7 +14,8 @@ GATE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(GATE)
 CHILDREN = ("xvfb", "ocr", "call-trace", "context-trace", "init-trace", "ghidra", "scsp-dsp")
 EXACT = {"tools/godot/install.py", "tools/godot/toolchain.json", ".github/workflows/tool-provisioning.yml",
-         "tools/saturn_lab/m68k_scsp_dsp.py", "tools/saturn_lab/scsp-dsp-source-lock.json",
+         "tools/saturn_lab/m68k_scsp_dsp.py", "tools/saturn_lab/m68k_scsp_state.py",
+         "tools/saturn_lab/m68k_consumer_native.py", "tools/saturn_lab/tests/test_m68k_scsp_state.py", "tools/saturn_lab/scsp-dsp-source-lock.json",
          "tools/saturn_lab/tests/test_m68k_scsp_dsp.py", "tools/saturn_lab/m68k_scsp_fifo.py",
          "tools/saturn_lab/m68k_probe.py", "tools/saturn_lab/m68k_probe_backend.c",
          "tools/saturn_lab/m68k-probe-source-lock.json", "tools/saturn_lab/probe_kernel.py"}
