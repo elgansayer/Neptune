@@ -1,9 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://dqi7p1c1f2c3b"]
+[gd_scene load_steps=9 format=3 uid="uid://dqi7p1c1f2c3b"]
 
 [ext_resource type="Script" path="res://scripts/CharacterSelect.gd" id="1_abcde"]
 [ext_resource type="Texture2D" path="res://art/backgrounds/character_select_bg.png" id="2_bg"]
 [ext_resource type="StyleBox" path="res://themes/panel_border_style.tres" id="3_panel_style"]
-[ext_resource type="FontFile" path="res://fonts/bomberman_font.ttf" id="4_font"]
 [ext_resource type="Texture2D" path="res://characters/portraits/bomber_blue_idle.png" id="5_portrait_idle"]
 [ext_resource type="Texture2D" path="res://characters/portraits/bomber_blue_hover.png" id="6_portrait_hover"]
 [ext_resource type="Texture2D" path="res://characters/portraits/bomber_blue_pressed.png" id="7_portrait_pressed"]
@@ -69,7 +68,6 @@ theme_override_constants/separation = 20
 
 [node name="RosterTitle" type="Label" parent="RootControl/MainPanelContainer/MainHBox/RosterPanel/RosterVBox"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_font")
 theme_override_font_sizes/font_size = 48
 text = "SELECT BOMBER"
 horizontal_alignment = 1
@@ -105,7 +103,6 @@ theme_override_constants/separation = 25
 
 [node name="DetailTitle" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_font")
 theme_override_font_sizes/font_size = 48
 text = "YOUR BOMBER"
 horizontal_alignment = 1
@@ -133,7 +130,6 @@ theme_override_constants/separation = 10
 
 [node name="NicknameLabel" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/PreviewAndNameHBox/NicknameVBox"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_font")
 text = "IN-GAME NICKNAME"
 
 [node name="NicknameLineEdit" type="LineEdit" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/PreviewAndNameHBox/NicknameVBox"]
@@ -148,7 +144,6 @@ theme_override_constants/separation = 15
 
 [node name="ColorLabel" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/ColorOptionsVBox"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_font")
 text = "PRIMARY COLOR"
 
 [node name="PrimaryColorPicker" type="ColorPickerButton" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/ColorOptionsVBox"]
@@ -174,14 +169,12 @@ theme_override_constants/separation = 10
 [node name="CharacterNameLabel" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/LorePanelContainer/LoreVBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_font")
 theme_override_font_sizes/font_size = 36
 text = "Bomber Name"
 horizontal_alignment = 1
 
 [node name="BioTitle" type="Label" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/LorePanelContainer/LoreVBox"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("4_font")
 text = "BOMBER BIO"
 
 [node name="CharacterBioText" type="RichTextLabel" parent="RootControl/MainPanelContainer/MainHBox/DetailPanel/DetailVBox/LorePanelContainer/LoreVBox"]
