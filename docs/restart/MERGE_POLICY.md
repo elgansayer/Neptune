@@ -70,6 +70,22 @@ Keep all other protections and zero mandatory approving reviews intact. A queued
 auto-merge demonstration must show both required checks completed before merge,
 plus their exact head/base, enable/merge timestamps and resulting commit.
 
+The corrected path was observed on [PR612](https://github.com/elgansayer/Neptune-Bomberman/pull/612):
+auto-merge enabled at 13:02:59 UTC; native aggregate succeeded at 13:10:19;
+preparation aggregate succeeded at 13:13:01; GitHub merged at 13:13:38. The
+coordinator observed the PR still blocked while native tests were green and
+preparation was running, and made no further merge call after enabling auto-merge.
+The [exact-head/base ordering receipt](evidence/2026-11-02-native-auto-merge-ordering.json)
+includes the two app-pinned statuses, real installation/dependency evidence and
+438 passing native results in 45 files. This validates the applicable-preparation
+path. The workflow's explicit non-applicability path requires its own live check;
+unit tests alone do not establish that GitHub executes it correctly.
+
+Keep [control alignment #613](https://github.com/elgansayer/Neptune-Bomberman/issues/613)
+separate: the formerly deployed control preflight expects one literal check and
+must adopt the two-check contract. Neither this GitHub merge nor local policy
+tests establish updater adoption, manual-session enrolment or Neptune continuity.
+
 ## Configuration and acceptance on the server
 
 1. Finish the active bounded task and fetch current main/foundation. Use an existing

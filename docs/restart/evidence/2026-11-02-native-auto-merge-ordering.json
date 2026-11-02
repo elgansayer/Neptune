@@ -1,0 +1,98 @@
+{
+  "accepted_pr": 612,
+  "auto_merge_enabled_at": "2026-11-02T13:02:59Z",
+  "base": "75586a2331d25453414c53c84dfc3d068f881b26",
+  "both_required_checks_completed_before_merge": true,
+  "coordinator_merge_call_after_auto_enable": false,
+  "current_spend": "unknown",
+  "enforce_admins": true,
+  "head": "2054b400b03f41a70a300099b3e8be397ce70ae2",
+  "issue": 610,
+  "manual_session_continuity_established": false,
+  "merge": "77d65d7c135b61f113b72aa6b781c805a7d8b899",
+  "merged_at": "2026-11-02T13:13:38Z",
+  "native_gate": {
+    "bot_results": {
+      "failed": 0,
+      "files": 45,
+      "passed": 438
+    },
+    "required_executed_checks": [
+      "input-tooling",
+      "film-contracts",
+      "catalogue-tests",
+      "catalogue-validation",
+      "factory-contracts",
+      "gate-contracts",
+      "native-install",
+      "native-runner",
+      "native-project",
+      "native-runtime",
+      "native-bots"
+    ],
+    "run": 41449635488
+  },
+  "no_admin_merge_bypass": true,
+  "observed_native_success_did_not_merge_while_preparation_pending": true,
+  "prior_gap": {
+    "all_checks_eventually_passed": true,
+    "installer_completed_at": "2026-11-02T12:53:10Z",
+    "merged_at": "2026-11-02T12:51:30Z",
+    "native_completed_at": "2026-11-02T12:51:25Z",
+    "pr": 608,
+    "waited_for_all_applicable_checks": false
+  },
+  "provisioning": {
+    "applicability": {
+      "identity": {
+        "base": "75586a2331d25453414c53c84dfc3d068f881b26",
+        "event": "pull_request",
+        "head": "2054b400b03f41a70a300099b3e8be397ce70ae2",
+        "merge": "40cf5f5f354afdccadaef2955c39c9c9677852cc",
+        "pr": 612
+      },
+      "paths": [
+        ".github/workflows/tool-provisioning.yml",
+        "docs/restart/MERGE_POLICY.md",
+        "tools/factory/provision_applicability.py",
+        "tools/factory/tests/test_provision_applicability.py"
+      ],
+      "required": true,
+      "schema": "neptune.provision-applicability.v1"
+    },
+    "dependencies": {
+      "child_results": {
+        "call-trace": "success",
+        "ocr": "success",
+        "xvfb": "success"
+      },
+      "required": true,
+      "selection_sha256": "93cc4eac6be5cea3b778eb68ff83a4f7810f5e0202d742d3aeb2fdbe21ee12ac",
+      "status": "success"
+    },
+    "run": 41449635581
+  },
+  "required_approving_reviews": 0,
+  "required_checks": [
+    {
+      "app_id": 15368,
+      "completed_at": "2026-11-02T13:13:01Z",
+      "conclusion": "success",
+      "head_sha": "2054b400b03f41a70a300099b3e8be397ce70ae2",
+      "id": 125293663971,
+      "name": "Pinned Godot and Saturn installation"
+    },
+    {
+      "app_id": 15368,
+      "completed_at": "2026-11-02T13:10:19Z",
+      "conclusion": "success",
+      "head_sha": "2054b400b03f41a70a300099b3e8be397ce70ae2",
+      "id": 125291349311,
+      "name": "Neptune merge gate"
+    }
+  ],
+  "schema": "neptune.native-auto-merge-ordering.v1",
+  "strict_current_base": true,
+  "wait_receipt_sha256": "62d56fd5ac5be976f8bb6678f984a0cd62ff30ab7624258a992949bf81d1f414",
+  "whole_game_fidelity_established": false
+}
