@@ -71,6 +71,77 @@ def synthetic_interpreter(mode="normal"):
     return types.SimpleNamespace(Memory=Memory, CPU=CPU, RETURN_SENTINEL=0xFFFFFFF0, instances=instances)
 
 
+def stack_interpreter(mode="normal"):
+    """Owned spill/restore simulation for memory/ABI fences, not original opcodes."""
+    class Memory:
+        def __init__(self):
+            self.regions = []
+
+        def add(self, base, size, data):
+            buffer = bytearray(data)
+            self.regions.append((base, base + size, buffer))
+            return buffer
+
+        def find(self, address, size):
+            physical = address & 0x1FFFFFFF if address >> 28 == 2 else address
+            for base, end, buffer in self.regions:
+                if base <= physical and physical + size <= end:
+                    return buffer, physical - base
+            raise MemoryError("Owned fixture unmapped address")
+
+        def read(self, address, size):
+            buffer, offset = self.find(address, size)
+            return int.from_bytes(buffer[offset:offset + size], "big")
+
+        def write(self, address, size, value):
+            buffer, offset = self.find(address, size)
+            buffer[offset:offset + size] = value.to_bytes(size, "big")
+
+    class CPU:
+        def __init__(self, memory):
+            self.mem, self.r = memory, [0] * 16
+            self.sr = self.gbr = self.vbr = self.mach = self.macl = self.pr = self.steps = self.pc = 0
+
+        def exec(self, instruction, pc, in_slot=False):
+            if instruction == "spill":
+                self.r[15] -= 4
+                address = self.r[15] if mode != "escaped-write" else pinned.BASE
+                self.mem.write(address, 4, self.macl if mode != "wrong-spill" else self.macl ^ 1)
+                if mode == "extra-write":
+                    self.mem.write(address, 4, self.macl)
+            elif instruction == "calculate":
+                self.macl = (self.r[4] * 1520 + self.r[5] * 152) & 0xFFFFFFFF
+                self.r[0] = (self.macl + 0x00207F74) & 0xFFFFFFFF
+                self.sr = (self.sr & ~1) | (((5 * self.r[4]) & 0xFFFFFFFF) >> 31)
+                if mode == "changed-register":
+                    self.r[7] = 0
+                if mode == "changed-condition":
+                    self.sr ^= 2
+                if mode == "changed-canary":
+                    self.mem.regions[1][2][0] ^= 1
+                if mode == "changed-kernel":
+                    self.mem.regions[0][2][0] ^= 1
+            elif instruction == "restore":
+                address = self.r[15] if mode != "other-read" else self.r[15] - 4
+                if mode == "mirror-read":
+                    address |= 0x20000000
+                if mode != "missing-restore":
+                    self.macl = self.mem.read(address, 4)
+                    if mode == "extra-read":
+                        self.mem.read(address, 4)
+                    if mode != "wrong-sp":
+                        self.r[15] += 4
+
+        def call(self, entry, max_steps, **registers):
+            for index, instruction in enumerate(("spill", "calculate", "return", "restore")):
+                self.steps += 1
+                self.exec(instruction, entry + 2 * index, in_slot=instruction == "restore")
+            self.pc = 0xFFFFFFF0
+            return self.r[0]
+
+    return types.SimpleNamespace(Memory=Memory, CPU=CPU, RETURN_SENTINEL=0xFFFFFFF0)
+
+
 class TableAddressProbeTests(unittest.TestCase):
     def test_complete_ordinary_and_constructed_selection_and_fixed_examples(self):
         self.assertEqual(probe.candidate(0, 0), 0x00207F74)
@@ -135,6 +206,28 @@ class TableAddressProbeTests(unittest.TestCase):
                               ("bad-pc", ValueError), ("wrong-return", ValueError)):
             with self.subTest(mode=mode), self.assertRaises(failure):
                 probe.execute(bytes(pinned.SIZE), synthetic_interpreter(mode))
+
+    def test_explicit_stack_mode_checks_poisoned_spill_restore_and_full_footprint(self):
+        result = probe.execute(bytes(pinned.SIZE), stack_interpreter(), bounded_stack=True)
+        self.assertEqual(result["cases"], 196)
+        self.assertEqual(result["writes"], 196)
+        contract = result["memory_contract"]
+        self.assertTrue(contract["sp_and_macl_preserved"])
+        self.assertTrue(contract["other_stack_bytes_unchanged"])
+        self.assertEqual(contract["only_stack_access"], {"address": "0x060fffec", "bytes": 4,
+                                                       "writes_per_case": 1, "reads_per_case": 1})
+        self.assertEqual(len(contract["witnesses_sha256"]), 64)
+
+    def test_default_mode_still_rejects_the_same_constructed_stack_write(self):
+        with self.assertRaisesRegex(ValueError, "pure-function"):
+            probe.execute(bytes(pinned.SIZE), stack_interpreter())
+
+    def test_stack_access_abi_condition_and_unaffected_memory_mutations_fail(self):
+        for mode in ("escaped-write", "wrong-spill", "extra-write", "missing-restore", "wrong-sp",
+                     "other-read", "mirror-read", "extra-read", "changed-register", "changed-condition",
+                     "changed-canary", "changed-kernel"):
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                probe.execute(bytes(pinned.SIZE), stack_interpreter(mode), bounded_stack=True)
 
     def test_incomplete_kernel_is_not_executed(self):
         with self.assertRaisesRegex(ValueError, "complete kernel"):
