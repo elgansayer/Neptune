@@ -2,19 +2,40 @@ name: Real tool provisioning
 
 on:
   pull_request:
-    paths:
-      - 'tools/factory/provision*'
-      - 'tools/factory/tests/test_provision*.py'
-      - 'tools/godot/install.py'
-      - 'tools/godot/toolchain.json'
-      - '.github/workflows/tool-provisioning.yml'
+    types: [opened, synchronize, reopened, ready_for_review, edited]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
+  applicability:
+    name: Determine exact preparation applicability
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      required: ${{ steps.select.outputs.required }}
+      selection_sha256: ${{ steps.select.outputs.selection_sha256 }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: false
+      - id: select
+        name: Classify complete exact-base/head paths including rename sources
+        run: python3 tools/factory/provision_applicability.py plan --report "$RUNNER_TEMP/provision-applicability.json" --github-output "$GITHUB_OUTPUT"
+      - name: Preserve applicability evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: provision-applicability-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provision-applicability.json
+          if-no-files-found: error
+          retention-days: 14
   call-trace:
+    needs: applicability
+    if: needs.applicability.outputs.required == 'true'
     name: Real matched-core call observer preparation
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -48,6 +69,8 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   ocr:
+    needs: applicability
+    if: needs.applicability.outputs.required == 'true'
     name: Real local OCR preparation
     runs-on: ubuntu-24.04
     timeout-minutes: 35
@@ -81,6 +104,8 @@ jobs:
           if-no-files-found: error
           retention-days: 14
   xvfb:
+    needs: applicability
+    if: needs.applicability.outputs.required == 'true'
     name: Real unprivileged Xvfb preparation
     runs-on: ubuntu-24.04
     timeout-minutes: 10
@@ -123,19 +148,27 @@ jobs:
           retention-days: 14
   install:
     name: Pinned Godot and Saturn installation
-    needs: [xvfb, ocr, call-trace]
+    needs: [applicability, xvfb, ocr, call-trace]
+    if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
+          fetch-depth: 0
           persist-credentials: false
           submodules: false
+      - name: Reject missing, stale, skipped or failed applicable dependencies
+        env:
+          NEPTUNE_PROVISION_NEEDS: ${{ toJSON(needs) }}
+        run: python3 tools/factory/provision_applicability.py assert-needs --report "$RUNNER_TEMP/provision-dependencies.json"
       - name: Install real tools into a fresh disposable cache
+        if: needs.applicability.outputs.required == 'true'
         run: |
           python3 tools/factory/provision.py --tool godot --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/godot-first" --timeout 300
           python3 tools/factory/provision.py --tool beetle-saturn --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/saturn-first" --timeout 1200
       - name: Reuse and recheck without another build or download
+        if: needs.applicability.outputs.required == 'true'
         run: |
           python3 tools/factory/provision.py --tool godot --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/godot-reuse" --timeout 60
           python3 tools/factory/provision.py --tool beetle-saturn --cache "$RUNNER_TEMP/prepared-tools" --evidence "$RUNNER_TEMP/provision-evidence/saturn-reuse" --timeout 60
@@ -158,6 +191,8 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: tool-provisioning-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/provision-evidence
+          path: |
+            ${{ runner.temp }}/provision-dependencies.json
+            ${{ runner.temp }}/provision-evidence
           if-no-files-found: error
           retention-days: 14
