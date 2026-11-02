@@ -154,3 +154,16 @@ See `PLAN.md` for the roadmap and upcoming features.
 ## 📝 License
 
 See LICENSE file.
+
+## Multilingual arcade font
+
+The project theme uses [Neptune Bubble](fonts/neptune-arcade/README.md), an original
+Saturn Bomberman-inspired rounded bubble face with an optional pixel HUD face
+and bundled Noto script fallbacks. CJK glyph forms
+follow the current translation locale. See the [font specimen](fonts/neptune-arcade/preview.png)
+and the measured coverage and licenses in the package. This supplies font rendering;
+UI translations and localized layout expansion remain separate work.
+
+Run the isolated engine verification with `python3 tools/fonts/check.py --godot /path/to/godot`.
+Use `--screenshot /absolute/path.png` with a graphical display to capture the standalone
+960×720 showcase. The font checks do not start a game server.
