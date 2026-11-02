@@ -91,7 +91,7 @@ def unpack(archive, destination):
 def fixture(path):
     # Independently generated public bitmap letters, no reference game content.
     glyphs = {
-        "N": "10001 11001 10101 10011 10001 10001 10001",
+        "N": "10001 11001 11001 10101 10011 10011 10001",
         "E": "11111 10000 10000 11110 10000 10000 11111",
         "P": "11110 10001 10001 11110 10000 10000 10000",
         "T": "11111 00100 00100 00100 00100 00100 00100",
@@ -146,6 +146,7 @@ def install(recipe, payload, work, runner, root):
                 "-DBUILD_TESTS=OFF", "-DGRAPHICS_DISABLED=ON", "-DDISABLED_LEGACY_ENGINE=ON",
                 "-DDISABLE_CURL=ON", "-DDISABLE_ARCHIVE=ON", "-DDISABLE_TIFF=ON",
                 "-DOPENMP_BUILD=OFF", "-DENABLE_NATIVE=OFF", "-DENABLE_LTO=OFF",
+                "-DCMAKE_CXX_FLAGS=-DTESSERACT_DISABLE_DEBUG_FONTS",
                 "-DENABLE_CCACHE=OFF", "-DENABLE_PRECOMPILED_HEADERS=OFF"], work, 90)
     runner.run([cmake, "--build", str(tess), "--target", "tesseract", "--parallel", "1"], work, 900)
     shutil.copy2(tess / "bin/tesseract", payload / "tesseract")

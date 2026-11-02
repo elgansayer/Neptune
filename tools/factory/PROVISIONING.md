@@ -48,7 +48,9 @@ recipe lock. CMake's archive hash was checked against its official release diges
 Only existing `make`, `cc`, `c++`, Python and system C/C++ runtime libraries are
 required; this supplies its own CMake, headers and static OCR/Leptonica libraries.
 Builds run one job with shared deadlines. Optional compressed image formats,
-network readers, training, graphics and OpenMP are disabled. Input is local PNM
+network readers, training, graphics, debug bitmap fonts and OpenMP are disabled.
+The upstream `TESSERACT_DISABLE_DEBUG_FONTS` switch avoids TIFF-only debug font
+initialisation; recognition remains the real LSTM engine. Input is local PNM
 (PBM/PGM/PPM); this is not a general PNG/JPEG OCR installation.
 
 Install and reuse verify the executable identity and pinned model hash, check
