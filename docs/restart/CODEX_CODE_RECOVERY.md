@@ -25,7 +25,7 @@ does not block this coordinator.
 
 **Further VPS execution, 2 November:** the existing Codex app continued through
 original SH-2 bounds/accumulator functions and original68000 sound code. Resume
-the [latest code638 checkpoint](saturn-code/VPS-CODE-638-CHECKPOINT.md),
+the [latest code640 checkpoint](saturn-code/VPS-CODE-640-CHECKPOINT.md),
 which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
@@ -44,8 +44,12 @@ twice, including6,440 full18-record scans per selection and an explicit readonly
 at8f8f8879333fb615eea42f60ede3c41c93e49d4f. Original61C4/61E6 context save/restore
 now completes456 cases each, twice, with exact48-byte layout, SP/PR/MAC restores
 and delay slots; all seven controls detected. Current263 tooling tests are
-separate from those original pairs. Continue original6DC8 and the surrounding
-context caller, alongside unresolved17F2 handlers and further modules. The
+separate from those original pairs.638/PR639 merged atce9059ca7a0092c76e2db214344a9f1b645bafa3.
+Original6DC8 now completes8,256 cases twice with signed-bound/truncation, all
+flag/category-byte cases and both MACL restore delay slots; ten controls detected.
+Its269 tooling tests remain separate. Continue the original6D36/6DAE context
+handoff/resume caller and6BE4 selection, alongside unresolved17F2 handlers and
+further modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
 
