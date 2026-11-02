@@ -80,7 +80,7 @@ and evidence arguments stay required, and a missing cache or failed check still 
 | `scope` | Starts `requirements only`: no check ran and no host, tool cache or engine was inspected |
 | `plan` | The shared classifier result: `mode` (`metadata`, `runner`, `gameplay`), sorted unique `paths` and the ordered `required` check names |
 | `baseline.checks` | Required checks that need no engine: the core checks every selection runs |
-| `baseline.python`, `baseline.executables` | Declared interpreter minimum and host tools those checks invoke (`cc`, `git`) |
+| `baseline.python`, `baseline.executables` | Declared interpreter minimum and host tools those checks invoke (`cc`, `git`, `openssl`) |
 | `native.required` | True for runner and gameplay selections: the test a real run applies before it demands the offline cache |
 | `native.checks` | Required engine checks; `baseline.checks` then `native.checks` equals `plan.required` |
 | `native.executables` | Host tools beyond the engine: `Xvfb` when `native-runtime` (a graphical client) is required, else empty |
@@ -142,6 +142,11 @@ restart recovery or continuous operation. #33 still requires those live tests
 before enabling unattended continuity.
 
 ## Named supplied-trace checks
+
+Actual pinned original experiment recording and public-key authentication use
+[`reference_receipt.py`](REFERENCE_RECEIPTS.md) (#579/#511). This separate trusted
+coordinator entrypoint reuses the existing sandbox/host gate; supplied traces and
+plausible hashes alone never establish source authenticity.
 
 The opt-in #576/#76 contract runs the existing exact behaviour-trace comparator
 in addition to the unchanged path-based checks. It uses the existing accepted

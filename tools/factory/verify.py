@@ -32,7 +32,7 @@ TOOLCHAIN_LOCK = "tools/godot/toolchain.json"
 # Python (3.11 for hashlib.file_digest) and invoke git and a C compiler. Only the
 # graphical native-runtime check needs a virtual display.
 BASELINE_PYTHON = ">=3.11"
-BASELINE_EXECUTABLES = ("cc", "git")
+BASELINE_EXECUTABLES = ("cc", "git", "openssl")
 DISPLAY_EXECUTABLES = ("Xvfb",)
 REPOSITORY = "elgansayer/Neptune-Bomberman"
 MAX_INTAKE_BYTES = 256 * 1024
