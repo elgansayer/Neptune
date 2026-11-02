@@ -23,6 +23,19 @@ validation and further functions; isolated CPU evidence does not complete this
 mission. The original host/media are available, so the earlier cloud access gap
 does not block this coordinator.
 
+**Further VPS execution, 2 November:** the existing Codex app continued through
+original SH-2 bounds/accumulator functions and original68000 sound code. Resume
+the [latest accepted code619 checkpoint](saturn-code/VPS-CODE-619-CHECKPOINT.md),
+which links source identities, actual execution evidence, retained private paths
+and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
+command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
+The latest leaves passed9,136 cases twice per module; the current231 tooling
+tests are separate from that original execution. Earlier first-action commands
+and memory candidates below are historical leads, not work to count again.
+Continue unresolved17F2 dispatch/handlers, callers and further modules. The
+all-original-code programme remains **active and incomplete**; no whole-module,
+natural gameplay, audio timing or hardware parity follows from these slices.
+
 Continue Elgan's Sega Saturn Bomberman reverse engineering on this VPS. **The
 primary objective is to reverse engineer all original game code.** Complete asset
 extraction remains a supporting objective. Preserve Neptune's wider product and
