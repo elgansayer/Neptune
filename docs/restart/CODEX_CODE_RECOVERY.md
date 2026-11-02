@@ -25,7 +25,7 @@ does not block this coordinator.
 
 **Further VPS execution, 2 November:** the existing Codex app continued through
 original SH-2 bounds/accumulator functions and original68000 sound code. Resume
-the [latest code629 checkpoint](saturn-code/VPS-CODE-629-CHECKPOINT.md),
+the [latest code635 checkpoint](saturn-code/VPS-CODE-635-CHECKPOINT.md),
 which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
@@ -37,9 +37,12 @@ Kernel-record#629 now executes6B38/6B56/940A/942E through complete returns,
 18,722 cases twice, including all18/16-record caller paths. Its253 current tooling
 tests are separate from the original reports. B934, A3E0, A25E and A2D8 also
 have retained results; do not count repeats as new work. Natural roles and
-caller/runtime validation remain open. Continue the original6B9C record-delta
-path and explicit RAM alias question from the checkpoint, alongside unresolved
-17F2 handlers, callers and further modules. The
+caller/runtime validation remain open. Original6B9C now completes7,568 cases
+twice, including6,440 full18-record scans per selection and an explicit readonly
+26006038→06006038 sampled-word alias. All nine mutation controls are detected;
+259 tooling tests remain separate from actual original reports. Continue the
+original61C4/61E6 context save/restore pair and surrounding caller, then6DC8,
+alongside unresolved17F2 handlers and further modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
 

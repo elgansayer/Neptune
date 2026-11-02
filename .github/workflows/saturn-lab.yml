@@ -57,12 +57,16 @@ jobs:
           from pathlib import Path
           sys.path.insert(0,'tools/saturn_lab')
           import probe_kernel_records as records
+          import probe_record_delta as delta
           emu=records.pinned.interpreter(Path('.sh2-source'))
           result=records.owned_smoke(emu)
           report={'schema':'neptune.owned-sh2-record-adapter.v1','original_game_bytes_executed':False,
                   'interpreter_revision':records.pinned.INTERPRETER_REVISION,
                   'interpreter_sources':records.pinned.SOURCE_HASHES,
-                  'probe_sha256':records.pinned.digest(Path(records.__file__).read_bytes()),'owned_smoke':result}
+                  'probe_sha256':records.pinned.digest(Path(records.__file__).read_bytes()),'owned_smoke':result,
+                  'delta_owned_smoke':delta.owned_smoke(emu),
+                  'delta_source_sha256':{name:records.pinned.digest(Path('tools/saturn_lab',name).read_bytes())
+                                         for name in ('probe_record_delta.py','sh2_profile.py')}}
           (Path(os.environ['RUNNER_TEMP'])/'sh2-record-adapter.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
           print('Owned pinned CPU/adapter guards, literal read and recovery passed; no original game bytes.')
           PY
