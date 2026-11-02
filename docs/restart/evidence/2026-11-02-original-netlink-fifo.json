@@ -1,0 +1,242 @@
+{
+  "bridge_sha256": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
+  "cases": 15872,
+  "contract_adapter_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "event_count_range": [
+    1,
+    8
+  ],
+  "experiment": "EXP-SAT-CODE-011",
+  "instruction_controls": {
+    "gate_bit6_only": {
+      "address": "0x10b8",
+      "mutated_driver_sha256": "a0dcf24fd4a6687fd19fd3e17176280534e63242ed9f9d99a9ddb1aeafe84d17",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 54,
+      "tested": 90
+    },
+    "missing_read_cursor_increment": {
+      "address": "0x10da",
+      "mutated_driver_sha256": "34be3c72f7c761f98d72002dc34fe1291fecbed87f25c1a40e1312456ad964b6",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 24,
+      "tested": 90
+    },
+    "reverse_full_branch": {
+      "address": "0x10d2",
+      "mutated_driver_sha256": "8d86a8563577e1bb2be4a4c8e8be70de613a23011add6e4226034c6e4b6078a8",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 36,
+      "tested": 90
+    },
+    "test_empty_instead_of_full": {
+      "address": "0x10ce",
+      "mutated_driver_sha256": "2f93237c4393204b823a4bd92084930f82f4ee664c1334410ae2e5fbeceaf3f2",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 24,
+      "tested": 90
+    },
+    "wrong_device_write_lane": {
+      "address": "0x10d8",
+      "mutated_driver_sha256": "2536d79512606993d65ab1b40791c8582b3728d9c319cfdde9beec3d3b2c13ad",
+      "reasons": [
+        "Native guard: forbidden-write"
+      ],
+      "rejected": 24,
+      "tested": 90
+    }
+  },
+  "instruction_count_range": [
+    3,
+    12
+  ],
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Constructed registers, software RAM and FIFO fixtures; not natural boot or gameplay",
+    "Stops before JSR130E; no complete main-loop, sound protocol or audio claim",
+    "Reference FIFO serial clock frozen, interrupt enables zero; no SCSP/DSP timing",
+    "Reference full-write behavior is an upstream hardware TODO; positive original never writes full",
+    "Shared interpreter lineage, not independent hardware validation; whole-program denominators unknown"
+  ],
+  "load_address": 0,
+  "module": "NLSND",
+  "native_identity": {
+    "abi": 3,
+    "base_identity": {
+      "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+      "flags": [
+        "-std=c11",
+        "-O2",
+        "-shared",
+        "-fPIC",
+        "-DM68K_INSTRUCTION_HOOK=1",
+        "-DM68K_SEPARATE_READS=1",
+        "-Wl,-z,defs"
+      ],
+      "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+    },
+    "component_sha256": "1560254353394f94d87aa5c892573f248abb30f1017b0a5a567706fd01f912b4",
+    "derived_backend_sha256": "5cbc9529c2d6d5b6f2e9a4587ade2344a30ad75e08793543deba7546852e1758",
+    "profile": "SCSP-MIDI-output-frozen-clock-interrupt-enables-zero",
+    "scsp_source_lock_sha256": "f209fd0b2408dbe9b01570dcc02f8075bf6e433b065b6e63a45d16afd9811706"
+  },
+  "original_game_bytes_executed": true,
+  "original_input_unchanged": true,
+  "outcomes": {
+    "device-full": 3328,
+    "disabled": 3328,
+    "one-byte-pushed": 6656,
+    "software-empty": 2560
+  },
+  "owned_smoke": {
+    "failure_controls": {
+      "execution_escape": "instruction-access",
+      "forbidden_write": "forbidden-write",
+      "nonreturning": "instruction-budget",
+      "unmapped_read": "unmapped-data-read"
+    },
+    "fresh_after_failure": true,
+    "interrupt_enables": 0,
+    "mmio_guards": {
+      "unsupported_even_write": "forbidden-write",
+      "unsupported_input_read": "unmapped-data-read",
+      "wrong_status_width": "unmapped-data-read"
+    },
+    "original_game_bytes_executed": false,
+    "positive_steps": 2,
+    "reference_fifo_cases": 40,
+    "serial_clock_advanced": false
+  },
+  "preparation": {
+    "binary_sha256": "9d7a5257262cc8f6f017201a0180c4964424e203f0ea02f927d3e51052208772",
+    "compile_exit": 0,
+    "compile_timeout_seconds": 60,
+    "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+    "identity": {
+      "abi": 3,
+      "base_identity": {
+        "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+        "flags": [
+          "-std=c11",
+          "-O2",
+          "-shared",
+          "-fPIC",
+          "-DM68K_INSTRUCTION_HOOK=1",
+          "-DM68K_SEPARATE_READS=1",
+          "-Wl,-z,defs"
+        ],
+        "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+      },
+      "component_sha256": "1560254353394f94d87aa5c892573f248abb30f1017b0a5a567706fd01f912b4",
+      "derived_backend_sha256": "5cbc9529c2d6d5b6f2e9a4587ade2344a30ad75e08793543deba7546852e1758",
+      "profile": "SCSP-MIDI-output-frozen-clock-interrupt-enables-zero",
+      "scsp_source_lock_sha256": "f209fd0b2408dbe9b01570dcc02f8075bf6e433b065b6e63a45d16afd9811706"
+    },
+    "limitations": [
+      "Frozen MIDI serial clock; no draining, samples, DSP or complete SCSP",
+      "Interrupt enables fixed zero; pending clear and real recalculation retained",
+      "Only read8 100404 and write8 100407; all other MMIO unmapped",
+      "Reference full-write discard remains upstream TODO, not hardware proof",
+      "Existing ABI1/ABI2 sources, caches and all host/provider limits preserved"
+    ],
+    "owned_smoke": {
+      "failure_controls": {
+        "execution_escape": "instruction-access",
+        "forbidden_write": "forbidden-write",
+        "nonreturning": "instruction-budget",
+        "unmapped_read": "unmapped-data-read"
+      },
+      "fresh_after_failure": true,
+      "interrupt_enables": 0,
+      "mmio_guards": {
+        "unsupported_even_write": "forbidden-write",
+        "unsupported_input_read": "unmapped-data-read",
+        "wrong_status_width": "unmapped-data-read"
+      },
+      "original_game_bytes_executed": false,
+      "positive_steps": 2,
+      "reference_fifo_cases": 40,
+      "serial_clock_advanced": false
+    },
+    "preparation_has_original_inputs": false,
+    "schema": "neptune.prepared-m68k-scsp-fifo.v1",
+    "scsp_source_lock": {
+      "component_sha256": "1560254353394f94d87aa5c892573f248abb30f1017b0a5a567706fd01f912b4",
+      "files": {
+        "COPYING": "a6996dcf0c334281f734560926e079b2dbbd5b78e81c0ca00a413ec01e1cd2fb",
+        "mednafen/ss/scsp.h": "707bdbfecb158e996cc6c36acba68dc7a0002d648f9b7e958ec7e5277f8872df",
+        "mednafen/ss/scsp.inc": "0fa92f80c30bc1a6944d7cbda55f3ecad189408d5a8dc394887a4ec6b1f5e501"
+      },
+      "functions": [
+        "SS_SCSP_RecalcSoundInt",
+        "SS_SCSP_RecalcMainInt",
+        "SS_SCSP_MIDI_Reset",
+        "SS_SCSP_MIDI_WriteOutput"
+      ],
+      "repository": "libretro/beetle-saturn-libretro",
+      "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+      "schema": "neptune.scsp-fifo-source-lock.v1"
+    },
+    "source_files": {
+      "runtime/third_party/musashi/README.md": "a0ba3677996973a30c563e8f5fe82678984483588e013909aaf5c0f42b8aa84c",
+      "runtime/third_party/musashi/history.txt": "0831ee0020bc52399456d76a41c8a16edd0136719ee50eb4df4431d91571ed15",
+      "runtime/third_party/musashi/m68k.h": "7fb10f51ee36d45f6e2be38d72aa0c57853810a816f1cf19e0f0c600bd1afa4a",
+      "runtime/third_party/musashi/m68kconf.h": "236bfbbae2d19c2bc3c3455340dafd3a086a86d2de6f19371eb9c27be8de8abf",
+      "runtime/third_party/musashi/m68kcpu.c": "0d98c1bfd104929ca393ab6020c05adaa3de5433961cbf924d0ab78a82778405",
+      "runtime/third_party/musashi/m68kcpu.h": "372d2086a9c39aadf87d9e0fa42104c5849bd4972ce74b191c0d458208193635",
+      "runtime/third_party/musashi/m68kdasm.c": "c31b1d3a9863c4271fd0ddcddf3cde8fadac691909ca994db6ec41941696dca2",
+      "runtime/third_party/musashi/m68kfpu.c": "e86c9eaaa51993c2d0fac1f6d489bafbe3d4209ff74163e97b7720011fe4327a",
+      "runtime/third_party/musashi/m68kmmu.h": "66bdbef424dc672c79d316cad6060d487a9cd574b0c12d008e82505a4a27df89",
+      "runtime/third_party/musashi/m68kops.c": "f36a23ff55ba012081b0b28815c23c975782dbca5eb1e10dbaf8825d14bb117e",
+      "runtime/third_party/musashi/m68kops.h": "f7a4709892d071901c677afafbab575fd99945c76cf1e9869789b54fac13199a",
+      "runtime/third_party/musashi/readme.txt": "ecff54ee43a229d39aaa6def046c95d5133f8f936ba83a6e62af50ac01832a4f",
+      "runtime/third_party/musashi/softfloat/README.txt": "c71e555b87858bcbd6629ca2a1b181babaf8fe129172c15489a9eeeb56a6dc1f",
+      "runtime/third_party/musashi/softfloat/mamesf.h": "0060a07e2a2292bb98a79917a8ddd02ae3225173ce37d919eb7e76a8cc661aac",
+      "runtime/third_party/musashi/softfloat/milieu.h": "48da7850cbd2481c3d87f7bde42815d0e64d08a2772afb847b5f91d90afcf9be",
+      "runtime/third_party/musashi/softfloat/softfloat-macros": "003fd1da7dac65e74c3129af0a45a2fb238140d281ccf456b2f3d18ac633e840",
+      "runtime/third_party/musashi/softfloat/softfloat-specialize": "ec8df128b1ebd711215e39d35ac62c8bde59f8bcd0cf88718d8fa5d18a475d72",
+      "runtime/third_party/musashi/softfloat/softfloat.c": "a9249098c1be64f346a20d72250be47e779764819afed2c6ecce7f8687476db6",
+      "runtime/third_party/musashi/softfloat/softfloat.h": "5cf048506ee233be66e1ec0ce7f15e0184e3758c14c41829a7f3ab0195f7b509"
+    },
+    "source_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+    "status": "ready"
+  },
+  "prepared_binary_sha256": "9d7a5257262cc8f6f017201a0180c4964424e203f0ea02f927d3e51052208772",
+  "private_report_sha256": "5edf9f0dfce4fc2bc8ba61a389c1309bc7dfbc3abe1b721a801804671230d0f5",
+  "probe_sha256": "59f3a7ed1f51d32195d033e80ea73849ce76c7e8a3250638b981abdbfb9e0bc0",
+  "range_sha256": "f34b9b93ebfdff5656544439c681d6c060ac8a97ff9db1cf0fb5786ee0445245",
+  "release": "usa-mk81070-v1003",
+  "results_sha256": "ff27ed1893f65090e8e08e85e9e7fd2464e0f961af7ce9598a108d28f4da4a03",
+  "schema": "neptune.original-m68k-scsp-fifo.v1",
+  "source_execution_head": "40554d69cbff27683566ea311216c65861f23ff6",
+  "source_path": "NETLINK/SNDDRV.BIN",
+  "status": "success",
+  "two_complete_reports_equal": true,
+  "variants": [
+    [
+      32768,
+      10015,
+      1
+    ],
+    [
+      65536,
+      8192,
+      0
+    ],
+    [
+      32768,
+      8213,
+      -1
+    ]
+  ]
+}
