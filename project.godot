@@ -10,6 +10,8 @@ config_version=5
 
 [application]
 
+run/main_scene.dedicated_server="res://main_server.tscn"
+
 config/name="Bomberman Client"
 run/main_scene="res://client/ui/login_screen.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")

@@ -10,8 +10,9 @@ const ContentDownload = preload("res://shared/network/content_download.gd")
 
 var _runtime_role := ""
 var _server_port := 7777
+var _transport := "enet"
 
-var peer: ENetMultiplayerPeer
+var peer: MultiplayerPeer
 var server_address = "127.0.0.1" # localhost for testing
 var connected = false
 var authenticated = false
@@ -47,6 +48,7 @@ func _ready():
 		return
 	_runtime_role = runtime.role
 	_server_port = runtime.port
+	_transport = runtime.transport
 	if _runtime_role != "client":
 		return
 	
@@ -98,10 +100,11 @@ func connect_to_server(address: String = "127.0.0.1"):
 	negotiated_protocol = 0
 	pending_initial_map.clear()
 	last_connection_error = ""
-	peer = ENetMultiplayerPeer.new()
+	var connection := preload("res://shared/network/transport.gd").client(_transport, address, _server_port)
+	peer = connection.peer
 	
 	print("[Client] Connecting to ", address, ":", _server_port)
-	var error = peer.create_client(address, _server_port)
+	var error: int = connection.error
 	
 	if error != OK:
 		push_error("Failed to create client: " + str(error))

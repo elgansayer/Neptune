@@ -8,16 +8,18 @@ static func read() -> Dictionary:
 	for arg in OS.get_cmdline_args():
 		if arg.ends_with(".tscn"):
 			scene = arg
-	return parse_arguments(OS.get_cmdline_user_args(), scene)
+	return parse_arguments(OS.get_cmdline_user_args(), scene, "websocket" if OS.has_feature("web") else "enet")
 
 ## Kept separate from process arguments so the real startup contract is testable.
-static func parse_arguments(arguments: Array, scene: String = "") -> Dictionary:
+static func parse_arguments(arguments: Array, scene: String = "", default_transport: String = "enet") -> Dictionary:
 	var role := "client"
 	if scene.get_file() == "main_server.tscn":
 		role = "server"
 	elif scene.get_file() == "bot_test_runner.tscn":
 		role = "test"
 	var port: int = Defaults.SERVER_PORT
+	var transport := default_transport
+	var explicit_transport := false
 	var explicit_role := false
 	var explicit_port := false
 	var room_seats := 0 # Omitted means choose the supported map/preset capacity.
@@ -71,7 +73,16 @@ static func parse_arguments(arguments: Array, scene: String = "") -> Dictionary:
 				if option == "--room-seats": room_seats = value.to_int()
 				else: preset_limit = value.to_int()
 			continue
-		if arg.begins_with("--runtime-role="):
+		if arg.begins_with("--transport="):
+			if explicit_transport:
+				return {"error": "Duplicate --transport"}
+			explicit_transport = true
+			transport = arg.trim_prefix("--transport=")
+			if transport not in ["enet", "websocket"]:
+				return {"error": "Invalid --transport; use enet or websocket"}
+		elif arg == "--transport":
+			return {"error": "Runtime options require =value"}
+		elif arg.begins_with("--runtime-role="):
 			if explicit_role:
 				return {"error": "Duplicate --runtime-role"}
 			explicit_role = true
@@ -94,7 +105,7 @@ static func parse_arguments(arguments: Array, scene: String = "") -> Dictionary:
 		return {"error": "--room-pack and --room-arena must be supplied together"}
 	if not room_pack_paths.is_empty() and not room_map.is_empty():
 		return {"error": "Choose --room-map or --room-pack/--room-arena, not both"}
-	return {"role": role, "port": port, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack_paths": room_pack_paths, "room_arena": room_arena, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}
+	return {"role": role, "port": port, "transport": transport, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack_paths": room_pack_paths, "room_arena": room_arena, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}
 
 static func _valid_pack_manifest_path(path: String) -> bool:
 	return preload("res://shared/content/pack_manifest.gd").valid_manifest_path(path)
