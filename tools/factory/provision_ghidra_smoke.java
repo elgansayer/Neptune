@@ -52,9 +52,16 @@ public class provision_ghidra_smoke extends GhidraScript {
             var result = decompiler.decompileFunction(function, 15, monitor);
             if (!result.decompileCompleted() || result.getHighFunction() == null)
                 throw new Exception("Headless decompilation failed");
+            // Public six-byte fixture only: bounded diagnostics distinguish tool failures.
+            String c = result.getDecompiledFunction().getC();
+            if (c.length() > 4096) throw new Exception("Oversized public decompiler result");
+            println("PUBLIC_FIXTURE_DECOMPILED_C=" + c);
+            int operationCount = 0;
             Iterator<PcodeOpAST> operations = result.getHighFunction().getPcodeOps();
             while (operations.hasNext()) {
                 PcodeOpAST operation = operations.next();
+                if (++operationCount > 64) throw new Exception("Oversized public pcode result");
+                println("PUBLIC_FIXTURE_PCODE=" + operation);
                 if (operation.getOpcode() == PcodeOp.RETURN && operation.getNumInputs() == 2 &&
                     operation.getInput(1).isConstant() && operation.getInput(1).getOffset() == 42)
                     returned42 = true;
