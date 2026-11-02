@@ -3,7 +3,8 @@ extends Node
 ## Gameplay compatibility, not account authentication or a pack/content lock.
 ## SceneMultiplayer withholds RPCs and peer_connected until both sides complete.
 const FORMAT := "neptune.protocol/1"
-const SUPPORTED_VERSIONS := [1]
+# v2 adds the reliable content-sharing RPC and pre-admission readiness contract.
+const SUPPORTED_VERSIONS := [2]
 const MAX_OFFER_BYTES := 1024
 const MAX_VERSIONS := 8
 const MAX_VERSION := 65535

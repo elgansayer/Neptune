@@ -178,6 +178,40 @@ func test_local_json_room_keeps_legacy_snapshot_without_pack_lock_fields() -> Va
 	return assert_true(config.render_geometry and not config.has("content") and not config.has("selection")
 		and not config.has("lock") and not config.has("lock_sha256"), "Legacy JSON rooms cannot acquire synthetic pack identities")
 
+func test_pending_content_pauses_initial_countdown_without_admitting_an_actor() -> Variant:
+	var game := _room([STANDARD], "example.standard:arena")
+	if not game.add_player(701, "Ready").accepted: return "Ready participant admission failed"
+	if not game.start_room_countdown().accepted: return "Control countdown failed"
+	var remaining: float = game.countdown_time
+	if not game.set_content_waiting(702, true).accepted: return "Content hold failed"
+	game._physics_process(1.1)
+	var held := game.start_room_countdown()
+	if game.match_active or game.countdown_time != remaining or held.accepted or held.reason != "content_not_ready" or game.players.has(702):
+		return "Pending content consumed a spawn or let the initial countdown advance"
+	game.set_content_waiting(702, false)
+	game.set_content_waiting(702, false)
+	game._physics_process(1.1)
+	return assert_true(game.match_active and game.players.size() == 1, "Clearing the final hold must resume the original countdown without a phantom actor")
+
+func test_late_content_hold_does_not_freeze_an_active_round() -> Variant:
+	var game := _room([STANDARD], "example.standard:arena")
+	if not game.add_player(701, "Playing").accepted or not game.start_room_countdown().accepted: return "Live round control failed"
+	game._physics_process(1.1)
+	if not game.match_active: return "Round did not start"
+	game.set_content_waiting(702, true)
+	var remaining: float = game.match_time_remaining
+	game._physics_process(0.25)
+	return assert_true(game.match_active and game.match_time_remaining < remaining and not game.players.has(702), "A late transfer must not pause an active simulation or join early")
+
+func test_content_holds_have_a_bounded_idempotent_identity_set() -> Variant:
+	var game := _room([STANDARD], "example.standard:arena")
+	if game.set_content_waiting(0, true).accepted or game.set_content_waiting(-1, true).accepted: return "Invalid content peer accepted"
+	for index in range(12):
+		if not game.set_content_waiting(701 + index, true).accepted: return "Supported hold boundary rejected"
+	if not game.set_content_waiting(701, true).accepted or game.set_content_waiting(713, true).accepted: return "Repeated or thirteenth waiter changed the budget"
+	game.set_content_waiting(701, false)
+	return assert_true(game.set_content_waiting(713, true).accepted and game.players.is_empty(), "Releasing a transfer hold must free only its pending slot")
+
 func test_selected_arena_metadata_reaches_existing_client_geometry_renderer() -> Variant:
 	var game := _room([STANDARD], "example.standard:arena")
 	if not game.room_setup_result.accepted: return "Standard pack room failed"
