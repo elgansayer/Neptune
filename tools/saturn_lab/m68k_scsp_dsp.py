@@ -118,6 +118,7 @@ def generated_source():
 
 def identity():
     return {'base_identity':short.identity(), 'abi':ABI,
+            'preparation_module_sha256':pinned.digest(Path(__file__).read_bytes()),
             'scsp_source_lock_sha256':pinned.digest(LOCK.read_bytes()),
             'derived_backend_sha256':pinned.digest(generated_source()),
             'component_sha256':json.loads(LOCK.read_text())['component_sha256'],
@@ -150,7 +151,8 @@ class Library(short.Library):
         if require_receipt:
             receipt=json.loads(pinned.read_bounded(directory/'receipt.json',65536))
             if (receipt.get('identity')!=identity() or receipt.get('status')!='ready' or
-                receipt.get('binary_sha256')!=pinned.digest(pinned.read_bounded(self.path,8*1024*1024))):
+                receipt.get('binary_sha256')!=pinned.digest(pinned.read_bounded(self.path,8*1024*1024)) or
+                receipt.get('owned_smoke',{}).get('original_game_bytes_executed') is not False):
                 raise ValueError('Prepared DSP identity failed')
         self.library=c.CDLL(str(self.path.resolve()))
         self.library.neptune_m68k_abi.restype=c.c_uint32
@@ -199,6 +201,17 @@ def smoke(library):
                         raise ValueError('Reference word readback failed')
                     if library.snapshot()!=expected: raise ValueError('Reference read changed device state')
                 selected+=1
+    identical=0
+    for seed in (0,0xFFFFFFFF):
+        for address in range(0x100800,0x100C00,2):
+            library.configure((seed,0)); before=library.snapshot(); bus=c.c_uint32()
+            if library.library.neptune_dsp_access(0,address,2,c.byref(bus))!=1:
+                raise ValueError('Identical-program fixture read failed')
+            if library.library.neptune_dsp_access(1,address,2,c.byref(bus))!=1:
+                raise ValueError('Identical-program fixture write failed')
+            if library.snapshot()!=transition(before,address,bus.value) or library.snapshot()['dirty']!=1:
+                raise ValueError('Identical program write did not invalidate decode')
+            identical+=1
     code=bytearray(0x200)
     regs=[0xA5A5A5A5]*18; regs[1]=0x9B7D; regs[15:18]=[0x70000,0x100,0x2700]
     regions=[(0x70000,(0xFFF000).to_bytes(4,'big'),False)]
@@ -230,7 +243,7 @@ def smoke(library):
             raise ValueError('Device guard failed: '+name)
         guards[name]=actual['status']
     if short.smoke(library)!=inherited: raise ValueError('CPU context recovery failed')
-    return {**inherited,'reference_word_cases':selected,'cpu_word_cases':cpu,'mmio_guards':guards,
+    return {**inherited,'reference_word_cases':selected,'identical_program_word_cases':identical,'cpu_word_cases':cpu,'mmio_guards':guards,
             'device_clocks_advanced':False,'interrupt_processing_called':False}
 
 

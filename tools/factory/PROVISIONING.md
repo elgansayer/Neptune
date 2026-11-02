@@ -334,9 +334,12 @@ python3 tools/saturn_lab/m68k_scsp_dsp.py \
 Run in constrained preparation with sources read-only, private media and broker
 credentials hidden, no network, and bounded memory/CPU/output. Compilation is
 limited to60seconds and stages are retained on failure. A ready receipt requires
-17,280 actual reference word-effect cases,640 owned CPU write/read/return cases,
+17,280 actual reference word-effect cases,1,024 identical-program-word writes,
+640 owned CPU write/read/return cases,
 unsupported-width/address/alignment checks and recovery. Existing cache reuse
 rechecks source/component/binary/recipe identity and repeats the real smoke.
+The recipe identity includes the preparation module, so verifier changes require
+a fresh generation rather than silently retaining an older receipt.
 `Pinned Godot and Saturn installation` requires this native child whenever its
 module, lock, tests or shared backend/preparation dependencies change. Missing,
 failed or skipped applicable native preparation blocks the required aggregate.

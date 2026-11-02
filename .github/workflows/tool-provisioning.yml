@@ -79,6 +79,7 @@ jobs:
           assert first==again and (cache/'receipt.json').read_bytes()==before
           assert again['owned_smoke']['reference_word_cases']==17280
           assert again['owned_smoke']['cpu_word_cases']==640
+          assert again['owned_smoke']['identical_program_word_cases']==1024
           assert again['owned_smoke']['original_game_bytes_executed'] is False
           (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
           print('Compiled ABI4, actual DSP register COEF/MADRS/MPROG/gap/dirty/lane effects, guards and reuse passed; no original inputs.')

@@ -52,6 +52,10 @@ class DspTests(unittest.TestCase):
         self.assertIn(b'neptune_dsp_access(1,address,size,&bus)',source)
         self.assertEqual((m.short.MAX_STEPS,m.short.MAX_EVENTS),(256,128))
 
+    def test_preparation_identity_includes_the_executable_verifier(self):
+        expected=m.pinned.digest(Path(m.__file__).read_bytes())
+        self.assertEqual(m.identity()['preparation_module_sha256'],expected)
+
     def test_changed_base_and_missing_or_changed_reference_fail_closed(self):
         with tempfile.TemporaryDirectory() as temporary:
             root=Path(temporary); changed=root/'base.c'; changed.write_bytes(b'changed')
