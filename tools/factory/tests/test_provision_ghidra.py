@@ -192,6 +192,9 @@ class GhidraPreparationTests(unittest.TestCase):
         java.parent.mkdir(parents=True)
         java.write_text('#!/usr/bin/python3\nimport json,sys,os\nprint(json.dumps({"argv":sys.argv[1:],"java_options":os.environ.get("JAVA_TOOL_OPTIONS")}))\n')
         java.chmod(0o755)
+        properties = directory / "ghidra/support/launch.properties"
+        properties.parent.mkdir(parents=True)
+        properties.write_text("VMARGS=-Djava.system.class.loader=ghidra.GhidraClassLoader\nVMARGS_LINUX=-Dtest.linux=true\nVMARGS_WINDOWS=-Dtest.windows=true\n")
         wrapper = directory / "ghidra-headless"
         wrapper.write_text(g.WRAPPER)
         wrapper.chmod(0o755)
@@ -200,6 +203,9 @@ class GhidraPreparationTests(unittest.TestCase):
                                                  "JAVA_TOOL_OPTIONS": "untrusted options", "PATH": os.defpath})
         observation = json.loads(result.stdout)
         self.assertIsNone(observation["java_options"])
+        self.assertIn("-Djava.system.class.loader=ghidra.GhidraClassLoader", observation["argv"])
+        self.assertIn("-Dtest.linux=true", observation["argv"])
+        self.assertNotIn("-Dtest.windows=true", observation["argv"])
         self.assertIn("-Duser.home=" + str(directory), observation["argv"])
         self.assertEqual(observation["argv"][-2:], ["project dir", "public"])
 

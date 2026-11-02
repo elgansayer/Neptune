@@ -173,7 +173,11 @@ root = Path(__file__).resolve().parent
 env = {key: value for key, value in os.environ.items()
        if key not in {"JAVA_TOOL_OPTIONS", "_JAVA_OPTIONS", "JDK_JAVA_OPTIONS", "CLASSPATH"}}
 java = root / "jdk/bin/java"
-os.execve(str(java), [str(java), "-Xmx768M", "-XX:ActiveProcessorCount=1",
+# The reviewed release's JVM settings include its required custom class loader.
+properties = root / "ghidra/support/launch.properties"
+vmargs = [line.split("=", 1)[1] for line in properties.read_text().splitlines()
+          if line.startswith(("VMARGS=", "VMARGS_LINUX="))]
+os.execve(str(java), [str(java), *vmargs, "-Xmx768M", "-XX:ActiveProcessorCount=1",
     "-Djava.awt.headless=true", "-Duser.home=" + env["HOME"],
     "-Djava.io.tmpdir=" + env["TMPDIR"], "-cp",
     str(root / "ghidra/Ghidra/Framework/Utility/lib/Utility.jar"),
