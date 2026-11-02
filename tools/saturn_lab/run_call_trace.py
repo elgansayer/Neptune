@@ -187,7 +187,19 @@ def run(args):
                       delivered_masks=[sorted(values) for values in driver.delivered])
         if args.mode == "enabled":
             phase = "bounded_original_call_validation"
-            trace = tracer.finish()
+            try:
+                trace = tracer.finish()
+            except Exception:
+                status = tracer.status()
+                result["failed_trace_status"] = {name: getattr(status, name) for name, _ in status._fields_}
+                records = (observer.Record * observer.CAPACITY)()
+                count = tracer.dll.neptune_call_records(records, observer.CAPACITY)
+                if count <= observer.CAPACITY:
+                    diagnostic = {"schema": "neptune.failed-call-trace-diagnostic.v1", "accepted": False,
+                                  "status": result["failed_trace_status"],
+                                  "records": [observer.serialise(record) for record in list(records)[:count]]}
+                    (args.output / "failed-call-records.json").write_text(json.dumps(diagnostic, indent=2, sort_keys=True) + "\n")
+                raise
             raw = (json.dumps(trace, indent=2, sort_keys=True) + "\n").encode()
             (args.output / "call-trace.json").write_bytes(raw)
             result.update(trace_sha256=sha(raw), pairs=trace["pairs"])
