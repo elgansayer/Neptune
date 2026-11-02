@@ -66,10 +66,13 @@ reference/disabled/enabled windows and14 actual-trace controls. Resume the curre
 checkpoint: PR654 merged and649 closed;655 now continues first-task623A/89C8/
 helper/library work, with one preliminary original89AC state returning23
 instructions twice and a semantic original-copy control retained. Broader helper
-coverage and the complete89C8 graph remain open. Continue the prepared broader655
-contracts and guarded runner in the checkpoint; its current host-admission deferral
-is not new original execution. Preserve live factory reservations and newer
-coordinator657 ownership. Then continue the larger root/task cycle, unresolved17F2
+coverage and the complete89C8 graph remain open. Broader655 now has8,738 cases
+twice with matching actual original reports:89AC, bounded89C8/623A prefixes,
+closed95B04 errors,96A80 callback-address stores and96AC0 table initialization.
+All31 family/control combinations have non-budget rejections. Read the current
+checkpoint and continue the positive library/BIOS/callback dependencies through
+a real89C8 return. Preserve live factory reservations and newer coordinator657
+ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.

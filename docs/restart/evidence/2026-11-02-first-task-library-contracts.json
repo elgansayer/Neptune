@@ -1,0 +1,483 @@
+{
+  "adapter_manifest_sha256": "ff791d837afa18580f443525fb8ba317a7e6255286c9ee023edfcef61eb5be7b",
+  "case_origin": "constructed registers/global block/stack; real original calls; natural whole-function validation unknown",
+  "cpu": "sh2",
+  "families": {
+    "callbacks": {
+      "byte_identical_reports": true,
+      "cases_per_run": 1536,
+      "instruction_controls": {
+        "callback_offset": {
+          "mutated_kernel_sha256": "40bb0ada0e0803782452e121a2f99235a2ab4eecc9d7313c36339db0ce3023f6",
+          "nonbudget_rejections": 48,
+          "pc": 101280390,
+          "tested": 48
+        },
+        "missing_last_callback_delay": {
+          "mutated_kernel_sha256": "a8d751a1e69ecdd1f46f45b4a841786e7a470a71d9ad7834cf72698cfb35be28",
+          "nonbudget_rejections": 48,
+          "pc": 101280406,
+          "tested": 48
+        }
+      },
+      "instruction_counts": [
+        12
+      ],
+      "outcomes_per_run": {
+        "complete_return": 1536
+      },
+      "private_directories": [
+        "/home/dev/neptune-research-private/655/contracts-callbacks-qh4bopjy",
+        "/home/dev/neptune-research-private/655/contracts-callbacks-rydxu7mv"
+      ],
+      "report_sha256": "73d2b3cb2b6550fdb2ed8c441756c4ec2819bfdf80466207152faaa625a31984",
+      "results_sha256": "543c3070b1e8c0be78810647f5024e225f7fc3f301fab7f3a4888dc01f23b410",
+      "runs": 2
+    },
+    "caller-prefix": {
+      "byte_identical_reports": true,
+      "cases_per_run": 1920,
+      "instruction_controls": {
+        "eleven_halfwords": {
+          "mutated_kernel_sha256": "dc827c7e3fa19c98234ae75d7d2c9dfb0e67610688b2267a5062e57e5a1c511f",
+          "nonbudget_rejections": 48,
+          "pc": 100698602,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "halfword_sentinel": {
+          "mutated_kernel_sha256": "ece39b507310d7e5c3f23d526ba71bb88d01aab64909868da436de65ea9907a6",
+          "nonbudget_rejections": 48,
+          "pc": 100698550,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "tested": 48
+        },
+        "lost_R0_delay_preservation": {
+          "mutated_kernel_sha256": "aaef96c86100889f33dbf587a66273a709235c3eb8b737fd647fd9f7898e2f01",
+          "nonbudget_rejections": 48,
+          "pc": 100698560,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "missing_pointer_stride_delay": {
+          "mutated_kernel_sha256": "09a480090b1e48fa67e9a66f3e8177dcfc25ad0619727c3dcea12b085b97c8b5",
+          "nonbudget_rejections": 48,
+          "pc": 100698614,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "tested": 48
+        },
+        "three_sentinels": {
+          "mutated_kernel_sha256": "d2022a01c74a4babcc618f943c2752d507fad2f45f338e053b62f84d3b0fbcc4",
+          "nonbudget_rejections": 48,
+          "pc": 100698548,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "zero_sentinel": {
+          "mutated_kernel_sha256": "bb4eaa3d4ef503f4aa8e37c0c6f413140dc0ba5012904864c71f476a8c853e3e",
+          "nonbudget_rejections": 48,
+          "pc": 100698542,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        }
+      },
+      "instruction_counts": [
+        130
+      ],
+      "original128_refusal": {
+        "attempted": 129,
+        "executed": 128,
+        "partial_trace_sha256": "913a6fc790a5b555863f7666a7b7254998a8419a1f41c5f3762b7ab33c4a5f21",
+        "pc": 100698558
+      },
+      "outcomes_per_run": {
+        "incomplete_prefix": 1920
+      },
+      "private_directories": [
+        "/home/dev/neptune-research-private/655/contracts-caller-prefix-bum73hwk",
+        "/home/dev/neptune-research-private/655/contracts-caller-prefix-s28mpch1"
+      ],
+      "report_sha256": "ca6b3e25d3388cfd0ffbd4642c3a5d33d8c2964fd4b76e5dde2d831f4737f1f2",
+      "results_sha256": "0543d822632c60bde673284f8a97fc4fb0b3451001d8bf8fc736b92829747637",
+      "runs": 2
+    },
+    "init-prefix": {
+      "byte_identical_reports": true,
+      "cases_per_run": 1920,
+      "instruction_controls": {
+        "eleven_halfwords": {
+          "mutated_kernel_sha256": "dc827c7e3fa19c98234ae75d7d2c9dfb0e67610688b2267a5062e57e5a1c511f",
+          "nonbudget_rejections": 48,
+          "pc": 100698602,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "halfword_sentinel": {
+          "mutated_kernel_sha256": "ece39b507310d7e5c3f23d526ba71bb88d01aab64909868da436de65ea9907a6",
+          "nonbudget_rejections": 48,
+          "pc": 100698550,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "tested": 48
+        },
+        "lost_R0_delay_preservation": {
+          "mutated_kernel_sha256": "aaef96c86100889f33dbf587a66273a709235c3eb8b737fd647fd9f7898e2f01",
+          "nonbudget_rejections": 48,
+          "pc": 100698560,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "missing_pointer_stride_delay": {
+          "mutated_kernel_sha256": "09a480090b1e48fa67e9a66f3e8177dcfc25ad0619727c3dcea12b085b97c8b5",
+          "nonbudget_rejections": 48,
+          "pc": 100698614,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "tested": 48
+        },
+        "three_sentinels": {
+          "mutated_kernel_sha256": "d2022a01c74a4babcc618f943c2752d507fad2f45f338e053b62f84d3b0fbcc4",
+          "nonbudget_rejections": 48,
+          "pc": 100698548,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "zero_sentinel": {
+          "mutated_kernel_sha256": "bb4eaa3d4ef503f4aa8e37c0c6f413140dc0ba5012904864c71f476a8c853e3e",
+          "nonbudget_rejections": 48,
+          "pc": 100698542,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        }
+      },
+      "instruction_counts": [
+        127
+      ],
+      "outcomes_per_run": {
+        "incomplete_prefix": 1920
+      },
+      "private_directories": [
+        "/home/dev/neptune-research-private/655/contracts-init-prefix-w18v8ba5",
+        "/home/dev/neptune-research-private/655/contracts-init-prefix-1m8v45hu"
+      ],
+      "report_sha256": "bd3ebd657c49927832276023afc0fdeb52d981ea0b90a0864c909f8d099d1174",
+      "results_sha256": "c04d2a4dd77caa20e3f82ab27c6a8aa12772ee83c36240ad092ca649ca1005d8",
+      "runs": 2
+    },
+    "leaf": {
+      "byte_identical_reports": true,
+      "cases_per_run": 1920,
+      "instruction_controls": {
+        "halfword_sentinel": {
+          "mutated_kernel_sha256": "ece39b507310d7e5c3f23d526ba71bb88d01aab64909868da436de65ea9907a6",
+          "nonbudget_rejections": 48,
+          "pc": 100698550,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "tested": 48
+        },
+        "lost_R0_delay_preservation": {
+          "mutated_kernel_sha256": "aaef96c86100889f33dbf587a66273a709235c3eb8b737fd647fd9f7898e2f01",
+          "nonbudget_rejections": 48,
+          "pc": 100698560,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "three_sentinels": {
+          "mutated_kernel_sha256": "d2022a01c74a4babcc618f943c2752d507fad2f45f338e053b62f84d3b0fbcc4",
+          "nonbudget_rejections": 48,
+          "pc": 100698548,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        },
+        "zero_sentinel": {
+          "mutated_kernel_sha256": "bb4eaa3d4ef503f4aa8e37c0c6f413140dc0ba5012904864c71f476a8c853e3e",
+          "nonbudget_rejections": 48,
+          "pc": 100698542,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 48
+        }
+      },
+      "instruction_counts": [
+        23
+      ],
+      "outcomes_per_run": {
+        "complete_return": 1920
+      },
+      "private_directories": [
+        "/home/dev/neptune-research-private/655/contracts-leaf-zt1o5dvl",
+        "/home/dev/neptune-research-private/655/contracts-leaf-z0fddttu"
+      ],
+      "report_sha256": "d607ade0d4a45925d9773a2f36dcbd4edc8443dc6a1aa6ed1e95250d6028f587",
+      "results_sha256": "ee78a3f819efeeecc7c915455c7b0f1032e42d51d2aeb94f2819017df2248db9",
+      "runs": 2
+    },
+    "library-validation": {
+      "byte_identical_reports": true,
+      "cases_per_run": 1280,
+      "instruction_controls": {
+        "lost_R14_delay_restore": {
+          "mutated_kernel_sha256": "e39a372bc6b6e2f6c2ba09640d19d8a711b13a450877ee81b5049ef8e9a2a04a",
+          "nonbudget_rejections": 353,
+          "pc": 101276620,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 370
+        },
+        "missing_error_clear": {
+          "mutated_kernel_sha256": "889a30b113f07eb83d426e3cc2c9560d2fc158171105efd0702d3b8ef09c0d4a",
+          "nonbudget_rejections": 370,
+          "pc": 101276440,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "tested": 370
+        },
+        "upper_bound_25": {
+          "mutated_kernel_sha256": "0af64c5de1e518833ff8e075e23dfa222aa9c145a27d0cd3a9f274d42595db1b",
+          "nonbudget_rejections": 37,
+          "pc": 101276446,
+          "reasons": [
+            "Original execution failed before declared boundary: None",
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 370
+        },
+        "wrong_alignment_error": {
+          "mutated_kernel_sha256": "f455f80faf8b9b95cf9f0dd7b28ec76ba991b9ff3237a6c78198b482195a9f19",
+          "nonbudget_rejections": 138,
+          "pc": 101276464,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 370
+        },
+        "wrong_count_error": {
+          "mutated_kernel_sha256": "2a3cd19527f3b303e17baf6b6c6f5390320222c903232c6e9985ba295f4ad81c",
+          "nonbudget_rejections": 186,
+          "pc": 101276454,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 370
+        },
+        "wrong_descriptor_error": {
+          "mutated_kernel_sha256": "c4faed09959ea5910f501b5bbcc1a149e978941862247f478101759efd5dffe1",
+          "nonbudget_rejections": 29,
+          "pc": 101276498,
+          "reasons": [
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 370
+        },
+        "zero_count_allowed": {
+          "mutated_kernel_sha256": "23528fd7aeb4aaa409bf64bc8aec1b739aece195cf3630162c1039260b41b217",
+          "nonbudget_rejections": 370,
+          "pc": 101276426,
+          "reasons": [
+            "Original execution failed before declared boundary: None",
+            "Register/PC/SR/PR/MAC output differs"
+          ],
+          "tested": 370
+        }
+      },
+      "instruction_counts": [
+        20,
+        21,
+        23,
+        26,
+        31,
+        34,
+        35,
+        38,
+        41
+      ],
+      "outcomes_per_run": {
+        "complete_return": 1220,
+        "incomplete_prefix": 60
+      },
+      "private_directories": [
+        "/home/dev/neptune-research-private/655/contracts-library-validation-d4fv17vk",
+        "/home/dev/neptune-research-private/655/contracts-library-validation-gwx6xm6x"
+      ],
+      "report_sha256": "ea6ac32bdc88b8bcdf023ee52e9610d5ee458cb7f99bf0d226dacc3b3a26c7b7",
+      "results_sha256": "d68ed738a306e96c884fa924ff587f7e941e3c01b874aeab016b73683775a64c",
+      "runs": 2
+    },
+    "tables": {
+      "byte_identical_reports": true,
+      "cases_per_run": 162,
+      "instruction_controls": {
+        "callback_offset": {
+          "mutated_kernel_sha256": "40bb0ada0e0803782452e121a2f99235a2ab4eecc9d7313c36339db0ce3023f6",
+          "nonbudget_rejections": 54,
+          "pc": 101280390,
+          "tested": 54
+        },
+        "lost_R14_restore_delay": {
+          "mutated_kernel_sha256": "c41499d8715e4786d38ed82f4e26e33d4ae6ee89072a8b71b5590bfc32cf4fab",
+          "nonbudget_rejections": 54,
+          "pc": 101280570,
+          "tested": 54
+        },
+        "lost_count_delay_store": {
+          "mutated_kernel_sha256": "24a7e7e350d157cb5034e2b0c5e500b4b2bf0924266aeee8ff82cd1f1e835bb8",
+          "nonbudget_rejections": 54,
+          "pc": 101280462,
+          "tested": 54
+        },
+        "lost_table_clear": {
+          "mutated_kernel_sha256": "a6226b385739915cd257645f226aaaf3efe109ae38aa12e652be8e0d86acbd71",
+          "nonbudget_rejections": 54,
+          "pc": 101280562,
+          "tested": 54
+        },
+        "missing_last_callback_delay": {
+          "mutated_kernel_sha256": "a8d751a1e69ecdd1f46f45b4a841786e7a470a71d9ad7834cf72698cfb35be28",
+          "nonbudget_rejections": 54,
+          "pc": 101280406,
+          "tested": 54
+        },
+        "missing_slot_stride_delay": {
+          "mutated_kernel_sha256": "1740bb1b9e1d069a48edb8730c72f697a2bd3fcad6a9b32b72f136fd7e4f7966",
+          "nonbudget_rejections": 48,
+          "pc": 101280530,
+          "tested": 54
+        }
+      },
+      "instruction_counts": [
+        68,
+        74,
+        80,
+        86,
+        92,
+        98,
+        104,
+        110,
+        116,
+        122,
+        128,
+        134,
+        140,
+        146,
+        152,
+        158,
+        164,
+        170,
+        176,
+        182,
+        188,
+        194,
+        200,
+        206,
+        212
+      ],
+      "outcomes_per_run": {
+        "complete_return": 162
+      },
+      "private_directories": [
+        "/home/dev/neptune-research-private/655/contracts-tables-4bxnoqaw",
+        "/home/dev/neptune-research-private/655/contracts-tables-hghzbg78"
+      ],
+      "report_sha256": "379bee940d3771dab3768fa1a8199c0e8aa9b50fcd9564c9e2b9c3aab05319e1",
+      "results_sha256": "e253389ea548f107317b1d6f9da4dece3f82ee9776c6fec1b09ffa05f50c5857",
+      "runs": 2
+    }
+  },
+  "family_control_combinations": 31,
+  "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+  "interpreter_sources": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limitations": [
+    "89C8 and623A remain incomplete prefixes ending89FC",
+    "Valid95B04 parameters stop before BIOS/library path at95B54; complete successful95B04 unresolved",
+    "96A80 stores callback addresses but does not execute those callbacks",
+    "No whole-module/function/dynamic-target denominator or gameplay/hardware/timing parity"
+  ],
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_and_github_credential_hidden": true,
+    "command_timeout_seconds": 60,
+    "model_dispatches": 0,
+    "native_builds": 0,
+    "nice": 10,
+    "offline_namespace": true,
+    "own_lease_seconds": 180,
+    "shared_host_slots": 3,
+    "source_originals_dependencies_readonly": true
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_file_unchanged": true,
+  "original_game_bytes_executed": true,
+  "outcomes_per_run": {
+    "complete_return": 4838,
+    "incomplete_prefix": 3900
+  },
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "retained_diagnostics": [
+    {
+      "kind": "deferred live exclusive admission; no original execution",
+      "path": "/home/dev/neptune-research-private/655/contracts-leaf-7d8iae1q/supervisor.json"
+    },
+    {
+      "kind": "unchanged guard rejected original constructed canary before CPU creation",
+      "path": "/home/dev/neptune-research-private/655/contracts-leaf-tohw3ce5/report.json",
+      "sha256": "325564c508418d4d66e4956e692d1d54337b19835578c6f37f506534f359b4a7"
+    },
+    {
+      "kind": "deferred full shared slots; no original execution",
+      "path": "/home/dev/neptune-research-private/655/contracts-leaf-gfqpicy4/supervisor.json"
+    }
+  ],
+  "schema": "neptune.original-first-task-library-contract-results.v1",
+  "selected_cases_per_run": 8738,
+  "source_files": {
+    "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+    "probe_library_tables.py": "7d1cd0f3f7d15093348d6b53932b0537234d75cc5e391a2b838f6abe051a2a30",
+    "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+    "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+    "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+    "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+  },
+  "source_head": "13cce5feeb5c82a4ed4df9d4ee57ca298f837a4c"
+}

@@ -109,47 +109,73 @@ dependencies through an actual full return before closing655. The stored
 Startup6174 writes CPU-internalFFFFFF08;6372 has BIOS/IRQ-sample dependencies.
 Those require real side-effect/native evidence, not invented devices or ticks.
 
-## Prepared broader contracts; host admission pending
+## Broader contracts: actual execution and retained admission history
 
-Pushed source`1c3fd5dedb89e8d89d41e74a2f9a0c005fcf6910` adds
-`tools/saturn_lab/probe_task_init.py` and seven owned tests.305 research tests and
-14 catalogue tests pass. The selected constructed cases are1,920 each for89AC,
+Pushed source`13cce5feeb5c82a4ed4df9d4ee57ca298f837a4c` adds`tools/saturn_lab/probe_task_init.py`,
+`probe_library_tables.py` and fourteen owned tests.312 research tests and
+14 catalogue tests pass. [PR658](https://github.com/elgansayer/Neptune-Bomberman/pull/658)
+retains the source and checkpoint. The selected constructed cases are1,920 each for89AC,
 89C8→89FC and623A→89FC;1,280 for95B04 parameter validation. Expected library
 outcomes are1,220 complete error returns and60 valid prefixes ending95B54 before
-the BIOS/library path. These are **model/test denominators, not new original
-execution evidence**.89C8,623A and the positive95B04 body remain incomplete.
+the BIOS/library path. Further selected counts are1,536 for96A80 callback-address
+stores and162 for96AC0 library-table initialization using real96A80, including
+all counts0..24 and signed negative skip boundaries. All six families now have
+two matching actual original reports,8,738 cases per run:4,838 complete returns,
+3,900 incomplete prefixes. All31 family/control combinations have non-budget
+rejections; old128 caller refusal retained. [Result](../research/2026-11-02-first-task-library-contracts.md),
+[derived evidence](../evidence/2026-11-02-first-task-library-contracts.json).
+89C8,623A and the positive95B04 body remain incomplete.
 Kernel/interpreter identities and accepted128/1024 guards remain unchanged.
 
 The original job was actually requested through the shared3 gate and deferred
-at20:00:50 UTC on2 November. Foreign live daemonPID416766 holds exclusive
+at20:00:50 UTC on2 November. At that observation foreign live daemonPID416766 held exclusive
 `exclusive:416766:c039db2d6a4444dfa2bb4eea90c30dbf` while its existing shared
-implementation owner1827 drains. Do not clear, adopt or bypass those leases.
+implementation owner1827 drained. Do not clear, adopt or bypass foreign leases.
 The retained receipt is
 `/home/dev/neptune-research-private/655/contracts-leaf-7d8iae1q/supervisor.json`;
 it records`admitted:false` and`original_game_bytes_executed:false`.
 
-Frozen source adapter:
-`/home/dev/neptune-research-private/655/adapter-c433eccac63da0c14a2d77060e41784a7a4280a5233638211d6d0c2fa2a6ac6b`.
-The manifest hashes the seven committed source files and records source head.
+Admission opened at20:08:05. The first admitted report was retained at
+`.../655/contracts-leaf-tohw3ce5/report.json`, SHA256
+`325564c508418d4d66e4956e692d1d54337b19835578c6f37f506534f359b4a7`.
+The unchanged guard rejected the constructed stack canary crossing the top of
+high RAM before CPU creation; it is not a game-code mismatch. The corrected
+source lowers constructedSP by0x100 and tests every declared region boundary.
+Preserve the earlier c433ecc adapter/report as historical failure evidence.
+
+Current frozen source adapter:
+`/home/dev/neptune-research-private/655/adapter-ff791d837afa18580f443525fb8ba317a7e6255286c9ee023edfcef61eb5be7b`.
+The manifest hashes eight committed source files and records source head13cce5f.
 Private runner/worker are retained in`/home/dev/neptune-evidence/code655-20261102/`.
-Retry admission using the prepared runner; each attempt retains a new directory:
+The20:09:49 retry was deferred with all three slots occupied by live daemon
+773373 jobs1811/1828/1812. Its receipt is`.../655/contracts-leaf-gfqpicy4/`
+The actual completed batch is`.../655/contract-batch-mlbb_e2m/`; all twelve
+report paths/hashes and the first successful leaf report are in the derived
+evidence. This command is retained for reproduction, **not the next work item**:
 
 ```sh
 unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
   /home/dev/neptune-evidence/code655-20261102/run-contract-family.py \
-  --adapter /home/dev/neptune-research-private/655/adapter-c433eccac63da0c14a2d77060e41784a7a4280a5233638211d6d0c2fa2a6ac6b \
+  --adapter /home/dev/neptune-research-private/655/adapter-ff791d837afa18580f443525fb8ba317a7e6255286c9ee023edfcef61eb5be7b \
   --family leaf
 ```
 
-After admission, retain two matching actual original reports per family, all
-semantic instruction controls and the actual caller128 refusal. Other families
-are`init-prefix`,`caller-prefix`,`library-validation`. Each admitted job keeps
+Completed families retain matching actual original reports, all semantic
+instruction controls and the actual caller128 refusal. Other command selections
+are`init-prefix`,`caller-prefix`,`library-validation`,`callbacks`,`tables`. Each admitted job keeps
 its own180-second lease,60-second/nice10/downward2GiB limit, offline namespace,
 readonly originals/source/dependencies and hidden broker/credential files.
 Inspect and retain any real mismatch before correcting the model. Do not relabel
 deferred admission as a failed CPU run or count source checks as original code.
-While the live reservation remains, continue source analysis of the positive
-95B04 dependencies without starting an unadmitted experiment.
+Continue positive95B04 dependencies without repeating completed jobs as new
+progress. The new static lead file is
+`.../655/library-dependency-source-leads.json`; its generator is
+`/home/dev/neptune-evidence/code655-20261102/inspect-library-dependencies.py`.
+96AC0 calls96A80, initializes the count, four callback addresses, seven scalar
+words, two five-word tables and count-dependent0xA8-stride slot markers. None of
+the stored callbacks are executed by these two functions.95B04's positive path
+also calls the BIOS vector at06000344, A6790,969E0 and96C60; those paths remain
+unresolved. Do not substitute HLE services or fabricate callback results.
 
 The initial allocator label for95B04 is withdrawn. Actual source checksR4 in
 1..24, pointer alignment and descriptor fields; no heap-size/API purpose is
