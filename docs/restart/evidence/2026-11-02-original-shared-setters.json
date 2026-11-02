@@ -1,0 +1,280 @@
+{
+  "both_original_modules_results_equal": true,
+  "modules": {
+    "SND": {
+      "cases": 9136,
+      "contract_adapter_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+      "cpu": "m68000",
+      "driver_sha256": "c8842cc957bf82693ddd72d996353c9cb92feb34fe5f2834c0651aebacb4bd04",
+      "event_count_range": [
+        13,
+        13
+      ],
+      "experiment": "EXP-SAT-CODE-013",
+      "instruction_controls": {
+        "lane0_missing_index_double": {
+          "address": "0x5202",
+          "mutated_driver_sha256": "0dd13352b22e7628f5b672256d567a34599b6aa73ad922d3dd76d5e4fa08701b",
+          "reasons": [
+            "Output or unaffected mapped byte differs",
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 15,
+          "tested": 18
+        },
+        "lane0_other_output_lane": {
+          "address": "0x51f6",
+          "mutated_driver_sha256": "e594a663e0e2eaa2204af8ebcb75e0a2ec5db9a41e1359d0ce9df56ba6486021",
+          "reasons": [
+            "Output or unaffected mapped byte differs"
+          ],
+          "rejected": 18,
+          "tested": 18
+        },
+        "lane0_other_payload_byte": {
+          "address": "0x51fa",
+          "mutated_driver_sha256": "84f6fdab25dcc4295456002cdbaa097f9e9d59473b6ca4d9638bc24b4182b3c1",
+          "reasons": [
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 18,
+          "tested": 18
+        },
+        "lane1_missing_index_double": {
+          "address": "0x5220",
+          "mutated_driver_sha256": "5cc1562a290888464a0c7460e371ec6e2cce8a45434d34e003082f60c322481a",
+          "reasons": [
+            "Output or unaffected mapped byte differs",
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 15,
+          "tested": 18
+        },
+        "lane1_other_output_lane": {
+          "address": "0x5214",
+          "mutated_driver_sha256": "57fbae9d4da2273c001d0064edab2f9a4893e8ea44f18e337118f4e877a0e76e",
+          "reasons": [
+            "Output or unaffected mapped byte differs"
+          ],
+          "rejected": 18,
+          "tested": 18
+        },
+        "lane1_other_payload_byte": {
+          "address": "0x5218",
+          "mutated_driver_sha256": "c520bee428ba16a2a2bc37522fc155f6e4a6adb98e9215e24d1f9a6438afbf59",
+          "reasons": [
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 18,
+          "tested": 18
+        }
+      },
+      "instruction_count_range": [
+        9,
+        9
+      ],
+      "lifetime": "shared-sound-driver",
+      "limitations": [
+        "Two complete leaves on constructed inputs, not whole modules or natural callers",
+        "SND/XBSND byte-equal drivers verified from distinct original containers; no NLSND equivalence",
+        "CPU-only fixed RAM, shared interpreter lineage, no boot/SCSP/DSP/audio/hardware proof",
+        "Whole-program/function/dynamic-target denominators unknown"
+      ],
+      "load_address": 0,
+      "module": "SND",
+      "native_identity": {
+        "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+        "flags": [
+          "-std=c11",
+          "-O2",
+          "-shared",
+          "-fPIC",
+          "-DM68K_INSTRUCTION_HOOK=1",
+          "-DM68K_SEPARATE_READS=1",
+          "-Wl,-z,defs"
+        ],
+        "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+      },
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "execution_escape": "instruction-access",
+          "forbidden_write": "forbidden-write",
+          "nonreturning": "instruction-budget",
+          "unmapped_read": "unmapped-data-read"
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false,
+        "positive_steps": 2
+      },
+      "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+      "private_report_sha256": "83957b2669bc6f2b9f61996d14f72d1ce3db00bf1b24fb36e3d3aa1a05d5defc",
+      "probe_sha256": "23c1e3405798398138e724a9a91a9667be3495e246f3fc7c59edbc6c6b3040e5",
+      "range_sha256": {
+        "0x51f0": "670b9c56673edfd7c93256a34e9c68b961c814cf39932d4ea808b415d89357db",
+        "0x520e": "dfad7ed31d495a7cdc32dea76da515d84da7e69e31618113d7bfb5d6ba330ceb"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "550e7e9776b7444a68d8b140802b1c878fbb811e95e7a61ecdb06afe00964d59",
+      "schema": "neptune.original-m68k-shared-setters.v1",
+      "source_identity": [
+        12976962,
+        "f5154d4aabdf9f3434b966a0d09fe5d08aa1ddabfa8848b836be630f506596d5",
+        68,
+        25556
+      ],
+      "status": "success",
+      "two_complete_reports_equal": true,
+      "variants": [
+        [
+          98304,
+          10015
+        ],
+        [
+          147456,
+          8192
+        ]
+      ]
+    },
+    "XBSND": {
+      "cases": 9136,
+      "contract_adapter_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+      "cpu": "m68000",
+      "driver_sha256": "c8842cc957bf82693ddd72d996353c9cb92feb34fe5f2834c0651aebacb4bd04",
+      "event_count_range": [
+        13,
+        13
+      ],
+      "experiment": "EXP-SAT-CODE-013",
+      "instruction_controls": {
+        "lane0_missing_index_double": {
+          "address": "0x5202",
+          "mutated_driver_sha256": "0dd13352b22e7628f5b672256d567a34599b6aa73ad922d3dd76d5e4fa08701b",
+          "reasons": [
+            "Output or unaffected mapped byte differs",
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 15,
+          "tested": 18
+        },
+        "lane0_other_output_lane": {
+          "address": "0x51f6",
+          "mutated_driver_sha256": "e594a663e0e2eaa2204af8ebcb75e0a2ec5db9a41e1359d0ce9df56ba6486021",
+          "reasons": [
+            "Output or unaffected mapped byte differs"
+          ],
+          "rejected": 18,
+          "tested": 18
+        },
+        "lane0_other_payload_byte": {
+          "address": "0x51fa",
+          "mutated_driver_sha256": "84f6fdab25dcc4295456002cdbaa097f9e9d59473b6ca4d9638bc24b4182b3c1",
+          "reasons": [
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 18,
+          "tested": 18
+        },
+        "lane1_missing_index_double": {
+          "address": "0x5220",
+          "mutated_driver_sha256": "5cc1562a290888464a0c7460e371ec6e2cce8a45434d34e003082f60c322481a",
+          "reasons": [
+            "Output or unaffected mapped byte differs",
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 15,
+          "tested": 18
+        },
+        "lane1_other_output_lane": {
+          "address": "0x5214",
+          "mutated_driver_sha256": "57fbae9d4da2273c001d0064edab2f9a4893e8ea44f18e337118f4e877a0e76e",
+          "reasons": [
+            "Output or unaffected mapped byte differs"
+          ],
+          "rejected": 18,
+          "tested": 18
+        },
+        "lane1_other_payload_byte": {
+          "address": "0x5218",
+          "mutated_driver_sha256": "c520bee428ba16a2a2bc37522fc155f6e4a6adb98e9215e24d1f9a6438afbf59",
+          "reasons": [
+            "Register/SR result differs from independent contract"
+          ],
+          "rejected": 18,
+          "tested": 18
+        }
+      },
+      "instruction_count_range": [
+        9,
+        9
+      ],
+      "lifetime": "xband-sound-driver",
+      "limitations": [
+        "Two complete leaves on constructed inputs, not whole modules or natural callers",
+        "SND/XBSND byte-equal drivers verified from distinct original containers; no NLSND equivalence",
+        "CPU-only fixed RAM, shared interpreter lineage, no boot/SCSP/DSP/audio/hardware proof",
+        "Whole-program/function/dynamic-target denominators unknown"
+      ],
+      "load_address": 0,
+      "module": "XBSND",
+      "native_identity": {
+        "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+        "flags": [
+          "-std=c11",
+          "-O2",
+          "-shared",
+          "-fPIC",
+          "-DM68K_INSTRUCTION_HOOK=1",
+          "-DM68K_SEPARATE_READS=1",
+          "-Wl,-z,defs"
+        ],
+        "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+      },
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "execution_escape": "instruction-access",
+          "forbidden_write": "forbidden-write",
+          "nonreturning": "instruction-budget",
+          "unmapped_read": "unmapped-data-read"
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false,
+        "positive_steps": 2
+      },
+      "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+      "private_report_sha256": "e7d8092817e5c0160a9cfcd52926a04402248731375f29e7a7a1575681206074",
+      "probe_sha256": "23c1e3405798398138e724a9a91a9667be3495e246f3fc7c59edbc6c6b3040e5",
+      "range_sha256": {
+        "0x51f0": "670b9c56673edfd7c93256a34e9c68b961c814cf39932d4ea808b415d89357db",
+        "0x520e": "dfad7ed31d495a7cdc32dea76da515d84da7e69e31618113d7bfb5d6ba330ceb"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "550e7e9776b7444a68d8b140802b1c878fbb811e95e7a61ecdb06afe00964d59",
+      "schema": "neptune.original-m68k-shared-setters.v1",
+      "source_identity": [
+        565040,
+        "8343b6024271094cc9c1473d767e140f0c26089bae78b69811435be7941488d9",
+        71784,
+        25556
+      ],
+      "status": "success",
+      "two_complete_reports_equal": true,
+      "variants": [
+        [
+          98304,
+          10015
+        ],
+        [
+          147456,
+          8192
+        ]
+      ]
+    }
+  },
+  "original_input_unchanged": true,
+  "schema": "neptune.original-shared-setters-evidence.v1",
+  "source_execution_head": "bc4a80caa75bb171500f632422efd9a615429d7e",
+  "status": "success",
+  "whole_program_status": "active; incomplete"
+}
