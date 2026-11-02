@@ -84,6 +84,42 @@ jobs:
           (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
           print('Compiled ABI4, actual DSP register COEF/MADRS/MPROG/gap/dirty/lane effects, guards and reuse passed; no original inputs.')
           PY
+      - name: Compile and exercise bounded disjoint SCSP state-call profile and reuse
+        run: |
+          python3 - <<'PY'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_scsp_state as state
+          cache=Path(os.environ['RUNNER_TEMP'])/'state-preparation'/'prepared'
+          first=state.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=state.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          smoke=again['owned_smoke']
+          assert smoke['reference_word_cases']==17280 and smoke['identical_program_word_cases']==1024
+          assert smoke['cpu_word_cases']==640 and smoke['disjoint_call_steps']==47
+          assert smoke['max_ranges_executed']==smoke['max_regions_read']==16
+          assert smoke['capacity']['full_instruction_limit_rejected']==2048
+          assert smoke['capacity']['full_event_limit_rejected']==1024
+          assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
+          assert smoke['missing_range_guarded'] and smoke['original_game_bytes_executed'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Actual ABI5 SCSP effects,16 ranges/region reads, native17th rejection, overflow/recovery and reuse passed; no originals.')
+          PY
+      - name: Preserve state-profile preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/state-preparation/**/*.json
+            ${{ runner.temp }}/state-preparation/**/*.stdout
+            ${{ runner.temp }}/state-preparation/**/*.stderr
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
       - name: Preserve preparation evidence including failed stages
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

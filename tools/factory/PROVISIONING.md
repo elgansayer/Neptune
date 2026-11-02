@@ -352,3 +352,38 @@ accesses remain native guard diagnostics, not implemented68000 exceptions.
 Clocks, DSP execution, interrupt processing, audio and hardware independence are
 outside this profile. Original command12 testing is a separate experiment using
 verified private inputs, never a preparation smoke or complete sound-engine claim.
+
+## Disjoint original state-call preparation
+
+Issue672 unblocks the measured NLSND51B2 graph in671. The actual traversal has
+8 separated code spans and7 data gaps; a separate caller context needs11 data
+regions. ABI4 rejects that complete mapping, and real limited-prefix execution
+stops at5AA2. Keeping tables separate from executable bytes requires a larger
+bounded profile rather than joining spans or pretending device registers are RAM.
+
+`tools/saturn_lab/m68k_scsp_state.py` prepares ABI5 using the unchanged ABI4 SCSP
+component and accepted ABI2 trace layout. Its fixed maximum is2048 instructions,
+1024events,16code ranges and16data regions. Per-experiment budgets remain smaller.
+Identity includes the state verifier, underlying device recipe, trace-layout
+adapter, derived backend and source/component locks. Earlier profiles and caches
+remain valid for their original source; ABI5 has its own library and receipt.
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_state.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /private/new-state-generation/prepared
+```
+
+Use the same constrained offline preparation as ABI4, without original inputs.
+A ready receipt requires the full inherited SCSP word/identical-write/owned-CPU
+suite, actual2048-step and1024-event rejection/recovery, a nested16-range call
+that reads all16 mapped regions, a missing-range guard, and native rejection of
+17ranges or17regions before execution. The latter invokes the C boundary directly;
+Python's count checks alone cannot certify it. Fresh preparation and reuse both
+execute these checks. The required preparation child runs ABI4 and ABI5 together
+for applicable changes, and the existing protected aggregate waits for it.
+
+This expands bounded tracing capacity. It adds no SCSP clock, DSP execution,
+audio, hardware independence or original-function semantic acceptance. The
+original671 experiment is separate and retains unsupported/guarded outcomes.
