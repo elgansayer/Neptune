@@ -6,6 +6,7 @@ extends "res://shared/rpc_interface.gd"
 const Constants = preload("res://shared/constants.gd")
 const RuntimeConfig = preload("res://shared/runtime_config.gd")
 const ProtocolNegotiation = preload("res://shared/network/protocol_negotiation.gd")
+const ContentDownload = preload("res://shared/network/content_download.gd")
 
 var _runtime_role := ""
 var _server_port := 7777
@@ -19,12 +20,20 @@ var negotiated_protocol := 0
 var last_connection_error := ""
 var username = ""
 var pending_initial_map: Dictionary = {} # Cache initial map until GameView is ready
+var content_cache_root := "user://pack-cache"
+var content_download
+var _last_content_result := {}
+var last_content_result: Dictionary:
+	get: return _last_content_result.duplicate(true)
 
 signal connection_succeeded
 signal connection_failed
 signal authentication_succeeded
 signal authentication_failed(error: String)
 signal latency_updated(latency_ms: int)
+signal content_status_changed(result: Dictionary)
+signal initial_map_received(map_data: Dictionary)
+signal game_state_received(state: Dictionary)
 
 var _ping_timer: Timer = null
 var _last_ping_timestamp: int = 0
@@ -83,6 +92,7 @@ func connect_to_server(address: String = "127.0.0.1"):
 		return
 
 	server_address = address
+	_reset_content()
 	connected = false
 	authenticated = false
 	negotiated_protocol = 0
@@ -124,6 +134,7 @@ func _on_connection_failed():
 	authenticated = false
 	negotiated_protocol = 0
 	pending_initial_map.clear()
+	_reset_content(true)
 	if last_connection_error.is_empty():
 		last_connection_error = "transport_connection_failed"
 	if _ping_timer:
@@ -137,6 +148,7 @@ func _on_server_disconnected():
 	authenticated = false
 	negotiated_protocol = 0
 	pending_initial_map.clear()
+	_reset_content(true)
 	if _ping_timer:
 		_ping_timer.stop()
 
@@ -146,6 +158,8 @@ func login(user: String, password: String):
 	if not connected:
 		push_error("Not connected to server")
 		return
+	if content_download != null and content_download.receipt().state == "failed":
+		_reset_content()
 	
 	print("[Client] Attempting login as: ", user)
 	username = user
@@ -184,7 +198,11 @@ func ping(_timestamp: int):
 
 # 5. Server-to-Client Auth Responses
 func auth_response(data: Dictionary):
+	if _runtime_role == "client" and (not connected or multiplayer.get_remote_sender_id() != 1): return
 	if data.success:
+		if content_download != null and content_download.receipt().state != "ready":
+			cancel_content_download("content_auth_before_ready")
+			return
 		print("[Client] Authentication successful!")
 		authenticated = true
 		username = data.username
@@ -195,6 +213,7 @@ func auth_response(data: Dictionary):
 		authentication_failed.emit(data.get("error", "Unknown error"))
 
 func register_response(data: Dictionary):
+	if _runtime_role == "client" and (not connected or multiplayer.get_remote_sender_id() != 1): return
 	if data.success:
 		print("[Client] Registration successful!")
 	else:
@@ -208,12 +227,27 @@ func ai_debug_update(debug_data: Dictionary):
 		game_view.update_ai_debug(debug_data)
 
 func receive_state(state: Dictionary):
+	if not connected or not authenticated: return
+	if _runtime_role == "client" and multiplayer.get_remote_sender_id() != 1: return
+	if content_download != null and content_download.receipt().state != "ready": return
+	game_state_received.emit(state.duplicate(true))
 	# Forward to active game view scene - find GameView node in tree
 	var game_view = _find_game_view()
 	if game_view:
 		game_view.update_game_state(state)
 
 func receive_initial_map(map_data: Dictionary):
+	if _runtime_role == "client" and (not connected or multiplayer.get_remote_sender_id() != 1): return
+	var config = map_data.get("map_config", {})
+	if content_download != null or (config is Dictionary and config.has("content")):
+		if content_download == null:
+			cancel_content_download("content_map_without_offer")
+			return
+		var verified: Dictionary = content_download.validate_initial_map(map_data)
+		if not verified.accepted:
+			cancel_content_download(verified.reason)
+			return
+	initial_map_received.emit(map_data.duplicate(true))
 	# Initial map data sent reliably (TCP) to handle larger payload
 	print("[ClientMain] Received initial map data with keys: ", map_data.keys())
 	var game_view = _find_game_view()
@@ -223,6 +257,73 @@ func receive_initial_map(map_data: Dictionary):
 		# Cache the map data until GameView is ready
 		pending_initial_map = map_data
 		print("[ClientMain] Cached initial map data (GameView not ready yet)")
+
+func content_message(message: Dictionary) -> void:
+	# RPC routing is shared for identical checksums; only the authority may offer
+	# bytes or change this client's selection. Peers never supply filesystem paths.
+	if _runtime_role != "client" or not connected or multiplayer.get_remote_sender_id() != 1: return
+	match message.get("type"):
+		"offer":
+			if authenticated or content_download != null:
+				cancel_content_download("unexpected_content_offer")
+				return
+			content_download = ContentDownload.new(content_cache_root)
+			content_download.outbound.connect(_send_content_message)
+			content_download.status_changed.connect(_on_content_status)
+			content_download.begin(message)
+		"chunk":
+			if content_download != null: content_download.receive(message)
+		"failure":
+			if content_download == null or not ContentDownload.exact_keys(message, ["type", "session_id", "reason"]): return
+			if message.get("session_id") != content_download.session_id() or not message.get("reason") is String or message.reason.length() > 128: return
+			if content_download.receipt().state != "failed": cancel_content_download(message.reason)
+
+func _process(_delta: float) -> void:
+	if content_download != null: content_download.tick()
+
+func _send_content_message(message: Dictionary) -> void:
+	if connected: ServerMain.rpc_id(1, "content_message", message)
+
+func _on_content_status(result: Dictionary) -> void:
+	_last_content_result = result.duplicate(true)
+	content_status_changed.emit(result.duplicate(true))
+	if result.state == "failed":
+		authenticated = false
+		pending_initial_map.clear()
+		authentication_failed.emit(result.reason)
+
+func cancel_content_download(reason: String = "content_cancelled") -> void:
+	# Once ready was sent, the authority may already have admitted this actor.
+	# Closing that transport is required before a retry can clear local selection.
+	var must_reconnect: bool = authenticated or (content_download != null and content_download.receipt().state == "ready") or reason == "content_auth_before_ready"
+	var closing_peer := peer
+	if must_reconnect:
+		connected = false
+		negotiated_protocol = 0
+		last_connection_error = reason
+		if _ping_timer: _ping_timer.stop()
+	if content_download != null:
+		content_download.cancel(reason)
+	else:
+		_last_content_result = {"accepted": false, "state": "failed", "reason": reason}
+		content_status_changed.emit(_last_content_result.duplicate(true))
+		authentication_failed.emit(reason)
+	authenticated = false
+	pending_initial_map.clear()
+	if must_reconnect and closing_peer != null: closing_peer.close()
+
+func _reset_content(preserve_failure: bool = false) -> void:
+	# Disconnects abandon only the transient buffer. Independently verified immutable
+	# releases remain cached and can be reused on another exact compatible offer.
+	var failure: Dictionary = _last_content_result.duplicate(true) if preserve_failure and _last_content_result.get("state") == "failed" else {}
+	if content_download != null:
+		if content_download.outbound.is_connected(_send_content_message):
+			content_download.outbound.disconnect(_send_content_message)
+		if content_download.status_changed.is_connected(_on_content_status):
+			content_download.status_changed.disconnect(_on_content_status)
+		content_download.cancel("content_connection_reset")
+	content_download = null
+	_last_content_result = failure
 
 func bomb_safety_update(safety_data: Dictionary):
 	# Forward bomb safety data to current GameView

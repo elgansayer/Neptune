@@ -4,6 +4,7 @@ extends Node
 ## authentication, admission, bots and snapshots come from actual ServerMain.
 const Gate = preload("res://shared/network/protocol_negotiation.gd")
 const Receiver = preload("res://tools/godot/room_probe_receiver.gd")
+const Download = preload("res://shared/network/content_download.gd")
 var humans := 12
 var bots := 0
 var seats := 12
@@ -25,6 +26,9 @@ var expected_content: Dictionary = {}
 var expected_selection_count := 2
 var expected_lock: Dictionary = {}
 var expected_lock_sha256 := ""
+
+func _process(_delta: float) -> void:
+	for entry in peers: entry.download.tick()
 
 func _ready() -> void:
 	port = preload("res://shared/runtime_config.gd").read().port
@@ -90,14 +94,28 @@ func _create_peer(index: int) -> void:
 		return
 	api.connected_to_server.connect(_connected.bind(index, router, api, gate))
 	api.connection_failed.connect(func(): fail("transport connection failed"))
-	peers.append({"api": api, "router": router, "gate": gate, "branch": branch})
+	var download = Download.new("user://capacity-content-peer-%d" % index)
+	download.outbound.connect(func(message: Dictionary): router.rpc_id(1, "content_message", message))
+	download.status_changed.connect(func(result: Dictionary):
+		if not result.get("accepted", true): fail("registered arena content download refused: " + result.reason)
+	)
+	peers.append({"api": api, "router": router, "gate": gate, "branch": branch, "download": download})
 	api.multiplayer_peer = peer
 
 func _connected(index: int, router: Node, _api: SceneMultiplayer, gate: Node) -> void:
-	if gate.selected_version(1) != 1:
+	if gate.selected_version(1) != 2:
 		fail("missing actual negotiated version")
 		return
 	router.rpc_id(1, "authenticate_request", "CapacityProbe%d" % index, "fixture-password")
+
+func content_received(index: int, message: Dictionary) -> void:
+	var download = peers[index].download
+	if message.get("type", "") == "offer":
+		download.begin(message)
+	elif message.get("type", "") == "chunk":
+		download.receive(message)
+	else:
+		fail("registered arena received unsupported content message")
 
 func auth_received(index: int, data: Dictionary) -> void:
 	if index == humans:
@@ -108,6 +126,9 @@ func auth_received(index: int, data: Dictionary) -> void:
 	else:
 		if not data.get("success", false) or data.get("room", {}).get("seats", 0) != seats:
 			fail("supported human auth/admission failed")
+			return
+		if not expected_content.is_empty() and peers[index].download.receipt().get("state", "") != "ready":
+			fail("registered arena admitted before production download helper verified readiness")
 			return
 		accepted[index] = true
 		if accepted.size() == humans:
@@ -125,6 +146,10 @@ func map_received(index: int, data: Dictionary) -> void:
 		fail("initial map/capacity contract mismatch")
 		return
 	if not expected_content.is_empty():
+		var verified: Dictionary = peers[index].download.validate_initial_map(data)
+		if not verified.accepted:
+			fail("registered arena initial map failed production content validation: " + verified.reason)
+			return
 		var config: Dictionary = data.get("map_config", {})
 		var selection = config.get("selection", [])
 		if config.get("content", {}) != expected_content or not selection is Array or selection.size() != expected_selection_count:
@@ -148,6 +173,9 @@ func map_received(index: int, data: Dictionary) -> void:
 func state_received(index: int, state: Dictionary) -> void:
 	if index == humans:
 		fail("refused peer received gameplay state")
+		return
+	if not expected_content.is_empty() and peers[index].download.receipt().get("state", "") != "ready":
+		fail("registered arena state arrived before content readiness")
 		return
 	var roster: Dictionary = state.get("p", {})
 	var capacity: Dictionary = state.get("room", {})

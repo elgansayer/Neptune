@@ -13,7 +13,7 @@ func _offer(versions: Variant, format: Variant = Protocol.FORMAT) -> PackedByteA
 	return JSON.stringify({"format": format, "versions": versions}).to_utf8_buffer()
 
 func test_current_protocol_is_explicit() -> Variant:
-	return assert_eq(Protocol.evaluate_offer(_offer([1])), {"accepted": true, "reason": "compatible", "version": 1}, "Current gameplay protocol must be selected explicitly")
+	return assert_eq(Protocol.evaluate_offer(_offer([2])), {"accepted": true, "reason": "compatible", "version": 2}, "Content-sharing gameplay protocol must be selected explicitly")
 
 func test_highest_shared_version_is_symmetric_and_order_independent() -> Variant:
 	for pair in [[[1, 2, 3], [2, 1]], [[3, 1, 2], [1, 2]], [[2, 1], [3, 2, 1]]]:
@@ -22,8 +22,11 @@ func test_highest_shared_version_is_symmetric_and_order_independent() -> Variant
 	return true
 
 func test_no_common_protocol_has_no_fallback() -> Variant:
-	var result: Dictionary = Protocol.evaluate_offer(_offer([2]))
-	return assert_true(not result.accepted and result.reason == "incompatible_protocol_versions" and not result.has("version"), "Future-only peers cannot fall back silently")
+	for versions in [[1], [3]]:
+		var result: Dictionary = Protocol.evaluate_offer(_offer(versions))
+		if result.accepted or result.reason != "incompatible_protocol_versions" or result.has("version"):
+			return "Old RPC layouts and future-only peers cannot fall back silently"
+	return true
 
 func test_empty_missing_or_unknown_envelope_is_rejected() -> Variant:
 	for raw in ["", "{}", "[]", "null", "true", "1", "\"text\"", "not JSON", "{\"versions\":[1]}", "{\"format\":\"neptune.protocol/1\"}"]:
@@ -37,7 +40,7 @@ func test_unknown_format_and_extra_fields_are_rejected() -> Variant:
 	return assert_true(not Protocol.evaluate_offer(JSON.stringify(extra).to_utf8_buffer()).accepted, "Unknown capabilities cannot be ignored in bootstrap")
 
 func test_trailing_documents_cannot_hide_behind_a_valid_offer() -> Variant:
-	var raw := _offer([1]).get_string_from_utf8()
+	var raw := _offer([2]).get_string_from_utf8()
 	for suffix in ["true", raw, "{}", " trailing text"]:
 		if Protocol.evaluate_offer((raw + suffix).to_utf8_buffer()).accepted:
 			return "A valid prefix hid trailing non-whitespace bytes"
@@ -61,7 +64,7 @@ func test_supported_version_count_and_numeric_boundaries() -> Variant:
 	return assert_true(result.accepted and result.version == 65535 and Protocol.validate_versions(versions), "Documented version/count boundaries must work")
 
 func test_offer_byte_budget_includes_whitespace() -> Variant:
-	var raw := _offer([1]).get_string_from_utf8()
+	var raw := _offer([2]).get_string_from_utf8()
 	var boundary := (raw + " ".repeat(Protocol.MAX_OFFER_BYTES - raw.length())).to_utf8_buffer()
 	var overflow := boundary.duplicate()
 	overflow.append(32)
