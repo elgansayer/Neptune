@@ -94,6 +94,39 @@ receipt, binary and source-archive identities, then rerunning the existing real
 smoke/reuse path locally. This avoids another build when the VPS cannot retain
 its preparation reserve; it does not relax that reserve or certify game capture.
 
+### Matched first-task/library observer
+
+`--tool beetle-saturn-init-trace` is a separate ABI1 generation under660/655.
+Existing call/context observers, reference locks and historical caches retain
+their identities. Its only profiles are original89C8 from623A (return6240) and
+original95B04 from89C8 (return8A18). It records the ten named direct call sites,
+two library tail sites, actual call delays/callee entries/returns and root
+RTS/restore-delay/return continuity. Uninstrumented internal device and callback
+semantics remain unresolved; completing this observation is not full code recovery.
+
+The value-only master hook reads fixed High Work RAM globals, the original stack
+and a validated library block. Unavailable library memory is explicitly tagged;
+its zeroed storage is not reported as observed game data. It does not call an
+emulated bus/cache/device accessor, write emulated state, change timing, enable
+JIT or change fusion. The existing actual fused-NOP boundary is also observed.
+
+Explicit separate limits: one root,128 records, depth16,4,194,304 pending master
+hooks and120 pending emulated frames. These hooks are not hardware cycle or
+instruction counts. Accepted128/1024 Python experiment guards and the context
+observer's4096-hook limit are unchanged. All2572 named source words must match
+the independently identified private kernel before entry and every snapshot.
+Source, pipeline, frame, stack, counter, depth, record and unfinished-capture
+failures retain diagnostics rather than producing successful function evidence.
+
+Owned compiled fixtures check both profiles, nested calls, tail linkage, actual
+fused-hook handling, source/memory/pipeline mutations, unavailable memory and
+unchanged CPU/RAM. The separate provisioner requires a real matched-core build,
+actual no-media ABI/fence smoke and verified reuse. CI exports the exact binary,
+receipt, patched identities, corresponding GPL source and notices through the
+same immutable artifact boundary as the context tool. No original game/BIOS is
+supplied to CI. Guarded VPS import, reference/disabled/enabled repeatability and
+actual natural original entry/full-return evidence are separate required work.
+
 ### Headless Ghidra/JDK preparation
 
 `--tool ghidra` prepares official Ghidra12.2 and compatible Temurin25.0.5+8,

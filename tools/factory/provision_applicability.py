@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("neptune_provision_checkout", ROOT / "tools/merge_gate/run.py")
 GATE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(GATE)
-CHILDREN = ("xvfb", "ocr", "call-trace", "context-trace", "ghidra")
+CHILDREN = ("xvfb", "ocr", "call-trace", "context-trace", "init-trace", "ghidra")
 EXACT = {"tools/godot/install.py", "tools/godot/toolchain.json", ".github/workflows/tool-provisioning.yml"}
 
 
