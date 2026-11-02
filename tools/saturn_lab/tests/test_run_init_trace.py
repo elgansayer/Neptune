@@ -86,7 +86,8 @@ class InitExperimentTests(unittest.TestCase):
                               imported_state_bytes=len(state), imported_state_sha256=p.sha(state), final_state_sha256=p.sha(state),
                               frame_observations_sha256=p.digest(frames), video_sha256=p.digest([f['video'] for f in frames]),
                               audio_sha256=p.digest([(f['audio_sha256'], f['audio_frames']) for f in frames]), audio_frames=2,
-                              resident_code_before=witness, resident_code_after=witness, input_polls=[2]*12,
+                              resident_code_before=witness, kernel_witness_complete_before=True,
+                              resident_code_after=witness, input_polls=[2]*12,
                               delivered_masks=[[0]]*12, emulation_wall_seconds=1.0,
                               selected_core_sha256=p.REFERENCE_CORE if mode == 'reference' else '7'*64)
                 if mode != 'reference': report['prepared_recipe_sha256'] = '8'*64
@@ -124,6 +125,21 @@ class InitExperimentTests(unittest.TestCase):
             file = paths[1]/'observations.json'; value = json.loads(file.read_text())
             value['frames'][0]['inputs'][0] = 8; file.write_text(json.dumps(value))
             with self.assertRaises(ValueError): p.compare(paths, kernel)
+
+    def test_comparison_accepts_verified_preloader_import_but_rejects_false_presence(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            paths, kernel = self.six_owned_runs(Path(temporary))
+            missing = bytearray((paths[0]/'imported.state').read_bytes())
+            missing[-0x100000+0x95B04:-0x100000+0x95B06] = bytes(2); missing = bytes(missing)
+            for directory in paths:
+                (directory/'imported.state').write_bytes(missing)
+                file = directory/'result.json'; report = json.loads(file.read_text())
+                report.update(imported_state_sha256=p.sha(missing), resident_code_before=[], kernel_witness_complete_before=False)
+                file.write_text(json.dumps(report))
+            self.assertEqual(p.compare(paths, kernel)['status'], 'success')
+            file = paths[0]/'result.json'; report = json.loads(file.read_text()); report['kernel_witness_complete_before'] = True
+            file.write_text(json.dumps(report))
+            with self.assertRaisesRegex(ValueError, 'presence'): p.compare(paths, kernel)
 
     def fake_run(self, root, mode='reference'):
         kernel, state = owned_source(); checkpoint = root/'checkpoint.json'; checkpoint.write_text('owned checkpoint')
@@ -188,20 +204,44 @@ class InitExperimentTests(unittest.TestCase):
             self.assertTrue((args.output/'final.state').is_file())
             self.assertTrue((args.output/'partial-observations.json').is_file())
 
-    def test_absent_source_or_mutable_inputs_stop_before_core_load(self):
+    def test_malformed_state_or_mutable_inputs_stop_before_core_load(self):
         for failure in ('source', 'mount'):
             with tempfile.TemporaryDirectory() as temporary:
                 root = Path(temporary); args, kernel, state, module, lock, profile, meta = self.fake_run(root)
-                bad_kernel = bytes(len(kernel)) if failure == 'source' else kernel
+                if failure == 'source': state = b'owned malformed state'
                 with patch.object(p, 'reference', return_value=(module, lock, profile, {}, b'seed')), \
                      patch.object(p, 'read_boot_checkpoint', return_value=(meta, state)), \
-                     patch.object(p.probe_kernel, 'kernel_bytes', return_value=bad_kernel), \
+                     patch.object(p.probe_kernel, 'kernel_bytes', return_value=kernel), \
                      patch.object(p.os, 'statvfs', return_value=types.SimpleNamespace(f_flag=0 if failure == 'mount' else p.os.ST_RDONLY)), \
                      patch.object(module, 'Core', side_effect=AssertionError('Must not load')) as load:
                     with self.assertRaises(ValueError): p.run(args)
                 load.assert_not_called()
                 report = json.loads((args.output/'result.json').read_text())
                 self.assertIs(report['original_game_bytes_executed'], False)
+
+    def test_verified_partial_boot_waits_for_original_loader_but_requires_full_final_source(self):
+        for loaded_later in (True, False):
+            with tempfile.TemporaryDirectory() as temporary:
+                root = Path(temporary); args, kernel, state, module, lock, profile, meta = self.fake_run(root)
+                missing = bytearray(state); missing[-0x100000+0x95B04:-0x100000+0x95B06] = bytes(2)
+                missing = bytes(missing); meta['state_sha256'] = p.sha(missing)
+                module.Core.restore = lambda self, value: None
+                module.Core.save_state = lambda self: state if loaded_later and self.frame > 1200 else missing
+                with patch.object(p, 'reference', return_value=(module, lock, profile, {}, b'seed')), \
+                     patch.object(p, 'read_boot_checkpoint', return_value=(meta, missing)), \
+                     patch.object(p.probe_kernel, 'kernel_bytes', return_value=kernel), \
+                     patch.object(p.os, 'statvfs', return_value=types.SimpleNamespace(f_flag=p.os.ST_RDONLY)):
+                    if loaded_later:
+                        result = p.run(args)
+                        self.assertEqual(result['resident_code_before'], [])
+                        self.assertFalse(result['kernel_witness_complete_before'])
+                        self.assertTrue(result['resident_code_after'])
+                        self.assertIs(result['original_game_bytes_executed'], True)
+                    else:
+                        with self.assertRaisesRegex(ValueError, 'absent'): p.run(args)
+                        result = json.loads((args.output/'result.json').read_text())
+                        self.assertIsNone(result['original_game_bytes_executed'])
+                        self.assertEqual(result['status'], 'failure')
 
     def test_first_frame_failure_retains_actual_partial_state_without_claiming_no_execution(self):
         with tempfile.TemporaryDirectory() as temporary:

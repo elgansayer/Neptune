@@ -47,6 +47,19 @@ def resident(state, kernel):
     return witnesses
 
 
+def boot_residency(state, kernel):
+    """Verified original boot checkpoints may precede the last kernel sectors.
+
+    Malformed states still fail. Native entry/snapshots and final comparison
+    require the complete, unchanged witness rather than accepting partial code.
+    """
+    try:
+        return resident(state, kernel)
+    except ValueError as error:
+        if str(error) != 'Original initialization source witness is absent from High Work RAM': raise
+        return []
+
+
 def run(args):
     if type(args.profile) is not int or args.profile not in (1, 2):
         raise ValueError('Require fixed original89C8 or95B04 profile1/2')
@@ -69,17 +82,21 @@ def run(args):
                   'kernel_identity': 'tools/saturn_lab/probe_kernel.py',
                   'reference_adapter': 'tools/saturn_lab/run_call_trace.py',
                   'boot_checkpoint_adapter': 'tools/saturn_lab/run_context_trace.py'}.items()}}
-    driver, tracer, frames, attempted = None, None, [], False
+    driver, tracer, frames, attempted, source_known = None, None, [], False, False
     phase = 'input_identity'
     try:
         module, lock, profile, identity, seed = reference(args.reference_root, args.lock, args.expected_lock)
         original, state = read_boot_checkpoint(module, args.boot_checkpoint, identity, args.expected_lock)
         if original['frame']+args.frames > 4800: raise ValueError('Original boot experiment exceeds4800-frame bound')
         kernel = probe_kernel.kernel_bytes(args.kernel)
+        result.update(reference_identity=identity, reference_lock_file_sha256=args.expected_lock,
+                      reference_checkpoint_file_sha256=sha(args.boot_checkpoint.read_bytes()),
+                      reference_state_sha256=original['state_sha256'], reference_frame=original['frame'],
+                      original_kernel_sha256=sha(kernel), input_boot_checkpoint_verified=True)
         inputs = (ROOT, args.reference_root, args.boot_checkpoint.parent, args.kernel.parent)
         if any(not os.statvfs(path).f_flag & os.ST_RDONLY for path in inputs):
             raise ValueError('Run with source/media/boot checkpoint/kernel mounted read-only')
-        witness = resident(state, kernel)
+        witness = boot_residency(state, kernel); source_known = bool(witness)
         core = confined(args.reference_root, lock['inputs']['emulator'])
         if args.mode != 'reference':
             if args.prepared is None: raise ValueError('Require separate immutable prepared initialization core')
@@ -88,11 +105,8 @@ def run(args):
             if not os.statvfs(args.prepared).f_flag & os.ST_RDONLY:
                 raise ValueError('Prepared initialization core must be mounted read-only')
             result['prepared_recipe_sha256'] = recipe
-        result.update(reference_identity=identity, reference_lock_file_sha256=args.expected_lock,
-                      reference_checkpoint_file_sha256=sha(args.boot_checkpoint.read_bytes()),
-                      reference_state_sha256=original['state_sha256'], reference_frame=original['frame'],
-                      original_kernel_sha256=sha(kernel), selected_core_sha256=provision.digest(core),
-                      resident_code_before=witness, input_boot_checkpoint_verified=True)
+        result.update(selected_core_sha256=provision.digest(core), resident_code_before=witness,
+                      kernel_witness_complete_before=bool(witness))
         phase = 'core_load_and_verified_original_state_import'
         save = args.output/'save'; save.mkdir()
         disc = confined(args.reference_root, lock['inputs']['disc'])
@@ -102,9 +116,11 @@ def run(args):
                              confined(args.reference_root, profile['log_shim']['path']))
         av = driver.load(disc, profile['controller_devices']); driver.restore(state)
         driver.frame, driver.video = original['frame'], original['last_video']
-        imported = driver.save_state(); resident(imported, kernel)
+        imported = driver.save_state(); witness = boot_residency(imported, kernel)
+        source_known = source_known or bool(witness)
         (args.output/'imported.state').write_bytes(imported)
-        result.update(av=av, imported_state_bytes=len(imported), imported_state_sha256=sha(imported))
+        result.update(av=av, imported_state_bytes=len(imported), imported_state_sha256=sha(imported),
+                      resident_code_before=witness, kernel_witness_complete_before=bool(witness))
         if args.mode != 'reference':
             tracer = observer.Trace(driver.dll)
             if args.mode == 'enabled':
@@ -119,12 +135,13 @@ def run(args):
         elapsed = time.monotonic()-started; final = driver.save_state()
         (args.output/'final.state').write_bytes(final)
         (args.output/'observations.json').write_text(json.dumps({'av': av, 'frames': frames}, sort_keys=True)+'\n')
+        final_witness = resident(final, kernel); source_known = True
         result.update(frames=len(frames), final_state_sha256=sha(final), frame_observations_sha256=digest(frames),
                       video_sha256=digest([f['video'] for f in frames]),
                       audio_sha256=digest([(f['audio_sha256'], f['audio_frames']) for f in frames]),
                       audio_frames=sum(f['audio_frames'] for f in frames), emulation_wall_seconds=elapsed,
                       input_polls=driver.polls, delivered_masks=[sorted(values) for values in driver.delivered],
-                      resident_code_after=resident(final, kernel))
+                      resident_code_after=final_witness)
         if args.mode == 'enabled':
             phase = 'bounded_original_initialization_validation'
             trace = tracer.finish(); raw = (json.dumps(trace, indent=2, sort_keys=True)+'\n').encode()
@@ -136,7 +153,7 @@ def run(args):
         raise
     finally:
         result.update(completed_original_frames=len(frames), original_execution_attempted=attempted,
-                      original_game_bytes_executed=True if frames else None if attempted else False)
+                      original_game_bytes_executed=True if frames and source_known else None if attempted else False)
         if result['status'] != 'success' and frames:
             (args.output/'partial-observations.json').write_text(json.dumps({'frames': frames}, sort_keys=True)+'\n')
         if result['status'] != 'success' and attempted and driver is not None and not (args.output/'final.state').exists():
@@ -225,9 +242,12 @@ def compare(directories, kernel):
         for name in ('imported', 'final'):
             state = probe_kernel.read_bounded(directory/(name+'.state'), state_graphics.MAX_STATE)
             if sha(state) != report[name+'_state_sha256']: raise ValueError('Private original state artifact differs')
-            if resident(state, kernel) != report['resident_code_before' if name == 'imported' else 'resident_code_after']:
+            witness = boot_residency(state, kernel) if name == 'imported' else resident(state, kernel)
+            if witness != report['resident_code_before' if name == 'imported' else 'resident_code_after']:
                 raise ValueError('Actual private state source witnesses differ')
             if name == 'imported' and len(state) != report['imported_state_bytes']: raise ValueError('Imported state size differs')
+            if name == 'imported' and report.get('kernel_witness_complete_before') is not bool(witness):
+                raise ValueError('Original boot source-presence declaration differs')
         elapsed = report.get('emulation_wall_seconds')
         if type(elapsed) not in (int, float) or not math.isfinite(elapsed) or elapsed <= 0: raise ValueError('Missing bounded wall observation')
         if report['mode'] == 'enabled':
@@ -244,7 +264,8 @@ def compare(directories, kernel):
              'port_zero_start_frames', 'init_profile', 'input_boot_checkpoint_verified', 'original_kernel_sha256',
              'completed_original_frames', 'original_game_bytes_executed', 'original_execution_attempted', 'av', 'imported_state_bytes',
              'imported_state_sha256', 'final_state_sha256', 'frame_observations_sha256', 'video_sha256',
-             'audio_sha256', 'audio_frames', 'resident_code_before', 'resident_code_after', 'input_polls', 'delivered_masks')
+             'audio_sha256', 'audio_frames', 'resident_code_before', 'kernel_witness_complete_before',
+             'resident_code_after', 'input_polls', 'delivered_masks')
     for run in runs:
         if any(key not in run or run[key] != baseline.get(key) for key in equal):
             raise ValueError('Reference/disabled/enabled state or original output repeatability differs')
