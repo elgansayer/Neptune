@@ -10,6 +10,7 @@ import ghidra.program.model.listing.Instruction;
 import ghidra.program.model.lang.Register;
 import ghidra.program.model.pcode.PcodeOp;
 import ghidra.program.model.pcode.PcodeOpAST;
+import ghidra.program.model.pcode.Varnode;
 import ghidra.program.model.scalar.Scalar;
 import ghidra.program.model.symbol.SourceType;
 import java.nio.file.Files;
@@ -44,9 +45,11 @@ public class provision_ghidra_smoke extends GhidraScript {
             throw new Exception("Wrong constant/register decoding");
         Function function = createFunction(base, "public_constant");
         if (function == null) throw new Exception("Missing public fixture function");
+        function.setCallingConvention("__stdcall");
         function.setReturnType(UnsignedIntegerDataType.dataType, SourceType.USER_DEFINED);
         DecompInterface decompiler = new DecompInterface();
         boolean returned42 = false;
+        int returnCount = 0;
         try {
             if (!decompiler.openProgram(currentProgram)) throw new Exception("Decompiler unavailable");
             var result = decompiler.decompileFunction(function, 15, monitor);
@@ -62,12 +65,19 @@ public class provision_ghidra_smoke extends GhidraScript {
                 PcodeOpAST operation = operations.next();
                 if (++operationCount > 64) throw new Exception("Oversized public pcode result");
                 println("PUBLIC_FIXTURE_PCODE=" + operation);
-                if (operation.getOpcode() == PcodeOp.RETURN && operation.getNumInputs() == 2 &&
-                    operation.getInput(1).isConstant() && operation.getInput(1).getOffset() == 42)
-                    returned42 = true;
+                if (operation.getOpcode() == PcodeOp.RETURN && operation.getNumInputs() == 2) {
+                    ++returnCount;
+                    Varnode value = operation.getInput(1);
+                    // Observed12.2 keeps the ABI output COPY before RETURN (even when C is literal).
+                    PcodeOp definition = value.getDef();
+                    if (!value.isConstant() && definition != null &&
+                        definition.getOpcode() == PcodeOp.COPY && definition.getNumInputs() == 1)
+                        value = definition.getInput(0);
+                    returned42 = value.isConstant() && value.getSize() == 4 && value.getOffset() == 42;
+                }
             }
         } finally { decompiler.dispose(); }
-        if (!returned42) throw new Exception("Decompiler did not recover constant return42");
+        if (!returned42 || returnCount != 1) throw new Exception("Decompiler did not recover constant return42");
         String json = "{\"version\":\"" + Application.getApplicationVersion() +
             "\",\"language\":\"SuperH:BE:32:SH-2\",\"base\":\"06004000\"," +
             "\"instructions\":[\"mov\",\"rts\",\"nop\"],\"constant_return\":42,\"delay_slot_depth\":1}\n";
