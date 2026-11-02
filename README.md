@@ -143,8 +143,9 @@ See LICENSE file.
 
 ## Multilingual arcade font
 
-The project theme uses [Neptune Arcade](fonts/neptune-arcade/README.md), an original
-Saturn-era-inspired pixel face with bundled Noto script fallbacks. CJK glyph forms
+The project theme uses [Neptune Bubble](fonts/neptune-arcade/README.md), an original
+Saturn Bomberman-inspired rounded bubble face with an optional pixel HUD face
+and bundled Noto script fallbacks. CJK glyph forms
 follow the current translation locale. See the [font specimen](fonts/neptune-arcade/preview.png)
 and the measured coverage and licenses in the package. This supplies font rendering;
 UI translations and localized layout expansion remain separate work.

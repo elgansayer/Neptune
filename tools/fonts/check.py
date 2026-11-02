@@ -38,7 +38,7 @@ def verify_integration() -> None:
     if 'ArcadeFontLocale="*res://scripts/arcade_font_locale.gd"' not in project:
         raise ValueError("Game does not register its locale font switcher")
     if "res://fonts/neptune-arcade/neptune_arcade.tres" not in theme or "default_font =" not in theme:
-        raise ValueError("Main theme does not use Neptune Arcade")
+        raise ValueError("Main theme does not use the multilingual Neptune Bubble resource")
     if "bomberman_font.ttf" in selection or "theme_override_fonts/font" in selection:
         raise ValueError("Character selection overrides the locale-aware global font")
 

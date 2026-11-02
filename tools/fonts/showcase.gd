@@ -22,14 +22,14 @@ func _ready() -> void:
 	style.set_border_width_all(2)
 	frame.add_theme_stylebox_override("panel", style)
 	add_child(frame)
-	label_at("NEPTUNE ARCADE", Vector2(44, 38), 32, GOLD)
-	label_at("Saturn-inspired original pixel face / multilingual Godot stack", Vector2(44, 83), 8, INK)
-	label_at("ORIGINAL FACE", Vector2(44, 119), 16, GOLD)
+	label_at("NEPTUNE BUBBLE", Vector2(44, 38), 32, GOLD, "", false, true)
+	label_at("Saturn Bomberman-inspired rounded display face / multilingual Godot stack", Vector2(44, 83), 8, INK)
+	label_at("ORIGINAL BUBBLE FACE", Vector2(44, 119), 16, GOLD)
 	label_at("ABCDEFGHIJKLMNOPQRSTUVWXYZ", Vector2(44, 149), 24, INK)
 	label_at("abcdefghijklmnopqrstuvwxyz  0123456789", Vector2(44, 185), 16, INK)
-	label_at("READY!  PLAYER 01  /  SCORE 99999  /  03:00", Vector2(44, 217), 16, GOLD)
-	label_at("8px  READY! Player 01", Vector2(44, 252), 8, INK)
-	label_at("16px  Prêt! Größe. Tiếng Việt.", Vector2(300, 245), 16, INK)
+	label_at("READY!  PLAYER 01  /  SCORE 99999  /  03:00", Vector2(44, 215), 24, GOLD, "", false, true)
+	label_at("Optional 8px pixel HUD: READY! Player 01", Vector2(44, 253), 8, INK, "", true)
+	label_at("16px  Prêt! Größe. Tiếng Việt.", Vector2(420, 245), 16, INK)
 	label_at("BUNDLED LANGUAGE FALLBACKS", Vector2(44, 285), 16, GOLD)
 	var rows := [
 		["JAPANESE", "ボンバーマン 日本語 対戦開始", "ja"],
@@ -46,7 +46,7 @@ func _ready() -> void:
 		var y := 322 + index * 37
 		label_at(row[0], Vector2(44, y + 5), 8, MUTED)
 		label_at(row[1], Vector2(280, y), 22, INK, row[2])
-	label_at("Pixel Latin at 8px multiples. CJK / complex scripts: 16px minimum, 24px recommended.",
+	label_at("Bubble display at 16 / 24 / 32px. CJK and complex scripts: 24px recommended.",
 		Vector2(44, 637), 8, MUTED)
 	label_at("Measured glyph coverage; unsupported Unicode stays visible as missing glyphs.",
 		Vector2(44, 656), 8, MUTED)
@@ -56,14 +56,21 @@ func _ready() -> void:
 
 
 func label_at(text: String, position_value: Vector2, size_value: int, color_value: Color,
-		region: String = "") -> void:
+		region: String = "", use_pixel: bool = false, display_style: bool = false) -> void:
 	var label := Label.new()
 	label.text = text
 	label.position = position_value
 	var suffix := "_" + region if not region.is_empty() else ""
-	label.add_theme_font_override("font", load(PACKAGE + "neptune_arcade" + suffix + ".tres"))
+	var filename := "neptune_pixel.tres" if use_pixel else "neptune_arcade" + suffix + ".tres"
+	label.add_theme_font_override("font", load(PACKAGE + filename))
 	label.add_theme_font_size_override("font_size", size_value)
 	label.add_theme_color_override("font_color", color_value)
+	if display_style:
+		label.add_theme_color_override("font_outline_color", Color("020712"))
+		label.add_theme_constant_override("outline_size", 2)
+		label.add_theme_color_override("font_shadow_color", Color("020712"))
+		label.add_theme_constant_override("shadow_offset_x", 2)
+		label.add_theme_constant_override("shadow_offset_y", 3)
 	add_child(label)
 
 

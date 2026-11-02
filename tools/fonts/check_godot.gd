@@ -69,6 +69,16 @@ func shape(text: String, font: Font, language: String) -> Array[Dictionary]:
 	return text_server.shaped_text_get_glyphs(line.get_rid())
 
 
+func has_curved_outline(font: FontFile, character: String) -> bool:
+	var rid: RID = font.get_rids()[0]
+	var glyph := text_server.font_get_glyph_index(rid, 32, character.unicode_at(0), 0)
+	var contours := text_server.font_get_glyph_contours(rid, 32, glyph)
+	for point in contours.get("points", []):
+		if point.z == 0.0:
+			return true
+	return false
+
+
 func glyphs_are_present(glyphs: Array[Dictionary], language: String) -> bool:
 	var present := not glyphs.is_empty()
 	for glyph in glyphs:
@@ -141,15 +151,36 @@ func _run() -> void:
 	collect_files(font, all_resources)
 	require(all_resources.size() > 20, "Bundled multilingual fallback chain is incomplete")
 	var primary := font.base_font as FontFile
-	require(primary != null, "Primary face must be a bundled FontFile")
+	require(primary != null, "Primary bubble face must be a bundled FontFile")
 	if primary != null:
+		require(primary.resource_path.ends_with("/NeptuneBubble.ttf"),
+			"The default display font must use Neptune Bubble")
+		require(primary.antialiasing == TextServer.FONT_ANTIALIASING_GRAY,
+			"The bubble font needs smooth grayscale antialiasing")
+		require(has_curved_outline(primary, "O"),
+			"The bubble face needs real curved glyph outlines")
 		for codepoint in range(32, 127):
 			require(primary.has_char(codepoint), "Primary face is missing ASCII U+%04X" % codepoint)
 		var glyphs := shape("BOMBERMAN abc 0123!?", font, "en")
 		glyphs_are_present(glyphs, "primary ASCII")
 		var primary_rids := primary.get_rids()
 		for glyph in glyphs:
-			require(glyph.font_rid in primary_rids, "ASCII selected a fallback instead of original arcade face")
+			require(glyph.font_rid in primary_rids, "ASCII selected a fallback instead of original bubble face")
+	var pixel := load(PACKAGE + "neptune_pixel.tres") as FontVariation
+	require(pixel != null, "Optional pixel font resource failed to load")
+	if pixel != null:
+		var pixel_primary := pixel.base_font as FontFile
+		require(pixel_primary != null, "Optional pixel font is missing its bundled primary face")
+		if pixel_primary != null:
+			require(pixel_primary.resource_path.ends_with("/NeptuneArcade.ttf"),
+				"The optional pixel resource must preserve Neptune Arcade")
+			require(pixel_primary.antialiasing == TextServer.FONT_ANTIALIASING_NONE,
+				"The optional pixel font must preserve crisp unfiltered edges")
+			require(not has_curved_outline(pixel_primary, "O"),
+				"The optional pixel face must preserve its original grid outlines")
+			for codepoint in range(32, 127):
+				require(pixel_primary.has_char(codepoint), "Pixel face is missing ASCII U+%04X" % codepoint)
+			glyphs_are_present(shape("PIXEL HUD Player 01", pixel, "en"), "optional pixel ASCII")
 	for suffix in REGIONS:
 		var locale_data: Array = REGIONS[suffix]
 		var regional := load(PACKAGE + "neptune_arcade_" + suffix + ".tres") as FontVariation
