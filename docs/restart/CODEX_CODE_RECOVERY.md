@@ -25,15 +25,19 @@ does not block this coordinator.
 
 **Further VPS execution, 2 November:** the existing Codex app continued through
 original SH-2 bounds/accumulator functions and original68000 sound code. Resume
-the [latest accepted code619 checkpoint](saturn-code/VPS-CODE-619-CHECKPOINT.md),
+the [latest accepted code625 checkpoint](saturn-code/VPS-CODE-625-CHECKPOINT.md),
 which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
-The latest leaves passed9,136 cases twice per module; the current231 tooling
-tests are separate from that original execution. B934, A3E0, A25E and A2D8
+Dispatcher#623/PR624 and complete returning-command scans#625/PR626 are also
+accepted:18,432 dispatcher cases (including144 retained illegal-vector failures)
+and3,196 complete selected active scans, twice each. The latter cover all eight
+slots using real dispatcher returns; nontrivial handlers remain unresolved.
+The current242 tooling tests are separate from original execution. B934, A3E0, A25E and A2D8
 already have retained results; do not count repeats as new work. The SH-2 task/
 entry helpers listed below remain open.
-Continue unresolved17F2 dispatch/handlers, callers and further modules. The
+Continue original SH-2 record/task leads6B38/6B56/940A/942E from the checkpoint,
+alongside unresolved17F2 handlers, callers and further modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
 

@@ -7,6 +7,13 @@ branch `research/saturn-m68k-active-scan-625`, isolated workspace
 Reconcile current origin/head/base/PR/checks before publication claims. Preserve
 the original restart worktree, coordinator#613/#621, Gemini#487 and newer claims.
 
+Publication: PR626 merged atb92977427eab834db1c9214fc535b13257352b1a,
+tested headeb67e658bd976f356df756173f6c9d441e6ef64c on base48c3456121ccd40bfd61799b9721da5fbc1ce869.
+Required gate41460484523 and provisioning aggregate41460484367 succeeded;
+factory-tool preparation was explicitly nonapplicable, not a new installation.
+Child625 is closed. The all-original-code programme and nontrivial handlers
+remain open.
+
 Original NLSND source SHA256
 f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296,
 sound68000 mapping0 candidate in NetLink lifetime. Execution head
@@ -42,14 +49,21 @@ Next selected-source command, returning to original SH-2 task/scheduler leads:
 
 ```sh
 timeout 60s nice -n 10 python3 \
-  /home/dev/neptune-evidence/code625-20261102/inspect-next-sh2.py
+  /home/dev/neptune-evidence/code625-20261102/inspect-sh2-record-leads.py
 ```
 
-Output625/next-sh2-static-leads.json is static only and checks the accepted
+Output625/next-sh2-record-leads.json is static only and checks the accepted
 20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7 kernel and
-all three pinned decoder/interpreter sources. It selects6B38/940A/942E ranges
+all three pinned decoder/interpreter sources. It selects6B38/6B56/940A/942E ranges
 and referenced literals without treating linear decoding as validated function
-extents. Recover actual caller/return/yield/continuation and bounded memory/stack
+extents. Static6B38 selects stride88 records at060BC190 using a signed low16
+product; nonzero byte+80 leads to long1 at+0, with MACL restored in RTS delay.
+The6B56 caller filters byte+81 and scans18 records with actual6B38 calls.
+Static940A uses16-byte records at060CE060, clears nonzero byte+11 and decrements
+byte060BF4A0;942E calls it for indices1..16. These are static contracts pending
+original execution and natural-role validation. The private next-kernel-plan.json
+records expected boundary/stack/canary questions; do not infer task semantics
+from the historical labels. Recover actual caller/return and bounded memory/stack
 contracts before execution; no natural scheduler semantics assumed. Preserve
 SH-2 register/device boundaries and all unsupported targets. The local prepared
 checkout has the pinned decoder; missing generated decomp/krnl.c is not a reason
