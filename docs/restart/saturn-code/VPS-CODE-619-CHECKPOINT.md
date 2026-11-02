@@ -7,6 +7,13 @@ branch `research/saturn-m68k-setters-619`, workspace
 Fetch current origin without reset, reconcile exact head/base/PR/checks and keep
 original restart untracked work plus other owners intact.
 
+Publication: PR620 merged atab365ac5a67777d971e7e15956f24f2d15eb0752,
+tested head9a04981b28596c24e9ae2934e0c3e092d78ed027 on basebb7836cb83a200aa3a8ba51f45579213d5e341ce.
+Required gate41454877626 and provisioning aggregate41454877538 succeeded;
+factory preparation was explicitly nonapplicable, not a new installation.
+All231 current research tests passed. Original CPU execution is the distinct
+retained evidence below. Child619 is closed; parent programme remains active.
+
 Original SND/XBSND entries51F0 and520E each execute nine instructions through RTS.
 Each separately pinned module passed9,136 cases twice; all six controls reject.
 Both module result rows hash550e7e9776b7444a68d8b140802b1c878fbb811e95e7a61ecdb06afe00964d59.
@@ -37,10 +44,12 @@ Next original-code static command:
 
 ```sh
 timeout 60s nice -n 10 python3 \
-  /home/dev/neptune-evidence/code614-20261102/inspect-command-dispatch.py
+  /home/dev/neptune-evidence/code619-20261102/inspect-dispatch-table.py
 ```
 
-Recover remaining17F2 indexed dispatch/table boundaries before active handler
+Selected output is retained at619/next-dispatch-table-static-leads.json. It covers
+48 indexed landings and1868..1870 returns; zero new original CPU execution.
+Recover actual17F2 indexed dispatch/table behavior before active handler
 execution. Preserve unsupported183E/184A leads; don't treat variable-length table
 entries as uniformly valid functions. Existing long ABI2 may be used only for
 its explicit bounded profile, with exact receipt/guards. Any SCSP handler needs
