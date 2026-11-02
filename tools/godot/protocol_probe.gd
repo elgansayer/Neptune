@@ -13,7 +13,7 @@ func _ready() -> void:
 	api.auth_callback = func(_id: int, _data: PackedByteArray): pass
 	api.peer_authenticating.connect(func(id: int):
 		attempted = true
-		var data := JSON.stringify({"format": "neptune.protocol/1", "versions": [2]}).to_utf8_buffer()
+		var data := JSON.stringify({"format": "neptune.protocol/1", "versions": [3]}).to_utf8_buffer()
 		match mode:
 			"malformed": data = "not JSON".to_utf8_buffer()
 			"invalid": data = JSON.stringify({"format": "neptune.protocol/1", "versions": [true]}).to_utf8_buffer()
@@ -26,7 +26,7 @@ func _ready() -> void:
 			get_tree().quit(1)
 		if mode == "retry":
 			# A later valid offer cannot undo a rejected attempt on this connection.
-			api.send_auth(id, JSON.stringify({"format": "neptune.protocol/1", "versions": [1]}).to_utf8_buffer())
+			api.send_auth(id, JSON.stringify({"format": "neptune.protocol/1", "versions": [2]}).to_utf8_buffer())
 	)
 	api.connected_to_server.connect(func():
 		print("NEPTUNE_PROTOCOL_UNEXPECTED_ADMISSION")

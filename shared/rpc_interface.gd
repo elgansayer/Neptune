@@ -71,10 +71,15 @@ func spawn_bot_request(_personality: String = "BALANCED"):
 func test_farming_spot_broadcast():
 	pass
 
+# 9. Authority-controlled immutable content transfer and readiness.
+@rpc("any_peer", "call_remote", "reliable")
+func content_message(_message: Dictionary):
+	pass
+
 ## Validation function to check RPC configuration
 func validate_rpc_config() -> Dictionary:
 	var config = get_script().get_rpc_config()
-	var expected_count = 14  # Total number of @rpc methods
+	var expected_count = 15  # Total number of @rpc methods
 	var is_valid = config.size() == expected_count
 	
 	return {

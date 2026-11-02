@@ -7,6 +7,8 @@ const Constants = preload("res://shared/constants.gd")
 const GameInstanceScript = preload("res://game_instance.gd")
 const RuntimeConfig = preload("res://shared/runtime_config.gd")
 const ProtocolNegotiation = preload("res://shared/network/protocol_negotiation.gd")
+const ContentDownload = preload("res://shared/network/content_download.gd")
+const PackArchive = preload("res://shared/content/pack_archive.gd")
 
 var peer: ENetMultiplayerPeer
 var auth_service # Will be LocalBackend or PlayFabBackend
@@ -16,6 +18,9 @@ var player_to_game = {} # peer_id -> game_id
 var _initialized = false # Prevent duplicate initialization
 var protocol_gate: Node
 var _server_room_options := {}
+var _content_offer_template := {}
+var _content_archives := {}
+var _pending_content := {} # Account-authenticated peers; never game participants yet.
 
 func _ready():
 	# RPC ownership belongs to the autoload, never a second scene instance.
@@ -102,6 +107,7 @@ func _on_player_connected(peer_id: int):
 
 func _on_player_disconnected(peer_id: int):
 	print("[Server] Peer disconnected: ", peer_id)
+	_clear_content_pending(peer_id)
 	# Clean up player from game if in one
 	if player_to_game.has(peer_id):
 		var game_id = player_to_game[peer_id]
@@ -123,6 +129,13 @@ func set_debug_timescale(timescale: float) -> void:
 # 2. Client-to-Server Auth RPCs
 func authenticate_request(username: String, password: String):
 	var peer_id = multiplayer.get_remote_sender_id()
+	if peer_id <= 1 or not multiplayer.is_server(): return
+	if _pending_content.has(peer_id):
+		_fail_content(peer_id, "content_already_pending")
+		return
+	if player_to_game.has(peer_id):
+		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": "already_admitted"})
+		return
 	print("[Server] *** AUTHENTICATE RPC RECEIVED ***")
 	print("[Server] Authentication attempt from peer ", peer_id, ": ", username)
 	print("[Server] Is server: ", multiplayer.is_server())
@@ -138,6 +151,9 @@ func authenticate_request(username: String, password: String):
 	
 	if result.success:
 		print("[Server] Authentication successful: ", username)
+		if not _content_offer_template.is_empty():
+			_begin_content(peer_id, username)
+			return
 		var admission := quick_start_game(peer_id, username)
 		if admission.accepted:
 			lobby_manager.add_player(peer_id, username)
@@ -255,6 +271,10 @@ func _prepare_shared_game(runtime: Dictionary = {}) -> Dictionary:
 			var refused: Dictionary = new_game.room_setup_result.duplicate(true)
 			new_game.queue_free()
 			return refused
+		var sharing := _prepare_content_offers(new_game)
+		if not sharing.accepted:
+			new_game.queue_free()
+			return sharing
 		active_games[shared_game_id] = new_game
 	return {"accepted": true, "reason": "room_prepared"}
 
@@ -272,12 +292,136 @@ func quick_start_game(peer_id: int, username: String) -> Dictionary:
 		return admission
 	if not game.match_active and game.get_room_capacity().configured:
 		var started: Dictionary = game.start_room_countdown()
-		if not started.accepted:
+		if not started.accepted and started.reason != "content_not_ready":
 			game.remove_player(peer_id)
 			return started
 	player_to_game[peer_id] = shared_game_id
 	print("[Server] Player ", username, " joined shared game. Total players: ", game.players.size())
 	return admission
+
+func _prepare_content_offers(game: Node) -> Dictionary:
+	_content_offer_template.clear()
+	_content_archives.clear()
+	if game.room_pack_paths.is_empty(): return {"accepted": true}
+	var by_identity := {}
+	var total_bytes := 0
+	for path in game.room_pack_paths:
+		var built := PackArchive.build(path)
+		if not built.accepted: return built
+		if not _content_archives.has(built.sha256):
+			total_bytes += built.size_bytes
+			if total_bytes > ContentDownload.MAX_SESSION_BYTES:
+				return {"accepted": false, "reason": "content_session_byte_budget_exceeded", "field": "room_pack_paths", "source": ""}
+		var identity: Dictionary = built.identity
+		var key: String = identity.pack_id
+		by_identity[key] = {"identity": identity.duplicate(true), "sha256": built.sha256, "size_bytes": built.size_bytes}
+		_content_archives[built.sha256] = built.bytes
+	var archives := []
+	for identity in game.room_content_lock.packs:
+		if not by_identity.has(identity.pack_id) or by_identity[identity.pack_id].identity != identity:
+			return {"accepted": false, "reason": "content_archive_selection_mismatch", "field": "room_pack_paths", "source": ""}
+		archives.append(by_identity[identity.pack_id])
+	_content_offer_template = {"type": "offer", "session_id": "0".repeat(64), "lock": game.room_content_lock.duplicate(true),
+		"lock_sha256": game.room_content_lock_sha256, "content_id": game.room_arena_id, "archives": archives}
+	var checked := ContentDownload.validate_offer(_content_offer_template)
+	if not checked.accepted: return checked
+	return {"accepted": true}
+
+func _begin_content(peer_id: int, username: String) -> void:
+	var game = active_games["shared_game"]
+	var capacity: Dictionary = game.get_room_capacity()
+	if _pending_content.size() >= Constants.MAX_MATCH_SEATS or capacity.occupied + _pending_content.size() >= capacity.seats:
+		print("[Server] Player admission refused: room_full")
+		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": "room_full"})
+		return
+	var offer: Dictionary = _content_offer_template.duplicate(true)
+	var random := Crypto.new().generate_random_bytes(32)
+	if random.size() != 32:
+		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": "content_session_random_failed"})
+		return
+	offer.session_id = random.hex_encode()
+	var held: Dictionary = game.set_content_waiting(peer_id, true)
+	if not held.accepted:
+		get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": held.reason})
+		return
+	_pending_content[peer_id] = {"username": username, "session_id": offer.session_id,
+		"deadline": Time.get_ticks_msec() + ContentDownload.TIMEOUT_MSEC, "offsets": {}}
+	get_node("/root/ClientMain").rpc_id(peer_id, "content_message", offer)
+	print("[Server] Content offered before admission: ", peer_id)
+
+func content_message(message: Dictionary) -> void:
+	var peer_id := multiplayer.get_remote_sender_id()
+	if not multiplayer.is_server() or peer_id <= 1 or not _pending_content.has(peer_id): return
+	var pending: Dictionary = _pending_content[peer_id]
+	if message.get("session_id") != pending.session_id:
+		_fail_content(peer_id, "stale_content_session")
+		return
+	if Time.get_ticks_msec() >= pending.deadline:
+		_fail_content(peer_id, "content_download_timeout")
+		return
+	match message.get("type"):
+		"cancel":
+			if not ContentDownload.exact_keys(message, ["type", "session_id"]):
+				_fail_content(peer_id, "invalid_content_cancel")
+			else:
+				_fail_content(peer_id, "content_cancelled")
+		"request":
+			if not ContentDownload.exact_keys(message, ["type", "session_id", "sha256", "offset"]) or not message.get("sha256") is String or not _content_archives.has(message.sha256) or not message.get("offset") is int:
+				_fail_content(peer_id, "invalid_content_request")
+				return
+			var bytes: PackedByteArray = _content_archives[message.sha256]
+			var offset: int = message.offset
+			if offset != pending.offsets.get(message.sha256, 0) or offset < 0 or offset >= bytes.size():
+				_fail_content(peer_id, "unexpected_content_request_offset")
+				return
+			var end := mini(offset + ContentDownload.CHUNK_BYTES, bytes.size())
+			pending.offsets[message.sha256] = end
+			get_node("/root/ClientMain").rpc_id(peer_id, "content_message", {"type": "chunk", "session_id": pending.session_id,
+				"sha256": message.sha256, "offset": offset, "data": bytes.slice(offset, end)})
+		"ready":
+			if not ContentDownload.exact_keys(message, ["type", "session_id", "lock_sha256"]) or message.get("lock_sha256") != _content_offer_template.lock_sha256:
+				_fail_content(peer_id, "content_lock_mismatch")
+				return
+			for hash in pending.offsets:
+				if pending.offsets[hash] != _content_archives[hash].size():
+					_fail_content(peer_id, "content_transfer_incomplete")
+					return
+			var username: String = pending.username
+			_clear_content_pending(peer_id, false)
+			var admission := quick_start_game(peer_id, username)
+			if admission.accepted:
+				lobby_manager.add_player(peer_id, username)
+				get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": true, "username": username, "room": active_games["shared_game"].get_room_capacity()})
+				print("[Server] Content ready; player admitted: ", peer_id)
+			else:
+				get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": admission.reason})
+			_resume_content_room()
+		_:
+			_fail_content(peer_id, "invalid_content_message")
+
+func _process(_delta: float) -> void:
+	for peer_id in _pending_content.keys():
+		if Time.get_ticks_msec() >= _pending_content[peer_id].deadline:
+			_fail_content(peer_id, "content_download_timeout")
+
+func _clear_content_pending(peer_id: int, resume: bool = true) -> void:
+	if not _pending_content.has(peer_id): return
+	_pending_content.erase(peer_id)
+	if active_games.has("shared_game"):
+		active_games["shared_game"].set_content_waiting(peer_id, false)
+	if resume: _resume_content_room()
+
+func _resume_content_room() -> void:
+	if active_games.has("shared_game"):
+		var game = active_games["shared_game"]
+		if not game.match_active and not game.players.is_empty(): game.start_room_countdown()
+
+func _fail_content(peer_id: int, reason: String) -> void:
+	if not _pending_content.has(peer_id): return
+	var session_id: String = _pending_content[peer_id].session_id
+	_clear_content_pending(peer_id)
+	get_node("/root/ClientMain").rpc_id(peer_id, "content_message", {"type": "failure", "session_id": session_id, "reason": reason})
+	get_node("/root/ClientMain").rpc_id(peer_id, "auth_response", {"success": false, "error": reason})
 
 # (no-op) Debug forwarding not required; broadcast happens from AI tasks via ClientMain
 

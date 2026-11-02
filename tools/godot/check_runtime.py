@@ -12,6 +12,7 @@ import time
 
 from run_bot_tests import ANSI, ERROR, ROOT
 from check_room_capacity import run_capacity_checks
+from check_content_sharing import run_content_sharing_checks
 
 
 @contextmanager
@@ -50,7 +51,9 @@ def main():
     parser.add_argument("--godot", required=True)
     parser.add_argument("--evidence", type=Path, default=ROOT / ".godot/runtime-evidence")
     parser.add_argument("--graphical", action="store_true", help="Also require an Xvfb desktop client")
-    parser.add_argument("--room-only", action="store_true", help="Run only room capacity probes after import")
+    selection = parser.add_mutually_exclusive_group()
+    selection.add_argument("--room-only", action="store_true", help="Run only room capacity probes after import")
+    selection.add_argument("--content-only", action="store_true", help="Run only clean-client content sharing probes after import")
     parser.add_argument("--process-timeout", type=float, default=30.0,
                         help="Bound each engine process, including graphical driver startup (5..60 seconds)")
     args = parser.parse_args()
@@ -89,6 +92,9 @@ def main():
         raise SystemExit("FAIL: import; inspect runtime evidence")
     if args.room_only:
         run_capacity_checks(base, env, args.evidence, bounded)
+        return
+    if args.content_only:
+        run_content_sharing_checks(base, env, args.evidence, bounded)
         return
     with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as reservation:
         reservation.bind(("127.0.0.1", 0))
@@ -130,7 +136,7 @@ def main():
                 else:
                     code, text = bounded(name, command)
                 if (code or ERROR.search(text) or "NEPTUNE_RUNTIME_CONNECTED" not in text
-                        or "NEPTUNE_PROTOCOL_SELECTED=1" not in text
+                        or "NEPTUNE_PROTOCOL_SELECTED=2" not in text
                         or "=== Bomberman Server Starting ===" in text):
                     raise SystemExit("FAIL: " + name + "; inspect evidence")
                 print("PASS:", name, "connected through actual ClientMain")
@@ -188,7 +194,8 @@ def main():
             raise SystemExit("FAIL: invalid configuration must exit 2")
     print("PASS: single server owner, non-zero bind failure and invalid-config checks")
     run_capacity_checks(base, env, args.evidence, bounded)
-    print("Native connection/startup evidence only; no match, browser or parity claim.")
+    run_content_sharing_checks(base, env, args.evidence, bounded)
+    print("Native startup, room and pack-sharing evidence; browser transport and Saturn fidelity remain unverified.")
 
 
 if __name__ == "__main__":
