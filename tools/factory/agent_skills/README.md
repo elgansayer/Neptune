@@ -13,6 +13,79 @@ anthropics/skills. REA instructions come from the published rea-agents 6.8.0
 package, rather than repository main. Sources are acquired without executing
 their hooks. The cache retains upstream licences, references and helper scripts.
 
+## Shared setup across harnesses and projects
+
+All 60 skills can be installed globally for the current user through the pinned
+Vercel `skills` CLI 1.7.4. The reviewed registry contains 79 harnesses, of which
+77 support global skill directories. Global scope is per operating-system user
+and host: run preparation once for each worker user/image, reusing the configured
+shared cache. Every project can use the shared library;
+Neptune's own workflow activates only for Neptune work. This does not install
+harness applications or start authenticated/model sessions.
+
+From this tooling checkout, run in the trusted preparation environment:
+
+```sh
+python3 tools/factory/agent_skills/setup.py --global --all-harnesses --download
+python3 tools/factory/agent_skills/setup.py --global --all-harnesses --verify
+```
+
+Use `--cache /shared/tool-cache/agent-skills` to share the prepared sources and
+CLI across checkouts. The default is the current user's
+`~/.local/share/agent-skills`; `AGENT_SKILLS_CACHE` can select another location.
+Existing HOME, CODEX_HOME and client configuration variables are preserved.
+The setup installs versioned, project-independent commands in `<cache>/bin`:
+
+```sh
+/shared/tool-cache/agent-skills/bin/skills-setup --verify
+/shared/tool-cache/agent-skills/bin/skills-setup --project /path/to/another/repo
+/shared/tool-cache/agent-skills/bin/skills list --global --json
+```
+
+These commands use the shared source catalogue and CLI from any working directory.
+Source/lock updates get a new bootstrap generation; the launcher does not depend
+on a particular project checkout remaining available.
+`--rea-command /absolute/path/to/rea` also registers the already installed REA
+server globally with Claude Code, current Antigravity and installed Codex.
+Subsequent runs retain that launcher from the setup receipt.
+
+The underlying standard skill command is:
+
+```sh
+npx --yes skills@1.7.4 add /absolute/path/to/verified/skills --global --skill '*' --agent codex claude-code antigravity antigravity-cli --yes --json
+```
+
+`setup.py` prepares the verified source directory before running that command,
+passes all 77 global-capable harness IDs, checks all selected skills, and verifies
+actual paths rather than relying on the CLI's success message. It bridges modern Antigravity's `.gemini/config/skills`
+and older helpers' Codex skill paths without changing the upstream instructions.
+The same aliases work for Claude, Antigravity, Codex, Gemini CLI, OpenCode, Pi,
+OpenHands and the other global-capable harnesses in `harnesses.json`.
+
+Eve and Promptscript are project-only in the upstream registry. Do not claim a
+global installation for them. Version 1.7.4's bare `--all --global` also selects
+these unsupported targets and exits nonzero; the setup filters them explicitly.
+For isolated workers or project-local discovery,
+repeat `--project /path/to/repo` to add `.agents/skills`, `.claude/skills`, and the
+project MCP files where applicable. Eve and Promptscript receive their own
+project skill directories in the selected project. Global installation never
+replaces a project's existing local instructions or same-name skills with
+different bytes.
+Foreign skill registrations and foreign REA entries are preserved and reported.
+
+The setup saves existing JSON before changing it and preserves unrelated MCP
+servers, settings and environment entries. Client trust/approval settings are not
+changed. Reload the harness after preparation and use its normal workspace/MCP
+approval controls. A successful MCP handshake is separate from proof that an
+installed desktop client has loaded the tools.
+
+Sources checked 2 November 2026:
+[skills CLI](https://github.com/vercel-labs/skills),
+[Claude skill discovery](https://code.claude.com/docs/en/skills),
+[Claude MCP](https://code.claude.com/docs/en/mcp),
+[Antigravity skills](https://antigravity.google/docs/skills), and
+[Antigravity MCP](https://antigravity.google/docs/mcp).
+
 ## Prepare once, verify offline
 
 Run the recipe from a coordinator-trusted checkout as an unprivileged preparation
