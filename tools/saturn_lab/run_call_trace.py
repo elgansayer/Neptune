@@ -222,7 +222,7 @@ def run(args):
 
 def decoded_trace(value):
     records = []
-    if value.get("schema") != "neptune.original-master-call-trace.v1" or not isinstance(value.get("records"), list):
+    if value.get("schema") != "neptune.original-master-call-trace.v2" or not isinstance(value.get("records"), list):
         raise ValueError("Missing versioned original-call records")
     if not 2 <= len(value["records"]) <= observer.CAPACITY:
         raise ValueError("Empty/oversized original-call records")

@@ -70,7 +70,7 @@ def prepare(source, header=None):
         (source / name).write_bytes(data)
     return {"schema": "neptune.call-trace-patch.v1", "reference_revision": REVISION,
             "source_hashes": SOURCES, "patched_hashes": {name: digest(data) for name, data in outputs.items()},
-            "observer_abi": 1, "cpu": "master SH-2 interpreter only",
+            "observer_abi": 2, "cpu": "master SH-2 interpreter only",
             "entry": "0x0600b934", "maximum_pairs": 64,
             "instruction_pc": "normal pipeline PC-4; delay slots never labelled PC-4",
             "game_bytes_modified": False}

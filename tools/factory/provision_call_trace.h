@@ -15,7 +15,7 @@
 #define NEPTUNE_TRACE_EXPORT
 #endif
 
-enum { NEPTUNE_TRACE_ABI = 1, NEPTUNE_TRACE_RECORDS = 128, NEPTUNE_TRACE_STEP_LIMIT = 4096 };
+enum { NEPTUNE_TRACE_ABI = 2, NEPTUNE_TRACE_RECORDS = 128, NEPTUNE_TRACE_STEP_LIMIT = 4096 };
 typedef struct {
  uint32_t sequence, kind, cpu, frame, pc;
  int32_t timestamp;
@@ -27,12 +27,14 @@ typedef struct {
 typedef struct {
  uint32_t abi, record_bytes, capacity, count, dropped, errors;
  uint32_t pending, completed, active, frame_known, frame, step_limit;
+ uint32_t master_dispatches;
 } NeptuneCallStatus;
 
 static struct {
  NeptuneCallRecord records[NEPTUNE_TRACE_RECORDS];
  uint32_t count, dropped, errors, pending, completed, active;
  uint32_t frame_known, frame, requested, return_pc, steps, saw_rts, saw_restore;
+ uint32_t master_dispatches;
 } neptune_call_trace;
 
 static void neptune_call_error(void)
@@ -92,6 +94,7 @@ NEPTUNE_TRACE_EXPORT uint32_t neptune_call_status(NeptuneCallStatus* out, uint32
  out->frame_known = neptune_call_trace.frame_known;
  out->frame = neptune_call_trace.frame;
  out->step_limit = NEPTUNE_TRACE_STEP_LIMIT;
+ out->master_dispatches = neptune_call_trace.master_dispatches;
  return 1;
 }
 
@@ -143,6 +146,12 @@ static INLINE void neptune_call_step(SH7095* z)
  uint32_t operation, pc;
  if(!neptune_call_trace.active)
   return;
+ if(neptune_call_trace.master_dispatches == UINT32_MAX)
+ {
+  neptune_call_error();
+  return;
+ }
+ neptune_call_trace.master_dispatches++;
  if(!neptune_call_trace.frame_known || setting_sh2_jit)
  {
   neptune_call_error();

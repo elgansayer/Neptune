@@ -17,7 +17,7 @@ class Record(C.Structure):
 class Status(C.Structure):
     _fields_ = [(name, C.c_uint32) for name in
                 ("abi", "record_bytes", "capacity", "count", "dropped", "errors",
-                 "pending", "completed", "active", "frame_known", "frame", "step_limit")]
+                 "pending", "completed", "active", "frame_known", "frame", "step_limit", "master_dispatches")]
 
 
 def serialise(record):
@@ -26,12 +26,13 @@ def serialise(record):
 
 
 def validate(records, status):
-    if (status.abi != 1 or status.record_bytes != C.sizeof(Record) or
+    if (status.abi != 2 or status.record_bytes != C.sizeof(Record) or
             status.capacity != CAPACITY or status.step_limit != STEP_LIMIT):
         raise ValueError("Unsupported trace ABI/layout")
     if (status.active or status.dropped or status.errors or status.pending or
             not status.frame_known or not 1 <= status.completed <= CAPACITY // 2 or
-            status.count != 2 * status.completed or len(records) != status.count):
+            status.count != 2 * status.completed or len(records) != status.count or
+            status.master_dispatches < 15 * status.completed):
         raise ValueError("Empty, incomplete, ambiguous or overflowed call trace")
     for index in range(0, len(records), 2):
         before, after = records[index:index + 2]
@@ -52,7 +53,7 @@ def validate(records, status):
                 any(getattr(before, name) != getattr(after, name) for name in ("gbr", "vbr", "mach", "macl")) or
                 after.sr != expected_sr):
             raise ValueError("Natural call SP/MACL/register/condition preservation mismatch")
-    return {"schema": "neptune.original-master-call-trace.v1", "entry": f"0x{ENTRY:08x}",
+    return {"schema": "neptune.original-master-call-trace.v2", "entry": f"0x{ENTRY:08x}",
             "cpu": "master SH-2 interpreter", "pairs": status.completed,
             "timestamp_unit": "signed core SH-2 scheduler timestamps, rebased each emulated frame",
             "dispatch_steps": "master hook dispatches, not hardware cycles; may include interruption",
@@ -78,7 +79,7 @@ class Trace:
         except AttributeError as error:
             raise ValueError("Core has no supported bounded-call observer") from error
         status = self.status()
-        if status.abi != 1 or status.record_bytes != C.sizeof(Record) or status.capacity != CAPACITY:
+        if status.abi != 2 or status.record_bytes != C.sizeof(Record) or status.capacity != CAPACITY:
             raise ValueError("Unsupported bounded-call observer ABI")
 
     def status(self):

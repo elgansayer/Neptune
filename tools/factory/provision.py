@@ -195,7 +195,7 @@ def smoke(tool, binary, runner, root):
         if tool == "beetle-saturn-call-trace":
             observer = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_call_trace_abi.py"),
                                               "--probe-core", str(binary)], binary.parent, 30))
-            if (observer.get("abi") != 1 or observer.get("record_bytes") != 120 or
+            if (observer.get("abi") != 2 or observer.get("record_bytes") != 120 or
                     observer.get("rejected_invalid_entry_budget_and_frame") is not True):
                 raise ProvisionError("smoke_failed", "Missing actual bounded observer ABI/fence result")
             return {"libretro": result, "observer": observer}
@@ -242,7 +242,7 @@ def install(tool, recipe, payload, work, runner, root):
     if tool == "beetle-saturn-call-trace":
         patched = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_call_trace.py"),
                                         "--source", str(source)], work, 30))
-        if patched.get("reference_revision") != actual or patched.get("observer_abi") != 1:
+        if patched.get("reference_revision") != actual or patched.get("observer_abi") != 2:
             raise ProvisionError("source_mismatch", "Observer patch identity mismatch")
         write_json(payload / "call-trace-build.json", patched)
     runner.run(["make", "-j1", "platform=unix", "LTO=0", "HAVE_OPENGL=0", "HAVE_CHD=1"], source, 1200)
