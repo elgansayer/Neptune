@@ -291,8 +291,15 @@ def owned_smoke(emu):
     actual=observe(literal,emu,MARK,regions,{**before,'r1':0x06006B98})
     if (actual['status']!='returned' or actual['registers']['r0']!=0x11223344 or
             actual['events']!=[[1,0x06006B98,4,0x11223344]]):raise ValueError('Owned literal read failed')
+    writable=bytearray(data);writable[offset:offset+2]=bytes.fromhex('2102')
+    destination=0x00204000
+    actual=observe(writable,emu,MARK,regions+[(destination,bytes([0xCD])*4)],{**before,'r1':destination})
+    if (actual['status']!='returned' or actual['events']!=[[2,destination,4,before['r0']]] or
+            actual['regions_after'][-1]!=before['r0'].to_bytes(4,'big') or
+            not actual['original_unaffected_bytes_equal']):raise ValueError('Owned controlled write failed')
     if observe(data,emu,MARK,regions,before)!=good:raise ValueError('Owned recovery after failures differs')
     return {'original_game_bytes_executed':False,'positive_instructions':3,'owned_literal_read':True,
+            'owned_controlled_write':True,
             'failure_controls':controls,'fresh_after_failure':True,'native_cpu_sources_unchanged':True}
 
 
