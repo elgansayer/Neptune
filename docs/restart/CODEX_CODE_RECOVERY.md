@@ -30,8 +30,9 @@ which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
 The latest leaves passed9,136 cases twice per module; the current231 tooling
-tests are separate from that original execution. Earlier first-action commands
-and memory candidates below are historical leads, not work to count again.
+tests are separate from that original execution. B934, A3E0, A25E and A2D8
+already have retained results; do not count repeats as new work. The SH-2 task/
+entry helpers listed below remain open.
 Continue unresolved17F2 dispatch/handlers, callers and further modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
