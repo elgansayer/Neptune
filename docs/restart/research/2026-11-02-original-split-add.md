@@ -121,7 +121,7 @@ checks do not replace the original host runs; exact-head/current-base CI remains
 the publication gate.
 
 Static neighboring tail-call leads at `0x0600A2AC`, `0x0600A2D4`,
-`0x0600A326`, `0x0600A350` and their scale/sign-extension wrappers remain separate
+`0x0600A326`, `0x0600A34E` and their scale/sign-extension wrappers remain separate
 untested functions. Natural callers, gameplay role, timing, independent CPU and
 Godot state/pixel/audio parity remain open. Next examine the task/entry helpers
 `0x06006B38`/`0x0600940A`/`0x0600942E`, then expand loader/dispatch and sound
