@@ -118,7 +118,7 @@ class ProvisionTests(unittest.TestCase):
         self.assertEqual(report["kind"], "smoke_failed")
 
     def test_interrupted_staging_never_counts_as_ready(self):
-        self.cache.mkdir()
+        self.cache.mkdir(mode=0o700)
         orphan = self.cache / ".prepare-beetle-saturn-interrupted"
         orphan.mkdir()
         (orphan / "mednafen_saturn_libretro.so").write_bytes(b"partial")
@@ -128,13 +128,28 @@ class ProvisionTests(unittest.TestCase):
         self.assertTrue(orphan.exists())  # Retention owns old stages, not arbitrary deletion.
 
     def test_concurrent_installer_is_requeued_without_duplicate_work(self):
-        self.cache.mkdir()
+        self.cache.mkdir(mode=0o700)
         with (self.cache / "beetle-saturn.lock").open("a") as lock:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             with self.assertRaisesRegex(p.ProvisionError, "Another installer"):
                 self.ensure()
         self.assertEqual(self.installs, 0)
         self.assertEqual(json.loads((self.home / "first/report.json").read_text())["kind"], "busy")
+
+    def test_writable_by_other_users_cache_is_rejected_before_any_work(self):
+        self.cache.mkdir(mode=0o700)
+        for mode in (0o720, 0o702):
+            with self.subTest(mode=oct(mode)):
+                self.cache.chmod(mode)
+                name = "unsafe-%o" % mode
+                with self.assertRaisesRegex(p.ProvisionError, "not group/world writable"):
+                    self.ensure(name)
+                report = json.loads((self.home / name / "report.json").read_text())
+                self.assertEqual(report["kind"], "unsafe_path")
+                self.assertEqual(report["conclusion"], "failure")
+                self.assertEqual(self.installs, 0)
+                self.assertEqual(self.probes, 0)
+                self.assertEqual(list(self.cache.iterdir()), [])
 
     def test_unknown_tool_requests_recipe_without_executing_issue_text(self):
         with self.assertRaises(p.ProvisionError) as caught:
