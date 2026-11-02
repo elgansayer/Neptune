@@ -1,0 +1,231 @@
+{
+  "controlled_data": {
+    "address": "0x60c0290",
+    "bytes": 32,
+    "carved_out_of_original_kernel_extent": true,
+    "category_byte": "0x60c029c",
+    "natural_contents": false,
+    "slot_byte": "0x60c029d"
+  },
+  "controlled_stack": {
+    "caller_frame_remaining_at_stop_bytes": 24,
+    "caller_return_observed": false,
+    "initial_sp": "0x60ffff0",
+    "macl_spill_below_frame_bytes": 4,
+    "mapped_bytes": 64
+  },
+  "each": {
+    "cases": 65536,
+    "input_pairs_sha256": "281f79f89f0121c31db2bea5d7151db246349b25f5901c114505c18bfaa50ba1",
+    "instruction_total": 3403264,
+    "observations_sha256": "4a5805a83eccfafc5b59582d7babe3509a67b2d7194364022377d28348310ec7",
+    "original_code_and_unaffected_data_equal": true,
+    "path_counts": {
+      "50": 2304,
+      "52": 63232
+    },
+    "reset_cases": 63232
+  },
+  "entry": "0x600bac4",
+  "experiment": "EXP-SAT-CODE-PAIRED-CALLER-630",
+  "fresh_processes": 2,
+  "game": "USA MK-81070 V1.003",
+  "harness_commit": "43190aee78a595586e7c1c484c6a9adfdbf37764",
+  "instruction_controls": [
+    {
+      "address": "0x600bac6",
+      "altered_sha256": "ebf43975dabf4d4e4a35cc17db4801671ab2065fcf1f7ed272135afc4fbdc0e3",
+      "name": "threshold_10",
+      "reason": "Caller prefix registers mismatch at input (9,255)",
+      "rejected": true
+    },
+    {
+      "address": "0x600badc",
+      "altered_sha256": "8c2bf3a8e29218c046ec8283904571e35e520ec99d93cbb15dc625659a78b553",
+      "name": "reversed_reset_branch",
+      "reason": "Caller prefix registers mismatch at input (8,255)",
+      "rejected": true
+    },
+    {
+      "address": "0x600bae2",
+      "altered_sha256": "924a7d3900ae47b48cec37a4ee073a574bcac2663568a5547101c86c9103170b",
+      "name": "missing_slot_reset",
+      "reason": "Caller prefix registers mismatch at input (9,255)",
+      "rejected": true
+    },
+    {
+      "address": "0x600baec",
+      "altered_sha256": "004040c271805da726234f422dff27b8f6887b961b5cb6c6acc52a21d449cda3",
+      "name": "changed_first_argument_delay",
+      "reason": "Caller prefix registers mismatch at input (0,0)",
+      "rejected": true
+    },
+    {
+      "address": "0x600b98a",
+      "altered_sha256": "6453bfd2d097ace00e4d49ac3ec7460c17e371c4ced73308e2ed1946736f888c",
+      "name": "changed_second_base",
+      "reason": "Caller prefix registers mismatch at input (8,255)",
+      "rejected": true
+    }
+  ],
+  "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+  "interpreter_sources": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "isolation": {
+    "address_space_bytes": 1073741824,
+    "cpu_seconds_per_process": 150,
+    "inputs_code_and_dependency": "read-only",
+    "network": "offline namespace, loopback only",
+    "provider_calls": 0,
+    "provider_credentials_broker_and_signing_authority": "hidden",
+    "report_limit_bytes": 2097152,
+    "wall_seconds_per_process": 180
+  },
+  "issue": 630,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "limitations": [
+    "No new natural-game capture or table dereference",
+    "No established table/gameplay meaning",
+    "No campaign/battle, timing, hardware or Godot parity proof",
+    "Constructed writable data/stack; shared interpreter lineage",
+    "Not whole-program recovery"
+  ],
+  "prefix_stop": "0x600bafa",
+  "prior_trace_crosscheck": {
+    "arguments": [
+      0,
+      0
+    ],
+    "compatible": true,
+    "does_not_establish_prior_pre_reset_globals": true,
+    "first_result": "0x207f74",
+    "full_prefix_naturally_observed": false,
+    "prior_frame": 34213,
+    "prior_return_context": "0x600baee",
+    "prior_trace_sha256": "c8dda8b2cb04166b8ad96f54fd916299364bf046c25dd9ae3034a0ecac937194",
+    "report_sha256": "19624979a396ffb235e31f5401f3c3e4557759fe4d950a91655dcf6d45630620",
+    "scope": "derived cross-check against accepted natural helper pair, not a new natural capture",
+    "second_helper_naturally_observed": false
+  },
+  "probe_sha256": "ff512fb5a0e8d63c92066474d581963569f62e453bfc6483e499b07ea7ae00d5",
+  "recovery": "one bounded read-only admission wait, then one fresh original-002 attempt through unchanged shared gate; no production reservation clearing",
+  "report_sha256": "19624979a396ffb235e31f5401f3c3e4557759fe4d950a91655dcf6d45630620",
+  "retained_failure": "original-001:180-second admission timeout behind live existing factory work; no original instruction execution",
+  "samples": [
+    {
+      "category": 0,
+      "first_pointer": 2129780,
+      "instructions": 50,
+      "second_pointer": 101396676,
+      "slot": 0
+    },
+    {
+      "category": 0,
+      "first_pointer": 2131148,
+      "instructions": 50,
+      "second_pointer": 101396820,
+      "slot": 9
+    },
+    {
+      "category": 0,
+      "first_pointer": 2168540,
+      "instructions": 50,
+      "second_pointer": 101400756,
+      "slot": 255
+    },
+    {
+      "category": 8,
+      "first_pointer": 2141940,
+      "instructions": 50,
+      "second_pointer": 101397956,
+      "slot": 0
+    },
+    {
+      "category": 8,
+      "first_pointer": 2143308,
+      "instructions": 50,
+      "second_pointer": 101398100,
+      "slot": 9
+    },
+    {
+      "category": 8,
+      "first_pointer": 2180700,
+      "instructions": 50,
+      "second_pointer": 101402036,
+      "slot": 255
+    },
+    {
+      "category": 9,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 0
+    },
+    {
+      "category": 9,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 9
+    },
+    {
+      "category": 9,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 255
+    },
+    {
+      "category": 128,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 0
+    },
+    {
+      "category": 128,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 9
+    },
+    {
+      "category": 128,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 255
+    },
+    {
+      "category": 255,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 0
+    },
+    {
+      "category": 255,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 9
+    },
+    {
+      "category": 255,
+      "first_pointer": 2129780,
+      "instructions": 52,
+      "second_pointer": 101396676,
+      "slot": 255
+    }
+  ],
+  "schema": "neptune.original-table-caller-evidence.v1",
+  "scope": "all constructed byte inputs; original prefix and two complete helpers; no caller return",
+  "seconds": [
+    43.292461276985705,
+    44.41961253155023
+  ],
+  "status": "accepted original-byte experiment; source PR gates separate"
+}
