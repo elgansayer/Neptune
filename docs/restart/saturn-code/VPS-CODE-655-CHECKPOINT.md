@@ -60,6 +60,25 @@ own180-second lease,60-second/nice10, downward2GiB AS; own lease released.
 
 ## Resume implementation and further original execution
 
+The [initial real caller-prefix result](../evidence/2026-11-02-first-task-caller-prefix.json)
+now executes original623A→89C8→89AC to89FC twice, identical full reports.
+It reuses actual native623A registers/128-byte stack snapshot, with104 bytes of
+constructed globals completely overwritten before use.130 original instructions
+(127 within89C8's prefix),35 writes and6 literal reads match independent exact
+register/SR/PR/MAC/PC/delay/transaction/scalar-memory expectations. All globals,
+savedR14/PR/local stack words, readonly canaries and other source bytes agree.
+Real89AC returns to89FC; parent89C8 has **not** returned and no allocator is run.
+
+Old128 guard actually refused at128 executed/129 attempted instructions before
+RTS89BE; retain the exact partial state. The unchanged accepted1024 profile ran
+the caller with a smaller explicit144 budget. No guard source or default was
+broadened. A disposable MOV0 control also reaches89FC in130 and is rejected
+semantically, not by budget. Actual evidence/source:
+`.../655/caller-prefix-preliminary-4lon_b6r/`,
+`/home/dev/neptune-evidence/code655-20261102/probe-caller-prefix-preliminary.py`
+and its supervised runner. Scope remains one constructed-memory prefix case,
+not broad ABI coverage, natural allocator state or complete89C8.
+
 ```sh
 python3 /home/dev/neptune-evidence/code649-20261102/inspect-next-first-task.py
 ```
@@ -75,8 +94,8 @@ explicit writable high-RAM regions; no new interpreter or callee stubs.
 pointer words to00200000,12 halfwords to0, and calls real89AC. All104 global
 bytes are contiguous060BD8C4..060BD92B; keep neighbors readonly. Its stack
 prologue savesR14/PR and allocates four bytes; local holds060BD914. Source
-predicts127 executed instructions from89C8 to89FC, or130 from real623A's
-MOV/JSR/NOP prefix; these counts still need original execution. Preserve128
+predicted127 executed instructions from89C8 to89FC, or130 from real623A's
+MOV/JSR/NOP prefix; the actual diagnostic now confirms those counts. Preserve128
 guard and retain an actual short refusal before selecting a separate already
 accepted bounded profile. Use original calls and exact per-stage memory/register
 continuity if staging. Expected memory model must be independent of opcode
