@@ -1,0 +1,94 @@
+{
+  "admission_attempt": {
+    "configured_shared_limit": 3,
+    "foreign_owner_preserved": true,
+    "original_game_bytes_executed": false,
+    "own_lease_seconds": 180,
+    "report_sha256": "ed7f04e44ef1057a08c1d6d8c51ee8265387cccaa841f8985b5776b38fc6d6dd",
+    "status": "host-capacity-unavailable",
+    "wait_seconds": 120
+  },
+  "ci": {
+    "adapter_job": 125345240231,
+    "artifact_id": 13151056579,
+    "artifact_sha256": "3555577d0fe076aaaa65ea366536314a0d74c7a5ad77f595eab92aa89869a466",
+    "catalogue_tests": 14,
+    "owned_report": {
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "original_game_bytes_executed": false,
+      "owned_smoke": {
+        "failure_controls": {
+          "cache_alias_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unmapped_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "unmapped_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "native_cpu_sources_unchanged": true,
+        "original_game_bytes_executed": false,
+        "owned_controlled_write": true,
+        "owned_literal_read": true,
+        "positive_instructions": 3
+      },
+      "probe_sha256": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+      "schema": "neptune.owned-sh2-record-adapter.v1"
+    },
+    "research_tooling_tests": 248,
+    "run": 41465522341,
+    "tooling_job": 125345239718
+  },
+  "limitations": [
+    "All function/caller byte and register contracts are static hypotheses pending original execution",
+    "Source-only CI uses owned synthetic bytes; zero original game instructions",
+    "Draft research PR631 remains open; no new recovered/verified original function counted",
+    "Full all-original-code programme remains active, incomplete"
+  ],
+  "original_game_bytes_executed": false,
+  "original_probe_families_executed": 0,
+  "planned_case_counts": {
+    "clear": 4072,
+    "clear-all": 10240,
+    "mark": 2298,
+    "mark-all": 2112
+  },
+  "planned_total_cases_per_complete_run": 18722,
+  "schema": "neptune.sh2-record-preparation-evidence.v1",
+  "source_head": "826520bb5d22fa22f441de8f610e34cb5c20d692",
+  "status": "source-only-smoke-passed-original-admission-pending"
+}

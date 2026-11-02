@@ -25,7 +25,7 @@ does not block this coordinator.
 
 **Further VPS execution, 2 November:** the existing Codex app continued through
 original SH-2 bounds/accumulator functions and original68000 sound code. Resume
-the [latest accepted code625 checkpoint](saturn-code/VPS-CODE-625-CHECKPOINT.md),
+the [latest code629 checkpoint](saturn-code/VPS-CODE-629-CHECKPOINT.md),
 which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
@@ -33,11 +33,13 @@ Dispatcher#623/PR624 and complete returning-command scans#625/PR626 are also
 accepted:18,432 dispatcher cases (including144 retained illegal-vector failures)
 and3,196 complete selected active scans, twice each. The latter cover all eight
 slots using real dispatcher returns; nontrivial handlers remain unresolved.
-The current242 tooling tests are separate from original execution. B934, A3E0, A25E and A2D8
-already have retained results; do not count repeats as new work. The SH-2 task/
-entry helpers listed below remain open.
-Continue original SH-2 record/task leads6B38/6B56/940A/942E from the checkpoint,
-alongside unresolved17F2 handlers, callers and further modules. The
+Kernel-record#629 now executes6B38/6B56/940A/942E through complete returns,
+18,722 cases twice, including all18/16-record caller paths. Its253 current tooling
+tests are separate from the original reports. B934, A3E0, A25E and A2D8 also
+have retained results; do not count repeats as new work. Natural roles and
+caller/runtime validation remain open. Continue the original6B9C record-delta
+path and explicit RAM alias question from the checkpoint, alongside unresolved
+17F2 handlers, callers and further modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
 

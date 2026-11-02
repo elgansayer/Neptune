@@ -1,0 +1,529 @@
+{
+  "cases_per_complete_run": 18722,
+  "families": {
+    "clear": {
+      "adapter_sha256": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+      "cases": 4072,
+      "cases_by_kind": {
+        "clear": 4072
+      },
+      "cpu": "sh2",
+      "event_count_range": [
+        0,
+        6
+      ],
+      "experiment": "EXP-SAT-CODE-016",
+      "instruction_controls": {
+        "counter_increment_instead_of_decrement": {
+          "mutated_kernel_sha256": "aa5818587f62f030698687871ac8866c5e17e52eec22c58c96f530e139383307",
+          "pc": 100701222,
+          "reasons": [
+            "Register/PC/SR/MACL/PR result differs"
+          ],
+          "rejected": 61,
+          "tested": 65
+        },
+        "missing_slot_flag_clear": {
+          "mutated_kernel_sha256": "3d4aa43c48c84e9e30387ad8875bcc0c02c918889472c0cd0047b727f5195e63",
+          "pc": 100701216,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 61,
+          "tested": 65
+        }
+      },
+      "instruction_count_range": [
+        4,
+        18
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed records/global byte/registers; no natural task/scheduler/gameplay role",
+        "Complete declared18/16-record callers, not all machine states or all kernel code",
+        "Pinned CPU-only interpreter, no hardware/device/timing/independent-engine validation",
+        "Whole-program/function/dynamic-target denominators remain unknown"
+      ],
+      "load_address": 100687872,
+      "mapping_adapter_sha256": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+      "max_clear_calls": 1,
+      "max_marker_calls": 0,
+      "max_steps_per_call": 1024,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "cache_alias_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unmapped_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "unmapped_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "native_cpu_sources_unchanged": true,
+        "original_game_bytes_executed": false,
+        "owned_controlled_write": true,
+        "owned_literal_read": true,
+        "positive_instructions": 3
+      },
+      "position_adapter_sha256": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+      "private_report_sha256": "e309f57a7e2452bddfd53b0f72f990c9a04ffa05ae18beca075dbf06fe9b4625",
+      "probe_sha256": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+      "range_sha256": {
+        "6006b38:6006b56": "e3e36336158e9323b317f724efb90dc8cafac559601526c5646d0a685d7ab088",
+        "6006b56:6006b96": "f8ed4aef202e6536693890afc8283146cdb6e9b93f3c77e3ccbc9765fb7e3035",
+        "600940a:600942e": "7845250c5a227b6353e34457eb6b57fe67700861d76b6d5a01d543a6679017e5",
+        "600942e:600944a": "76a1fc0c2a29d5124f42cfb2e99c00906d853e317186b717306d4f387a28efd8"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "1322aceac3fb08d2b0fd9811456fa944819566515d47d894b5e698634ed23802",
+      "schema": "neptune.original-sh2-kernel-records.v1",
+      "selection": "clear",
+      "status": "success",
+      "two_complete_reports_equal": true
+    },
+    "clear-all": {
+      "adapter_sha256": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+      "cases": 10240,
+      "cases_by_kind": {
+        "clear-all": 10240
+      },
+      "cpu": "sh2",
+      "event_count_range": [
+        38,
+        102
+      ],
+      "experiment": "EXP-SAT-CODE-016",
+      "instruction_controls": {
+        "missing_outer_R14_delay_restore": {
+          "mutated_kernel_sha256": "058f865f03f495e105c9b4104dc309855c9f6cec6a012d2a02c972eb817d810d",
+          "pc": 100701256,
+          "reasons": [
+            "Register/PC/SR/MACL/PR result differs"
+          ],
+          "rejected": 64,
+          "tested": 64
+        },
+        "only_fifteen_calls": {
+          "mutated_kernel_sha256": "3d3e761565d45e601c0cdfd9237859c08abf326000d252d724a48d492ef6d944",
+          "pc": 100701238,
+          "reasons": [
+            "Register/PC/SR/MACL/PR result differs"
+          ],
+          "rejected": 64,
+          "tested": 64
+        }
+      },
+      "instruction_count_range": [
+        281,
+        377
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed records/global byte/registers; no natural task/scheduler/gameplay role",
+        "Complete declared18/16-record callers, not all machine states or all kernel code",
+        "Pinned CPU-only interpreter, no hardware/device/timing/independent-engine validation",
+        "Whole-program/function/dynamic-target denominators remain unknown"
+      ],
+      "load_address": 100687872,
+      "mapping_adapter_sha256": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+      "max_clear_calls": 16,
+      "max_marker_calls": 0,
+      "max_steps_per_call": 1024,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "cache_alias_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unmapped_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "unmapped_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "native_cpu_sources_unchanged": true,
+        "original_game_bytes_executed": false,
+        "owned_controlled_write": true,
+        "owned_literal_read": true,
+        "positive_instructions": 3
+      },
+      "position_adapter_sha256": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+      "private_report_sha256": "70671a56d91465e7f1d23ce143399ebe11162308dad6aad3bbfbc4fae1222941",
+      "probe_sha256": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+      "range_sha256": {
+        "6006b38:6006b56": "e3e36336158e9323b317f724efb90dc8cafac559601526c5646d0a685d7ab088",
+        "6006b56:6006b96": "f8ed4aef202e6536693890afc8283146cdb6e9b93f3c77e3ccbc9765fb7e3035",
+        "600940a:600942e": "7845250c5a227b6353e34457eb6b57fe67700861d76b6d5a01d543a6679017e5",
+        "600942e:600944a": "76a1fc0c2a29d5124f42cfb2e99c00906d853e317186b717306d4f387a28efd8"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "0d99fbd23f08db2d07cde3c56cb455f7aac1574e8d0366ba7a23361f17db8378",
+      "schema": "neptune.original-sh2-kernel-records.v1",
+      "selection": "clear-all",
+      "status": "success",
+      "two_complete_reports_equal": true
+    },
+    "mark": {
+      "adapter_sha256": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+      "cases": 2298,
+      "cases_by_kind": {
+        "mark": 2298
+      },
+      "cpu": "sh2",
+      "event_count_range": [
+        4,
+        5
+      ],
+      "experiment": "EXP-SAT-CODE-016",
+      "instruction_controls": {
+        "missing_MACL_delay_restore": {
+          "mutated_kernel_sha256": "9e1cf64d07b103b18a52d2d1028389f1ebca231d67937e14b091feef427cdcfc",
+          "pc": 100690772,
+          "reasons": [
+            "Register/PC/SR/MACL/PR result differs"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "missing_marker_word_store": {
+          "mutated_kernel_sha256": "d215ed529a8e24fa39d5fd97eba4584203022989a0984787617f2ba9eba9cac3",
+          "pc": 100690768,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 65,
+          "tested": 66
+        },
+        "missing_signed_index_truncation": {
+          "mutated_kernel_sha256": "6d67cc700d614a8701ceba113df713ea35ca565f9b61503a1b74f8e746939834",
+          "pc": 100690756,
+          "reasons": [
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Read outside original literals and declared inputs'}"
+          ],
+          "rejected": 1,
+          "tested": 66
+        }
+      },
+      "instruction_count_range": [
+        13,
+        15
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed records/global byte/registers; no natural task/scheduler/gameplay role",
+        "Complete declared18/16-record callers, not all machine states or all kernel code",
+        "Pinned CPU-only interpreter, no hardware/device/timing/independent-engine validation",
+        "Whole-program/function/dynamic-target denominators remain unknown"
+      ],
+      "load_address": 100687872,
+      "mapping_adapter_sha256": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+      "max_clear_calls": 0,
+      "max_marker_calls": 1,
+      "max_steps_per_call": 1024,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "cache_alias_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unmapped_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "unmapped_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "native_cpu_sources_unchanged": true,
+        "original_game_bytes_executed": false,
+        "owned_controlled_write": true,
+        "owned_literal_read": true,
+        "positive_instructions": 3
+      },
+      "position_adapter_sha256": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+      "private_report_sha256": "3bbd9ee74675b63edda47211c6474074e551cb2d03113afc3123c0ace1ef8ac1",
+      "probe_sha256": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+      "range_sha256": {
+        "6006b38:6006b56": "e3e36336158e9323b317f724efb90dc8cafac559601526c5646d0a685d7ab088",
+        "6006b56:6006b96": "f8ed4aef202e6536693890afc8283146cdb6e9b93f3c77e3ccbc9765fb7e3035",
+        "600940a:600942e": "7845250c5a227b6353e34457eb6b57fe67700861d76b6d5a01d543a6679017e5",
+        "600942e:600944a": "76a1fc0c2a29d5124f42cfb2e99c00906d853e317186b717306d4f387a28efd8"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "f751877ea3dad2db062c1edbdd6ea4192ed4511c90cc1d3db741a60fbf407a1f",
+      "schema": "neptune.original-sh2-kernel-records.v1",
+      "selection": "mark",
+      "status": "success",
+      "two_complete_reports_equal": true
+    },
+    "mark-all": {
+      "adapter_sha256": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+      "cases": 2112,
+      "cases_by_kind": {
+        "mark-all": 2112
+      },
+      "cpu": "sh2",
+      "event_count_range": [
+        48,
+        156
+      ],
+      "experiment": "EXP-SAT-CODE-016",
+      "instruction_controls": {
+        "category_sign_not_zero_extended": {
+          "mutated_kernel_sha256": "43b2531f17d3df0d5ce2387b816c8e3bdd0e9587b62cb26dafc02b9349cbda95",
+          "pc": 100690802,
+          "reasons": [
+            "Register/PC/SR/MACL/PR result differs"
+          ],
+          "rejected": 29,
+          "tested": 64
+        },
+        "missing_caller_index_delay": {
+          "mutated_kernel_sha256": "6840348e4290e2cc19cde4e3773353aac0de553d106904f4af54d3ba27b88e9b",
+          "pc": 100690814,
+          "reasons": [
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Read outside original literals and declared inputs'}",
+            "Register/PC/SR/MACL/PR result differs"
+          ],
+          "rejected": 34,
+          "tested": 64
+        },
+        "only_seventeen_records": {
+          "mutated_kernel_sha256": "beb664d4975cfcb1e88bca5125f39ded0ea1432b8f8f7c72b377d7b1aad5a5b0",
+          "pc": 100690786,
+          "reasons": [
+            "Executed PC/delay path differs",
+            "Register/PC/SR/MACL/PR result differs"
+          ],
+          "rejected": 64,
+          "tested": 64
+        }
+      },
+      "instruction_count_range": [
+        198,
+        540
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed records/global byte/registers; no natural task/scheduler/gameplay role",
+        "Complete declared18/16-record callers, not all machine states or all kernel code",
+        "Pinned CPU-only interpreter, no hardware/device/timing/independent-engine validation",
+        "Whole-program/function/dynamic-target denominators remain unknown"
+      ],
+      "load_address": 100687872,
+      "mapping_adapter_sha256": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+      "max_clear_calls": 0,
+      "max_marker_calls": 18,
+      "max_steps_per_call": 1024,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "cache_alias_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unmapped_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside original literals and declared inputs",
+            "status": "failed"
+          },
+          "unmapped_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside declared controlled RAM/stack",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "native_cpu_sources_unchanged": true,
+        "original_game_bytes_executed": false,
+        "owned_controlled_write": true,
+        "owned_literal_read": true,
+        "positive_instructions": 3
+      },
+      "position_adapter_sha256": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+      "private_report_sha256": "f6d81b6241bb1b6ed9c3dfdfbd8bb381634d67f9fe3b141447e9305d91ed01cb",
+      "probe_sha256": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+      "range_sha256": {
+        "6006b38:6006b56": "e3e36336158e9323b317f724efb90dc8cafac559601526c5646d0a685d7ab088",
+        "6006b56:6006b96": "f8ed4aef202e6536693890afc8283146cdb6e9b93f3c77e3ccbc9765fb7e3035",
+        "600940a:600942e": "7845250c5a227b6353e34457eb6b57fe67700861d76b6d5a01d543a6679017e5",
+        "600942e:600944a": "76a1fc0c2a29d5124f42cfb2e99c00906d853e317186b717306d4f387a28efd8"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "df03bf1c4ad6eddbb40e3765ac39f163ad972daaf4622263241477b04851abf5",
+      "schema": "neptune.original-sh2-kernel-records.v1",
+      "selection": "mark-all",
+      "status": "success",
+      "two_complete_reports_equal": true
+    }
+  },
+  "original_admission_denial_retained": "/home/dev/neptune-research-private/629/kernel-records-ni0yxfie/supervisor.json",
+  "original_game_bytes_executed": true,
+  "schema": "neptune.original-kernel-record-evidence.v1",
+  "short_caller_rejection": {
+    "actual_error": {
+      "reason": "Local instruction budget exceeded",
+      "type": "ValueError"
+    },
+    "actual_event_count": 40,
+    "actual_executed_instructions": 128,
+    "actual_status": "failed",
+    "case": [
+      "mark-all",
+      255,
+      262143,
+      262143,
+      1
+    ],
+    "completed_original_call": false,
+    "cpu_attempted_steps": 129,
+    "expected_full_events": 156,
+    "expected_full_instructions": 540,
+    "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+    "original_game_bytes_executed": true,
+    "original_unaffected_bytes_equal": true,
+    "private_report_sha256": "3abe312c49acdfae7c2a833349d084a99b7be351e083968d075356859b77233e",
+    "probe_sha256": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+    "schema": "neptune.original-sh2-record-caller-budget.v1"
+  },
+  "source_execution_head": "0e458325c794a96837e38e90480b9749a3daf36e",
+  "status": "success",
+  "whole_program_status": "active; incomplete"
+}
