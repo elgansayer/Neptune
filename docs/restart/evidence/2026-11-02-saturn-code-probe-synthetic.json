@@ -1,0 +1,54 @@
+{
+  "actual_interpreter_synthetic_negative_controls": {
+    "changed_base_rejected": true,
+    "changed_stride_rejected": true,
+    "nonreturn_loop_rejected": true,
+    "stack_write_rejected": true
+  },
+  "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+  "interpreter_sources": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "original_game_bytes_executed": false,
+  "owned_synthetic_instructions_sha256": "783b89d6cd29fc4e3704d8e3d5bed7b76f26209b5549ed64f24cb49086af32df",
+  "probe_sha256": "059470eab23a7518cb810bb01dd70248d6096c760e532c82a40d11d2526f83be",
+  "results": {
+    "case_domains": {
+      "constructed_32_bit_boundaries": 96,
+      "upstream_sample_domain": 100
+    },
+    "cases": 196,
+    "executed_pcs": [
+      "0x0600b934",
+      "0x0600b936",
+      "0x0600b938",
+      "0x0600b93a",
+      "0x0600b93c",
+      "0x0600b93e",
+      "0x0600b940",
+      "0x0600b942",
+      "0x0600b944",
+      "0x0600b946",
+      "0x0600b948",
+      "0x0600b94a",
+      "0x0600b94c"
+    ],
+    "max_instructions": 13,
+    "mutation_rejections": {
+      "changed_base": 196,
+      "changed_stride": 194,
+      "swapped_arguments": 174
+    },
+    "observed_changed_registers": [
+      "macl",
+      "r0",
+      "r1"
+    ],
+    "results_sha256": "5d3bfa5eb6b3fa6f02fb36fdb09cbff21336b9ea69a0e59cf8ec57a1564a80f6",
+    "writes": 0
+  },
+  "schema": "neptune.synthetic-code-probe-interoperability.v1",
+  "status": "success"
+}
