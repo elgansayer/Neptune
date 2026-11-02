@@ -1,0 +1,143 @@
+{
+  "actual_isolation": {
+    "broker_auth_authority_hidden": true,
+    "inputs_source_native_readonly": true,
+    "offline": true
+  },
+  "bounds": {
+    "address_space_bytes": 536870912,
+    "cpu_seconds": 45,
+    "guard_seconds": 5,
+    "host_shared_limit": 3,
+    "lease_seconds": 180,
+    "native_max_events": 128,
+    "native_max_steps": 256,
+    "output_file_bytes": 4194304,
+    "per_case_steps": 80,
+    "wall_seconds": 60
+  },
+  "cases_per_run": 12800,
+  "device_dependency": {
+    "actual_original_steps": 34,
+    "diagnostic_completed_original_call": false,
+    "diagnostic_sha256": "7a0552352b457eeed154822b48969240c489383f18395c6faa76ad608cf1111c",
+    "issue": 666,
+    "last_pc": "0x41c8",
+    "native_status": "forbidden-write",
+    "write_address": "0x100700",
+    "write_width": 2
+  },
+  "execution_seconds": {
+    "run1": 6.500876982696354,
+    "run2": 6.938362073153257
+  },
+  "execution_source_head": "9a7d2d66645fc4196804a905ed29f22523c2d958",
+  "full_sample_count": 15,
+  "guardian_lifetime": {
+    "all_ended": true,
+    "count": 3,
+    "identities_remain_private": true,
+    "scope": "owned original-run children, not factory restart recovery"
+  },
+  "instruction_controls": {
+    "shifted_word_destination": {
+      "address": "0x5118",
+      "mutated_driver_sha256": "2dbbd50db89c1015608892e5e60b914e001b5db28b5db4fd1b467232ebfd04d4",
+      "reasons": {
+        "Output or unaffected mapped byte differs": 48
+      },
+      "terminal_semantic_rejections": 48,
+      "tested": 48
+    },
+    "wrong_byte_default": {
+      "address": "0x512a",
+      "mutated_driver_sha256": "5d84eb137168875c876278f421471bf110c4b8c35afe1675a270c168df499af3",
+      "reasons": {
+        "Output or unaffected mapped byte differs": 48
+      },
+      "terminal_semantic_rejections": 48,
+      "tested": 48
+    },
+    "wrong_word_default": {
+      "address": "0x5156",
+      "mutated_driver_sha256": "935eb9cbc59efb75816df9cc32d0d8aee2bea08e1b441bafb92b26ea551a6688",
+      "reasons": {
+        "Output or unaffected mapped byte differs": 48
+      },
+      "terminal_semantic_rejections": 48,
+      "tested": 48
+    }
+  },
+  "instruction_counts": [
+    {
+      "cases": 4608,
+      "instructions": 55,
+      "mode": "dispatcher"
+    },
+    {
+      "cases": 4096,
+      "instructions": 42,
+      "mode": "handler"
+    },
+    {
+      "cases": 4096,
+      "instructions": 40,
+      "mode": "initializer"
+    }
+  ],
+  "issue": 665,
+  "limitations": [
+    "Constructed isolated RAM/registers, not natural commands or boot",
+    "No SCSP/DSP/audio/hardware timing or Godot parity",
+    "Only command13; other issue665 handlers and whole-program denominator remain open",
+    "Shared Musashi lineage; complete domain is declared cases, not all machine states"
+  ],
+  "live_factory_continuity": false,
+  "model_calls_by_tests_probes": 0,
+  "native_identity": {
+    "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-DM68K_INSTRUCTION_HOOK=1",
+      "-DM68K_SEPARATE_READS=1",
+      "-Wl,-z,defs"
+    ],
+    "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+  },
+  "new_owned_tests": 8,
+  "observations_sha256": "7a42b9bad208fd9c72d77adb1c8336d11608bf42d6e2bfe5c38a47c96e8c80cb",
+  "original": {
+    "bytes": 23920,
+    "cpu": "m68000",
+    "load_address": 0,
+    "path": "NETLINK/SNDDRV.BIN",
+    "release": "USA MK-81070 V1.003",
+    "sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296"
+  },
+  "original_instructions_per_main_run": 589312,
+  "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+  "ranges_sha256": {
+    "17f2:18f2": "70f17a4a4f0059ed9d16a52cf29fdbd2ec56b0afb87ddec4681517b30bb13e62",
+    "1e62:1e68": "88b89225554170b93d01b1c9787f6805c8546655737e2d2c4e8f3a4564bf5ec4",
+    "510e:51b2": "58039296ab2b29d5368d3a4eb7fa6a64ed74286022f0976a996fcefa6c99bb1c"
+  },
+  "repeated_runs": 2,
+  "report_sha256": "d43b844ae11136d90c125c1eecea977aa3f91025d2eea08468a37a2de0895201",
+  "schema": "neptune.original-m68k-initializer-evidence.v1",
+  "scope": "complete isolated initializer/handler13/dispatcher returns for the declared constructed domain; not natural commands, other665handlers or whole-game parity",
+  "source_sha256": {
+    "tools/saturn_lab/analyze_sound_driver.py": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+    "tools/saturn_lab/m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
+    "tools/saturn_lab/m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+    "tools/saturn_lab/m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "tools/saturn_lab/probe_command_dispatch.py": "86bc16c51ce36cc5cb6637380ae0736ceed3a10934dfafce27951fe53d0f056c",
+    "tools/saturn_lab/probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "tools/saturn_lab/probe_netlink_initializer.py": "f0a0e108ce3d63c537011b9a4f91ab3ba6abf67a063e3f06b12d599995e4e2c3",
+    "tools/saturn_lab/probe_netlink_pointer.py": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+    "tools/saturn_lab/probe_netlink_records.py": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5"
+  },
+  "tooling_tests": 320
+}
