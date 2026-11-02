@@ -125,7 +125,7 @@ class GhidraPreparationTests(unittest.TestCase):
                 return version if version is not None else 'openjdk version "25.0.5" 2026-10-20'
             if not missing:
                 observation = {"version": "12.2", "language": g.LANGUAGE, "base": "06004000",
-                               "instructions": ["mov", "rts", "nop"], "constant_return": 42}
+                               "instructions": ["mov", "rts", "nop"], "constant_return": 42, "delay_slot_depth": 1}
                 (runner.evidence / "ghidra-public-sh2.json").write_text(json.dumps(observation if result is None else result))
             return "headless output is not evidence without the observation"
         runner.run.side_effect = run
@@ -207,6 +207,7 @@ class GhidraPreparationTests(unittest.TestCase):
         self.assertIn("-Dtest.linux=true", observation["argv"])
         self.assertNotIn("-Dtest.windows=true", observation["argv"])
         self.assertIn("-Duser.home=" + str(directory), observation["argv"])
+        self.assertIn("-Dapplication.cachedir=" + str(directory / ".cache/ghidra"), observation["argv"])
         self.assertEqual(observation["argv"][-2:], ["project dir", "public"])
 
 

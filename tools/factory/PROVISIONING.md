@@ -130,7 +130,8 @@ an arbitrary-script sandbox; workers receive no reference files implicitly.
 
 The independently specified public fixture is exactly `e0 2a 00 0b 00 09`:
 `mov #42,r0; rts; nop`. The smoke imports it at0x06004000 using the pinned
-`SuperH:BE:32:SH-2` language, checks each instruction/operand and requires native
+`SuperH:BE:32:SH-2` language, checks each instruction/operand (including Ghidra’s explicit `_nop` delay-slot
+notation and a one-instruction return delay) and requires native
 headless decompilation to recover constant return42. Version output alone cannot
 pass. Fresh install/reuse and an actual changed-immediate rejection are required
 children of the existing installation aggregate. This validates that tool path

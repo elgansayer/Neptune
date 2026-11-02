@@ -25,13 +25,17 @@ public class provision_ghidra_smoke extends GhidraScript {
             !currentProgram.getMinAddress().equals(base) || currentProgram.getMemory().getSize() != 6)
             throw new Exception("Wrong SH-2 import identity");
         if (!disassemble(base)) throw new Exception("Disassembly failed");
-        String[] expected = {"mov", "rts", "nop"};
+        // Pinned SleighInstructionPrototype prefixes instructions in a delay slot with "_".
+        String[] expected = {"mov", "rts", "_nop"};
         for (int i = 0; i < expected.length; ++i) {
             Instruction instruction = getInstructionAt(base.add(2 * i));
             if (instruction == null || instruction.getLength() != 2 ||
-                !instruction.getMnemonicString().equalsIgnoreCase(expected[i]))
-                throw new Exception("Wrong instruction at " + i);
+                !instruction.getMnemonicString().equalsIgnoreCase(expected[i]) ||
+                instruction.isInDelaySlot() != (i == 2))
+                throw new Exception("Wrong instruction/delay metadata at " + i + ": " + instruction);
         }
+        if (getInstructionAt(base.add(2)).getDelaySlotDepth() != 1)
+            throw new Exception("Wrong return delay-slot depth");
         Instruction first = getInstructionAt(base);
         Object[] immediate = first.getOpObjects(0), register = first.getOpObjects(1);
         if (immediate.length != 1 || !(immediate[0] instanceof Scalar) ||
@@ -59,7 +63,7 @@ public class provision_ghidra_smoke extends GhidraScript {
         if (!returned42) throw new Exception("Decompiler did not recover constant return42");
         String json = "{\"version\":\"" + Application.getApplicationVersion() +
             "\",\"language\":\"SuperH:BE:32:SH-2\",\"base\":\"06004000\"," +
-            "\"instructions\":[\"mov\",\"rts\",\"nop\"],\"constant_return\":42}\n";
+            "\"instructions\":[\"mov\",\"rts\",\"nop\"],\"constant_return\":42,\"delay_slot_depth\":1}\n";
         Files.writeString(Path.of(getScriptArgs()[0]), json, java.nio.file.StandardOpenOption.CREATE_NEW);
     }
 }

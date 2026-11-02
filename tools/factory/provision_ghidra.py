@@ -179,7 +179,10 @@ vmargs = [line.split("=", 1)[1] for line in properties.read_text().splitlines()
           if line.startswith(("VMARGS=", "VMARGS_LINUX="))]
 os.execve(str(java), [str(java), *vmargs, "-Xmx768M", "-XX:ActiveProcessorCount=1",
     "-Djava.awt.headless=true", "-Duser.home=" + env["HOME"],
-    "-Djava.io.tmpdir=" + env["TMPDIR"], "-cp",
+    "-Djava.io.tmpdir=" + env["TMPDIR"],
+    "-Dapplication.tempdir=" + env["TMPDIR"],
+    "-Dapplication.settingsdir=" + str(Path(env["HOME"]) / ".config/ghidra"),
+    "-Dapplication.cachedir=" + str(Path(env["HOME"]) / ".cache/ghidra"), "-cp",
     str(root / "ghidra/Ghidra/Framework/Utility/lib/Utility.jar"),
     "ghidra.Ghidra", "ghidra.app.util.headless.AnalyzeHeadless", *sys.argv[1:]], env)
 '''
@@ -225,7 +228,7 @@ def smoke(recipe, binary, runner, root):
         fail("smoke_failed", "Missing or oversized real headless observation")
     result = json.loads(observation.read_text())
     expected = {"version": recipe["version"], "language": LANGUAGE, "base": "06004000",
-                "instructions": ["mov", "rts", "nop"], "constant_return": 42}
+                "instructions": ["mov", "rts", "nop"], "constant_return": 42, "delay_slot_depth": 1}
     if result != expected:
         fail("smoke_failed", "Actual SH-2 import/disassembly/decompilation differs")
     # A smoke may not mutate the published dependency generation.
