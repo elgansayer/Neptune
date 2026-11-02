@@ -52,6 +52,18 @@ CPU/RAM nonmutation, semantic mutations and bounded failure retention. No game
 or BIOS instructions execute in these fixtures. Logs:
 `/home/dev/neptune-evidence/code660-20261102/`.
 
+The first actual CI preparation/reuse passed for all six children at3b44c19,
+but another owner's662 merge advanced main before acceptance.226c8cc integrates
+that current base. Its real Xvfb smoke failed before reporting readiness; raw
+logs/receipts remain in`.../code660-20261102/xvfb-ci-failure-226/`. An owned split-
+write pipe test reproduced the probe's single-read framing failure. The fix
+accumulates one complete displayfd line under the same8-second/32-byte bounds,
+retains bytes/exit diagnostics and still requires the real pixel roundtrip.
+211 factory tests pass after this repair. Exact cause of the original intermittent
+CI startup failure is not proven; final real preparation must pass. The native
+initialization recipe remains0a848d81731e35e6e2fa2bcdcd605b271c7fd4eed7a60df0c2fbac571e4085d2.
+No old CI receipt is relabeled as a current-head result.
+
 The patcher also passed against all six exact upstream source hashes restored
 from the retained649 corresponding-source archive into a disposable directory,
 verified byte-for-byte before the new patch. Proof:`.../code660-20261102/real-source-patch.json`;
