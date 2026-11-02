@@ -1,0 +1,159 @@
+{
+  "cases": 18432,
+  "contract_adapter_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "event_count_range": [
+    1,
+    9
+  ],
+  "experiment": "EXP-SAT-CODE-014",
+  "instruction_controls": {
+    "high_limit_90": {
+      "address": "0x17fc",
+      "mutated_driver_sha256": "aeea1669737781de4b722a7fdb5e59daf19e13ce0e084552acc404e6855f8579",
+      "reasons": [
+        "Native guard: instruction-access"
+      ],
+      "rejected": 8,
+      "tested": 96
+    },
+    "high_mask_seven": {
+      "address": "0x1802",
+      "mutated_driver_sha256": "c8aff9fecec802e674abf5b29e8d544cbe87bade647df33d3cab5af66f2910ea",
+      "reasons": [
+        "Native guard: instruction-access"
+      ],
+      "rejected": 24,
+      "tested": 96
+    },
+    "low_limit_1F": {
+      "address": "0x1856",
+      "mutated_driver_sha256": "1556f8cce46b6b09221867bf5767c18bd464f6dd2afea9f75a124bfd83037e0e",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 8,
+      "tested": 96
+    },
+    "missing_low_index_double": {
+      "address": "0x185c",
+      "mutated_driver_sha256": "094198c46b711e81a2cd4b95ca2887c8b42d9c4315c2451f56a14b483279b9fd",
+      "reasons": [
+        "Native guard: unmapped-data-read",
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 16,
+      "tested": 96
+    },
+    "missing_middle_ORI": {
+      "address": "0x1842",
+      "mutated_driver_sha256": "16044b79ebe4667b296ca2c899a846a2a629762096b96dd6d6128de4c728620c",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 8,
+      "tested": 96
+    },
+    "missing_return_flag_operation": {
+      "address": "0x186e",
+      "mutated_driver_sha256": "18b047179eee9ad6a132a0b0d5f2cae076b3c357bb08cd51ce4c11b2c49077de",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 52,
+      "tested": 96
+    }
+  },
+  "instruction_count_range": [
+    7,
+    16
+  ],
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Complete declared skip/no-op paths; nontrivial handlers stop at entry",
+    "144 real illegal-landing failures retain unmapped-vector status; no completed handler claim",
+    "Constructed registers/stack; no natural commands, boot, SCSP/DSP/audio or hardware timing",
+    "CPU interpreter lineage shared; whole-program/function/dynamic-target denominators unknown"
+  ],
+  "load_address": 0,
+  "module": "NLSND",
+  "native_identity": {
+    "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-DM68K_INSTRUCTION_HOOK=1",
+      "-DM68K_SEPARATE_READS=1",
+      "-Wl,-z,defs"
+    ],
+    "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+  },
+  "original_game_bytes_executed": true,
+  "outcomes": {
+    "complete-return": 16128,
+    "handler-prefix": 2160,
+    "unresolved-exception-vector": 144
+  },
+  "owned_smoke": {
+    "failure_controls": {
+      "execution_escape": "instruction-access",
+      "forbidden_write": "forbidden-write",
+      "nonreturning": "instruction-budget",
+      "unmapped_read": "unmapped-data-read"
+    },
+    "fresh_after_failure": true,
+    "original_game_bytes_executed": false,
+    "positive_steps": 2
+  },
+  "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+  "private_report_sha256": "42aa5a4fd379ec94fe0f16e3975b697a970af65089016bd34fe07f8986ff9fbb",
+  "probe_sha256": "86bc16c51ce36cc5cb6637380ae0736ceed3a10934dfafce27951fe53d0f056c",
+  "range_sha256": "70f17a4a4f0059ed9d16a52cf29fdbd2ec56b0afb87ddec4681517b30bb13e62",
+  "release": "usa-mk81070-v1003",
+  "results_sha256": "170c2d088a10785b125bc900eee99ad13dd5e36b45f84d39ed76dfdd5f294b8d",
+  "retained_attempts": {
+    "admission_denied_no_execution": "dc8db44be3246d231666edb97249ba9b60d4cff332ed2df72b7283ad53bc4feb",
+    "diagnostic": "3ab44609170f3340f2ff70b2f5e804c938ba4686e2f2c6fb26ed7e7519adbc66",
+    "initial_contract_failure": "48e347b9c67daad903665afa37a9d05678abbfbfef58ace5360ad7fbed7f2b22"
+  },
+  "schema": "neptune.original-m68k-command-dispatch.v1",
+  "source_execution_head": "0fe8e9c64757116d6700450e244857900a2d84fe",
+  "source_path": "NETLINK/SNDDRV.BIN",
+  "status": "success",
+  "successful_bounded_cases": 18288,
+  "two_complete_reports_equal": true,
+  "unresolved_handler_entries": [
+    5506,
+    5774,
+    6386,
+    6416,
+    6488,
+    6498,
+    6508,
+    6522,
+    6530,
+    6544,
+    6582,
+    6590,
+    6598,
+    6616,
+    6684,
+    6812,
+    6880,
+    6948,
+    6960,
+    6968,
+    6970,
+    7468,
+    7650,
+    7726,
+    7756,
+    7766,
+    7778,
+    7784,
+    7918
+  ]
+}
