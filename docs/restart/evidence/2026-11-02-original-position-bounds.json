@@ -1,0 +1,117 @@
+{
+  "adapter_sha256": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+  "caller_cases": 1800,
+  "cases": 1980,
+  "experiment": "EXP-SAT-CODE-003",
+  "function_instruction_counts": {
+    "0x600a3e0": [
+      13
+    ],
+    "0x600a3fa": [
+      53
+    ]
+  },
+  "game": "USA MK-81070 V1.003",
+  "host_supervision": {
+    "broker_authority_hidden": true,
+    "existing_host_resource_gate": true,
+    "provider_calls": 0,
+    "readonly_source_and_originals": true,
+    "timeout_seconds_per_command": 60
+  },
+  "instruction_controls": {
+    "caller_index_not_truncated": {
+      "mutated_kernel_sha256": "ba859bac23798b8f51b8e5e085f7963a26ff338703c2d66b829a7756337d0503",
+      "pc": "0x600a416",
+      "reasons": [
+        "unmapped 2-byte access at 060D3870",
+        "unmapped 2-byte access at 066037D8"
+      ],
+      "rejected": 27,
+      "tested": 45
+    },
+    "caller_missing_register_restore": {
+      "mutated_kernel_sha256": "82834c02485d5bbfedf689f24e17b9576166c2b12b891d4977718bf55e847be1",
+      "pc": "0x600a448",
+      "reasons": [
+        "Unexpected register clobber or failed stack restoration"
+      ],
+      "rejected": 45,
+      "tested": 45
+    },
+    "caller_missing_vertical_store": {
+      "mutated_kernel_sha256": "d64896cbbe6b03471b0ecebc3c8f0bba5e3728c841fac0d8e95b3d44fd04a8b2",
+      "pc": "0x600a43c",
+      "reasons": [
+        "Position output differs from independent byte contract"
+      ],
+      "rejected": 45,
+      "tested": 45
+    },
+    "missing_return_delay_store": {
+      "mutated_kernel_sha256": "d6fb0928cc1f03fc2c2008e6ca6b721904bfa37abf2af6456de2d56e5fb96808",
+      "pc": "0x600a3f8",
+      "reasons": [
+        "Position output differs from independent byte contract"
+      ],
+      "rejected": 180,
+      "tested": 180
+    },
+    "nonreturning_leaf": {
+      "mutated_kernel_sha256": "61cfdc069ce8ec0193852c130f3245d599ef88db520538dbf2963f147bf91ad5",
+      "pc": "0x600a3f6",
+      "reasons": [
+        "Instruction budget exceeded"
+      ],
+      "rejected": 180,
+      "tested": 180
+    },
+    "subtract_to_add": {
+      "mutated_kernel_sha256": "30e109f15fc238a6225354039c2d9cbd1fef9aab94fb5d733bf3f17334404c14",
+      "pc": "0x600a3e2",
+      "reasons": [
+        "Position output differs from independent byte contract"
+      ],
+      "rejected": 100,
+      "tested": 180
+    }
+  },
+  "instruction_ranges": {
+    "caller": [
+      "0x600a3fa",
+      "0x600a44a"
+    ],
+    "leaf": [
+      "0x600a3e0",
+      "0x600a3fa"
+    ]
+  },
+  "intake_base": "abc6dfa",
+  "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+  "interpreter_sources": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "leaf_cases": 180,
+  "limitations": [
+    "No natural data, gameplay role, timing, independent CPU oracle or whole-program completion",
+    "Sampled register preservation only; function return value unspecified",
+    "Caller entry is a static boundary lead; executed with constructed ABI inputs"
+  ],
+  "original_game_bytes_executed": true,
+  "private_report_sha256": "cc73feaa8d8f757ddea6dbf9b673a667c4e0612de310e1fe51393e4508101496",
+  "probe_sha256": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+  "range_sha256": {
+    "caller": "48528755e85f60809e9b87d09f763df456150be623e6e954b72f52b29415519c",
+    "caller_literal": "4efc0b67133675678d80a9844fa616851f502bb3611a3f481a225638ddf001cd",
+    "leaf": "f4db5f0035bc8e740000b0ab9df034fd727414afd2771e7f2113d98fb745ef18"
+  },
+  "results_sha256": "0a7712af0237c9d892ed859f52efc2c920e30cdebbc935f7e279ae382495302d",
+  "schema": "neptune.position-bounds-probe.v1",
+  "scope": "Original instructions; initialized controlled records/descriptor/stack; CPU-only",
+  "source_head": "efea635769ebaf8d1dc1216fd19df128b0c982ae",
+  "status": "success",
+  "two_complete_reports_equal": true
+}

@@ -1,0 +1,990 @@
+{
+  "SND_XBSND_driver_bytes_equal": true,
+  "issue": 596,
+  "limitations": [
+    "Static discovery only; zero recovered-executed 68000 functions",
+    "Candidate code/data counts are not verified instruction/function denominators",
+    "No original natural loads, self-modification, DSP, events or audio proven"
+  ],
+  "modules": {
+    "NLSND": {
+      "bad_paths": {
+        "0x183e": "does not decode",
+        "0x184a": "does not decode"
+      },
+      "candidate_code_bytes": 12442,
+      "candidate_data_bytes": 1288,
+      "candidate_instruction_count": 3747,
+      "candidate_instructions_sha256": "9006f820e5f4c35ee89f686c5715ad169c34d3ad1fa1471046122139f2957d77",
+      "candidate_load_address": 0,
+      "cpu": "m68000",
+      "decoder_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "decoder_sources": {
+        "runtime/third_party/musashi/m68k.h": "7fb10f51ee36d45f6e2be38d72aa0c57853810a816f1cf19e0f0c600bd1afa4a",
+        "runtime/third_party/musashi/m68kconf.h": "236bfbbae2d19c2bc3c3455340dafd3a086a86d2de6f19371eb9c27be8de8abf",
+        "runtime/third_party/musashi/m68kdasm.c": "c31b1d3a9863c4271fd0ddcddf3cde8fadac691909ca994db6ec41941696dca2",
+        "src/saturnrecomp/m68k.py": "9ef1cd11fc11cdac0a3c1c92f93260cb8c35063507f4701a03d6a8f87cfb9f47"
+      },
+      "driver_bytes": 23920,
+      "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+      "first_reset_instruction_bytes": 4,
+      "initial_stack_pointer": "0xa000",
+      "limitations": [
+        "Static control-flow leads only, not execution or recovered function semantics",
+        "No natural load, self-modification, DSP, sound-event or audio validation",
+        "Candidate code/data partition is not complete executable coverage",
+        "Function denominator unknown; sound modules at zero have separate lifetimes"
+      ],
+      "module": "NLSND",
+      "odd_reset_vector_rejected": true,
+      "original_game_bytes_executed": false,
+      "owned_decoder_smoke_passed": true,
+      "private_report_sha256": "a660f09d51cfa8f243ebf134fbfad9526e8d0123319986b616b302f1a0ff3786",
+      "release": "usa-mk81070-v1003",
+      "reset_pc": "0x1000",
+      "schema": "neptune.sound-code-discovery.v1",
+      "source_identity": [
+        23920,
+        "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+        0,
+        23920
+      ],
+      "status": "success",
+      "table_leads": [
+        [
+          "0x2106",
+          "branches",
+          "0x210a",
+          4
+        ],
+        [
+          "0x2128",
+          "branches",
+          "0x212c",
+          8
+        ],
+        [
+          "0x129e",
+          "branches",
+          "0x12a2",
+          4
+        ],
+        [
+          "0x1468",
+          "branches",
+          "0x146c",
+          8
+        ],
+        [
+          "0x1400",
+          "branches",
+          "0x1404",
+          4
+        ],
+        [
+          "0x1808",
+          "branches",
+          "0x180e",
+          16
+        ],
+        [
+          "0x1f00",
+          "branches",
+          "0x1f08",
+          8
+        ],
+        [
+          "0x1864",
+          "branches",
+          "0x1872",
+          32
+        ],
+        [
+          "0x24ae",
+          "branches",
+          "0x24b2",
+          8
+        ],
+        [
+          "0x2b3a",
+          "branches",
+          "0x2b3e",
+          16
+        ],
+        [
+          "0x24fa",
+          "branches",
+          "0x24fe",
+          8
+        ],
+        [
+          "0x26ba",
+          "branches",
+          "0x26be",
+          16
+        ],
+        [
+          "0x25ea",
+          "branches",
+          "0x25f2",
+          16
+        ],
+        [
+          "0x2676",
+          "branches",
+          "0x267a",
+          16
+        ],
+        [
+          "0x2632",
+          "branches",
+          "0x2636",
+          16
+        ],
+        [
+          "0x2ff4",
+          "branches",
+          "0x2ff8",
+          8
+        ],
+        [
+          "0x25ee",
+          "branches",
+          "0x25f2",
+          16
+        ],
+        [
+          "0x25a6",
+          "branches",
+          "0x25aa",
+          16
+        ],
+        [
+          "0x2562",
+          "branches",
+          "0x2566",
+          16
+        ],
+        [
+          "0x251e",
+          "branches",
+          "0x2522",
+          16
+        ],
+        [
+          "0x4eb4",
+          "offsets",
+          "0x4eb8",
+          128
+        ],
+        [
+          "0x508c",
+          "offsets",
+          "0x5090",
+          4
+        ]
+      ],
+      "two_complete_reports_equal": true,
+      "unclassified_bytes": 10190,
+      "unclassified_ranges": [
+        [
+          "0x400",
+          3072
+        ],
+        [
+          "0x1020",
+          64
+        ],
+        [
+          "0x146e",
+          2
+        ],
+        [
+          "0x1840",
+          2
+        ],
+        [
+          "0x184c",
+          8
+        ],
+        [
+          "0x1874",
+          2
+        ],
+        [
+          "0x203a",
+          56
+        ],
+        [
+          "0x221a",
+          512
+        ],
+        [
+          "0x27be",
+          206
+        ],
+        [
+          "0x2bf8",
+          4
+        ],
+        [
+          "0x34f0",
+          20
+        ],
+        [
+          "0x35bc",
+          34
+        ],
+        [
+          "0x362a",
+          1728
+        ],
+        [
+          "0x3d2e",
+          512
+        ],
+        [
+          "0x3f46",
+          386
+        ],
+        [
+          "0x40fe",
+          6
+        ],
+        [
+          "0x4124",
+          100
+        ],
+        [
+          "0x4208",
+          256
+        ],
+        [
+          "0x4442",
+          806
+        ],
+        [
+          "0x4b6e",
+          72
+        ],
+        [
+          "0x4cf2",
+          40
+        ],
+        [
+          "0x4d7c",
+          256
+        ],
+        [
+          "0x505e",
+          32
+        ],
+        [
+          "0x5414",
+          128
+        ],
+        [
+          "0x54b6",
+          72
+        ],
+        [
+          "0x5586",
+          1130
+        ],
+        [
+          "0x5a1a",
+          136
+        ],
+        [
+          "0x5ac4",
+          136
+        ],
+        [
+          "0x5b6e",
+          136
+        ],
+        [
+          "0x5c18",
+          136
+        ],
+        [
+          "0x5ce4",
+          140
+        ]
+      ],
+      "unresolved_transfers": [
+        "0x4122"
+      ],
+      "vector_entries": [
+        "0x1000",
+        "0x154a",
+        "0x17c4",
+        "0x17ce",
+        "0x17d8",
+        "0x17e0",
+        "0x17e8"
+      ],
+      "vector_table_sha256": "c86aefb7850529d0459b871e0a27594c085d591f83474fe14062cf83a5b12d0a",
+      "vector_target_counts": {
+        "0x1000": 1,
+        "0x154a": 1,
+        "0x17c4": 1,
+        "0x17ce": 1,
+        "0x17d8": 1,
+        "0x17e0": 1,
+        "0x17e8": 249
+      },
+      "wrapper_sha256": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914"
+    },
+    "SND": {
+      "bad_paths": {
+        "0x1b0a": "overlaps 1B0E",
+        "0x1b12": "overlaps 1B16"
+      },
+      "candidate_code_bytes": 13428,
+      "candidate_data_bytes": 1632,
+      "candidate_instruction_count": 4051,
+      "candidate_instructions_sha256": "4f8e00ee913ea6983f54fabd4c289603b5d7e98e1a54275e1c05efdcb04d902c",
+      "candidate_load_address": 0,
+      "cpu": "m68000",
+      "decoder_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "decoder_sources": {
+        "runtime/third_party/musashi/m68k.h": "7fb10f51ee36d45f6e2be38d72aa0c57853810a816f1cf19e0f0c600bd1afa4a",
+        "runtime/third_party/musashi/m68kconf.h": "236bfbbae2d19c2bc3c3455340dafd3a086a86d2de6f19371eb9c27be8de8abf",
+        "runtime/third_party/musashi/m68kdasm.c": "c31b1d3a9863c4271fd0ddcddf3cde8fadac691909ca994db6ec41941696dca2",
+        "src/saturnrecomp/m68k.py": "9ef1cd11fc11cdac0a3c1c92f93260cb8c35063507f4701a03d6a8f87cfb9f47"
+      },
+      "driver_bytes": 25556,
+      "driver_sha256": "c8842cc957bf82693ddd72d996353c9cb92feb34fe5f2834c0651aebacb4bd04",
+      "first_reset_instruction_bytes": 4,
+      "initial_stack_pointer": "0xa000",
+      "limitations": [
+        "Static control-flow leads only, not execution or recovered function semantics",
+        "No natural load, self-modification, DSP, sound-event or audio validation",
+        "Candidate code/data partition is not complete executable coverage",
+        "Function denominator unknown; sound modules at zero have separate lifetimes"
+      ],
+      "module": "SND",
+      "odd_reset_vector_rejected": true,
+      "original_game_bytes_executed": false,
+      "owned_decoder_smoke_passed": true,
+      "private_report_sha256": "83a75226aed55fab138d04a7cf3a803a7617cc83745e45105943f203562dc255",
+      "release": "usa-mk81070-v1003",
+      "reset_pc": "0x1000",
+      "schema": "neptune.sound-code-discovery.v1",
+      "source_identity": [
+        12976962,
+        "f5154d4aabdf9f3434b966a0d09fe5d08aa1ddabfa8848b836be630f506596d5",
+        68,
+        25556
+      ],
+      "status": "success",
+      "table_leads": [
+        [
+          "0x2c28",
+          "words",
+          "0x2c2c",
+          8
+        ],
+        [
+          "0x3258",
+          "branches",
+          "0x325c",
+          16
+        ],
+        [
+          "0x2cc8",
+          "words",
+          "0x2cca",
+          128
+        ],
+        [
+          "0x368a",
+          "branches",
+          "0x368e",
+          8
+        ],
+        [
+          "0x15d8",
+          "longs",
+          "0x15da",
+          8
+        ],
+        [
+          "0x1564",
+          "branches",
+          "0x1568",
+          4
+        ],
+        [
+          "0x1ad2",
+          "branches",
+          "0x1ada",
+          16
+        ],
+        [
+          "0x2174",
+          "branches",
+          "0x217c",
+          8
+        ],
+        [
+          "0x1b60",
+          "branches",
+          "0x1b6e",
+          32
+        ],
+        [
+          "0x484c",
+          "words",
+          "0x4858",
+          20
+        ],
+        [
+          "0x5518",
+          "offsets",
+          "0x551c",
+          128
+        ],
+        [
+          "0x56f0",
+          "offsets",
+          "0x56f4",
+          4
+        ]
+      ],
+      "two_complete_reports_equal": true,
+      "unclassified_bytes": 10496,
+      "unclassified_ranges": [
+        [
+          "0x400",
+          3072
+        ],
+        [
+          "0x1020",
+          106
+        ],
+        [
+          "0x1266",
+          70
+        ],
+        [
+          "0x17f8",
+          4
+        ],
+        [
+          "0x1a46",
+          8
+        ],
+        [
+          "0x1b0c",
+          2
+        ],
+        [
+          "0x1b12",
+          4
+        ],
+        [
+          "0x1b70",
+          2
+        ],
+        [
+          "0x22ae",
+          56
+        ],
+        [
+          "0x25a2",
+          1588
+        ],
+        [
+          "0x2c9c",
+          8
+        ],
+        [
+          "0x2e8a",
+          206
+        ],
+        [
+          "0x3316",
+          4
+        ],
+        [
+          "0x3c42",
+          20
+        ],
+        [
+          "0x3d0e",
+          34
+        ],
+        [
+          "0x3d8c",
+          1734
+        ],
+        [
+          "0x4490",
+          512
+        ],
+        [
+          "0x46a8",
+          386
+        ],
+        [
+          "0x4900",
+          256
+        ],
+        [
+          "0x4cb6",
+          10
+        ],
+        [
+          "0x51a8",
+          72
+        ],
+        [
+          "0x5356",
+          40
+        ],
+        [
+          "0x53e0",
+          256
+        ],
+        [
+          "0x56c2",
+          32
+        ],
+        [
+          "0x5a78",
+          128
+        ],
+        [
+          "0x5b1a",
+          72
+        ],
+        [
+          "0x5bea",
+          1130
+        ],
+        [
+          "0x607e",
+          136
+        ],
+        [
+          "0x6128",
+          136
+        ],
+        [
+          "0x61d2",
+          136
+        ],
+        [
+          "0x627c",
+          136
+        ],
+        [
+          "0x6348",
+          140
+        ]
+      ],
+      "unresolved_transfers": [],
+      "vector_entries": [
+        "0x1000",
+        "0x172a",
+        "0x1734",
+        "0x1a32",
+        "0x1a3c",
+        "0x1a4e",
+        "0x1a56"
+      ],
+      "vector_table_sha256": "758aeda3cf5bb41ee983b345630f86f98db8cf30f2f0504b97f98b81396954ab",
+      "vector_target_counts": {
+        "0x1000": 1,
+        "0x172a": 1,
+        "0x1734": 1,
+        "0x1a32": 1,
+        "0x1a3c": 1,
+        "0x1a4e": 1,
+        "0x1a56": 249
+      },
+      "wrapper_sha256": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914"
+    },
+    "XBSND": {
+      "bad_paths": {
+        "0x1b0a": "overlaps 1B0E",
+        "0x1b12": "overlaps 1B16"
+      },
+      "candidate_code_bytes": 13428,
+      "candidate_data_bytes": 1632,
+      "candidate_instruction_count": 4051,
+      "candidate_instructions_sha256": "4f8e00ee913ea6983f54fabd4c289603b5d7e98e1a54275e1c05efdcb04d902c",
+      "candidate_load_address": 0,
+      "cpu": "m68000",
+      "decoder_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "decoder_sources": {
+        "runtime/third_party/musashi/m68k.h": "7fb10f51ee36d45f6e2be38d72aa0c57853810a816f1cf19e0f0c600bd1afa4a",
+        "runtime/third_party/musashi/m68kconf.h": "236bfbbae2d19c2bc3c3455340dafd3a086a86d2de6f19371eb9c27be8de8abf",
+        "runtime/third_party/musashi/m68kdasm.c": "c31b1d3a9863c4271fd0ddcddf3cde8fadac691909ca994db6ec41941696dca2",
+        "src/saturnrecomp/m68k.py": "9ef1cd11fc11cdac0a3c1c92f93260cb8c35063507f4701a03d6a8f87cfb9f47"
+      },
+      "driver_bytes": 25556,
+      "driver_sha256": "c8842cc957bf82693ddd72d996353c9cb92feb34fe5f2834c0651aebacb4bd04",
+      "first_reset_instruction_bytes": 4,
+      "initial_stack_pointer": "0xa000",
+      "limitations": [
+        "Static control-flow leads only, not execution or recovered function semantics",
+        "No natural load, self-modification, DSP, sound-event or audio validation",
+        "Candidate code/data partition is not complete executable coverage",
+        "Function denominator unknown; sound modules at zero have separate lifetimes"
+      ],
+      "module": "XBSND",
+      "odd_reset_vector_rejected": true,
+      "original_game_bytes_executed": false,
+      "owned_decoder_smoke_passed": true,
+      "private_report_sha256": "9033b967f359783733c675778100f79c6873a8dd9ce4a3af839a170ef5a613c9",
+      "release": "usa-mk81070-v1003",
+      "reset_pc": "0x1000",
+      "schema": "neptune.sound-code-discovery.v1",
+      "source_identity": [
+        565040,
+        "8343b6024271094cc9c1473d767e140f0c26089bae78b69811435be7941488d9",
+        71784,
+        25556
+      ],
+      "status": "success",
+      "table_leads": [
+        [
+          "0x2c28",
+          "words",
+          "0x2c2c",
+          8
+        ],
+        [
+          "0x3258",
+          "branches",
+          "0x325c",
+          16
+        ],
+        [
+          "0x2cc8",
+          "words",
+          "0x2cca",
+          128
+        ],
+        [
+          "0x368a",
+          "branches",
+          "0x368e",
+          8
+        ],
+        [
+          "0x15d8",
+          "longs",
+          "0x15da",
+          8
+        ],
+        [
+          "0x1564",
+          "branches",
+          "0x1568",
+          4
+        ],
+        [
+          "0x1ad2",
+          "branches",
+          "0x1ada",
+          16
+        ],
+        [
+          "0x2174",
+          "branches",
+          "0x217c",
+          8
+        ],
+        [
+          "0x1b60",
+          "branches",
+          "0x1b6e",
+          32
+        ],
+        [
+          "0x484c",
+          "words",
+          "0x4858",
+          20
+        ],
+        [
+          "0x5518",
+          "offsets",
+          "0x551c",
+          128
+        ],
+        [
+          "0x56f0",
+          "offsets",
+          "0x56f4",
+          4
+        ]
+      ],
+      "two_complete_reports_equal": true,
+      "unclassified_bytes": 10496,
+      "unclassified_ranges": [
+        [
+          "0x400",
+          3072
+        ],
+        [
+          "0x1020",
+          106
+        ],
+        [
+          "0x1266",
+          70
+        ],
+        [
+          "0x17f8",
+          4
+        ],
+        [
+          "0x1a46",
+          8
+        ],
+        [
+          "0x1b0c",
+          2
+        ],
+        [
+          "0x1b12",
+          4
+        ],
+        [
+          "0x1b70",
+          2
+        ],
+        [
+          "0x22ae",
+          56
+        ],
+        [
+          "0x25a2",
+          1588
+        ],
+        [
+          "0x2c9c",
+          8
+        ],
+        [
+          "0x2e8a",
+          206
+        ],
+        [
+          "0x3316",
+          4
+        ],
+        [
+          "0x3c42",
+          20
+        ],
+        [
+          "0x3d0e",
+          34
+        ],
+        [
+          "0x3d8c",
+          1734
+        ],
+        [
+          "0x4490",
+          512
+        ],
+        [
+          "0x46a8",
+          386
+        ],
+        [
+          "0x4900",
+          256
+        ],
+        [
+          "0x4cb6",
+          10
+        ],
+        [
+          "0x51a8",
+          72
+        ],
+        [
+          "0x5356",
+          40
+        ],
+        [
+          "0x53e0",
+          256
+        ],
+        [
+          "0x56c2",
+          32
+        ],
+        [
+          "0x5a78",
+          128
+        ],
+        [
+          "0x5b1a",
+          72
+        ],
+        [
+          "0x5bea",
+          1130
+        ],
+        [
+          "0x607e",
+          136
+        ],
+        [
+          "0x6128",
+          136
+        ],
+        [
+          "0x61d2",
+          136
+        ],
+        [
+          "0x627c",
+          136
+        ],
+        [
+          "0x6348",
+          140
+        ]
+      ],
+      "unresolved_transfers": [],
+      "vector_entries": [
+        "0x1000",
+        "0x172a",
+        "0x1734",
+        "0x1a32",
+        "0x1a3c",
+        "0x1a4e",
+        "0x1a56"
+      ],
+      "vector_table_sha256": "758aeda3cf5bb41ee983b345630f86f98db8cf30f2f0504b97f98b81396954ab",
+      "vector_target_counts": {
+        "0x1000": 1,
+        "0x172a": 1,
+        "0x1734": 1,
+        "0x1a32": 1,
+        "0x1a3c": 1,
+        "0x1a4e": 1,
+        "0x1a56": 249
+      },
+      "wrapper_sha256": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914"
+    }
+  },
+  "native_decoder": {
+    "cache_artifacts": {
+      "m68kdasm-39b82369882c.c": "6a08ede1eba63e1140345198b3d17c973b9049a78d5ae719a28926f909733c90",
+      "m68kdasm-39b82369882c.so": "b28f930c6c317d0651e48cf33cfe750029a523ac658574caad52ea4deecf95d9",
+      "shim-39b82369882c.c": "a84983bb2e8bbff57efe7fe7ff32540bf8579255bc0803b4e1802f0a1bd8de86"
+    },
+    "compiler": "cc (Debian 14.2.0-19) 14.2.0"
+  },
+  "next_dispatch_inspection": {
+    "A2_preservation_across_subroutine": "unvalidated",
+    "base_setting_wrappers": {
+      "0x40c8": "0x4124",
+      "0x40d2": "0x414c",
+      "0x40dc": "0x4138",
+      "0x40e6": "0x4160",
+      "0x40f0": "0x4174"
+    },
+    "intervening_subroutine": "0x4b00",
+    "original_game_bytes_executed": false,
+    "private_selected_leads_sha256": "2dbd5d3498aca6f59122f2c683961a6189145d2beeff2c42f636c77b172d85cd",
+    "shared_branch_target": "0x4104"
+  },
+  "original_game_bytes_executed": false,
+  "reset_prefixes": {
+    "NLSND": {
+      "range": [
+        4096,
+        4128
+      ],
+      "sha256": "f555e3f5f0a4d0e39afa8dde55ca035d55b0f35b46fb840c2eddc2d391df7aec"
+    },
+    "SND": {
+      "range": [
+        4096,
+        4128
+      ],
+      "sha256": "79d301f239d7a2c9571e18dbe24d0ea785c4e4b0927f93fc6e375638fa9d659f"
+    },
+    "XBSND": {
+      "range": [
+        4096,
+        4128
+      ],
+      "sha256": "79d301f239d7a2c9571e18dbe24d0ea785c4e4b0927f93fc6e375638fa9d659f"
+    }
+  },
+  "schema": "neptune.sound-code-discovery-summary.v1",
+  "source_execution_head": "bbd57b5e00bbf668b5c06cdd6cb4d7e5cde7a6a9",
+  "source_extraction": {
+    "cue_sha256": "785e6f9fbcb8639902e5239b3fb560555e17a3cb8c91a38cbdd8aaeed03ef9da",
+    "edc_mismatches": 0,
+    "edc_verified_sector_count": 6626,
+    "extractor_modules": {
+      "classify.py": "bd5463e8eeb8aba877770a562f9acf5e05bf5d7b7472ca108d492e0d62b06f26",
+      "cue.py": "a0147633b474ccf3b81184b4be7ab0691562f6246177caa1b3ff0293a029a710",
+      "ipbin.py": "49789d084e685136648db33e1e91b5d4a0a665bc070ddcc524191e29d7c796ca",
+      "iso9660.py": "811668c4d8628ee8f03001ffb070977e82d1aee1aec23e7c00f54de144da31ce"
+    },
+    "files": {
+      "NLSND": {
+        "container_bytes": 23920,
+        "container_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+        "driver_bytes": 23920,
+        "driver_offset": 0,
+        "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+        "extents": [
+          {
+            "byte_length": 23920,
+            "extent_lba": 3473,
+            "sector_count": 12
+          }
+        ],
+        "source_path": "NETLINK/SNDDRV.BIN"
+      },
+      "SND": {
+        "container_bytes": 12976962,
+        "container_sha256": "f5154d4aabdf9f3434b966a0d09fe5d08aa1ddabfa8848b836be630f506596d5",
+        "driver_bytes": 25556,
+        "driver_offset": 68,
+        "driver_sha256": "c8842cc957bf82693ddd72d996353c9cb92feb34fe5f2834c0651aebacb4bd04",
+        "extents": [
+          {
+            "byte_length": 12976962,
+            "extent_lba": 4238,
+            "sector_count": 6337
+          }
+        ],
+        "source_path": "BOMSS/PROGRAM.BIN"
+      },
+      "XBSND": {
+        "container_bytes": 565040,
+        "container_sha256": "8343b6024271094cc9c1473d767e140f0c26089bae78b69811435be7941488d9",
+        "driver_bytes": 25556,
+        "driver_offset": 71784,
+        "driver_sha256": "c8842cc957bf82693ddd72d996353c9cb92feb34fe5f2834c0651aebacb4bd04",
+        "extents": [
+          {
+            "byte_length": 565040,
+            "extent_lba": 771,
+            "sector_count": 276
+          }
+        ],
+        "source_path": "XBAND/XBAND.DAT"
+      }
+    },
+    "schema": "neptune.sound-source-extraction.v1",
+    "source_track_sha256": "34c3c15b6858971fd2f34fd1a98be7c8308b4141c1a8804288611bb2542c126c"
+  }
+}
