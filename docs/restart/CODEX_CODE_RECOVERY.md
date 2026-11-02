@@ -1,0 +1,154 @@
+# VPS Codex continuation: reverse engineer all Saturn Bomberman code
+
+Paste the prompt below into the **existing Codex session on the research VPS**.
+This is the owner's 2 November 2026 continuation, superseding older feature-first
+task selection. Saving or publishing this file does not send a message, start a
+host process or establish that Codex accepted the assignment.
+
+Short paste instruction once the branch is fetched:
+
+```text
+Fetch origin in the existing Neptune repository without resetting any work. Read the prompt with `git show origin/research/saturn-code-probes:docs/restart/CODEX_CODE_RECOVERY.md` (or from current main if merged), then execute its VPS continuation. Our primary objective is to reverse engineer ALL original Sega Saturn Bomberman game code. Use the originals already on this VPS, run the next original-byte probe, retain real evidence, commit/push tested results, and keep progressing through the programme after each bounded result.
+```
+
+## Continuation prompt
+
+Continue Elgan's Sega Saturn Bomberman reverse engineering on this VPS. **The
+primary objective is to reverse engineer all original game code.** Complete asset
+extraction remains a supporting objective. Preserve Neptune's wider product and
+existing accepted work, but choose code recovery before independent game/UI/Power
+expansion or another already-completed media extraction.
+
+Work in `elgansayer/Neptune-Bomberman`; decoded private assets belong in
+`elgansayer/SaturnBomberman-Assets`. First read current `AGENTS.md`,
+`FACTORY_FIRST_GOAL.md`, `SATURN_FIDELITY.md`, `RESEARCH_EXECUTION.md`,
+`REVERSE_ENGINEERING.md`, `MERGE_POLICY.md`, `saturn-code/README.md` and
+`research/2026-11-02-saturn-code-probe.md` under `docs/restart/`.
+Use mission #464, index #477 and code tasks #478/#480–#483/#488/#492/#494–#497/#515.
+
+### Establish the actual host and preserve ownership
+
+Inspect repository status/remotes, current main/open PRs, current processes,
+claims/leases and installed tools without exposing secrets. Reuse the existing
+Elgl factory, supported Codex access and configured shared limits. Read live
+#33/#536; preserve manual sessions and current Gemini/Antigravity #487 ownership.
+Do not reset a dirty checkout, force-clear leases, launch another scheduler,
+create an uncontrolled agent tree, change allowances or enable paid fallback.
+Start with one bounded original-code job within the existing host gate.
+
+Fetch current main and `research/saturn-code-probes`. If its work is not merged,
+inspect the code-recovery PR and use a fresh isolated worktree at that branch.
+Do not reimplement accepted tools or overwrite another worker's worktree.
+The cloud session prepared the code; it could not access this VPS filesystem.
+Confirm the private inputs and actual command outcomes yourself.
+
+Already supplied inputs live under `/home/dev/Sega-Saturn-BIOS/`. The accepted
+USA kernel extraction is `/home/dev/neptune-research-private/483/0KRNL.BIN`;
+the accepted interpreter checkout is `/home/dev/neptune-tools/saturn-recomp-f20de94`.
+Resolve actual existing paths rather than assuming they remain unchanged. **Do
+not ask Elgan to supply the discs or BIOS again.** If a free required tool is
+missing, use the existing pinned preparation boundary through #508/#518.
+
+### First action: execute the next original function
+
+Run `tools/saturn_lab/probe_table_address.py` against the unchanged USA
+MK-81070 V1.003 kernel. The kernel is 786,432 bytes, SHA-256
+`20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7`.
+The existing adapter also checks SHA-1 and all three interpreter-source hashes at
+`saturn-recomp@f20de940e8013fc84103a5b39c4069ed8071b1f9`.
+
+Target entry `0x0600B934`, kernel file offset `0x5934`, arguments `r4=n`, `r5=m`.
+The pinned upstream hypothesis is
+`((10*n+m)*152 + 0x00207F74) modulo 2^32`. The probe uses 100 ordinary sampled
+pairs and 96 constructed sign/overflow pairs, fresh CPUs, return and delay-slot
+evidence, at most 256 instructions per call, read-only kernel memory and no
+invented device RAM. Choose fresh report names; accepted reports are immutable.
+
+```sh
+timeout 60s nice -n 10 python3 tools/saturn_lab/probe_table_address.py \
+  --kernel /home/dev/neptune-research-private/483/0KRNL.BIN \
+  --saturn-recomp /home/dev/neptune-tools/saturn-recomp-f20de94 \
+  --report /home/dev/neptune-research-private/483/code-002-vps-run1.json
+timeout 60s nice -n 10 python3 tools/saturn_lab/probe_table_address.py \
+  --kernel /home/dev/neptune-research-private/483/0KRNL.BIN \
+  --saturn-recomp /home/dev/neptune-tools/saturn-recomp-f20de94 \
+  --report /home/dev/neptune-research-private/483/code-002-vps-run2.json
+cmp /home/dev/neptune-research-private/483/code-002-vps-run1.json \
+    /home/dev/neptune-research-private/483/code-002-vps-run2.json
+```
+
+These are commands to execute, **not completed original-game evidence**. The
+cloud smoke used owned synthetic SH-2 instructions, explicitly labelled false for
+`original_game_bytes_executed`; never turn that into a new verified game function.
+If the original probe fails, retain the failure, inspect the real instructions
+and determine whether the arithmetic, ABI or pure-leaf hypothesis is wrong. Do
+not silently map registers as RAM or weaken the candidate to force a pass.
+
+If it succeeds twice, retain source/tool/report digests and mutation results,
+identify actual original instruction ranges/literals and inspect at least a
+bounded original caller/return path. Perform an original-instruction or separately
+implemented semantic negative control where justified. Publish the precise
+recovered contract and limits in a tested evidence PR. CPU interpreter success
+does not establish natural gameplay role, hardware timing or whole-game parity.
+
+### Continue through all code after the first result
+
+Do not end the programme after this helper. Use the new 15-candidate module census
+as an incomplete starting map and expand it from actual bytes and runtime loads.
+Account for:
+
+- System-area bootstrap, boot/loader chain and resident kernel.
+- Master/slave SH-2 functions, overlays, code-bearing banks, SDK/library code,
+  direct/indirect call targets, task yield/resume edges and runtime patches.
+- All gameplay, objects/enemies/bosses, original CPU policies, RNG, scheduling,
+  movement/collision/bombs/items, progression, menus/fonts/text and save code.
+- 68000 sound drivers, their self-modification, sequences/trigger logic, and
+  observed SCSP DSP programs.
+- USA/Japan differences, hidden/unused paths and offline NetLink/XBAND code.
+
+Keep source hash, release, CPU/address space, mapping and residency lifetime in
+every function identity. KRNL and XBAND reuse `0x06006000`; several sound drivers
+load at sound CPU address zero. Upstream patched IP images and generated
+trampolines remain distinct from original code. A full file is not necessarily
+all executable instructions; classify literals, jump tables, data and padding.
+Do not copy USA mappings into Japan without evidence or guess RNG taps.
+
+Next bounded memory-function candidates are documented in pinned upstream
+`decomp/krnl.c`: `0x0600A3E0`, `0x0600A25E`, `0x0600A2D8`, task/entry helpers
+`0x06006B38`/`0x0600940A`/`0x0600942E`. Derive their actual instruction and
+memory contracts before adding explicit bounded writable data/stack regions;
+compare every unaffected mapped byte. Register-writing `0x0600665C` requires a
+real device-side-effect model, not flat RAM. Prioritise substantial gameplay,
+RNG/scheduler and load/dispatch routines as instrumentation becomes available.
+
+### Evidence, publication and durable continuation
+
+For every slice retain original file/range/hash, mapping, entry/ABI, arguments,
+reads/writes, returns/events, instruction/timing units, tested cases, negative
+controls and remaining unknown targets. Track discovered, disassembled,
+translated, semantically reconstructed, original-byte tested and naturally
+runtime-validated separately. Do not equate asset counts, translated instruction
+counts, green metadata tests or a completed child issue with all code recovered.
+Unknown module/function denominators stay unknown. Lost source names/comments
+need not be recoverable for behavior to be understood.
+
+Keep discs, BIOS, save states, raw dumps and credentials host-private. Share
+selected derived traces/measurements; publish authorised decoded assets with
+provenance in their private release namespace. Preserve #584/assets #3's completed
+FILM work without repeating it as new code progress. Keep original reference
+fixtures independent of candidate output and exact Godot checks separate.
+
+Run applicable checks, commit and push completed task-owned changes, open/update
+focused PRs and use tests-gated merging at the exact head/current base. No
+mandatory approving review is added; missing, skipped or failing checks do not
+pass. Then reconcile the child, checkpoint and select the next eligible code
+slice. Continue within configured session/tool/storage/provider budgets.
+
+Before interruption or any hard limit, save owner/lease, module/function,
+source/head/base identities, actual commands/results, private evidence paths,
+remaining targets, blocker and **the exact next runnable command**. Resume that
+record rather than restarting setup. Report new code actually recovered, tested
+functions and validation limits. If blocked, name the concrete missing capability;
+do not announce the parent goal complete. Whole-program completion requires the
+module/range/function/dynamic-target and behavior inventories to be reconciled
+with reproducible evidence, alongside complete asset extraction.
