@@ -3,11 +3,44 @@
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [issue649](https://github.com/elgansayer/Neptune-Bomberman/issues/649).
 Workspace `/home/dev/neptune-code-recovery-20261102`, capture/evidence branch
-`research/saturn-natural-context-649`; separate tool PR650 is
+`research/saturn-context-cold-boot-649`; accepted late-window branch is
+`research/saturn-natural-context-649`, and separate tool PR650 is
 `research/saturn-context-observer-649`. Reconcile live head/base/checks before
 merging. Preserve coordinator634/636/642/645/647, Gemini487, all newer claims
 and the original restart worktree. No provider calls, scheduler, quota reset or
 continuity activation. Programme parents and536 stay open.
+
+## Fresh entry now passes actual repeatability
+
+[Fresh result](../research/2026-11-02-original-fresh-context-boot.md),
+[fresh evidence](../evidence/2026-11-02-original-fresh-context-boot.json).
+Fresh6BE4 entry at frame1247 saves ROOT through original61C4, returns6C00,
+restores record0 through61E6 and transfers to0600623A. Complete167 pending
+hooks; save17/restore18. Six new600-frame reference/disabled/enabled original
+runs, twice each, have exact equal import/final state, native video/audio/input,
+resident339-word witnesses and repeatable traces.14 actual-trace corruptions
+are rejected. Native tool remains the accepted ABI2 generation. All298 Saturn
+tooling tests pass; owned tests are separate from original evidence.
+
+Execution source`0084b324a614e267692792d4ac1d99d61feddef2`, readonly adapter
+`.../649/adapter-c218cf4edf53a8d72321d07433c267ed15dcfd19abbdca4246a8e8d1fafe9fd6/`.
+Private paired runs`.../649/repeatability-boot-profile1-5g9nai4r/` and
+`.../649/fresh-boot-derived.json`. New actual reference chain is
+`cold-boot-hv5k6i3p/reference/checkpoint.json` (frame600, kernel not resident)
+then`early-boot-30vjuaqm/reference/checkpoint.json` (frame1200, kernel resident,
+ROOT still zero). Both prior enabled windows are genuine failed empty captures.
+A real frame600 image in`boot-screen-9g42dw6g/` shows the SEGA licence screen;
+no menu input was injected. The successful search uses no inputs. Original
+historical lock/frontend/media/checkpoints are unchanged. `--cold-boot` imports
+nothing; `--boot-checkpoint` checks the actual reference producer/identity/
+state/report hashes and accounting. Each window<=600; whole boot search<=4800.
+Strict `--checkpoint` still requires resident code before emulation.
+
+Fresh caller return PR619C is observed; static call6174→6372 is distinct from
+an assumed direct6BE4 call. Startup6372 needs real BIOS/IRQ-sample behavior;
+6174 has a CPU-internal register write, not flat RAM. First task623A's static
+callee89C8 and its89AC/helper/allocator dependencies are next. Full bodies and
+roles remain unknown; do not count the original whole programme complete.
 
 ## Completed actual runtime comparisons
 
@@ -74,32 +107,28 @@ hidden broker/authority. All own leases released. CI/account spend unknown.
 
 ## Next work
 
-PR650 merged normally at`f1423251f173161c310a06fbdf5c29014c8230d2` after all15
-checks on updated4a0ee63 passed against current basec0620ff. Both native runs
-41498217240/41498286512 succeeded; no old-head or gate bypass. Exact check and
-merge receipts are in `/home/dev/neptune-evidence/code649-20261102/pr650-*`.
-Accepted main is incorporated into this capture branch. Create its evidence/
-driver PR, run applicable checks and merge normally. Keep649 open for fresh entry.
+Tool PR650 merged at`f1423251f173161c310a06fbdf5c29014c8230d2`, late-window
+PR651 at`3fde4dc6b94554fcf7def6f7253d87ec53fc3603`, both normally after all
+applicable exact-head/current-base checks. Publish this fresh source/evidence PR
+and wait for its applicable gates before merging. Issue649 can close when all
+three named master-profile acceptance results are incorporated; parents464/515
+and the all-code programme stay open. Preserve every failed window/generation.
 
-Next named code question: observe **fresh6BE4 entry/root save**, then expand
-natural root/task/caller coverage. The late checkpoint reaches resumed6C00 and
-has genuinely empty fresh-entry windows. Earlier frame600 checkpoint27 has a
-different frontend identity; do not substitute/re-pin it. Implement bounded
-cold-boot/early-window mode using the existing verified reference frontend,
-unchanged historical lock/media/CMOS seed, private original source witness and
-actual newly captured states. Start at most600 original frames per window;
-missing/partial/changed-source traces fail. Commit/push tested source before
-actual execution; preserve all failed windows and compare fresh reference/
-disabled/enabled runs twice if fresh entry is captured.
+Next named code question: first-task623A→89C8 initialization and its helper/
+allocator graph. Inspect actual original89AC and89C8 with source identities,
+then execute original complete helper/caller-prefix/full graph as appropriate,
+retaining exact registers/SR/MAC/stack/memory transactions/canaries and real
+return or incomplete-prefix boundaries. Never stub unknown allocator/callbacks
+or turn a prefix into a complete89C8 claim. Original6372's BIOS/tick/device
+behavior needs native evidence, not flat RAM or injected ticks.
 
-Private next source-inspection command:
-`python3 /home/dev/neptune-evidence/code649-20261102/inspect-cold-boot-source.py`.
-It reads the pinned frontend boundaries only and executes zero original frames.
-Do not repeat completed transfers into existing cache/evidence directories.
-`run-six-abi2.py 2/3` are completed experiment commands, not fresh progress.
+Next runnable source audit:
+`python3 /home/dev/neptune-evidence/code649-20261102/inspect-next-first-task.py`.
+The output is a lead, not new original instruction execution. Original-code
+commands must use fresh private evidence and the current shared admission;
+existing successful boot transfers/comparisons must not be rerun as new progress.
 
-Continue actual caller0600B5D2/task bodies, loader/slave/overlays/libraries,
-remaining68000/DSP and regional network/menu/save code. Executable/function/
-dynamic-target denominators, console timing, identified gameplay scenes and
-Godot/gameplay parity remain unknown. Never mark the programme complete after
-this bounded native capture or tool result.
+Continue slave/loader/overlays/libraries, remaining68000/DSP and regional
+network/menu/save code. Executable/function/dynamic-target denominators,
+console timing, identified gameplay and Godot parity remain unknown. Never
+mark the programme complete after this fresh scheduler/context result.
