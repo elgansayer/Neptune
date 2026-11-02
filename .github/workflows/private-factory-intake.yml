@@ -1,0 +1,107 @@
+name: Private factory intake compatibility
+
+on:
+  workflow_dispatch:
+    inputs:
+      control_revision:
+        description: Exact public Elgl factory commit selected by the coordinator
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Validate owner-selected immutable input
+        env:
+          CONTROL_REVISION: ${{ inputs.control_revision }}
+          ACTOR: ${{ github.actor }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          python3 - <<'PY'
+          import os, re
+          assert os.environ['ACTOR'] == os.environ['OWNER'], 'Owner coordinator dispatch required'
+          assert re.fullmatch(r'[0-9a-f]{40}', os.environ['CONTROL_REVISION']), 'Exact commit required'
+          with open(os.environ['GITHUB_ENV'], 'a') as target:
+              target.write('CONTROL_REVISION=' + os.environ['CONTROL_REVISION'] + '\n')
+          PY
+      - name: Checkout accepted private tools with this repository's own read token
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: 8e94003417435ef396192dbf25ee6882fc3567a2
+          persist-credentials: false
+          submodules: false
+          sparse-checkout: |
+            tools
+            docs/restart
+      - name: Fetch only the selected public factory source without credentials
+        env:
+          GIT_CONFIG_NOSYSTEM: '1'
+          GIT_CONFIG_GLOBAL: /dev/null
+          GIT_TERMINAL_PROMPT: '0'
+        run: |
+          mkdir "$RUNNER_TEMP/public-factory"
+          git -C "$RUNNER_TEMP/public-factory" init --quiet
+          git -C "$RUNNER_TEMP/public-factory" remote add origin https://github.com/elgansayer/elgl.git
+          git -C "$RUNNER_TEMP/public-factory" fetch --depth=1 --filter=blob:none origin "$CONTROL_REVISION"
+          git -C "$RUNNER_TEMP/public-factory" sparse-checkout set automation
+          git -C "$RUNNER_TEMP/public-factory" checkout --detach FETCH_HEAD
+          test "$(git -C "$RUNNER_TEMP/public-factory" rev-parse HEAD)" = "$CONTROL_REVISION"
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.13'
+      - name: Use the existing shared-factory dependency toolchain
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: '0.12.5'
+          enable-cache: false
+      - name: Install frozen factory development dependencies
+        run: uv sync --frozen --extra development --directory "$RUNNER_TEMP/public-factory/automation"
+      - name: Enable the existing unprivileged namespace test boundary
+        run: |
+          if [ -e /proc/sys/kernel/apparmor_restrict_unprivileged_userns ]; then
+            sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          fi
+      - name: Require actual private Neptune algorithms and divergence rejection
+        env:
+          NEPTUNE_ACCEPTED_SOURCE: ${{ github.workspace }}
+          NEPTUNE_INTAKE_EVIDENCE: ${{ runner.temp }}/private-intake-evidence
+        run: |
+          cd "$RUNNER_TEMP/public-factory/automation"
+          uv run --frozen pytest runtime_checks/test_neptune_intake_namespace.py -o addopts='' -q
+      - name: Bind successful reports to both exact source identities
+        env:
+          INTAKE_EVIDENCE: ${{ runner.temp }}/private-intake-evidence
+          EXPERIMENT_RUN: ${{ github.run_id }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          evidence = Path(os.environ['INTAKE_EVIDENCE'])
+          reports = {name: json.loads((evidence / (name + '.json')).read_text()) for name in ('matching', 'divergent')}
+          for name, report in reports.items():
+              assert report['integration_source_scope'] == 'actual pinned private Neptune algorithms'
+              assert report['feature_checks']['behaviour-trace-exact-v1']['comparison']['match'] is (name == 'matching')
+              assert report['conclusion'] == ('success' if name == 'matching' else 'failure')
+              assert all(value['status'] == 'success' and value['exit'] == 0 for value in report['checks'].values())
+          assert subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip() == '8e94003417435ef396192dbf25ee6882fc3567a2'
+          factory = Path(os.environ['RUNNER_TEMP']) / 'public-factory'
+          assert subprocess.check_output(['git', '-C', str(factory), 'rev-parse', 'HEAD'], text=True).strip() == os.environ['CONTROL_REVISION']
+          receipt = {'schema': 'neptune.private-intake-compatibility.v1', 'control_revision': os.environ['CONTROL_REVISION'],
+              'neptune_revision': '8e94003417435ef396192dbf25ee6882fc3567a2', 'run': os.environ['EXPERIMENT_RUN'],
+              'reports': {name: hashlib.sha256((evidence / (name + '.json')).read_bytes()).hexdigest() for name in reports},
+              'scope': 'actual private parser/comparer with synthetic role-labelled observations; no original/Godot fidelity or continuity claim', 'model_calls': 0}
+          (evidence / 'receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+          PY
+      - name: Retain private compatibility evidence including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: private-intake-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/private-intake-evidence
+          if-no-files-found: error
+          retention-days: 14
