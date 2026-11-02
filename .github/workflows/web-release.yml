@@ -85,3 +85,19 @@ jobs:
           docker tag neptune-server-candidate "$image:latest"
           docker push "$image:sha-$GITHUB_SHA"
           docker push "$image:latest"
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Notify Arcane after image publication
+        env:
+          DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          DEPLOY_RESOLVE: ${{ vars.DEPLOY_RESOLVE }}
+        run: |
+          set -euo pipefail
+          test -n "$DEPLOY_WEBHOOK_URL" || { echo "DEPLOY_WEBHOOK_URL is missing" >&2; exit 1; }
+          status=$(curl --silent --show-error --output /tmp/deploy.json --write-out '%{http_code}' --max-time 90 --resolve "$DEPLOY_RESOLVE" --request POST "$DEPLOY_WEBHOOK_URL")
+          test "$status" = 202 || { echo "Deployment trigger returned HTTP $status" >&2; exit 1; }
+          echo "Arcane accepted deployment. Check the project's Event Log for the rollout result."
