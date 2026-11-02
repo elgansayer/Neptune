@@ -6,6 +6,14 @@ new-work queues. Use recovered contracts to drive Godot implementation; defer
 independent Power/product breadth unless it removes a named pipeline blocker.
 Existing owners, research inputs, acceptance scope and full product goals remain.
 
+The owner subsequently clarified that **all original game code** is the primary
+research deliverable. Continue the [code module census](saturn-code/README.md) and
+[original-function probe](research/2026-11-02-saturn-code-probe.md) through
+#480–#483/#488/#492/#494–#497/#515. Asset work supports named code questions;
+finished media extraction cannot stand in for source/semantic recovery. Separate
+original modules from patched/derived analysis artifacts and keep unknown code,
+function and dynamic-target totals explicit. Preserve active #487 extraction.
+
 Execution index: [#477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
 Saturn mission: [#464](https://github.com/elgansayer/Neptune-Bomberman/issues/464).
 Power mission: [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476).

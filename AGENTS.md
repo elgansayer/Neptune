@@ -29,6 +29,15 @@ active owners, finish bounded work in progress and retain the full moddable
 native/browser/community game scope. No competing scheduler, provider allowance
 or mandatory approving review is introduced.
 
+The owner's further 2 November clarification makes **all original Saturn game
+code** the primary research deliverable. Follow the code-first continuation in
+`docs/restart/FACTORY_FIRST_GOAL.md`: boot/kernel, both SH-2 CPUs, overlays and
+dynamic targets, libraries, 68000 sound code, observed DSP programs and regional
+network/menu/save paths. Select code analysis and original-byte/runtime validation;
+asset/tool work should unblock a named code question. Preserve active extraction
+owners. A module census, translated instructions or extracted audio is not
+complete code recovery. Keep unknown executable/function denominators explicit.
+
 ## Product
 
 - The owner's 30 October ethos is binding: start with the look and behaviour of

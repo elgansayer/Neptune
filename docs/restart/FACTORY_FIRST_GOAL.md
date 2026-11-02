@@ -21,6 +21,43 @@ The moddable native/browser game, multiplayer, strong bots, community packs,
 profiles, stats and workshop remain the end product. They consume the pipeline's
 outputs and are not removed from the backlog or marked complete.
 
+## Further owner clarification: reverse engineer all game code
+
+The owner's subsequent 2 November direction is explicit: **reverse engineer all
+the code**. Code recovery is the primary research output. The accepted asset
+work remains useful, and active owners continue; a newly extracted soundtrack,
+another inventory or a tooling PR cannot substitute for the code objective.
+
+Continue #478/#480–#483/#488/#492/#494–#497/#515 through the existing factory.
+Account for the original boot chain and resident kernel, master/slave SH-2
+functions and tasks, overlays and code-bearing resources, SDK/libraries,
+indirect targets and resumptions, 68000 sound drivers and observed DSP programs,
+menus/save handling and regional NetLink/XBAND paths. Keep module, source digest,
+CPU/address space and load lifetime together: different modules reuse the same
+addresses. Upstream generated trampolines and patched boot images are analysis
+artifacts, not unmodified original game code.
+
+For each slice recover original code boundaries, arguments/returns, state reads
+and writes, callers and behavior, then compare against original instructions and
+natural execution with a deliberate wrong branch/state/result. Distinguish source
+hypotheses, disassembly, instruction translation, isolated original-byte tests,
+natural emulator observations and independent checks. The original source's
+names/comments may be unrecoverable. A complete instruction translation or byte
+census does not establish complete recovered semantics.
+
+Current bounded continuation: [module candidates](saturn-code/README.md) and the
+[next original-function probe](research/2026-11-02-saturn-code-probe.md). The
+already verified helper at `0x0600A4B0` and resident-checked decompressor remain
+accepted; the new `0x0600B934` hypothesis needs original-host execution before
+it counts as a newly validated function. Do not guess RNG taps from its symbol.
+
+If original bytes or the existing VPS command channel are unavailable, record
+the precise access blocker and next runnable command. Continue independently
+useful code work; do not claim a host job ran or repeatedly repackage the finished
+FILM extraction as code recovery. Use the already supplied media, not another
+request for discs. Whole-program executable/function/dynamic-target denominators
+remain unknown until discovery itself has been reconciled with runtime evidence.
+
 ## Select the next work
 
 1. **Make the shared factory usable and recoverable.** Continue #33/#536 manual
