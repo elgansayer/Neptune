@@ -68,7 +68,7 @@ domain varies pending byte0/80, state flags0..3 and caller-context aliasing.
 Two fresh guarded processes reached the real return for every case and produced
 identical reports. Counts range from31 to245 instructions and66 to156 events.
 The156-event paths directly demonstrate why the old event capacity was too small.
-All8 code spans and12 distinct data-region addresses were actually read/executed
+All8 code spans were executed and all12 distinct mapped data regions were read
 across the selection. Per-case instruction budget was512, below the native max.
 
 The two previously terminal ABI4 cases agree exactly with ABI5 in registers/SR,
