@@ -50,7 +50,7 @@ def cases():
     coordinates = (0, 1, 0x7FFF, 0x8000, 0xFFFF)
     descriptors = ((0, 1, 2, 3), (0x7F, 0x80, 0xFF, 0),
                    (0x80, 0xFF, 0x7F, 0x80), (0xFF, 0x7F, 0x80, 0xFF))
-    deltas = (0, 1, 0xFFFF, 0x7FFFFFFF, 0x80000000, 0xFFFFFFFF)
+    deltas = (0, 1, 0x7FFF, 0x8000, 0xFFFF, 0x10000, 0x7FFFFFFF, 0x80000000, 0xFFFFFFFF)
     return list(itertools.product(coordinates, descriptors, deltas))
 
 
@@ -168,46 +168,50 @@ def run_case(data, emu, entry, coordinate, descriptor, delta, index=0):
 
 def execute(data, emu):
     selected = cases()
-    if len(selected) != 120:
+    if len(selected) != 180:
         raise ValueError("Case selection changed")
     rows = [run_case(data, emu, LEAF, *case) for case in selected]
     # The caller converts both scalar extents through signed halfword stack
     # slots, and truncates index*84 before adding the record base.
     indices = (0, 1, 127, 255, 780, 781, 0x7FFF, 0xFFFF, 0x10000, 0xFFFFFFFF)
     rows.extend(run_case(data, emu, CALLER, *case, index=index)
-                for index in indices for case in selected[::10])
+                for index in indices for case in selected)
     controls = {}
-    for name, pc, replacement in (
-        ("subtract_to_add", LEAF + 2, "add"),
-        ("missing_return_delay_store", LEAF + 24, "nop"),
-        ("nonreturning_leaf", LEAF + 22, "loop"),
+    for name, pc, replacement, original_op, entry in (
+        ("subtract_to_add", LEAF + 2, "add", "sub", LEAF),
+        ("missing_return_delay_store", LEAF + 24, "nop", "mov.w", LEAF),
+        ("nonreturning_leaf", LEAF + 22, "loop", "rts", LEAF),
+        ("caller_index_not_truncated", 0x0600A416, "nop", "extu.w", CALLER),
+        ("caller_missing_vertical_store", 0x0600A43C, "nop", "mov.w", CALLER),
+        ("caller_missing_register_restore", 0x0600A448, "nop", "mov.l", CALLER),
     ):
         offset = pc - pinned.BASE
         ins = emu.sh2.decode(int.from_bytes(data[offset:offset + 2], "big"), pc)
+        if ins.op != original_op:
+            raise ValueError("Original control instruction changed")
         if replacement == "add":
-            if ins.op != "sub":
-                raise ValueError("Original control instruction changed")
             word = 0x300C | (ins.n << 8) | (ins.m << 4)
         else:
-            if ins.op != ("mov.w" if replacement == "nop" else "rts"):
-                raise ValueError("Original control instruction changed")
             word = 0x0009 if replacement == "nop" else 0xAFFE
         altered = bytearray(data)
         altered[offset:offset + 2] = word.to_bytes(2, "big")
         rejected = 0
         reasons = set()
-        for case in selected:
+        control_cases = [(case, 0) for case in selected] if entry == LEAF else [
+            (case, index) for index in (0, 781, 0xFFFF, 0x10000, 0xFFFFFFFF)
+            for case in selected[::20]]
+        for case, index in control_cases:
             try:
-                run_case(bytes(altered), emu, LEAF, *case)
-            except ValueError as error:
+                run_case(bytes(altered), emu, entry, *case, index=index)
+            except (ValueError, emu.MemoryError_) as error:
                 rejected += 1
                 reasons.add(str(error))
         if not rejected:
             raise ValueError("Original-instruction mutation survived")
         controls[name] = {"pc": hex(pc), "rejected": rejected,
-                          "tested": len(selected), "reasons": sorted(reasons),
+                          "tested": len(control_cases), "reasons": sorted(reasons),
                           "mutated_kernel_sha256": pinned.digest(altered)}
-    return {"cases": len(rows), "leaf_cases": 120, "caller_cases": 120,
+    return {"cases": len(rows), "leaf_cases": len(selected), "caller_cases": len(indices) * len(selected),
             "results": rows, "results_sha256": pinned.digest(json.dumps(rows, sort_keys=True).encode()),
             "instruction_controls": controls,
             "instruction_ranges": {"leaf": [hex(LEAF), "0x600a3fa"],

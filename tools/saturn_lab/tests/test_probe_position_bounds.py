@@ -17,8 +17,8 @@ import probe_kernel as pinned
 class PositionBoundsTests(unittest.TestCase):
     def test_case_selection_is_nonempty_distinct_cartesian_product(self):
         rows = probe.cases()
-        self.assertEqual(len(rows), 120)
-        self.assertEqual(len(set(rows)), 120)
+        self.assertEqual(len(rows), 180)
+        self.assertEqual(len(set(rows)), 180)
         self.assertEqual({r[0] for r in rows}, {0, 1, 0x7fff, 0x8000, 0xffff})
         self.assertIn(0x80000000, {r[2] for r in rows})
 
