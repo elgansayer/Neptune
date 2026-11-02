@@ -27,7 +27,7 @@ COPYING are retained in the generation. It does not map device space as RAM.
 |700..77E|64 coefficients: store value shifted right3; readback shifts left3|
 |780..7BE|32 full16-bit MADRS values|
 |7C0..7FE|Unmatched write falls through without state change; reads unsupported|
-|800..BFE|12864-bit MPROG entries, four big-endian word lanes each; set MPROG_Dirty even on identical writes|
+|800..BFE|128 64-bit MPROG entries, four big-endian word lanes each; set MPROG_Dirty even on identical writes|
 
 All640 even destinations were exercised with9 edge values and3 seeded states:
 17,280 actual reference-component cases, followed by640 owned CPU write/read/RTS
@@ -89,7 +89,7 @@ python3 tools/saturn_lab/probe_netlink_dsp.py \
 
 Use the configured shared admission limit, bounded processes and fresh output
 paths. Actual evidence used limit3, lease180seconds,80instructions/case,
-512MiB address space and60CPU/wall seconds per original process. Guardian
+512MiB address space,60 CPU seconds and75 wall seconds per original process. Guardian
 identities and terminal outcomes are retained. No provider call or account-policy
 change was introduced. Actual account and CI spend is unknown.
 

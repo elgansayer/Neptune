@@ -13,7 +13,7 @@
       "cpu_seconds": 60,
       "file_bytes": 8388608,
       "per_case_steps": 80,
-      "wall_seconds": 60
+      "wall_seconds": 75
     },
     "original_wall_seconds": [
       14.704788974486291,
