@@ -21,6 +21,7 @@ var _server_room_options := {}
 var _content_offer_template := {}
 var _content_archives := {}
 var _pending_content := {} # Account-authenticated peers; never game participants yet.
+var _finished_room_serial := 0
 
 func _ready():
 	# RPC ownership belongs to the autoload, never a second scene instance.
@@ -115,6 +116,10 @@ func _on_player_disconnected(peer_id: int):
 		if active_games.has(game_id):
 			active_games[game_id].remove_player(peer_id)
 		player_to_game.erase(peer_id)
+		# Completed rooms are retained only while their original clients remain.
+		if game_id != "shared_game" and active_games.has(game_id) and not game_id in player_to_game.values():
+			active_games[game_id].queue_free()
+			active_games.erase(game_id)
 	# Clean up from lobby
 	lobby_manager.remove_player(peer_id)
 
@@ -254,6 +259,26 @@ func test_farming_spot_broadcast():
 
 func _prepare_shared_game(runtime: Dictionary = {}) -> Dictionary:
 	var shared_game_id = "shared_game"
+	if active_games.has(shared_game_id) and _pending_content.is_empty():
+		var previous = active_games[shared_game_id]
+		if not previous.get_round_result().is_empty():
+			# A terminal room cannot admit/start a new round. Allocate a fresh
+			# authority rather than clearing its settled result or transient state.
+			# Existing clients retain their completed room until they disconnect.
+			_finished_room_serial += 1
+			var retired_id := "finished_game_%d" % _finished_room_serial
+			active_games.erase(shared_game_id)
+			previous.game_id = retired_id
+			previous.name = retired_id
+			var retained := false
+			for id in player_to_game:
+				if player_to_game[id] == shared_game_id:
+					player_to_game[id] = retired_id
+					retained = true
+			if retained:
+				active_games[retired_id] = previous
+			else:
+				previous.queue_free()
 	if not active_games.has(shared_game_id):
 		print("[Server] Creating new shared game instance")
 		# Use load() instead of preload const to avoid compile-time issues
@@ -279,7 +304,7 @@ func _prepare_shared_game(runtime: Dictionary = {}) -> Dictionary:
 		active_games[shared_game_id] = new_game
 	return {"accepted": true, "reason": "room_prepared"}
 
-# Quick-start still uses one shared room; host UI and round replacement are #31.
+# Quick-start uses one joinable room; completed rooms retain only existing clients.
 func quick_start_game(peer_id: int, username: String) -> Dictionary:
 	var shared_game_id = "shared_game"
 	var prepared := _prepare_shared_game(_server_room_options)

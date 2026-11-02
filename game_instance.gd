@@ -2084,6 +2084,13 @@ func _do_register_console_commands() -> void:
 		print("[GameInstance] Make sure LimboConsole addon is enabled in project settings")
 		return
 	
+	# Commands outlive a room. Keep their callables on the server autoload and
+	# update only the authority reference when a completed room is replaced.
+	var owner_node := get_node("/root/ServerMain")
+	var registered := owner_node.get_node_or_null("ConsoleCommands")
+	if registered != null:
+		registered.game_instance_ref = self
+		return
 	print("[GameInstance] 🎮 Loading console commands script...")
 	var script = load("res://scripts/console_commands.gd")
 	if not script:
@@ -2092,7 +2099,7 @@ func _do_register_console_commands() -> void:
 	
 	var console_commands = script.new()
 	console_commands.name = "ConsoleCommands"
-	add_child(console_commands)
+	owner_node.add_child(console_commands)
 	
 	print("[GameInstance] 📝 Registering console commands...")
 	console_commands.register_all_commands(self)

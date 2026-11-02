@@ -75,6 +75,7 @@ func _on_register_pressed():
 	client_main.register(username, password)
 
 func _on_connection_succeeded():
+	$VBoxContainer/Title.text = "Joining Game..."
 	status_label.text = "Connected! Registering..."
 	# Auto-register with random credentials
 	var username = username_field.text
@@ -109,6 +110,7 @@ func _on_authentication_succeeded():
 	get_tree().change_scene_to_file("res://client/game_view.tscn")
 
 func _on_authentication_failed(error: String):
+	$VBoxContainer/Title.text = "Unable to Join"
 	cancel_content_button.visible = false
 	login_button.text = "Try again"
 	login_button.visible = true
@@ -117,6 +119,8 @@ func _on_authentication_failed(error: String):
 			status_label.text = "Download cancelled. Choose Try again when you are ready."
 		"content_download_timeout":
 			status_label.text = "The server content download timed out. Try again."
+		"round_finished":
+			status_label.text = "The previous round has ended. Choose Try again to join a new round."
 		"room_full":
 			status_label.text = "This server is full. Try again or choose another server."
 		_:
