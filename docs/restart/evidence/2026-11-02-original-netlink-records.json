@@ -1,0 +1,186 @@
+{
+  "bridge_sha256": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+  "cases": 8456,
+  "copy_cases": 8192,
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "experiment": "EXP-SAT-CODE-007",
+  "function_statistics": {
+    "0x4bb6": {
+      "cases": 8192,
+      "instructions": [
+        12
+      ],
+      "model_cycles": [
+        202
+      ]
+    },
+    "0x4be0": {
+      "cases": 264,
+      "instructions": [
+        18,
+        23,
+        28,
+        33,
+        38,
+        43,
+        48,
+        53,
+        58,
+        63,
+        68,
+        73,
+        78,
+        83,
+        88,
+        93,
+        98,
+        103,
+        108,
+        113,
+        118,
+        123,
+        128,
+        133,
+        138,
+        143,
+        148,
+        153,
+        158,
+        163,
+        168,
+        173
+      ],
+      "model_cycles": [
+        250,
+        304,
+        358,
+        412,
+        466,
+        520,
+        574,
+        628,
+        682,
+        736,
+        790,
+        844,
+        898,
+        952,
+        1006,
+        1060,
+        1114,
+        1168,
+        1222,
+        1276,
+        1330,
+        1384,
+        1438,
+        1492,
+        1546,
+        1600,
+        1654,
+        1708,
+        1762,
+        1816,
+        1864,
+        1870,
+        1924
+      ]
+    }
+  },
+  "initial_failed_report": {
+    "diagnostic_sha256": "e1128fc2b26657968c00e9ba4bac8ac606a0aea61e3b91a6ab1417cd509adaa9",
+    "guard_was_not_weakened": true,
+    "reason": "Expected MOVEM longword callbacks; pinned CPU emits two ordered halfword writes per saved register",
+    "sha256": "f445169c8855670ea5859f8f5c134f5a312d52d06f0856d80fc2847a9e3498b8",
+    "source_head": "b941f356eb322c175758f8ad342d42f658175694"
+  },
+  "instruction_controls": {
+    "copy_missing_index_clear": {
+      "address": "0x4bca",
+      "mutated_driver_sha256": "a758ebf9633fce7b554bba31d852f1bad04b6441056c988fa1241462e6386de2",
+      "reasons": [
+        "Native guard: forbidden-write"
+      ],
+      "rejected": 256,
+      "tested": 256
+    },
+    "copy_missing_second_store": {
+      "address": "0x4bd6",
+      "mutated_driver_sha256": "eb2df5b65f3d3f275a5249e51a571fe6b65d77c35b626edcf08d41eb22efd3e1",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 256,
+      "tested": 256
+    },
+    "scan_limit31": {
+      "address": "0x4be4",
+      "mutated_driver_sha256": "6af6d8aaf9e0d6a16c6fdf78d49c1d9978e94286b92c99530058225a8480e515",
+      "reasons": [
+        "Output or unaffected mapped byte differs",
+        "Read/write sequence or widths differ"
+      ],
+      "rejected": 16,
+      "tested": 264
+    },
+    "scan_no_allocation_flag": {
+      "address": "0x4c22",
+      "mutated_driver_sha256": "7e0b9869e4b711484135aa20a2f918ab12f9ac4a03503f3a79949eb47c73dd38",
+      "reasons": [
+        "Output or unaffected mapped byte differs",
+        "Read/write sequence or widths differ"
+      ],
+      "rejected": 256,
+      "tested": 264
+    }
+  },
+  "intake_base": "287c4298a2e7a1e6bfb5332ab2017cd49aca04ea",
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Initialized RAM/registers, not natural sound events or a proven queue role",
+    "No SCSP/device/DSP model, independent hardware oracle, timing or whole-program completion"
+  ],
+  "load_address": 0,
+  "module": "NLSND",
+  "native_identity": {
+    "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-DM68K_INSTRUCTION_HOOK=1",
+      "-DM68K_SEPARATE_READS=1",
+      "-Wl,-z,defs"
+    ],
+    "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+  },
+  "original_game_bytes_executed": true,
+  "owned_smoke": {
+    "failure_controls": {
+      "execution_escape": "instruction-access",
+      "forbidden_write": "forbidden-write",
+      "nonreturning": "instruction-budget",
+      "unmapped_read": "unmapped-data-read"
+    },
+    "fresh_after_failure": true,
+    "original_game_bytes_executed": false,
+    "positive_steps": 2
+  },
+  "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+  "private_report_sha256": "7eea248482fa02b90f7ec335c092e4ad328f2a4938f3765624dcf817417e7257",
+  "probe_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+  "range_sha256": {
+    "4bb6:4be0": "723f98a4d114c6ab7a19a9664ffc48d84778965ba54f2da7b31a5a5400f5695b",
+    "4be0:4c2a": "00d30de3322866e44f7900a4557dce8a86592b75f9675d5c05429f40dba7ca09"
+  },
+  "release": "usa-mk81070-v1003",
+  "results_sha256": "1070f86ed9dc46aa6a0d6e0205df5a0d02b443698a7dc35290b64a0cd97ac355",
+  "scan_cases": 264,
+  "schema": "neptune.original-m68k-records.v1",
+  "source_head": "a0c2e9af525c42ce7e1cf14d4a2b9ef15e8e3c02",
+  "source_path": "NETLINK/SNDDRV.BIN",
+  "status": "success",
+  "two_complete_reports_equal": true
+}
