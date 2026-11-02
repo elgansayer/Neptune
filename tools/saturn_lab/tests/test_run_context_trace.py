@@ -36,7 +36,7 @@ class ExperimentTests(unittest.TestCase):
         after.pr, after.mach, after.macl = context[9:12]
         after.stack_address = after.r[15] - 64
         status = observer.Status()
-        for name, value in dict(abi=1, record_bytes=1996, capacity=128, count=3, profile=2,
+        for name, value in dict(abi=2, record_bytes=1996, capacity=128, count=3, profile=2,
                                 completed=1, requested=1, frame_known=1, frame=102, source_checks=3,
                                 step_limit=4096, master_dispatches=118).items():
             setattr(status, name, value)

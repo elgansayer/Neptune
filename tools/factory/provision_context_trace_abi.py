@@ -21,7 +21,7 @@ class Status(C.Structure):
                 ("abi", "record_bytes", "capacity", "count", "dropped", "errors", "active", "pending",
                  "completed", "requested", "profile", "frame_known", "frame", "step_limit", "steps",
                  "master_dispatches", "outside_inspected", "source_mismatch_candidates", "source_checks",
-                 "last_error", "last_pc", "last_address")]
+                 "last_error", "last_pc", "last_address", "fused_nops")]
 
 
 def serialise(record):
@@ -62,7 +62,7 @@ def restore_pair(before, after):
 
 
 def validate(records, status):
-    if (status.abi != 1 or status.record_bytes != C.sizeof(Record) or status.capacity != CAPACITY or
+    if (status.abi != 2 or status.record_bytes != C.sizeof(Record) or status.capacity != CAPACITY or
             status.step_limit != STEP_LIMIT or status.profile not in (1, 2, 3)):
         raise ValueError("Unsupported context observer ABI/layout/profile")
     width = 3 if status.profile == 2 else 5
@@ -109,6 +109,7 @@ def validate(records, status):
         restore_pair(restore, transfer)
     return {"schema": "neptune.original-master-context-trace.v1", "cpu": "master SH-2 interpreter",
             "profile": status.profile, "completed_cycles": status.completed,
+            "dispatch_steps": "master observer hooks including actual fused NOP delays; not hardware cycles",
             "scope": "original save/restore and caller boundaries; no task-body or whole-game parity claim",
             "records": [serialise(record) for record in records], "status": serialise(status)}
 
@@ -128,7 +129,7 @@ class Trace:
         except AttributeError as error:
             raise ValueError("Core has no supported context observer") from error
         status = self.status()
-        if status.abi != 1 or status.record_bytes != C.sizeof(Record) or status.capacity != CAPACITY:
+        if status.abi != 2 or status.record_bytes != C.sizeof(Record) or status.capacity != CAPACITY:
             raise ValueError("Unsupported context observer layout")
 
     def status(self):

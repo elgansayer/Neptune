@@ -40,13 +40,27 @@ def prepare(source, header=None):
     names = ("begin", "frame", "stop", "status", "records", "witness")
     exports = exports.replace(b"global: retro_*;", b"global: retro_*; " +
                               b" ".join(("neptune_context_" + name + ";").encode() for name in names))
+    # Actual original execution exposed NOP delay fusion: these delays never
+    # visit the ordinary switch hook. Observe the existing fused execution,
+    # preserving its CPU state, timing and all master/slave fusion choices.
+    ops = content["mednafen/ss/sh7095_ops.inc"]
+    start = ops.index(b" #define FUSE_DELAY_SLOT_NOP()")
+    end = ops.index(b" // Triplet fusion:", start)
+    fusion = ops[start:end]
+    increment = b"   z->PC += 2;"
+    if fusion.count(increment) != 1:
+        raise ValueError("Missing/ambiguous inspected fused NOP boundary")
+    fusion = fusion.replace(increment, b"   if(!which) neptune_context_fused_nop(z);\t\t\\\r\n" + increment)
+    ops = ops[:start] + fusion + ops[end:]
     outputs = {"mednafen/ss/ss.c": main, "mednafen/ss/sh7095.inc": steps,
-               "link.T": exports, "mednafen/ss/neptune_context_trace.h": observer}
+               "mednafen/ss/sh7095_ops.inc": ops, "link.T": exports,
+               "mednafen/ss/neptune_context_trace.h": observer}
     for name, data in outputs.items():
         (source / name).write_bytes(data)
     return {"schema": "neptune.context-trace-patch.v1", "reference_revision": REVISION,
             "source_hashes": SOURCES, "patched_hashes": {name: digest(data) for name, data in outputs.items()},
-            "observer_abi": 1, "cpu": "master SH-2 interpreter only",
+            "observer_abi": 2, "cpu": "master SH-2 interpreter only",
+            "fused_nop_observation": "actual master fused handler before PC increment; value-only PC+2 normalization",
             "profiles": {"1": "fresh selection 06006BE4", "2": "resumed selection 06006C00",
                          "3": "yield 06006D36"}, "maximum_cycles": 16,
             "capacity": 128, "maximum_inflight_dispatches": 4096,

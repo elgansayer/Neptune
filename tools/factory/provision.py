@@ -206,7 +206,7 @@ def smoke(tool, binary, runner, root):
         if tool == "beetle-saturn-context-trace":
             observer = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_context_trace_abi.py"),
                                               "--probe-core", str(binary)], binary.parent, 30))
-            if (observer.get("abi") != 1 or observer.get("record_bytes") != 1996 or
+            if (observer.get("abi") != 2 or observer.get("record_bytes") != 1996 or
                     observer.get("rejected_invalid_profile_budget_witness_and_frame") is not True):
                 raise ProvisionError("smoke_failed", "Missing actual bounded context observer ABI/fence result")
             return {"libretro": result, "observer": observer}
@@ -259,7 +259,7 @@ def install(tool, recipe, payload, work, runner, root):
     if tool == "beetle-saturn-context-trace":
         patched = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_context_trace.py"),
                                         "--source", str(source)], work, 30))
-        if patched.get("reference_revision") != actual or patched.get("observer_abi") != 1:
+        if patched.get("reference_revision") != actual or patched.get("observer_abi") != 2:
             raise ProvisionError("source_mismatch", "Context observer patch identity mismatch")
         # CI may export this separate native payload. Include corresponding
         # patched source and upstream notices, before any compilation products.
