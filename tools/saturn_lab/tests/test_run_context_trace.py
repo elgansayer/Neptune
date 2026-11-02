@@ -14,6 +14,93 @@ import run_context_trace as experiment
 
 
 class ExperimentTests(unittest.TestCase):
+    def owned_boot(self, root, mode):
+        """No native library, media or original bytes: exercise boot provenance."""
+        (root / "core").write_bytes(b"owned fixture, not a library")
+        class Driver:
+            def __init__(self, *args):
+                self.frame, self.video, self.saves = 0, None, 0
+                self.polls, self.delivered = [0] * 12, [set() for _ in range(12)]
+                self.dll = object()
+            def load(self, *args): return {"fps": 60.0}
+            def restore(self, *args): raise AssertionError("Cold boot must not import a state")
+            def save_state(self):
+                self.saves += 1
+                return b"owned initial state" if self.saves == 1 else b"owned final state"
+            def step(self, masks):
+                frame = self.frame
+                self.frame += 1
+                self.video = {"width": 1, "height": 1, "sha256": "1" * 64}
+                return {"frame": frame, "video": self.video, "audio_sha256": "0" * 64,
+                        "audio_frames": 1, "inputs": masks}
+            def close(self): pass
+        module = types.SimpleNamespace(Core=Driver, CHECKPOINT="owned.checkpoint.v1",
+                                       read_checkpoint=lambda *_: (_ for _ in ()).throw(AssertionError("No checkpoint")),
+                                       digest=lambda x: hashlib.sha256(json.dumps(x).encode()).hexdigest())
+        args = types.SimpleNamespace(profile=1, cold_boot=True, checkpoint=None, frames=2, pairs=1,
+                                     start_frames=0, output=root / "out", mode=mode, reference_root=root,
+                                     lock=root / "unused", expected_lock="0" * 64, kernel=root / "unused", prepared=root)
+        lock = {"inputs": {"emulator": "core", "disc": "disc.cue"}}
+        profile = {"system_directory": "system", "options": {}, "log_shim": {"path": "shim"}, "controller_devices": [1]*12}
+        return module, args, lock, profile
+
+    def test_cold_boot_retains_real_state_without_importing_or_claiming_kernel_execution(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            module, args, lock, profile = self.owned_boot(root, "reference")
+            identity = {"owned": "identity"}
+            with patch.object(experiment, "reference", return_value=(module, lock, profile, identity, b"seed")), \
+                 patch.object(experiment.probe_kernel, "kernel_bytes", return_value=bytes(experiment.probe_kernel.SIZE)), \
+                 patch.object(experiment.os, "statvfs", return_value=types.SimpleNamespace(f_flag=experiment.os.ST_RDONLY)), \
+                 patch.object(experiment, "boot_residency", return_value=[]):
+                report = experiment.run(args)
+            self.assertEqual(report["status"], "success")
+            self.assertIsNone(report["original_game_bytes_executed"])
+            self.assertIsNone(report["reference_checkpoint_file_sha256"])
+            self.assertEqual(report["completed_original_frames"], 2)
+            self.assertEqual(report["reference_frame"], 0)
+            checkpoint = json.loads((args.output / "checkpoint.json").read_text())
+            self.assertEqual(checkpoint["identity"], identity)
+            self.assertEqual(checkpoint["frame"], 2)
+            self.assertEqual(checkpoint["state_sha256"], experiment.sha(b"owned final state"))
+            self.assertEqual((args.output / checkpoint["state_path"]).read_bytes(), b"owned final state")
+            self.assertEqual(report["new_reference_checkpoint_file_sha256"], experiment.sha((args.output / "checkpoint.json").read_bytes()))
+            self.assertEqual((args.output / "save/disc.smpc").read_bytes(), b"seed")
+
+    def test_empty_boot_trace_fails_but_keeps_state_frames_and_failed_records(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            module, args, lock, profile = self.owned_boot(root, "enabled")
+            class Trace:
+                def __init__(self, *args):
+                    self.started = False
+                    self.dll = types.SimpleNamespace(neptune_context_stop=lambda: None)
+                def start(self, profile, pairs, words): self.started, self.words = True, words
+                def witness(self, *args): return self.words
+                def frame(self, frame): pass
+                def finish(self): raise ValueError("Empty owned boot trace")
+                def snapshot(self): return [], experiment.observer.Status()
+            with patch.object(experiment, "reference", return_value=(module, lock, profile, {}, b"seed")), \
+                 patch.object(experiment.probe_kernel, "kernel_bytes", return_value=bytes(experiment.probe_kernel.SIZE)), \
+                 patch.object(experiment.os, "statvfs", return_value=types.SimpleNamespace(f_flag=experiment.os.ST_RDONLY)), \
+                 patch.object(experiment.provision, "cached", return_value=root/"core"), \
+                 patch.object(experiment, "boot_residency", return_value=[]), \
+                 patch.object(experiment.observer, "Trace", Trace):
+                with self.assertRaisesRegex(ValueError, "Empty owned"):
+                    experiment.run(args)
+            report = json.loads((args.output/"result.json").read_text())
+            self.assertEqual(report["status"], "failure")
+            self.assertIsNone(report["original_game_bytes_executed"])
+            self.assertEqual(report["frames"], 2)
+            self.assertEqual((args.output/"final.state").read_bytes(), b"owned final state")
+            self.assertEqual(len(json.loads((args.output/"observations.json").read_text())["frames"]), 2)
+            self.assertFalse(json.loads((args.output/"failed-context-records.json").read_text())["accepted"])
+            self.assertFalse((args.output/"checkpoint.json").exists())
+
+    def test_cold_boot_does_not_turn_invalid_states_into_missing_residency(self):
+        with self.assertRaises(ValueError):
+            experiment.boot_residency(b"owned invalid state", bytes(experiment.probe_kernel.SIZE))
+
     def six_owned_runs(self, root):
         """Artefact-validation fixture, never claimed as original execution."""
         observer = experiment.observer
@@ -175,7 +262,7 @@ class ExperimentTests(unittest.TestCase):
     def test_rehashed_empty_execution_and_mislabeled_profile_never_pass(self):
         with tempfile.TemporaryDirectory() as temporary:
             paths = self.six_owned_runs(Path(temporary))
-            for field, value in (("original_game_bytes_executed", False),
+            for field, value in (("original_game_bytes_executed", False), ("original_game_bytes_executed", None),
                                  ("completed_original_frames", 0), ("context_profile", 3)):
                 originals = [(p / "result.json").read_bytes() for p in paths]
                 for path in paths:

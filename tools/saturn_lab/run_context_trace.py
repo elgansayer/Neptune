@@ -43,7 +43,20 @@ def resident(state, kernel):
     return regions
 
 
+def boot_residency(state, kernel):
+    """A well-formed pre-loader state may not contain the kernel yet."""
+    try:
+        return resident(state, kernel)
+    except ValueError as error:
+        if str(error) != "Original context source witness is absent from High Work RAM":
+            raise
+        return []
+
+
 def run(args):
+    cold_boot = getattr(args, "cold_boot", False)
+    if type(cold_boot) is not bool:
+        raise ValueError("Cold boot must be explicitly selected")
     if type(args.profile) is not int or args.profile not in (1, 2, 3):
         raise ValueError("Require explicit fresh/resumed/yield profile 1..3")
     if type(args.frames) is not int or not 1 <= args.frames <= 600:
@@ -62,19 +75,28 @@ def run(args):
                                  "state_parser": sha(Path(state_graphics.__file__).read_bytes()),
                                  "kernel_identity": sha(Path(probe_kernel.__file__).read_bytes()),
                                  "reference_adapter": sha((ROOT / "tools/saturn_lab/run_call_trace.py").read_bytes())},
-              "state_import": "explicit controlled import only; historical checkpoint/lock never modified",
+              "state_import": ("cold boot; no checkpoint imported" if cold_boot else
+                               "explicit controlled import only; historical checkpoint/lock never modified"),
               "model_calls": 0}
     driver, tracer, frames = None, None, []
+    saw_resident = False
     phase = "input_identity"
     try:
         root = args.reference_root
         module, lock, profile, identity, seed = reference(root, args.lock, args.expected_lock)
-        original, state = module.read_checkpoint(args.checkpoint, identity)
+        if cold_boot:
+            if getattr(args, "checkpoint", None) is not None:
+                raise ValueError("Choose cold boot or one original checkpoint")
+            original, state = {"frame": 0, "state_sha256": None}, None
+        else:
+            original, state = module.read_checkpoint(args.checkpoint, identity)
         kernel = probe_kernel.kernel_bytes(args.kernel)
+        inputs = (root, args.kernel.parent) + (() if cold_boot else (args.checkpoint.parent,))
         if any(not os.statvfs(path).f_flag & os.ST_RDONLY
-               for path in (root, args.checkpoint.parent, args.kernel.parent)):
+               for path in inputs):
             raise ValueError("Run with original media/checkpoint/kernel mounted read-only")
-        source_witness = resident(state, kernel)
+        source_witness = [] if cold_boot else resident(state, kernel)
+        saw_resident = bool(source_witness)
         core = confined(root, lock["inputs"]["emulator"])
         if args.mode != "reference":
             if args.prepared is None:
@@ -85,11 +107,11 @@ def run(args):
                 raise ValueError("Prepared observer generation must be mounted read-only")
             result["prepared_recipe_sha256"] = recipe
         result.update(reference_identity=identity, reference_lock_file_sha256=args.expected_lock,
-                      reference_checkpoint_file_sha256=sha(args.checkpoint.read_bytes()),
+                      reference_checkpoint_file_sha256=None if cold_boot else sha(args.checkpoint.read_bytes()),
                       original_kernel_sha256=sha(kernel),
                       reference_state_sha256=original["state_sha256"], reference_frame=original["frame"],
                       selected_core_sha256=provision.digest(core), resident_code_before=source_witness)
-        phase = "core_load_and_explicit_state_import"
+        phase = "core_load_and_cold_boot" if cold_boot else "core_load_and_explicit_state_import"
         save = args.output / "save"
         save.mkdir()
         disc = confined(root, lock["inputs"]["disc"])
@@ -98,10 +120,19 @@ def run(args):
         driver = module.Core(core, root / profile["system_directory"], save, profile["options"],
                              confined(root, profile["log_shim"]["path"]))
         av = driver.load(disc, profile["controller_devices"])
-        driver.restore(state)
-        driver.frame, driver.video = original["frame"], original["last_video"]
+        if cold_boot:
+            if driver.frame != 0 or driver.video is not None:
+                raise ValueError("Pinned cold boot did not begin at frame zero before video")
+        else:
+            driver.restore(state)
+            driver.frame, driver.video = original["frame"], original["last_video"]
         canonical_import = driver.save_state()
-        resident(canonical_import, kernel)
+        if cold_boot:
+            source_witness = boot_residency(canonical_import, kernel)
+            result["resident_code_before"] = source_witness
+            saw_resident = bool(source_witness)
+        else:
+            resident(canonical_import, kernel)
         result.update(av=av, imported_state_bytes=len(canonical_import), imported_state_sha256=sha(canonical_import))
         tracer = None
         if args.mode != "reference":
@@ -118,29 +149,42 @@ def run(args):
             frames.append(driver.step([8 if relative < args.start_frames else 0] + [0] * 11))
         elapsed = time.monotonic() - started
         final = driver.save_state()
-        witness = resident(final, kernel)
+        # Preserve the real early state and observations even when the kernel
+        # has not loaded or no acceptable context trace was captured.
         (args.output / "final.state").write_bytes(final)
         (args.output / "observations.json").write_text(json.dumps({"av": av, "frames": frames}, sort_keys=True) + "\n")
-        result.update(frames=len(frames), final_state_sha256=sha(final), resident_code_after=witness,
+        result.update(frames=len(frames), final_state_sha256=sha(final),
                       frame_observations_sha256=module.digest(frames),
                       video_sha256=module.digest([frame["video"] for frame in frames]),
                       audio_sha256=module.digest([(frame["audio_sha256"], frame["audio_frames"]) for frame in frames]),
                       audio_frames=sum(frame["audio_frames"] for frame in frames),
                       emulation_wall_seconds=elapsed, input_polls=driver.polls,
                       delivered_masks=[sorted(values) for values in driver.delivered])
+        if cold_boot and args.mode == "reference":
+            checkpoint = {"schema": module.CHECKPOINT, "identity": identity,
+                          "state_path": "final.state", "state_sha256": sha(final), "state_bytes": len(final),
+                          "frame": driver.frame, "last_video": driver.video}
+            raw = (json.dumps(checkpoint, indent=2, sort_keys=True) + "\n").encode()
+            (args.output / "checkpoint.json").write_bytes(raw)
+            result["new_reference_checkpoint_file_sha256"] = sha(raw)
+        witness = boot_residency(final, kernel) if cold_boot else resident(final, kernel)
+        saw_resident = saw_resident or bool(witness)
+        result["resident_code_after"] = witness
         if args.mode == "enabled":
             phase = "bounded_original_context_validation"
             trace = tracer.finish()
             raw = (json.dumps(trace, indent=2, sort_keys=True) + "\n").encode()
             (args.output / "context-trace.json").write_bytes(raw)
             result.update(trace_sha256=sha(raw), pairs=trace["completed_cycles"])
+            saw_resident = True  # Every actual record passed the native source witness.
         result["status"] = "success"
         return result
     except Exception as error:
         result["error"] = {"phase": phase, "type": type(error).__name__, "reason": str(error)}
         raise
     finally:
-        result.update(completed_original_frames=len(frames), original_game_bytes_executed=bool(frames))
+        result.update(completed_original_frames=len(frames),
+                      original_game_bytes_executed=bool(frames) if saw_resident or not cold_boot else None)
         if result["status"] != "success" and frames:
             (args.output / "partial-observations.json").write_text(json.dumps({"frames": frames}, sort_keys=True) + "\n")
         if tracer is not None and tracer.started and result["status"] != "success":
@@ -308,7 +352,10 @@ def main(argv=None):
     parser.add_argument("--reference-root", type=Path, required=True)
     parser.add_argument("--lock", type=Path, required=True)
     parser.add_argument("--expected-lock", required=True)
-    parser.add_argument("--checkpoint", type=Path, required=True)
+    initialization = parser.add_mutually_exclusive_group(required=True)
+    initialization.add_argument("--checkpoint", type=Path)
+    initialization.add_argument("--cold-boot", action="store_true",
+                                help="Boot the pinned original media; import no historical state")
     parser.add_argument("--kernel", type=Path, required=True)
     parser.add_argument("--prepared", type=Path)
     parser.add_argument("--mode", choices=("reference", "disabled", "enabled"), required=True)
