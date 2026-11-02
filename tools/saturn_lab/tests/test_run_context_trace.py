@@ -101,6 +101,84 @@ class ExperimentTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             experiment.boot_residency(b"owned invalid state", bytes(experiment.probe_kernel.SIZE))
 
+    def owned_boot_checkpoint(self, root, frame=600):
+        directory = root / "boot"
+        directory.mkdir()
+        checkpoint = directory / "checkpoint.json"
+        identity = {"owned": "identity"}
+        state = b"owned boot state"
+        meta = {"frame": frame, "state_sha256": experiment.sha(state), "last_video": {"owned": "video"}}
+        checkpoint.write_text(json.dumps(meta))
+        proof = {"schema": "neptune.explicit-context-trace-experiment.v1", "status": "success",
+                 "mode": "reference", "selected_core_sha256": experiment.REFERENCE_CORE,
+                 "reference_identity": identity, "reference_lock_file_sha256": "0"*64,
+                 "frames": 600, "reference_frame": frame-600, "completed_original_frames": 600,
+                 "final_state_sha256": meta["state_sha256"],
+                 "new_reference_checkpoint_file_sha256": experiment.sha(checkpoint.read_bytes()),
+                 "state_import": "cold boot; no checkpoint imported", "reference_checkpoint_file_sha256": None}
+        (directory / "result.json").write_text(json.dumps(proof))
+        module = types.SimpleNamespace(read_checkpoint=lambda *_: (meta, state))
+        return checkpoint, identity, module, proof
+
+    def test_boot_checkpoint_requires_matching_reference_execution_and_artifacts(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint, identity, module, proof = self.owned_boot_checkpoint(Path(temporary))
+            self.assertEqual(experiment.read_boot_checkpoint(module, checkpoint, identity, "0"*64)[0]["frame"], 600)
+            for name, value in (("mode", "enabled"), ("status", "failure"), ("selected_core_sha256", "1"*64),
+                                ("reference_identity", {}), ("reference_lock_file_sha256", "1"*64),
+                                ("frames", 601), ("completed_original_frames", 0), ("reference_frame", 1),
+                                ("new_reference_checkpoint_file_sha256", "1"*64), ("final_state_sha256", "1"*64),
+                                ("state_import", "explicit controlled import only; historical checkpoint/lock never modified")):
+                mutated = dict(proof, **{name: value})
+                (checkpoint.parent / "result.json").write_text(json.dumps(mutated))
+                with self.subTest(name=name), self.assertRaises(ValueError):
+                    experiment.read_boot_checkpoint(module, checkpoint, identity, "0"*64)
+            proof.update(state_import="verified original boot checkpoint import", input_boot_checkpoint_verified=False)
+            (checkpoint.parent / "result.json").write_text(json.dumps(proof))
+            with self.assertRaisesRegex(ValueError, "rooted"):
+                experiment.read_boot_checkpoint(module, checkpoint, identity, "0"*64)
+
+    def test_verified_boot_continues_actual_state_with_separate_total_bound(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            checkpoint, identity, reader, proof = self.owned_boot_checkpoint(root)
+            module, args, lock, profile = self.owned_boot(root, "reference")
+            module.read_checkpoint = reader.read_checkpoint
+            restored = []
+            module.Core.restore = lambda self, state: restored.append(state)
+            args.cold_boot, args.boot_checkpoint = False, checkpoint
+            with patch.object(experiment, "reference", return_value=(module, lock, profile, identity, b"seed")), \
+                 patch.object(experiment.probe_kernel, "kernel_bytes", return_value=bytes(experiment.probe_kernel.SIZE)), \
+                 patch.object(experiment.os, "statvfs", return_value=types.SimpleNamespace(f_flag=experiment.os.ST_RDONLY)), \
+                 patch.object(experiment, "boot_residency", return_value=[]):
+                result = experiment.run(args)
+            self.assertEqual(restored, [b"owned boot state"])
+            self.assertTrue(result["input_boot_checkpoint_verified"])
+            self.assertEqual(result["reference_frame"], 600)
+            self.assertIsNone(result["original_game_bytes_executed"])
+            self.assertEqual(json.loads((args.output/"checkpoint.json").read_text())["frame"], 602)
+        with tempfile.TemporaryDirectory() as temporary:
+            checkpoint, identity, module, proof = self.owned_boot_checkpoint(Path(temporary), 4800)
+            proof.update(state_import="verified original boot checkpoint import", input_boot_checkpoint_verified=True)
+            (checkpoint.parent / "result.json").write_text(json.dumps(proof))
+            with self.assertRaisesRegex(ValueError, "provenance"):
+                experiment.read_boot_checkpoint(module, checkpoint, identity, "0"*64)
+
+    def test_strict_checkpoint_cannot_skip_absent_source_witness(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            module, args, lock, profile = self.owned_boot(root, "reference")
+            args.cold_boot, args.checkpoint = False, root/"original-checkpoint"
+            module.read_checkpoint = lambda *_: ({"frame": 600, "state_sha256": "1"*64}, b"owned")
+            with patch.object(experiment, "reference", return_value=(module, lock, profile, {}, b"seed")), \
+                 patch.object(experiment.probe_kernel, "kernel_bytes", return_value=b"owned"), \
+                 patch.object(experiment.os, "statvfs", return_value=types.SimpleNamespace(f_flag=experiment.os.ST_RDONLY)), \
+                 patch.object(experiment, "resident", side_effect=ValueError("absent witness")), \
+                 patch.object(module, "Core", side_effect=AssertionError("Must not load emulator")) as load:
+                with self.assertRaisesRegex(ValueError, "absent witness"):
+                    experiment.run(args)
+            load.assert_not_called()
+
     def six_owned_runs(self, root):
         """Artefact-validation fixture, never claimed as original execution."""
         observer = experiment.observer

@@ -53,8 +53,34 @@ def boot_residency(state, kernel):
         return []
 
 
+def read_boot_checkpoint(module, path, identity, expected_lock):
+    """Continue only a retained reference boot window with matching artifacts."""
+    meta, state = module.read_checkpoint(path, identity)
+    proof = read_json(path.parent / "result.json")
+    cold, imported = "cold boot; no checkpoint imported", "verified original boot checkpoint import"
+    frames, start = proof.get("frames"), proof.get("reference_frame")
+    if (proof.get("schema") != "neptune.explicit-context-trace-experiment.v1" or
+            proof.get("status") != "success" or proof.get("mode") != "reference" or
+            proof.get("selected_core_sha256") != REFERENCE_CORE or proof.get("reference_identity") != identity or
+            proof.get("reference_lock_file_sha256") != expected_lock or
+            type(frames) is not int or not 1 <= frames <= 600 or
+            type(start) is not int or not 0 <= start < 4800 or meta["frame"] != start + frames or
+            meta["frame"] >= 4800 or proof.get("completed_original_frames") != frames or
+            proof.get("final_state_sha256") != meta["state_sha256"] or
+            proof.get("new_reference_checkpoint_file_sha256") != sha(path.read_bytes()) or
+            proof.get("state_import") not in (cold, imported)):
+        raise ValueError("Missing or inconsistent original reference boot-window provenance")
+    if (proof["state_import"] == cold and (start != 0 or proof.get("reference_checkpoint_file_sha256") is not None) or
+            proof["state_import"] == imported and proof.get("input_boot_checkpoint_verified") is not True):
+        raise ValueError("Boot checkpoint is not rooted in a verified cold boot")
+    return meta, state
+
+
 def run(args):
     cold_boot = getattr(args, "cold_boot", False)
+    boot_checkpoint = getattr(args, "boot_checkpoint", None)
+    boot_mode = cold_boot or boot_checkpoint is not None
+    checkpoint_path = boot_checkpoint if boot_checkpoint is not None else getattr(args, "checkpoint", None)
     if type(cold_boot) is not bool:
         raise ValueError("Cold boot must be explicitly selected")
     if type(args.profile) is not int or args.profile not in (1, 2, 3):
@@ -76,6 +102,7 @@ def run(args):
                                  "kernel_identity": sha(Path(probe_kernel.__file__).read_bytes()),
                                  "reference_adapter": sha((ROOT / "tools/saturn_lab/run_call_trace.py").read_bytes())},
               "state_import": ("cold boot; no checkpoint imported" if cold_boot else
+                               "verified original boot checkpoint import" if boot_checkpoint is not None else
                                "explicit controlled import only; historical checkpoint/lock never modified"),
               "model_calls": 0}
     driver, tracer, frames = None, None, []
@@ -85,17 +112,24 @@ def run(args):
         root = args.reference_root
         module, lock, profile, identity, seed = reference(root, args.lock, args.expected_lock)
         if cold_boot:
-            if getattr(args, "checkpoint", None) is not None:
+            if checkpoint_path is not None:
                 raise ValueError("Choose cold boot or one original checkpoint")
             original, state = {"frame": 0, "state_sha256": None}, None
+        elif boot_checkpoint is not None:
+            if getattr(args, "checkpoint", None) is not None:
+                raise ValueError("Choose a strict checkpoint or verified boot checkpoint")
+            original, state = read_boot_checkpoint(module, checkpoint_path, identity, args.expected_lock)
+            if original["frame"] + args.frames > 4800:
+                raise ValueError("Original boot search exceeds the separate 4800-frame bound")
+            result["input_boot_checkpoint_verified"] = True
         else:
-            original, state = module.read_checkpoint(args.checkpoint, identity)
+            original, state = module.read_checkpoint(checkpoint_path, identity)
         kernel = probe_kernel.kernel_bytes(args.kernel)
-        inputs = (root, args.kernel.parent) + (() if cold_boot else (args.checkpoint.parent,))
+        inputs = (root, args.kernel.parent) + (() if cold_boot else (checkpoint_path.parent,))
         if any(not os.statvfs(path).f_flag & os.ST_RDONLY
                for path in inputs):
             raise ValueError("Run with original media/checkpoint/kernel mounted read-only")
-        source_witness = [] if cold_boot else resident(state, kernel)
+        source_witness = [] if cold_boot else (boot_residency(state, kernel) if boot_mode else resident(state, kernel))
         saw_resident = bool(source_witness)
         core = confined(root, lock["inputs"]["emulator"])
         if args.mode != "reference":
@@ -107,7 +141,7 @@ def run(args):
                 raise ValueError("Prepared observer generation must be mounted read-only")
             result["prepared_recipe_sha256"] = recipe
         result.update(reference_identity=identity, reference_lock_file_sha256=args.expected_lock,
-                      reference_checkpoint_file_sha256=None if cold_boot else sha(args.checkpoint.read_bytes()),
+                      reference_checkpoint_file_sha256=None if cold_boot else sha(checkpoint_path.read_bytes()),
                       original_kernel_sha256=sha(kernel),
                       reference_state_sha256=original["state_sha256"], reference_frame=original["frame"],
                       selected_core_sha256=provision.digest(core), resident_code_before=source_witness)
@@ -127,7 +161,7 @@ def run(args):
             driver.restore(state)
             driver.frame, driver.video = original["frame"], original["last_video"]
         canonical_import = driver.save_state()
-        if cold_boot:
+        if boot_mode:
             source_witness = boot_residency(canonical_import, kernel)
             result["resident_code_before"] = source_witness
             saw_resident = bool(source_witness)
@@ -160,14 +194,14 @@ def run(args):
                       audio_frames=sum(frame["audio_frames"] for frame in frames),
                       emulation_wall_seconds=elapsed, input_polls=driver.polls,
                       delivered_masks=[sorted(values) for values in driver.delivered])
-        if cold_boot and args.mode == "reference":
+        if boot_mode and args.mode == "reference":
             checkpoint = {"schema": module.CHECKPOINT, "identity": identity,
                           "state_path": "final.state", "state_sha256": sha(final), "state_bytes": len(final),
                           "frame": driver.frame, "last_video": driver.video}
             raw = (json.dumps(checkpoint, indent=2, sort_keys=True) + "\n").encode()
             (args.output / "checkpoint.json").write_bytes(raw)
             result["new_reference_checkpoint_file_sha256"] = sha(raw)
-        witness = boot_residency(final, kernel) if cold_boot else resident(final, kernel)
+        witness = boot_residency(final, kernel) if boot_mode else resident(final, kernel)
         saw_resident = saw_resident or bool(witness)
         result["resident_code_after"] = witness
         if args.mode == "enabled":
@@ -184,7 +218,7 @@ def run(args):
         raise
     finally:
         result.update(completed_original_frames=len(frames),
-                      original_game_bytes_executed=bool(frames) if saw_resident or not cold_boot else None)
+                      original_game_bytes_executed=bool(frames) if saw_resident or not boot_mode else None)
         if result["status"] != "success" and frames:
             (args.output / "partial-observations.json").write_text(json.dumps({"frames": frames}, sort_keys=True) + "\n")
         if tracer is not None and tracer.started and result["status"] != "success":
@@ -356,6 +390,8 @@ def main(argv=None):
     initialization.add_argument("--checkpoint", type=Path)
     initialization.add_argument("--cold-boot", action="store_true",
                                 help="Boot the pinned original media; import no historical state")
+    initialization.add_argument("--boot-checkpoint", type=Path,
+                                help="Continue a verified new reference boot window, at most 4800 total frames")
     parser.add_argument("--kernel", type=Path, required=True)
     parser.add_argument("--prepared", type=Path)
     parser.add_argument("--mode", choices=("reference", "disabled", "enabled"), required=True)
