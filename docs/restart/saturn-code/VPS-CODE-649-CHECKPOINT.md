@@ -1,118 +1,104 @@
 # VPS code649 continuation checkpoint
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
-[issue649](https://github.com/elgansayer/Neptune-Bomberman/issues/649), branch
-`research/saturn-context-observer-649`, workspace
-`/home/dev/neptune-code-recovery-20261102`. Latest accepted original execution
-remains [646](VPS-CODE-646-CHECKPOINT.md), merged through PR648 at
-`c0620ffec3ec739750a5f697edac7e0080572fa1`. Preserve coordinator634/636/642/645/647,
-Gemini487, the original restart worktree and all newer claims. No provider calls,
-new scheduler, quota reset or continuity activation.
+[issue649](https://github.com/elgansayer/Neptune-Bomberman/issues/649).
+Workspace `/home/dev/neptune-code-recovery-20261102`, capture/evidence branch
+`research/saturn-natural-context-649`; separate tool PR650 is
+`research/saturn-context-observer-649`. Reconcile live head/base/checks before
+merging. Preserve coordinator634/636/642/645/647, Gemini487, all newer claims
+and the original restart worktree. No provider calls, scheduler, quota reset or
+continuity activation. Programme parents and536 stay open.
 
-## Current tool implementation; original acceptance pending
+## Completed actual runtime comparisons
 
-Separate `beetle-saturn-context-trace` recipe and ABI2: fresh selection6BE4,
-resumed selection6C00, yield6D36; original61C4 save/61E6 restore boundaries and
-actual post-delay transfers. Master interpreter only; VBR slot is not CPU identity.
-Record cap128, cycle cap16, pending dispatch cap4096. Fixed validated High Work
-RAM snapshots only. Private original kernel supplies339 source-witness words;
-none are bundled in Git. No emulated state/bus/cache/device writes.
+[Result](../research/2026-11-02-original-context-observer.md),
+[derived evidence](../evidence/2026-11-02-original-context-observer.json).
+Both resumed-selection profile2 and yield profile3 passed six fresh original
+runs each: reference/disabled/enabled twice,600 frames per run, identical exact
+canonical import/final state, native video/audio/input, resident339-word source
+witnesses and repeatable enabled traces. All runs repeat33960..34559; no distinct
+7,200-frame coverage claim. No original or emulated state was injected/modified.
 
-Owned native fixture exercises all three profiles, CPU/RAM nonmutation, delay
-distinctions, witness mismatch/recovery, unknown pointers, JIT/frame/counter/
-budget/overflow fences and semantic mutations. Current ABI2 passes183 factory
-tests, including actual fused-boundary fixtures; log
-`/home/dev/neptune-evidence/code649-20261102/factory-abi2-check-001.log`.
-The patch also applied successfully to fresh copies of all inspected real pinned
-core sources; retained `actual-pinned-source-patch-abi2.json` in that directory.
-Earlier181-test output, including an existing semaphore-cleanup warning, remains.
-These are tool tests, not original game execution or natural-context evidence.
+At33963, record2 yields through real61C4 save/61E6 ROOT restore to6C00.
+Its final complete recorded CPU/header/root/table/context/stack/opcode/clock
+state equals resumed selection's initial6C00 state across the fresh runs.
+Selection chooses record3 and restores to6D86. Save17 and restore18 helper
+instructions agree with recovered contracts. Yield takes82 and selection140
+pending observer hooks; neither is hardware-cycle or complete caller-instruction
+count. Master only; VBR slot is not physical CPU identity. Natural caller PR
+0600B5D2 and task bodies remain leads.
 
-The existing B934 header/patch/ABI and immutable generation remain unchanged.
-Shared provisioner edits version recipe identities normally; historical source
-snapshots/receipts stay valid under their own original identities. The new real
-CI preparation child builds and reuses the matched core, probes actual exports
-and fences, and joins the existing required installation aggregate. Native
-payload includes corresponding patched source and upstream GPL notice; Neptune's
-root Apache licence stays intact.
+Driver execution source`998a58bf1d021845d44bc694680d47976582bcf1`;
+private readonly adapter`.../649/adapter-8deac887b2ce07f7dbf5c8ff3342aa5130fba5e1771c1974d841b8ae6aefcb92/`.
+Complete private pairs:
+`/home/dev/neptune-research-private/649/repeatability-abi2-profile2-9kaih_qi/`
+and`.../649/repeatability-abi2-profile3-ktx4ws7r/`.
+`.../649/natural-paired-derived.json` retains comparison/report hashes, exact
+boundary continuity and25 rejected corruptions of actual trace copies. These
+are trace controls, not modified original instructions. Derivation logs and
+supervision: `/home/dev/neptune-evidence/code649-20261102/derive-natural-*`.
 
-## Resume preparation, then originals
+## Tool and retained failures
 
-First ABI1 native generation was actually built/reused in CI41496099227 and
-twice locally under readonly/hidden-broker/offline guard. Core
-`f1051af190fbed4a47eee2a4e4f7ddfeb7e82ece9986a5ae36c35fc35bd74c23`,
-recipe`33653a6e1127726ee9c49cf47311e6e810ff1ad03a1c72cf00a16c607d16753f`.
-CI artifact13166123904 SHA256
-`cc0c5063b64f538b36a834bddcd6f9f17c77cec6b18d7ad367986a52e15d0978`;
-verified transfer and receipts in `.../649/ci-preparation-001/` and
-`.../649/local-reuse-001/`. Xvfb's first reuse-startup failure was retained at
-`/home/dev/neptune-evidence/context649-xvfb-failure-artifact.zip`; one same-head
-failed-job rerun passed the complete provisioning workflow. No gate was bypassed.
+Separate ABI2 tool head`4a0ee634cbcf95612a5e03032abf318eb1c681ee` uses the historical
+Beetle reference pin, exact source-hash patching and immutable generations.
+Native core`27199dc2fb6241040d6ee66ce7e5f3ff55dc80ee0bacb183853d15cc5ea90398`,
+recipe`db9f8d9cf81c9ddbdbb90985030faac698de9eb533740b494b7c6449c0ded442`.
+CI41498217240 native job125458874155 built/reused it; artifact13167467277
+SHA256`ca17b4a97733e94e624b65e68386789bbcdc9353494c941a589ece9ceac72c7a`.
+Verified transfer`.../649/ci-preparation-002/`; two actual local cache-only
+reuses`.../649/local-reuse-002/`. Existing B934 tool/generation is unchanged.
+Corresponding patched source and upstream GPL notice accompany the native tool;
+Neptune's root Apache licence remains intact.
 
-Actual original windows at driver head`b0c09d50eb6530c8510cf6ee471e716176a8d368`
-are private in `.../649/natural-windows-y2nruxhl/`:600 frames each, Start10,
-original-game execution=true. Resumed selection profile2 captured a complete
-three-record entry/restore/transfer at frame33963 and passed the recovered
-restore contract. This is one preliminary capture, without six-run acceptance.
-Yield profile3 retained three entry/save/saved records before failing its
-restore pipeline guard; fresh profile1 retained an actual empty600-frame window.
-Neither failure is accepted as coverage.
-[Derived preliminary evidence](../evidence/2026-11-02-natural-context-preliminary.json)
-retains actual result/state/observation/trace digests and explicit acceptance gaps.
+Actual ABI1 yield failed closed because pinned-core NOP delays fuse inside branch
+handlers and bypass the outer hook. ABI2 observes that actual master fused path,
+normalises only a pipeline-PC value and preserves emulated state/timing/fusion.
+All183 factory tests,292 Saturn tooling tests and14 catalogue tests pass; owned
+tests remain separate from original evidence. Logs live in
+`/home/dev/neptune-evidence/code649-20261102/`.
 
-The yield failure exposed real NOP delay fusion in the pinned core, rather than
-the ordinary delay path used by the initial owned fixture. ABI2 adds an actual
-master fused-NOP hook before the existing PC increment, value-only pipeline-PC
-normalisation and a separate fused count. All emulated fusion/state/timing choices
-are preserved. Test this path and prepare a NEW immutable native generation;
-retain ABI1 source snapshot/bindings/library and all actual failure records.
-PR650 must not merge on its old green head after this new failure was learned.
+Retain ABI1 library/source/bindings and actual partial/empty windows:
+`.../649/natural-windows-y2nruxhl/`, plus ABI2 failed fresh-entry window
+`.../649/natural-windows-abi2-4q61q3ok/profile-1/`.
+[Preliminary evidence](../evidence/2026-11-02-natural-context-preliminary.json)
+retains original failure/artifact hashes. Xvfb's first reuse-startup failure and
+same-head successful bounded rerun are retained; no merge gate was bypassed.
 
-Updated tool source head`4a0ee634cbcf95612a5e03032abf318eb1c681ee` is pushed;
-native preparation runs41498217240/41498286512 are pending, with all applicable
-children retained. Capture driver branch`research/saturn-natural-context-649`
-incorporates ABI2; all292 Saturn tooling tests pass against it. Resume native
-artifact verification after its context job succeeds:
+VPS disks are below the retained6GiB native-build reserve. No local native build
+was admitted and no evidence deleted. Verified exact-head CI artifacts were
+rechecked through the existing provisioner with local compilation explicitly
+refused. Preserve shared3, own180-second leases,60-second/nice10 commands,
+downward2GiB AS, offline namespace, readonly originals/source/tool mounts and
+hidden broker/authority. All own leases released. CI/account spend unknown.
 
-```sh
-python3 /home/dev/neptune-evidence/code649-20261102/verify-ci-context-artifact-abi2.py
-```
+## Next work
 
-That uses fresh private `ci-preparation-002` and cache`context649-ci-002`;
-do not rerun a successful transfer into an existing directory. Then create a
-new readonly adapter snapshot of the committed driver/tool sources, run actual
-cache-only guarded reuse (local build must remain refused), and fresh original
-windows. Existing `run-local-reuse.py` and `run-original-windows.py` are explicit
-ABI1 experiment commands: copy/adapt their fresh output/transfer paths instead
-of overwriting the old evidence or relabelling the ABI1 adapter as ABI2.
+PR650 must merge only its updated4a0ee63 head after **all** applicable exact-head/
+current-base checks pass. Both native preparation runs41498217240/41498286512
+must be reconciled; the old8d3e391 green head is superseded by the actual failure.
+Then merge accepted main into the capture branch, create its evidence/driver PR,
+run applicable checks and merge normally. Keep649 open for missing fresh entry.
 
-Both writable VPS disks currently have less than the retained6GiB native-build
-reserve. No local native build was started and no evidence was deleted. Use
-the exact tested-head real CI context-trace artifact: verify run/head/workflow,
-archive digest, recipe/receipt/binary/patch/source-archive/licence identities;
-copy only its new generation into a private coordinator cache. Rerun the existing
-provisioner smoke/reuse under shared admission and guarded readonly source with
-broker/authority hidden. A verified cache reuse needs no local compilation.
-Preserve shared3, downward-only resource caps and current foreign leases. Record
-actual failures rather than claiming a tool from a directory or success string.
+Next named code question: observe **fresh6BE4 entry/root save**, then expand
+natural root/task/caller coverage. The late checkpoint reaches resumed6C00 and
+has genuinely empty fresh-entry windows. Earlier frame600 checkpoint27 has a
+different frontend identity; do not substitute/re-pin it. Implement bounded
+cold-boot/early-window mode using the existing verified reference frontend,
+unchanged historical lock/media/CMOS seed, private original source witness and
+actual newly captured states. Start at most600 original frames per window;
+missing/partial/changed-source traces fail. Commit/push tested source before
+actual execution; preserve all failed windows and compare fresh reference/
+disabled/enabled runs twice if fresh entry is captured.
 
-After actual native build/reuse, implement the bounded original driver using
-accepted `run_call_trace.reference` source/lock verification and immutable state
-import. Historical commands are in
-`/home/dev/neptune-evidence/trace593/run-repeatability-007.py` and plan
-`/home/dev/neptune-evidence/code646-20261102/next-natural-context-plan.json`.
-Pinned media/checkpoint/kernel and prior prepared generation are detailed in646.
-Do not re-pin historical locks or feed constructed contexts into natural runs.
+Private next source-inspection command:
+`python3 /home/dev/neptune-evidence/code649-20261102/inspect-cold-boot-source.py`.
+It reads the pinned frontend boundaries only and executes zero original frames.
+Do not repeat completed transfers into existing cache/evidence directories.
+`run-six-abi2.py 2/3` are completed experiment commands, not fresh progress.
 
-Run fresh reference/disabled/enabled windows twice, at most600 frames each;
-compare exact canonical import/final state, native video/audio/input, resident
-original code witnesses and full context trace repeatability. Retain actual
-empty/partial/failing windows and source mismatches privately. Late checkpoint
-may reach resumed6C00 without fresh6BE4; report that distinction and seek fresh
-entry separately. Interrupted cycles fail validation. Validate recovered save/
-restore contracts on actual contexts, then expand recovered task/dynamic targets.
-
-Issue649 stays open until its original-capture acceptance is satisfied. Whole
-module/function/dynamic-target denominators, physical hardware timing, slave
-execution, scene identity and game/Godot parity remain unknown. Continue further
-loader/overlay/library/68000/DSP/regional code after this bounded observer.
+Continue actual caller0600B5D2/task bodies, loader/slave/overlays/libraries,
+remaining68000/DSP and regional network/menu/save code. Executable/function/
+dynamic-target denominators, console timing, identified gameplay scenes and
+Godot/gameplay parity remain unknown. Never mark the programme complete after
+this bounded native capture or tool result.
