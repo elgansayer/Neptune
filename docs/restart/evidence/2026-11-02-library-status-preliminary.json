@@ -1,0 +1,79 @@
+{
+  "cases": 1,
+  "cpu": "sh2",
+  "data_events_per_run": 13,
+  "entry": "06096C60",
+  "inputs": {
+    "argument_r4": -5,
+    "callback": 0,
+    "constructed_block": "060D0000",
+    "library_pointer_cell": "060FA8BC",
+    "status_word": -16
+  },
+  "instructions_per_run": 24,
+  "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+  "interpreter_sources": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_and_credential_hidden": true,
+    "command_seconds": 60,
+    "guard_maximum_unchanged": 128,
+    "model_dispatches": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "shared_host_slots": 3,
+    "source_originals_dependencies_readonly": true
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "negative": {
+    "pc": "06096C88",
+    "returned_instructions": 24,
+    "scope": "disposable original-copy mapping-24 instead of-25",
+    "semantic_nonbudget_rejection": true
+  },
+  "new_original_game_execution": true,
+  "original_file_unchanged": true,
+  "outcome": {
+    "R13_R14_SP_PR_restored_and_MAC_preserved": true,
+    "all_visible_registers_trace_events_regions_and_other_source_bytes_checked": true,
+    "block_C0": -25,
+    "r0": -25,
+    "return": "complete original RTS and restore delay; constructed PR sentinel"
+  },
+  "private_directory": "/home/dev/neptune-research-private/655/library-status-preliminary-40elyogw",
+  "programme_status": "active; incomplete",
+  "raw_report_sha256": "1cc20e510c3449d35fed6a5b46f5b1d7727a58929d6b5ec77b88cc72c2efb18b",
+  "release": "usa-mk81070-v1003",
+  "reports_identical": true,
+  "runs": 2,
+  "schema": "neptune.original-library-status-preliminary-derived.v1",
+  "scope": "one constructed callback-null96C60case; broader callback/full95B04/89C8 semantics unresolved",
+  "source_range": [
+    "06096C60",
+    "06096CB0"
+  ],
+  "source_range_sha256": "f42884e9781a82c4c43e20c8fa4d0fa9b221f460580b4dfe2a87813ebb489a9e",
+  "support_source": {
+    "files": {
+      "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+      "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+      "probe_library_tables.py": "7d1cd0f3f7d15093348d6b53932b0537234d75cc5e391a2b838f6abe051a2a30",
+      "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+      "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+      "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+      "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+      "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+    },
+    "source_head": "13cce5feeb5c82a4ed4df9d4ee57ca298f837a4c"
+  },
+  "worker_sha256": "4494be473a8df69d6cb180615d0ea90ace0d70250c4a877cfd3920e1de107ff7"
+}
