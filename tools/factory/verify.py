@@ -19,6 +19,7 @@ import sys
 import time
 
 from readiness import digest as task_digest, evaluate as evaluate_intake
+import feature_contracts
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("neptune_ci_plan", ROOT / "tools/merge_gate/run.py")
@@ -190,7 +191,8 @@ def requirements(paths, *, root=ROOT):
                        "toolchain": pinned_toolchain(root) if needed else None}}
 
 
-def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run, intake=None, now=time.time):
+def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run, intake=None, now=time.time,
+           feature_artifacts=None):
     if evidence.exists():
         raise ValueError("Use a fresh verification evidence directory")
     evidence.mkdir(parents=True, mode=0o700)
@@ -206,6 +208,18 @@ def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run, inta
                 raise ValueError("Candidate head changed during intake binding")
             identity["base"] = binding["base"]
             report["task_binding"] = binding
+            snapshot, raw_sha = read_intake(intake)
+            if raw_sha != binding["intake_sha256"]:
+                raise ValueError("Accepted intake changed before feature selection")
+            required_features = feature_contracts.requirements(snapshot["task"])
+        else:
+            if feature_artifacts is not None:
+                raise ValueError("Feature artifacts require a trusted --intake")
+            required_features = {}
+        if required_features:
+            report.update(feature_requirements=required_features, feature_checks={})
+        prepared_feature = feature_contracts.prepare(required_features, feature_artifacts,
+                                                      root=root, evidence=evidence)
         report.update(identity=identity, plan=plan)
         if plan["mode"] != "metadata":
             report["offline_toolchain"] = offline_toolchain(root, toolchain)
@@ -225,14 +239,21 @@ def verify(paths, evidence, toolchain, *, root=ROOT, runner=subprocess.run, inta
             print(name + ": " + record["status"], flush=True)
             if record["status"] != "success":
                 raise ValueError("Required check failed: " + name)
+        if prepared_feature is not None:
+            result = feature_contracts.execute(prepared_feature)
+            report["feature_checks"][feature_contracts.NAME] = result
+            if result["status"] != "success":
+                raise ValueError("Required named feature comparison diverged")
         if selected_contents(root, paths) != identity["selected_contents_sha256"]:
             raise ValueError("Selected source changed during verification")
         if intake is not None and task_binding(intake, paths, root, now) != binding:
             raise ValueError("Accepted intake or candidate changed during verification")
+        if prepared_feature is not None:
+            feature_contracts.unchanged(prepared_feature)
         gate.assert_pass(report, identity)
         report["conclusion"] = "success"
         return report
-    except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as error:
+    except (ValueError, KeyError, TypeError, OSError, RecursionError, subprocess.SubprocessError) as error:
         report.update(conclusion="failure", error=str(error))
         raise
     finally:
@@ -248,10 +269,12 @@ def main(argv=None):
     parser.add_argument("--evidence", type=Path, help="fresh evidence directory (required unless --plan)")
     parser.add_argument("--intake", type=Path,
                         help="fresh trusted coordinator snapshot; bind actual committed scope and task identity")
+    parser.add_argument("--feature-artifacts", type=Path,
+                        help="separate trusted read-only supplied artifacts selected by accepted task requirements")
     args = parser.parse_args(argv)
     given = {"--toolchain": args.toolchain, "--evidence": args.evidence}
     if args.plan:
-        plan_forbidden = {**given, "--intake": args.intake}
+        plan_forbidden = {**given, "--intake": args.intake, "--feature-artifacts": args.feature_artifacts}
         if any(value is not None for value in plan_forbidden.values()):
             parser.error("--plan accepts only --changed-path (remove " +
                          ", ".join(flag for flag, value in plan_forbidden.items() if value is not None) + ")")
@@ -261,13 +284,17 @@ def main(argv=None):
         if args.plan:
             print("NEPTUNE_FACTORY_REQUIREMENTS=" + json.dumps(requirements(args.changed_path), sort_keys=True))
             return 0
-        report = verify(args.changed_path, args.evidence, args.toolchain, intake=args.intake)
-    except (ValueError, KeyError, TypeError, OSError, subprocess.SubprocessError) as error:
+        report = verify(args.changed_path, args.evidence, args.toolchain, intake=args.intake,
+                        feature_artifacts=args.feature_artifacts)
+    except (ValueError, KeyError, TypeError, OSError, RecursionError, subprocess.SubprocessError) as error:
         print("FAIL: " + str(error), file=sys.stderr)
         return 1
     receipt = {key: report[key] for key in ("schema", "identity", "plan", "checks", "conclusion")}
     if "task_binding" in report:
         receipt["task_binding"] = report["task_binding"]
+    if "feature_requirements" in report:
+        receipt["feature_requirements"] = report["feature_requirements"]
+        receipt["feature_checks"] = report["feature_checks"]
     print("NEPTUNE_FACTORY_VERIFICATION=" + json.dumps(receipt, sort_keys=True))
     return 0
 
