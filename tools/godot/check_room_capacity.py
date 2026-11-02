@@ -1,10 +1,11 @@
 """Real local server/auth/admission/snapshot capacity checks; not browser/load testing."""
+import hashlib
 import json
 import socket
 import subprocess
 import time
 
-from run_bot_tests import ANSI, ERROR
+from run_bot_tests import ANSI, ERROR, ROOT
 
 
 def run_capacity_checks(base, env, evidence, bounded):
@@ -14,16 +15,51 @@ def run_capacity_checks(base, env, evidence, bounded):
                                        ("auto-fill-four", 1, 3, 4, True),
                                        ("auto-fill-twelve", 2, 10, 12, True),
                                        ("standard-arena", 2, 2, 4, True),
-                                       ("wide-arena", 2, 2, 4, True)]:
+                                       ("wide-arena", 2, 2, 4, True),
+                                       ("registered-standard", 2, 2, 4, True),
+                                       ("registered-wide", 2, 2, 4, True),
+                                       ("registered-linked", 2, 2, 4, True)]:
         map_name, width, height = {"standard-arena": ("neptune_standard", 15, 13),
-                                   "wide-arena": ("neptune_wide", 27, 13)}.get(name, ("neptune_twelve", 17, 13))
+                                   "wide-arena": ("neptune_wide", 27, 13),
+                                   "registered-standard": ("neptune_standard", 15, 13),
+                                   "registered-wide": ("neptune_wide", 27, 13)}.get(name, ("neptune_twelve", 17, 13))
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as port_reservation:
             port_reservation.bind(("127.0.0.1", 0))
             port = port_reservation.getsockname()[1]
         seats = humans + bots
         options = ["--server-port=" + str(port), "--room-seats=" + str(seats),
-                   "--room-preset-limit=" + str(preset),
-                   "--room-map=res://maps/" + map_name + ".json"]
+                   "--room-preset-limit=" + str(preset)]
+        expected_content = {}
+        expected_lock = {}
+        expected_lock_sha256 = ""
+        if name.startswith("registered-"):
+            variant = name.removeprefix("registered-")
+            manifest_path = ROOT / "demo/packs" / variant / "manifest.json"
+            manifest_bytes = manifest_path.read_bytes()
+            manifest = json.loads(manifest_bytes)
+            entry = manifest["content"][0]
+            expected_content = {"pack_id": manifest["pack_id"], "version": manifest["version"],
+                                "manifest_sha256": hashlib.sha256(manifest_bytes).hexdigest(),
+                                "content_id": entry["id"], "kind": "arena", "sha256": entry["sha256"]}
+            arena = json.loads((manifest_path.parent / entry["path"]).read_bytes())
+            width, height = len(arena["grid"][0]), len(arena["grid"])
+            # The dependent root deliberately precedes both dependencies. Every
+            # supplied manifest remains an explicit root, regardless of ordering.
+            variants = ["linked", "wide", "standard"] if variant == "linked" else ["standard", "wide"]
+            identities = []
+            for included in variants:
+                contents = (ROOT / "demo/packs" / included / "manifest.json").read_bytes()
+                metadata = json.loads(contents)
+                identities.append({"pack_id": metadata["pack_id"], "version": metadata["version"],
+                                   "manifest_sha256": hashlib.sha256(contents).hexdigest()})
+                options.append("--room-pack=res://demo/packs/" + included + "/manifest.json")
+            identities.sort(key=lambda identity: identity["pack_id"])
+            expected_lock = {"schema": "neptune.manifest-lock.v1", "roots": identities, "packs": identities}
+            lock_json = json.dumps(expected_lock, sort_keys=True, ensure_ascii=False, separators=(",", ":"))
+            expected_lock_sha256 = hashlib.sha256(lock_json.encode()).hexdigest()
+            options.append("--room-arena=" + entry["id"])
+        else:
+            options.append("--room-map=res://maps/" + map_name + ".json")
         if auto_fill:
             options += ["--room-fill-to=" + str(seats), "--room-bot-personality=DEFENSIVE"]
         command = base + ["res://main_server.tscn", "--", *options]
@@ -47,6 +83,11 @@ def run_capacity_checks(base, env, evidence, bounded):
                                   "--probe-preset=" + str(preset),
                                   "--probe-map-width=" + str(width), "--probe-map-height=" + str(height)]
                 if auto_fill: command.append("--probe-auto-fill")
+                if expected_content:
+                    command.append("--probe-content-json=" + json.dumps(expected_content, separators=(",", ":")))
+                    command.append("--probe-lock-json=" + lock_json)
+                    command.append("--probe-lock-sha256=" + expected_lock_sha256)
+                    command.append("--probe-selection-count=" + str(len(identities)))
                 code, text = bounded("room-" + name + "-clients", command)
                 markers = [line.split("=", 1)[1] for line in text.splitlines()
                            if line.startswith("NEPTUNE_ROOM_CAPACITY=")]
@@ -54,6 +95,9 @@ def run_capacity_checks(base, env, evidence, bounded):
                             "preset_limit": preset, "protocol_limit": 12,
                             "accepted": humans, "refused": 1, "snapshots": humans, "maps": humans, "active": True}
                 if auto_fill: expected["auto_fill"] = True
+                if expected_content:
+                    expected.update(content=expected_content, selection=identities,
+                                    lock=expected_lock, lock_sha256=expected_lock_sha256)
                 receipt = json.loads(markers[0]) if len(markers) == 1 else {}
                 policy = receipt.pop("bot_policy", "")
                 seed = receipt.pop("bot_policy_seed", "")
@@ -93,6 +137,14 @@ def run_capacity_checks(base, env, evidence, bounded):
         if code != 2 or "Server listening" in text:
             raise SystemExit("FAIL: invalid room options accepted: " + name)
     print("PASS: unsupported room map and invalid capacity options refuse before listening")
+    for arena, reason in [("example.standard:missing", "unknown_content"),
+                          ("example.missing:arena", "unknown_content")]:
+        code, text = bounded("pack-invalid-" + arena.replace(":", "-"), base + [
+            "res://main_server.tscn", "--", "--room-pack=res://demo/packs/standard/manifest.json",
+            "--room-arena=" + arena])
+        if (code != 2 or "Room setup refused: " + reason not in text or "Content diagnostic:" not in text
+                or "Server listening" in text or "Match started!" in text or ERROR.search(text)):
+            raise SystemExit("FAIL: explicit unknown arena did not refuse before listening")
     for name, options, reason in [
             ("over-room", ["--room-seats=4", "--room-fill-to=5"], "bot_fill_capacity_exceeded"),
             ("unknown-profile", ["--room-bot-personality=UNKNOWN"], "unknown_bot_personality")]:

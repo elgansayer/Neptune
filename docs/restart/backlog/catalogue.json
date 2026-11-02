@@ -140,7 +140,9 @@
         "retain palettes, timing and missing-state records",
         "Enumerate all discovered players, enemies, bosses, mounts, objects, hazards, effects, menus/fonts/text, cutscenes, ending/credits, SFX/voices/music and palette/regional variants",
         "Join #485–#489 and #495 to source bank/range, animation frames/durations/directions/anchors/layers, sound sample/sequence/trigger and runtime state coverage",
-        "Track extracted bytes, decoded files, reference reconstruction, private asset commit and Neptune presentation separately. No PNG/WAV count or lack of newly observed frames proves completeness"
+        "Track extracted bytes, decoded files, reference reconstruction, private asset commit and Neptune presentation separately. No PNG/WAV count or lack of newly observed frames proves completeness",
+        "Retain native frame durations and audio sample indices/rates, trigger/loop boundaries, mix/sequence identity and source-to-Godot comparison links for every covered presentation state",
+        "Report missing animation, effect, music, voice and SFX states as incomplete under SATURN_FIDELITY.md, extraction or private publication alone cannot establish faithful presentation"
       ],
       "depends_on": [
         "REF-001"
@@ -2960,8 +2962,10 @@
       "title": "Implement Saturn presentation and camera comparisons",
       "acceptance": [
         "Capture framing, HUD placements and animation cadence per supported resolution",
-        "compare screenshots at documented tolerances",
-        "distinguish art mismatch from rule mismatch"
+        "compare exact native-resolution frames at declared boundaries, retain documented-tolerance screenshots as diagnostic/prototype evidence only",
+        "distinguish art mismatch from rule mismatch",
+        "Apply SATURN_FIDELITY.md at the declared native-resolution digital boundary, covering palettes, composition, scrolling, effect phases, draw order and frame durations with pinned release/input/capture identities",
+        "Compare production Godot output and detect deliberate pixel/anchor/palette/frame-duration mutations, retain missing or mismatching cases as incomplete instead of masking them or inflating tolerances"
       ],
       "depends_on": [
         "REF-001",
@@ -3620,7 +3624,8 @@
       "acceptance": [
         "Filter region, mode, seats, latency and pack compatibility",
         "keep private rooms out of public results",
-        "handle stale listings and full-room races"
+        "handle stale listings and full-room races",
+        "List compatible player-hosted servers with declared modes, required content digests and reachable endpoints, validate listing ownership and expire stale advertisements"
       ],
       "depends_on": [
         "ROOM-001"
@@ -3664,7 +3669,8 @@
       "acceptance": [
         "Lock rules, versions, packs and roster at countdown",
         "invalidate readiness on relevant changes",
-        "reject clients with mismatched content hashes"
+        "reject clients with mismatched content hashes",
+        "Validate completed map, mode, item and selected-character downloads before readiness, refresh the session contract on pre-start roster or character changes and define safe boundaries for later changes"
       ],
       "depends_on": [
         "ROOM-001",
@@ -3820,7 +3826,8 @@
       "acceptance": [
         "Measure available endpoint latency before joining",
         "expose selected region and fallback",
-        "avoid silent mid-match server moves"
+        "avoid silent mid-match server moves",
+        "Allow direct connection to compatible player-hosted servers independently of the official directory"
       ],
       "depends_on": [
         "ROOM-001"
@@ -4224,8 +4231,10 @@
       "title": "Define versioned pack manifests and stable identifiers",
       "acceptance": [
         "Require namespaced IDs, author, version, dependencies and content types",
-        "reject duplicate IDs and incompatible schemas",
-        "provide precise file/field diagnostics"
+        "reject duplicate registrations within a resolved session and incompatible schemas, immutable versions of the same logical ID may coexist in storage",
+        "provide precise file/field diagnostics",
+        "Reserve built-in namespaces and reject shadowing of existing content IDs or resource paths, new variants register new IDs while originals remain selectable",
+        "Inspect existing player, Tirra and stage authoring projects, exports and loaders first, record reuse/adaptation decisions and connect their content to the public identity contract"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -4267,7 +4276,8 @@
       "acceptance": [
         "Verify archive hashes before activation",
         "deduplicate immutable files",
-        "recover from interruption without partially enabled content"
+        "recover from interruption without partially enabled content",
+        "Isolate pack versions without mounting replacement resources into the engine root, test two additions coexisting and attempted overwrites failing"
       ],
       "depends_on": [
         "PACK-002",
@@ -4312,7 +4322,8 @@
       "acceptance": [
         "Declare required engine, renderer, bot and rules capabilities",
         "compute compatible session sets",
-        "explain which dependency prevents play"
+        "explain which dependency prevents play",
+        "Negotiate the exact server content lock and selected-character descriptors before readiness, distinguish cosmetic inventory from simulation-affecting capabilities"
       ],
       "depends_on": [
         "PACK-001",
@@ -4357,7 +4368,8 @@
       "acceptance": [
         "Specify named states, directions, timings, anchors and fallback animations",
         "validate missing frames",
-        "load an original character with no engine edits"
+        "load an original character with no engine edits",
+        "Extend the existing character atlas and animation workflow, verify source-to-export reproducibility and preserve compatible names, timing, regions and trim margins rather than restarting authoring"
       ],
       "depends_on": [
         "PACK-006"
@@ -4401,7 +4413,8 @@
       "acceptance": [
         "Keep competitive cosmetics mechanically equivalent by default",
         "allow explicit authored class rules in declared modes",
-        "show gameplay-affecting choices before joining"
+        "show gameplay-affecting choices before joining",
+        "Carry each participant's selected character ID and immutable digest through the validated server content pipeline to other clients and late joiners, including unpublished session uploads, without altering hitboxes or granting abilities"
       ],
       "depends_on": [
         "PACK-007",
@@ -4424,7 +4437,8 @@
       "acceptance": [
         "Store layers, spawns, bounds, hazards and objectives with stable references",
         "validate unsupported tiles and missing resources",
-        "load the same map in editor, server and client"
+        "load the same map in editor, server and client",
+        "Reuse existing stage TileMap authoring, MapPackLoader conversion and JSON MapLoader/MapManager APIs, retain map identity/version, dimensions, spawns and soft-block settings through export/import"
       ],
       "depends_on": [
         "PACK-006",
@@ -4515,7 +4529,8 @@
       "acceptance": [
         "Keep old locked versions while active sessions need them",
         "migrate only supported save schemas",
-        "demonstrate failed upgrade rollback without lost progress"
+        "demonstrate failed upgrade rollback without lost progress",
+        "Publishing or selecting a new release preserves old immutable releases pinned by saves and replays and leaves baseline content unchanged"
       ],
       "depends_on": [
         "PACK-002",
@@ -4538,7 +4553,7 @@
       "title": "Implement pack enablement, profiles and conflict diagnostics",
       "acceptance": [
         "Allow named local content profiles",
-        "report conflicting overrides with provenance",
+        "reject duplicate registrations and replacement overrides with provenance, variants require new IDs",
         "ensure disabling a pack cannot silently change a running match"
       ],
       "depends_on": [
@@ -4561,7 +4576,8 @@
       "acceptance": [
         "Ship an original character, map, item and mode through documented schemas",
         "remove privileged loading assumptions",
-        "use the same validation path as community packs"
+        "use the same validation path as community packs",
+        "Verify adding and removing compatible community packs leaves built-in IDs, assets and default Saturn settings unchanged, sample definitions must not require pack-ID-specific engine branches"
       ],
       "depends_on": [
         "PACK-007",
@@ -6127,7 +6143,8 @@
       "acceptance": [
         "Resume interrupted transfers and verify hashes",
         "install a complete compatible set atomically",
-        "play installed packs while the catalogue is unavailable"
+        "play installed packs while the catalogue is unavailable",
+        "Server selection automatically fetches missing exact versions and reuses verified cached bytes, test clean and cached joins, switching server locks and late-arriving custom characters without mandatory public workshop publication"
       ],
       "depends_on": [
         "WORKSHOP-001",
@@ -7265,7 +7282,9 @@
       "acceptance": [
         "Drive damage and actions from simulation events",
         "let render rate change presentation only",
-        "test skipped frames and headless execution"
+        "test skipped frames and headless execution",
+        "For the faithful Saturn profile, consume the measured game/presentation/audio clock mapping and preserve ordered frame/sample-index events independently of local render rate or network arrival time",
+        "Verify production animation/effect timelines across skipped renders, pause, restore and late/duplicate delivery without resetting effect age or replaying sound, detect a deliberate one-tick/frame mutation"
       ],
       "depends_on": [
         "SIM-001"
@@ -7354,7 +7373,10 @@
       "acceptance": [
         "Support bounded intro, loop, combat and victory transitions",
         "preserve user volume settings",
-        "test pause, chapter changes and missing audio resources"
+        "test pause, chapter changes and missing audio resources",
+        "For the faithful Saturn profile, compare production Godot native-rate digital PCM and sample-indexed event timelines with pinned SCSP/CD/stream fixtures from #488/#489 under SATURN_FIDELITY.md",
+        "Verify trigger onset, intro/loop endpoints, pitch/rate, mixing/pan/volume, priority/interruption and pause/transition/restore behavior at explicit comparison boundaries and reference settings",
+        "Detect a shifted/dropped/repeated sample, wrong loop boundary and wrong event/mix setting, label diagnostic or tolerated audio comparisons approximate and leave exact parity incomplete"
       ],
       "depends_on": [
         "PACK-001"
@@ -7820,7 +7842,9 @@
       "acceptance": [
         "Map changed capabilities to applicable native, browser, network and pack fixtures",
         "reject empty/skipped/error runs",
-        "preserve original assertions and tolerances"
+        "preserve original assertions and tolerances",
+        "Select separate authentic reference-versus-production-Godot state/event, native-pixel and native-rate-audio gates for applicable Saturn claims under SATURN_FIDELITY.md, tolerated prototype checks cannot satisfy exact parity",
+        "Require current task-revision/head/base receipts with independent reference/candidate identities and relevant state/tick/pixel/sample mutation evidence, keep original creator fixtures independently eligible without claiming reference parity"
       ],
       "depends_on": [
         "FACTORY-005"
@@ -8305,7 +8329,8 @@
       "acceptance": [
         "Document tested start, upgrade, backup and recovery commands",
         "provide a minimal original-content deployment",
-        "verify instructions from a fresh supported environment"
+        "verify instructions from a fresh supported environment",
+        "Demonstrate a fresh player-hosted server publishing a listing with a custom map and mode and accepting a clean client that automatically obtains its required creations"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -8780,7 +8805,9 @@
         "Map actual 68000 driver/bank interfaces and any observed DSP use, sample formats, instruments, sequences and envelopes",
         "Capture source samples separately from synthesised playback/mixes, including pitch, looping, volume, panning and channel priorities",
         "Connect game events to sound commands and verify rendered output and interruption behaviour",
-        "Inventory all discovered banks/voices with hashes, decoder recipes and unknown formats, a mixed WAV count cannot establish completeness"
+        "Inventory all discovered banks/voices with hashes, decoder recipes and unknown formats, a mixed WAV count cannot establish completeness",
+        "Retain bounded native-rate signed PCM with format/channels/sample counts and sample-indexed sound commands, loop/envelope/pitch/mix/priority metadata, correlate the audio clock with measured game/presentation clocks",
+        "Supply reproducible exact output fixtures for production Godot comparison and detect shifted sample/trigger, loop and mix mutations, report extraction and Godot playback parity separately rather than equating decoded samples with matching music or effects"
       ],
       "depends_on": [
         "RSAT-003",
@@ -8804,7 +8831,9 @@
         "Reuse #473's sector/track inventory and AIF provenance, distinguish unknown mastering differences and unverified PAL-rip hypothesis",
         "Decode losslessly where the format permits, retaining timebase, sample rate, channels, loop/cue points and stream packet timing",
         "Map track/movie/stream selection to game states and compare A/V synchronisation against the original",
-        "Reject truncated tables/streams and keep regional outputs separate, do not infer every soundtrack source is CD-DA"
+        "Reject truncated tables/streams and keep regional outputs separate, do not infer every soundtrack source is CD-DA",
+        "Retain exact track/index/pregap/stream timestamps, native PCM format/rate/channels/sample counts and sample-indexed cue/loop/transition expectations for #29/#287 production Godot comparisons",
+        "Detect truncated/dropped/repeated samples, wrong cue/loop boundaries and A/V clock drift, no silent resampling or temporal alignment may turn approximate playback into exact baseline evidence"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -8870,7 +8899,9 @@
         "Recover RNG state/algorithm/call ordering and correlate calls to tasks, interrupts and gameplay updates",
         "Measure VBlank versus game tick, CD seek/read latency, audio-completion gates, pause and slowdown using observed units",
         "Test event ordering and simultaneous boundaries across repeats and releases without hidden time warping",
-        "Retain unexplained drift and compare instrumented/unmodified paths, synthetic seeded randomness is not parity"
+        "Retain unexplained drift and compare instrumented/unmodified paths, synthetic seeded randomness is not parity",
+        "Publish a measured mapping of controller polling, game/task updates, VBlank/presentation, sound commands and native audio sample clocks including phase/order, rational rates, pause/slowdown and restore semantics",
+        "Measure bounded long-replay drift and provide exact clock/event fixtures for production Godot consumers, arbitrary fixed 60 Hz, float-delta or wall-clock schedules are not accepted substitutes without reference evidence"
       ],
       "depends_on": [
         "RSAT-005",
@@ -8894,7 +8925,9 @@
         "Measure subpixels, speed, corners, collision shapes, input buffering and placement/owner-overlap rules",
         "Sweep fuse/explosion/chain timing, blast obstruction, damage/invulnerability, kick/throw/landing and simultaneous action boundaries",
         "Link observations to relevant routines/data and generate executable expected traces with explicit units/timebases",
-        "Detect deliberate one-unit/one-tick mutations and extend item/mount interactions through #398/#407"
+        "Detect deliberate one-unit/one-tick mutations and extend item/mount interactions through #398/#407",
+        "Compare canonical integer/fixed-point production Godot state and ordered events against equivalent pinned original initial conditions and input recordings, preserve reference numerical units and simultaneous-action ordering",
+        "Attach reproducible first-divergence results and one-subpixel/speed/fuse/event-order mutations under SATURN_FIDELITY.md, unknown mechanics and passing synthetic/prototype traces cannot qualify exact baseline parity"
       ],
       "depends_on": [
         "RSAT-014"
@@ -9249,7 +9282,8 @@
         "Evaluate GhidraMCP/PyGhidra and native agent interfaces against pinned versions using an isolated project",
         "Expose bounded read/analysis actions and explicit writes, with source/input/output identities and no secrets or bulk raw binary submission to models",
         "Create version-controlled skills/runbooks from actual tested commands, fixtures and negative cases rather than speculative tool recipes",
-        "Verify resumption and use by a second supported agent, follow skill-creator instructions when implementing/installing skills"
+        "Verify resumption and use by a second supported agent, follow skill-creator instructions when implementing/installing skills",
+        "For each fidelity skill/runbook, retain source/tool/input/output identities and successful use/resumption by a second supported agent, exercise wrong-release, missing-input, malformed-output and false-success negative controls before advertising the capability"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -9316,7 +9350,9 @@
         "Bind receipts to source/core/settings/input/capture hashes, exact task revision/head/base, command and resource owner",
         "Run authorised private fixtures without exposing ROM/BIOS/state credentials to ordinary CI or model prompts",
         "Separate tool-only CI, real reference observation, extracted-content validation and Neptune runtime parity gates",
-        "Reject forged/stale/missing/truncated/skipped receipts and demonstrate deliberate regression detection via #76's existing verifier"
+        "Reject forged/stale/missing/truncated/skipped receipts and demonstrate deliberate regression detection via #76's existing verifier",
+        "Authenticate retained real source captures and independent candidate build/content/adapter/input/output identities at declared state/frame/sample boundaries, a supplied hash or model-authored summary alone is not source authenticity",
+        "Bind faithful state/pixel/audio results and deliberate mutation outcomes to the accepted task revision and exact candidate head/current base, reject approximate-only evidence for exact claims and preserve the existing receipt schema"
       ],
       "depends_on": [
         "FACTORY-005",
@@ -9361,7 +9397,9 @@
         "Compare original emulation, native recompilation and available hardware recordings with explicit clock/input/crop/state alignment",
         "Identify shared code lineage and correlated errors, two copies of one emulator are not independent confirmation",
         "Retain disagreement, loading/audio gate drift and precision limits, prohibit silent resampling/masking/tolerance inflation",
-        "Demonstrate a seeded implementation or extraction defect is detected and publish minimal replayable counterexamples"
+        "Demonstrate a seeded implementation or extraction defect is detected and publish minimal replayable counterexamples",
+        "Declare native pixel/audio boundaries and phase/order mappings between input, game, VBlank and sample clocks, disclose capture/device precision and correlated emulator errors rather than implying analog-device equivalence",
+        "Compare exact state/events, pixels and PCM where the declared digital contract permits, retain approximate independent/hardware checks as supporting evidence that cannot replace missing exact Godot parity"
       ],
       "depends_on": [],
       "existing_issue": null,
@@ -9406,7 +9444,9 @@
         "Maintain distinct denominators for static bytes, executable ranges, functions, dynamic targets, modes/routes, assets and observed behaviours",
         "Cross-link research ledgers, private source identities, asset commits and Neptune comparison fixtures",
         "Reject conclusions based solely on all bytes classified, all instructions translated, all tests passing or no new discoveries",
-        "Produce completion dossiers with unresolved risks and mutation checks, grow bounded tasks idempotently through #410"
+        "Produce completion dossiers with unresolved risks and mutation checks, grow bounded tasks idempotently through #410",
+        "Report separate per-release known/discovered/unknown, extracted, implemented and exact-verified coverage for maps/routes, mechanics/timing, effects/pixels and music/SFX/voice/PCM under SATURN_FIDELITY.md",
+        "A completion dossier must link production Godot comparisons and state/tick/pixel/sample mutation results at defined digital boundaries, tolerated prototypes or unknown denominators cannot become a fully identical or complete claim"
       ],
       "depends_on": [
         "REF-013"

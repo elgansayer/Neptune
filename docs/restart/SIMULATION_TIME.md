@@ -14,7 +14,7 @@ durations in game time. A paused SceneTree stops the authority and its child act
 Disabling the authority's physics callback stops its clock; individually stepping
 or unpausing child nodes is a testing/debugging operation, not a complete room pause.
 
-The explicit Godot 4.5 physics phases are authority clock/status at priority -200,
+The explicit Godot physics phases are authority clock/status at priority -200,
 bombs at -150, bot hazard publication/decisions at -100, then player movement at
 default priority 0. This makes observed bomb elapsed time and danger deadlines
 agree at the decision boundary. BotManager refreshes AIManager and HazardPredictor
@@ -22,10 +22,13 @@ after bomb advancement. Immediate placement queries use the same current clock.
 Idle process priority is separate from physics process priority.
 
 A child `SimulationStatePublisher` runs at physics priority 100 after the actors.
-It publishes only when the authority's existing network interval is due. Thus the
+It settles pending round-end requests every tick, then publishes only when the
+authority's existing network interval is due. Thus the
 packet's clock/tick and actor state describe the same completed physics step.
 Disabling the authority's physics also disables this publisher's work. Sending
 inside the early clock phase would label previous-step positions with a newer tick.
+See [ROUND_SETTLEMENT.md](ROUND_SETTLEMENT.md) for simultaneous deaths, timeout
+ordering and the server-local immutable terminal snapshot.
 
 This is the implemented Neptune simulation schedule, not a measured claim about
 either reference game's simultaneous-action ordering. Reference profiles still need

@@ -12,6 +12,33 @@ measured Saturn/Power mechanics, browser/native cross-play, portable community
 characters/maps/power-ups/modes, complete solo and explicitly authored co-op
 stories, and shared player/mod services available in-game and on a website.
 
+Follow the owner's 30 October clarification in `COMMUNITY_CONTENT.md`: the starting
+look and behaviour target is Saturn Bomberman; all mods are additions, never file/ID
+replacements or silent default changes. Support player-hosted listed servers with
+automatic exact-version downloads and per-participant custom-character sharing.
+Read `PROJECT_EVALUATION.md` and reuse existing PACK/ROOM/WORKSHOP tasks for these
+gaps. Prove a small creator-to-server-to-clean-client journey before UI breadth;
+advance measured Saturn fidelity alongside it without blocking original fixtures.
+
+The owner's 1 November clarification is binding: read
+[SATURN_FIDELITY.md](SATURN_FIDELITY.md). The Saturn baseline must match the chosen
+release's maps, levels, assets, effects, music, mechanics, speeds and timings.
+Pin each scenario, input/checkpoint, timebase and evidence identity; define state,
+video and audio comparisons and a deliberate mutation that must fail. Put these
+requirements in the existing task acceptance/evidence fields. Mark unrelated
+checks inapplicable with a reason. Exploratory/prototype success cannot establish
+exact fidelity, and unknown precision or missing coverage remains unresolved.
+
+Customisation is the main product advantage: players' own avatars and admins' own
+maps, game types and power-ups must work together and share automatically. Begin
+every relevant task by exploring the existing player/Tirra/stage pack projects,
+exported PCKs, loaders, map APIs and client integration; record reuse/adaptation
+decisions before adding a parallel system. Continue those authoring experiments,
+repair reproducibility defects and preserve compatible animation/map semantics.
+Use the existing-pack inventory in `PROJECT_EVALUATION.md`. A new manifest or
+registry should connect this work to additive selection and distribution, not
+restart character or map authoring from scratch.
+
 This is an execution request. Make tested implementation progress, not another
 broad roadmap. Use long-lived goals and small verifiable changes. Continue through
 eligible tasks until the current milestone is demonstrated or all remaining work
@@ -23,6 +50,7 @@ routine implementation choices and tests-gated merges are already authorised.
 Read `AGENTS.md` and its required documents. Under `docs/restart/`, also read
 `ARCHITECTURE.md`, `COMMUNITY_CONTENT.md`, `BOTS.md`, `SIMULATION_TIME.md`,
 `FACTORY_PLAYBOOK.md`, `REVERSE_ENGINEERING.md`, `POWER_BOMBERMAN.md`,
+`SATURN_FIDELITY.md`,
 `NETPLAY_BENCHMARKS.md`, `OPEN_SOURCE_AND_CONTENT.md`, `MERGE_POLICY.md` and
 `backlog/README.md`, `backlog/catalogue.json`, `backlog/INDEX.md`.
 Use #23 as the restart epic and #69 as the comprehensive roadmap. The asset
@@ -47,7 +75,21 @@ reset a running checkout or force-push over concurrent changes. Older bootstrap
 instructions are historical where current merged evidence supersedes them.
 Do not assume a cloud worker has the VPS's access, private media or credentials.
 
-## First assignment and ownership
+## Current assignment and ownership
+
+Finish your active bounded task before adopting new scope. Read current #536 and
+#33: unattended continuity remains inactive pending shared manual-session lease
+compatibility. Preserve the existing Elgl control plane, broker, manual sessions
+and limits; do not launch another scheduler or restart an owner's checkout.
+After reconciling ownership, choose the next eligible bounded child from #536,
+#76/#511 (trusted executable acceptance) or #29/#488/#489 (state, visual and audio
+comparisons). Check current prerequisites and open PRs before dispatch; an issue
+number is not evidence that its prerequisite has passed.
+
+The foundation assignments below describe the 29 October bootstrap. Reuse their
+accepted implementations and live evidence; do not redispatch them as new work.
+
+### Historical first assignment
 
 If you are the existing server worker, finish your active bounded task before
 adopting the next milestone. If newly dispatched, avoid competing with its #30/#50
@@ -72,8 +114,13 @@ Use one coordinator with three logical queues: development/integration, Saturn
 research, and Power research. Laboratories produce pinned scenarios, observations,
 captures, uncertainty and executable comparisons. Development consumes those
 contracts and returns reproducible divergences. Keep separate ownership and private
-evidence stores. Begin with one active job; more concurrency requires configured
-limits and measured capacity, not three new machines by default.
+evidence stores. Begin with one heavy job within shared leases and configured
+host/provider/retry limits; expand only after measured capacity and recovery.
+Capture/measurement and implementation workers hand off pinned contracts to a
+trusted executable verifier. Keep reference fixtures independent of candidate
+outputs; optional model review never replaces comparison results or blocks the
+accepted tests-only merge policy. #76/#511 own the remaining verification path;
+these instructions do not implement it. Do not call models inside frame loops.
 
 ### Dependable multiplayer and bots
 
@@ -87,7 +134,9 @@ actual browser/native clients.
 
 ### One recoverable factory job
 
-Implement #33 through its bounded children and available #25 prerequisites. Persist
+Continue #33 through its current bounded #536 work after resolving shared lease
+compatibility; do not enable unattended continuity while that gate remains open.
+Persist
 issue/acceptance/dependencies, input/base/head identities, lease, attempt, commands,
 usage and evidence. Demonstrate a real issue -> isolated implementation -> tests ->
 PR -> current-base merge -> reconciled completion. Interrupt/restart and prove
@@ -157,8 +206,10 @@ and local tests do not require purchasing a domain or publishing production serv
 ## Execution loop and continuity
 
 Audit overlap -> claim -> implement -> applicable real tests -> inspect logs ->
-attach evidence -> focused PR -> required current-base checks -> merge -> reconcile
+attach evidence -> commit and push -> focused PR -> required current-base checks -> merge -> reconcile
 the issue -> next eligible task. No mandatory AI/human approving review is required.
+Always publish completed changes before ending a session; do not leave them only
+in a local checkout. Report the pushed commit and PR/merge state or a concrete blocker.
 Never bypass failing gates, weaken assertions/tolerances, fabricate reference
 captures or treat missing/skipped/empty checks as passing.
 

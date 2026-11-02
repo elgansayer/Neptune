@@ -5,6 +5,16 @@
 > and [server handoff](docs/restart/SERVER_HANDOFF.md). The historical description
 > below includes outdated paths/status claims. Verify them against the current code.
 
+The product ethos is **Saturn Bomberman as the starting look and behaviour, with
+additions-only community content and automatic sharing through player-hosted servers**.
+Read the [canonical contract](docs/restart/COMMUNITY_CONTENT.md) and
+[current project evaluation](docs/restart/PROJECT_EVALUATION.md).
+
+The owner's 1 November target includes exact timings, speeds, mechanics, effects,
+music and sound. Follow the [Saturn fidelity acceptance contract](docs/restart/SATURN_FIDELITY.md)
+and its measured state, native-pixel and sample-timed audio gates. These remain
+implementation goals; tooling tests alone do not certify the original game rebuilt.
+
 A competitive multiplayer Bomberman game with server-authoritative physics and modern networking.
 
 ## 🏗️ Architecture
@@ -15,6 +25,10 @@ A competitive multiplayer Bomberman game with server-authoritative physics and m
 - **Physics**: Native Godot CharacterBody2D/StaticBody2D with collision exceptions
 
 ## 🚀 Quick Start
+
+Development uses the [latest stable dependency policy](docs/restart/DEPENDENCY_POLICY.md),
+including Godot, addons and tooling. Check upstream releases, refresh reproducible
+pins and validate compatibility when adopting updates.
 
 ### Start Server
 ```bash
@@ -117,7 +131,7 @@ See `docs/SBOMBERMAN_REFERENCE.md` for detailed comparison.
 
 ## 🛠️ Tech Stack
 
-- **Engine**: Godot 4.5
+- **Engine**: Godot (latest stable target; recorded toolchain currently pins 4.7.2)
 - **Language**: GDScript
 - **Networking**: ENet (client-server RPC)
 - **Database**: SQLite (local), PlayFab (future)

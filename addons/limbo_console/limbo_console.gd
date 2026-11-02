@@ -422,7 +422,7 @@ func execute_command(p_command_line: String, p_silent: bool = false) -> void:
 		if failed:
 			_suggest_argument_corrections(expanded_argv)
 	else:
-		usage(argv[0])
+		usage(command_name)
 	if _options.sparse_mode:
 		print_line("")
 	_silent = false
@@ -439,6 +439,7 @@ func execute_script(p_file: String, p_silent: bool = true) -> void:
 			LimboConsole.execute_command(line, p_silent)
 	else:
 		LimboConsole.error("File not found: " + p_file.trim_prefix("user://"))
+	_resume_scroll_following.call_deferred()
 
 
 ## Formats the tip text (hopefully useful ;).
@@ -573,10 +574,37 @@ func _build_gui() -> void:
 	_output = RichTextLabel.new()
 	_output.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_output.scroll_active = true
-	_output.scroll_following = true
+	_output.scroll_following = false # To implement custom scroll following behavior
 	_output.bbcode_enabled = true
 	_output.focus_mode = Control.FOCUS_CLICK
 	vbox.add_child(_output)
+
+	# To allow user to pause scrolling, we need to track the scroll bar ourselves
+	var scroll_bar: VScrollBar = _output.get_v_scroll_bar()
+	var scroll_history: Dictionary = {
+		"last_value": 1.0,
+		"last_height": scroll_bar.max_value - scroll_bar.page,
+		"correction_queued": false,
+	}
+	var correct_scroll := func() -> void:
+		scroll_history["correction_queued"] = false
+		scroll_history["last_height"] = scroll_bar.max_value - scroll_bar.page
+		if scroll_history["last_value"] == 1.0:
+			_resume_scroll_following()
+	scroll_bar.value_changed.connect(func(value):
+		# Scroll bar height changes multiple times on printing new lines
+		var current_height := scroll_bar.max_value - scroll_bar.page
+		if current_height != scroll_history["last_height"]:
+			if not scroll_history["correction_queued"]:
+				scroll_history["correction_queued"] = true
+				correct_scroll.call_deferred()
+		else:
+			# Scroll bar is done moving from prints, so it must have been moved by user. Thus, we update the last value
+			if scroll_bar.max_value - scroll_bar.page > 0:
+				scroll_history["last_value"] = scroll_bar.value / (scroll_bar.max_value - scroll_bar.page)
+			else:
+				scroll_history["last_value"] = 1.0
+	)
 
 	_entry = CommandEntry.new()
 	vbox.add_child(_entry)
@@ -772,9 +800,9 @@ func _parse_argv(p_argv: PackedStringArray, p_callable: Callable, r_args: Array)
 			r_args[i - 1] = a.to_float()
 		elif a.is_valid_int():
 			r_args[i - 1] = a.to_int()
-		elif a == "true" or a == "1" or a == "yes":
+		elif a == "true" or a == "1" or a == "yes" or a == "on":
 			r_args[i - 1] = true
-		elif a == "false" or a == "0" or a == "no":
+		elif a == "false" or a == "0" or a == "no" or a == "off":
 			r_args[i - 1] = false
 		else:
 			r_args[i - 1] = a.trim_prefix('"').trim_suffix('"')
@@ -792,7 +820,7 @@ func _parse_argv(p_argv: PackedStringArray, p_callable: Callable, r_args: Array)
 func _are_compatible_types(p_expected_type: int, p_parsed_type: int) -> bool:
 	return p_expected_type == p_parsed_type or \
 		p_expected_type == TYPE_NIL or \
-		p_expected_type == TYPE_STRING or \
+		p_expected_type == TYPE_STRING or p_expected_type == TYPE_STRING_NAME or \
 		(p_expected_type in [TYPE_BOOL, TYPE_INT, TYPE_FLOAT] and p_parsed_type in [TYPE_BOOL, TYPE_INT, TYPE_FLOAT]) or \
 		(p_expected_type in [TYPE_VECTOR2, TYPE_VECTOR2I] and p_parsed_type in [TYPE_VECTOR2, TYPE_VECTOR2I]) or \
 		(p_expected_type in [TYPE_VECTOR3, TYPE_VECTOR3I] and p_parsed_type in [TYPE_VECTOR3, TYPE_VECTOR3I]) or \
@@ -1044,7 +1072,7 @@ func _validate_callable(p_callable: Callable) -> bool:
 
 	var ret := true
 	for arg in method_info.args:
-		if not arg.type in [TYPE_NIL, TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_VECTOR2, TYPE_VECTOR2I, TYPE_VECTOR3, TYPE_VECTOR3I, TYPE_VECTOR4, TYPE_VECTOR4I]:
+		if not arg.type in [TYPE_NIL, TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING, TYPE_STRING_NAME, TYPE_VECTOR2, TYPE_VECTOR2I, TYPE_VECTOR3, TYPE_VECTOR3I, TYPE_VECTOR4, TYPE_VECTOR4I]:
 			push_error("LimboConsole: Unsupported argument type: %s is %s" % [arg.name, type_string(arg.type)])
 			ret = false
 	return ret
@@ -1073,6 +1101,7 @@ func _on_entry_text_submitted(p_command: String) -> void:
 		_clear_autocomplete()
 		_fill_entry("")
 		execute_command(p_command)
+		_resume_scroll_following.call_deferred()
 		_update_autocomplete()
 
 
@@ -1082,3 +1111,10 @@ func _on_entry_text_changed() -> void:
 		_update_autocomplete()
 	else:
 		_history_iter.reset()
+
+
+## Resumes the scroll following behavior. Should generally be called using
+## call_deferred as the scroll bar does not update immediately.
+func _resume_scroll_following() -> void:
+	var scroll_bar: VScrollBar = _output.get_v_scroll_bar()
+	scroll_bar.value = scroll_bar.max_value

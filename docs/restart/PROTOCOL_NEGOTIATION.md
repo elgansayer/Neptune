@@ -16,7 +16,7 @@ Each end sends one reliable, ASCII JSON offer:
 ```
 
 Both ends select the highest intersection of their implemented versions. Product
-support is currently **only version 1**, using the pinned Godot 4.5 native wire
+support is currently **only version 1**, using the pinned Godot 4.7.2 native wire
 protocol and existing RPC signatures. A version may be advertised only when its
 actual message semantics are implemented. The tests use extra version numbers to
 exercise selection; this does not make those versions supported product codecs.

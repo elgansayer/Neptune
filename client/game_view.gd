@@ -5,6 +5,7 @@ extends Node2D
 # Uses Godot's CanvasLayers, YSort, and z_index for proper rendering order
 
 const Constants = preload("res://shared/constants.gd")
+const CharacterPacks = preload("res://shared/content/character_pack_loader.gd")
 const RenderingLayers = preload("res://shared/rendering_layers.gd")
 const BombScene = preload("res://client/ui/bomb.tscn")
 const PowerUpScene = preload("res://client/ui/powerup.tscn")
@@ -27,6 +28,7 @@ var debug_canvas: CanvasLayer
 @onready var camera = $Camera2D
 
 var player_nodes = {} # peer_id -> Node2D
+var _local_character_visuals := {} # Explicit cosmetic selections; no network authority.
 var bomb_nodes = {} # bomb_id -> Node2D
 var powerup_nodes = {} # powerup_id -> Node2D
 var egg_nodes = {} # egg_id -> Node2D (Tirra eggs)
@@ -565,6 +567,8 @@ func update_game_state(state: Dictionary):
 
 	# Remove players no longer in state
 	if state.has("players"):
+		for peer_id in _local_character_visuals.keys():
+			if not state.players.has(peer_id): _local_character_visuals.erase(peer_id)
 		for peer_id in player_nodes.keys():
 			if not state.players.has(peer_id):
 				player_nodes[peer_id].queue_free()
@@ -713,6 +717,16 @@ func update_blocks(map_data: Array):
 			nodes.block.queue_free()
 			block_nodes.erase(tile_key)
 
+func select_local_character(peer_id: String, manifest_paths: Array, content_id: String) -> Dictionary:
+	if RegEx.create_from_string("^-?[0-9]{1,12}\\z").search(peer_id) == null:
+		return {"accepted": false, "reason": "invalid_participant_id"}
+	if player_nodes.has(peer_id):
+		return {"accepted": false, "reason": "visual_already_created"}
+	var loaded := CharacterPacks.load_character(manifest_paths, content_id)
+	if not loaded.accepted: return loaded
+	_local_character_visuals[peer_id] = loaded
+	return {"accepted": true, "descriptor": loaded.descriptor.duplicate(true)}
+
 func update_player(peer_id: String, data: Dictionary):
 	var player_node
 
@@ -726,17 +740,26 @@ func update_player(peer_id: String, data: Dictionary):
 		player_node = Node2D.new()
 		player_node.name = "Player_" + peer_id
 		
-		# Load Robin Hood sprite from PCK
-		var player_pck_scene = load("res://player.tscn")
-		if player_pck_scene:
-			var sprite_root = player_pck_scene.instantiate()
+		var sprite_root: Node2D = null
+		var fallback := "state_idle"
+		if _local_character_visuals.has(peer_id):
+			var selected: Dictionary = _local_character_visuals[peer_id]
+			sprite_root = CharacterPacks.create_visual(selected)
+			fallback = selected.fallback
+			player_node.set_meta("character_descriptor", selected.descriptor.duplicate(true))
+		else:
+			# Preserve the existing default visual when no local choice was made.
+			var player_pck_scene = load("res://player.tscn")
+			if player_pck_scene: sprite_root = player_pck_scene.instantiate()
+		if sprite_root:
 			sprite_root.position = Vector2.ZERO
 			player_node.add_child(sprite_root)
 			# Store reference to AnimatedSprite2D for animation control
 			var anim_sprite = sprite_root.get_node_or_null("AnimatedSprite2D")
 			if anim_sprite:
-				anim_sprite.play("state_idle")
+				anim_sprite.play(fallback)
 				player_node.set_meta("animated_sprite", anim_sprite)
+				player_node.set_meta("character_fallback", fallback)
 		else:
 			# Fallback to colored rectangle if PCK not loaded
 			var sprite = ColorRect.new()
@@ -950,10 +973,10 @@ func update_player(peer_id: String, data: Dictionary):
 			if animated_sprite.sprite_frames.has_animation(anim_name):
 				animated_sprite.play(anim_name)
 			else:
-				# Fallback to state_idle if animation doesn't exist
-				print("[GameView] Animation not found: ", anim_name, " - using state_idle")
-				if animated_sprite.sprite_frames.has_animation("state_idle"):
-					animated_sprite.play("state_idle")
+				var fallback: String = player_node.get_meta("character_fallback", "state_idle")
+				print("[GameView] Animation not found: ", anim_name, " - using ", fallback)
+				if animated_sprite.sprite_frames.has_animation(fallback):
+					animated_sprite.play(fallback)
 	
 	# === VIRUS VISUAL EFFECTS (Saturn Bomberman) ===
 	_update_virus_visual_effects(player_node, data)

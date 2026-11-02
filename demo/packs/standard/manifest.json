@@ -1,0 +1,16 @@
+{
+  "schema": "neptune.pack.v1",
+  "pack_id": "example.standard:pack",
+  "version": "1.0.0",
+  "author": "Neptune contributors",
+  "license": "Apache-2.0",
+  "dependencies": [],
+  "content": [
+    {
+      "id": "example.standard:arena",
+      "kind": "arena",
+      "path": "arena.json",
+      "sha256": "0bbf173ec493c72be4aed8c2a90bb85ebff025280fac6e11e4f4e0b74f6c26d4"
+    }
+  ]
+}

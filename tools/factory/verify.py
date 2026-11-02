@@ -25,7 +25,6 @@ spec.loader.exec_module(gate)
 SCHEMA = "neptune.factory-verification.v1"
 REQUIREMENTS_SCHEMA = "neptune.factory-requirements.v1"
 TOOLCHAIN_LOCK = "tools/godot/toolchain.json"
-GODOT_BINARY = "Godot_v4.5-stable_linux.x86_64"
 # Declared, never probed from the host: the core checks run under the invoking
 # Python (3.11 for hashlib.file_digest) and invoke git and a C compiler. Only the
 # graphical native-runtime check needs a virtual display.
@@ -69,9 +68,7 @@ def selected_contents(root, paths):
 def offline_toolchain(root, directory):
     lock_path = root / TOOLCHAIN_LOCK
     lock = json.loads(lock_path.read_text())
-    if lock.get("binary_name") != GODOT_BINARY:
-        raise ValueError("Unsupported pinned Godot binary name")
-    binary = directory / lock["binary_name"]
+    binary = directory / gate.godot_binary_name(lock)
     if not binary.is_file() or not os.access(binary, os.X_OK) or sha(binary) != lock["binary_sha256"]:
         raise ValueError("Missing/mismatched offline Godot cache; provision it before verification")
     if not isinstance(lock.get("addons"), dict) or not lock["addons"]:
@@ -93,8 +90,7 @@ def pinned_toolchain(root):
     lock = json.loads(raw)
     if not isinstance(lock, dict):
         raise ValueError("Pinned Godot toolchain lock must be a JSON object")
-    if lock.get("binary_name") != GODOT_BINARY:
-        raise ValueError("Unsupported pinned Godot binary name")
+    binary_name = gate.godot_binary_name(lock)
     version, binary_sha256, addons = lock.get("godot_version"), lock.get("binary_sha256"), lock.get("addons")
     if not isinstance(version, str) or not version or not is_sha256(binary_sha256):
         raise ValueError("Missing pinned Godot version/binary identity")
@@ -106,7 +102,7 @@ def pinned_toolchain(root):
             raise ValueError("Invalid native addon identity: " + relative)
     # Identities only: the lock's download location is deliberately not forwarded.
     return {"tool": "godot", "lock": TOOLCHAIN_LOCK, "lock_sha256": hashlib.sha256(raw).hexdigest(),
-            "godot_version": version, "binary_name": GODOT_BINARY, "binary_sha256": binary_sha256,
+            "godot_version": version, "binary_name": binary_name, "binary_sha256": binary_sha256,
             "addons": dict(sorted(addons.items()))}
 
 

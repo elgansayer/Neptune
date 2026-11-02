@@ -1,0 +1,48 @@
+{
+  "checked_on": "2026-10-30",
+  "source": "GitHub official repository releases/latest; stable, non-draft releases",
+  "releases": [
+    {
+      "repository": "godotengine/godot",
+      "tag": "4.7.2-stable",
+      "release_url": "https://github.com/godotengine/godot/releases/tag/4.7.2-stable",
+      "published_at": "2026-08-18T16:12:28Z",
+      "archive_url": "https://github.com/godotengine/godot/releases/download/4.7.2-stable/Godot_v4.7.2-stable_linux.x86_64.zip",
+      "archive_sha256": "cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4",
+      "upstream_digest": "sha256:cadd3204e728a35d3f13adb7fd0d7902636b79f6b95c40c265eb73b6c35329e4"
+    },
+    {
+      "repository": "limbonaut/limboai",
+      "tag": "v1.8.1",
+      "release_url": "https://github.com/limbonaut/limboai/releases/tag/v1.8.1",
+      "published_at": "2026-08-20T13:10:47Z",
+      "archive_url": "https://github.com/limbonaut/limboai/releases/download/v1.8.1/limboai%2Bv1.8.1.gdextension-4.6.zip",
+      "archive_sha256": "0910411f8dbc0da8920f6c8bbbb6397c347cd9f2f193942468a702dfb11d5f0e",
+      "upstream_digest": "sha256:0910411f8dbc0da8920f6c8bbbb6397c347cd9f2f193942468a702dfb11d5f0e"
+    },
+    {
+      "repository": "2shady4u/godot-sqlite",
+      "tag": "v4.9",
+      "release_url": "https://github.com/2shady4u/godot-sqlite/releases/tag/v4.9",
+      "published_at": "2026-08-09T13:22:16Z",
+      "archive_url": "https://github.com/2shady4u/godot-sqlite/releases/download/v4.9/addons.zip",
+      "archive_sha256": "95e91b72fe32984a84edaf6357a78753661f37a170cb362f5b948e0ede7c2cb0",
+      "upstream_digest": "sha256:95e91b72fe32984a84edaf6357a78753661f37a170cb362f5b948e0ede7c2cb0"
+    },
+    {
+      "repository": "limbonaut/limbo_console",
+      "tag": "v0.8.0",
+      "release_url": "https://github.com/limbonaut/limbo_console/releases/tag/v0.8.0",
+      "published_at": "2026-06-20T14:49:01Z",
+      "archive_url": "https://github.com/limbonaut/limbo_console/releases/download/v0.8.0/limbo_console_v0.8.0.zip",
+      "archive_sha256": "68cee989910322561222fde3261871a7bd0878122147a949bbb7a27fabef8d9a",
+      "upstream_digest": "sha256:68cee989910322561222fde3261871a7bd0878122147a949bbb7a27fabef8d9a"
+    }
+  ],
+  "local_patches": {
+    "limbo_console": [
+      "Preserve get_alias_argv PackedStringArray duplicate fix (tests/test_console_aliases.gd)."
+    ]
+  },
+  "platform_scope": "Upstream cross-platform addon bundles; Linux x86_64 and web exports validated separately."
+}

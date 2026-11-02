@@ -16,9 +16,11 @@ Begin with one live worker to prove intake, provider authentication, evidence,
 restart recovery and costs. Increase to two implementation workers once measured.
 AI review is optional. Keep interface-changing work serial where necessary.
 
-The coordinator dispatches version-pinned OpenHands SDK/Agent Server conversations
-in isolated workspaces. GitHub Actions executes deterministic checks, not a second
-competing autonomous planner. Provider adapters use documented authentication,
+Reuse the deployed Elgl Repo Factory and supported shared provider broker as
+specified in [FACTORY_PLAYBOOK.md](FACTORY_PLAYBOOK.md); do not create a competing
+scheduler or assume OpenHands is required. Dispatch version-pinned supported
+workers in isolated workspaces. GitHub Actions executes deterministic checks.
+Provider adapters use documented authentication,
 bounded retries/backoff and explicit paid-fallback policy. A provider failure must
 not mark a task complete or produce an infinite retry loop.
 

@@ -7,6 +7,18 @@ The [catalogue](backlog/catalogue.json) has 418 desired features, including 38 n
 research jobs. This document records the 30 October 2026 evidence and dispatch
 contract, not completed reconstruction.
 
+The owner's 1 November requirement is the
+[Saturn fidelity contract](SATURN_FIDELITY.md): identical content and presentation,
+exact measured mechanics/speeds/timing, and matching effects, music and sound at
+defined digital boundaries. State/events, native-resolution pixels and native-rate
+audio need separate executable evidence. Connect measured input/game/VBlank/audio
+clocks to the production Godot implementation. Tolerated comparisons are useful
+diagnostics but cannot establish exactness. Unknown behavior or missing evidence
+remains incomplete or blocked. Reuse #399/#429/#488/#489/#492/#493 and
+#76/#508/#511/#513/#515, preserving active owners and acceptance revisions.
+Complete source recovery is not a prerequisite for independently eligible creator
+fixtures or the first measured Godot slice.
+
 ## Accepted starting points
 
 - #466 audited 50,407 existing asset files. Much of the collection is GameMaker
@@ -105,6 +117,13 @@ these results independently; complete decompilation does not block original pack
 
 Every result links source range/resource ID, build/region, tool/core/settings,
 input/checkpoint/timebase, output hash, command, confidence and counterexamples.
+For faithful comparisons, include independently identified reference and candidate
+inputs, adapter/build/content identities, native frame/sample boundaries, and
+authentic private capture receipts bound to the task revision and candidate
+head/current base. Repeated original captures and deliberate state/tick/pixel/sample
+mutations must distinguish authentic matching outputs from missing, stale,
+fabricated or weakened evidence. A matching hash alone does not authenticate a
+capture or prove the original game's complete coverage.
 Track separately: discovered/static-classified, decoded/disassembled/decompiled,
 executed, semantically validated, privately published, and Neptune parity.
 Instruction translation and full byte classification do not prove behaviour or

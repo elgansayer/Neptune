@@ -5,6 +5,15 @@ class_name GameInstance
 # Manages one game match with multiple players
 
 const Constants = preload("res://shared/constants.gd")
+const MAX_RETAINED_ELIMINATIONS := 256
+
+signal elimination_recorded(event: Dictionary)
+
+var _combat_actor_serial := 0
+var _elimination_sequence := 0
+var _discarded_eliminations := 0
+var _elimination_events: Array[Dictionary] = []
+var _flame_damage_sources: Dictionary = {}
 
 # Entity scene files for instantiation
 const ServerPlayerScene = preload("res://shared/entities/ServerPlayer.tscn")
@@ -46,6 +55,12 @@ var _spawn_plan: RefCounted
 var _spawn_signature := ""
 var _spawn_bindings: Dictionary = {}
 var room_map_path := "" # Trusted local JSON selection; public pack loading is separate.
+var room_pack_paths: Array = [] # Explicit local data-only manifests; never PCK mounts.
+var room_arena_id: String = ""
+var room_content_descriptor: Dictionary = {}
+var room_content_selection: Array = []
+var room_content_lock: Dictionary = {}
+var room_content_lock_sha256: String = ""
 var room_capacity_request := {} # Set before _ready by the authority, not clients.
 var room_setup_result := {"accepted": false, "reason": "authority_not_ready"}
 var last_room_start_result := {}
@@ -77,7 +92,19 @@ var sent_explosions := {} # bomb_id -> bool (has this explosion been sent to cli
 # Match timer
 var match_duration := 180.0 # 3 minutes default
 var match_time_remaining := match_duration
-var match_active := false # Start false, set true after countdown
+var _round_end_check_pending := false
+var _round_timeout_pending := false
+var _round_result: Dictionary = {}
+var match_active := false: # Start false, set true after countdown.
+	set(value):
+		if value and not match_active:
+			# Trusted activation also supports isolated native fixtures. Configured
+			# rooms still refuse implicit restarts through start_room_countdown().
+			_round_end_check_pending = false
+			_round_timeout_pending = false
+			_round_result = {}
+			winner_id = ""
+		match_active = value
 var countdown_time := 1.0 # 1 second countdown before match starts
 var winner_id := ""
 
@@ -151,8 +178,27 @@ func _ready():
 	# Load map from PCK file
 	var map_data: Dictionary
 	
-	# Try to load PCK map first
-	if not room_map_path.is_empty():
+	# An explicit registered arena must resolve before legacy local map routes.
+	if not room_pack_paths.is_empty() or not room_arena_id.is_empty():
+		if not room_map_path.is_empty():
+			room_setup_result = {"accepted": false, "reason": "conflicting_room_map_selection", "field": "room_map", "source": ""}
+		elif room_pack_paths.is_empty() or room_arena_id.is_empty():
+			room_setup_result = {"accepted": false, "reason": "incomplete_room_pack_selection", "field": "room_pack" if room_pack_paths.is_empty() else "room_arena", "source": ""}
+		else:
+			var pack_result: Dictionary = preload("res://shared/content/arena_pack_loader.gd").load_arena(room_pack_paths, room_arena_id)
+			if pack_result.accepted:
+				map_data = pack_result.map
+				room_content_descriptor = pack_result.descriptor.duplicate(true)
+				room_content_selection = pack_result.selection.duplicate(true)
+				room_content_lock = pack_result.lock.duplicate(true)
+				room_content_lock_sha256 = pack_result.lock_sha256
+			else:
+				room_setup_result = pack_result.duplicate(true)
+		if map_data.is_empty():
+			countdown_time = 0.0
+			set_physics_process(false)
+			return # Explicit failures cannot select the legacy PCK/procedural default.
+	elif not room_map_path.is_empty():
 		map_data = MapLoader.load_map_from_file(room_map_path)
 		if map_data.is_empty():
 			room_setup_result = SpawnReservations.failure("invalid_room_map")
@@ -388,7 +434,8 @@ func _physics_process(delta):
 		
 		if match_time_remaining <= 0:
 			match_time_remaining = 0
-			end_match()
+			# Bombs and actors still own this final tick. Settle after their phase.
+			_round_timeout_pending = true
 	
 	last_sync_time += delta
 	
@@ -403,6 +450,7 @@ func _physics_process(delta):
 	# The late physics publisher sends state after actor movement has completed.
 
 func _publish_due_state() -> void:
+	_settle_round_end()
 	if last_sync_time >= SYNC_INTERVAL:
 		last_sync_time = 0.0
 		sync_state_to_clients()
@@ -415,6 +463,82 @@ func get_simulation_time_sec() -> float:
 
 func get_clock_state() -> Dictionary:
 	return {"server_time": current_time_msec, "simulation_tick": simulation_tick}
+
+func get_elimination_event_state() -> Dictionary:
+	# Server-local diagnostic history, not durable statistics or a public RPC.
+	return {"schema": 1, "game_id": game_id, "last_sequence": _elimination_sequence,
+		"discarded": _discarded_eliminations, "events": _elimination_events.duplicate(true)}
+
+func _combat_actor_snapshot(player: ServerPlayer) -> Dictionary:
+	return {"peer_id": player.peer_id, "player_id": player.player_id,
+		"participant_id": _spawn_bindings.get(player.peer_id, ""),
+		"incarnation": int(player.get_meta("combat_incarnation", 0)),
+		"type": "bot" if player.is_ai_bot() else "human"}
+
+func _capture_bomb_damage_source(bomb: ServerBomb, player: ServerPlayer) -> void:
+	bomb.set_meta("combat_source", {"kind": "bomb", "bomb_id": bomb.bomb_id,
+		"owner": _combat_actor_snapshot(player)})
+
+func _bomb_damage_source(bomb: ServerBomb) -> Dictionary:
+	# Never resolve an old owner's peer ID against a potentially reused roster slot.
+	return bomb.get_meta("combat_source", {"kind": "bomb", "bomb_id": bomb.bomb_id,
+		"owner": {}}).duplicate(true)
+
+func _apply_player_damage(player: ServerPlayer, source: Dictionary) -> bool:
+	if not _round_result.is_empty() or not is_instance_valid(player) or player.is_dead or players.get(player.peer_id) != player:
+		return false
+	var victim := _combat_actor_snapshot(player)
+	var cell := player.get_tile_position()
+	player.die()
+	if not player.is_dead:
+		return false # Invincibility or a mount absorbed the hit.
+	var owner: Dictionary = source.get("owner", {})
+	var self_ko: Variant = null
+	if source.get("kind") == "bomb" and int(owner.get("incarnation", 0)) > 0 and victim.incarnation > 0:
+		self_ko = owner.incarnation == victim.incarnation
+	_elimination_sequence += 1
+	var event := {"schema": 1, "sequence": _elimination_sequence, "game_id": game_id,
+		"simulation_tick": simulation_tick, "server_time_msec": current_time_msec,
+		"tile": [cell.x, cell.y], "victim": victim,
+		"source": source.duplicate(true), "self_ko": self_ko}
+	if _elimination_events.size() >= MAX_RETAINED_ELIMINATIONS:
+		_elimination_events.pop_front()
+		_discarded_eliminations += 1
+	_elimination_events.append(event)
+	check_match_end_condition()
+	elimination_recorded.emit(event.duplicate(true))
+	return true
+
+func _retain_flame_source(key: String, source: Dictionary, expires_at_msec: float) -> void:
+	if not active_explosion_tiles.has(key):
+		_flame_damage_sources.erase(key)
+	var entries: Array = _flame_damage_sources.get(key, [])
+	for entry in entries:
+		if entry.source.bomb_id == source.bomb_id:
+			entry.expires_at_msec = maxf(entry.expires_at_msec, expires_at_msec)
+			return
+	entries.append({"source": source.duplicate(true), "expires_at_msec": expires_at_msec})
+	_flame_damage_sources[key] = entries
+
+func _prune_flame_sources() -> void:
+	for key in _flame_damage_sources.keys():
+		if not active_explosion_tiles.has(key):
+			_flame_damage_sources.erase(key)
+			continue
+		var live: Array[Dictionary] = []
+		for entry in _flame_damage_sources[key]:
+			if current_time_msec <= entry.expires_at_msec:
+				live.append(entry)
+		if live.is_empty():
+			_flame_damage_sources.erase(key)
+		else:
+			_flame_damage_sources[key] = live
+
+func _lingering_flame_source(key: String) -> Dictionary:
+	var entries: Array = _flame_damage_sources.get(key, [])
+	# Deterministic diagnostic convention: earliest observed source still burning.
+	# This is not a claim about Saturn's scoring or chain/assist rules.
+	return entries[0].source.duplicate(true) if not entries.is_empty() else {"kind": "unknown_flame", "owner": {}}
 
 func configure_room_capacity(seats: Variant, preset_limit: Variant = Constants.MAX_MATCH_SEATS) -> Dictionary:
 	# Trusted preset limits remain independent of the protocol maximum. This does
@@ -667,6 +791,8 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 		print("[Game] Player spawned with 1 bomb (no items)")
 	
 	players[peer_id] = player
+	_combat_actor_serial += 1
+	player.set_meta("combat_incarnation", _combat_actor_serial)
 	add_child(player)
 	
 	# For bot players (negative peer_id), set multiplayer authority to server
@@ -679,6 +805,7 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	return {"accepted": true, "reason": "admitted", "peer_id": peer_id, "participant_id": identity, "cell": allocation.cell.duplicate(), "position": [spawn_position.x, spawn_position.y], "reused": allocation.reused}
 
 func remove_player(peer_id: int, retain_spawn: bool = false):
+	var was_present := players.has(peer_id)
 	if players.has(peer_id):
 		var player = players[peer_id]
 		if is_instance_valid(player):
@@ -694,14 +821,46 @@ func remove_player(peer_id: int, retain_spawn: bool = false):
 	_spawn_bindings.erase(peer_id)
 	if _spawn_plan != null and not retain_spawn: _spawn_plan.release(identity)
 	print("[Game] Player left: ", peer_id)
+	if was_present:
+		check_match_end_condition()
 
-func end_match():
-	"""End the match and determine winner"""
+func get_round_result() -> Dictionary:
+	# Server-local terminal snapshot; empty until settlement, never a live roster.
+	return _round_result.duplicate(true)
+
+func _alive_player_ids() -> Array[String]:
+	var alive: Array[String] = []
+	for peer_id in players:
+		if is_instance_valid(players[peer_id]) and not players[peer_id].is_dead:
+			alive.append(str(peer_id))
+	alive.sort()
+	return alive
+
+func _settle_round_end() -> void:
 	if not match_active:
+		return
+	var check_survivors := _round_end_check_pending
+	var timed_out := _round_timeout_pending
+	_round_end_check_pending = false
+	_round_timeout_pending = false
+	if timed_out:
+		end_match("timeout")
+	elif check_survivors and _alive_player_ids().size() <= 1:
+		end_match("survivors")
+
+func end_match(reason: String = "stopped"):
+	"""Trusted explicit stop; gameplay requests settle in the late physics phase."""
+	if not match_active or not _round_result.is_empty():
 		return # Already ended
 	
+	var survivors := _alive_player_ids()
+	winner_id = survivors[0] if survivors.size() == 1 else ""
+	_round_result = {"schema": 1, "game_id": game_id, "simulation_tick": simulation_tick,
+		"server_time_msec": current_time_msec, "reason": reason,
+		"winner_id": winner_id, "survivors": survivors}
+	_round_end_check_pending = false
+	_round_timeout_pending = false
 	match_active = false
-	winner_id = find_winner()
 	
 	print("[GameInstance] Match ended. Winner: ", winner_id if winner_id else "Draw")
 	game_ended.emit(winner_id)
@@ -712,10 +871,7 @@ func end_match():
 
 func find_winner() -> String:
 	"""Find the winner (last player alive)"""
-	var alive_players = []
-	for peer_id in players:
-		if not players[peer_id].is_dead:
-			alive_players.append(str(peer_id))
+	var alive_players := _alive_player_ids()
 	
 	# Return single survivor, or empty string if draw/no survivors
 	if alive_players.size() == 1:
@@ -850,8 +1006,7 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 			for player in players_by_tile[pos]:
 				if is_instance_valid(player) and not player.is_dead:
 					print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-					player.die()
-					_check_alive_players()
+					_apply_player_damage(player, {"kind": "hurry_block", "tile": [pos.x, pos.y], "owner": {}})
 	else:
 		for peer_id in players:
 			var player = players[peer_id]
@@ -861,10 +1016,7 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 			var player_tile = player.get_tile_position()
 			if player_tile == pos:
 				print("[Hurry] 💀 Player %s crushed by hurry block at %s!" % [player.player_name, pos])
-				player.die()
-
-				# Check for match end
-				_check_alive_players()
+				_apply_player_damage(player, {"kind": "hurry_block", "tile": [pos.x, pos.y], "owner": {}})
 	
 	# Destroy any bomb at this position
 	var bombs_to_remove = []
@@ -920,14 +1072,7 @@ func _spawn_hurry_block(pos: Vector2i, players_by_tile = null, bombs_by_tile = n
 	map_changes.append([pos.x, pos.y, 3])
 
 func _check_alive_players():
-	"""Check if match should end after a player death"""
-	var alive_count = 0
-	for peer_id in players:
-		if not players[peer_id].is_dead:
-			alive_count += 1
-	
-	if alive_count <= 1:
-		end_match()
+	check_match_end_condition()
 
 var _public_observation_source: RefCounted
 
@@ -1139,6 +1284,7 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i) -> Str
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
+	_capture_bomb_damage_source(bomb, player)
 	bomb.explosion_range = player.get_effective_bomb_range() # SMALL_FLAME virus forces range to 1
 	bomb.bomb_type = player.bomb_type
 	
@@ -1181,6 +1327,7 @@ func _place_single_bomb(player: ServerPlayer) -> String:
 	bomb.bomb_id = str(next_bomb_id)
 	next_bomb_id += 1
 	bomb.owner_id = player.player_id
+	_capture_bomb_damage_source(bomb, player)
 	bomb.explosion_range = player.get_effective_bomb_range() # SMALL_FLAME virus forces range to 1
 	bomb.bomb_type = player.bomb_type # Copy player's current bomb type
 	
@@ -1286,10 +1433,12 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 	# Calculate when this explosion tile expires (in milliseconds)
 	# Explosion lasts for EXPLOSION_DURATION (1.0 seconds by default)
 	var expiration_time = current_time_msec + GameConfig.EXPLOSION_DURATION * 1000.0
+	var source := _bomb_damage_source(bomb)
 	
 	for tile_pos in tiles:
 		# Track this tile as actively burning for continuous damage detection
 		var tile_key = "%d,%d" % [tile_pos.x, tile_pos.y]
+		_retain_flame_source(tile_key, source, expiration_time)
 		active_explosion_tiles[tile_key] = expiration_time
 		
 		# Check for player hits
@@ -1303,11 +1452,9 @@ func _on_explosion_expanded(bomb: ServerBomb, tiles: Array[Vector2i]):
 			var player_tile = player.get_tile_position()
 			
 			if player_tile == tile_pos:
-				player.die()
+				_apply_player_damage(player, source)
 				print("[Game] Player ", player.username, " killed by explosion at ", tile_pos)
 				
-				# Check if match should end (only 1 or 0 players left alive)
-				check_match_end_condition()
 		
 		# Check for destructible blocks
 		if tile_pos.y >= 0 and tile_pos.y < game_map.size():
@@ -1348,6 +1495,7 @@ func _check_explosion_damage():
 	
 	for tile_key in expired_tiles:
 		active_explosion_tiles.erase(tile_key)
+	_prune_flame_sources()
 	
 	# Now check if any alive player is standing on a burning tile
 	for peer_id in players:
@@ -1361,23 +1509,13 @@ func _check_explosion_damage():
 		var tile_key = "%d,%d" % [player_tile.x, player_tile.y]
 		
 		if active_explosion_tiles.has(tile_key):
-			player.die()
+			_apply_player_damage(player, _lingering_flame_source(tile_key))
 			print("[Game] Player ", player.username, " walked into explosion at ", player_tile)
-			check_match_end_condition()
 
 func check_match_end_condition():
-	"""Check if the match should end based on alive players"""
-	if not match_active:
-		return
-	
-	var alive_count = 0
-	for peer_id in players:
-		if not players[peer_id].is_dead:
-			alive_count += 1
-	
-	# End match if 1 or fewer players alive
-	if alive_count <= 1:
-		end_match()
+	# Count only at the completed tick, after every damage/removal callback.
+	if match_active:
+		_round_end_check_pending = true
 
 func destroy_block(cell: Vector2i):
 	"""Destroy a destructible block and optionally spawn powerup (server-side only)"""
@@ -1438,6 +1576,22 @@ func _pack_explosion_tiles(tiles: Array) -> Array:
 		var data_packed = (dir_code << 8) | (length << 1) | is_end
 		packed.append([pos_packed, data_packed])
 	return packed
+
+## Detached public metadata: manifest source paths never enter the wire snapshot.
+func get_room_map_config() -> Dictionary:
+	var config := {
+		"tile_size": GameConfig.TILE_SIZE,
+		"width": GameConfig.map_width,
+		"height": GameConfig.map_height,
+		"name": GameConfig.map_name,
+		"render_geometry": not room_map_path.is_empty() or not room_content_descriptor.is_empty()
+	}
+	if not room_content_descriptor.is_empty():
+		config["content"] = room_content_descriptor.duplicate(true)
+		config["selection"] = room_content_selection.duplicate(true)
+		config["lock"] = room_content_lock.duplicate(true)
+		config["lock_sha256"] = room_content_lock_sha256
+	return config
 
 func sync_state_to_clients():
 	# Clean up old explosions (keep for progressive display duration)
@@ -1599,13 +1753,7 @@ func sync_state_to_clients():
 				"map_packed": packed_map,
 				"map_width": game_map[0].size() if game_map.size() > 0 else 0,
 				"map_height": game_map.size(),
-				"map_config": {
-					"tile_size": GameConfig.TILE_SIZE,
-					"width": GameConfig.map_width,
-					"height": GameConfig.map_height,
-					"name": GameConfig.map_name,
-					"render_geometry": not room_map_path.is_empty()
-				}
+				"map_config": get_room_map_config()
 			}
 			# Send map reliably (TCP) to avoid MTU issues on first sync
 			get_tree().root.get_node("ClientMain").rpc_id(peer_id, "receive_initial_map", map_data)

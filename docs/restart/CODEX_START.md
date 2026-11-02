@@ -1,12 +1,25 @@
 # Server Codex starting prompt
 
 For the current post-bootstrap execution brief, start with [CODEX_NEXT.md](CODEX_NEXT.md).
-It records the accepted simulation-clock work, the 379-feature queue and the next
-factory/product/research goals. Recheck live state before acting on historical steps below.
+Read [SATURN_FIDELITY.md](SATURN_FIDELITY.md) for the owner's 1 November requirement:
+identical maps, levels, assets, effects and music, with exact measured timing,
+mechanics and speeds for the chosen release. Finish the active bounded task first;
+then inspect #536/#33 for continuity and #76/#511 plus #29/#488/#489 for executable
+state, visual and audio verification. Shared manual-session lease compatibility
+still blocks unattended continuity; do not launch it from this saved prompt.
+
+The bootstrap assignments below are historical context, not a fresh instruction
+to rebuild accepted foundations. Recheck live issues, owners and evidence before
+choosing work. Use existing task acceptance/evidence fields, a pinned scenario,
+comparison commands and a deliberate mutation that must fail. A prototype result
+does not establish exact fidelity; independent original creator work may proceed.
 
 Paste the text below into Codex on the VPS. It is a working instruction, not an
 assertion that any service is already deployed. Supply secrets through the host's
 configured secret mechanism, not this prompt or GitHub issues.
+
+Historical bootstrap prompt follows; current dispatch is governed by CODEX_NEXT.md,
+SATURN_FIDELITY.md and fresh issue/lease evidence.
 
 ---
 

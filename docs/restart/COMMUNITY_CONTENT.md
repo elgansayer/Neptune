@@ -1,9 +1,118 @@
 # Multiplayer, bots and community-created adventures
 
-Status: accepted product direction, 29 October 2026. This is an implementation
-contract, not a claim that these features exist. Tracker: [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23).
+Status: accepted product direction, clarified by the owner on 30 October 2026.
+The 1 November clarification in [SATURN_FIDELITY.md](SATURN_FIDELITY.md) requires
+exact timing, mechanics, speeds, native visuals, effects, music and sound for the
+faithful starting profile. Approximate prototypes remain separate evidence.
+This is an implementation contract, not a claim that these features exist.
+Tracker: [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23).
+
+## Owner's ethos: Saturn first, everything extensible, additions only
+
+The starting experience must look and act like Sega Saturn Bomberman. This is a
+fidelity target for presentation and play: menus, pixel art, palettes, animation
+timing, camera/HUD, audio cues, movement, collisions, bombs, items, CPUs, battle
+rules and campaign progression. A vaguely similar arena is not the target. Pin the
+reference release/region and measure differences; do not claim exactness from
+placeholder art or unverified historical completion reports. Public distribution
+of reference assets follows [OPEN_SOURCE_AND_CONTENT.md](OPEN_SOURCE_AND_CONTENT.md).
+
+Build an engine on that foundation: single player, local/online multiplayer,
+co-op, campaigns and battle modes, with creators able to add characters, maps,
+tiles, hazards, power-ups, bomb behaviours, modes, enemies, bosses, mounts, stories
+and further supported content types. Keep the faithful Saturn starting profile
+intact. Enhanced Neptune and measured Power-inspired profiles are explicit choices;
+installing a mod must not silently change the default experience. Reference work
+and original creator fixtures can progress in parallel.
+
+**Mods are always additions, never replacements.** Every contribution registers
+new namespaced content IDs. A variant may reference existing permitted content and
+declare differences under its own ID; the original remains available unchanged.
+No mod may overwrite a built-in or another pack's files/IDs, patch engine code,
+or rely on load order to win a collision. Reserve engine/first-party namespaces;
+reject duplicate registrations with a useful diagnostic. Installing, enabling,
+disabling or removing an addition must preserve the original content and unrelated
+packs. Runtime item/status replacement or stacking rules are gameplay semantics,
+not permission to replace content packages.
+
+Versions are immutable and coexist. A new release must not replace bytes pinned
+by an active match, saved campaign or replay. A release may retain its logical
+pack/content IDs with a new version and digest; installing v2 alongside v1 is
+allowed. Reject conflicting registrations within a resolved session, not the
+mere presence of multiple cached versions. Profiles select exact content and
+rules explicitly, with documented compatibility. Extensibility means documented,
+versioned extension points for all these categories, with engine/API additions
+when new mechanics require them; it is not a promise that every unsupported or
+conflicting combination already works. First-party content uses those same APIs.
+
+## Player servers and automatic sharing
+
+Players can host their own servers with their own maps, item pools, modes and
+campaigns. The server listing exposes compatible public servers, their content,
+player counts and connection quality; support private/direct joins as well.
+Players choose a server, automatically fetch its missing creations and play
+without manually copying files, rebuilding the game or replacing their installation.
+Workshop publication must not be a prerequisite for a private creator playtest.
+
+Use a server/registry download endpoint and a shared content-addressed cache:
+
+1. Discover the server and check protocol, pack API, profile and capabilities.
+2. Obtain its resolved immutable dependency lock, digests and download sizes.
+3. Automatically fetch missing permitted data-only packs, validate them and stage
+   installation atomically. Reuse verified cached content; show progress, cancellation
+   and actionable failures. Small pixel art helps, but measure compressed and decoded
+   budgets rather than assuming all uploads are tiny.
+4. Confirm the same simulation-affecting lock on server and clients before ready/start.
+   Include the lock in match, checkpoint and replay records. Switching servers selects
+   their locks without mutating the default game or the previous server's content.
+
+A player's own character is part of the same journey. Selection records the
+character's namespaced ID and exact version/digest for that participant. The server
+validates it and makes the pack available to the other clients, including later
+joiners; those clients download/cache it automatically and render that participant
+using it. Support sharing an unpublished local creation through an authorised
+session upload, not only a centrally published workshop item. Do not require a
+manual install, a shared global `player.tscn`, or direct peer filesystem access.
+
+Cosmetic selection cannot grant abilities, alter hitboxes or suppress required
+hazard cues. Validate size/format/animation contracts and apply declared server
+content policy before advertising acceptance. In the normal compatible flow,
+everyone sees the accepted custom character. Use a visible placeholder only during
+loading or an explained policy/download failure; do not report a fallback as
+successful character synchronisation. Gameplay capabilities require the ordinary
+session lock and must never be smuggled in as cosmetics.
+
+Keep the cosmetic roster inventory distinct from the simulation-affecting lock,
+while using the same validated download/cache pipeline. Define pre-start readiness
+and later safe activation boundaries explicitly; a late cosmetic download must
+not silently rewrite gameplay dependencies or pause an existing match.
+
+Before declaring this ethos delivered, demonstrate two independently authored
+additions coexisting; reject an attempted built-in/other-pack ID overwrite; prove
+the unmodified Saturn baseline still runs; join a player-hosted listed server with
+empty client caches; propagate a player's new character to another clean client
+and a later joiner; switch between servers with different locks; and reuse cached
+bytes on return. A changed locked digest must fail, and an interrupted download
+must never become an installed/ready pack. Extend the same journey to a custom
+power-up/mode and a saved solo/co-op story as their runtimes become available.
 
 ## Priority and scope
+
+Customisation is the defining product advantage: a player brings their own avatar,
+and a server admin creates/selects their own maps, game types and power-ups, with
+automatic sharing making those creations playable together. This capability must
+drive implementation choices and acceptance, not remain an optional workshop layer.
+Prioritise a working creator-to-play journey over simply growing the stock roster,
+map count or reference feature checklist. This is our intended differentiation
+from Power Bomberman; actual comparative feature claims still need evidence.
+
+Development continues the existing pack experiments. Inspect the player, Tirra
+and stage authoring projects, their PCK exports, runtime loading/animation paths
+and JSON map APIs before inventing replacements. Preserve useful atlas/timing,
+tile-layer, metadata, preview and export work; migrate it incrementally into the
+additive public interfaces. Existing trusted PCK exports are a foundation to adapt,
+not evidence that automatic, data-only online sharing is already delivered. The
+[project evaluation](PROJECT_EVALUATION.md) inventories the concrete starting points.
 
 Neptune is a multiplayer-first, open-source community platform with strong bots.
 Solo play and co-op are first-class supported modes. Creators must eventually be

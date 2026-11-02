@@ -1,0 +1,102 @@
+{
+  "date": "2026-10-30",
+  "source_commit": "9d19b43df62fac1b3a4f34904bd70416742ac412",
+  "issue": 542,
+  "pull_request": 543,
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "comparison_baseline": "7f64513",
+  "compatibility_finding": "AStarGrid2D permits paths from a solid start in Godot 4.5 but returns an empty path in 4.7.2. Overlapping actors marked the current start solid. Exclude dynamic player occupancy at the current start without clearing static terrain. Other occupied tiles remain obstacles.",
+  "scenario_seed": 424242,
+  "checks": {
+    "initial_full_suite": {
+      "log_sha256": "67b4ee44e290f397d2430ee834a51ad40354619ef080ac80d3a7a2af9f232bc1",
+      "passed": 215,
+      "failed": 1,
+      "files": 29,
+      "failures": {
+        "res://tests/survival/test_comprehensive_no_suicide.gd::res://tests/survival/test_comprehensive_no_suicide.gd": "FAIL: FAIL: 1 bot death(s) detected out of 3 bots"
+      }
+    },
+    "original_4_5_scenario": {
+      "log_sha256": "27296bf4f4e8c09626fafbc5b89336092b4440ce1f64d0e1a9e1573f9ecd3211",
+      "passed": 1,
+      "failed": 0,
+      "files": 1,
+      "failures": {}
+    },
+    "new_engine_old_addons_scenario": {
+      "log_sha256": "b0e68aa4d004c29f03178e1875fce7d51c404aa8f68b828e7558eeb1f34d7f69",
+      "passed": 0,
+      "failed": 1,
+      "files": 1,
+      "failures": {
+        "res://tests/survival/test_comprehensive_no_suicide.gd::res://tests/survival/test_comprehensive_no_suicide.gd": "FAIL: FAIL: 1 bot death(s) detected out of 3 bots"
+      }
+    },
+    "upgraded_scenario_before_fix": {
+      "log_sha256": "08d21e6bc0277d4e4d2abb33a2b343d07882d54674fd65ba2f6b621128585516",
+      "passed": 0,
+      "failed": 1,
+      "files": 1,
+      "failures": {
+        "res://tests/survival/test_comprehensive_no_suicide.gd::res://tests/survival/test_comprehensive_no_suicide.gd": "FAIL: FAIL: 1 bot death(s) detected out of 3 bots"
+      }
+    },
+    "overlap_regression_before_fix": {
+      "log_sha256": "f994660cd3e658a6e69535721ba3a5b800675426a740d6f462af939ea3c454cd",
+      "passed": 2,
+      "failed": 2,
+      "files": 1,
+      "failures": {
+        "res://tests/test_grid_escape.gd::test_overlapping_bomb_bystander_keeps_a_legal_escape": "FAIL: false",
+        "res://tests/test_grid_escape.gd::test_overlapping_bystander_cannot_block_departure": "FAIL: false"
+      }
+    },
+    "overlap_regression_after_fix": {
+      "log_sha256": "4c3d32458448d0a8cecd2f74c842afa7c311e9c5a075ee72724b957b5f11e756",
+      "passed": 4,
+      "failed": 0,
+      "files": 1,
+      "failures": {}
+    },
+    "sqlite": {
+      "log_sha256": "8573f9edc475e0f4fd43577a5ddb09c1e64fd513c6858d0c310055fae5625906",
+      "passed": 1,
+      "failed": 0,
+      "files": 1,
+      "failures": {}
+    },
+    "console_aliases": {
+      "log_sha256": "684a930ce11578a8dc507cae005385224ec7dc6a9198872e0ed755893b871f49",
+      "passed": 3,
+      "failed": 0,
+      "files": 1,
+      "failures": {}
+    }
+  },
+  "additional_validation": {
+    "runner_boundary_tests": 25,
+    "factory_tests": 69,
+    "merge_gate_tests": 19,
+    "input_tooling_tests": 93,
+    "catalogue_tests": 14,
+    "native_runtime": "Headless/graphical client-server round trips, protocol rejection, bind/configuration negatives and all room-capacity/bot-fill probes passed.",
+    "provisioning": "Trusted Godot preparation recipe downloaded and verified the pinned engine and addon hashes, checked the actual version, and emitted a successful receipt.",
+    "templates": "Official 4.7.2 archive and embedded version verified. Corrupt archive rejected without publishing a version directory.",
+    "exports": "Linux and single-threaded GDExtension Web debug exports completed without engine errors and included both legacy PCKs.",
+    "exported_linux_startup": "Exit 0 in test role with both PCKs mounted and no logged engine errors.",
+    "chromium_startup": {
+      "role": "test (avoids network connection)",
+      "page_errors": [],
+      "console_errors": [],
+      "canvas": 1,
+      "status_hidden": true
+    }
+  },
+  "limits": [
+    "Required exact-head/current-base CI and the full post-fix gameplay suite must pass before integration; focused results alone do not authorize merge.",
+    "Browser ENet connection remains unsupported and tracked in issue #34; test-role rendering/startup is not cross-play evidence.",
+    "Other export platforms were updated from upstream addon bundles but not executed locally.",
+    "No Saturn fidelity or reference-version portability claim."
+  ]
+}

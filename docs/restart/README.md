@@ -5,11 +5,25 @@ Real input, bridge and static disc/regional inventory work is accepted through
 #467/#468/#473. Full disc-graphics extraction and continuous Neptune factory
 operation remain unverified. Start with [research execution](RESEARCH_EXECUTION.md)
 and [issue #477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
-The current repository targets Godot 4.5. Pin that baseline
-for the first reproducible build; choose any engine upgrade through a separate
-compatibility task.
+Development must stay on the latest stable packages and Godot, following the
+[dependency policy](DEPENDENCY_POLICY.md). The recorded toolchain uses Godot 4.7.2 with current stable native addons. Refresh pins and validate
+compatibility as part of adopting current releases.
 
 ## Goal
+
+The owner's 1 November clarification requires exact maps/assets, timing, speeds,
+mechanics, effects, music and sound in the faithful profile. Apply
+[SATURN_FIDELITY.md](SATURN_FIDELITY.md) to task intake and completion: exact
+state/events, native pixels and sample-timed audio at the declared digital boundary.
+Existing metadata/native CI is not whole-game parity. Continue independent
+community work while #29/#76/#511 build the measured end-to-end acceptance slices.
+
+The owner's clarified ethos is [Saturn first, additions only, automatic sharing](COMMUNITY_CONTENT.md#owners-ethos-saturn-first-everything-extensible-additions-only).
+The initial game should look and act like Saturn Bomberman; creators then extend
+every supported content category without replacing original content. Player-hosted
+servers and automatic server/character downloads are central to this goal.
+Read the [30 October project evaluation and build recommendations](PROJECT_EVALUATION.md)
+for implementation gaps and the first end-to-end acceptance slice.
 
 Build a multiplayer-first platform with strong bots, desktop/browser cross-play,
 community-authored characters, maps, power-ups and complete solo/co-op stories,
@@ -30,6 +44,10 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 
 ## Documents
 
+- [Exact Saturn fidelity, tools and agent handoffs](SATURN_FIDELITY.md)
+
+- [Source-backed project evaluation and build recommendations](PROJECT_EVALUATION.md)
+- [Latest stable dependencies and Godot policy](DEPENDENCY_POLICY.md)
 - [Tests-only automatic merge policy and setup](MERGE_POLICY.md)
 - [Multiplayer, power-ups, campaigns and co-op contract](COMMUNITY_CONTENT.md)
 - [Everything to provide and install](REQUIREMENTS.md)

@@ -150,9 +150,10 @@ def binary_name(tool, root):
     if tool == "beetle-saturn":
         return "mednafen_saturn_libretro.so"
     lock = json.loads((root / "tools/godot/toolchain.json").read_text())
-    if lock["binary_name"] != "Godot_v4.5-stable_linux.x86_64":
+    name = lock.get("binary_name")
+    if not isinstance(name, str) or not re.fullmatch(r"Godot_v[0-9]+\.[0-9]+(?:\.[0-9]+)?-stable_linux\.x86_64", name):
         raise ProvisionError("invalid_recipe", "Unexpected Godot output name")
-    return lock["binary_name"]
+    return name
 
 
 def smoke(tool, binary, runner, root):

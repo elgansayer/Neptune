@@ -6,11 +6,13 @@ import json
 import os
 from pathlib import Path
 import platform
+import struct
 import subprocess
 import sys
 import tempfile
 import unittest
 from types import SimpleNamespace
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import frontend as f
@@ -88,7 +90,7 @@ class ContractTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
             modules={}
-            for name in ("frontend.py","cli.py","media.py","log_shim.c"):
+            for name in ("frontend.py","cli.py","media.py","pcm.py","log_shim.c"):
                 f.copy_checked(Path(f.__file__).parent/name,root/name)
                 modules[name]={"path":name,"sha256":f.fingerprint(root/name)["sha256"]}
             (root/"shim").write_bytes(b"synthetic shim identity")
@@ -99,6 +101,9 @@ class ContractTests(unittest.TestCase):
             changed=copy.deepcopy(good); changed["options"]["beetle_saturn_region"]="Japan"
             with self.assertRaises(f.LabError): f.validate_profile(root,changed)
             (root/"cli.py").write_text("tampered")
+            with self.assertRaises(f.LabError): f.validate_profile(root,good)
+            (root/"cli.py").write_bytes((Path(f.__file__).parent/"cli.py").read_bytes())
+            (root/"pcm.py").write_text("tampered audio helper")
             with self.assertRaises(f.LabError): f.validate_profile(root,good)
 
     def test_supervisor_rejects_false_green_and_bounds_execution(self):
@@ -155,8 +160,8 @@ class NativeABIContractTests(unittest.TestCase):
     @classmethod
     def tearDownClass(cls): cls.temp.cleanup()
 
-    def core(self,mode=0):
-        driver=f.Core(self.root/"core.so",self.root,self.root,{"fixture_option":"on"},self.root/"shim.so")
+    def core(self,mode=0,retain_audio=False):
+        driver=f.Core(self.root/"core.so",self.root,self.root,{"fixture_option":"on"},self.root/"shim.so",retain_audio=retain_audio)
         self.addCleanup(driver.close)
         driver.dll.fixture_mode.argtypes=[C.c_uint]; driver.dll.fixture_mode(mode)
         return driver
@@ -185,6 +190,134 @@ class NativeABIContractTests(unittest.TestCase):
             finally:
                 # Expected failure remains sticky; cleanup cannot mask it.
                 driver.errors.clear(); driver.close()
+
+    def test_pcm_single_batch_and_mixed_callback_bytes_preserve_observations(self):
+        for mode, expected in ((0, [(8,256)]), (7,[(-32768,32767),(-1,1)]),
+                               (8,[(-32768,32767),(1,-1),(5,-5)])):
+            with self.subTest(mode=mode):
+                driver=self.core(mode,retain_audio=True)
+                driver.load(self.root/"synthetic.cue",[1]*12)
+                observed=driver.step([8,256]+[0]*10)
+                raw=b"".join(struct.pack("<hh",*pair) for pair in expected)
+                self.assertEqual(driver.audio_pcm,raw)
+                self.assertEqual(observed["audio_frames"],len(expected))
+                self.assertEqual(observed["audio_sha256"],hashlib.sha256(raw).hexdigest())
+                driver.close()
+                plain=self.core(mode)
+                plain.load(self.root/"synthetic.cue",[1]*12)
+                self.assertEqual(plain.step([8,256]+[0]*10),observed)
+                self.assertIsNone(plain.audio_pcm)
+                plain.close()
+
+    def test_pcm_callback_budgets_null_pointer_and_dynamic_timing_fail(self):
+        for mode, message in ((9,"budget"),(10,"Null audio"),(11,"Dynamic AV")):
+            driver=self.core(mode,retain_audio=True)
+            driver.load(self.root/"synthetic.cue",[1]*12)
+            with self.subTest(mode=mode),self.assertRaisesRegex(f.LabError,message):
+                driver.step([0]*12)
+            self.assertFalse(driver.audio_window)
+            driver.errors.clear(); driver.close()
+        driver=self.core(7,retain_audio=True)
+        driver.load(self.root/"synthetic.cue",[1]*12)
+        with patch.object(f,"MAX_FRAME_SAMPLES",1),self.assertRaisesRegex(f.LabError,"budget"):
+            driver.step([0]*12)
+        driver.errors.clear(); driver.close()
+
+    def test_pcm_callbacks_outside_capture_window_fail_and_buffers_reset(self):
+        driver=self.core(14,retain_audio=True)
+        with self.assertRaisesRegex(f.LabError,"outside"):
+            driver.load(self.root/"synthetic.cue",[1]*12)
+        driver.errors.clear(); driver.close()
+        driver=self.core(8,retain_audio=True)
+        driver.load(self.root/"synthetic.cue",[1]*12)
+        first=driver.step([0]*12)
+        self.assertEqual(first["audio_frames"],3)
+        second=driver.step([0]*12)
+        self.assertEqual(second["audio_frames"],4)
+        self.assertEqual(len(driver.audio_pcm),16)
+        self.assertEqual(second["audio_sha256"],hashlib.sha256(driver.audio_pcm).hexdigest())
+        driver.dll.fixture_mode(15)
+        with self.assertRaisesRegex(f.LabError,"outside"):
+            driver.close()
+        driver.errors.clear()
+
+    def test_pcm_zero_sample_frame_and_fractional_native_rate(self):
+        driver=self.core(13,retain_audio=True)
+        driver.load(self.root/"synthetic.cue",[1]*12)
+        self.assertEqual(driver.step([0]*12)["audio_frames"],1)
+        empty=driver.step([0]*12)
+        self.assertEqual(empty["audio_frames"],0)
+        self.assertEqual(driver.audio_pcm,b"")
+        self.assertEqual(empty["audio_sha256"],hashlib.sha256(b"").hexdigest())
+        driver.close()
+        driver=self.core(16,retain_audio=True)
+        self.assertEqual(driver.load(self.root/"synthetic.cue",[1]*12)["sample_rate"],44100.5)
+        driver.close()
+
+    def run_synthetic(self, root, name, mode=8, capture=True, frames=3,
+                      restore=None, checkpoint_at=None, writer_factory=None):
+        """Exercise run() with the real C ABI; no real-media validation is claimed."""
+        inputs=root/"inputs"; inputs.mkdir(exist_ok=True)
+        (inputs/"system").mkdir(exist_ok=True)
+        f.copy_checked(self.root/"core.so",inputs/"core.so")
+        f.copy_checked(self.root/"shim.so",inputs/"shim.so")
+        (inputs/"synthetic.cue").write_text("Synthetic C ABI fixture only")
+        profile={"region":"usa", "system_directory":"system", "controller_devices":[1]*12,
+                 "options":{"fixture_option":"on"}, "log_shim":{"path":"shim.so"},
+                 "frontend_sha256":f.fingerprint(Path(f.__file__))["sha256"],
+                 "python_sha256":f.fingerprint(Path(sys.executable).resolve())["sha256"]}
+        (inputs/"settings.json").write_text(json.dumps(profile))
+        lock={"region":"usa","inputs":{"settings":"settings.json","emulator":"core.so",
+              "disc":"synthetic.cue","bios":"system/"+f.FIRMWARE["usa"]["filename"]}}
+        (inputs/"lock.json").write_text(json.dumps(lock))
+        output=root/name; output.mkdir()
+        args=SimpleNamespace(root=inputs,lock=inputs/"lock.json",actions=None,
+                             frames=frames,output=output,capture_audio=capture,capture=[],
+                             restore=restore,checkpoint=False,checkpoint_at=checkpoint_at)
+        core_type=f.Core
+        def fixture_core(*positional,**keywords):
+            driver=core_type(*positional,**keywords)
+            driver.dll.fixture_mode.argtypes=[C.c_uint]
+            driver.dll.fixture_mode(mode)
+            return driver
+        # The fixture deliberately is not a Saturn core or valid disc. Separate
+        # tests exercise real input/profile pinning; here bypass those two gates
+        # to test the actual capture lifecycle without private original media.
+        with patch.object(f,"verify_lock"),patch.object(f,"validate_profile",return_value=f.RTC_SEED), \
+             patch.object(f,"Core",side_effect=fixture_core):
+            if writer_factory is None:
+                return f.run(args)
+            with patch.object(f,"PCMWriter",side_effect=writer_factory):
+                return f.run(args)
+
+    def test_run_pcm_retention_and_restored_suffix_preserve_default_observations(self):
+        import pcm
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            enabled=self.run_synthetic(root,"full",checkpoint_at=1)
+            disabled=self.run_synthetic(root,"default",capture=False)
+            self.assertEqual({k:v for k,v in enabled.items() if k!="audio_capture"},disabled)
+            self.assertFalse((root/"default/audio.json").exists())
+            self.assertFalse((root/"default/audio.s16le").exists())
+            self.assertEqual((root/"full/observations.json").read_bytes(),
+                             (root/"default/observations.json").read_bytes())
+            self.assertEqual(enabled["audio_capture"]["manifest_sha256"],
+                             f.fingerprint(root/"full/audio.json")["sha256"])
+            self.run_synthetic(root,"restored",frames=2,restore=root/"full/checkpoint.json")
+            report=pcm.compare_captures(root/"full/audio.json",root/"restored/audio.json",reference_start=1)
+            self.assertTrue(report["match"])
+
+    def test_run_pcm_failures_publish_no_success_manifest(self):
+        import pcm
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            for mode in (9,10,11,12,14,15):
+                with self.subTest(mode=mode),self.assertRaises(f.LabError):
+                    self.run_synthetic(root,"failed-"+str(mode),mode=mode)
+                self.assertFalse((root/("failed-"+str(mode))/"audio.json").exists())
+            with self.assertRaisesRegex(f.LabError,"budget"):
+                self.run_synthetic(root,"budget",writer_factory=lambda output:pcm.PCMWriter(output,max_bytes=4))
+            self.assertFalse((root/"budget/audio.json").exists())
 
 
 if __name__=="__main__": unittest.main()

@@ -1,15 +1,18 @@
 # Trustworthy native test execution
 
-These tools pin the existing Godot 4.5 Linux x86_64 baseline and test the runner's
-failure boundaries. They do not implement emulation, extraction, cross-play or a
+These tools currently pin Godot 4.7.2 Linux x86_64 and test the runner's
+failure boundaries. Development must adopt the latest stable Godot under the
+[dependency policy](../../docs/restart/DEPENDENCY_POLICY.md); update these pins,
+native addons, export templates and examples together after compatibility checks.
+The commands below use the current recorded pin. These tools do not implement emulation, extraction, cross-play or a
 factory. No API model calls are made.
 
 ```sh
-python3 tools/godot/install.py --directory /tmp/neptune-godot-4.5
-python3 tools/godot/check_runner.py --godot /tmp/neptune-godot-4.5/Godot_v4.5-stable_linux.x86_64
-python3 tools/godot/check_project_contracts.py --godot /tmp/neptune-godot-4.5/Godot_v4.5-stable_linux.x86_64
-python3 tools/godot/check_runtime.py --godot /tmp/neptune-godot-4.5/Godot_v4.5-stable_linux.x86_64 --graphical
-bash run_bot_tests.sh --godot /tmp/neptune-godot-4.5/Godot_v4.5-stable_linux.x86_64 --run-specific survival_test
+python3 tools/godot/install.py --directory /tmp/neptune-godot-4.7.2
+python3 tools/godot/check_runner.py --godot /tmp/neptune-godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64
+python3 tools/godot/check_project_contracts.py --godot /tmp/neptune-godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64
+python3 tools/godot/check_runtime.py --godot /tmp/neptune-godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64 --graphical
+bash run_bot_tests.sh --godot /tmp/neptune-godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64 --run-specific survival_test
 ```
 
 The installer verifies the pinned archive, extracted executable and repository
@@ -60,6 +63,40 @@ assertions, durations or engine error detection.
 Termination or interruption of the supervisor reaps its Godot process group;
 this failure boundary is checked with a real hanging Godot fixture.
 
+## Current dependencies and exports
+
+The [release inventory](dependency-releases.json) records the official stable
+releases checked on 30 October 2026 and verified archive digests: Godot 4.7.2,
+LimboAI 1.8.1, Godot SQLite 4.9 and LimboConsole 0.8.0. The local console alias
+copy fix remains applied and covered by `test_console_aliases`. Resource UIDs
+remain those of this project. The engine filename is read from `toolchain.json`
+by CI, provisioning and offline verification instead of fixing it in each consumer.
+
+Install the matching Linux x86_64 and web export templates in a writable data
+directory, then use the root `Linux` and `Web` presets:
+
+```sh
+export XDG_DATA_HOME=/tmp/neptune-export-data
+export XDG_CONFIG_HOME=/tmp/neptune-export-config
+export XDG_CACHE_HOME=/tmp/neptune-export-cache
+mkdir -p "$XDG_DATA_HOME" "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" /tmp/neptune-exports/web
+python3 tools/godot/install_templates.py --directory "$XDG_DATA_HOME/godot/export_templates"
+/tmp/neptune-godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-debug Linux /tmp/neptune-exports/neptune.x86_64
+/tmp/neptune-godot-4.7.2/Godot_v4.7.2-stable_linux.x86_64 --headless --path . --export-debug Web /tmp/neptune-exports/web/index.html
+```
+
+The template installer verifies the pinned official archive and version before
+extracting the selected templates. `--archive /path/templates.tpz` reuses an
+existing archive with the same integrity checks. Other export platforms need
+their matching official templates and platform-specific validation.
+
+Presets include external `.pck` content and enable single-threaded web native
+extensions. Run exported Linux binaries directly beside their PCK, without
+`--path`: official templates disable path overrides. Serve browser exports over
+HTTP with the required isolation headers. Browser rendering/startup is a separate
+check from networking: ENet browser transport remains the open cross-play work in
+[#34](https://github.com/elgansayer/Neptune-Bomberman/issues/34).
+
 ## Native startup roles
 
 The server scene selects `server`, the bot runner selects `test`, and ordinary
@@ -84,12 +121,16 @@ The regression requires zero ticks while paused and exactly one native update pe
 active manager physics callback at every tested cadence. It does not establish
 complete policy determinism or tactical quality.
 
-## Known project failures
+## Historical project failures
 
-The full existing suite currently fails correctly: five legacy scenarios cannot
+The original runner-baseline audit found failures: five legacy scenarios cannot
 find their game instance, one `_ready()` script lacks a suite contract, and one
 standalone `SceneTree` script is not a Node suite. Migrate these with real scenario
 assertions; do not exclude or reinterpret them to obtain green CI.
+
+The current upgrade checks and compatibility findings are recorded in
+[the upgrade evidence](../../docs/restart/evidence/2026-10-30-godot-upgrade.json).
+Use current CI results for the full-suite status.
 
 Startup role/duplicate-binding work is tracked in #47. CI is explicitly named as
 infrastructure/addon validation, not full game health or Saturn parity.
