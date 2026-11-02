@@ -48,7 +48,7 @@ jobs:
           curl --fail --silent http://127.0.0.1:8765/healthz
           cp deploy/web/smoke.mjs "$RUNNER_TEMP/web-smoke/"
           cd "$RUNNER_TEMP/web-smoke"
-          npm install --no-save playwright@1.56.1
+          npm install --no-save playwright@1.64.1
           npx playwright install --with-deps chromium
           node smoke.mjs
       - name: Collect real server diagnostics
