@@ -19,7 +19,7 @@ def main():
     for command in [
         [args.godot, '--headless', '--path', str(ROOT), '--editor', '--import'],
         [args.godot, '--headless', '--path', str(ROOT), '--export-release', 'Web', str(output / 'index.html')],
-        [args.godot, '--headless', '--path', str(ROOT), '--export-release', 'Linux', str(server / 'neptune.x86_64')],
+        [args.godot, '--headless', '--path', str(ROOT), '--export-release', 'Linux Server', str(server / 'neptune.x86_64')],
     ]:
         result = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=420)
         print(result.stdout, flush=True)

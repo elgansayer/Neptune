@@ -41,6 +41,11 @@ jobs:
           docker run -d --name server-candidate --network neptune-smoke --network-alias server neptune-server-candidate
           docker run -d --name web-candidate --network neptune-smoke -p 127.0.0.1:8765:80 neptune-web-candidate
           mkdir -p "$RUNNER_TEMP/web-smoke"
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8765/healthz; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8765/healthz
           cp deploy/web/smoke.mjs "$RUNNER_TEMP/web-smoke/"
           cd "$RUNNER_TEMP/web-smoke"
           npm install --no-save playwright@1.56.1
@@ -48,7 +53,10 @@ jobs:
           node smoke.mjs
       - name: Collect real server diagnostics
         if: always()
-        run: docker logs server-candidate > "$RUNNER_TEMP/web-smoke/server.log" 2>&1 || true
+        run: |
+          mkdir -p "$RUNNER_TEMP/web-smoke"
+          docker logs server-candidate > "$RUNNER_TEMP/web-smoke/server.log" 2>&1 || true
+          docker logs web-candidate > "$RUNNER_TEMP/web-smoke/web.log" 2>&1 || true
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
@@ -56,6 +64,7 @@ jobs:
           path: |
             ${{ runner.temp }}/web-smoke/browser-startup.png
             ${{ runner.temp }}/web-smoke/server.log
+            ${{ runner.temp }}/web-smoke/web.log
           if-no-files-found: warn
       - uses: docker/login-action@v3
         if: github.event_name != 'pull_request'
