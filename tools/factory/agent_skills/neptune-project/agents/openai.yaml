@@ -1,0 +1,4 @@
+interface:
+  display_name: "Neptune Project"
+  short_description: "Route Neptune factory, research and Godot work"
+  default_prompt: "Use $neptune-project to select the right Neptune workflow and verify its evidence."

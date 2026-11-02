@@ -1,0 +1,9 @@
+# Latest stable PyPI releases checked 2026-11-02; local development tools only.
+gdtoolkit==4.5.0
+hypothesis==6.170.14
+pyghidra==3.2.0
+pytest==9.2.0
+ruff==0.17.3
+soundfile==0.14.0
+pillow==13.0.0
+playwright==1.64.1

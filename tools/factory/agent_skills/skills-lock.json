@@ -1,0 +1,372 @@
+{
+  "schema": "neptune.agent-skills.v1",
+  "checked_at": "2026-11-02",
+  "screened_entries": 344,
+  "sources": [
+    {
+      "id": "gamedev",
+      "repository": "gamedev-skills/awesome-gamedev-agent-skills",
+      "revision": "19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "archive_url": "https://codeload.github.com/gamedev-skills/awesome-gamedev-agent-skills/tar.gz/19d93f97c9c1ea0f8b306e77aa81e0d3e352d3e9",
+      "archive_sha256": "bdb288d7d6006660440e552357df2e904fbb3b916a379c1ebae3049c2412e316",
+      "skills": [
+        {
+          "name": "ai-behavior-trees-utility-ai",
+          "path": "skills/disciplines/ai-behavior-trees-utility-ai",
+          "tree_sha256": "47b64e070f6274a56e2696f57e60c2b8bc3c715a8dcfa890a7b58a5b3193e05e"
+        },
+        {
+          "name": "audio-design",
+          "path": "skills/disciplines/audio-design",
+          "tree_sha256": "160b07bf389d7fb0ae3ed23b698ea253603be8d92b9b791b373fc64a6b43b3c2"
+        },
+        {
+          "name": "camera-systems",
+          "path": "skills/disciplines/camera-systems",
+          "tree_sha256": "1fb47cec2c4018702d91d1cba32aed023908e32c29deb0e4a1068758b8a1197c"
+        },
+        {
+          "name": "dialogue-systems",
+          "path": "skills/disciplines/dialogue-systems",
+          "tree_sha256": "7cdeee0d449cb6807fbd7a093b7f2f18bf02f78e74e50c50ba770e2928992c8e"
+        },
+        {
+          "name": "game-ai",
+          "path": "skills/disciplines/game-ai",
+          "tree_sha256": "1055f75b1d8f7af1c72a78ecebbb34942bd1ed9d88c8f6ddfcda5f51e0cb17b5"
+        },
+        {
+          "name": "game-feel",
+          "path": "skills/disciplines/game-feel",
+          "tree_sha256": "6e9c4c65289f52aa31bac19850dac94cffd07bdd4add02787a225782570a56ac"
+        },
+        {
+          "name": "game-ui-ux",
+          "path": "skills/disciplines/game-ui-ux",
+          "tree_sha256": "ae420e13c96429ff3fd1403e8f2494b95ea5b268d9bfcbc711e1573e829bc153"
+        },
+        {
+          "name": "input-systems",
+          "path": "skills/disciplines/input-systems",
+          "tree_sha256": "70d986611bd4ad26cea971b0c7936bf984ef0f05843057aa2889808dbdb58aa8"
+        },
+        {
+          "name": "level-design",
+          "path": "skills/disciplines/level-design",
+          "tree_sha256": "afee9539800df83a5e2ff68feaf9333a1f13fd9512b1926be5df75afb5127e88"
+        },
+        {
+          "name": "performance-optimization",
+          "path": "skills/disciplines/performance-optimization",
+          "tree_sha256": "d4feeee8ad1db98ef696ff78be6b2002dd3c79012b27501bdf21fc165bcc5baf"
+        },
+        {
+          "name": "physics-tuning",
+          "path": "skills/disciplines/physics-tuning",
+          "tree_sha256": "61b83895684a65b129602de43e1a302b91e537b6b3a876ab9c13170df14f697f"
+        },
+        {
+          "name": "save-systems",
+          "path": "skills/disciplines/save-systems",
+          "tree_sha256": "8239bd1762af3e39c9c4d686fef8c30fcc0a0f03e1866c7b05f87995a0d8207c"
+        },
+        {
+          "name": "godot-2d-movement",
+          "path": "skills/godot/godot-2d-movement",
+          "tree_sha256": "4e759359082f689f3b869560b0020b9225cd2abfa143c0f6b6214641c900ab81"
+        },
+        {
+          "name": "godot-animation",
+          "path": "skills/godot/godot-animation",
+          "tree_sha256": "ccab51fd85aeca713828d486ea6c442b7658a98ccc610cb8be5e8dd301431c5f"
+        },
+        {
+          "name": "godot-audio",
+          "path": "skills/godot/godot-audio",
+          "tree_sha256": "75401cd96a888410515b27f61ae1b393239912a242ee06107f7ffee6f8abbb03"
+        },
+        {
+          "name": "godot-export",
+          "path": "skills/godot/godot-export",
+          "tree_sha256": "1d66d11a9fb56e41eedc9195008d783c23b396f8ff37b1cd6f4678f18884ef73"
+        },
+        {
+          "name": "godot-gdscript-headless-testing",
+          "path": "skills/godot/godot-gdscript-headless-testing",
+          "tree_sha256": "359a3870eb4d098cfcea2261e806caee2770446b39b18de8e2c1557c90771b4e"
+        },
+        {
+          "name": "godot-gdscript",
+          "path": "skills/godot/godot-gdscript",
+          "tree_sha256": "81403170f06cdf1c3474d987103dab2f2e2a8879e7c63ab7e40f0aa88af64159"
+        },
+        {
+          "name": "godot-multiplayer",
+          "path": "skills/godot/godot-multiplayer",
+          "tree_sha256": "bdc13ec80224caa4d2cec1fe002d728b496871846e2622b2bfb7225cb733207a"
+        },
+        {
+          "name": "godot-nodes-scenes",
+          "path": "skills/godot/godot-nodes-scenes",
+          "tree_sha256": "f835a7ee484954aa65e8b0386d2df3f234d7ff25f4d51f3d5b94f8bd25c2ac88"
+        },
+        {
+          "name": "godot-physics",
+          "path": "skills/godot/godot-physics",
+          "tree_sha256": "fe1855b9cacf868cab06913c4c4959fd02c2da7c8c0ce696980a3fa095b0ea97"
+        },
+        {
+          "name": "godot-resources",
+          "path": "skills/godot/godot-resources",
+          "tree_sha256": "4b0587542b42535c83e6bee59736a647c835eecc01c1e649b85ee172895ed463"
+        },
+        {
+          "name": "godot-shaders",
+          "path": "skills/godot/godot-shaders",
+          "tree_sha256": "61f1703b880d4b8d84b2a7f92133564516e66d3a9e6474e84a2b1539e6d7634a"
+        },
+        {
+          "name": "godot-signals-groups",
+          "path": "skills/godot/godot-signals-groups",
+          "tree_sha256": "0d628cd8156c3299b1bdfd5b816d259068836596ced52234ec270c987d8d4ed8"
+        },
+        {
+          "name": "godot-tilemap",
+          "path": "skills/godot/godot-tilemap",
+          "tree_sha256": "4eee77abd3adb648092a94cb185ee958d2390644d658d1989b360b80d73c487a"
+        },
+        {
+          "name": "godot-ui-control",
+          "path": "skills/godot/godot-ui-control",
+          "tree_sha256": "aae80fe78e70d6465f41141c4a82834c7ee707bc9d06ea04277c72c520f0a338"
+        }
+      ]
+    },
+    {
+      "id": "godot",
+      "repository": "haxqer/godot-skill",
+      "revision": "037c03e9858ae748bf66c010aeb9942dbe9b93d6",
+      "archive_url": "https://codeload.github.com/haxqer/godot-skill/tar.gz/037c03e9858ae748bf66c010aeb9942dbe9b93d6",
+      "archive_sha256": "e5446d856142eedc43455b0d98b8c566233d758d62a8b9147d916d3f8ae2dc3b",
+      "skills": [
+        {
+          "name": "godot",
+          "path": "skill/godot",
+          "tree_sha256": "cd8b44d000ad05ddcead2a191198635cf30c10bf3a3fa12844f7fffa62a05fe0"
+        }
+      ]
+    },
+    {
+      "id": "openai",
+      "repository": "openai/skills",
+      "revision": "49f948faa9258a0c61caceaf225e179651397431",
+      "archive_url": "https://codeload.github.com/openai/skills/tar.gz/49f948faa9258a0c61caceaf225e179651397431",
+      "archive_sha256": "d0610c3eb29cfede17ba5aca1544817b317a03915a82037942958e2f54007ddf",
+      "skills": [
+        {
+          "name": "gh-address-comments",
+          "path": "skills/.curated/gh-address-comments",
+          "tree_sha256": "7b51448a101d2281c15a2e7180281a9fad1d646168ebb79b20b5f028b0c9dad6"
+        },
+        {
+          "name": "gh-fix-ci",
+          "path": "skills/.curated/gh-fix-ci",
+          "tree_sha256": "40662e9d4177f242fb571c9c60395ee9677a07fa45ce36dc7f533412db93c060"
+        },
+        {
+          "name": "playwright",
+          "path": "skills/.curated/playwright",
+          "tree_sha256": "ef6eb7ead439f87fd4007a071bd37bdbd97dd7a286695f63caeb6528c0057d21"
+        },
+        {
+          "name": "screenshot",
+          "path": "skills/.curated/screenshot",
+          "tree_sha256": "1598bacd744021fec2a80b186ecf4f58c4c821ebee9a494f70bf9456b6b502a7"
+        },
+        {
+          "name": "security-best-practices",
+          "path": "skills/.curated/security-best-practices",
+          "tree_sha256": "11fc4f203478f5a3b87d78450ac5b79991adc5a27cf1ff558e5ecc4daa59aaa4"
+        },
+        {
+          "name": "security-ownership-map",
+          "path": "skills/.curated/security-ownership-map",
+          "tree_sha256": "669f1fa7a054dee30cbd036608209b83de68a0221a339a847702fc9c10d37291"
+        },
+        {
+          "name": "security-threat-model",
+          "path": "skills/.curated/security-threat-model",
+          "tree_sha256": "96d73ad7eec74dcb144a0d48ed1243d79665aa25c90621f7659ad2b4218a65d5"
+        },
+        {
+          "name": "skill-creator",
+          "path": "skills/.system/skill-creator",
+          "tree_sha256": "42cd05c548308ca523ec47f94804c5e43abb0c7898b7b6a2ce4feee6bc7251d1"
+        },
+        {
+          "name": "skill-installer",
+          "path": "skills/.system/skill-installer",
+          "tree_sha256": "30bf3cf373e39397cd096bc9b5ec1a407de92a4ee8005f52962af6f8da54400a"
+        }
+      ]
+    },
+    {
+      "id": "engineering",
+      "repository": "wshobson/agents",
+      "revision": "7e2fb559cf4b824b27f1fec49fe88f7511066d26",
+      "archive_url": "https://codeload.github.com/wshobson/agents/tar.gz/7e2fb559cf4b824b27f1fec49fe88f7511066d26",
+      "archive_sha256": "091cdbcf008ae3c873585d6a3286b8f2f444311b1665f4a974b3edc9bc79f1e4",
+      "skills": [
+        {
+          "name": "api-design-principles",
+          "path": "plugins/backend-development/skills/api-design-principles",
+          "tree_sha256": "1796ba0c19c4deaa26c93c41c97305ed74f3269e14c92fee3213851951b96082"
+        },
+        {
+          "name": "github-actions-templates",
+          "path": "plugins/cicd-automation/skills/github-actions-templates",
+          "tree_sha256": "5fc4cc20d9892f4061971bc320dd4e16c3e1e61bc67e2878dcbf573e7b28a7ce"
+        },
+        {
+          "name": "auth-implementation-patterns",
+          "path": "plugins/developer-essentials/skills/auth-implementation-patterns",
+          "tree_sha256": "1ca126f003c1ab7ea96c60c82a1d9ba3cd19ffa238b27002dcd417c4e3edf53f"
+        },
+        {
+          "name": "e2e-testing-patterns",
+          "path": "plugins/developer-essentials/skills/e2e-testing-patterns",
+          "tree_sha256": "2e052ab775a276a7d492125577fdaa0e697518fa2ac90ee118723e56158141b5"
+        },
+        {
+          "name": "dependency-upgrade",
+          "path": "plugins/framework-migration/skills/dependency-upgrade",
+          "tree_sha256": "baabe2d0c335f71db06ee7a05485905f1db38cd9f5faf20f2b4ce247950b9238"
+        },
+        {
+          "name": "async-python-patterns",
+          "path": "plugins/python-development/skills/async-python-patterns",
+          "tree_sha256": "cc9bab2583551fc9c55ad6c7ee80335f7ecff719715b38af6f13a825135283f6"
+        },
+        {
+          "name": "python-error-handling",
+          "path": "plugins/python-development/skills/python-error-handling",
+          "tree_sha256": "355b5ab52886a40a9db89f6f6869a922b426eced1e5c0a09f33e4804b11de290"
+        },
+        {
+          "name": "python-observability",
+          "path": "plugins/python-development/skills/python-observability",
+          "tree_sha256": "1ba63026bb346ba7e349bcd72b61e745f7a97319bf49ad0e40010b79de7d364d"
+        },
+        {
+          "name": "python-performance-optimization",
+          "path": "plugins/python-development/skills/python-performance-optimization",
+          "tree_sha256": "cf448b806c9c0aade742fe6043d75e1ca47145a1491bb6bf077f312acc1155f1"
+        },
+        {
+          "name": "python-resilience",
+          "path": "plugins/python-development/skills/python-resilience",
+          "tree_sha256": "2a7c98ca2bbd667f4e1e50369b64230465779148adc6522689f0a30ce60d3d7a"
+        },
+        {
+          "name": "python-resource-management",
+          "path": "plugins/python-development/skills/python-resource-management",
+          "tree_sha256": "2ab6fb6e859db992d40213c1f56452161538e4097e7bfd9d5d188c2f1ecd5b86"
+        },
+        {
+          "name": "python-testing-patterns",
+          "path": "plugins/python-development/skills/python-testing-patterns",
+          "tree_sha256": "d01a34ef00816202e4c4680dc7dc4ad40cc1d29645725cd5701a78857b4e023a"
+        },
+        {
+          "name": "uv-package-manager",
+          "path": "plugins/python-development/skills/uv-package-manager",
+          "tree_sha256": "5174ddf7a14d51ab900891c21365ff71a5e724c81ef1b54d0cdfb13a8b344623"
+        },
+        {
+          "name": "binary-analysis-patterns",
+          "path": "plugins/reverse-engineering/skills/binary-analysis-patterns",
+          "tree_sha256": "9500e59d45c5842debdf8b1a8837c88dc5dd1cd0b0e80c0d037d3df7a8f1b6cd"
+        },
+        {
+          "name": "protocol-reverse-engineering",
+          "path": "plugins/reverse-engineering/skills/protocol-reverse-engineering",
+          "tree_sha256": "b2ca2a64aaca5d108dab13d55c2978f653343b3762241f1c2b8dce099f5f6be3"
+        },
+        {
+          "name": "bash-defensive-patterns",
+          "path": "plugins/shell-scripting/skills/bash-defensive-patterns",
+          "tree_sha256": "e8a6fe1fd5ed83424faece22dd11d6e0b0631129ccdfa2f0b73033593c998455"
+        },
+        {
+          "name": "memory-safety-patterns",
+          "path": "plugins/systems-programming/skills/memory-safety-patterns",
+          "tree_sha256": "b905a2b579eb07fda35041ffaba6377cf711987f17d8cbf26985e3da7d745b9d"
+        },
+        {
+          "name": "accessibility-compliance",
+          "path": "plugins/ui-design/skills/accessibility-compliance",
+          "tree_sha256": "7865ddc855285b2cf4cf4a0a68b18bd183c2b0427480c06007748f9c7b1c36c2"
+        }
+      ]
+    },
+    {
+      "id": "superpowers",
+      "repository": "obra/superpowers",
+      "revision": "2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+      "archive_url": "https://codeload.github.com/obra/superpowers/tar.gz/2ce8aa15d05bd57213e6f746f953aafb7ded7a8b",
+      "archive_sha256": "da34247c51339cdd6175b3590261f16e25b08d46669afd5b6fc3f842ab303e20",
+      "skills": [
+        {
+          "name": "systematic-debugging",
+          "path": "skills/systematic-debugging",
+          "tree_sha256": "fa3fac4e35376230eb41c5504722b8309e2428e26932c90482dd313cb3dd34ef"
+        },
+        {
+          "name": "verification-before-completion",
+          "path": "skills/verification-before-completion",
+          "tree_sha256": "29d4bd654fdc57679501bf73b2821abf4ce035c536054a3e8e90ed7ed38644c7"
+        }
+      ]
+    },
+    {
+      "id": "anthropic",
+      "repository": "anthropics/skills",
+      "revision": "ca45fc496a3436251f191354091d557da31c15b5",
+      "archive_url": "https://codeload.github.com/anthropics/skills/tar.gz/ca45fc496a3436251f191354091d557da31c15b5",
+      "archive_sha256": "8dd1ed88fb5fa5bf6d4d7d44a1333fe35a808f42594513009777374e97ccfdf0",
+      "skills": [
+        {
+          "name": "mcp-builder",
+          "path": "skills/mcp-builder",
+          "tree_sha256": "7dfe11a85160a1894205013c9fc4308c7fd8209633eb08b02002963f89cfcbdf"
+        },
+        {
+          "name": "webapp-testing",
+          "path": "skills/webapp-testing",
+          "tree_sha256": "7dd9eedc497fbf8b5634a293190b11f93cf4b80f7cd6c1a775def12deadeebb9"
+        }
+      ]
+    },
+    {
+      "id": "rea",
+      "repository": "morluto/rea",
+      "revision": "6.8.0",
+      "archive_url": "https://registry.npmjs.org/rea-agents/-/rea-agents-6.8.0.tgz",
+      "archive_sha256": "8d542ec76a9cb350584b60a6c9c088706ff812d5bb5b094c20c95b6dc25698bb",
+      "skills": [
+        {
+          "name": "reverse-engineer-anything",
+          "path": "skills/reverse-engineer-anything",
+          "tree_sha256": "e9275b6d7beb65caa76663f106338474fd142fe904261f4c1c9df74329e997cc"
+        }
+      ]
+    }
+  ],
+  "local_skills": [
+    {
+      "name": "neptune-project",
+      "path": "neptune-project",
+      "tree_sha256": "b586abb76e09bd802b0efaa7b8d98a623547352e23e0235dc8d0f5290c084b3b"
+    }
+  ]
+}
