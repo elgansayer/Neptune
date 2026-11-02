@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'tools/factory/provision*'
-      - 'tools/factory/tests/test_provision.py'
+      - 'tools/factory/tests/test_provision*.py'
       - 'tools/godot/install.py'
       - 'tools/godot/toolchain.json'
       - '.github/workflows/tool-provisioning.yml'
@@ -14,6 +14,39 @@ permissions:
   contents: read
 
 jobs:
+  ocr:
+    name: Real local OCR preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Build pinned OCR and recognise independent public text
+        run: |
+          python3 tools/factory/provision.py --tool tesseract --cache "$RUNNER_TEMP/ocr-tools" --evidence "$RUNNER_TEMP/ocr-evidence/first" --timeout 1800
+          python3 tools/factory/provision.py --tool tesseract --cache "$RUNNER_TEMP/ocr-tools" --evidence "$RUNNER_TEMP/ocr-evidence/reuse" --timeout 60
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          first, again = [json.loads((Path(os.environ['RUNNER_TEMP']) / 'ocr-evidence' / name / 'report.json').read_text()) for name in ('first', 'reuse')]
+          assert first['conclusion'] == again['conclusion'] == 'success'
+          assert first['reused'] is False and again['reused'] is True
+          assert first['binary_sha256'] == again['binary_sha256']
+          assert first['recipe_sha256'] == again['recipe_sha256']
+          assert first['smoke'] == again['smoke']
+          assert again['smoke']['text'] == 'NEPTUNE READY'
+          assert len(again['commands']) == 2
+          PY
+      - name: Preserve OCR installation and recognition evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ocr-provisioning-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ocr-evidence
+          if-no-files-found: error
+          retention-days: 14
   xvfb:
     name: Real unprivileged Xvfb preparation
     runs-on: ubuntu-24.04
@@ -57,7 +90,7 @@ jobs:
           retention-days: 14
   install:
     name: Pinned Godot and Saturn installation
-    needs: xvfb
+    needs: [xvfb, ocr]
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
