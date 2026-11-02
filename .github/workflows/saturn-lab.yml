@@ -61,6 +61,7 @@ jobs:
           import probe_kernel_context as context
           import probe_record_transition as transition
           import probe_context_handoff as handoff
+          import probe_record_selection as selection
           emu=records.pinned.interpreter(Path('.sh2-source'))
           result=records.owned_smoke(emu)
           report={'schema':'neptune.owned-sh2-record-adapter.v1','original_game_bytes_executed':False,
@@ -76,7 +77,10 @@ jobs:
                   'transition_probe_sha256':records.pinned.digest(Path(transition.__file__).read_bytes()),
                   'handoff_owned_smoke':handoff.owned_smoke(emu),
                   'handoff_source_sha256':{name:records.pinned.digest(Path('tools/saturn_lab',name).read_bytes())
-                                          for name in ('probe_context_handoff.py','sh2_handoff_profile.py')}}
+                                          for name in ('probe_context_handoff.py','sh2_handoff_profile.py')},
+                  'selection_owned_smoke':selection.owned_smoke(emu),
+                  'selection_source_sha256':{name:records.pinned.digest(Path('tools/saturn_lab',name).read_bytes())
+                                            for name in ('probe_record_selection.py','sh2_selection_profile.py')}}
           (Path(os.environ['RUNNER_TEMP'])/'sh2-record-adapter.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
           print('Owned pinned CPU/adapter guards, literal read and recovery passed; no original game bytes.')
           PY
