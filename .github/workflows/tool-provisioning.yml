@@ -14,8 +14,50 @@ permissions:
   contents: read
 
 jobs:
+  xvfb:
+    name: Real unprivileged Xvfb preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    container:
+      image: debian:13.7-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4
+    steps:
+      - name: Prepare dependencies inside disposable CI container
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3 ca-certificates xserver-common x11-xkb-utils libx11-6 libxfont2 libgl1 libaudit1 libpixman-1-0 libselinux1 libsystemd0 libunwind8 libxau6 libxdmcp6 libnettle8t64
+          useradd --create-home --user-group --uid 1001 recipe
+          install -d -m 700 -o recipe -g recipe /tmp/xvfb-cache /tmp/xvfb-evidence
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Install, smoke and reuse the real package as an ordinary user
+        run: |
+          runuser -u recipe -- python3 tools/factory/provision.py --tool xvfb --cache /tmp/xvfb-cache --evidence /tmp/xvfb-evidence/first --timeout 120
+          runuser -u recipe -- python3 tools/factory/provision.py --tool xvfb --cache /tmp/xvfb-cache --evidence /tmp/xvfb-evidence/reuse --timeout 60
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          first, again = [json.loads((Path('/tmp/xvfb-evidence') / name / 'report.json').read_text()) for name in ('first', 'reuse')]
+          assert first['conclusion'] == again['conclusion'] == 'success'
+          assert first['reused'] is False and again['reused'] is True
+          assert first['binary_sha256'] == again['binary_sha256']
+          assert first['recipe_sha256'] == again['recipe_sha256']
+          assert first['smoke'] == again['smoke']
+          assert again['smoke']['pixel'] == 0x123456
+          assert len(again['commands']) == 1
+          PY
+      - name: Preserve graphical preparation evidence including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: xvfb-provisioning-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/xvfb-evidence
+          if-no-files-found: error
+          retention-days: 14
   install:
     name: Pinned Godot and Saturn installation
+    needs: xvfb
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:

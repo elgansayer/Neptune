@@ -21,6 +21,9 @@ python3 tools/factory/provision.py --tool beetle-saturn \
 python3 tools/factory/provision.py --tool godot \
   --cache /canonical/repo/.factory-tools/prepared \
   --evidence /private/evidence/install-godot-001 --timeout 300
+python3 tools/factory/provision.py --tool xvfb \
+  --cache /canonical/repo/.factory-tools/prepared \
+  --evidence /private/evidence/install-xvfb-001 --timeout 120
 ```
 
 Both recipes currently target Linux x86_64. Godot delegates downloads and hash
@@ -30,6 +33,42 @@ verifies checkout identity and builds with one job and the accepted software/CHD
 options. It needs existing `git`, `make`, `cc` and `c++`. Its smoke loads the real
 library in a fresh bounded process and checks API symbols/version and Saturn/CUE
 identity without a BIOS or game. This is not a boot or compatibility test.
+
+### Graphical preparation: Debian13 amd64
+
+The Xvfb recipe (#568) obtains the exact reviewed Debian security package without
+running maintainer scripts or installing a host package. It checks both the
+bounded package and extracted regular binary against pinned SHA-256 values. Only
+`usr/bin/Xvfb` enters the immutable payload. The selected version is
+`2:21.1.16-1.3+deb13u4`, checked on 2 November against the
+[official package page](https://packages.debian.org/trixie/xvfb) and
+[official size/hash record](https://packages.debian.org/trixie/amd64/xvfb/download).
+The earlier signed-metadata preparation experiment remains documented in #568;
+runtime installation consumes these reviewed pins, not a mutable latest index.
+
+This recipe explicitly requires Debian13, existing `dpkg-deb`, `dpkg-query`,
+`dpkg`, `xkbcomp`, compatible `xserver-common`, and X11/Xfont runtime libraries.
+Remaining dynamic-library or display configuration incompatibilities fail the
+actual startup smoke. It does not install these dependencies or pretend a
+different distribution supports this binary; a missing dependency is a managed
+preparation task, not a root request for a worker.
+
+Fresh installation and every reuse start a real bounded Xvfb via `-displayfd`,
+with TCP disabled. The probe connects through Xlib, checks 640x480x24 geometry,
+maps a window and reads back a deliberately selected pixel. It reaps its server
+on success, startup failure and timeout. `xvfb-server.log` retains server output
+separately from the machine-readable observation. The existing lock, staging,
+cache hashing, repair preservation and shared command deadline apply. Use the
+returned directory on the offline verifier's PATH; the installer does not mutate
+the caller's PATH or replace `/usr/bin/Xvfb`.
+
+The mandatory real provisioning workflow also runs this recipe as an ordinary
+user in a digest-pinned disposable Debian CI container, then validates reuse.
+Container preparation installs runtime dependencies only inside that disposable
+environment. The existing required `Pinned Godot and Saturn installation` job
+depends on this graphical check; its failure or skip cannot qualify as success.
+This proves graphical tool preparation, not a Godot graphical test, screenshot
+fidelity, emulator execution or deployed factory provision-to-resume lifecycle.
 
 The successful `NEPTUNE_TOOL_READY=` JSON supplies the immutable `directory`,
 `binary`, recipe/source identities, binary and receipt hashes, commands and smoke
@@ -92,7 +131,7 @@ Do not add shell commands obtained directly from issue bodies to a trusted recip
 `python3 tools/factory/check.py` exercises real locks/process deadlines and a tiny
 synthetic C ABI, plus simulated install/repair/failure cases. Synthetic outputs
 prove installer contracts only. The `Real tool provisioning` workflow actually
-downloads/builds both pinned tools, runs their smoke checks and demonstrates
+downloads/builds the pinned tools, runs their smoke checks and demonstrates
 cache reuse. Read its exact-head result before claiming those real installations.
 The protected aggregate check also runs all applicable existing tests.
 
