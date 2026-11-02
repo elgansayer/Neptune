@@ -1,0 +1,153 @@
+{
+  "bridge_sha256": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+  "cases": 9136,
+  "contract_adapter_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "experiment": "EXP-SAT-CODE-008",
+  "instruction_controls": {
+    "group_mask_three": {
+      "address": "0x4c66",
+      "mutated_driver_sha256": "82933353dc458a5e13f400e83ac424db997c0475afe30538d067e6418eae0483",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 24,
+      "tested": 48
+    },
+    "missing_counter_increment": {
+      "address": "0x4c82",
+      "mutated_driver_sha256": "6e53f513cf00bce4cfce73bcba8fffec76e0a5b90509fc76bc28804c629aed49",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 48,
+      "tested": 48
+    },
+    "missing_saturation_clear": {
+      "address": "0x4c60",
+      "mutated_driver_sha256": "a14f35a436a56ec666496416740a8db65c9798faa803fbdc32c9dd105db8a932",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 8,
+      "tested": 48
+    },
+    "missing_tag_bits": {
+      "address": "0x4c76",
+      "mutated_driver_sha256": "787bdd45ff91ac35eda851a64ffc8df206b32c5141cfbbf9611a9106ee3f7a9e",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 12,
+      "tested": 48
+    }
+  },
+  "instruction_counts": [
+    32,
+    37,
+    38,
+    39
+  ],
+  "intake_base": "ba2933314b7a9434c0e21f008853782d5fec5f18",
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Constructed data/registers, not natural sound commands or validated device effects",
+    "No SCSP/DSP/hardware timing or whole-program coverage; interpreter lineage shared"
+  ],
+  "load_address": 0,
+  "model_cycle_counts": [
+    348,
+    398,
+    404,
+    412,
+    418
+  ],
+  "module": "NLSND",
+  "native_identity": {
+    "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-DM68K_INSTRUCTION_HOOK=1",
+      "-DM68K_SEPARATE_READS=1",
+      "-Wl,-z,defs"
+    ],
+    "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+  },
+  "original_game_bytes_executed": true,
+  "owned_smoke": {
+    "failure_controls": {
+      "execution_escape": "instruction-access",
+      "forbidden_write": "forbidden-write",
+      "nonreturning": "instruction-budget",
+      "unmapped_read": "unmapped-data-read"
+    },
+    "fresh_after_failure": true,
+    "original_game_bytes_executed": false,
+    "positive_steps": 2
+  },
+  "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+  "private_report_sha256": "247a9cb596cb30e4e858dcc10e0d867215146b381cb5ab4089671fbc2bc2254d",
+  "probe_sha256": "f0995a284fcb1a662c7c2ea9540c0ab91c92eb06d630113cf74ee02ec92eca51",
+  "range_sha256": "f4d7fb140444f9a36cf75d14dce9a8140f32fdafd9151f0a2eb0abf7299e4ea7",
+  "release": "usa-mk81070-v1003",
+  "results_sha256": "f805dce1dbfad6398f7d0516eebbad2e78f950cef9ba28c5f32b13bfdb3be782",
+  "schema": "neptune.original-m68k-command.v1",
+  "source_head": "90ba548e115789d98f8169e4ba1a7cf4dd7af0bf",
+  "source_path": "NETLINK/SNDDRV.BIN",
+  "status": "success",
+  "two_complete_reports_equal": true,
+  "variants": [
+    [
+      0,
+      0,
+      32,
+      127,
+      16,
+      0,
+      0,
+      9984,
+      32768,
+      2779054080
+    ],
+    [
+      9,
+      16,
+      128,
+      16,
+      16,
+      1,
+      127,
+      10015,
+      65536,
+      1515847680
+    ],
+    [
+      255,
+      0,
+      127,
+      128,
+      255,
+      255,
+      255,
+      8202,
+      32768,
+      287440896
+    ],
+    [
+      24,
+      16,
+      0,
+      255,
+      128,
+      128,
+      128,
+      8213,
+      65536,
+      2005401600
+    ]
+  ]
+}
