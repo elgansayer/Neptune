@@ -1,0 +1,77 @@
+name: Bounded SCSP FIFO preparation
+
+on:
+  pull_request:
+    paths:
+      - 'tools/saturn_lab/m68k_scsp_fifo.py'
+      - 'tools/saturn_lab/scsp-fifo-source-lock.json'
+      - 'tools/saturn_lab/m68k_probe.py'
+      - 'tools/saturn_lab/m68k_probe_backend.c'
+      - 'tools/saturn_lab/m68k-probe-source-lock.json'
+      - 'tools/saturn_lab/probe_kernel.py'
+      - '.github/workflows/saturn-fifo-preparation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  prepare-fifo:
+    name: Real bounded SCSP FIFO preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: callumjenkins/saturn-recomp
+          ref: f20de940e8013fc84103a5b39c4069ed8071b1f9
+          path: .fifo-sources/cpu
+          sparse-checkout: runtime/third_party/musashi
+          persist-credentials: false
+          submodules: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: libretro/beetle-saturn-libretro
+          ref: 01bc063fdd0fb5fc208850c9ecc658834df762ab
+          path: .fifo-sources/scsp
+          sparse-checkout: |
+            /mednafen/ss/scsp.h
+            /mednafen/ss/scsp.inc
+            /COPYING
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          submodules: false
+      - name: Compile, exercise actual FIFO bus effects and verify reuse without originals
+        run: |
+          python3 - <<'PY'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_scsp_fifo as fifo
+          cache=Path(os.environ['RUNNER_TEMP'])/'fifo-preparation'/'prepared'
+          first=fifo.prepare('.fifo-sources/cpu','.fifo-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=fifo.prepare('.fifo-sources/cpu','.fifo-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          assert again['owned_smoke']['reference_fifo_cases']==40
+          assert again['owned_smoke']['original_game_bytes_executed'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Compiled ABI3, actual FIFO reset/push/wrap/full/interrupt effects, guards and reuse passed; no original inputs.')
+          PY
+      - name: Preserve preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-fifo-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/fifo-preparation/**/*.json
+            ${{ runner.temp }}/fifo-preparation/**/*.stdout
+            ${{ runner.temp }}/fifo-preparation/**/*.stderr
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
