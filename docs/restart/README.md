@@ -1,4 +1,10 @@
-# Neptune restart: multiplayer, bots and community content
+# Neptune restart: AI factory, Saturn research and community game
+
+**Current priority, 2 November:** build the existing shared AI development factory
+and use it primarily for Saturn Bomberman reverse engineering. Follow
+[FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md) for task selection, tool/package
+preparation, agent handoffs and operational acceptance. Ordinary product expansion
+follows that critical path; active work and the full game scope are preserved.
 
 Status: the [bounded libretro bridge has real boot/replay evidence](evidence/2026-10-29-libretro-bridge.md).
 Real input, bridge and static disc/regional inventory work is accepted through
@@ -11,12 +17,16 @@ compatibility as part of adopting current releases.
 
 ## Goal
 
+The persistent objective and dispatch order are in
+[FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md). Factory supervision/recovery and
+real Saturn experiments take precedence over independent feature breadth.
+
 The owner's 1 November clarification requires exact maps/assets, timing, speeds,
 mechanics, effects, music and sound in the faithful profile. Apply
 [SATURN_FIDELITY.md](SATURN_FIDELITY.md) to task intake and completion: exact
 state/events, native pixels and sample-timed audio at the declared digital boundary.
-Existing metadata/native CI is not whole-game parity. Continue independent
-community work while #29/#76/#511 build the measured end-to-end acceptance slices.
+Existing metadata/native CI is not whole-game parity. Select independent work
+under the factory/Saturn priority while #29/#76/#511 build measured acceptance slices.
 
 The owner's clarified ethos is [Saturn first, additions only, automatic sharing](COMMUNITY_CONTENT.md#owners-ethos-saturn-first-everything-extensible-additions-only).
 The initial game should look and act like Saturn Bomberman; creators then extend
@@ -44,6 +54,7 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 
 ## Documents
 
+- [Current factory/Saturn-first goal and dispatch priority](FACTORY_FIRST_GOAL.md)
 - [Exact Saturn fidelity, tools and agent handoffs](SATURN_FIDELITY.md)
 
 - [Source-backed project evaluation and build recommendations](PROJECT_EVALUATION.md)
@@ -99,6 +110,10 @@ runner/startup work, with remaining scenario contracts in #50. Inspect their
 current status and evidence; this documentation update does not certify those PRs.
 
 ## Milestones
+
+First prove the operational factory and real Saturn acceptance in
+[FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md). The product milestones below remain
+required; they are not the order for new claims when factory/research work is eligible.
 
 1. Finish a trustworthy Godot baseline. Inspect current PRs #49/#51 and remaining
    legacy test task #50 before duplicating server work.

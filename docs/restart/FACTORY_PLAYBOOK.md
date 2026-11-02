@@ -1,5 +1,14 @@
 # Operating the three-track AI factory
 
+The owner's 2 November priority is [FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md):
+build the existing shared development factory and use it primarily to
+reverse-engineer Saturn Bomberman, then implement and compare recovered slices.
+The tracks below remain logical queues; they do not have equal dispatch priority.
+Factory/Saturn tasks precede independent game/UI/workshop and Power expansion.
+Preserve active owners. Name the real experiment each infrastructure change
+unblocks, add needed tools through #508/#518, and prove actual recovery and
+reference comparisons instead of counting agents or framework layers.
+
 This is the implementation contract for #33. The 30 October operator direction is
 to reuse the deployed `elgansayer/elgl` Repo Factory and its supported shared
 Codex/Claude/Gemini provider broker. Preserve existing services, configured shared

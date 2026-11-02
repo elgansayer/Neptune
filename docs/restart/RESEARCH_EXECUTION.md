@@ -1,5 +1,11 @@
 # Saturn and Power reverse-engineering execution
 
+Current owner priority, 2 November: [FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md).
+The shared AI development factory and Saturn reverse engineering are the primary
+new-work queues. Use recovered contracts to drive Godot implementation; defer
+independent Power/product breadth unless it removes a named pipeline blocker.
+Existing owners, research inputs, acceptance scope and full product goals remain.
+
 Execution index: [#477](https://github.com/elgansayer/Neptune-Bomberman/issues/477).
 Saturn mission: [#464](https://github.com/elgansayer/Neptune-Bomberman/issues/464).
 Power mission: [#476](https://github.com/elgansayer/Neptune-Bomberman/issues/476).
