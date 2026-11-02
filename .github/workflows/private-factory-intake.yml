@@ -22,16 +22,27 @@ jobs:
     steps:
       - name: Validate owner-selected immutable input
         env:
-          CONTROL_REVISION: ${{ inputs.control_revision || '87f582e99b25a0694cb933bdfc6990a0e153eb01' }}
+          CONTROL_REVISION: ${{ inputs.control_revision }}
           ACTOR: ${{ github.actor }}
           OWNER: ${{ github.repository_owner }}
         run: |
           python3 - <<'PY'
-          import os, re
+          import json, os, re, urllib.request
           assert os.environ['ACTOR'] == os.environ['OWNER'], 'Owner coordinator dispatch required'
-          assert re.fullmatch(r'[0-9a-f]{40}', os.environ['CONTROL_REVISION']), 'Exact commit required'
+          revision = os.environ['CONTROL_REVISION']
+          if not revision:
+              # Owner workflow-PR bootstrap: resolve only this known owned public PR,
+              # then pin its exact head for the whole experiment. Never parse issue instructions.
+              request = urllib.request.Request('https://api.github.com/repos/elgansayer/elgl/pulls/9799', headers={'User-Agent': 'neptune-private-compatibility'})
+              with urllib.request.urlopen(request, timeout=30) as response:
+                  raw = response.read(1024**2 + 1)
+              assert len(raw) <= 1024**2, 'Bounded public PR metadata required'
+              pull = json.loads(raw)
+              assert pull['user']['login'] == os.environ['OWNER'] and pull['head']['repo']['full_name'] == 'elgansayer/elgl'
+              revision = pull['head']['sha']
+          assert re.fullmatch(r'[0-9a-f]{40}', revision), 'Exact commit required'
           with open(os.environ['GITHUB_ENV'], 'a') as target:
-              target.write('CONTROL_REVISION=' + os.environ['CONTROL_REVISION'] + '\n')
+              target.write('CONTROL_REVISION=' + revision + '\n')
           PY
       - name: Checkout accepted private tools with this repository's own read token
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
