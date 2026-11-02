@@ -9,8 +9,10 @@ parents, and requires the head to include the event's current base. Strict branc
 protection is additionally required so a later base change invalidates eligibility.
 The GitHub Actions app (15368) must be the configured required status source.
 
-All changes run the 18 input-tool tests, catalogue rejection tests and validation,
-and `check.py`'s gate contracts. An explicit infrastructure-only allowlist additionally
+All changes run the input-tool tests, FILM packet/PCM rejection tests, catalogue
+rejection tests and validation, factory contracts and `check.py`'s gate contracts.
+Missing FILM tests cannot produce a passing aggregate receipt. The existing native
+path classification is unchanged. An explicit infrastructure-only allowlist additionally
 requires pinned Godot installation, real runner boundary tests and actual suite/native
 addon probes. Unknown paths, game scripts/scenes/assets/configuration, new tests and
 runtime probes additionally require headless/graphical native startup/connection

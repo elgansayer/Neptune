@@ -117,7 +117,7 @@ class TaskVerificationTests(unittest.TestCase):
         self.assertEqual(report["conclusion"], "success")
         self.assertEqual(report["plan"], legacy["plan"])
         self.assertEqual(list(report["checks"]), list(verify.gate.CORE))
-        self.assertEqual(len(self.calls), 5)
+        self.assertEqual(len(self.calls), len(verify.gate.CORE))
         self.assertEqual(report["identity"]["base"], self.base)
         self.assertEqual(report["task_binding"], self.bind())
 
