@@ -126,3 +126,5 @@ a disassembler, not an execution harness. Device accesses need a real side-effec
 model. SH-2 task/entry helpers `0x06006B38`/`0x0600940A`/`0x0600942E` remain
 independently eligible; actual scheduler meaning and RNG taps are not inferred
 from symbols. Keep the complete code programme active.
+
+A further selected static inspection found five A2-setting wrappers at `0x40C8`, `0x40D2`, `0x40DC`, `0x40E6` and `0x40F0`, choosing bases `0x4124`, `0x414C`, `0x4138`, `0x4160` and `0x4174`, respectively. Each branches to `0x4104`, which first calls `0x4B00`. A2 preservation across that subroutine is unvalidated; these base-setting leads therefore do not close the indirect jump. The next concrete source question is the `0x4B00` call/return and register contract. Selected observations and their digest are retained, with no original CPU execution.

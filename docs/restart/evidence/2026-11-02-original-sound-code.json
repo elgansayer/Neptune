@@ -887,6 +887,20 @@
     },
     "compiler": "cc (Debian 14.2.0-19) 14.2.0"
   },
+  "next_dispatch_inspection": {
+    "A2_preservation_across_subroutine": "unvalidated",
+    "base_setting_wrappers": {
+      "0x40c8": "0x4124",
+      "0x40d2": "0x414c",
+      "0x40dc": "0x4138",
+      "0x40e6": "0x4160",
+      "0x40f0": "0x4174"
+    },
+    "intervening_subroutine": "0x4b00",
+    "original_game_bytes_executed": false,
+    "private_selected_leads_sha256": "2dbd5d3498aca6f59122f2c683961a6189145d2beeff2c42f636c77b172d85cd",
+    "shared_branch_target": "0x4104"
+  },
   "original_game_bytes_executed": false,
   "reset_prefixes": {
     "NLSND": {
