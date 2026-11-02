@@ -113,6 +113,14 @@ func font_for_language(language: String, default_font: Font) -> Font:
 
 
 func check_locale_switcher() -> void:
+	var startup_switcher := root.get_node_or_null("ArcadeFontLocale")
+	require(startup_switcher != null, "Project font autoload did not start")
+	var startup_theme := ThemeDB.get_project_theme()
+	require(startup_theme != null and startup_theme.default_font != null,
+		"Project theme has no font after normal startup")
+	if startup_switcher != null and startup_theme != null and startup_theme.default_font != null:
+		require(startup_theme.default_font.resource_path == startup_switcher.font_path_for_locale(TranslationServer.get_locale()),
+			"Normal startup did not assign the locale font to the actual project theme")
 	var locale_script = load("res://scripts/arcade_font_locale.gd")
 	if locale_script == null:
 		require(false, "Missing game locale switcher")
@@ -135,12 +143,16 @@ func check_locale_switcher() -> void:
 		var theme := load("res://themes/main_theme.tres") as Theme
 		require(theme.default_font.resource_path == locale_script.font_path_for_locale(locale),
 			"Theme did not switch for locale " + locale)
+		require(ThemeDB.get_project_theme().default_font.resource_path == locale_script.font_path_for_locale(locale),
+			"Active project theme did not switch for locale " + locale)
 	TranslationServer.set_locale(old_locale)
 	switcher.refresh()
 	switcher.free()
 
 
 func _run() -> void:
+	# A custom SceneTree initializes before its autoloads enter the tree.
+	await process_frame
 	require(text_server.has_feature(TextServer.FEATURE_SHAPING), "Advanced script shaping is unavailable")
 	var font := load(PACKAGE + "neptune_arcade.tres") as FontVariation
 	if font == null:

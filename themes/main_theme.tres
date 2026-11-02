@@ -1,7 +1,7 @@
-[gd_resource type="Theme" load_steps=2 format=3]
-
-[ext_resource type="FontVariation" path="res://fonts/neptune-arcade/neptune_arcade.tres" id="arcade"]
+[gd_resource type="Theme" format=3]
 
 [resource]
-default_font = ExtResource("arcade")
+; ArcadeFontLocale assigns the imported font before game Controls enter the tree.
+; Project themes load before the editor's first asset import, so keep this
+; startup resource free of dependencies on imported font data.
 default_font_size = 16

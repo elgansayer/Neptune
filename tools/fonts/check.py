@@ -19,7 +19,7 @@ def run(command: list[str], *, cwd: Path, env: dict[str, str], marker: str | Non
     if result.returncode or (marker and marker not in result.stdout):
         print(result.stdout, end="")
         raise RuntimeError(f"Font check failed (exit {result.returncode}): {command}")
-    if "SCRIPT ERROR:" in result.stdout or "Parse Error:" in result.stdout:
+    if "ERROR:" in result.stdout or "Parse Error:" in result.stdout:
         print(result.stdout, end="")
         raise RuntimeError("Godot reported a script error")
     if marker:
@@ -37,8 +37,8 @@ def verify_integration() -> None:
         raise ValueError("Game does not select the bundled main theme")
     if 'ArcadeFontLocale="*res://scripts/arcade_font_locale.gd"' not in project:
         raise ValueError("Game does not register its locale font switcher")
-    if "res://fonts/neptune-arcade/neptune_arcade.tres" not in theme or "default_font =" not in theme:
-        raise ValueError("Main theme does not use the multilingual Neptune Bubble resource")
+    if "ext_resource" in theme or "default_font =" in theme:
+        raise ValueError("Startup theme must not load imported fonts before the first asset import")
     if "bomberman_font.ttf" in selection or "theme_override_fonts/font" in selection:
         raise ValueError("Character selection overrides the locale-aware global font")
 
@@ -74,9 +74,11 @@ def main() -> int:
             (sandbox / "project.godot").write_text(
                 'config_version=5\n[application]\nconfig/name="Neptune Font Check"\n'
                 'run/main_scene="res://tools/fonts/showcase.tscn"\n'
+                '[autoload]\nArcadeFontLocale="*res://scripts/arcade_font_locale.gd"\n'
                 '[display]\nwindow/size/viewport_width=960\nwindow/size/viewport_height=720\n'
                 '[rendering]\nrenderer/rendering_method="gl_compatibility"\n'
                 'textures/default_filters/use_nearest_mipmap_filter=false\n'
+                '[gui]\ntheme/custom="res://themes/main_theme.tres"\n'
             )
             env = os.environ.copy()
             for key, name in (("XDG_DATA_HOME", "data"), ("XDG_CACHE_HOME", "cache"),
