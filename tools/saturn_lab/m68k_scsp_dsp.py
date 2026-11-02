@@ -38,7 +38,7 @@ def extract_component(sources):
         matches = re.findall(r'struct '+name+r'\n\{[\s\S]+?\n\};', header)
         if len(matches) != 1: raise ValueError('Ambiguous DSP declaration')
         declarations.append('typedef struct '+name+' '+name+';\n'+matches[0])
-    macros = source[source.index('#ifdef MSB_FIRST'):source.index('/* internal forward declarations')]
+    macros = source[source.index('/* Local big-endian-bus access macros'):source.index('/* internal forward declarations')]
     definitions = []
     for suffix in ('W0', 'W1'):
         name = 'SS_SCSP_RW_u16_'+suffix
