@@ -87,3 +87,5 @@ Existing [selector samples](../research/2026-10-30-saturn-original-kernel-result
 and [resident decompression comparisons](../evidence/2026-10-30-gemini-program-bin-archive-002.md)
 remain useful accepted evidence. They do not increase this census into a verified
 whole-program function total. Unknown denominators remain `null`.
+
+The [2 November original memory-helper/caller result](../research/2026-11-02-original-position-bounds.md) adds two isolated-tested USA kernel entries and their explicit controlled-memory limits. It does not establish natural gameplay validation or a whole-program function denominator.
