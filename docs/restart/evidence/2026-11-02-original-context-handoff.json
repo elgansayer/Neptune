@@ -1,0 +1,950 @@
+{
+  "cases_per_complete_run": 2400,
+  "families": {
+    "records": {
+      "cases": 864,
+      "complete_activation_returns": 864,
+      "complete_resumed_returns": 864,
+      "cpu": "sh2",
+      "experiment": "EXP-SAT-CODE-020",
+      "immediate_wrapper_returns": 0,
+      "initial_incomplete_handoffs": 864,
+      "instruction_controls": {
+        "missing_context_PR_restore": {
+          "first_rejection_summary": {
+            "actual_error": {
+              "reason": "Read outside literals and controlled inputs",
+              "type": "ValueError"
+            },
+            "actual_pc": 100691366,
+            "actual_status": "failed",
+            "attempted_steps": 92,
+            "case": [
+              "records",
+              0,
+              0,
+              0,
+              2147483647,
+              1,
+              1,
+              0
+            ],
+            "executed_instructions": 92,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "910b8db995de4eef8137d9c69bfb5853bf6215ca4dd9d0836d6659ac03dc27e6",
+          "pc": 100688384,
+          "reasons": [
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Access through undeclared RAM alias'}",
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Read outside literals and controlled inputs'}"
+          ],
+          "rejected": 68,
+          "tested": 68
+        },
+        "missing_context_result_delay": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 82,
+            "case": [
+              "records",
+              0,
+              0,
+              0,
+              2147483647,
+              1,
+              1,
+              0
+            ],
+            "executed_instructions": 82,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "382eed3d6e78b0c8022ec3c8ad54f44a7248885c39ddb27f5001b8fa3137842b",
+          "pc": 100688392,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "rejected": 68,
+          "tested": 68
+        },
+        "missing_epilogue_R14_delay_restore": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 33,
+            "case": [
+              "records",
+              0,
+              0,
+              0,
+              2147483647,
+              1,
+              1,
+              0
+            ],
+            "executed_instructions": 33,
+            "full_private_failure_evidence_retained": true,
+            "phase": "resume"
+          },
+          "mutated_kernel_sha256": "b4077eff71909eed34ebd090963b63466726491c246695d4914a9d224e1e39b4",
+          "pc": 100691372,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "rejected": 68,
+          "tested": 68
+        },
+        "missing_pending_clear": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 33,
+            "case": [
+              "records",
+              0,
+              0,
+              0,
+              2147483647,
+              1,
+              1,
+              0
+            ],
+            "executed_instructions": 33,
+            "full_private_failure_evidence_retained": true,
+            "phase": "resume"
+          },
+          "mutated_kernel_sha256": "1957df455792bd3aaa01970fd504c16d0fa1d214f7a9fe7fffdb6095c2729f5c",
+          "pc": 100691362,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 68,
+          "tested": 68
+        }
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed outbound root context and controlled resume ABI; no natural task code executed",
+        "Incomplete handoffs remain separate from complete activations; actual saved context feeds resume",
+        "CPU-only, no natural caller/scheduler/hardware timing/independent-engine validation",
+        "Explicit known high RAM views only; whole executable/function/dynamic-target denominators unknown"
+      ],
+      "literal_sha256": {
+        "6006e0c": "9a5883ad816ba3dde5c0a10fa4c75e650e03d7e3b5a73ee4645bec513ccd1ea8",
+        "6006e10": "c3c4f668739330e73f2f9f554b537670df534f879ded94d7cbe694c424db5757",
+        "6006e20": "b22ac9cc23c92d1b6a9e63f458b2ef8944e1c7bc9381c62bceebfc2b194d9c43",
+        "6006e28": "0fb06e7e948ba142ae309476bed86928c09aa406d753a13878d8561211740628",
+        "6006e2c": "86722c7bb3beab9e87aea13678e21886ae4d085bfad121bd2e41851d05d7425a",
+        "6006e30": "d0e7ebcb13620c287d770dcdafad8cf0f9f7944bc5dbefc2fb8aceb0816e5b5a"
+      },
+      "load_address": 100687872,
+      "max_steps_per_phase": 128,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "original_saved_context_continuity_checked": 864,
+      "outbound_event_range": [
+        42,
+        42
+      ],
+      "outbound_instruction_range": [
+        82,
+        82
+      ],
+      "owned_smoke": {
+        "both_cpu_alias_coherence": [
+          {
+            "alias_write_canonical_alias_reads_equal": true,
+            "cpu_slot": 0,
+            "instructions": 5
+          },
+          {
+            "alias_write_canonical_alias_reads_equal": true,
+            "cpu_slot": 1,
+            "instructions": 5
+          }
+        ],
+        "failure_controls": {
+          "0:alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "0:alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "0:code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "0:code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "0:full_loop": {
+            "executed_instructions": 128,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "0:neighbor_alias": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "0:neighbor_canonical": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "0:readonly_alias": {
+            "executed_instructions": 1,
+            "reason": "Write through readonly RAM alias",
+            "status": "failed"
+          },
+          "0:short_loop": {
+            "executed_instructions": 8,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "0:unknown_return_target": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "0:unknown_task_stack": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "1:alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "1:alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "1:code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "1:code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "1:full_loop": {
+            "executed_instructions": 128,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "1:neighbor_alias": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "1:neighbor_canonical": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "1:readonly_alias": {
+            "executed_instructions": 1,
+            "reason": "Write through readonly RAM alias",
+            "status": "failed"
+          },
+          "1:short_loop": {
+            "executed_instructions": 8,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "1:unknown_return_target": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "1:unknown_task_stack": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "executable_terminal_configuration": {
+            "rejected": true
+          },
+          "invalid_alias_translation": {
+            "rejected": true
+          },
+          "readonly_alias_backing": {
+            "rejected": true
+          }
+        },
+        "fresh_after_failure": true,
+        "handoff_distinct_from_return": true,
+        "original_game_bytes_executed": false
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/643/context-handoff-wmqkij6q/records",
+      "private_report_sha256": "d0bf1a1095596d1502aeb80f304738be4b231d40072f8f1b4701c8a87adc33be",
+      "range_sha256": {
+        "60061c4:600620a": "95037b1e704a4ad8c5ee119e2c479d65a304f6020e1987511060577aaa234b84",
+        "6006d36:6006dc8": "4e7fbfc812926f1fe7dc1ac98770c369e1c17f4a26eecfd00be80ce7e3291240"
+      },
+      "release": "usa-mk81070-v1003",
+      "repeated_incomplete_handoffs": 0,
+      "results_sha256": "4f948781b73177cf39bcb06c209990a2180564dc5cf736fc2311ca9178856be2",
+      "resume_event_range": [
+        17,
+        17
+      ],
+      "resume_instruction_range": [
+        33,
+        33
+      ],
+      "schema": "neptune.original-sh2-context-handoff.v1",
+      "selection": "records",
+      "source_sha256": {
+        "probe_context_handoff.py": "807d5ac0b1ca4bea732cc8987a0c8558a30ba42ae7818ab6da7868991c25e17e",
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true
+    },
+    "wrapper": {
+      "cases": 384,
+      "complete_activation_returns": 288,
+      "complete_resumed_returns": 192,
+      "cpu": "sh2",
+      "experiment": "EXP-SAT-CODE-020",
+      "immediate_wrapper_returns": 96,
+      "initial_incomplete_handoffs": 288,
+      "instruction_controls": {
+        "wrapper_argument_zero": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 93,
+            "case": [
+              "wrapper",
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            "executed_instructions": 93,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "10d22af1a28bffb40684d3f8d5faeab96f5bf19bc45b38b5bce7f6f2a9cad066",
+          "pc": 100691394,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "rejected": 50,
+          "tested": 66
+        },
+        "wrapper_inverted_pending_skip": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 93,
+            "case": [
+              "wrapper",
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 93,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "0a04133b86d3b93df5e1718ffded6bff787ee4af6515d200136591267a08fbcc",
+          "pc": 100691390,
+          "reasons": [
+            "Return/handoff boundary differs"
+          ],
+          "rejected": 66,
+          "tested": 66
+        }
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed outbound root context and controlled resume ABI; no natural task code executed",
+        "Incomplete handoffs remain separate from complete activations; actual saved context feeds resume",
+        "CPU-only, no natural caller/scheduler/hardware timing/independent-engine validation",
+        "Explicit known high RAM views only; whole executable/function/dynamic-target denominators unknown"
+      ],
+      "literal_sha256": {
+        "6006e0c": "9a5883ad816ba3dde5c0a10fa4c75e650e03d7e3b5a73ee4645bec513ccd1ea8",
+        "6006e10": "c3c4f668739330e73f2f9f554b537670df534f879ded94d7cbe694c424db5757",
+        "6006e20": "b22ac9cc23c92d1b6a9e63f458b2ef8944e1c7bc9381c62bceebfc2b194d9c43",
+        "6006e28": "0fb06e7e948ba142ae309476bed86928c09aa406d753a13878d8561211740628",
+        "6006e2c": "86722c7bb3beab9e87aea13678e21886ae4d085bfad121bd2e41851d05d7425a",
+        "6006e30": "d0e7ebcb13620c287d770dcdafad8cf0f9f7944bc5dbefc2fb8aceb0816e5b5a"
+      },
+      "load_address": 100687872,
+      "max_steps_per_phase": 128,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "original_saved_context_continuity_checked": 288,
+      "outbound_event_range": [
+        2,
+        44
+      ],
+      "outbound_instruction_range": [
+        11,
+        93
+      ],
+      "owned_smoke": {
+        "both_cpu_alias_coherence": [
+          {
+            "alias_write_canonical_alias_reads_equal": true,
+            "cpu_slot": 0,
+            "instructions": 5
+          },
+          {
+            "alias_write_canonical_alias_reads_equal": true,
+            "cpu_slot": 1,
+            "instructions": 5
+          }
+        ],
+        "failure_controls": {
+          "0:alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "0:alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "0:code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "0:code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "0:full_loop": {
+            "executed_instructions": 128,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "0:neighbor_alias": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "0:neighbor_canonical": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "0:readonly_alias": {
+            "executed_instructions": 1,
+            "reason": "Write through readonly RAM alias",
+            "status": "failed"
+          },
+          "0:short_loop": {
+            "executed_instructions": 8,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "0:unknown_return_target": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "0:unknown_task_stack": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "1:alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "1:alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "1:code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "1:code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "1:full_loop": {
+            "executed_instructions": 128,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "1:neighbor_alias": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "1:neighbor_canonical": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "1:readonly_alias": {
+            "executed_instructions": 1,
+            "reason": "Write through readonly RAM alias",
+            "status": "failed"
+          },
+          "1:short_loop": {
+            "executed_instructions": 8,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "1:unknown_return_target": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "1:unknown_task_stack": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "executable_terminal_configuration": {
+            "rejected": true
+          },
+          "invalid_alias_translation": {
+            "rejected": true
+          },
+          "readonly_alias_backing": {
+            "rejected": true
+          }
+        },
+        "fresh_after_failure": true,
+        "handoff_distinct_from_return": true,
+        "original_game_bytes_executed": false
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/643/context-handoff-wmqkij6q/wrapper",
+      "private_report_sha256": "db329ed067f447053c71404feabf66fbc613edb8654fe53941844c3e11a597d5",
+      "range_sha256": {
+        "60061c4:600620a": "95037b1e704a4ad8c5ee119e2c479d65a304f6020e1987511060577aaa234b84",
+        "6006d36:6006dc8": "4e7fbfc812926f1fe7dc1ac98770c369e1c17f4a26eecfd00be80ce7e3291240"
+      },
+      "release": "usa-mk81070-v1003",
+      "repeated_incomplete_handoffs": 96,
+      "results_sha256": "0bb70e4a9fc7eaa7ef9b05340e5930f8a7049dc106b3a919c8b4df048842f9f2",
+      "resume_event_range": [
+        17,
+        27
+      ],
+      "resume_instruction_range": [
+        33,
+        43
+      ],
+      "schema": "neptune.original-sh2-context-handoff.v1",
+      "selection": "wrapper",
+      "source_sha256": {
+        "probe_context_handoff.py": "807d5ac0b1ca4bea732cc8987a0c8558a30ba42ae7818ab6da7868991c25e17e",
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true
+    },
+    "yield": {
+      "cases": 1152,
+      "complete_activation_returns": 864,
+      "complete_resumed_returns": 864,
+      "cpu": "sh2",
+      "experiment": "EXP-SAT-CODE-020",
+      "immediate_wrapper_returns": 0,
+      "initial_incomplete_handoffs": 1152,
+      "instruction_controls": {
+        "missing_record_live_word": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 82,
+            "case": [
+              "yield",
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            "executed_instructions": 82,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "4c8698e1912c9810ea52df0960f6e20f63384ade98b4827b6c52647e6d11b635",
+          "pc": 100691314,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "missing_record_saved_argument": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 82,
+            "case": [
+              "yield",
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            "executed_instructions": 82,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "8de5828ef62bde3341c55dfd7d9ceb05a8dca92ecc2f2f98569e508c3e1d1bd0",
+          "pc": 100691296,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "missing_record_word_store": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 82,
+            "case": [
+              "yield",
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            "executed_instructions": 82,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "8344d09b7d048d730ecdb5d85c181fd868bb6e6b2e9699d138731defa326f98a",
+          "pc": 100691300,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "missing_save_context_offset_delay": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 82,
+            "case": [
+              "yield",
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
+              0
+            ],
+            "executed_instructions": 82,
+            "full_private_failure_evidence_retained": true,
+            "phase": "outbound"
+          },
+          "mutated_kernel_sha256": "2c06abea76900a0d649c5fed46702a91bf028419ce0cf8dad22d8c0a14a4b37f",
+          "pc": 100691332,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 66,
+          "tested": 66
+        }
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed outbound root context and controlled resume ABI; no natural task code executed",
+        "Incomplete handoffs remain separate from complete activations; actual saved context feeds resume",
+        "CPU-only, no natural caller/scheduler/hardware timing/independent-engine validation",
+        "Explicit known high RAM views only; whole executable/function/dynamic-target denominators unknown"
+      ],
+      "literal_sha256": {
+        "6006e0c": "9a5883ad816ba3dde5c0a10fa4c75e650e03d7e3b5a73ee4645bec513ccd1ea8",
+        "6006e10": "c3c4f668739330e73f2f9f554b537670df534f879ded94d7cbe694c424db5757",
+        "6006e20": "b22ac9cc23c92d1b6a9e63f458b2ef8944e1c7bc9381c62bceebfc2b194d9c43",
+        "6006e28": "0fb06e7e948ba142ae309476bed86928c09aa406d753a13878d8561211740628",
+        "6006e2c": "86722c7bb3beab9e87aea13678e21886ae4d085bfad121bd2e41851d05d7425a",
+        "6006e30": "d0e7ebcb13620c287d770dcdafad8cf0f9f7944bc5dbefc2fb8aceb0816e5b5a"
+      },
+      "load_address": 100687872,
+      "max_steps_per_phase": 128,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "original_saved_context_continuity_checked": 1152,
+      "outbound_event_range": [
+        42,
+        42
+      ],
+      "outbound_instruction_range": [
+        82,
+        82
+      ],
+      "owned_smoke": {
+        "both_cpu_alias_coherence": [
+          {
+            "alias_write_canonical_alias_reads_equal": true,
+            "cpu_slot": 0,
+            "instructions": 5
+          },
+          {
+            "alias_write_canonical_alias_reads_equal": true,
+            "cpu_slot": 1,
+            "instructions": 5
+          }
+        ],
+        "failure_controls": {
+          "0:alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "0:alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "0:code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "0:code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "0:full_loop": {
+            "executed_instructions": 128,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "0:neighbor_alias": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "0:neighbor_canonical": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "0:readonly_alias": {
+            "executed_instructions": 1,
+            "reason": "Write through readonly RAM alias",
+            "status": "failed"
+          },
+          "0:short_loop": {
+            "executed_instructions": 8,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "0:unknown_return_target": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "0:unknown_task_stack": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "1:alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "1:alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "1:code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "1:code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "1:full_loop": {
+            "executed_instructions": 128,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "1:neighbor_alias": {
+            "executed_instructions": 1,
+            "reason": "Access through undeclared RAM alias",
+            "status": "failed"
+          },
+          "1:neighbor_canonical": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "1:readonly_alias": {
+            "executed_instructions": 1,
+            "reason": "Write through readonly RAM alias",
+            "status": "failed"
+          },
+          "1:short_loop": {
+            "executed_instructions": 8,
+            "reason": "Handoff instruction budget exceeded",
+            "status": "failed"
+          },
+          "1:unknown_return_target": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "1:unknown_task_stack": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "executable_terminal_configuration": {
+            "rejected": true
+          },
+          "invalid_alias_translation": {
+            "rejected": true
+          },
+          "readonly_alias_backing": {
+            "rejected": true
+          }
+        },
+        "fresh_after_failure": true,
+        "handoff_distinct_from_return": true,
+        "original_game_bytes_executed": false
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/643/context-handoff-wmqkij6q/yield",
+      "private_report_sha256": "c0e93f5f9f7864cabd3de5622cfd1b6b39fc6dce6b766c6e3136335664a27bb0",
+      "range_sha256": {
+        "60061c4:600620a": "95037b1e704a4ad8c5ee119e2c479d65a304f6020e1987511060577aaa234b84",
+        "6006d36:6006dc8": "4e7fbfc812926f1fe7dc1ac98770c369e1c17f4a26eecfd00be80ce7e3291240"
+      },
+      "release": "usa-mk81070-v1003",
+      "repeated_incomplete_handoffs": 288,
+      "results_sha256": "d67a6973cecbbde8066f0cf9a092fb749b694e749d4e4813fb99e86cddf495a3",
+      "resume_event_range": [
+        17,
+        27
+      ],
+      "resume_instruction_range": [
+        33,
+        43
+      ],
+      "schema": "neptune.original-sh2-context-handoff.v1",
+      "selection": "yield",
+      "source_sha256": {
+        "probe_context_handoff.py": "807d5ac0b1ca4bea732cc8987a0c8558a30ba42ae7818ab6da7868991c25e17e",
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true
+    }
+  },
+  "limits": {
+    "address_space_maximum_bytes": 2147483648,
+    "command_seconds": 60,
+    "continuity_enabled": false,
+    "host_shared": 3,
+    "instructions_per_phase": 128,
+    "nice": 10,
+    "own_lease_seconds": 180,
+    "provider_calls": 0
+  },
+  "original_game_bytes_executed": true,
+  "schema": "neptune.original-context-handoff-evidence.v1",
+  "source_execution_head": "f519dbc4b4872f9a8996acc34b9b34b2b9e3b785",
+  "source_only_ci": {
+    "artifact_id": 13161765639,
+    "artifact_sha256": "4b19623292162733f05c7a20f71d0f7fce4aa6225e85066cd23d53b5099afa83",
+    "original_game_bytes_executed": false,
+    "run_id": 41484021707,
+    "source_head": "f519dbc4b4872f9a8996acc34b9b34b2b9e3b785"
+  },
+  "status": "success",
+  "whole_program_status": "active; incomplete"
+}
