@@ -48,8 +48,12 @@ census does not establish complete recovered semantics.
 Current bounded continuation: [module candidates](saturn-code/README.md) and the
 [next original-function probe](research/2026-11-02-saturn-code-probe.md). The
 already verified helper at `0x0600A4B0` and resident-checked decompressor remain
-accepted; the new `0x0600B934` hypothesis needs original-host execution before
-it counts as a newly validated function. Do not guess RNG taps from its symbol.
+accepted. The [subsequent original-host result](research/2026-11-02-saturn-table-address-result.md)
+for `0x0600B934` rejects its initial stackless assumption and verifies sampled
+arithmetic plus an explicit MACL spill/restore contract in a pinned CPU interpreter.
+Natural callers, timing and the function's gameplay role remain open. Continue
+those questions and the next bounded functions; do not repeat this completed
+sample as if missing or guess RNG taps from its symbol.
 
 If original bytes or the existing VPS command channel are unavailable, record
 the precise access blocker and next runnable command. Continue independently
