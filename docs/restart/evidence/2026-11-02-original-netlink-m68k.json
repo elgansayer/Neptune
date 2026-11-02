@@ -1,0 +1,311 @@
+{
+  "experiments": {
+    "nlsnd-dispatch-001": {
+      "bridge_sha256": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+      "cases": 2560,
+      "cpu": "m68000",
+      "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+      "experiment": "EXP-SAT-CODE-006",
+      "instruction_controls": {
+        "missing_upper_D7_clear": {
+          "address": "0x4114",
+          "mutated_driver_sha256": "fede093a6d589d7607da6048d67b4cd1595265e46ae7c0faf5520e6c3e6b5b89",
+          "reasons": [
+            "Native guard: instruction-access"
+          ],
+          "rejected": 200,
+          "tested": 320
+        },
+        "selector_mask_three": {
+          "address": "0x411c",
+          "mutated_driver_sha256": "74f2faa75c26378184420289f8bf66238db886b1db3d23a53c16c45b55080426",
+          "reasons": [
+            "Native guard: instruction-access"
+          ],
+          "rejected": 160,
+          "tested": 320
+        },
+        "wrong_first_table_base": {
+          "address": "0x40cc",
+          "mutated_driver_sha256": "a8475c6cb9cf36fa721c5b782bfb627532329fd7c2992a48652af0cbecf9e870",
+          "reasons": [
+            "Native guard: instruction-access"
+          ],
+          "rejected": 64,
+          "tested": 320
+        }
+      },
+      "instruction_counts": [
+        20
+      ],
+      "leaf_adapter_sha256": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+      "lifetime": "netlink-sound-driver",
+      "limitations": [
+        "Constructed inputs; stop at indirect destination before executing its handler",
+        "No natural sound-event semantics, device/SCSP/DSP model or hardware timing",
+        "Not every caller, memory state, dynamic target or whole-program function"
+      ],
+      "load_address": 0,
+      "model_cycle_counts": [
+        238,
+        240,
+        242,
+        244
+      ],
+      "module": "NLSND",
+      "native_identity": {
+        "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+        "flags": [
+          "-std=c11",
+          "-O2",
+          "-shared",
+          "-fPIC",
+          "-DM68K_INSTRUCTION_HOOK=1",
+          "-DM68K_SEPARATE_READS=1",
+          "-Wl,-z,defs"
+        ],
+        "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+      },
+      "observed_constructed_targets": {
+        "0x40c8": [
+          "0x4124",
+          "0x4128",
+          "0x412c",
+          "0x4130",
+          "0x4134",
+          "0x4138",
+          "0x413c",
+          "0x4140"
+        ],
+        "0x40d2": [
+          "0x414c",
+          "0x4150",
+          "0x4154",
+          "0x4158",
+          "0x415c",
+          "0x4160",
+          "0x4164",
+          "0x4168"
+        ],
+        "0x40dc": [
+          "0x4138",
+          "0x413c",
+          "0x4140",
+          "0x4144",
+          "0x4148",
+          "0x414c",
+          "0x4150",
+          "0x4154"
+        ],
+        "0x40e6": [
+          "0x4160",
+          "0x4164",
+          "0x4168",
+          "0x416c",
+          "0x4170",
+          "0x4174",
+          "0x4178",
+          "0x417c"
+        ],
+        "0x40f0": [
+          "0x4174",
+          "0x4178",
+          "0x417c",
+          "0x4180",
+          "0x4184",
+          "0x4188",
+          "0x418c",
+          "0x4190"
+        ]
+      },
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "execution_escape": "instruction-access",
+          "forbidden_write": "forbidden-write",
+          "nonreturning": "instruction-budget",
+          "unmapped_read": "unmapped-data-read"
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false,
+        "positive_steps": 2
+      },
+      "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+      "private_report_sha256": "ab7a545316a08d777874c5504471ec9ecc0380f61d1a87d8e3623c58f7adc5d5",
+      "probe_sha256": "5cd9f12d1f092af402fd5d3abcf644d4228472e77c2e6841e9b34470b9602361",
+      "ranges_sha256": {
+        "40c8:40d2": "331065a735fce33eb98198f0722ca425018c34f26cb81f77a98d13d901638897",
+        "40d2:40dc": "b4119cc38536cbc293e37c87873edbdc326d14b43c59c0c4712dcf2009db0a0a",
+        "40dc:40e6": "dd2e247660882fc1f71f3252cba07593e0c92c1cdc04ab25b35da317a2c94f2a",
+        "40e6:40f0": "92130f134b878c02d5cc0587891a77ff4ef560fd05b936d0cb182c5be5737fcd",
+        "40f0:40fa": "de5e74a35cd86b4849aef9121f0a8dbfbd3951ee27a95e0e87469e46cf57fe63",
+        "4104:4124": "2bc436fa50dd328d8408884b6afd5558c995306fb9db82f50379d378db5490fa",
+        "4b00:4b1c": "cda52ce0886da259a094a16fcbc0688aeb37fbb6a3282fbf9ad2b4041de14bb3"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "e3e9ddc45485c3346da4fa67b9b5da0648fd90a1e491d1727d8d2fdf7f45fe62",
+      "schema": "neptune.original-m68k-dispatch.v1",
+      "source_path": "NETLINK/SNDDRV.BIN",
+      "status": "success",
+      "two_complete_reports_equal": true
+    },
+    "nlsnd-leaf-001": {
+      "bridge_sha256": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+      "cases": 88,
+      "cpu": "m68000",
+      "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+      "entry": 19200,
+      "exclusive_end": 19228,
+      "experiment": "EXP-SAT-CODE-005",
+      "instruction_controls": {
+        "changed_A4_increment": {
+          "address": "0x4b08",
+          "mutated_driver_sha256": "cfba7b363423b76fc45ea200aa5f30d2e401a3a98488905d3c969ecf124fafda",
+          "reasons": [
+            "Original register result differs from independent contract"
+          ],
+          "rejected": 88,
+          "tested": 88
+        },
+        "missing_A6_copy": {
+          "address": "0x4b0c",
+          "mutated_driver_sha256": "2c97314a0dcbba02d3e8f70ae913f071fd9a625bfbcfc075c51cc56a8220b079",
+          "reasons": [
+            "Original register result differs from independent contract"
+          ],
+          "rejected": 88,
+          "tested": 88
+        },
+        "nonreturning": {
+          "address": "0x4b1a",
+          "mutated_driver_sha256": "531d42feb317f281af027ba29bae5aeb9c05f211710329cfdcc59ee97b678abc",
+          "reasons": [
+            "Native guard: instruction-budget"
+          ],
+          "rejected": 88,
+          "tested": 88
+        }
+      },
+      "instruction_counts": [
+        7
+      ],
+      "instruction_range_sha256": "cda52ce0886da259a094a16fcbc0688aeb37fbb6a3282fbf9ad2b4041de14bb3",
+      "lifetime": "netlink-sound-driver",
+      "limitations": [
+        "Isolated original instructions with constructed data/stack/register state",
+        "No natural load/caller, hardware timing, SCSP/DSP or audio semantics",
+        "Musashi lineage is not an independent hardware oracle",
+        "Unknown whole-program/function denominator; programme incomplete"
+      ],
+      "load_address": 0,
+      "model_cycle_counts": [
+        88
+      ],
+      "module": "NLSND",
+      "native_identity": {
+        "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+        "flags": [
+          "-std=c11",
+          "-O2",
+          "-shared",
+          "-fPIC",
+          "-DM68K_INSTRUCTION_HOOK=1",
+          "-DM68K_SEPARATE_READS=1",
+          "-Wl,-z,defs"
+        ],
+        "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+      },
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "failure_controls": {
+          "execution_escape": "instruction-access",
+          "forbidden_write": "forbidden-write",
+          "nonreturning": "instruction-budget",
+          "unmapped_read": "unmapped-data-read"
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false,
+        "positive_steps": 2
+      },
+      "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+      "private_report_sha256": "8a89090f33da392098799219f11a157b77b29adc506d34f6197645bf825de9f4",
+      "probe_sha256": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "6e747d0361abed4772b611a9326bb6a2b5032d9896f1d7f7fbf9184784d44df1",
+      "schema": "neptune.original-m68k-pointer.v1",
+      "source_adapter_sha256": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+      "source_path": "NETLINK/SNDDRV.BIN",
+      "status": "success",
+      "two_complete_reports_equal": true
+    }
+  },
+  "intake_base": "be254b056bedacee086d84dd4b36ba25bbe7d631",
+  "issue": 600,
+  "limitations": [
+    "Original CPU-only helper and bounded wrapper-dispatch paths with constructed RAM/registers",
+    "Stop before handlers; no natural sound-event, SCSP/DSP, hardware timing or whole-program completion"
+  ],
+  "preparation": {
+    "binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+    "compile_exit": 0,
+    "compile_timeout_seconds": 60,
+    "compiler": "cc (Debian 14.2.0-19) 14.2.0",
+    "identity": {
+      "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+      "flags": [
+        "-std=c11",
+        "-O2",
+        "-shared",
+        "-fPIC",
+        "-DM68K_INSTRUCTION_HOOK=1",
+        "-DM68K_SEPARATE_READS=1",
+        "-Wl,-z,defs"
+      ],
+      "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+    },
+    "limitations": [
+      "CPU interpreter only; no device or SCSP model; serialized process-global CPU",
+      "Synthetic reset then explicit registers; no original reset executed",
+      "Model cycles are not hardware timing or audio samples"
+    ],
+    "owned_smoke": {
+      "failure_controls": {
+        "execution_escape": "instruction-access",
+        "forbidden_write": "forbidden-write",
+        "nonreturning": "instruction-budget",
+        "unmapped_read": "unmapped-data-read"
+      },
+      "fresh_after_failure": true,
+      "original_game_bytes_executed": false,
+      "positive_steps": 2
+    },
+    "preparation_has_original_inputs": false,
+    "schema": "neptune.prepared-m68k.v1",
+    "source_files": {
+      "runtime/third_party/musashi/README.md": "a0ba3677996973a30c563e8f5fe82678984483588e013909aaf5c0f42b8aa84c",
+      "runtime/third_party/musashi/history.txt": "0831ee0020bc52399456d76a41c8a16edd0136719ee50eb4df4431d91571ed15",
+      "runtime/third_party/musashi/m68k.h": "7fb10f51ee36d45f6e2be38d72aa0c57853810a816f1cf19e0f0c600bd1afa4a",
+      "runtime/third_party/musashi/m68kconf.h": "236bfbbae2d19c2bc3c3455340dafd3a086a86d2de6f19371eb9c27be8de8abf",
+      "runtime/third_party/musashi/m68kcpu.c": "0d98c1bfd104929ca393ab6020c05adaa3de5433961cbf924d0ab78a82778405",
+      "runtime/third_party/musashi/m68kcpu.h": "372d2086a9c39aadf87d9e0fa42104c5849bd4972ce74b191c0d458208193635",
+      "runtime/third_party/musashi/m68kdasm.c": "c31b1d3a9863c4271fd0ddcddf3cde8fadac691909ca994db6ec41941696dca2",
+      "runtime/third_party/musashi/m68kfpu.c": "e86c9eaaa51993c2d0fac1f6d489bafbe3d4209ff74163e97b7720011fe4327a",
+      "runtime/third_party/musashi/m68kmmu.h": "66bdbef424dc672c79d316cad6060d487a9cd574b0c12d008e82505a4a27df89",
+      "runtime/third_party/musashi/m68kops.c": "f36a23ff55ba012081b0b28815c23c975782dbca5eb1e10dbaf8825d14bb117e",
+      "runtime/third_party/musashi/m68kops.h": "f7a4709892d071901c677afafbab575fd99945c76cf1e9869789b54fac13199a",
+      "runtime/third_party/musashi/readme.txt": "ecff54ee43a229d39aaa6def046c95d5133f8f936ba83a6e62af50ac01832a4f",
+      "runtime/third_party/musashi/softfloat/README.txt": "c71e555b87858bcbd6629ca2a1b181babaf8fe129172c15489a9eeeb56a6dc1f",
+      "runtime/third_party/musashi/softfloat/mamesf.h": "0060a07e2a2292bb98a79917a8ddd02ae3225173ce37d919eb7e76a8cc661aac",
+      "runtime/third_party/musashi/softfloat/milieu.h": "48da7850cbd2481c3d87f7bde42815d0e64d08a2772afb847b5f91d90afcf9be",
+      "runtime/third_party/musashi/softfloat/softfloat-macros": "003fd1da7dac65e74c3129af0a45a2fb238140d281ccf456b2f3d18ac633e840",
+      "runtime/third_party/musashi/softfloat/softfloat-specialize": "ec8df128b1ebd711215e39d35ac62c8bde59f8bcd0cf88718d8fa5d18a475d72",
+      "runtime/third_party/musashi/softfloat/softfloat.c": "a9249098c1be64f346a20d72250be47e779764819afed2c6ecce7f8687476db6",
+      "runtime/third_party/musashi/softfloat/softfloat.h": "5cf048506ee233be66e1ec0ce7f15e0184e3758c14c41829a7f3ab0195f7b509"
+    },
+    "source_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+    "status": "ready"
+  },
+  "schema": "neptune.original-netlink-m68k-summary.v1",
+  "source_head_dispatch": "9f792b88c70afec360fc8ad7f317ebc4d4501e99",
+  "source_head_leaf": "173bef4caf2bf12b95f67b962e40fbbcf13681c4"
+}
