@@ -1,0 +1,659 @@
+{
+  "aggregate_controls": {
+    "addition_instead_of_subtraction": {
+      "rejected": 107,
+      "tested": 193
+    },
+    "missing_R14_return_delay_restore": {
+      "rejected": 193,
+      "tested": 193
+    },
+    "missing_equality_skip": {
+      "rejected": 17,
+      "tested": 193
+    },
+    "missing_subtraction_delay_store": {
+      "rejected": 110,
+      "tested": 193
+    },
+    "only_seventeen_records": {
+      "rejected": 176,
+      "tested": 193
+    },
+    "signed_delta_comparison": {
+      "rejected": 108,
+      "tested": 193
+    },
+    "signed_first_comparison": {
+      "rejected": 110,
+      "tested": 193
+    },
+    "undeclared_adjacent_alias": {
+      "rejected": 193,
+      "tested": 193
+    },
+    "zero_floor_and_threshold": {
+      "rejected": 176,
+      "tested": 193
+    }
+  },
+  "cases_per_complete_run": 7568,
+  "completed_remaining_checkpoint": "/home/dev/neptune-research-private/635/record-delta-5t5n2gh0/supervisor.json",
+  "families": {
+    "boundary": {
+      "actual_full18_loop_cases": 528,
+      "cases": 576,
+      "cpu": "sh2",
+      "end_exclusive": 100690916,
+      "entry": 100690844,
+      "event_count_range": [
+        6,
+        87
+      ],
+      "experiment": "EXP-SAT-CODE-017",
+      "instruction_controls": {
+        "addition_instead_of_subtraction": {
+          "mutated_kernel_sha256": "405595fe81e1b5a42d37821021d5aab318d690a13db01ab67c4ec3427d053033",
+          "pc": 100690892,
+          "reasons": [
+            "Exact read/write transactions differ",
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 27,
+          "tested": 64
+        },
+        "missing_R14_return_delay_restore": {
+          "mutated_kernel_sha256": "ebbe61a673ec46f43bda5332a38be6641f874d9cf2eacd9141d27048c3b5af2d",
+          "pc": 100690914,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 64,
+          "tested": 64
+        },
+        "missing_equality_skip": {
+          "mutated_kernel_sha256": "1f8c2f1bf8fd759afc311f9112b4fdd9b5e1d3a916c487a5f8acb2d24b1992d1",
+          "pc": 100690856,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 6,
+          "tested": 64
+        },
+        "missing_subtraction_delay_store": {
+          "mutated_kernel_sha256": "a99564a7fa43090ccb80b92dcc54cfd247fa10c07db3ef5f830ec6bf4638a0b1",
+          "pc": 100690896,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 27,
+          "tested": 64
+        },
+        "only_seventeen_records": {
+          "mutated_kernel_sha256": "fbee42ed51a9285ed3cc19a722066a5732e98bd72d4d5be89ca50599e0342980",
+          "pc": 100690868,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 58,
+          "tested": 64
+        },
+        "signed_delta_comparison": {
+          "mutated_kernel_sha256": "90ea0388e2fc5ee079c9e866cdbdedfddd27d1b8dd50a8673bebd56c996b7c6e",
+          "pc": 100690886,
+          "reasons": [
+            "Executed PC/delay path differs",
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 29,
+          "tested": 64
+        },
+        "signed_first_comparison": {
+          "mutated_kernel_sha256": "70066d7aa3f0b41df8e38d76755cd74ecb0e18e3d18cdbdb199bf11b834ab5e4",
+          "pc": 100690880,
+          "reasons": [
+            "Executed PC/delay path differs"
+          ],
+          "rejected": 29,
+          "tested": 64
+        },
+        "undeclared_adjacent_alias": {
+          "mutated_kernel_sha256": "3e1a729f4838bf6fbe97c133355c8023785f8781435a1821ac1961851a005ab6",
+          "pc": 100691456,
+          "reasons": [
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Read through undeclared alias'}"
+          ],
+          "rejected": 64,
+          "tested": 64
+        },
+        "zero_floor_and_threshold": {
+          "mutated_kernel_sha256": "0b3581bf522eab0e349c0a190a166ce3415e153ac780d0a10365a27a50745220",
+          "pc": 100690862,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 58,
+          "tested": 64
+        }
+      },
+      "instruction_count_range": [
+        9,
+        315
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed sample/previous/records/registers; natural clock/timer/gameplay role unknown",
+        "Complete18-record CPU routine on selected cases; not all machine states or whole kernel",
+        "Pinned CPU-only interpreter, no hardware/timing/independent-engine validation",
+        "Whole-program/function/dynamic-target denominators remain unknown"
+      ],
+      "literal_sha256": "54efffc651b3a0a4a9f33d5dc4b54ddefcb931746562f94ea9c8163acb89022f",
+      "load_address": 100687872,
+      "max_steps_per_call": 1024,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "coherent_canonical_alias_reads": true,
+        "failure_controls": {
+          "alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "alias_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "invalid_alias_configuration": {
+            "rejected": true
+          },
+          "partial_alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          },
+          "readonly_sample": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unknown_alias": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/635/record-delta-5a_rh8lu/boundary",
+      "private_report_sha256": "c7eddafc57b7ba29db78f3a9667258ed51dbc65326b72ee67502622f8e3042b1",
+      "range_sha256": "6315321c05745e2ff4d27a35a01c4ec3d94eafc6ff5149e3aec541db95f52e0b",
+      "readonly_aliases": [
+        [
+          637558840,
+          100687928,
+          4
+        ]
+      ],
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "7b723ce9c1d4b081ce3c5b032e5e660610487c75712708d9c3d5e92a6757c282",
+      "schema": "neptune.original-sh2-record-delta.v1",
+      "selection": "boundary",
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_record_delta.py": "0e23df8655b3b3d9478794f162745540bd790af6b685d761d123eaf01e4d55b7",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_profile.py": "26c22576b6398b9f96a1f9b7a2407e4e400c634afcc82d3e916f6b99507087d5"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true,
+      "unchanged_sample_cases": 48
+    },
+    "flags": {
+      "actual_full18_loop_cases": 512,
+      "cases": 512,
+      "cpu": "sh2",
+      "end_exclusive": 100690916,
+      "entry": 100690844,
+      "event_count_range": [
+        27,
+        99
+      ],
+      "experiment": "EXP-SAT-CODE-017",
+      "instruction_controls": {
+        "addition_instead_of_subtraction": {
+          "mutated_kernel_sha256": "405595fe81e1b5a42d37821021d5aab318d690a13db01ab67c4ec3427d053033",
+          "pc": 100690892,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 63,
+          "tested": 64
+        },
+        "missing_R14_return_delay_restore": {
+          "mutated_kernel_sha256": "ebbe61a673ec46f43bda5332a38be6641f874d9cf2eacd9141d27048c3b5af2d",
+          "pc": 100690914,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 64,
+          "tested": 64
+        },
+        "missing_equality_skip": {
+          "mutated_kernel_sha256": "1f8c2f1bf8fd759afc311f9112b4fdd9b5e1d3a916c487a5f8acb2d24b1992d1",
+          "pc": 100690856,
+          "reasons": [],
+          "rejected": 0,
+          "tested": 64
+        },
+        "missing_subtraction_delay_store": {
+          "mutated_kernel_sha256": "a99564a7fa43090ccb80b92dcc54cfd247fa10c07db3ef5f830ec6bf4638a0b1",
+          "pc": 100690896,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 63,
+          "tested": 64
+        },
+        "only_seventeen_records": {
+          "mutated_kernel_sha256": "fbee42ed51a9285ed3cc19a722066a5732e98bd72d4d5be89ca50599e0342980",
+          "pc": 100690868,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 64,
+          "tested": 64
+        },
+        "signed_delta_comparison": {
+          "mutated_kernel_sha256": "90ea0388e2fc5ee079c9e866cdbdedfddd27d1b8dd50a8673bebd56c996b7c6e",
+          "pc": 100690886,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 63,
+          "tested": 64
+        },
+        "signed_first_comparison": {
+          "mutated_kernel_sha256": "70066d7aa3f0b41df8e38d76755cd74ecb0e18e3d18cdbdb199bf11b834ab5e4",
+          "pc": 100690880,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 63,
+          "tested": 64
+        },
+        "undeclared_adjacent_alias": {
+          "mutated_kernel_sha256": "3e1a729f4838bf6fbe97c133355c8023785f8781435a1821ac1961851a005ab6",
+          "pc": 100691456,
+          "reasons": [
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Read through undeclared alias'}"
+          ],
+          "rejected": 64,
+          "tested": 64
+        },
+        "zero_floor_and_threshold": {
+          "mutated_kernel_sha256": "0b3581bf522eab0e349c0a190a166ce3415e153ac780d0a10365a27a50745220",
+          "pc": 100690862,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 64,
+          "tested": 64
+        }
+      },
+      "instruction_count_range": [
+        163,
+        343
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed sample/previous/records/registers; natural clock/timer/gameplay role unknown",
+        "Complete18-record CPU routine on selected cases; not all machine states or whole kernel",
+        "Pinned CPU-only interpreter, no hardware/timing/independent-engine validation",
+        "Whole-program/function/dynamic-target denominators remain unknown"
+      ],
+      "literal_sha256": "54efffc651b3a0a4a9f33d5dc4b54ddefcb931746562f94ea9c8163acb89022f",
+      "load_address": 100687872,
+      "max_steps_per_call": 1024,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "coherent_canonical_alias_reads": true,
+        "failure_controls": {
+          "alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "alias_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "invalid_alias_configuration": {
+            "rejected": true
+          },
+          "partial_alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          },
+          "readonly_sample": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unknown_alias": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/635/record-delta-5t5n2gh0/flags",
+      "private_report_sha256": "274f2c3e252be54b06fb4ab94860e7d691704bbd80a10a107fcd9bd610fdb2d7",
+      "range_sha256": "6315321c05745e2ff4d27a35a01c4ec3d94eafc6ff5149e3aec541db95f52e0b",
+      "readonly_aliases": [
+        [
+          637558840,
+          100687928,
+          4
+        ]
+      ],
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "25e500d27f896db8a205a24348fb6fa8949e40b21adffed913442d53af712c46",
+      "schema": "neptune.original-sh2-record-delta.v1",
+      "selection": "flags",
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_record_delta.py": "0e23df8655b3b3d9478794f162745540bd790af6b685d761d123eaf01e4d55b7",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_profile.py": "26c22576b6398b9f96a1f9b7a2407e4e400c634afcc82d3e916f6b99507087d5"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true,
+      "unchanged_sample_cases": 0
+    },
+    "records": {
+      "actual_full18_loop_cases": 5400,
+      "cases": 6480,
+      "cpu": "sh2",
+      "end_exclusive": 100690916,
+      "entry": 100690844,
+      "event_count_range": [
+        6,
+        99
+      ],
+      "experiment": "EXP-SAT-CODE-017",
+      "instruction_controls": {
+        "addition_instead_of_subtraction": {
+          "mutated_kernel_sha256": "405595fe81e1b5a42d37821021d5aab318d690a13db01ab67c4ec3427d053033",
+          "pc": 100690892,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 17,
+          "tested": 65
+        },
+        "missing_R14_return_delay_restore": {
+          "mutated_kernel_sha256": "ebbe61a673ec46f43bda5332a38be6641f874d9cf2eacd9141d27048c3b5af2d",
+          "pc": 100690914,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 65,
+          "tested": 65
+        },
+        "missing_equality_skip": {
+          "mutated_kernel_sha256": "1f8c2f1bf8fd759afc311f9112b4fdd9b5e1d3a916c487a5f8acb2d24b1992d1",
+          "pc": 100690856,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 11,
+          "tested": 65
+        },
+        "missing_subtraction_delay_store": {
+          "mutated_kernel_sha256": "a99564a7fa43090ccb80b92dcc54cfd247fa10c07db3ef5f830ec6bf4638a0b1",
+          "pc": 100690896,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 20,
+          "tested": 65
+        },
+        "only_seventeen_records": {
+          "mutated_kernel_sha256": "fbee42ed51a9285ed3cc19a722066a5732e98bd72d4d5be89ca50599e0342980",
+          "pc": 100690868,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 54,
+          "tested": 65
+        },
+        "signed_delta_comparison": {
+          "mutated_kernel_sha256": "90ea0388e2fc5ee079c9e866cdbdedfddd27d1b8dd50a8673bebd56c996b7c6e",
+          "pc": 100690886,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 16,
+          "tested": 65
+        },
+        "signed_first_comparison": {
+          "mutated_kernel_sha256": "70066d7aa3f0b41df8e38d76755cd74ecb0e18e3d18cdbdb199bf11b834ab5e4",
+          "pc": 100690880,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 18,
+          "tested": 65
+        },
+        "undeclared_adjacent_alias": {
+          "mutated_kernel_sha256": "3e1a729f4838bf6fbe97c133355c8023785f8781435a1821ac1961851a005ab6",
+          "pc": 100691456,
+          "reasons": [
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Read through undeclared alias'}"
+          ],
+          "rejected": 65,
+          "tested": 65
+        },
+        "zero_floor_and_threshold": {
+          "mutated_kernel_sha256": "0b3581bf522eab0e349c0a190a166ce3415e153ac780d0a10365a27a50745220",
+          "pc": 100690862,
+          "reasons": [
+            "Register/PC/SR/PR result differs"
+          ],
+          "rejected": 54,
+          "tested": 65
+        }
+      },
+      "instruction_count_range": [
+        9,
+        343
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed sample/previous/records/registers; natural clock/timer/gameplay role unknown",
+        "Complete18-record CPU routine on selected cases; not all machine states or whole kernel",
+        "Pinned CPU-only interpreter, no hardware/timing/independent-engine validation",
+        "Whole-program/function/dynamic-target denominators remain unknown"
+      ],
+      "literal_sha256": "54efffc651b3a0a4a9f33d5dc4b54ddefcb931746562f94ea9c8163acb89022f",
+      "load_address": 100687872,
+      "max_steps_per_call": 1024,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "coherent_canonical_alias_reads": true,
+        "failure_controls": {
+          "alias_fetch": {
+            "executed_instructions": 2,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "alias_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "code_as_data": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "full_loop": {
+            "executed_instructions": 1024,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "invalid_alias_configuration": {
+            "rejected": true
+          },
+          "partial_alias_overrun": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          },
+          "readonly_sample": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "short_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "unknown_alias": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/635/record-delta-5t5n2gh0/records",
+      "private_report_sha256": "65e91af528b202e99e096cb746d3910908f5f5dc0f220142b302a935d09ea9a0",
+      "range_sha256": "6315321c05745e2ff4d27a35a01c4ec3d94eafc6ff5149e3aec541db95f52e0b",
+      "readonly_aliases": [
+        [
+          637558840,
+          100687928,
+          4
+        ]
+      ],
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "66f5f224370d9cd7d3ab0f72a7b929024858369dc3b7c01d63094127d1f5380b",
+      "schema": "neptune.original-sh2-record-delta.v1",
+      "selection": "records",
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_record_delta.py": "0e23df8655b3b3d9478794f162745540bd790af6b685d761d123eaf01e4d55b7",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_profile.py": "26c22576b6398b9f96a1f9b7a2407e4e400c634afcc82d3e916f6b99507087d5"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true,
+      "unchanged_sample_cases": 1080
+    }
+  },
+  "limits": {
+    "address_space_maximum_bytes": 2147483648,
+    "command_seconds": 60,
+    "continuity_enabled": false,
+    "host_shared": 3,
+    "nice": 10,
+    "own_lease_seconds": 180,
+    "provider_calls": 0
+  },
+  "original_game_bytes_executed": true,
+  "retained_partial_admission_checkpoint": "/home/dev/neptune-research-private/635/record-delta-5a_rh8lu/supervisor.json",
+  "schema": "neptune.original-record-delta-evidence.v1",
+  "source_execution_head": "7b0302efc781211d3780fa281e588ccad85d7731",
+  "source_only_ci": {
+    "artifact_id": 13156818200,
+    "artifact_sha256": "548a376f9186ed1f98fc25add66be1bdfaeb7eaeaeb7b0786931bfc9ab52bccc",
+    "original_game_bytes_executed": false,
+    "run_id": 41476199167
+  },
+  "status": "success",
+  "whole_program_status": "active; incomplete"
+}
