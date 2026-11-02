@@ -64,7 +64,7 @@ class FeatureContractTests(unittest.TestCase):
     def test_actual_comparator_and_task_binding_are_additive_to_path_checks(self):
         result = self.run_contract()
         self.assertEqual(result["schema"], verify.SCHEMA)
-        self.assertEqual(len(self.fixture.calls), 5)
+        self.assertEqual(len(self.fixture.calls), len(verify.gate.CORE))
         self.assertEqual(list(result["checks"]), list(verify.gate.CORE))
         self.assertEqual(result["task_binding"], self.fixture.bind())
         check = result["feature_checks"][features.NAME]
@@ -165,12 +165,14 @@ class FeatureContractTests(unittest.TestCase):
                 self.rejected(name)
 
     def test_replacement_during_path_checks_cannot_pass_cached_observations(self):
+        final_check = len(verify.selection(self.fixture.paths)["required"])
         def runner(command, **kwargs):
             result = self.fixture.runner(command, **kwargs)
-            if len(self.fixture.calls) == 5:
+            if len(self.fixture.calls) == final_check:
                 (self.artifacts / "candidate.json").write_text('{"status":"success"}')
             return result
         self.rejected(runner=runner)
+        self.assertEqual(len(self.fixture.calls), final_check)
 
     def test_artifact_mount_cannot_be_candidate_source_or_output(self):
         self.rejected("inside-source", artifacts=self.fixture.root)
@@ -178,13 +180,15 @@ class FeatureContractTests(unittest.TestCase):
         self.rejected("inside-output", artifacts=output)
 
     def test_intake_revision_change_after_execution_fails(self):
+        final_check = len(verify.selection(self.fixture.paths)["required"])
         def runner(command, **kwargs):
             result = self.fixture.runner(command, **kwargs)
-            if len(self.fixture.calls) == 5:
+            if len(self.fixture.calls) == final_check:
                 self.snapshot["task"]["revision"] = "0" * 64
                 self.fixture.save_snapshot(self.snapshot)
             return result
         self.rejected(runner=runner)
+        self.assertEqual(len(self.fixture.calls), final_check)
 
 
 if __name__ == "__main__":

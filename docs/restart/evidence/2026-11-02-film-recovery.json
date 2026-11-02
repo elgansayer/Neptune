@@ -1,0 +1,850 @@
+{
+  "commands": [
+    {
+      "argv": [
+        "ffmpeg",
+        "-version"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "b241942a091ee91966e5b04017a34f1f2a3bcfb1cf80a195e274db03874459d9"
+    },
+    {
+      "argv": [
+        "ffprobe",
+        "-version"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "02412fef1eca820a65af53c5fa03b637f92ef643783005ccf9c4b4e3a31fb699"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS1.CPK",
+        "-map",
+        "0:a:0",
+        "-c:a",
+        "pcm_s8",
+        "-f",
+        "s8",
+        "-fs",
+        "4417057",
+        "$OUTPUT/BOMSS1/ffmpeg-audio.s8"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$OUTPUT/BOMSS1/audio.wav",
+        "-map",
+        "0:a:0",
+        "-c:a",
+        "pcm_s8",
+        "-f",
+        "s8",
+        "-fs",
+        "4417057",
+        "$OUTPUT/BOMSS1/ffmpeg-wave-roundtrip.s8"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS1.CPK",
+        "-map",
+        "0:v:0",
+        "-an",
+        "-pix_fmt",
+        "rgb24",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "$OUTPUT/BOMSS1/video-run1.framehash"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS1.CPK",
+        "-map",
+        "0:v:0",
+        "-an",
+        "-pix_fmt",
+        "rgb24",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "$OUTPUT/BOMSS1/video-run2.framehash"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration:stream=index,codec_type,time_base,duration,r_frame_rate",
+        "-of",
+        "json",
+        "$INPUT/BOMSS1.CPK"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "2eb1d6f2b9a8c6f56e16fd00d4efc6ab2454d2b1de4a231c4c19ef50557c8080"
+    },
+    {
+      "argv": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-select_streams",
+        "v:0",
+        "-show_packets",
+        "-show_entries",
+        "packet=pts,duration,flags",
+        "-of",
+        "json",
+        "$INPUT/BOMSS1.CPK"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "a91e87956b4498e6146a3a5309e830ee80c9e3c600375a9c891d390c517837db"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS2.CPK",
+        "-map",
+        "0:a:0",
+        "-c:a",
+        "pcm_s8",
+        "-f",
+        "s8",
+        "-fs",
+        "5018585",
+        "$OUTPUT/BOMSS2/ffmpeg-audio.s8"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$OUTPUT/BOMSS2/audio.wav",
+        "-map",
+        "0:a:0",
+        "-c:a",
+        "pcm_s8",
+        "-f",
+        "s8",
+        "-fs",
+        "5018585",
+        "$OUTPUT/BOMSS2/ffmpeg-wave-roundtrip.s8"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS2.CPK",
+        "-map",
+        "0:v:0",
+        "-an",
+        "-pix_fmt",
+        "rgb24",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "$OUTPUT/BOMSS2/video-run1.framehash"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS2.CPK",
+        "-map",
+        "0:v:0",
+        "-an",
+        "-pix_fmt",
+        "rgb24",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "$OUTPUT/BOMSS2/video-run2.framehash"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration:stream=index,codec_type,time_base,duration,r_frame_rate",
+        "-of",
+        "json",
+        "$INPUT/BOMSS2.CPK"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "6a85d225ef35825f5ce531b6f76c46027f95b17d03c89e72d06bb44aee487bfd"
+    },
+    {
+      "argv": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-select_streams",
+        "v:0",
+        "-show_packets",
+        "-show_entries",
+        "packet=pts,duration,flags",
+        "-of",
+        "json",
+        "$INPUT/BOMSS2.CPK"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "71e0464d073c86c4608f8df0aaa4bb0f8fc960e38548f6ed636c6cafa951bab7"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS3.CPK",
+        "-map",
+        "0:a:0",
+        "-c:a",
+        "pcm_s8",
+        "-f",
+        "s8",
+        "-fs",
+        "5854721",
+        "$OUTPUT/BOMSS3/ffmpeg-audio.s8"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$OUTPUT/BOMSS3/audio.wav",
+        "-map",
+        "0:a:0",
+        "-c:a",
+        "pcm_s8",
+        "-f",
+        "s8",
+        "-fs",
+        "5854721",
+        "$OUTPUT/BOMSS3/ffmpeg-wave-roundtrip.s8"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS3.CPK",
+        "-map",
+        "0:v:0",
+        "-an",
+        "-pix_fmt",
+        "rgb24",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "$OUTPUT/BOMSS3/video-run1.framehash"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffmpeg",
+        "-v",
+        "error",
+        "-xerror",
+        "-nostdin",
+        "-n",
+        "-threads",
+        "1",
+        "-i",
+        "$INPUT/BOMSS3.CPK",
+        "-map",
+        "0:v:0",
+        "-an",
+        "-pix_fmt",
+        "rgb24",
+        "-fps_mode",
+        "passthrough",
+        "-threads",
+        "1",
+        "-f",
+        "framehash",
+        "$OUTPUT/BOMSS3/video-run2.framehash"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-show_entries",
+        "format=duration:stream=index,codec_type,time_base,duration,r_frame_rate",
+        "-of",
+        "json",
+        "$INPUT/BOMSS3.CPK"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "83294f98b101e124688ee40162d54f2c90f28a05b14df400e62cc65d9b618776"
+    },
+    {
+      "argv": [
+        "ffprobe",
+        "-v",
+        "error",
+        "-select_streams",
+        "v:0",
+        "-show_packets",
+        "-show_entries",
+        "packet=pts,duration,flags",
+        "-of",
+        "json",
+        "$INPUT/BOMSS3.CPK"
+      ],
+      "exit_code": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "90c13783990e15a79a0d82524e0ca9af004390b97f8c34a5abc6f46f99334517"
+    }
+  ],
+  "lineage": "prior-assets-unresolved-release",
+  "python": "3.12.14",
+  "results": [
+    {
+      "asset_name": "BOMSS1.CPK",
+      "external_validation": {
+        "all_ffprobe_packet_pts_durations_and_keyframes_match_stab": true,
+        "ffmpeg_pcm_s8_sha256": "81918289f4d8fe0f299fa3dc32b85b29ba491fc175d00699b948269369e74364",
+        "ffprobe": {
+          "format": {
+            "duration": "100.160000"
+          },
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_type": "video",
+              "duration": "4.173333",
+              "index": 0,
+              "r_frame_rate": "25/1",
+              "time_base": "1/600"
+            },
+            {
+              "codec_type": "audio",
+              "duration": "100.160000",
+              "index": 1,
+              "r_frame_rate": "0/0",
+              "time_base": "1/22050"
+            }
+          ]
+        },
+        "ffprobe_stream_duration_used_as_timing_oracle": false,
+        "first_frame": "0,          0,          0,        1,   153600, ec14bdeabe1338960016c32cd5f3e467beb02e15bd7bdd035bc1e50b899b4db3",
+        "last_frame": "0,       2503,       2503,        1,   153600, 81e85dd30d6fa7fe190a4b2826d533a3945df895b24fc0b22fc8968dae662a41",
+        "pcm_matches_all_samples": true,
+        "two_video_framehash_runs_identical": true,
+        "video_decoded_frames": 2504,
+        "video_framehash_sha256": "4bbe13fbcce5fae84c3990066e670b908e8bf98b033711b715813671634516d9",
+        "wave_decodes_to_same_pcm": true
+      },
+      "negative_controls": {
+        "changed_packet_tick_detected": true,
+        "changed_recovered_audio_bit_detected": true,
+        "one_tick_duration_drift_rejected": true,
+        "overlapping_packet_rejected": true,
+        "truncated_payload_rejected": true,
+        "unsupported_version_rejected": true,
+        "wrong_planar_passthrough_detected": true
+      },
+      "report": {
+        "accounting": {
+          "header_bytes": 46528,
+          "packet_bytes": 27688580,
+          "packet_table_sha256": "8521f9ea098a4d9cdf451156f1c97c19abb7af2ff6ca87965f97b035de4da7f6",
+          "packets": 2904,
+          "unaccounted_bytes": 0
+        },
+        "artifacts": {
+          "audio.s8": {
+            "bytes": 4417056,
+            "sha256": "81918289f4d8fe0f299fa3dc32b85b29ba491fc175d00699b948269369e74364"
+          },
+          "audio.wav": {
+            "bytes": 4417100,
+            "sha256": "35c5bd879b4e27b9364fea8b09895f2539a73cc0f1cee014c7ee49a144d3e53c"
+          },
+          "sample-table.json": {
+            "sha256": "8521f9ea098a4d9cdf451156f1c97c19abb7af2ff6ca87965f97b035de4da7f6"
+          }
+        },
+        "audio": {
+          "channels": 2,
+          "duration_seconds": {
+            "denominator": 25,
+            "numerator": 2504
+          },
+          "packets": 400,
+          "pcm_bytes": 4417056,
+          "pcm_s8_sha256": "81918289f4d8fe0f299fa3dc32b85b29ba491fc175d00699b948269369e74364",
+          "recovered_format": "signed-8-interleaved",
+          "sample_frames": 2208528,
+          "sample_rate_hz": 22050,
+          "source_format": "signed-8-planar-per-packet"
+        },
+        "audio_minus_video_seconds": {
+          "denominator": 1,
+          "numerator": 0
+        },
+        "format": "Sega FILM 1.04",
+        "limitations": [
+          "Prior asset container; release not authenticated against a supplied disc.",
+          "Cinepak packets/timing inspected; pixels require an external decoder.",
+          "PCM samples recovered; game trigger mapping and SCSP behaviour remain open.",
+          "No emulator, gameplay, hardware accuracy or Neptune parity established."
+        ],
+        "schema": "neptune.saturn-film-recovery.v1",
+        "source": {
+          "bytes": 27735108,
+          "lineage": "prior-assets-unresolved-release",
+          "pinned_usa_or_japan_original": false,
+          "release_identity": "unresolved",
+          "sha256": "c070db915f55f821e5ff3e7d008723a5eebdd018a9faa26d7a60f7f0efdb35a3"
+        },
+        "video": {
+          "average_frames_per_second": {
+            "denominator": 1,
+            "numerator": 25
+          },
+          "bits_per_pixel": 24,
+          "clock_hz": 600,
+          "codec": "cvid",
+          "compressed_packets_decoded_to_pixels": false,
+          "duration_seconds": {
+            "denominator": 25,
+            "numerator": 2504
+          },
+          "duration_ticks_histogram": {
+            "24": 2504
+          },
+          "end_pts_ticks": 60096,
+          "frames": 2504,
+          "height": 160,
+          "start_pts_ticks": 0,
+          "width": 320
+        }
+      },
+      "source_unchanged": true
+    },
+    {
+      "asset_name": "BOMSS2.CPK",
+      "external_validation": {
+        "all_ffprobe_packet_pts_durations_and_keyframes_match_stab": true,
+        "ffmpeg_pcm_s8_sha256": "8508c5d0ec61be134fbebfe21c94b1355ba469a86b50b477b108a92d27328fc2",
+        "ffprobe": {
+          "format": {
+            "duration": "113.800091"
+          },
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_type": "video",
+              "duration": "4.741667",
+              "index": 0,
+              "r_frame_rate": "25/1",
+              "time_base": "1/600"
+            },
+            {
+              "codec_type": "audio",
+              "duration": "113.800091",
+              "index": 1,
+              "r_frame_rate": "0/0",
+              "time_base": "1/22050"
+            }
+          ]
+        },
+        "ffprobe_stream_duration_used_as_timing_oracle": false,
+        "first_frame": "0,          0,          0,        1,   153600, 0bb9f1fa03ae61782566eecc9bbeca26abf845f3c219b573818439d537fbc6ee",
+        "last_frame": "0,       2844,       2844,        1,   153600, b2ae5c6a161f53ad42b2f000a2cb8e1b5cf1ed300d4c7bea0e7ef055c8e5275e",
+        "pcm_matches_all_samples": true,
+        "two_video_framehash_runs_identical": true,
+        "video_decoded_frames": 2845,
+        "video_framehash_sha256": "ed48486122e2c0fb566b8c750aa97267c2a7f198eb5ce48c213376eef1963fdf",
+        "wave_decodes_to_same_pcm": true
+      },
+      "negative_controls": {
+        "changed_packet_tick_detected": true,
+        "changed_recovered_audio_bit_detected": true,
+        "one_tick_duration_drift_rejected": true,
+        "overlapping_packet_rejected": true,
+        "truncated_payload_rejected": true,
+        "unsupported_version_rejected": true,
+        "wrong_planar_passthrough_detected": true
+      },
+      "report": {
+        "accounting": {
+          "header_bytes": 52864,
+          "packet_bytes": 32149192,
+          "packet_table_sha256": "3ef90cb4bd10dacd6ca7d46ee25ee51157be57513e6ad3bc472146b4728cc81f",
+          "packets": 3300,
+          "unaccounted_bytes": 0
+        },
+        "artifacts": {
+          "audio.s8": {
+            "bytes": 5018584,
+            "sha256": "8508c5d0ec61be134fbebfe21c94b1355ba469a86b50b477b108a92d27328fc2"
+          },
+          "audio.wav": {
+            "bytes": 5018628,
+            "sha256": "fc005cd69ffc162a4475ae7b407d0407f18576d2288e2080f9d1cdb28bfcc340"
+          },
+          "sample-table.json": {
+            "sha256": "3ef90cb4bd10dacd6ca7d46ee25ee51157be57513e6ad3bc472146b4728cc81f"
+          }
+        },
+        "audio": {
+          "channels": 2,
+          "duration_seconds": {
+            "denominator": 11025,
+            "numerator": 1254646
+          },
+          "packets": 455,
+          "pcm_bytes": 5018584,
+          "pcm_s8_sha256": "8508c5d0ec61be134fbebfe21c94b1355ba469a86b50b477b108a92d27328fc2",
+          "recovered_format": "signed-8-interleaved",
+          "sample_frames": 2509292,
+          "sample_rate_hz": 22050,
+          "source_format": "signed-8-planar-per-packet"
+        },
+        "audio_minus_video_seconds": {
+          "denominator": 11025,
+          "numerator": 1
+        },
+        "format": "Sega FILM 1.04",
+        "limitations": [
+          "Prior asset container; release not authenticated against a supplied disc.",
+          "Cinepak packets/timing inspected; pixels require an external decoder.",
+          "PCM samples recovered; game trigger mapping and SCSP behaviour remain open.",
+          "No emulator, gameplay, hardware accuracy or Neptune parity established."
+        ],
+        "schema": "neptune.saturn-film-recovery.v1",
+        "source": {
+          "bytes": 32202056,
+          "lineage": "prior-assets-unresolved-release",
+          "pinned_usa_or_japan_original": false,
+          "release_identity": "unresolved",
+          "sha256": "10f6edcdb39593c7c859f4faf564e4f66b5c0600567f79a9d81a570cd2634bf8"
+        },
+        "video": {
+          "average_frames_per_second": {
+            "denominator": 1,
+            "numerator": 25
+          },
+          "bits_per_pixel": 24,
+          "clock_hz": 600,
+          "codec": "cvid",
+          "compressed_packets_decoded_to_pixels": false,
+          "duration_seconds": {
+            "denominator": 5,
+            "numerator": 569
+          },
+          "duration_ticks_histogram": {
+            "24": 2845
+          },
+          "end_pts_ticks": 68280,
+          "frames": 2845,
+          "height": 160,
+          "start_pts_ticks": 0,
+          "width": 320
+        }
+      },
+      "source_unchanged": true
+    },
+    {
+      "asset_name": "BOMSS3.CPK",
+      "external_validation": {
+        "all_ffprobe_packet_pts_durations_and_keyframes_match_stab": true,
+        "ffmpeg_pcm_s8_sha256": "0ed6b5a2609b3f41e2f084ac2d0f21cb31e52924e103d24b4c22aecf2a720737",
+        "ffprobe": {
+          "format": {
+            "duration": "132.760091"
+          },
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_type": "video",
+              "duration": "5.531667",
+              "index": 0,
+              "r_frame_rate": "25/1",
+              "time_base": "1/600"
+            },
+            {
+              "codec_type": "audio",
+              "duration": "132.760091",
+              "index": 1,
+              "r_frame_rate": "0/0",
+              "time_base": "1/22050"
+            }
+          ]
+        },
+        "ffprobe_stream_duration_used_as_timing_oracle": false,
+        "first_frame": "0,          0,          0,        1,   153600, 1344f4cca0325759fa8b99e2d5d32fe71687985e8a00ba105b1a75fe87a43e9e",
+        "last_frame": "0,       3318,       3318,        1,   153600, 99ab87df67256681e992388af074440fdb37b44299f56f5887fe0e94094544cb",
+        "pcm_matches_all_samples": true,
+        "two_video_framehash_runs_identical": true,
+        "video_decoded_frames": 3319,
+        "video_framehash_sha256": "7f2364a50b98f1b5ec58a7f1a56293bb5857d844acbeada4ec368982625009a6",
+        "wave_decodes_to_same_pcm": true
+      },
+      "negative_controls": {
+        "changed_packet_tick_detected": true,
+        "changed_recovered_audio_bit_detected": true,
+        "one_tick_duration_drift_rejected": true,
+        "overlapping_packet_rejected": true,
+        "truncated_payload_rejected": true,
+        "unsupported_version_rejected": true,
+        "wrong_planar_passthrough_detected": true
+      },
+      "report": {
+        "accounting": {
+          "header_bytes": 61664,
+          "packet_bytes": 33517976,
+          "packet_table_sha256": "c2bd4947afa7d7fc02a374c5f392fd3f3ac14894fa5629e3ef2351c1ae5a850c",
+          "packets": 3850,
+          "unaccounted_bytes": 0
+        },
+        "artifacts": {
+          "audio.s8": {
+            "bytes": 5854720,
+            "sha256": "0ed6b5a2609b3f41e2f084ac2d0f21cb31e52924e103d24b4c22aecf2a720737"
+          },
+          "audio.wav": {
+            "bytes": 5854764,
+            "sha256": "07ab4e2331cb79ab9b6f7182033347c072828d0fa25b52a41a6e7d8364cd8363"
+          },
+          "sample-table.json": {
+            "sha256": "c2bd4947afa7d7fc02a374c5f392fd3f3ac14894fa5629e3ef2351c1ae5a850c"
+          }
+        },
+        "audio": {
+          "channels": 2,
+          "duration_seconds": {
+            "denominator": 2205,
+            "numerator": 292736
+          },
+          "packets": 531,
+          "pcm_bytes": 5854720,
+          "pcm_s8_sha256": "0ed6b5a2609b3f41e2f084ac2d0f21cb31e52924e103d24b4c22aecf2a720737",
+          "recovered_format": "signed-8-interleaved",
+          "sample_frames": 2927360,
+          "sample_rate_hz": 22050,
+          "source_format": "signed-8-planar-per-packet"
+        },
+        "audio_minus_video_seconds": {
+          "denominator": 11025,
+          "numerator": 1
+        },
+        "format": "Sega FILM 1.04",
+        "limitations": [
+          "Prior asset container; release not authenticated against a supplied disc.",
+          "Cinepak packets/timing inspected; pixels require an external decoder.",
+          "PCM samples recovered; game trigger mapping and SCSP behaviour remain open.",
+          "No emulator, gameplay, hardware accuracy or Neptune parity established."
+        ],
+        "schema": "neptune.saturn-film-recovery.v1",
+        "source": {
+          "bytes": 33579640,
+          "lineage": "prior-assets-unresolved-release",
+          "pinned_usa_or_japan_original": false,
+          "release_identity": "unresolved",
+          "sha256": "d5325c7a00562ed494b1349a5452fa33da7ec442ed0dea28a7ba52fd3f0894ba"
+        },
+        "video": {
+          "average_frames_per_second": {
+            "denominator": 1,
+            "numerator": 25
+          },
+          "bits_per_pixel": 24,
+          "clock_hz": 600,
+          "codec": "cvid",
+          "compressed_packets_decoded_to_pixels": false,
+          "duration_seconds": {
+            "denominator": 25,
+            "numerator": 3319
+          },
+          "duration_ticks_histogram": {
+            "24": 3319
+          },
+          "end_pts_ticks": 79656,
+          "frames": 3319,
+          "height": 160,
+          "start_pts_ticks": 0,
+          "width": 320
+        }
+      },
+      "source_unchanged": true
+    }
+  ],
+  "schema": "neptune.prior-assets-film-experiment.v1",
+  "timeout_seconds_per_process": 120,
+  "tool_sources": {
+    "__init__.py": "601f7f5fb1fec4893d688f0a5a02982381003ebf9d8e6dcf892a91d95d2839c7",
+    "check.py": "a4d202d6c511772a2499be051dad883e81dd93b443855861311bfb55f7341c5b",
+    "cli.py": "e62a7883e9114d7e00ec244d52ceeff5887fb77d0e848a4f73e4f145342d5809",
+    "film.py": "25d578650489b72b6a89c58d9ea36c3b794e87bedf0e1249684c3b0515a0ec01",
+    "test_film.py": "4caa93da2d5bf026b4e2ccc827911a33dcb58a8ed0286dec332651a9c705a8ad",
+    "validate_real.py": "7f0d4197aaddcc143c44c1744e584d2f169fb6a8603073f7448104d2782641dc"
+  },
+  "tools": {
+    "ffmpeg": {
+      "executable_sha256": "e8a8d46f5225f3062cec7c07fb145d58ae73c603cb740dcd5bad34bfb54e455a",
+      "version": "ffmpeg version 7.1.5-0+deb13u1 Copyright (c) 2000-2026 the FFmpeg developers"
+    },
+    "ffprobe": {
+      "executable_sha256": "cefc5f81c0b18429cdbf8fa5a89e1e9c759235e10f93f9b329ff1b2fdff26f46",
+      "version": "ffprobe version 7.1.5-0+deb13u1 Copyright (c) 2007-2026 the FFmpeg developers"
+    }
+  }
+}
