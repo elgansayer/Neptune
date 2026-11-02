@@ -51,7 +51,7 @@ def contract(case):
     kind,selector,offset,variant=case;entry=SAVE if kind=='save' else RESTORE
     values=vector(selector);before=records.initial(entry,CTX+offset,variant)
     for i in range(16):
-        if i!=4:before[f'r{i}']=values[i]
+        if i!=4:before[f'r{i}']=values[i]^(0x5A5A5A5A if kind=='restore' else 0)
     before.update(macl=values[16],mach=values[17],gbr=values[18],vbr=values[19],
                   pr=0xFFFFFFF0 if kind=='save' else values[20])
     address=CTX+offset

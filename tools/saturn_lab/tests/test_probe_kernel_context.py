@@ -34,6 +34,7 @@ class KernelContextTests(unittest.TestCase):
         for reg,field in [('r4',0),*[(f'r{i}',4*(i-7)) for i in range(8,16)],('pr',36),('mach',40),('macl',44)]:
             self.assertEqual(m.reg[reg],int.from_bytes(source[16+field:20+field],'big'))
         self.assertNotEqual(m.before['pr'],m.reg['pr'])
+        self.assertTrue(all(m.before[f'r{i}']!=m.reg[f'r{i}'] for i in range(8,16)))
         self.assertEqual(m.reg['r0'],m.before['r5'])
         self.assertEqual(m.trace[-1],[0x06006208,True])
         self.assertEqual(m.buffers[0],source)
