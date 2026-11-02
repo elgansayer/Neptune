@@ -56,9 +56,12 @@ Original6BE4 now has7,736 cases twice:5,340 selected-task handoffs and2,396
 retained bounded waits, real6B9C polls, all18 records, actual root PR6C00 and
 the original128 short refusal.15 mutation controls have non-budget rejections;
 283 tooling tests remain separate. A real no-media check proves the existing
-B934 observer rejects these context entries. Continue issue649's separate bounded
-natural-context observer/capture, then the larger root/task cycle, unresolved17F2
-handlers and further original modules. The
+B934 observer rejects these context entries. Issue649 now has a separate
+ABI2 observer (tool PR650 merged), with actual natural yield/resumed selection
+validated through12 fresh600-frame reference/disabled/enabled runs and exact
+root handoff continuity. See the current checkpoint for evidence/publication.
+Fresh6BE4 entry remains missing: continue bounded early-boot capture, then the
+larger root/task cycle, unresolved17F2 handlers and further original modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
 

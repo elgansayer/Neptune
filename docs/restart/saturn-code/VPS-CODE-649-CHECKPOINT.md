@@ -74,11 +74,12 @@ hidden broker/authority. All own leases released. CI/account spend unknown.
 
 ## Next work
 
-PR650 must merge only its updated4a0ee63 head after **all** applicable exact-head/
-current-base checks pass. Both native preparation runs41498217240/41498286512
-must be reconciled; the old8d3e391 green head is superseded by the actual failure.
-Then merge accepted main into the capture branch, create its evidence/driver PR,
-run applicable checks and merge normally. Keep649 open for missing fresh entry.
+PR650 merged normally at`f1423251f173161c310a06fbdf5c29014c8230d2` after all15
+checks on updated4a0ee63 passed against current basec0620ff. Both native runs
+41498217240/41498286512 succeeded; no old-head or gate bypass. Exact check and
+merge receipts are in `/home/dev/neptune-evidence/code649-20261102/pr650-*`.
+Accepted main is incorporated into this capture branch. Create its evidence/
+driver PR, run applicable checks and merge normally. Keep649 open for fresh entry.
 
 Next named code question: observe **fresh6BE4 entry/root save**, then expand
 natural root/task/caller coverage. The late checkpoint reaches resumed6C00 and
