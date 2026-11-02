@@ -1,86 +1,88 @@
-# VPS code629 in-progress checkpoint
+# VPS code629 continuation checkpoint
 
-All-original-code programme **active, incomplete**. This is a resumable work
-record, **not accepted original execution evidence**. Existing Codex app owns
-issue629 and draft [PR631](https://github.com/elgansayer/Neptune-Bomberman/pull/631),
-branch `research/saturn-sh2-records-629`, workspace
-`/home/dev/neptune-code-recovery-20261102`. Latest accepted checkpoint remains
-[code625](VPS-CODE-625-CHECKPOINT.md). Preserve original restart worktree and
-coordinator#613/#621/#627, Gemini#487 and all newer live claims.
+All-original-code programme **active, incomplete**. Existing Codex app owns629,
+[PR631](https://github.com/elgansayer/Neptune-Bomberman/pull/631), branch
+`research/saturn-sh2-records-629`, workspace
+`/home/dev/neptune-code-recovery-20261102`. [Result](../research/2026-11-02-original-kernel-records.md),
+[derived evidence](../evidence/2026-11-02-original-kernel-records.json).
+Reconcile current origin/head/base/PR/checks before publication claims. Preserve
+original restart worktree, coordinator#613/#621/#627, Gemini#487 and newer claims.
 
-Prepared source head826520bb5d22fa22f441de8f610e34cb5c20d692 contains original
-kernel probes for6B38/6B56 and940A/942E with full18/16-record callers. Static
-models cover signed low16*88 indexing, unsigned category/full32 comparison,
-conditional record marks, byte flags/counter wrap, actual nested calls/delay
-slots, all visible registers/SR/PR/MACL and exact data/stack/canary effects.
-They remain **hypotheses pending original execution**; natural roles unknown.
+## Actual original execution
 
-Planned per-run cases:2,298 marker,2,112 category caller,4,072 flag-clear helper,
-10,240 full16-call paths,18,722 total. These counts are planned, not verified
-original cases. Inputs cover all flag/counter bytes and selected signed/wrapping
-indices. Each family is a separate bounded job; no reduced record-count loop.
-Local per-call profile is1024 instructions, older probe limits unchanged.
-The real128-instruction caller rejection is prepared but has not executed.
+Original USA kernel SHA256
+20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7,
+SH-2 mapping06006000, resident-kernel lifetime. Original execution head
+0e458325c794a96837e38e90480b9749a3daf36e; probe SHA256
+33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3.
+All18,722 selected original cases ran twice with matching full report pairs:
 
-Source-only CI41465522341 at826520b passed248 research tooling tests and14
-catalogue tests. The actual hash-pinned SH-2 CPU/adapter also passed owned
-instruction, literal and controlled-write positives, memory/code/cache-alias
-rejections,8/1024 instruction-cap failures and fresh recovery. All those smokes
-explicitly record `original_game_bytes_executed:false`.
-[Source-only evidence](../evidence/2026-11-02-kernel-record-preparation.json).
-Artifact13151056579 is retained locally under
-`/home/dev/neptune-evidence/code629-20261102/ci-owned-41465522341/`.
-Do not count green CI as recovered original functions or mark draft631 ready.
+| Family | Cases/run | SHA256 of either complete report |
+| --- | ---: | --- |
+|6B38 marker|2,298|3bbd9ee74675b63edda47211c6474074e551cb2d03113afc3123c0ace1ef8ac1|
+|6B56 full18-record caller|2,112|f6d81b6241bb1b6ed9c3dfdfbd8bb381634d67f9fe3b141447e9305d91ed01cb|
+|940A flag clear/count|4,072|e309f57a7e2452bddfd53b0f72f990c9a04ffa05ae18beca075dbf06fe9b4625|
+|942E full16-call caller|10,240|70671a56d91465e7f1d23ce143399ebe11162308dad6aad3bbfbc4fae1222941|
 
-## Actual admission state
+All ten altered-original controls detected, with exact registers/SR/PR/MACL,
+PC/delay paths, reads/writes and complete controlled/original canaries checked.
+Actual maxima540 instructions/156 events;18/16 real helper calls, no stubs.
+Natural task/scheduler roles, out-of-range index validity and hardware timing
+remain unproved. See result for exact signed/unsigned field and register effects.
 
-The finite supervisor at
-`/home/dev/neptune-research-private/629/kernel-records-ni0yxfie/supervisor.json`
-waited120 seconds and ended `host-capacity-unavailable`. Its family list is empty
-and `original_game_bytes_executed:false`. No original worker was launched or own
-lease acquired. A foreign exclusive owner is being renewed by the live existing
-Repo Factory daemon; a live namespace child and existing implementation shared
-reservation were observed. These are preserved, not cleared, adopted or stopped.
-Recheck live process/lease state; never infer termination from elapsed time.
+Immutable private pairs and short proof:
+`/home/dev/neptune-research-private/629/kernel-records-bprrbpow/`.
+Family folders `mark`, `mark-all`, `clear`, `clear-all`; two fresh reports each.
+The real128-instruction caller request rejected before instruction129 executed,
+with trace128, CPU attempted-step count129 and40 events. It remains explicitly
+incomplete, hash3abe312c49acdfae7c2a833349d084a99b7be351e083968d075356859b77233e.
+Full new caller profile uses1024; older adapters and global limits unchanged.
 
-Configured shared host limit3 is unchanged. Ready jobs use own180-second leases,
-60-second per-command deadlines, nice10, and a downward-only2GiB address-space
-cap. Read-only original/source/code mounts and hidden broker authority are
-configured for admitted workers; this denied attempt did not execute that
-namespace check. No provider/model call, scheduler, paid fallback, allowance reset
-or continuity activation. #536 remains open; account/CI spend unknown.
+Supervisors/logs `/home/dev/neptune-evidence/code629-20261102/`. Earlier denied
+admission `.../629/kernel-records-ni0yxfie` remains zero-original-execution
+history. Its foreign owner ended normally, another verifier drained, then normal
+admission opened. No foreign lease was cleared/adopted/stopped. Own family and
+derivation leases were released. Actual shared limit3, leases180, command
+limits60 seconds, nice10 and downward-only2GiB AS caps preserved. Code/original/
+interpreter read-only and broker-hidden checks passed in all real jobs.
+No provider/model call, scheduler, quota/allowance reset, continuity activation
+or paid fallback. #536 open; account/CI spend unknown.
 
-## Resume exactly
+Source-only CI evidence from the earlier preparation phase is retained separately
+and explicitly executes no original game bytes. Do not replace the actual
+original report pairs with those smokes. After incorporating accepted disjoint
+coordinator#630/PR633 atc4125e4b8b328cad9d776d93cf60bb765992fc8c, all four probe/
+imported-adapter hashes still match the original-run receipts and all253 current
+research tooling tests pass. Pending publication must use the current exact head
+and current base; never bypass a missing/failed check or close a parent.
 
-First fetch origin/status and current claims without reset. Remain on the draft
-branch or merge current main into it deliberately; preserve untracked work.
-The supervisor confirms that its probe file matches committed HEAD before
-executing anything. Exact next bounded command:
+## Next original code
+
+Exact next selected-source command (static only):
 
 ```sh
-/opt/hellotalk-factory/venv/bin/python3 \
-  /home/dev/neptune-evidence/code629-20261102/run-records.py
+timeout 60s nice -n 10 python3 \
+  /home/dev/neptune-evidence/code629-20261102/inspect-next-delta.py
 ```
 
-It creates a fresh private output directory, waits at most120 seconds for
-existing admission, and releases only its own family lease in `finally`.
-For each admitted family it runs two fresh original reports and compares them.
-Before the18-record family it retains a real short-caller budget rejection.
-Every worker checks the accepted USA kernel SHA256
-20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7 and all three
-pinned interpreter sources. Never supply media again or map device registers as
-RAM. If a partial batch completes, retain its reports and resume only missing
-families using `--families mark-all clear clear-all` (choose the actual remainder).
-Do not rerun already completed pairs merely because observation ended.
+Output `.../629/next-delta-static.json` selects6B9C..6BE4 with original literal
+references. It reads a cache-through RAM address26006038 and prior state060BD050,
+compares them, and on change scans18 stride88 records at060BC190. Selected code
+appears to reduce nontrivial active record words by an unsigned delta, flooring
+at1, then store the current value as prior state. This is a **static hypothesis**,
+not a validated natural clock/frame role or completed original experiment.
 
-After real execution, inspect all failures against original instructions; keep
-the first artifacts immutable. Require exact all-register/data/PC/delay/canary
-matches, all ten altered-instruction controls and the full18/16-record paths.
-Retain hashes and derived evidence, update draft631 around actual results,
-mark ready only when original evidence is complete, then wait all applicable
-exact-head/current-base checks and merge normally. No bypass or parent closure.
+Before running it, derive the exact32-bit wrap/saturation/zero paths, all reads/
+writes/returns and aliases. The accepted reference Memory folds26006038 onto
+06006038; validate that specific controlled RAM alias and coherent views in a
+new explicit experiment, without broadening earlier guards or inventing device
+register RAM. Preserve unchanged original code/literals and all18 record
+canaries. Test equality, wrapping deltas, inactive records, words0/1/boundaries,
+full18 iterations, actual delay slots and failures. Then publish tested evidence
+and continue surrounding initialization/allocation, natural callers, further
+loader/slave/overlay/scheduler/library paths.
 
-Further nontrivial NLSND handlers, kernel/slave/overlays, observed DSP and
-regional/menu/save/network paths remain open. Whole executable/function/dynamic-
-target denominators and natural gameplay/audio/hardware validation are unknown.
-Do not shrink the all-code goal to this four-function probe or stop after it.
+Also retain unresolved NLSND handlers, observed DSP, menu/save/network/Japan
+code, independent-engine/hardware/audio validation and unknown whole executable/
+function/dynamic-target denominators. Do not shrink the programme to these four
+functions or mark #464/#477/#515 complete after any bounded result.
