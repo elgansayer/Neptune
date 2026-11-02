@@ -1,0 +1,373 @@
+{
+  "cases_per_complete_run": 912,
+  "families": {
+    "restore": {
+      "all_restored_PR_values_differed_from_entry": true,
+      "all_restored_R8_R15_values_differed_from_entry": true,
+      "cases": 456,
+      "cpu": "sh2",
+      "entry_PR_preserved": true,
+      "event_count_range": [
+        12,
+        12
+      ],
+      "experiment": "EXP-SAT-CODE-018",
+      "instruction_controls": {
+        "missing_restore_PR": {
+          "first_rejection_summary": {
+            "actual_error": {
+              "reason": "Instruction fetch outside declared code",
+              "type": "ValueError"
+            },
+            "actual_pc": 0,
+            "actual_pr": 0,
+            "actual_status": "failed",
+            "attempted_steps": 18,
+            "case": [
+              "restore",
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 18,
+            "full_private_failure_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "910b8db995de4eef8137d9c69bfb5853bf6215ca4dd9d0836d6659ac03dc27e6",
+          "pc": 100688384,
+          "reasons": [
+            "Original execution failed: {'type': 'ValueError', 'reason': 'Instruction fetch outside declared code'}"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "missing_restore_R4": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_pr": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 18,
+            "case": [
+              "restore",
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 18,
+            "full_private_failure_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "98ea17bd032852ba02b768796a3d63434d4e43ad140ff90de74799c10393de50",
+          "pc": 100688388,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "missing_restore_SP": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_pr": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 18,
+            "case": [
+              "restore",
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 18,
+            "full_private_failure_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "d04ec6a0629052cac061e70e1de5e0211da18564bf33bb6b4cd516f498b4c938",
+          "pc": 100688372,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "missing_restore_result_delay": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_pr": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 18,
+            "case": [
+              "restore",
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 18,
+            "full_private_failure_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "382eed3d6e78b0c8022ec3c8ad54f44a7248885c39ddb27f5001b8fa3137842b",
+          "pc": 100688392,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "rejected": 66,
+          "tested": 66
+        }
+      },
+      "instruction_count_range": [
+        18,
+        18
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed48-byte context/registers; restore saved PR fixed to non-executable sentinel",
+        "Selected CPU-only routines, no natural caller/scheduler or hardware/timing/independent-engine proof",
+        "No new executable targets or aliases; whole executable/function/dynamic-target denominators unknown"
+      ],
+      "load_address": 100687872,
+      "max_steps_per_call": 64,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "entry_PR_preserved": true,
+        "failure_controls": {
+          "bounded_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "missing_PR_load": {
+            "executed_instructions": 3,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "undeclared_alias": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          },
+          "unknown_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false,
+        "owned_PR_restore_reached_sentinel": true
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/638/kernel-context-y2u8xqk9/restore",
+      "private_report_sha256": "16e0a57bd7c18a4f25cfc5c211b2bdad2f788494a449bae634bef8533a2cede4",
+      "range_sha256": {
+        "60061c4:60061e6": "0e41c89784b32e6f5a18b98cbd02170bcda3ce780b250c370f24d156274322ad",
+        "60061e6:600620a": "11ac8755bf442e03d29f223e1657139d0f3b7aa8747919bc4f2490211d41a19d"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "0e58e462fa0543315d56ccf7e96b0e06c17319888f73447b8fdfc9b7efb77dda",
+      "schema": "neptune.original-sh2-kernel-context.v1",
+      "selection": "restore",
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_context.py": "37905451e3e4bb570770048c41f8d4fee0379d4d8cbe7f2180b4b6d90a69ad26",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_profile.py": "26c22576b6398b9f96a1f9b7a2407e4e400c634afcc82d3e916f6b99507087d5"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true
+    },
+    "save": {
+      "cases": 456,
+      "cpu": "sh2",
+      "entry_PR_preserved": true,
+      "event_count_range": [
+        12,
+        12
+      ],
+      "experiment": "EXP-SAT-CODE-018",
+      "instruction_controls": {
+        "missing_save_zero_delay": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_pr": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 17,
+            "case": [
+              "save",
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 17,
+            "full_private_failure_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "4ce75167f0ea7f4e9a6cd325ba23d562fbea9511b0ef6931091566adc2614347",
+          "pc": 100688356,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "save_MACH_in_MACL_field": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_pr": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 17,
+            "case": [
+              "save",
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 17,
+            "full_private_failure_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "cd4e9496a979588cfd6ff3b1965822adcee13d6c7838bf3401c59b3b11322d86",
+          "pc": 100688344,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 66,
+          "tested": 66
+        },
+        "save_second_R8_from_R9": {
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967280,
+            "actual_pr": 4294967280,
+            "actual_status": "returned",
+            "attempted_steps": 17,
+            "case": [
+              "save",
+              12,
+              256,
+              1
+            ],
+            "executed_instructions": 17,
+            "full_private_failure_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "fea760eff718109316f4cb1a898a2f7f02ab46b438d62ac36be55873f7467a10",
+          "pc": 100688326,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "rejected": 55,
+          "tested": 66
+        }
+      },
+      "instruction_count_range": [
+        17,
+        17
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+      "lifetime": "resident-kernel",
+      "limitations": [
+        "Constructed48-byte context/registers; restore saved PR fixed to non-executable sentinel",
+        "Selected CPU-only routines, no natural caller/scheduler or hardware/timing/independent-engine proof",
+        "No new executable targets or aliases; whole executable/function/dynamic-target denominators unknown"
+      ],
+      "load_address": 100687872,
+      "max_steps_per_call": 64,
+      "module": "KRNL",
+      "original_game_bytes_executed": true,
+      "owned_smoke": {
+        "entry_PR_preserved": true,
+        "failure_controls": {
+          "bounded_loop": {
+            "executed_instructions": 8,
+            "reason": "Local instruction budget exceeded",
+            "status": "failed"
+          },
+          "code_write": {
+            "executed_instructions": 1,
+            "reason": "Write outside writable canonical inputs",
+            "status": "failed"
+          },
+          "missing_PR_load": {
+            "executed_instructions": 3,
+            "reason": "Instruction fetch outside declared code",
+            "status": "failed"
+          },
+          "undeclared_alias": {
+            "executed_instructions": 1,
+            "reason": "Read through undeclared alias",
+            "status": "failed"
+          },
+          "unknown_read": {
+            "executed_instructions": 1,
+            "reason": "Read outside literals and controlled inputs",
+            "status": "failed"
+          }
+        },
+        "fresh_after_failure": true,
+        "original_game_bytes_executed": false,
+        "owned_PR_restore_reached_sentinel": true
+      },
+      "private_report_pair": "/home/dev/neptune-research-private/638/kernel-context-y2u8xqk9/save",
+      "private_report_sha256": "6723e27aca27ed27ac4000420c7fef8f40e2683844428c30a0cabdc61c3e96b2",
+      "range_sha256": {
+        "60061c4:60061e6": "0e41c89784b32e6f5a18b98cbd02170bcda3ce780b250c370f24d156274322ad",
+        "60061e6:600620a": "11ac8755bf442e03d29f223e1657139d0f3b7aa8747919bc4f2490211d41a19d"
+      },
+      "release": "usa-mk81070-v1003",
+      "results_sha256": "0f90c91088d1e45c15fc420fad65cd8f1eaf7e62b6b2e38e2c379db8e4f0df0f",
+      "schema": "neptune.original-sh2-kernel-context.v1",
+      "selection": "save",
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_context.py": "37905451e3e4bb570770048c41f8d4fee0379d4d8cbe7f2180b4b6d90a69ad26",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+        "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+        "sh2_profile.py": "26c22576b6398b9f96a1f9b7a2407e4e400c634afcc82d3e916f6b99507087d5"
+      },
+      "status": "success",
+      "two_complete_reports_equal": true
+    }
+  },
+  "initial_fixture_history": "/home/dev/neptune-research-private/638/kernel-context-f82j1jr9/",
+  "limits": {
+    "address_space_maximum_bytes": 2147483648,
+    "command_seconds": 60,
+    "continuity_enabled": false,
+    "host_shared": 3,
+    "instruction_limit": 64,
+    "nice": 10,
+    "own_lease_seconds": 180,
+    "provider_calls": 0
+  },
+  "original_game_bytes_executed": true,
+  "schema": "neptune.original-kernel-context-evidence.v1",
+  "source_execution_head": "e7e5dffc5f10881081c49bf606bc4030e68c23e5",
+  "source_only_ci": {
+    "artifact_id": 13158691870,
+    "artifact_sha256": "8eb4f1841bb00a255665e596d695ff70310778eac394eaf1e3e3d9907df42683",
+    "original_game_bytes_executed": false,
+    "run_id": 41478704998,
+    "source_head": "e7e5dffc5f10881081c49bf606bc4030e68c23e5"
+  },
+  "status": "success",
+  "whole_program_status": "active; incomplete"
+}
