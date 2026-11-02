@@ -71,9 +71,17 @@ twice with matching actual original reports:89AC, bounded89C8/623A prefixes,
 closed95B04 errors,96A80 callback-address stores and96AC0 table initialization.
 All31 family/control combinations have non-budget rejections. Read the current
 checkpoint: PR658 merged27e44f1; next96C60 status/error diagnostic is prepared
-with an actual host-admission deferral retained, not new CPU execution. Continue
-the positive library/BIOS/callback dependencies through a real89C8 return.
-Preserve live factory reservations and newer coordinator657
+with earlier host-admission deferrals retained. That one-state96C60 diagnostic
+subsequently passed twice,24 instructions/13 events, with a semantic control.
+Separate native observer PR663 mergedfed7932 after actual CI preparation/reuse;
+two guarded local reuse checks and twelve fresh600-frame original windows now
+pass. Natural89C8 and95B04 enter at1247 and return1A at1264 through real calls
+and RTS/restore delays. Reference/disabled/enabled state/video/audio/input match
+exactly, both enabled trace pairs repeat and42 record-copy controls reject.
+Read the current checkpoint and [natural result](research/2026-11-02-first-task-natural-init.md):
+these boundaries do not complete internal library/device semantics. Continue
+broader96C60/9696C contracts and positive library/BIOS/callback dependencies.
+Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,

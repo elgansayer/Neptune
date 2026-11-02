@@ -48,3 +48,7 @@ Logs, partial state/frames and rejected native records are retained on failures;
 an attempted incomplete first frame is not mislabeled as zero execution.
 Raw states, traces, media, BIOS and credentials remain outside Git. Owned fixture
 tests check this tooling only; actual original execution needs separate evidence.
+
+Actual two-profile/twelve-window VPS results and retained failures are recorded
+in [the natural initialization report](../../docs/restart/research/2026-11-02-first-task-natural-init.md).
+Both named roots return naturally; internal library/device semantics remain open.
