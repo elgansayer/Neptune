@@ -1,10 +1,11 @@
 # Saturn code recovery: next original-byte function probe
 
-Status, 2 November 2026: **the original-game experiment below has not run in this
-workspace**. The supplied USA kernel remains on the research VPS, whose private
-filesystem is unavailable here. The new probe and its rejection tests are ready;
-an actual pinned-interpreter interoperability smoke passed using owned synthetic
-SH-2 instructions. Neither is a new verified original function result.
+Update, 2 November 2026: the existing VPS coordinator has now executed the real
+kernel under #590. The initial stackless assumption failed on a MACL spill.
+An explicit bounded spill/restore contract then passed two 196-case runs and
+four altered-original controls. Read the [original result and exact limits](2026-11-02-saturn-table-address-result.md).
+The preparation and synthetic interoperability evidence below remains historical;
+it must not be confused with the subsequent real-original execution.
 
 This is a bounded continuation of [#483](https://github.com/elgansayer/Neptune-Bomberman/issues/483)
 and the [existing original helper result](2026-10-30-saturn-original-kernel-result.md).
@@ -29,9 +30,9 @@ explicit, rather than relying on host C signed-overflow behaviour. Whether the
 original instructions agree on every selected constructed case is a question
 for the original-byte run, not an established fact.
 
-The source describes nine candidate kernel helpers. This one is a useful next
-target because its proposed contract needs two register arguments and no device
-or mutable-memory model. Its natural caller, valid table-index domain, pointed-to
+The source describes nine candidate kernel helpers. This one was selected because
+its proposed contract needs two register arguments and no device model. Original
+execution subsequently required the observed bounded MACL stack spill. Its natural caller, valid table-index domain, pointed-to
 record interpretation, complete function boundary and ABI remain unverified.
 The arithmetic expression alone does not recover a gameplay system.
 
@@ -76,6 +77,11 @@ A later original-instruction mutation and natural caller trace remain separate
 verification work.
 
 ## Run on the existing original host
+
+The commands below retain the initial strict no-write control, which now has a
+known original failure. For the observed stack contract and repeatable original
+instruction controls use `--bounded-stack --instruction-controls` as documented
+in the linked actual VPS result. Do not map arbitrary data/device RAM.
 
 Use the accepted extracted kernel and exact interpreter sources, retain the
 original media unchanged, reconcile host ownership, and choose fresh private

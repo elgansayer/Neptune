@@ -21,6 +21,9 @@ EXPERIMENT = "EXP-SAT-CODE-002"
 SOURCE_REVISION = "c73bc117daec9f2dba4bf32cb08b5f0a91fb93a3"
 SOURCE_BLOB = "6aba3320e95f988d4424ce5a10c77ee29ed46ab1"
 REGISTERS = tuple(f"r{i}" for i in range(16)) + ("sr", "gbr", "vbr", "mach", "macl", "pr")
+STACK_TOP = 0x060FFFF0
+STACK_BASE = STACK_TOP - 64
+STACK_SIZE = 80
 
 
 def candidate(n: int, m: int) -> int:
@@ -82,13 +85,28 @@ def exercise(call) -> dict:
             "writes": 0, "mutation_rejections": mutations}
 
 
-def execute(data: bytes, sh2emu) -> dict:
+def execute(data: bytes, sh2emu, *, bounded_stack: bool = False) -> dict:
     if len(data) != pinned.SIZE:
         raise ValueError("Execution requires the complete kernel-sized input")
 
-    class ReadOnlyMemory(sh2emu.Memory):
+    class ObservedMemory(sh2emu.Memory):
+        def read(self, addr, size):
+            physical = addr & MASK
+            if physical >> 28 == 0x2:
+                physical &= 0x1FFFFFFF
+            if bounded_stack and STACK_BASE <= physical < STACK_BASE + STACK_SIZE:
+                if addr != STACK_TOP - 4 or size != 4 or self.writes != 1 or self.reads:
+                    raise ValueError("Unexpected stack read; spill/restore contract failed")
+                self.reads += 1
+            return super().read(addr, size)
+
         def write(self, addr, size, value):
-            raise ValueError(f"Unexpected write at 0x{addr:08x}; pure-function hypothesis failed")
+            if not bounded_stack:
+                raise ValueError(f"Unexpected write at 0x{addr:08x}; pure-function hypothesis failed")
+            if addr != STACK_TOP - 4 or size != 4 or self.writes or value != self.expected_macl:
+                raise ValueError("Unexpected write; only the observed MACL spill is allowed")
+            self.writes += 1
+            return super().write(addr, size, value)
 
     class ObservedCPU(sh2emu.CPU):
         def __init__(self, memory):
@@ -105,8 +123,10 @@ def execute(data: bytes, sh2emu) -> dict:
             self.visited.append(pc)
             return super().exec(instruction, pc, in_slot=in_slot)
 
-    memory = ReadOnlyMemory()
-    memory.add(pinned.BASE, len(data), data)
+    memory = ObservedMemory()
+    kernel = memory.add(pinned.BASE, len(data), data)
+    stack = memory.add(STACK_BASE, STACK_SIZE, bytes(STACK_SIZE)) if bounded_stack else None
+    witnesses = []
 
     def registers(cpu):
         return {**{f"r{i}": value for i, value in enumerate(cpu.r)},
@@ -115,17 +135,77 @@ def execute(data: bytes, sh2emu) -> dict:
     def call(n, m):
         cpu = ObservedCPU(memory)
         cpu.r = [0xA5A5A5A5] * 16
-        cpu.r[15] = 0x060FFFF0  # deliberately unmapped: stack writes must fail
+        cpu.r[15] = STACK_TOP  # unmapped unless the observed stack contract is explicit
         cpu.r[4], cpu.r[5] = n, m
         cpu.pr = sh2emu.RETURN_SENTINEL
+        if bounded_stack:
+            cpu.macl = (0x13579BDF ^ n ^ (m << 1)) & MASK
+            cpu.sr = 0x3F0
+            pattern = bytes((index + (n & 255) + (m & 255)) % 256 for index in range(STACK_SIZE))
+            stack[:] = pattern
+            memory.reads = memory.writes = 0
+            memory.expected_macl = cpu.macl
         before = registers(cpu)
         result = cpu.call(ENTRY, max_steps=MAX_STEPS, r4=n, r5=m)
         after = registers(cpu)
+        if bounded_stack:
+            expected = bytearray(pattern)
+            expected[60:64] = before["macl"].to_bytes(4, "big")
+            if (memory.writes != 1 or memory.reads != 1 or stack != expected or kernel != data):
+                raise ValueError("Stack footprint or unchanged original-memory contract failed")
+            preserved = set(REGISTERS) - {"r0", "r2", "r3", "r6", "sr"}
+            if any(before[name] != after[name] for name in preserved):
+                raise ValueError("Preserved register, MACL or stack pointer changed")
+            expected_sr = (before["sr"] & ~1) | (((5 * n) & MASK) >> 31)
+            if after["sr"] != expected_sr:
+                raise ValueError("SHLL condition-bit contract failed")
+            witnesses.append({"n": n, "m": m, "macl": before["macl"],
+                              "writes": memory.writes, "reads": memory.reads,
+                              "stack_sha256": pinned.digest(stack)})
         return {"result": result, "instructions": cpu.steps, "pcs": cpu.visited,
                 "changed_registers": [name for name in REGISTERS if before[name] != after[name]],
                 "return_sentinel_reached": cpu.pc == sh2emu.RETURN_SENTINEL}
 
-    return exercise(call)
+    result = exercise(call)
+    if bounded_stack:
+        result.update(writes=len(witnesses), memory_contract={
+            "mode": "observed-macl-spill", "kernel": "read-only and unchanged",
+            "constructed_stack_base": f"0x{STACK_BASE:08x}", "constructed_stack_bytes": STACK_SIZE,
+            "only_stack_access": {"address": f"0x{STACK_TOP - 4:08x}", "bytes": 4,
+                                 "writes_per_case": 1, "reads_per_case": 1},
+            "other_stack_bytes_unchanged": True, "sp_and_macl_preserved": True,
+            "validated_cases": len(witnesses),
+            "witnesses_sha256": pinned.digest(json.dumps(witnesses, sort_keys=True).encode())})
+    return result
+
+
+def instruction_controls(data: bytes, sh2emu) -> list[dict]:
+    """Execute four explicitly altered private copies; never modify the original.
+
+    The CLI validates original identity before calling this experiment. A normal
+    result or a timeout is not a passing semantic/footprint negative control.
+    """
+    changes = (("stride150", 0x0600B96C, 2, 150),
+               ("base_plus4", 0x0600B984, 4, 0x00207F78),
+               ("remove_macl_restore_delay_slot", 0x0600B94E, 2, 0x0009),
+               ("remove_macl_spill", 0x0600B934, 2, 0x0009))
+    results = []
+    for name, address, size, value in changes:
+        altered = bytearray(data)
+        offset = address - pinned.BASE
+        altered[offset:offset + size] = value.to_bytes(size, "big")
+        if len(altered) != pinned.SIZE or altered == data:
+            raise ValueError("Invalid or ineffective original-copy mutation")
+        try:
+            execute(bytes(altered), sh2emu, bounded_stack=True)
+        except ValueError as error:
+            results.append({"name": name, "address": f"0x{address:08x}",
+                            "altered_sha256": pinned.digest(altered), "rejected": True,
+                            "error_class": type(error).__name__, "reason": str(error),
+                            "source": "explicitly altered private copy; never reference"})
+        else:
+            raise ValueError("Original-copy mutation was not detected: " + name)
+    return results
 
 
 def main(argv=None) -> int:
@@ -133,7 +213,13 @@ def main(argv=None) -> int:
     parser.add_argument("--kernel", type=Path, required=True)
     parser.add_argument("--saturn-recomp", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True, help="Fresh private report, never overwritten")
+    parser.add_argument("--bounded-stack", action="store_true",
+                        help="Explicit observed one-word MACL spill/restore; default rejects all writes")
+    parser.add_argument("--instruction-controls", action="store_true",
+                        help="Also reject four fixed private original-copy mutations; requires bounded stack")
     args = parser.parse_args(argv)
+    if args.instruction_controls and not args.bounded_stack:
+        parser.error("--instruction-controls requires --bounded-stack")
     report = {"schema": "neptune.table-address-probe.v1", "status": "failure",
               "experiment": EXPERIMENT, "entry": f"0x{ENTRY:08x}",
               "game": "USA MK-81070 V1.003", "kernel_sha256": pinned.KERNEL_SHA256,
@@ -143,6 +229,7 @@ def main(argv=None) -> int:
                                     "revision": SOURCE_REVISION, "path": "decomp/krnl.c", "blob": SOURCE_BLOB},
               "probe_sha256": pinned.digest(Path(__file__).read_bytes()),
               "input_adapter_sha256": pinned.digest(Path(pinned.__file__).read_bytes()),
+              "memory_mode": "observed-macl-spill" if args.bounded_stack else "strict-no-writes",
               "scope": "isolated original-byte function samples in a CPU interpreter",
               "limitations": ["Upstream arithmetic is a hypothesis until this original-byte run succeeds.",
                               "Constructed arguments are not natural gameplay observations.",
@@ -159,7 +246,9 @@ def main(argv=None) -> int:
                 phase = "interpreter_identity"
                 module = pinned.interpreter(args.saturn_recomp)
                 phase = "original_execution"
-                result = execute(data, module)
+                result = execute(data, module, bounded_stack=args.bounded_stack)
+                if args.instruction_controls:
+                    result["instruction_controls"] = instruction_controls(data, module)
                 report.update(status="success", **result)
             except Exception as error:
                 # Avoid embedding private paths, raw instructions or memory in a
