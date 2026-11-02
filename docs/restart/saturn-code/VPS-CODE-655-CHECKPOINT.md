@@ -36,7 +36,7 @@ before first root save; do not relabel absence as a failed game boot.
 
 ## 655 preliminary actual original helper
 
-Named scope is full first-task89C8 initialization and its helper/allocator graph.
+Named scope is full first-task89C8 initialization and its helper/library graph.
 623A's static first call targets89C8; its real89AC helper initializes four words.
 The [preliminary evidence](../evidence/2026-11-02-task-init-helper-preliminary.json)
 is **one constructed state only**: original89AC completes RTS+NOP in23
@@ -67,7 +67,7 @@ constructed globals completely overwritten before use.130 original instructions
 (127 within89C8's prefix),35 writes and6 literal reads match independent exact
 register/SR/PR/MAC/PC/delay/transaction/scalar-memory expectations. All globals,
 savedR14/PR/local stack words, readonly canaries and other source bytes agree.
-Real89AC returns to89FC; parent89C8 has **not** returned and no allocator is run.
+Real89AC returns to89FC; parent89C8 has **not** returned and no later library call is run.
 
 Old128 guard actually refused at128 executed/129 attempted instructions before
 RTS89BE; retain the exact partial state. The unchanged accepted1024 profile ran
@@ -77,7 +77,7 @@ semantically, not by budget. Actual evidence/source:
 `.../655/caller-prefix-preliminary-4lon_b6r/`,
 `/home/dev/neptune-evidence/code655-20261102/probe-caller-prefix-preliminary.py`
 and its supervised runner. Scope remains one constructed-memory prefix case,
-not broad ABI coverage, natural allocator state or complete89C8.
+not broad ABI coverage, natural library state or complete89C8.
 
 ```sh
 python3 /home/dev/neptune-evidence/code649-20261102/inspect-next-first-task.py
@@ -102,11 +102,17 @@ continuity if staging. Expected memory model must be independent of opcode
 decoding and exact transaction order/canaries checked.
 
 89FC is an incomplete prefix boundary before further globals and original95B04
-allocation. Never count it as89C8's complete return. Continue heap/callback
+library call. Never count it as89C8's complete return. Continue library/callback
 dependencies through an actual full return before closing655. The stored
 00200000 pointer is not permission for arbitrary flat-RAM/device access.
 Startup6174 writes CPU-internalFFFFFF08;6372 has BIOS/IRQ-sample dependencies.
 Those require real side-effect/native evidence, not invented devices or ticks.
+
+The initial allocator label for95B04 is withdrawn. Actual source checksR4 in
+1..24, pointer alignment and descriptor fields; no heap-size/API purpose is
+established. Recover its library contract and any device effects before modeling
+its successful path. Raw diagnostic reports remain unchanged; only this
+interpretation and next-target labels are corrected.
 
 Then continue623A's complete body/roles, other libraries, slave/loader/overlays,
 remaining68000/DSP and regional network/menu/save code. Native caches/history

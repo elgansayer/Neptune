@@ -64,7 +64,7 @@ Fresh6BE4 entry is now observed at frame1247 through actual61C4 root save,
 61E6 record0 restore and transfer623A, with a further six exact repeated original
 reference/disabled/enabled windows and14 actual-trace controls. Resume the current
 checkpoint: PR654 merged and649 closed;655 now continues first-task623A/89C8/
-helper/allocator work, with one preliminary original89AC state returning23
+helper/library work, with one preliminary original89AC state returning23
 instructions twice and a semantic original-copy control retained. Broader helper
 coverage and the complete89C8 graph remain open. Continue that code work,
 then the larger root/task cycle, unresolved17F2 and further original modules. The

@@ -50,12 +50,12 @@
   "private_report_sha256": "d78e529d343bb1dba7dde9f824dc9b0befa1a278540a43d5c1d8891451940e1a",
   "remaining": [
     "Reusable independently modelled probe and broad ABI/data cases",
-    "95B04 allocation and all remaining89C8 calls through actual complete RTS",
+    "95B04 library call and all remaining89C8 calls through actual complete RTS",
     "623A full body/role;6372 BIOS/IRQ startup and other whole-code coverage"
   ],
   "reports_equal": true,
   "schema": "neptune.original-first-task-caller-prefix-evidence.v1",
-  "scope": "One original623A\u219289C8\u219289AC path to89FC, repeated twice; incomplete89C8; no allocator call executed",
+  "scope": "One original623A\u219289C8\u219289AC path to89FC, repeated twice; incomplete89C8; no later library call call executed",
   "short_refusal": {
     "attempted_steps": 129,
     "error": {
