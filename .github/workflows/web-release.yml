@@ -1,0 +1,62 @@
+name: Web release
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths:
+      - deploy/web/**
+      - .github/workflows/web-release.yml
+      - export_presets.cfg
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: web-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install pinned Godot and export templates
+        run: |
+          python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
+          python3 tools/godot/install_templates.py --directory "$HOME/.local/share/godot/export_templates"
+          python3 -c 'import json; print("GODOT_BINARY=" + json.load(open("tools/godot/toolchain.json"))["binary_name"])' >> "$GITHUB_ENV"
+      - name: Import and export current project
+        run: python3 deploy/web/export.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY"
+      - name: Build serving image
+        run: docker build -f deploy/web/Dockerfile -t neptune-web-candidate .
+      - name: Exercise real browser startup
+        run: |
+          docker run -d --name web-candidate -p 127.0.0.1:8765:80 neptune-web-candidate
+          mkdir -p "$RUNNER_TEMP/web-smoke"
+          cp deploy/web/smoke.mjs "$RUNNER_TEMP/web-smoke/"
+          cd "$RUNNER_TEMP/web-smoke"
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          node smoke.mjs
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: web-startup-evidence
+          path: ${{ runner.temp }}/web-smoke/browser-startup.png
+          if-no-files-found: warn
+      - uses: docker/login-action@v3
+        if: github.event_name != 'pull_request'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish tested image
+        if: github.event_name != 'pull_request'
+        run: |
+          image=ghcr.io/elgansayer/neptune-bomberman-web
+          docker tag neptune-web-candidate "$image:sha-$GITHUB_SHA"
+          docker tag neptune-web-candidate "$image:latest"
+          docker push "$image:sha-$GITHUB_SHA"
+          docker push "$image:latest"
