@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Original96C60 status/error handling and9696C setter with real89C2 callback.
+"""Original96C60 status/error handling and9696C setter/callback handoff.
 
-Closed callback contract: null or the unchanged original RTS/NOP at89C2.
-Other callback targets, BIOS/device behavior and whole-library semantics remain open.
+Null/suppressed callbacks return; original89C2's real tail transfer ends at293A4.
+The293A4 callee, other callback targets and whole-library semantics remain open.
 """
 import argparse
 import itertools
@@ -14,10 +14,11 @@ import probe_task_init as task
 
 pinned, records, guard = task.pinned, task.records, task.short
 STATUS, SETTER, CALLBACK = 0x06096C60, 0x0609696C, 0x060089C2
+CALLBACK_TARGET = 0x060293A4
 CELL, STATUS_WORD, BLOCK = 0x060FA8BC, 0x060FC080, 0x060D0000
 MASK = 0xFFFFFFFF
 MAPPINGS = {(-16)&MASK: (-25)&MASK, (-14)&MASK: (-2)&MASK, (-13)&MASK: (-23)&MASK}
-LITERALS = {0x06096CF0: STATUS_WORD, 0x06096CE8: CELL, 0x060969D0: CELL}
+LITERALS = {0x06096CF0: STATUS_WORD, 0x06096CE8: CELL, 0x060969D0: CELL, 0x06008BF4: CALLBACK_TARGET}
 HALFWORDS = {0x06096CE4: 0xB8, 0x060969B4: 0xB8}
 FAMILIES = ('status', 'setter')
 
@@ -91,7 +92,10 @@ class Model(records.Model):
                 self.step(0x06096CA0); r['r3'] = self.read(r['r13'],4)
                 self.step(0x06096CA2); r['pr'] = 0x06096CA6
                 self.step(0x06096CA4,True); r['r4'] = self.read(r['r13']+4,4)
-                self.step(CALLBACK); self.step(CALLBACK+2,True)
+                self.step(CALLBACK); r['r3'] = self.read(0x06008BF4,4)
+                self.step(CALLBACK+2); self.step(CALLBACK+4,True)
+                r['pc'] = CALLBACK_TARGET; self.handoff = True
+                return
         self.step(0x06096CA6); r['r0'] = r['r14']
         self.step(0x06096CA8); r['pr'] = self.pop()
         self.step(0x06096CAA); r['r13'] = self.pop()
@@ -141,30 +145,34 @@ def contract(data, case):
     expected[9] = word(result)
     if family=='setter': expected[7:9] = [word(callback),word(userdata)]
     expected[12] = b''.join(word(before[name]) for name in ('pr','r13','r14'))
-    if [bytes(buf) for buf in model.buffers] != expected or model.reg['r0'] != result:
+    if ([bytes(buf) for buf in model.buffers] != expected or
+            not getattr(model,'handoff',False) and model.reg['r0'] != result or
+            getattr(model,'handoff',False) and (model.reg['r5'] != result or model.reg['r4'] != userdata)):
         raise ValueError('Independent scalar status/setter contract differs')
     return entry,model,regions
 
 
 def observe(data, emu, family, before, regions):
-    ranges = ((STATUS,0x06096CB0),(CALLBACK,CALLBACK+4))
+    ranges = ((STATUS,0x06096CB0),(CALLBACK,CALLBACK+6))
     if family=='setter': ranges += ((SETTER,SETTER+18),)
     return guard.observe(data,emu,before['pc'],regions,before,ranges=ranges,
-                         literals=tuple(LITERALS),aliases=(),terminals={before['pr']:'returned'},budget=128)
+                         literals=tuple(LITERALS),aliases=(),
+                         terminals={before['pr']:'returned',CALLBACK_TARGET:'handoff'},budget=128)
 
 
 def run_case(data, emu, case):
     entry,model,regions = contract(data,case)
     actual = observe(data,emu,case[0],model.before,regions)
     reason = None
-    if actual['status'] != 'returned': reason = 'Original status/setter did not return: '+str(actual['error'])
+    expected_status = 'handoff' if getattr(model,'handoff',False) else 'returned'
+    if actual['status'] != expected_status: reason = 'Original status/setter missed declared boundary: '+str(actual['error'])
     elif actual['registers'] != model.reg: reason = 'Status/setter register/PC/SR/PR/MAC differs'
     elif actual['trace'] != model.trace or actual['steps'] != len(model.trace): reason = 'Status/setter PC/delay trace differs'
     elif actual['events'] != model.events: reason = 'Status/setter data transactions differ'
     elif actual['regions_after'] != [bytes(buf) for buf in model.buffers] or not actual['original_unaffected_bytes_equal']:
         reason = 'Status/setter output/canaries/other original bytes differ'
     if reason: raise task.CaseFailure(reason,case,actual)
-    return {'case':list(case),'entry':entry,'status':'returned','instructions':actual['steps'],
+    return {'case':list(case),'entry':entry,'status':expected_status,'instructions':actual['steps'],
             'after_registers':actual['registers'],'trace':actual['trace'],'data_events':actual['events'],
             'regions_after_sha256':[pinned.digest(buf) for buf in actual['regions_after']], 'all_visible_state_checked':True}
 
@@ -174,7 +182,7 @@ def execute(data, emu, family):
     mutations = [('mapping-25',0x06096C88,0xEEE8),('mapping-2',0x06096C86,0xEEFF),
                  ('mapping-23',0x06096C82,0xEEEA),('lost-input-delay',0x06096C6E,9),
                  ('lost-error-store-delay',0x06096C96,9),('lost-callback-userdata-delay',0x06096CA4,9),
-                 ('lost-root-R14-restore',0x06096CAE,9),('changed-original-callback-delay',CALLBACK+2,0xE400)]
+                 ('lost-root-R14-restore',0x06096CAE,9),('changed-original-callback-tail-delay',CALLBACK+4,0xE400)]
     if family=='setter':
         mutations += [('lost-callback-store',SETTER+6,9),('lost-userdata-store',SETTER+12,9),
                       ('changed-tail-zero-delay',SETTER+16,0xE401)]
@@ -193,7 +201,8 @@ def execute(data, emu, family):
         if not count: raise ValueError('No non-budget semantic rejection: '+name)
         controls[name] = {'pc':pc,'tested':len(chosen),'nonbudget_rejections':count,'first_rejection':first,
                           'mutated_kernel_sha256':pinned.digest(changed)}
-    return {'cases':len(rows),'complete_returns':len(rows),'results':rows,
+    return {'cases':len(rows),'complete_returns':sum(row['status']=='returned' for row in rows),
+            'callback_handoffs':sum(row['status']=='handoff' for row in rows),'results':rows,
             'results_sha256':pinned.digest(json.dumps(rows,sort_keys=True).encode()),
             'instruction_controls':controls,'original_game_bytes_executed':True}
 
@@ -210,8 +219,9 @@ def main(argv=None):
               'original_game_bytes_executed':False,'programme_status':'active; incomplete',
               'source_sha256':{p.name:pinned.digest(p.read_bytes()) for p in map(Path,(__file__,
                     records.__file__,task.__file__,pinned.__file__,guard.__file__))},
-              'limitations':['Constructed high-RAM block/stack; only null or unchanged original89C2 callback',
-                    'Other callback targets/device behavior and complete95B04/89C8 semantics unresolved',
+              'limitations':['Constructed high-RAM block/stack; null/suppressed callbacks return',
+                    'Original89C2 tail transfer ends at293A4, with no substituted return;293A4 and other callbacks unresolved',
+                    'Device behavior and complete95B04/89C8 semantics unresolved',
                     'No stubs/MMIO/injected ticks; original128 guard unchanged; gameplay/hardware parity unknown']}
     try: fd = os.open(args.report,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
     except OSError: print('FAIL: require fresh report path'); return 1

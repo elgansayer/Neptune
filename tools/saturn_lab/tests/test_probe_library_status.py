@@ -31,9 +31,13 @@ class LibraryStatusContracts(unittest.TestCase):
         for family in p.FAMILIES:
             for case in p.cases(family):
                 entry,model,regions = p.contract(data,case)
-                self.assertEqual(model.reg['pc'],model.before['pr'])
-                for name in ('r13','r14','r15','pr','mach','macl','gbr','vbr'):
+                handoff=getattr(model,'handoff',False)
+                self.assertEqual(model.reg['pc'],p.CALLBACK_TARGET if handoff else model.before['pr'])
+                for name in (('mach','macl','gbr','vbr') if handoff else ('r13','r14','r15','pr','mach','macl','gbr','vbr')):
                     self.assertEqual(model.reg[name],model.before[name])
+                if handoff:
+                    self.assertEqual(model.reg['r15'],model.before['r15']-12)
+                    self.assertEqual(model.reg['pr'],0x06096CA6)
                 self.assertLessEqual(len(model.trace),128)
                 for (_,buf,writable),after in zip(regions,model.buffers):
                     if not writable: self.assertEqual(bytes(after),buf)
@@ -49,13 +53,15 @@ class LibraryStatusContracts(unittest.TestCase):
             for callback in (0,p.CALLBACK):
                 case=('status',0,37,status,callback,argument,0x12345678)
                 _,model,regions=p.contract(owned_literals(),case)
-                self.assertEqual(model.reg['r0'],expected)
-                calls=[row for row in model.trace if row[0] in (p.CALLBACK,p.CALLBACK+2)]
-                self.assertEqual(calls,[[p.CALLBACK,False],[p.CALLBACK+2,True]] if expected and callback else [])
+                self.assertEqual(model.reg['r0'],status if expected and callback else expected)
+                calls=[row for row in model.trace if p.CALLBACK<=row[0]<p.CALLBACK+6]
+                self.assertEqual(calls,[[p.CALLBACK,False],[p.CALLBACK+2,False],[p.CALLBACK+4,True]] if expected and callback else [])
                 if calls:
                     self.assertEqual(model.reg['r4'],0x12345678)
                     self.assertEqual(model.reg['r5'],expected)
                     self.assertEqual(model.reg['sr']&1,0)
+                    self.assertEqual(model.reg['pc'],p.CALLBACK_TARGET)
+                    self.assertNotIn([0x06096CA6,False],model.trace)
                 else:self.assertEqual(model.reg['sr']&1,1)
 
     def test_setter_tail_clears_argument_and_uses_original_callback_for_mapped_error(self):
@@ -64,7 +70,7 @@ class LibraryStatusContracts(unittest.TestCase):
             self.assertEqual(model.buffers[7],p.CALLBACK.to_bytes(4,'big'))
             self.assertEqual(model.buffers[8],bytes.fromhex('fedcba98'))
             self.assertIn([p.SETTER+16,True],model.trace)
-            self.assertEqual(model.reg['r0'],p.effective(status,0))
+            self.assertEqual(model.reg['r0'],status if status else 0)
             self.assertEqual(model.reg['r4'],0xFEDCBA98 if status else 0)
 
     def test_unknown_callbacks_bad_scalars_and_changed_original_literals_are_refused(self):
@@ -82,7 +88,9 @@ class LibraryStatusContracts(unittest.TestCase):
         args=observed.call_args.kwargs
         self.assertEqual(args['budget'],128)
         self.assertEqual(args['aliases'],())
-        self.assertEqual(args['ranges'],((p.STATUS,0x06096CB0),(p.CALLBACK,p.CALLBACK+4)))
+        self.assertEqual(args['ranges'],((p.STATUS,0x06096CB0),(p.CALLBACK,p.CALLBACK+6)))
+        self.assertEqual(args['terminals'][p.CALLBACK_TARGET],'handoff')
+        self.assertTrue(all(not lo<=p.CALLBACK_TARGET<hi for lo,hi in args['ranges']))
         self.assertEqual(p.guard.MAX_STEPS,128)
 
 
