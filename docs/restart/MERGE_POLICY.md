@@ -40,6 +40,36 @@ Report those states separately. The one-time foundation integration may use the
 GitHub merge API after its exact-head tests pass; that is not evidence of a running
 continuous merger.
 
+## Required preparation and native auto-merge
+
+Issue #610 addresses an observed gap: PR608 automatically merged at 12:51:30 UTC
+on 2 November after its native gate succeeded, while its applicable
+`Pinned Godot and Saturn installation` check finished at 12:53:10. That check
+eventually passed, but native auto-merge did not wait for it. The shared factory
+merger's conditional supplemental-check rule does not configure GitHub protection.
+
+Both literal checks must be required in GitHub, with the existing Actions app
+ID15368 and strict/current-base protection:
+
+- `Neptune merge gate`: applicable nonempty tooling and real native tests.
+- `Pinned Godot and Saturn installation`: the always-present preparation aggregate.
+
+The preparation workflow runs on every PR. Its first job verifies exact merge
+parents/base/head, classifies complete changed paths with rename sources and
+deletions included, and publishes a selection digest. The aggregate independently
+recomputes that selection. Applicable core/OCR/Xvfb jobs must succeed, followed
+by real Godot/core preparation and reuse. Only an explicit matching unrelated
+selection permits the preparation children to skip. Missing, failed, stale or
+skipped applicable dependencies fail the aggregate. An empty/malformed selection
+is not proof of non-applicability. Explicit manual runs prepare all tools.
+
+This keeps ordinary metadata PRs eligible without rebuilding unrelated tools or
+waiting forever for a path-filtered required check. Read back actual protection
+after configuration; source alone does not establish that both checks are required.
+Keep all other protections and zero mandatory approving reviews intact. A queued
+auto-merge demonstration must show both required checks completed before merge,
+plus their exact head/base, enable/merge timestamps and resulting commit.
+
 ## Configuration and acceptance on the server
 
 1. Finish the active bounded task and fetch current main/foundation. Use an existing
