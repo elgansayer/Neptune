@@ -168,7 +168,7 @@ class VerificationTests(unittest.TestCase):
             with self.subTest(paths=paths):
                 result = verify.requirements(paths, root=self.root)
                 self.assertEqual(set(result), {"schema", "scope", "plan", "baseline", "native"})
-                self.assertEqual(result["baseline"], {"checks": core, "python": ">=3.11", "executables": ["cc", "git"]})
+                self.assertEqual(result["baseline"], {"checks": core, "python": ">=3.11", "executables": ["cc", "git", "openssl"]})
                 native = result["native"]
                 self.assertEqual(set(native), {"required", "checks", "executables", "toolchain"})
                 self.assertEqual(result["baseline"]["checks"] + native["checks"], result["plan"]["required"])
