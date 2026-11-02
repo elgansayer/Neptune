@@ -12,7 +12,7 @@
 #define NEPTUNE_CTX_EXPORT
 #endif
 
-enum { NEPTUNE_CTX_ABI=1, NEPTUNE_CTX_CAPACITY=128, NEPTUNE_CTX_STEPS=4096,
+enum { NEPTUNE_CTX_ABI=2, NEPTUNE_CTX_CAPACITY=128, NEPTUNE_CTX_STEPS=4096,
        NEPTUNE_CTX_WITNESS=339, NEPTUNE_CTX_PAIRS=16 };
 enum { CTX_ENTRY=1, CTX_SAVE=2, CTX_SAVED=3, CTX_RESTORE=4, CTX_TRANSFER=5 };
 enum { CTX_BAD_FRAME=1, CTX_BAD_PIPELINE=2, CTX_BAD_ADDRESS=3, CTX_BUDGET=4,
@@ -28,7 +28,7 @@ typedef struct {
  uint32_t abi, record_bytes, capacity, count, dropped, errors, active, pending,
           completed, requested, profile, frame_known, frame, step_limit, steps,
           master_dispatches, outside_inspected, source_mismatch_candidates,
-          source_checks, last_error, last_pc, last_address;
+          source_checks, last_error, last_pc, last_address, fused_nops;
 } NeptuneContextStatus;
 static struct {
  NeptuneContextRecord records[NEPTUNE_CTX_CAPACITY];
@@ -38,7 +38,7 @@ static struct {
           source_mismatch_candidates, source_checks, last_error, last_pc,
           last_address, mismatch_known, save_context, save_return, target,
           save_call, save_delay, save_rts, save_restored, restore_call,
-          restore_delay, restore_rts, restore_restored;
+          restore_delay, restore_rts, restore_restored, fused_nops;
 } neptune_context_trace;
 
 static void neptune_context_error(uint32_t kind, uint32_t pc, uint32_t address)
@@ -156,6 +156,7 @@ NEPTUNE_CTX_EXPORT uint32_t neptune_context_status(NeptuneContextStatus* out,uin
  CTX_STATUS(frame_known);CTX_STATUS(frame);CTX_STATUS(steps);CTX_STATUS(master_dispatches);
  CTX_STATUS(outside_inspected);CTX_STATUS(source_mismatch_candidates);CTX_STATUS(source_checks);
  CTX_STATUS(last_error);CTX_STATUS(last_pc);CTX_STATUS(last_address);
+ CTX_STATUS(fused_nops);
 #undef CTX_STATUS
  return 1;
 }
@@ -174,7 +175,7 @@ NEPTUNE_CTX_EXPORT uint32_t neptune_context_witness(uint16_t* out,uint32_t capac
 
 /* Normal pipeline PC is four bytes ahead. Delay PCs are branch-target based:
  * recognize only the inspected opcode/target relationship, never PC-4. */
-static INLINE void neptune_context_step(const SH7095* z)
+static INLINE void neptune_context_step_at(const SH7095* z,uint32_t pipeline_pc)
 {
  uint32_t op,pc,code,profile,context,entry;
  if(!neptune_context_trace.active) return;
@@ -193,17 +194,17 @@ static INLINE void neptune_context_step(const SH7095* z)
  { neptune_context_error(CTX_BUDGET,0,0);return; }
  if(op&0x80)
  {
-  if(neptune_context_trace.stage==1 && neptune_context_trace.save_call && z->PC==0x060061C6 &&
+  if(neptune_context_trace.stage==1 && neptune_context_trace.save_call && pipeline_pc==0x060061C6 &&
      code==(profile==1?0x0009U:0x7420U)) neptune_context_trace.save_delay=1;
   if(neptune_context_trace.stage==2 && neptune_context_trace.save_rts && code==0xE000 &&
-     z->PC==neptune_context_trace.save_return+2) neptune_context_trace.save_restored=1;
-  if(neptune_context_trace.stage==3 && neptune_context_trace.restore_call && z->PC==0x060061E8 &&
+     pipeline_pc==neptune_context_trace.save_return+2) neptune_context_trace.save_restored=1;
+  if(neptune_context_trace.stage==3 && neptune_context_trace.restore_call && pipeline_pc==0x060061E8 &&
      code==(profile==3?0x0009U:0x6EF6U)) neptune_context_trace.restore_delay=1;
   if(neptune_context_trace.stage==4 && neptune_context_trace.restore_rts && code==0x6053 &&
-     z->PC==neptune_context_trace.target+2) neptune_context_trace.restore_restored=1;
+     pipeline_pc==neptune_context_trace.target+2) neptune_context_trace.restore_restored=1;
   return;
  }
- pc=z->PC-4;
+ pc=pipeline_pc-4;
  if(!neptune_context_trace.stage)
  {
   entry=profile==1?0x06006BE4:(profile==2?0x06006C00:0x06006D36);
@@ -271,5 +272,22 @@ static INLINE void neptune_context_step(const SH7095* z)
   neptune_context_trace.stage=4;return;
  }
  if(neptune_context_trace.stage==4 && pc==0x06006206 && code==0x000B) neptune_context_trace.restore_rts=1;
+}
+static INLINE void neptune_context_step(const SH7095* z)
+{
+ neptune_context_step_at(z,z->PC);
+}
+/* The inspected core folds NOP delays inside the branch handler. At this
+ * exact pre-NOP point PC is target, before the switch tail adds two. Expose
+ * the equivalent delay pipeline PC as a value; never modify CPU state. */
+static INLINE void neptune_context_fused_nop(const SH7095* z)
+{
+ if(!neptune_context_trace.active) return;
+ if((z->Pipe_ID>>24)!=0xF5)
+ { neptune_context_error(CTX_BAD_PIPELINE,z->PC,0);return; }
+ if(neptune_context_trace.fused_nops==UINT32_MAX)
+ { neptune_context_error(CTX_COUNTER,z->PC,0);return; }
+ neptune_context_trace.fused_nops++;
+ neptune_context_step_at(z,z->PC+2);
 }
 #endif

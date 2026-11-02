@@ -57,12 +57,18 @@ native-output acceptance are separate experiments described in
 
 ### Matched original-context observer
 
-`--tool beetle-saturn-context-trace` is a separate generation and ABI, retaining
+`--tool beetle-saturn-context-trace` is a separate generation and ABI2, retaining
 the historical source pin, existing `B934` observer and immutable caches. It
 observes master interpreter boundaries for fresh `6BE4` selection, resumed
 `6C00` selection, or `6D36` yield. It records the original save/restore helper
 entries and actual transfers after their delay slots. VBR slots are data;
 they do not identify a physical CPU. No slave coverage is claimed.
+
+Actual original execution exposed the pinned core's NOP delay fusion: those
+delays bypass its outer switch. The observer also hooks that exact master fused
+handler before its PC increment, normalising the pipeline PC as a value without
+writing CPU state. Both fused and ordinary delay paths are tested. Dispatch
+counts include these observer hooks and are not hardware instruction/cycle counts.
 
 Limits are 16 complete cycles, 128 records and 4,096 dispatches per pending
 cycle. Source witnesses supplied from the independently identified private
