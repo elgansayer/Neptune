@@ -34,7 +34,7 @@ was re-pinned. Frame600 actual image shows the SEGA licence screen. Original
 master frame1200 raw pipelinePC002007C6 and zero ROOT demonstrate this was still
 before first root save; do not relabel absence as a failed game boot.
 
-##655 preliminary actual original helper
+## 655 preliminary actual original helper
 
 Named scope is full first-task89C8 initialization and its helper/allocator graph.
 623A's static first call targets89C8; its real89AC helper initializes four words.
