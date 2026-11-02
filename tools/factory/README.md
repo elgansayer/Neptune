@@ -154,6 +154,64 @@ and an ambiguous publication that must remain blocked.
 
 ## Trusted intake boundary
 
+### Bind verification to the accepted task
+
+The opt-in `verify.py --intake` path implements the bounded source-scope portion
+of [#559](https://github.com/elgansayer/Neptune-Bomberman/issues/559) under #76.
+It consumes the existing `neptune.factory-intake.v1` snapshot; no new intake
+schema, scheduler or executable issue-text format is introduced.
+
+```sh
+python3 tools/factory/verify.py \
+  --intake /private/fresh-task-intake.json \
+  --changed-path tools/factory/example.py \
+  --toolchain /canonical/repo/.factory-tools/godot \
+  --evidence /private/verification/run-001
+```
+
+Repeat `--changed-path` for every actual changed file. The verifier reads the
+complete committed diff from the snapshot's exact base to current HEAD, with
+rename detection disabled so both old and new paths are checked. It requires
+that base to be an ancestor, the selection to equal the full diff, each path to
+be inside a literal accepted `task.scope.paths` boundary, and the number of paths
+to stay within `max_files`. Empty diffs fail. A prefix such as `tools/factory2`
+does not match an accepted `tools/factory` directory.
+
+Tracked, staged and untracked source must be clean. Assume-unchanged and
+skip-worktree index flags are rejected even on unselected files. Repository/index
+override environment variables are rejected. Keep the immutable intake, tool
+cache, logs and evidence outside candidate source or in explicitly ignored
+directories. The verifier does not discard changes or reset index flags.
+
+The snapshot must be a regular file of at most 256 KiB with unique JSON keys.
+Existing readiness checks enforce its freshness, prerequisite attestations,
+capabilities and active-work inventory. The coordinator supplies a fresh snapshot
+after reconciling ownership; its admitted job is not an overlapping external
+claim in that inventory. The snapshot is not proof of a live provider lease.
+Expired/future/not-ready snapshots and a different repository fail. Verification
+re-reads and revalidates the snapshot and candidate after all checks; a changed
+task/revision, snapshot bytes, HEAD, diff or working source prevents success.
+
+Opt-in reports and stdout receipts add `task_binding`: repository, issue, feature
+ID, revision, complete task and raw-intake SHA-256, base/head and actual changed
+paths. `identity` also records the accepted base. Existing path-only invocation,
+its receipt shape and the shared 5/8/10 check plan remain unchanged. `--plan`
+rejects `--intake` and remains requirements-only: it does not read Git or intake.
+Upgrade the existing factory consumer deliberately before opting into the added
+receipt fields; this CLI does not change a deployed coordinator.
+
+The coordinator still owns trusted policy, Git configuration/metadata, task
+revision and current-base selection. Run its trusted entrypoint in the existing
+credential-free verifier sandbox, derive paths independently and validate the
+returned binding against its accepted task and current protected branch. A
+candidate must not choose a narrower task or verify itself using its own edited
+policy. The local tool establishes consistency with supplied trusted intake;
+it does not authenticate GitHub state or private reference captures.
+
+Named native/browser/network/pack and exact state/pixel/audio acceptance contracts
+remain #76/#511 integration work. Passing this source-scope guard alone cannot
+establish an authentic reference experiment, Saturn parity or factory continuity.
+
 `readiness.py` consumes a coordinator-produced snapshot. It never executes issue
 text, model output or shell commands. The coordinator must obtain fresh issue/PR
 state, authenticate dependency evidence and resolve the catalogue's feature IDs.
