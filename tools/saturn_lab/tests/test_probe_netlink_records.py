@@ -22,7 +22,10 @@ class NetlinkRecordTests(unittest.TestCase):
         self.assertEqual(after[17],0x2708)
         self.assertEqual(after[:15],before[:15])
         self.assertEqual(after[15:17],[leaf.SP+4,leaf.STOP])
-        self.assertEqual(len(events),15)
+        self.assertEqual(len(events),19)
+        self.assertEqual(events[:2],[[2,leaf.SP-2,2,before[8]&0xFFFF],
+                                     [2,leaf.SP-4,2,before[8]>>16]])
+        self.assertNotEqual(before[8]&0xFFFF,before[8]>>16)
 
     def test_scan_first_free_changes_one_record_and_returns_original_sr2700(self):
         before,after,regions,expected,events,pcs=probe.scan_contract(31,0x201F,0)
@@ -31,7 +34,7 @@ class NetlinkRecordTests(unittest.TestCase):
         self.assertEqual(after[17],0x2700)
         self.assertEqual(after[:15],before[:15])
         self.assertEqual(len(pcs),173)
-        self.assertEqual(sum(1 for kind,_,_,_ in events if kind==2),10)
+        self.assertEqual(sum(1 for kind,_,_,_ in events if kind==2),12)
 
     def test_full_scan_preserves_all_records_and_discards_carry_on_sr_restore(self):
         _,after,regions,expected,events,pcs=probe.scan_contract(-1,0x271F,1)
@@ -39,7 +42,7 @@ class NetlinkRecordTests(unittest.TestCase):
         self.assertEqual(after[17],0x2700)
         self.assertEqual(len(pcs),168)
         self.assertIn(0x4BFE,pcs)
-        self.assertEqual(sum(1 for kind,_,_,_ in events if kind==2),3)
+        self.assertEqual(sum(1 for kind,_,_,_ in events if kind==2),5)
 
     def test_native_guard_memory_abi_and_instruction_failures_are_rejected(self):
         valid={'status_code':1,'status':'stop-reached','registers':[1],

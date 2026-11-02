@@ -29,7 +29,7 @@ def scan_cases():
 
 
 def base_regs(entry,sr):
-    regs=[0xA5A5A5A5]*18
+    regs=[0xA5A50000 | (i*0x101) for i in range(18)]
     regs[14],regs[15],regs[16],regs[17]=RECORD,leaf.SP,entry,sr
     return regs
 
@@ -44,7 +44,10 @@ def copy_contract(index,payload,sr,base):
     stack=bytes([0xCD])*16+leaf.STOP.to_bytes(4,'big')
     regions=[(PTR,base.to_bytes(4,'big'),False),(RECORD+1,bytes([index,*payload]),False),
              (destination,bytes.fromhex('e36c'),True),(leaf.SP-16,stack,True)]
-    events=[[2,leaf.SP-offset,4,before[reg]] for offset,reg in ((4,8),(8,2),(12,1),(16,0))]
+    # Pinned Musashi MOVEM.L predecrement writes the low word then high word
+    # for each register. This differs from its generic longword store callback.
+    events=[event for offset,reg in ((4,8),(8,2),(12,1),(16,0)) for event in (
+        [2,leaf.SP-offset+2,2,before[reg]&0xFFFF], [2,leaf.SP-offset,2,before[reg]>>16])]
     events += [[1,PTR,4,base],[1,RECORD+2,1,payload[0]],[1,RECORD+3,1,payload[1]],
                [1,RECORD+1,1,index],[2,destination,1,payload[0]],[2,destination+1,1,payload[1]]]
     events += [[1,leaf.SP+offset,4,before[reg]] for offset,reg in ((-16,0),(-12,1),(-8,2),(-4,8))]
@@ -68,7 +71,9 @@ def scan_contract(free,sr,variant):
     expected[15],expected[16],expected[17]=leaf.SP+4,leaf.STOP,0x2700
     stack=bytes([0xCD])*10+leaf.STOP.to_bytes(4,'big')
     regions=[(SLOTS,bytes(records),True),(leaf.SP-10,stack,True)]
-    events=[[2,leaf.SP-4,4,before[13]],[2,leaf.SP-8,4,before[7]],[2,leaf.SP-10,2,0x2700]]
+    events=[event for offset,reg in ((4,13),(8,7)) for event in (
+        [2,leaf.SP-offset+2,2,before[reg]&0xFFFF], [2,leaf.SP-offset,2,before[reg]>>16])]
+    events += [[2,leaf.SP-10,2,0x2700]]
     limit=free+1 if free>=0 else 32
     events += [[1,SLOTS+12*i,1,records[12*i]] for i in range(limit)]
     if free>=0:
