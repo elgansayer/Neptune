@@ -188,7 +188,7 @@ def contract(case):
     entry = {'leaf': LEAF, 'init-prefix': INIT, 'caller-prefix': CALLER,
              'library-validation': LIBRARY}[family]
     before = records.initial(entry, 0x11223344, variant)
-    before['r15'] -= variant*0x1000
+    before['r15'] -= 0x100+variant*0x1000
     if family != 'library-validation' and case[3] is not None:
         before[case[3]] = case[4]
     canary = lambda n: bytes((seed + 37*i) & 255 for i in range(n))

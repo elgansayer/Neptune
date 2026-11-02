@@ -93,6 +93,8 @@ class TaskInitTests(unittest.TestCase):
                 else: incomplete += 1
                 for (_, raw, writable), after in zip(regions, m.buffers):
                     if not writable: self.assertEqual(bytes(after), raw)
+                for lo, raw, _ in regions:
+                    self.assertTrue(0x06000000 <= lo < lo+len(raw) <= 0x06100000)
             counts[family] = (complete, incomplete)
         self.assertEqual(counts, {'leaf': (1920, 0), 'init-prefix': (0, 1920),
                                   'caller-prefix': (0, 1920), 'library-validation': (1220, 60)})
