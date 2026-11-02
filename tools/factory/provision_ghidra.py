@@ -151,7 +151,10 @@ def files_identity(directory):
     for path in sorted(directory.rglob("*")):
         if path.is_symlink() or not (path.is_file() or path.is_dir()):
             fail("invalid_cache", "Nonregular Ghidra/JDK cache member")
-        if path.is_dir() or path.name in {MANIFEST, "receipt.json"} and path.parent == directory:
+        if path.name in {MANIFEST, "receipt.json"} and path.parent == directory:
+            continue
+        if path.is_dir():
+            entries[path.relative_to(directory).as_posix()] = {"directory": True, "mode": stat.S_IMODE(path.stat().st_mode)}
             continue
         total += path.stat().st_size
         if total > MAX_EXPANSION or len(entries) >= MAX_FILES:
@@ -161,6 +164,15 @@ def files_identity(directory):
     if not entries:
         fail("invalid_cache", "Empty Ghidra/JDK payload")
     return entries
+
+
+def seal_payload(directory):
+    # Official SleighLanguageFile skips install-local lock creation on read-only
+    # installations. Never ignore newly written locks or rewrite published hashes.
+    for path in sorted(directory.rglob("*"), reverse=True):
+        if path.is_symlink() or not (path.is_dir() or path.is_file()):
+            fail("invalid_cache", "Cannot seal a nonregular tool payload")
+        path.chmod(0o555 if path.is_dir() or path.stat().st_mode & 0o111 else 0o444)
 
 
 WRAPPER = '''#!/usr/bin/python3
@@ -197,6 +209,7 @@ def install(recipe, payload, work, runner, root):
     wrapper = payload / "ghidra-headless"
     wrapper.write_text(WRAPPER)
     wrapper.chmod(0o755)
+    seal_payload(payload)
     (payload / MANIFEST).write_text(json.dumps(files_identity(payload), sort_keys=True) + "\n")
 
 
@@ -232,7 +245,12 @@ def smoke(recipe, binary, runner, root):
     if result != expected:
         fail("smoke_failed", "Actual SH-2 import/disassembly/decompilation differs")
     # A smoke may not mutate the published dependency generation.
-    if files_identity(directory) != json.loads(manifest.read_text()):
+    after, before = files_identity(directory), json.loads(manifest.read_text())
+    if after != before:
+        changes = {"added": sorted(set(after) - set(before)), "removed": sorted(set(before) - set(after)),
+                   "changed": sorted(key for key in set(after) & set(before) if after[key] != before[key])}
+        (runner.evidence / "payload-changes.json").write_text(json.dumps(
+            {key: {"count": len(value), "first_paths": value[:32]} for key, value in changes.items()}, sort_keys=True))
         fail("invalid_cache", "Headless execution mutated the prepared payload")
     return {"scope": SCOPE, **result, "jdk_version": recipe["jdk_version"],
             "fixture_sha256": digest(fixture), "payload_sha256": manifest_sha}

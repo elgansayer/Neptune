@@ -99,6 +99,16 @@ class GhidraPreparationTests(unittest.TestCase):
         self.assertFalse(notice.is_symlink())
         self.assertEqual(notice.read_bytes(), b"notice")
 
+    def test_payload_is_readonly_before_first_probe_and_directory_modes_are_bound(self):
+        directory = self.payload()
+        g.seal_payload(directory)
+        for path in directory.rglob("*"):
+            self.assertEqual(path.stat().st_mode & 0o222, 0)
+        before = g.files_identity(directory)
+        self.assertTrue(before["ghidra"]["directory"])
+        (directory / "ghidra").chmod(0o755)
+        self.assertNotEqual(g.files_identity(directory), before)
+
     def test_archive_expansion_and_index_limits_apply(self):
         archive = self.archive([("root/file", "file", b"abc")], True)
         with patch.object(g, "MAX_EXPANSION", 2), self.assertRaises(p.ProvisionError):

@@ -119,7 +119,9 @@ non-directory parents, devices, hardlinks and escaping/cyclic links. Internal JD
 notice symlinks are resolved within the archive and materialised as regular files;
 the resulting cache contains no links. Interrupted staging never advertises ready.
 
-Every reuse verifies all payload file hashes, sizes and modes against the manifest
+The staged dependency files/directories become read-only before the first smoke,
+so upstream skips installation-local language locks just as in a read-only mount.
+Every reuse verifies all payload file hashes, sizes and file/directory modes against the manifest
 bound to the published receipt, then runs real Java and headless analysis in a
 fresh private home/project. The returned `ghidra-headless` executable selects the
 bundled JDK directly, limits Java's heap to768MiB and active processors to one,
