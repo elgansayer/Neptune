@@ -70,8 +70,10 @@ coverage and the complete89C8 graph remain open. Broader655 now has8,738 cases
 twice with matching actual original reports:89AC, bounded89C8/623A prefixes,
 closed95B04 errors,96A80 callback-address stores and96AC0 table initialization.
 All31 family/control combinations have non-budget rejections. Read the current
-checkpoint and continue the positive library/BIOS/callback dependencies through
-a real89C8 return. Preserve live factory reservations and newer coordinator657
+checkpoint: PR658 merged27e44f1; next96C60 status/error diagnostic is prepared
+with an actual host-admission deferral retained, not new CPU execution. Continue
+the positive library/BIOS/callback dependencies through a real89C8 return.
+Preserve live factory reservations and newer coordinator657
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
