@@ -27,6 +27,7 @@ typedef struct {
 void fixture_reset(void) { memset(&neptune_call_trace, 0, sizeof(neptune_call_trace)); setting_sh2_jit = 0; }
 void fixture_jit(uint32_t enabled) { setting_sh2_jit = enabled; }
 void fixture_overflow(void) { neptune_call_trace.count = NEPTUNE_TRACE_RECORDS; }
+void fixture_dispatch_overflow(void) { neptune_call_trace.master_dispatches = UINT32_MAX; }
 uint32_t fixture_step(const NeptuneCallRecord* input, uint32_t raw_pc, uint32_t pipe) {
  SH7095 z, before;
  memset(&z, 0, sizeof(z));
@@ -93,6 +94,24 @@ class ObserverTests(unittest.TestCase):
         self.assertEqual(after["pc"], before["pr"])
         self.assertEqual(after["dispatch_steps"], 14)
         self.assertEqual(after["macl"], 0x12345678)
+        self.assertEqual(result["status"]["master_dispatches"], 15)
+
+    def test_dispatch_coverage_distinguishes_empty_execution_and_counter_overflow(self):
+        self.binding.start(1)
+        self.binding.frame(0)
+        self.step(0x06006004)
+        status = self.binding.status()
+        self.assertEqual((status.master_dispatches, status.completed, status.errors), (1, 0, 0))
+        with self.assertRaises(ValueError):
+            self.binding.finish()
+        self.setUp()
+        self.binding.start(1)
+        self.binding.frame(0)
+        self.dll.fixture_dispatch_overflow()
+        self.step(0x06006004)
+        self.assertEqual(self.binding.status().errors, 1)
+        with self.assertRaises(ValueError):
+            self.binding.finish()
 
     def test_real_c_library_probe_exercises_fences_without_claiming_cpu_execution(self):
         result = trace.probe_library(Path(self.temp.name) / "observer.so")
