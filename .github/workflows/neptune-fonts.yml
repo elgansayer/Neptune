@@ -22,4 +22,6 @@ jobs:
       - name: Install the repository-pinned engine
         run: python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
       - name: Shape bundled language samples and verify regional glyphs in real Godot
-        run: python3 tools/fonts/check.py --godot "$RUNNER_TEMP/godot/Godot_v4.5-stable_linux.x86_64"
+        run: |
+          FONT_GODOT_BINARY="$(python3 -c 'import json; print(json.load(open("tools/godot/toolchain.json"))["binary_name"])')"
+          python3 tools/fonts/check.py --godot "$RUNNER_TEMP/godot/$FONT_GODOT_BINARY"
