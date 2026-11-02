@@ -1,0 +1,75 @@
+{
+  "accepted_long_guard_sha256": "d744a4235e5df6709adaf66a272abdc56b8ee2bd0413f2980aac5ae5fba11c21",
+  "chosen_budget": 144,
+  "classification": "incomplete_prefix_after_actual89AC_return; not89C8_return",
+  "events": 41,
+  "existing_long_profile_cap": 1024,
+  "guard_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+  "instruction_count": 130,
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "limits": {
+    "address_space_bytes": 2147483648,
+    "command_wall_seconds": 60,
+    "host_shared": 3,
+    "nice": 10,
+    "own_lease_seconds": 180,
+    "provider_calls": 0
+  },
+  "literal_reads": 6,
+  "native_register_stack_origin": {
+    "input_scope": "Actual native623A registers/stack; constructed104-byte globals completely overwritten before use",
+    "sha256": "8caa53066857fd847988c72d3afa696f0e3c78186c0c46b2740e9eee170425c7",
+    "trace": "/home/dev/neptune-research-private/649/repeatability-boot-profile1-5g9nai4r/enabled-1/context-trace.json"
+  },
+  "negative_control": {
+    "instructions": 130,
+    "kind": "disposable original-copy MOV0 at89AE",
+    "original_file_unchanged": true,
+    "semantic_not_budget_rejection": true,
+    "status": "handoff"
+  },
+  "original128_guard_unchanged": true,
+  "original_game_bytes_executed": true,
+  "original_runs": 2,
+  "outputs": {
+    "all_visible_registers_and_transactions_checked": true,
+    "global_bytes_written": 104,
+    "global_data_end_exclusive": "060BD92C",
+    "global_data_start": "060BD8C4",
+    "pointer_value": "00200000",
+    "pointer_words": 16,
+    "readonly_canaries_and_every_other_original_byte_unchanged": true,
+    "saved_outer_return_pr": "06006240",
+    "sentinel_words": 4,
+    "stack_bytes_written": 12,
+    "zero_halfwords": 12
+  },
+  "parent_prefix_instruction_count": 127,
+  "private_evidence": "/home/dev/neptune-research-private/655/caller-prefix-preliminary-4lon_b6r",
+  "private_report_sha256": "d78e529d343bb1dba7dde9f824dc9b0befa1a278540a43d5c1d8891451940e1a",
+  "remaining": [
+    "Reusable independently modelled probe and broad ABI/data cases",
+    "95B04 library call and all remaining89C8 calls through actual complete RTS",
+    "623A full body/role;6372 BIOS/IRQ startup and other whole-code coverage"
+  ],
+  "reports_equal": true,
+  "schema": "neptune.original-first-task-caller-prefix-evidence.v1",
+  "scope": "One original623A\u219289C8\u219289AC path to89FC, repeated twice; incomplete89C8; no later library call executed",
+  "short_refusal": {
+    "attempted_steps": 129,
+    "error": {
+      "reason": "Handoff instruction budget exceeded",
+      "type": "ValueError"
+    },
+    "executed_instructions": 128,
+    "pc": "060089be",
+    "status": "failed"
+  },
+  "source_head": "4fec0cbeb1e85d77c6f060e86c5d4d7b7e439859",
+  "supervisor_sha256": "afd11591555e7fd55f445e75481acb0fe1d5efb4f25f694ade38f45d0fcab190",
+  "terminal_pc": "060089FC",
+  "whole_program_status": "active; incomplete",
+  "worker_sha256": "0e1af60047f462ee3f1342558e0cf77f440ad6a018866f34d1fbd02735fb6f91",
+  "writes": 35
+}

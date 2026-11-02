@@ -57,7 +57,7 @@ targets6372, whose startup includes BIOS callbacks and a sampled-word wait;
 this return address must not be relabelled as a direct6BE4 call. The first task
 instruction at623A matches the captured boundary. Its static immediate callee
 is89C8; that function starts with RAM-table initialization and a real89AC helper
-before allocator dependencies. Task purpose and complete bodies remain unknown.
+before library dependencies. Task purpose and complete bodies remain unknown.
 Boot6174 also writes a CPU-internal register; do not treat it as flat RAM.
 
 Private evidence:
@@ -74,7 +74,7 @@ scheduler, allowance, quota or continuity changes. Account/CI spend is unknown.
 Together with [the accepted late-window result](2026-11-02-original-context-observer.md),
 all three named master profiles now have actual repeated original evidence.
 This closes the bounded missing-fresh-entry question, not the programme.
-Continue first-task623A/89C8 and helper/allocator dependencies, startup6372,
+Continue first-task623A/89C8 and helper/library dependencies, startup6372,
 slave/loader/overlays/libraries, remaining68000/DSP and regional code. Whole
 module/function/dynamic-target denominators, physical hardware timing, identified
 gameplay and Godot parity remain unproved. The all-code programme is active.

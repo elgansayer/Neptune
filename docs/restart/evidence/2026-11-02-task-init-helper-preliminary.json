@@ -1,0 +1,97 @@
+{
+  "complete_reports_equal": true,
+  "entry": "060089ac",
+  "execution": {
+    "cancelled": false,
+    "exit": 0,
+    "host_shared_limit": 3,
+    "output": "/home/dev/neptune-research-private/655/helper-preliminary-izfhq7bf",
+    "owner": "code655:helper-preliminary:698503",
+    "provider_calls": 0,
+    "source_head": "dfc3b373bb278044bcc312070b3e3ec8b637d216",
+    "timed_out": false,
+    "truncated": false
+  },
+  "guard_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+  "instructions_per_original_run": 23,
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "literal_read": [
+    1,
+    100699120,
+    4,
+    101439684
+  ],
+  "negative_control": {
+    "instructions": 23,
+    "kind": "disposable original-copy MOV0 instead of MOV-1 at89AE",
+    "original_file_unchanged": true,
+    "semantic_not_budget_rejection": true,
+    "status": "returned"
+  },
+  "observed_contract": {
+    "canaries_and_other_original_bytes_unchanged": true,
+    "clobbered_registers": [
+      "r4",
+      "r5",
+      "r6",
+      "r7"
+    ],
+    "data_start": "060BD8C4",
+    "filled_value": "FFFFFFFF",
+    "other_visible_registers_and_specials_checked": true,
+    "rts_delay": "NOP060089C0",
+    "sr_t_after": 1,
+    "stack_untouched": true,
+    "word_count": 4
+  },
+  "original_game_bytes_executed": true,
+  "original_runs": 2,
+  "private_evidence": "/home/dev/neptune-research-private/655/helper-preliminary-izfhq7bf",
+  "private_report_sha256": "1b6ef4d57e11039d07cc3a3f2ce5a84f744a3a3ccf8816282863945fdc52a4f3",
+  "reference_source_hashes": {
+    "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+    "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+    "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+  },
+  "remaining": [
+    "Reusable probe and broader ABI/data cases",
+    "Original89C8 caller prefix before89FC, with actual89AC and honest incomplete status",
+    "Original95B04 unresolved library call and all remaining89C8 calls through complete RTS",
+    "Firsttask623A larger body/role,6372 BIOS/IRQ/device startup",
+    "Unknown whole-code denominators; no hardware/Godot/gameplay parity"
+  ],
+  "schema": "neptune.task-init-helper-preliminary-evidence.v1",
+  "scope": "One constructed89AC state returns completely twice; not broad helper coverage, complete89C8 or natural helper-call validation",
+  "source_head": "dfc3b373bb278044bcc312070b3e3ec8b637d216",
+  "source_range_sha256": "48da7a14c442026b8c100dd88e6e62fe22e8b445971db204e5a38c564c9f3a33",
+  "supervisor_sha256": "332522aecc1584886ba3397e27727ce5b1852998931bcb5226cb357b2ecba247",
+  "whole_program_status": "active; incomplete",
+  "worker_sha256": "6d7d556e71a6ace38ce3ba2d9cadaa43f5d25792529109b5da7b764bf3e2a36a",
+  "writes": [
+    [
+      2,
+      101439684,
+      4,
+      4294967295
+    ],
+    [
+      2,
+      101439688,
+      4,
+      4294967295
+    ],
+    [
+      2,
+      101439692,
+      4,
+      4294967295
+    ],
+    [
+      2,
+      101439696,
+      4,
+      4294967295
+    ]
+  ]
+}

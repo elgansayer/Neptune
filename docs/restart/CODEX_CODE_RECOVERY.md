@@ -25,7 +25,7 @@ does not block this coordinator.
 
 **Further VPS execution, 2 November:** the existing Codex app continued through
 original SH-2 bounds/accumulator functions and original68000 sound code. Resume
-the [current code649 checkpoint](saturn-code/VPS-CODE-649-CHECKPOINT.md),
+the [current code655 checkpoint](saturn-code/VPS-CODE-655-CHECKPOINT.md),
 which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
@@ -63,7 +63,10 @@ root handoff continuity. See the current checkpoint for evidence/publication.
 Fresh6BE4 entry is now observed at frame1247 through actual61C4 root save,
 61E6 record0 restore and transfer623A, with a further six exact repeated original
 reference/disabled/enabled windows and14 actual-trace controls. Resume the current
-checkpoint for publication and next first-task623A/89C8/helper/allocator work,
+checkpoint: PR654 merged and649 closed;655 now continues first-task623A/89C8/
+helper/library work, with one preliminary original89AC state returning23
+instructions twice and a semantic original-copy control retained. Broader helper
+coverage and the complete89C8 graph remain open. Continue that code work,
 then the larger root/task cycle, unresolved17F2 and further original modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
