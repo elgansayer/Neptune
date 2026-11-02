@@ -1,0 +1,15 @@
+{
+  "component_sha256": "0a698c20bfee37024993adb94e3113ba1e86c4cc8726486b35a9c1a052c2b0f7",
+  "files": {
+    "COPYING": "a6996dcf0c334281f734560926e079b2dbbd5b78e81c0ca00a413ec01e1cd2fb",
+    "mednafen/ss/scsp.h": "707bdbfecb158e996cc6c36acba68dc7a0002d648f9b7e958ec7e5277f8872df",
+    "mednafen/ss/scsp.inc": "0fa92f80c30bc1a6944d7cbda55f3ecad189408d5a8dc394887a4ec6b1f5e501"
+  },
+  "functions": [
+    "selected word branches SS_SCSP_RW_u16_W0",
+    "selected word branches SS_SCSP_RW_u16_W1"
+  ],
+  "repository": "libretro/beetle-saturn-libretro",
+  "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+  "schema": "neptune.scsp-dsp-source-lock.v1"
+}

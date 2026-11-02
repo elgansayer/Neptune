@@ -313,3 +313,39 @@ VPS acceptance is separate: use a fresh disposable cache, record the real instal
 and reuse results, then use an authorised private game fixture with a new input
 lock. Prove the existing factory provisions and resumes after interruption and a
 provider/tool failure. #518 stays open until that integration and evidence exist.
+
+## Bounded SCSP DSP word-register preparation
+
+Issue666 uses the existing no-original-input native preparation boundary, without
+changing ABI1/2/3 or a reference core. `tools/saturn_lab/m68k_scsp_dsp.py` produces
+ABI4 from the accepted Musashi lock plus `scsp-dsp-source-lock.json`. The latter
+pins Beetle's licence, declarations and register source at the historical
+reference revision. It extracts the actual COEF/MADRS/MPROG word branches and
+endian helpers; reference implementation and original game bytes stay external.
+The generated component retains the upstream licence notice and COPYING.
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_dsp.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /path/to/new/private/preparation/prepared
+```
+
+Run in constrained preparation with sources read-only, private media and broker
+credentials hidden, no network, and bounded memory/CPU/output. Compilation is
+limited to60seconds and stages are retained on failure. A ready receipt requires
+17,280 actual reference word-effect cases,640 owned CPU write/read/return cases,
+unsupported-width/address/alignment checks and recovery. Existing cache reuse
+rechecks source/component/binary/recipe identity and repeats the real smoke.
+`Pinned Godot and Saturn installation` requires this native child whenever its
+module, lock, tests or shared backend/preparation dependencies change. Missing,
+failed or skipped applicable native preparation blocks the required aggregate.
+
+Supported writes are even words100700..100BFE. COEF drops low3bits, MADRS stores
+16bits, and MPROG updates the correct big-endian word lane and invalidates decoded
+state even for identical data. Gap7C0..7FF writes follow upstream's no-op
+fallthrough; gap reads remain unsupported. Other accesses fail closed. Odd
+accesses remain native guard diagnostics, not implemented68000 exceptions.
+Clocks, DSP execution, interrupt processing, audio and hardware independence are
+outside this profile. Original command12 testing is a separate experiment using
+verified private inputs, never a preparation smoke or complete sound-engine claim.
