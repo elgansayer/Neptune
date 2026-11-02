@@ -418,6 +418,25 @@ class XvfbRecipeTests(unittest.TestCase):
         self.assertEqual(len(processes), 2)
         self.assertTrue(all(process.poll() is not None for process in processes))
 
+    def test_displayfd_readiness_line_can_arrive_in_separate_real_pipe_writes(self):
+        binary = self.root / "owned-display-producer"
+        binary.write_text("#!/usr/bin/python3\nimport os,sys,time\n"
+                          "fd=int(sys.argv[sys.argv.index('-displayfd')+1])\n"
+                          "os.write(fd,b'12')\ntime.sleep(0.1)\nos.write(fd,b'3\\n')\ntime.sleep(2)\n")
+        binary.chmod(0o755)
+        with patch.object(xvfb, "pixel_roundtrip", return_value={"owned": "protocol fixture"}) as pixel:
+            self.assertEqual(xvfb.probe(binary), {"owned": "protocol fixture"})
+        pixel.assert_called_once_with(":123")
+
+    def test_truncated_displayfd_never_reaches_pixel_check_and_retains_bytes(self):
+        binary = self.root / "owned-truncated-display"
+        binary.write_text("#!/usr/bin/python3\nimport os,sys\n"
+                          "os.write(int(sys.argv[sys.argv.index('-displayfd')+1]),b'12')\n")
+        binary.chmod(0o755)
+        with patch.object(xvfb, "pixel_roundtrip") as pixel, self.assertRaisesRegex(p.ProvisionError, "12"):
+            xvfb.probe(binary)
+        pixel.assert_not_called()
+
     def test_pixel_mutation_is_detected_and_connection_closed(self):
         library = MagicMock()
         library.XOpenDisplay.return_value = 1
