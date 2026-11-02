@@ -53,7 +53,9 @@ def contract(command,word,upper,sr,base):
                 # Pinned 68000 illegal instruction: stack PPC and SR, then read
                 # vector4 at10. The vector is deliberately NOT mapped/supplied.
                 outcome='unresolved-exception-vector';expected[15]=leaf.SP-10
-                expected[16]=landing+2
+                # Pinned m68ki_jump_vector sets REG_PC to vector*4 before
+                # reading its value. The rejected read therefore leaves PC10.
+                expected[16]=0x10
                 events += [[2,leaf.SP-8,4,landing],[2,leaf.SP-10,2,(sr&~31)|flags]]
                 after[16:20]=landing.to_bytes(4,'big');after[14:16]=((sr&~31)|flags).to_bytes(2,'big')
             elif target==0x186E:

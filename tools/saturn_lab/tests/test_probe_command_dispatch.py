@@ -51,7 +51,7 @@ class CommandDispatchTests(unittest.TestCase):
     def test_unmapped_exception_vector_is_never_completed(self):
         _,expected,_,after,events,pcs,_,outcome=p.contract(0x8C,1,0xA5A5FF00,0x271F,0x8000)
         self.assertEqual(expected[15],p.leaf.SP-10)
-        self.assertEqual(expected[16],0x1840)
+        self.assertEqual(expected[16],0x10)
         self.assertEqual(events[-2:],[[2,p.leaf.SP-8,4,0x183E],[2,p.leaf.SP-10,2,0x2700]])
         self.assertEqual(after[0][14:20],bytes.fromhex('27000000183e'))
         class Wrong:
