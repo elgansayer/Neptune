@@ -18,8 +18,10 @@ and DSP remain active research.
   `5dbed5a85bc32ff3970da0c234f33ade01aa2670` against base `e117b116`, required
   CI run `41434645968`. Two original runs, 1,120 cases per run, entries A25E/A2D8,
   ten rejected instruction controls. [Contract and evidence](../research/2026-11-02-original-split-add.md).
-- #596 / [PR598](https://github.com/elgansayer/Neptune-Bomberman/pull/598): pushed
-  sound discovery; check live merge/head/check state before resuming. Three
+- #596 / [PR598](https://github.com/elgansayer/Neptune-Bomberman/pull/598): accepted
+  merge `95e28ffb781a549b30359725937534b600b6599e`, tested head
+  `784eb019b1803259e23fb9f88cee9281fa99e0ec`, base `a8cbc796`, required CI
+  run `41435704857`. Check live successor work before resuming. Three
   original driver identities, two identical static reports per module, exact
   SND/XBSND byte equality, retained static conflicts and NetLink indirect target.
   **Zero original 68000 instructions executed.** [Contract and evidence](../research/2026-11-02-original-sound-code.md).
@@ -51,7 +53,7 @@ open; do not start another scheduler or claim live Neptune continuity.
 
 ## Exact next commands and eligible work
 
-First reconcile publication, without a new provider call:
+First reconcile accepted publication and preserve new active claims, without a new provider call:
 
 ```sh
 gh pr view 598 --repo elgansayer/Neptune-Bomberman \
@@ -63,7 +65,7 @@ Then continue selected sound code inspection with the prepared read-only recipe
 
 ```sh
 timeout 60s nice -n 10 python3 \
-  /home/dev/neptune-evidence/code596-20261102/inspect-next-sound.py
+  /home/dev/neptune-evidence/code596-20261102/inspect-next-sound.py --subroutine
 ```
 
 Concrete next sound question: the five original NetLink wrappers set A2 to
