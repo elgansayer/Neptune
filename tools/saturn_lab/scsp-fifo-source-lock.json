@@ -1,0 +1,17 @@
+{
+  "component_sha256": "1560254353394f94d87aa5c892573f248abb30f1017b0a5a567706fd01f912b4",
+  "files": {
+    "COPYING": "a6996dcf0c334281f734560926e079b2dbbd5b78e81c0ca00a413ec01e1cd2fb",
+    "mednafen/ss/scsp.h": "707bdbfecb158e996cc6c36acba68dc7a0002d648f9b7e958ec7e5277f8872df",
+    "mednafen/ss/scsp.inc": "0fa92f80c30bc1a6944d7cbda55f3ecad189408d5a8dc394887a4ec6b1f5e501"
+  },
+  "functions": [
+    "SS_SCSP_RecalcSoundInt",
+    "SS_SCSP_RecalcMainInt",
+    "SS_SCSP_MIDI_Reset",
+    "SS_SCSP_MIDI_WriteOutput"
+  ],
+  "repository": "libretro/beetle-saturn-libretro",
+  "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+  "schema": "neptune.scsp-fifo-source-lock.v1"
+}
