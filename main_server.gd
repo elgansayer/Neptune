@@ -10,7 +10,7 @@ const ProtocolNegotiation = preload("res://shared/network/protocol_negotiation.g
 const ContentDownload = preload("res://shared/network/content_download.gd")
 const PackArchive = preload("res://shared/content/pack_archive.gd")
 
-var peer: ENetMultiplayerPeer
+var peer: MultiplayerPeer
 var auth_service # Will be LocalBackend or PlayFabBackend
 var lobby_manager
 var active_games = {} # game_id -> GameInstance
@@ -73,8 +73,9 @@ func _start_server(runtime: Dictionary) -> void:
 		return
 	
 	# Start server
-	peer = ENetMultiplayerPeer.new()
-	var error = peer.create_server(runtime.port, Constants.MAX_CONNECTED_PEERS)
+	var listener := preload("res://shared/network/transport.gd").server(runtime.transport, runtime.port, Constants.MAX_CONNECTED_PEERS)
+	peer = listener.peer
+	var error: int = listener.error
 	if error != OK:
 		push_error("Failed to start server: " + str(error))
 		get_tree().quit(1)
