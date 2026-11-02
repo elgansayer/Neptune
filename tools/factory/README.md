@@ -141,6 +141,74 @@ merge through the adapter demonstrates publication, not a complete AI job,
 restart recovery or continuous operation. #33 still requires those live tests
 before enabling unattended continuity.
 
+## Named supplied-trace checks
+
+The opt-in #576/#76 contract runs the existing exact behaviour-trace comparator
+in addition to the unchanged path-based checks. It uses the existing accepted
+task's string fields, without another intake or receipt schema. The coordinator
+adds the exact selector `check:behaviour-trace-exact-v1` to `task.acceptance`.
+In `task.evidence`, it supplies exactly one of each of these five records:
+
+```text
+trace-v1:contract:<sha256 of canonical trace contract>
+trace-v1:reference-source:<sha256 of canonical reference source object>
+trace-v1:candidate-source:<sha256 of canonical candidate source object>
+trace-v1:reference-file:<sha256 of raw reference.json bytes>
+trace-v1:candidate-file:<sha256 of raw candidate.json bytes>
+```
+
+Canonical object bytes use `tools/saturn_lab/compare_trace.py:canonical` encoded
+as UTF-8. The contract identifies the declared scenario, ruleset, observation
+units, input recording and rational clock. Source objects retain the existing
+build, content/input lock, capture and adapter identities; the required roles are
+`reference` and `implementation`. Source object hashes may differ. The comparator
+still requires an identical contract and exact ordered observations, with no
+alignment, tolerance, dropped samples or relaxed assertions.
+
+The coordinator captures and binds candidate artifacts after the relevant build
+and capture step, before verification. Ordinary issue prose or a worker's claimed
+hash must not establish those identities. These declarations are consistency
+requirements, **not source authentication**. #511 must supply independently
+authenticated original/candidate executions before any real fidelity claim.
+The accepted intake remains subject to its existing freshness/revision/full-Git-
+scope checks; replacing the task or artifacts invalidates the run.
+
+Place the declared artifacts on a separate coordinator-supplied read-only mount:
+
+```text
+/private/supplied-artifacts/behaviour-trace-exact-v1/reference.json
+/private/supplied-artifacts/behaviour-trace-exact-v1/candidate.json
+```
+
+```sh
+python3 tools/factory/verify.py --changed-path docs/owned-result.md \
+  --intake /private/accepted-task.json \
+  --feature-artifacts /private/supplied-artifacts \
+  --toolchain /prepared/godot --evidence /private/evidence/unique-run
+```
+
+The artifact mount must be outside candidate source and output evidence, without
+symlink components. The CLI checks identities, bounded strict JSON and trace
+semantics before baseline commands, then actually executes the comparator and
+checks that the files remained unchanged. Unknown `check:` selectors and malformed,
+duplicate, incomplete or orphaned `trace-v1:` requirements fail. Missing, replaced,
+truncated, skipped-summary or mismatching artifacts cannot become a successful
+feature result. Arbitrary commands from task strings are never executed.
+
+The same `neptune.factory-verification.v1` receipt gains optional
+`feature_requirements` and `feature_checks` objects. A feature result records the
+actual in-process comparator operation/code identity, artifact identities and
+existing comparison result, including first divergence. It is a supplied-observation
+check, not proof that original Saturn or production Godot ran. Legacy selections
+without the selector preserve their five/eight/ten checks and receipt fields.
+`--plan` still reads no intake or artifacts and rejects this execution option.
+
+This is a local verifier interface. The live shared Elgl adapter does not yet
+select, mount or enforce these optional fields. Keep #76/#511 open until that
+integration, authenticated private experiments and relevant mutation controls pass.
+Neither ordinary green CI nor this supplied-artifact contract establishes the
+whole game's state, native pixels or sample-timed audio parity.
+
 ## Local ownership foundations
 
 Implements the local foundations of #71/#72. No scheduler, provider, remote GitHub

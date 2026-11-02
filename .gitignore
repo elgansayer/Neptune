@@ -21,3 +21,7 @@ SBomberman-main/
 # Generated local agent registrations; reviewed sources live in the skill lock.
 /.agents/skills/
 /.codex/config.toml
+/.claude/skills/
+/.mcp.json
+/.agents/mcp_config.json
+/agent/skills/
