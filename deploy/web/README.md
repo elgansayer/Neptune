@@ -28,3 +28,17 @@ Check Arcane's Event Log for the rollout result; webhook acceptance is
 asynchronous. To roll back, set both images to the same previous `sha-<full
 commit>` or recorded digests and redeploy. Keep those pins until ready to resume
 following `latest`. Exported release inputs exclude the research-private tree.
+
+
+The browser gate opens two clean visitors sequentially against the same server.
+The first visitor leaves after its match starts; the second must still
+negotiate, authenticate and render a fresh map. This catches the hosted
+`round_finished` admission failure that a fresh-server-only smoke misses.
+
+The server replaces a completed joinable room with a new authority for later
+visitors. Existing clients retain the completed room and its terminal result
+until their last connection leaves, then that retired authority is freed.
+Active matches and in-flight exact-content transfers prevent replacement.
+The new room uses the same configured map, pack and room options. Console
+commands remain on the server autoload and are rebound to the current room.
+This is hosted admission recovery, not a complete rematch UI or fidelity claim.
