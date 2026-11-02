@@ -1,0 +1,1076 @@
+{
+  "bounded_incomplete_waits_per_run": 2396,
+  "cases_per_complete_run": 7736,
+  "common_source_identity_and_owned_smoke": {
+    "cpu": "sh2",
+    "experiment": "EXP-SAT-CODE-021",
+    "guard_derivation": {
+      "accepted_source_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+      "derived_sha256": "d744a4235e5df6709adaf66a272abdc56b8ee2bd0413f2980aac5ae5fba11c21",
+      "only_change": "MAX_STEPS=128 ->1024 in fresh namespace; older source/global unchanged"
+    },
+    "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+    "interpreter_sources": {
+      "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+      "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+      "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+    },
+    "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+    "lifetime": "resident-kernel",
+    "limitations": [
+      "Constructed full table/root/arrays/header and static sample; no natural scheduler capture",
+      "Selected task transfers are incomplete handoffs; bounded waits/short refusals remain failed executions",
+      "No injected ticks, task execution, callee stubs, simultaneous CPUs, timing or independent-engine proof",
+      "Unknown whole executable/function/dynamic-target denominators; programme active/incomplete"
+    ],
+    "literal_sha256": {
+      "6006e00": "64133471c637278bb3d7cb81d8c9be6d9bbb90eba808c76e3934f4531644d1e6",
+      "6006e04": "cb603c83ad5d4f42aac0bfd44075a6f3259253677fabe8e2a163559fd3573202",
+      "6006e08": "7adb9d6d6388fe95dd02a7a723b5ba87f1704d8d91d7a5a7c316d423b9cd8b17",
+      "6006e0c": "9a5883ad816ba3dde5c0a10fa4c75e650e03d7e3b5a73ee4645bec513ccd1ea8",
+      "6006e10": "c3c4f668739330e73f2f9f554b537670df534f879ded94d7cbe694c424db5757",
+      "6006e14": "03e166f3698b4900f82aa6819760efc2ecead816596d5d45cf8e43443b4eea19",
+      "6006e18": "60d7bb49e499c6853652255db2eb11ee5ff8401632ead3c9ef05af5e51421f4a",
+      "6006e1c": "f396140fdfaa924591329145679fea3518c38788d9b29375796383f9439802f1",
+      "6006e20": "b22ac9cc23c92d1b6a9e63f458b2ef8944e1c7bc9381c62bceebfc2b194d9c43",
+      "6006e24": "7e2f1f9bb9095d473df736d736ceb9b2037820dd99f9a61ab99990719b5c5566",
+      "6006e28": "0fb06e7e948ba142ae309476bed86928c09aa406d753a13878d8561211740628",
+      "6006e2c": "86722c7bb3beab9e87aea13678e21886ae4d085bfad121bd2e41851d05d7425a"
+    },
+    "load_address": 100687872,
+    "max_instructions": 1024,
+    "module": "KRNL",
+    "original_game_bytes_executed": true,
+    "owned_smoke": {
+      "cap_only_derived_guard_sha256": "d744a4235e5df6709adaf66a272abdc56b8ee2bd0413f2980aac5ae5fba11c21",
+      "coherent_slots": [
+        {
+          "coherent_alias_write_reads": true,
+          "instructions": 5,
+          "slot": 0
+        },
+        {
+          "coherent_alias_write_reads": true,
+          "instructions": 5,
+          "slot": 1
+        }
+      ],
+      "failure_controls": {
+        "0:alias_overrun": {
+          "executed_instructions": 1,
+          "reason": "Access through undeclared RAM alias",
+          "status": "failed"
+        },
+        "0:code_as_data": {
+          "executed_instructions": 1,
+          "reason": "Read outside literals and controlled inputs",
+          "status": "failed"
+        },
+        "0:code_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "0:full_loop": {
+          "executed_instructions": 1024,
+          "reason": "Handoff instruction budget exceeded",
+          "status": "failed"
+        },
+        "0:neighbor_array_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "0:neighbor_index_alias": {
+          "executed_instructions": 1,
+          "reason": "Access through undeclared RAM alias",
+          "status": "failed"
+        },
+        "0:readonly_array_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "0:sample_alias_write": {
+          "executed_instructions": 1,
+          "reason": "Write through readonly RAM alias",
+          "status": "failed"
+        },
+        "0:sample_canonical_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "0:short_loop": {
+          "executed_instructions": 128,
+          "reason": "Handoff instruction budget exceeded",
+          "status": "failed"
+        },
+        "0:unknown_read": {
+          "executed_instructions": 1,
+          "reason": "Read outside literals and controlled inputs",
+          "status": "failed"
+        },
+        "0:unknown_return": {
+          "executed_instructions": 2,
+          "reason": "Instruction fetch outside declared code",
+          "status": "failed"
+        },
+        "1:alias_overrun": {
+          "executed_instructions": 1,
+          "reason": "Access through undeclared RAM alias",
+          "status": "failed"
+        },
+        "1:code_as_data": {
+          "executed_instructions": 1,
+          "reason": "Read outside literals and controlled inputs",
+          "status": "failed"
+        },
+        "1:code_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "1:full_loop": {
+          "executed_instructions": 1024,
+          "reason": "Handoff instruction budget exceeded",
+          "status": "failed"
+        },
+        "1:neighbor_array_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "1:neighbor_index_alias": {
+          "executed_instructions": 1,
+          "reason": "Access through undeclared RAM alias",
+          "status": "failed"
+        },
+        "1:readonly_array_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "1:sample_alias_write": {
+          "executed_instructions": 1,
+          "reason": "Write through readonly RAM alias",
+          "status": "failed"
+        },
+        "1:sample_canonical_write": {
+          "executed_instructions": 1,
+          "reason": "Write outside writable canonical inputs",
+          "status": "failed"
+        },
+        "1:short_loop": {
+          "executed_instructions": 128,
+          "reason": "Handoff instruction budget exceeded",
+          "status": "failed"
+        },
+        "1:unknown_read": {
+          "executed_instructions": 1,
+          "reason": "Read outside literals and controlled inputs",
+          "status": "failed"
+        },
+        "1:unknown_return": {
+          "executed_instructions": 2,
+          "reason": "Instruction fetch outside declared code",
+          "status": "failed"
+        },
+        "older_129_refused": {
+          "rejected": true
+        }
+      },
+      "fresh_after_failure": true,
+      "guard_source_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+      "older_profile_unchanged": true,
+      "original_game_bytes_executed": false
+    },
+    "range_sha256": {
+      "60061c4:600620a": "95037b1e704a4ad8c5ee119e2c479d65a304f6020e1987511060577aaa234b84",
+      "6006b9c:6006d36": "6eb5be7f6a2a014c80367229387fcf8906d2928f46b6c2b9e33bbaada546e15f"
+    },
+    "release": "usa-mk81070-v1003",
+    "schema": "neptune.original-sh2-record-selection.v1",
+    "source_sha256": {
+      "probe_context_handoff.py": "807d5ac0b1ca4bea732cc8987a0c8558a30ba42ae7818ab6da7868991c25e17e",
+      "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+      "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+      "probe_position_bounds.py": "4d6843e6efee076b81bbb1219554eaab1def1b6290e67b904dbbd1c47fef3f71",
+      "probe_record_delta.py": "0e23df8655b3b3d9478794f162745540bd790af6b685d761d123eaf01e4d55b7",
+      "probe_record_selection.py": "682165ccaa85d2d1faf9c6e30715c8ab32f2a1c107a17d83d378ce1a2645e6d5",
+      "probe_split_add.py": "42ee3f895d0068e8cd009cdc0512fb5b34103a32bd0fd858e128495bd566a7d4",
+      "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+      "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+    },
+    "status": "success"
+  },
+  "families": {
+    "fields": {
+      "bounded_incomplete_waits": 288,
+      "cases": 576,
+      "handoff_event_range": [
+        77,
+        86
+      ],
+      "handoff_instruction_range": [
+        168,
+        188
+      ],
+      "handoff_records_examined_range": [
+        1,
+        1
+      ],
+      "instruction_controls": {
+        "missing_init_argument_store": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 178,
+            "case": [
+              "fields",
+              0,
+              4294967295,
+              0,
+              2,
+              0,
+              0,
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 178,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "afa9a3a034d1076acd7582f1d6c93129c4fbb8e2e60c8150b56b96b756d74629",
+          "pc": 100691102,
+          "reasons": [
+            "Register/PC/SR/PR/MAC result differs"
+          ],
+          "semantic_or_permission_rejections": 16,
+          "tested": 48
+        },
+        "missing_interval_reload": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 168,
+            "case": [
+              "fields",
+              0,
+              4294967295,
+              0,
+              1,
+              1,
+              0,
+              0,
+              0,
+              0
+            ],
+            "executed_instructions": 168,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "2c684137ec3469668c5000b570ce7a6140fc8c7cf086b085456f1f542424584a",
+          "pc": 100691226,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "semantic_or_permission_rejections": 24,
+          "tested": 48
+        }
+      },
+      "normal_function_returns": 0,
+      "poll_call_range": [
+        0,
+        3
+      ],
+      "private_report_pair": "/home/dev/neptune-research-private/646/record-selection-1c570c8y/fields",
+      "private_report_sha256": "f98d9866aec4933ee58d11884f4ef40ac5ae9e7c8a9faf0a0a2d6d7175395346",
+      "results_sha256": "13b1cd2400b982e45344051598d1a35cc74236b07010a06fb84204738ee429b6",
+      "root_context_write_continuity_cases": 576,
+      "selected_task_handoffs": 288,
+      "two_complete_reports_equal": true,
+      "wait_event_range": [
+        179,
+        179
+      ]
+    },
+    "flag-bytes": {
+      "bounded_incomplete_waits": 1012,
+      "cases": 1024,
+      "handoff_event_range": [
+        78,
+        87
+      ],
+      "handoff_instruction_range": [
+        172,
+        192
+      ],
+      "handoff_records_examined_range": [
+        1,
+        1
+      ],
+      "instruction_controls": {
+        "flag_three_becomes_four": {
+          "budget_only_refusals_not_counted": 1,
+          "first_budget_refusal_summary": {
+            "actual_error": {
+              "reason": "Handoff instruction budget exceeded",
+              "type": "ValueError"
+            },
+            "actual_pc": 100691120,
+            "actual_status": "failed",
+            "attempted_steps": 1025,
+            "case": [
+              "flag-bytes",
+              0,
+              16,
+              17,
+              3,
+              1,
+              0,
+              0,
+              1,
+              0
+            ],
+            "executed_instructions": 1024,
+            "full_private_evidence_retained": true
+          },
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 177,
+            "case": [
+              "flag-bytes",
+              0,
+              16,
+              17,
+              4,
+              1,
+              0,
+              0,
+              1,
+              0
+            ],
+            "executed_instructions": 177,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "d3f619b2f62064c2d589c6aa325ea0280a074d148481dda193a2cdb1665fd54e",
+          "pc": 100691078,
+          "reasons": [
+            "Bounded incomplete wait/short guard boundary differs"
+          ],
+          "semantic_or_permission_rejections": 1,
+          "tested": 53
+        },
+        "flag_two_becomes_four": {
+          "budget_only_refusals_not_counted": 1,
+          "first_budget_refusal_summary": {
+            "actual_error": {
+              "reason": "Handoff instruction budget exceeded",
+              "type": "ValueError"
+            },
+            "actual_pc": 100691120,
+            "actual_status": "failed",
+            "attempted_steps": 1025,
+            "case": [
+              "flag-bytes",
+              0,
+              16,
+              17,
+              2,
+              1,
+              0,
+              0,
+              1,
+              0
+            ],
+            "executed_instructions": 1024,
+            "full_private_evidence_retained": true
+          },
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 192,
+            "case": [
+              "flag-bytes",
+              0,
+              16,
+              17,
+              4,
+              1,
+              0,
+              0,
+              1,
+              0
+            ],
+            "executed_instructions": 192,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "c5e8c2f34fdd6c372f3c2704bedc4ffdb11aa04683fa74b2dd4abe4b12079431",
+          "pc": 100691088,
+          "reasons": [
+            "Bounded incomplete wait/short guard boundary differs"
+          ],
+          "semantic_or_permission_rejections": 1,
+          "tested": 53
+        }
+      },
+      "normal_function_returns": 0,
+      "poll_call_range": [
+        0,
+        6
+      ],
+      "private_report_pair": "/home/dev/neptune-research-private/646/record-selection-1c570c8y/flag-bytes",
+      "private_report_sha256": "18ef4902a30cb5ab8491ab08e1d68e22d216debc6d69cac5d7f04ade64d844eb",
+      "results_sha256": "4461126bb0a799c67c817ddb0c45111b09aa39a9abe9109867aac2232803dddf",
+      "root_context_write_continuity_cases": 1024,
+      "selected_task_handoffs": 12,
+      "two_complete_reports_equal": true,
+      "wait_event_range": [
+        190,
+        190
+      ]
+    },
+    "polls0": {
+      "bounded_incomplete_waits": 396,
+      "cases": 864,
+      "handoff_event_range": [
+        142,
+        185
+      ],
+      "handoff_instruction_range": [
+        611,
+        885
+      ],
+      "handoff_records_examined_range": [
+        18,
+        36
+      ],
+      "instruction_controls": {
+        "missing_wrap_index_delay": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": {
+              "reason": "Read outside literals and controlled inputs",
+              "type": "ValueError"
+            },
+            "actual_pc": 100691056,
+            "actual_status": "failed",
+            "attempted_steps": 625,
+            "case": [
+              "polls0",
+              0,
+              0,
+              0,
+              1,
+              2,
+              0,
+              0,
+              1,
+              0
+            ],
+            "executed_instructions": 625,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "873ffbae3f8724f70906f1490fe898968aec7eb28ab001ff736761cbfefdbd7c",
+          "pc": 100691130,
+          "reasons": [
+            "Bounded incomplete wait/short guard boundary differs",
+            "Original execution failed before task handoff: {'type': 'ValueError', 'reason': 'Read outside literals and controlled inputs'}"
+          ],
+          "semantic_or_permission_rejections": 49,
+          "tested": 51
+        }
+      },
+      "normal_function_returns": 0,
+      "poll_call_range": [
+        1,
+        6
+      ],
+      "private_report_pair": "/home/dev/neptune-research-private/646/record-selection-1c570c8y/polls0",
+      "private_report_sha256": "99784f638888f58d4de000fc2bf0b535f74b657cf027055700002965727567a2",
+      "results_sha256": "b38668dc0990c6f8dea48df816be08c4e2210dc48e28f60999a9b4ae763e7200",
+      "root_context_write_continuity_cases": 864,
+      "selected_task_handoffs": 468,
+      "two_complete_reports_equal": true,
+      "wait_event_range": [
+        176,
+        188
+      ]
+    },
+    "polls1": {
+      "bounded_incomplete_waits": 396,
+      "cases": 864,
+      "handoff_event_range": [
+        142,
+        185
+      ],
+      "handoff_instruction_range": [
+        611,
+        885
+      ],
+      "handoff_records_examined_range": [
+        18,
+        36
+      ],
+      "instruction_controls": {
+        "delta_addition_wraps_wait_into_ready": {
+          "budget_only_refusals_not_counted": 12,
+          "first_budget_refusal_summary": {
+            "actual_error": {
+              "reason": "Handoff instruction budget exceeded",
+              "type": "ValueError"
+            },
+            "actual_pc": 100691056,
+            "actual_status": "failed",
+            "attempted_steps": 1025,
+            "case": [
+              "polls1",
+              1,
+              0,
+              0,
+              3,
+              4294967295,
+              2147483647,
+              0,
+              1,
+              0
+            ],
+            "executed_instructions": 1024,
+            "full_private_evidence_retained": true
+          },
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 614,
+            "case": [
+              "polls1",
+              1,
+              4294967295,
+              0,
+              1,
+              4294967295,
+              1,
+              4294967295,
+              1,
+              1
+            ],
+            "executed_instructions": 614,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "405595fe81e1b5a42d37821021d5aab318d690a13db01ab67c4ec3427d053033",
+          "pc": 100690892,
+          "reasons": [
+            "Bounded incomplete wait/short guard boundary differs"
+          ],
+          "semantic_or_permission_rejections": 1,
+          "tested": 52
+        }
+      },
+      "normal_function_returns": 0,
+      "poll_call_range": [
+        1,
+        6
+      ],
+      "private_report_pair": "/home/dev/neptune-research-private/646/record-selection-1c570c8y/polls1",
+      "private_report_sha256": "04403edcd11e529891cf7f20a19bcc3a0a203353054abe7d8d0549fc78f5f5b6",
+      "results_sha256": "94c886f67f3b4c2968ad4ecb6015880f739cc826d8d5bd6cb97e949bc9e38321",
+      "root_context_write_continuity_cases": 864,
+      "selected_task_handoffs": 468,
+      "two_complete_reports_equal": true,
+      "wait_event_range": [
+        176,
+        188
+      ]
+    },
+    "positions0": {
+      "bounded_incomplete_waits": 0,
+      "cases": 2052,
+      "handoff_event_range": [
+        77,
+        134
+      ],
+      "handoff_instruction_range": [
+        168,
+        481
+      ],
+      "handoff_records_examined_range": [
+        1,
+        18
+      ],
+      "instruction_controls": {
+        "missing_init_saved_PR_store": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": {
+              "reason": "Instruction fetch outside declared code",
+              "type": "ValueError"
+            },
+            "actual_pc": 3735879680,
+            "actual_status": "failed",
+            "attempted_steps": 193,
+            "case": [
+              "positions0",
+              0,
+              17,
+              0,
+              2,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 193,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "703c77a8ff9b6a1cfd88504d7e1a26542cc297f4860674d1efda3be626a542f7",
+          "pc": 100691096,
+          "reasons": [
+            "Original execution failed before task handoff: {'type': 'ValueError', 'reason': 'Instruction fetch outside declared code'}"
+          ],
+          "semantic_or_permission_rejections": 2,
+          "tested": 55
+        },
+        "missing_scan_pointer_delay": {
+          "budget_only_refusals_not_counted": 42,
+          "first_budget_refusal_summary": {
+            "actual_error": {
+              "reason": "Handoff instruction budget exceeded",
+              "type": "ValueError"
+            },
+            "actual_pc": 100691120,
+            "actual_status": "failed",
+            "attempted_steps": 1025,
+            "case": [
+              "positions0",
+              0,
+              0,
+              7,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 1024,
+            "full_private_evidence_retained": true
+          },
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 461,
+            "case": [
+              "positions0",
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 461,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "6f08e7663b74b2ab97e2f64395ee2f57c138b61fa6023f795141f1d0c20be3a5",
+          "pc": 100691124,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "semantic_or_permission_rejections": 8,
+          "tested": 55
+        },
+        "missing_selection_index_store": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 461,
+            "case": [
+              "positions0",
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 461,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "1d0bb36fc6f425b75db2de519a810e1b4cd05b86cd505f59e1834274f15e37a8",
+          "pc": 100691168,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "semantic_or_permission_rejections": 55,
+          "tested": 55
+        },
+        "wrong_next_record_increment": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 446,
+            "case": [
+              "positions0",
+              0,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 446,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "1d8a5834a138c77a0888fb407d52d2a87b8d723f8143fcbd617993212c683c78",
+          "pc": 100691024,
+          "reasons": [
+            "Handoff instruction count differs",
+            "Original execution failed before task handoff: {'type': 'ValueError', 'reason': 'Read outside literals and controlled inputs'}"
+          ],
+          "semantic_or_permission_rejections": 55,
+          "tested": 55
+        }
+      },
+      "normal_function_returns": 0,
+      "poll_call_range": [
+        0,
+        2
+      ],
+      "private_report_pair": "/home/dev/neptune-research-private/646/record-selection-1c570c8y/positions0",
+      "private_report_sha256": "e6575e00cf25e337d385969667bdcb7b2bf54430ca05dc09602221d735bc8922",
+      "results_sha256": "c1462fd8875ed60981bd04d0e919768a8152f64c63e515d0df0c4c70e647578a",
+      "root_context_write_continuity_cases": 2052,
+      "selected_task_handoffs": 2052,
+      "two_complete_reports_equal": true,
+      "wait_event_range": null
+    },
+    "positions1": {
+      "bounded_incomplete_waits": 0,
+      "cases": 2052,
+      "handoff_event_range": [
+        77,
+        134
+      ],
+      "handoff_instruction_range": [
+        168,
+        481
+      ],
+      "handoff_records_examined_range": [
+        1,
+        18
+      ],
+      "instruction_controls": {
+        "initializing_flag_four": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 193,
+            "case": [
+              "positions1",
+              1,
+              17,
+              0,
+              2,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 193,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "276fee688ec40bf9ab32350d31eb9c1b12b66b74a9505025e11914021a30b11d",
+          "pc": 100691106,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "semantic_or_permission_rejections": 2,
+          "tested": 55
+        },
+        "missing_R14_tail_delay": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 461,
+            "case": [
+              "positions1",
+              1,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 461,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "47888097c3849a429c6b7e1df82e85352bdfaa8702861d5c600b8e71d89c3845",
+          "pc": 100691252,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "semantic_or_permission_rejections": 55,
+          "tested": 55
+        },
+        "missing_array_writeback": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 461,
+            "case": [
+              "positions1",
+              1,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 461,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "baf5bad4210725bb9fb85d8f36b0891a3645a6fbc0d6816a910189bdd2eb4e05",
+          "pc": 100691206,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "semantic_or_permission_rejections": 55,
+          "tested": 55
+        },
+        "missing_current_pointer_store": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": null,
+            "actual_pc": 4294967264,
+            "actual_status": "handoff",
+            "attempted_steps": 461,
+            "case": [
+              "positions1",
+              1,
+              0,
+              0,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 461,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "0cc344e72e37388c0afc2b65ef596b21db57e0b8335659f030b447f7e2273da8",
+          "pc": 100691190,
+          "reasons": [
+            "Exact read/write transactions differ"
+          ],
+          "semantic_or_permission_rejections": 55,
+          "tested": 55
+        },
+        "missing_record_wrap": {
+          "budget_only_refusals_not_counted": 0,
+          "first_rejection_summary": {
+            "actual_error": {
+              "reason": "Read outside literals and controlled inputs",
+              "type": "ValueError"
+            },
+            "actual_pc": 100691056,
+            "actual_status": "failed",
+            "attempted_steps": 89,
+            "case": [
+              "positions1",
+              1,
+              17,
+              0,
+              1,
+              1,
+              0,
+              0,
+              7,
+              0
+            ],
+            "executed_instructions": 89,
+            "full_private_evidence_retained": true
+          },
+          "mutated_kernel_sha256": "15849a16bff94895d33ba3a36f5d65a81704d6bf1f8cc972b19ecc400e942d5c",
+          "pc": 100691034,
+          "reasons": [
+            "Original execution failed before task handoff: {'type': 'ValueError', 'reason': 'Read outside literals and controlled inputs'}"
+          ],
+          "semantic_or_permission_rejections": 9,
+          "tested": 55
+        }
+      },
+      "normal_function_returns": 0,
+      "poll_call_range": [
+        0,
+        2
+      ],
+      "private_report_pair": "/home/dev/neptune-research-private/646/record-selection-1c570c8y/positions1",
+      "private_report_sha256": "907dc0673cb50527c785befa428eabff52a0471ee433c76864711366ab377da4",
+      "results_sha256": "3241cd0fc6c471debd8769a645a0479429d4cee6549ac217e1ecf0a9090fea80",
+      "root_context_write_continuity_cases": 2052,
+      "selected_task_handoffs": 2052,
+      "two_complete_reports_equal": true,
+      "wait_event_range": null
+    },
+    "waits": {
+      "bounded_incomplete_waits": 304,
+      "cases": 304,
+      "handoff_event_range": null,
+      "handoff_instruction_range": null,
+      "handoff_records_examined_range": null,
+      "instruction_controls": {},
+      "normal_function_returns": 0,
+      "poll_call_range": [
+        1,
+        7
+      ],
+      "private_report_pair": "/home/dev/neptune-research-private/646/record-selection-1c570c8y/waits",
+      "private_report_sha256": "4124bcc50d355cd99bc370965799b6d2057686ce2464c344702e35eab2ea3424",
+      "results_sha256": "04394818b1432d7c76f439854f039617b2785ee569dc56d86ff4b716ff2779f4",
+      "root_context_write_continuity_cases": 304,
+      "selected_task_handoffs": 0,
+      "two_complete_reports_equal": true,
+      "wait_event_range": [
+        173,
+        240
+      ]
+    }
+  },
+  "limits": {
+    "address_space_maximum_bytes": 2147483648,
+    "command_seconds": 60,
+    "continuity_enabled": false,
+    "earlier_handoff_cap": 128,
+    "host_shared": 3,
+    "nice": 10,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "selection_instruction_cap": 1024
+  },
+  "next_natural_observer_capability": {
+    "after": {
+      "abi": 2,
+      "active": 0,
+      "capacity": 128,
+      "completed": 0,
+      "count": 0,
+      "dropped": 0,
+      "errors": 0,
+      "frame": 0,
+      "frame_known": 0,
+      "master_dispatches": 0,
+      "pending": 0,
+      "record_bytes": 120,
+      "step_limit": 4096
+    },
+    "before": {
+      "abi": 2,
+      "active": 0,
+      "capacity": 128,
+      "completed": 0,
+      "count": 0,
+      "dropped": 0,
+      "errors": 0,
+      "frame": 0,
+      "frame_known": 0,
+      "master_dispatches": 0,
+      "pending": 0,
+      "record_bytes": 120,
+      "step_limit": 4096
+    },
+    "core_sha256": "0f14356da70ac8b88a8a1727e25acf6137be4ace453c37b1819d82222346faca",
+    "emulated_frames": 0,
+    "known_B934_entry_accepted_and_stopped": true,
+    "natural_context_trace_available": false,
+    "original_game_bytes_executed": false,
+    "private_report": "/home/dev/neptune-research-private/646/observer-capability-0ff501zo/existing-observer-capability.json",
+    "private_report_sha256": "b287d1ac437315d705284e7ea14e96ad383faadb0fd237a873fb2a49c5cc11ce",
+    "provider_calls": 0,
+    "readonly_and_broker_hidden": true,
+    "recipe_sha256": "54cfecd0f16c98e1523854c8d293da4beb6a731dd09a9374c5cf0c43318ea2a2",
+    "schema": "neptune.existing-context-observer-capability.v1",
+    "unsupported_entries_refused": {
+      "060061e6": 0,
+      "06006be4": 0,
+      "06006d36": 0
+    },
+    "unsupported_requests_left_status_unchanged": true
+  },
+  "normal_function_returns": 0,
+  "original128_short_profile": {
+    "actual_error": {
+      "reason": "Handoff instruction budget exceeded",
+      "type": "ValueError"
+    },
+    "actual_status": "failed",
+    "case": [
+      "positions0",
+      0,
+      4294967295,
+      17,
+      1,
+      1,
+      0,
+      0,
+      7,
+      0
+    ],
+    "cpu_attempted_steps": 129,
+    "instructions_executed": 128,
+    "normal_function_return_completed": false,
+    "outcome": "incomplete_short_guard",
+    "private_report_sha256": "e6575e00cf25e337d385969667bdcb7b2bf54430ca05dc09602221d735bc8922",
+    "root_resume_PR": 100690944
+  },
+  "original_game_bytes_executed": true,
+  "schema": "neptune.original-record-selection-evidence.v1",
+  "selected_task_handoffs_per_run": 5340,
+  "source_execution_head": "3da95dc94ff07411fb2ef37ba3e0f2acaf80807a",
+  "source_only_ci": {
+    "artifact_id": 13163266758,
+    "artifact_sha256": "853cf289e6aa53df14aab1148c8eb51197cdb35b90efc4d671b86f1a4c7fbb8b",
+    "original_game_bytes_executed": false,
+    "run_id": 41488833293,
+    "source_head": "3da95dc94ff07411fb2ef37ba3e0f2acaf80807a"
+  },
+  "status": "selected-contracts-matched",
+  "whole_program_status": "active; incomplete"
+}
