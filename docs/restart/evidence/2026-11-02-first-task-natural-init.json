@@ -1,0 +1,1238 @@
+{
+  "batch_manifest_sha256": "5c6c2b7b1ebe6fc670dc5017df250c1707cca36d7e40fd8d405e4b7bb35ebfc1",
+  "bounds": {
+    "depth": 16,
+    "frames_per_run": 600,
+    "historical_python_guards_unchanged": [
+      128,
+      1024
+    ],
+    "native_hooks_are_instructions_or_hardware_cycles": false,
+    "pending_frames": 120,
+    "pending_native_hooks": 4194304,
+    "profiles": 2,
+    "record_capacity": 128,
+    "repeats_per_mode": 2,
+    "roots_per_enabled_run": 1,
+    "runs_per_profile": 6,
+    "source_witness_words": 2572
+  },
+  "cpu": "master SH-2",
+  "driver_source_head": "828beed73b1207d2f472065a26f6c21fba43096f",
+  "execution_guard": {
+    "VPS_native_builds": 0,
+    "as_bytes": 2147483648,
+    "broker_and_authority_key_hidden": true,
+    "command_seconds": 60,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_dispatches": 0,
+    "shared_host_limit": 3,
+    "source_originals_prepared_readonly": true
+  },
+  "frozen_adapter": "/home/dev/neptune-research-private/660/adapter-9df9cab6045ea9a1bd31573b8ea35888582afe34656f42b29ce6feced37da6e7",
+  "frozen_source_manifest_sha256": "9df9cab6045ea9a1bd31573b8ea35888582afe34656f42b29ce6feced37da6e7",
+  "issue": 660,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident kernel after original loader",
+  "load_address": "06006000",
+  "local_reuse": {
+    "directory": "/home/dev/neptune-research-private/660/local-reuse-2jw3bq3w",
+    "native_build_callback_refuses_build": true,
+    "repetitions": 2,
+    "status": "actual_local_reuse_passed",
+    "supervisor_sha256": "7a8e149f61934f474583b96a344003c1ea4bcb0602d3bbca0f0fce13cb03c801"
+  },
+  "module": "KRNL",
+  "native_tool": {
+    "artifact": 13180950020,
+    "artifact_sha256": "d42913ad21dc91e38c9a175fc9035556c32cdbfa00249550f1b87926b5d3e7f6",
+    "binary_sha256": "083127e15f1d4844b774da83cff8403920706ebd520040ab4e68115000e7df2f",
+    "corresponding_source_sha256": "90d1d6c3ecdb2cc688215c00f3c6bdc2606f59473b58b38c4e080e9bd5645ce1",
+    "head": "44328ce3ddc1066caf4dd987493ddc42e2b79b8e",
+    "job": 125556000422,
+    "recipe_sha256": "0a848d81731e35e6e2fa2bcdcd605b271c7fd4eed7a60df0c2fbac571e4085d2",
+    "run": 41526580031
+  },
+  "original_game_bytes_executed": true,
+  "parent_issue": 655,
+  "private_batch": "/home/dev/neptune-research-private/660/natural-batch-ux_1k7qf/batch.json",
+  "private_validation": "/home/dev/neptune-research-private/660/natural-analysis-oanuuapm",
+  "profiles": {
+    "1": {
+      "actual_record_copy_controls": [
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "6b9f4f45fe8833f6d64918345afaa8a354677684ae25a11ef2f8b5c5a61583a5",
+          "name": "root-pr",
+          "reason": "Original initialization root entry/return/stack linkage differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "b36402ddc2f279f7c75674f4da51062d81f187972cf846b2232fb4ca342b211b",
+          "name": "call-target",
+          "reason": "Named call target/link/depth differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "2d6c5d9b3b9739128e9f245e2f41dbd23b7b1516983485373ebaad8f8d4fc625",
+          "name": "call-link",
+          "reason": "Named call target/link/depth differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "c44fa57ab27ec4e92823f27ca5c60f20ae37f075e4c22c4819d36e2d75436bc2",
+          "name": "delay-pipeline",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "47f90806c82804457d7fc34bb7517ecf7d9aea727d59430ec9e3bce8a3e24025",
+          "name": "delay-pc",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "a4923cd1fbdef38bd5edd2571a5f48dd63852f903fa5de572c40bf93c3780ddd",
+          "name": "callee-pr",
+          "reason": "Actual callee entry/target/SP/PR differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "8b60be29bf7afedc5021766af64fcf7470f556406e0c0305e66bb325ef565754",
+          "name": "return-pr",
+          "reason": "Actual named call return/stack/link differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "827306d51916f721b8036cff7dfd6d1e177151cc83aacafb3831fac75407f5b8",
+          "name": "root-rts-opcode",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "d8254c5f0533b40b78953bf0ed9558cf0c8df25acd54fa72eab0fa3c654553b7",
+          "name": "root-restore-opcode",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "e88d87e1ff59073de1eeeac3af3c18fae0ae5c7eba0cc1596bce898d31c7e89b",
+          "name": "record-sequence",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "39b29215f2c6397c4e2590f6e747432b4d0a50242ef82cd89f27abf36e8f6487",
+          "name": "nonmonotonic-frame",
+          "reason": "Nonmonotonic initialization observation clock",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "588c97bc4f7e996f1026fb1699f88e5684e6c70a56329d7c37bd36e74fcb97f8",
+          "name": "callee-sp",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "37af5ccac4d0711317a7efca0b72580c5890b6dab95306849e07a0c813b1799d",
+          "name": "return-sp",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "8751885423ef023703be30d63e9b9cb8b5d98fd541dcd83759228fdaf184a4fd",
+          "name": "root-return-sp",
+          "reason": "Original initialization root entry/return/stack linkage differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "b8c576877bdde43bf9de6ec671bb42c41a58b849db6ac56094a1a48326c58004",
+          "name": "root-return-r14",
+          "reason": "Original initialization root entry/return/stack linkage differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "eac6d8894308a2d78c834f65fb3aa4f7b5148d9c50b5a938853a18343b253ee6",
+          "name": "root-restore-stack-word",
+          "reason": "Root restore delay stack word differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "03b82892072c9910e570a478b4bd752bdddd3d285edb4899184649f46372c190",
+          "name": "status-dropped",
+          "reason": "Empty, interrupted, partial, overflowed or failed initialization trace",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "6997af3306f6808f5943aa3b6e6934a2edeedfcf26fc3abc5661f20aed4c0ce7",
+          "name": "status-pending",
+          "reason": "Empty, interrupted, partial, overflowed or failed initialization trace",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "b0b88f7ba31093318d11ac45778d5d43cfa9f0d146ed5e9da7e6e8290a200bc7",
+          "name": "status-errors",
+          "reason": "Empty, interrupted, partial, overflowed or failed initialization trace",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "88ec316cff8f8432ee044b3c6d709e50873c4cbeae9ed39fbdf617a42fb3744b",
+          "name": "false-completion-summary",
+          "reason": "Initialization summary differs from independently validated records",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "4cafb5f3d566ef4651b282cb16efe265e6e5fdda81329558292e105b0198c5e6",
+          "name": "independent-source-witness",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        }
+      ],
+      "common_observation_hashes": {
+        "audio_sha256": "f4248e90287c0997f13b4e499426158cafbda4f0325a34c1c6f709d3ccdcfaec",
+        "final_state_sha256": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "frame_observations_sha256": "aecb363567623c3b668f131b7ad0b8065563de8e728670168774efc9ae417993",
+        "imported_state_sha256": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "reference_checkpoint_file_sha256": "214b039ff3e722a7fffe547192530f70f528d04e206288fb2a592be446e1a773",
+        "reference_lock_file_sha256": "eb0d91e0bebd63af78181ce4d4d6af354554466b1f726bfe700e78eff6275cba",
+        "video_sha256": "05409a79834d1cd832275ea72e04eb04a57fbf7be946c71abbc19cf2de595b42"
+      },
+      "comparison": {
+        "completed_roots_per_enabled_run": 1,
+        "disabled_vs_reference_wall_ratio": 1.1071295829695649,
+        "enabled_vs_disabled_wall_ratio": 0.9286955897177231,
+        "equal_observations": [
+          "driver_sha256",
+          "source_modules",
+          "reference_identity",
+          "reference_lock_file_sha256",
+          "reference_checkpoint_file_sha256",
+          "reference_state_sha256",
+          "reference_frame",
+          "frames",
+          "port_zero_start_frames",
+          "init_profile",
+          "input_boot_checkpoint_verified",
+          "original_kernel_sha256",
+          "completed_original_frames",
+          "original_game_bytes_executed",
+          "original_execution_attempted",
+          "av",
+          "imported_state_bytes",
+          "imported_state_sha256",
+          "final_state_sha256",
+          "frame_observations_sha256",
+          "video_sha256",
+          "audio_sha256",
+          "audio_frames",
+          "resident_code_before",
+          "kernel_witness_complete_before",
+          "resident_code_after",
+          "input_polls",
+          "delivered_masks"
+        ],
+        "frames_per_run": 600,
+        "init_profile": 1,
+        "instrumented_core_sha256": "083127e15f1d4844b774da83cff8403920706ebd520040ab4e68115000e7df2f",
+        "median_emulation_wall_seconds": {
+          "disabled": 6.5221582860685885,
+          "enabled": 6.057099635712802,
+          "reference": 5.891052308958024
+        },
+        "reference_core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+        "repeats_per_mode": 2,
+        "runs": 6,
+        "schema": "neptune.init-observer-comparison.v1",
+        "scope": "one natural initialization boundary; internal semantics and hardware/gameplay parity remain unresolved",
+        "status": "success",
+        "trace_sha256": "2719dde90a65dfe5020d4b93cd9ee9ce7774e820d5dfd1f5b489f36b8c050b3f",
+        "whole_program_status": "active; incomplete"
+      },
+      "complete_RTS_restore_delay_and_SP_R14_PR_linkage_checked": true,
+      "control_count": 21,
+      "driver_sha256": "f08c34005123f22da7469aa1b43f75db8bf3cb33ea301a64d8035936273d6631",
+      "entry": "060089C8",
+      "entry_frame": 1247,
+      "natural96AC0_sample_matches_prior_independent_scalar_contract": true,
+      "natural_count": 16,
+      "only_first16_of24_sampled_marker_positions_are_active_slots": true,
+      "pending_native_hooks": 4012829,
+      "records": 44,
+      "return_frame": 1264,
+      "return_pc": "06006240",
+      "returned_r0": "0000001A",
+      "selected_boundary_scalars": [
+        {
+          "frame": 1247,
+          "kind": 1,
+          "pc": "060089C8",
+          "pr": "06006240",
+          "r0": "00000001",
+          "r4_r5_r6": [
+            "00000001",
+            "00000001",
+            "00000100"
+          ],
+          "sp": "060BBF20",
+          "target": "00000000"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "060089AC",
+          "pr": "060089FC",
+          "r0": "00000001",
+          "r4_r5_r6": [
+            "060BD92C",
+            "00200000",
+            "060BD914"
+          ],
+          "sp": "060BBF14",
+          "target": "060089AC"
+        },
+        {
+          "frame": 1247,
+          "kind": 5,
+          "pc": "060089FC",
+          "pr": "060089FC",
+          "r0": "00000001",
+          "r4_r5_r6": [
+            "060BD8D4",
+            "FFFFFFFF",
+            "060BD8D4"
+          ],
+          "sp": "060BBF14",
+          "target": "060089AC"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "06095B04",
+          "pr": "06008A18",
+          "r0": "060BF00C",
+          "r4_r5_r6": [
+            "00000010",
+            "060BD92C",
+            "060BF00C"
+          ],
+          "sp": "060BBF14",
+          "target": "06095B04"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "060007C0",
+          "pr": "06095B5E",
+          "r0": "060BF198",
+          "r4_r5_r6": [
+            "FFFFF7FF",
+            "00000000",
+            "060BF00C"
+          ],
+          "sp": "060BBF04",
+          "target": "060007C0"
+        },
+        {
+          "frame": 1247,
+          "kind": 5,
+          "pc": "06095B5E",
+          "pr": "06095B5E",
+          "r0": "25FE00A0",
+          "r4_r5_r6": [
+            "FFFFF7FF",
+            "00000000",
+            "060BF00C"
+          ],
+          "sp": "060BBF04",
+          "target": "060007C0"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "06096AC0",
+          "pr": "06095B6A",
+          "r0": "25FE00A0",
+          "r4_r5_r6": [
+            "00000010",
+            "00000000",
+            "060BF00C"
+          ],
+          "sp": "060BBF04",
+          "target": "06096AC0"
+        },
+        {
+          "frame": 1247,
+          "kind": 5,
+          "pc": "06095B6A",
+          "pr": "06095B6A",
+          "r0": "000000C4",
+          "r4_r5_r6": [
+            "00000000",
+            "060BDD78",
+            "00000010"
+          ],
+          "sp": "060BBF04",
+          "target": "06096AC0"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "060A6790",
+          "pr": "06095B7A",
+          "r0": "000000C4",
+          "r4_r5_r6": [
+            "00000000",
+            "060BDD78",
+            "00000010"
+          ],
+          "sp": "060BBF04",
+          "target": "060A6790"
+        },
+        {
+          "frame": 1247,
+          "kind": 5,
+          "pc": "06095B7A",
+          "pr": "06095B7A",
+          "r0": "00000000",
+          "r4_r5_r6": [
+            "00000000",
+            "FFFFFFF3",
+            "00000BC5"
+          ],
+          "sp": "060BBF04",
+          "target": "060A6790"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "060969E0",
+          "pr": "06095B9E",
+          "r0": "00000001",
+          "r4_r5_r6": [
+            "060BF00C",
+            "FFFFFFF3",
+            "00000BC5"
+          ],
+          "sp": "060BBF04",
+          "target": "060969E0"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06095B9E",
+          "pr": "06095B9E",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF04",
+          "target": "060969E0"
+        },
+        {
+          "frame": 1264,
+          "kind": 4,
+          "pc": "06096C60",
+          "pr": "06095BB8",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF04",
+          "target": "06096C60"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06095BB8",
+          "pr": "06095BB8",
+          "r0": "00000000",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF04",
+          "target": "06096C60"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06008A18",
+          "pr": "06008A18",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF14",
+          "target": "06095B04"
+        },
+        {
+          "frame": 1264,
+          "kind": 4,
+          "pc": "0609696C",
+          "pr": "06008A22",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "060089C2",
+            "00000000",
+            "00000BD5"
+          ],
+          "sp": "060BBF14",
+          "target": "0609696C"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06008A22",
+          "pr": "06008A22",
+          "r0": "00000000",
+          "r4_r5_r6": [
+            "00000000",
+            "00000000",
+            "060FA8BC"
+          ],
+          "sp": "060BBF14",
+          "target": "0609696C"
+        },
+        {
+          "frame": 1264,
+          "kind": 4,
+          "pc": "06095CBC",
+          "pr": "06008A38",
+          "r0": "00000000",
+          "r4_r5_r6": [
+            "060B1AB8",
+            "00000000",
+            "060FA8BC"
+          ],
+          "sp": "060BBF14",
+          "target": "06095CBC"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06008A38",
+          "pr": "06008A38",
+          "r0": "00000019",
+          "r4_r5_r6": [
+            "00000000",
+            "0000000B",
+            "0000000C"
+          ],
+          "sp": "060BBF14",
+          "target": "06095CBC"
+        },
+        {
+          "frame": 1264,
+          "kind": 4,
+          "pc": "06095E5A",
+          "pr": "06008A4E",
+          "r0": "00000019",
+          "r4_r5_r6": [
+            "00000019",
+            "0000000B",
+            "0000000C"
+          ],
+          "sp": "060BBF14",
+          "target": "06095E5A"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06008A4E",
+          "pr": "06008A4E",
+          "r0": "060BE58C",
+          "r4_r5_r6": [
+            "00000000",
+            "060BD9F8",
+            "00000BD5"
+          ],
+          "sp": "060BBF14",
+          "target": "06095E5A"
+        },
+        {
+          "frame": 1264,
+          "kind": 10,
+          "pc": "06006240",
+          "pr": "06006240",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "00000000",
+            "060BD9F8",
+            "00000BD5"
+          ],
+          "sp": "060BBF20",
+          "target": "00000000"
+        }
+      ],
+      "source_checks": 45,
+      "source_mismatch_candidates": 0,
+      "source_modules": {
+        "boot_checkpoint_adapter": "6b8eefc95bb1c190d1624682774e4ca190f4b121084f290146e93a0c0ce1528b",
+        "kernel_identity": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "observer": "91e74363a832d9dd81b928637e484a897a770f93ee0d5790f1c490c93ee4a015",
+        "provisioner": "a3ad7be487f01272ecc41f827c20baaaa3239bc6ad78df5fbfcce99685eb8e73",
+        "reference_adapter": "c93cf2fb9303417a5a8f29d10095a3b56a121899f249f45074d1793896d2a5a5",
+        "state_parser": "bda2cf73a485c19a67a68074f650a936aa6b9de61e4caf12e723c5b8ee9c6e87"
+      }
+    },
+    "2": {
+      "actual_record_copy_controls": [
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "87e840cd8ef0e011084067714339139b71c6c9683d8d56d05e4f26c563b6445a",
+          "name": "root-pr",
+          "reason": "Original initialization root entry/return/stack linkage differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "cfb71ff42a7694cf7920e1efc9daeda715ae8fde602381d5731eb8ff0e0126da",
+          "name": "call-target",
+          "reason": "Named call target/link/depth differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "c59be2169a79e4edbc96b1b454ac578a47816b0f1aeaf03776536d8fb45b7c96",
+          "name": "call-link",
+          "reason": "Named call target/link/depth differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "0cf564b346f4e8b9581b006ca439ee9175d1f3f498602ce2993e6ccde1b92d4b",
+          "name": "delay-pipeline",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "ba5ac6c31f07bce705c49efdd83668fe22e589f31ce856726d03325a85ffbeb2",
+          "name": "delay-pc",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "f9be476f4efec83d95a30ce04b62b5afc317779c29f5ba8b1c2c8f2963a8e288",
+          "name": "callee-pr",
+          "reason": "Actual callee entry/target/SP/PR differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "fb464021fa03a57b1b5946c6dfe2b3b2f1adb5cc49f18822930fcd593bf4e474",
+          "name": "return-pr",
+          "reason": "Actual named call return/stack/link differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "1bb8d8b67e28748ecd08872d41af4171936561dbaece5b73c7eab9e05ffbbbbc",
+          "name": "root-rts-opcode",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "03db3501263096e5a5b1afe26dc1f724817bc3d3b0454129073dc9038de1563c",
+          "name": "root-restore-opcode",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "950f4994a222877edeac5b95c0834463b4cdad3a6e94f76a31f47dd0e701d821",
+          "name": "record-sequence",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "f927aafd10812b520c4853108ae19ee528030811bd3b2fea4a2a5033428b9c9b",
+          "name": "nonmonotonic-frame",
+          "reason": "Nonmonotonic initialization observation clock",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "195142939d61fcd5293b18337c27249ee7d9fb46ac48ffbb70973b57ac5c2cc2",
+          "name": "callee-sp",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "773d9494dc7a2adbc366f599d034dd8db5819d9023883fac3e6cbb4b39fa0a04",
+          "name": "return-sp",
+          "reason": "Initialization record order/pipeline/snapshot address differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "d58abfeec9ca464c6ab69f57a6dd41a614b44b510c1e8241adf291148148e58f",
+          "name": "root-return-sp",
+          "reason": "Original initialization root entry/return/stack linkage differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "25f4712100576568f33f614349f64128f035cba23eb892ee973377b2988c6b52",
+          "name": "root-return-r14",
+          "reason": "Original initialization root entry/return/stack linkage differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "06b4fccb48635425843ebdf5f07ebfe45bbcb918b1ae8f91fbaa444cfcd1d573",
+          "name": "root-restore-stack-word",
+          "reason": "Root restore delay stack word differs",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "adfa767b48610d25312f828c66d367dfb126c3025b62e761219ef71b6add4236",
+          "name": "status-dropped",
+          "reason": "Empty, interrupted, partial, overflowed or failed initialization trace",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "8fbe81a5b7f6afd9604c3fee3ec57fee1b3bf9bfa7d12e9377e7f923c43662d6",
+          "name": "status-pending",
+          "reason": "Empty, interrupted, partial, overflowed or failed initialization trace",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "d3bec6e437a139528c9b52539ae53414a7d0aeed45e0ee08622fc872786b4699",
+          "name": "status-errors",
+          "reason": "Empty, interrupted, partial, overflowed or failed initialization trace",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "42582ba018b4e3924e385c39994563ca60b5ddc6e034297a01f969815e6f94ae",
+          "name": "false-completion-summary",
+          "reason": "Initialization summary differs from independently validated records",
+          "rejected": true
+        },
+        {
+          "budget_unchanged": true,
+          "copied_record_sha256": "9f80118087db105126c105b3eb627462d19c8c2f1fd5b3cb1af40752cf0909a9",
+          "name": "independent-source-witness",
+          "reason": "Executed named opcode differs from the private source witness",
+          "rejected": true
+        }
+      ],
+      "common_observation_hashes": {
+        "audio_sha256": "f4248e90287c0997f13b4e499426158cafbda4f0325a34c1c6f709d3ccdcfaec",
+        "final_state_sha256": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "frame_observations_sha256": "aecb363567623c3b668f131b7ad0b8065563de8e728670168774efc9ae417993",
+        "imported_state_sha256": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "reference_checkpoint_file_sha256": "214b039ff3e722a7fffe547192530f70f528d04e206288fb2a592be446e1a773",
+        "reference_lock_file_sha256": "eb0d91e0bebd63af78181ce4d4d6af354554466b1f726bfe700e78eff6275cba",
+        "video_sha256": "05409a79834d1cd832275ea72e04eb04a57fbf7be946c71abbc19cf2de595b42"
+      },
+      "comparison": {
+        "completed_roots_per_enabled_run": 1,
+        "disabled_vs_reference_wall_ratio": 1.0376900914959557,
+        "enabled_vs_disabled_wall_ratio": 0.9138470502566368,
+        "equal_observations": [
+          "driver_sha256",
+          "source_modules",
+          "reference_identity",
+          "reference_lock_file_sha256",
+          "reference_checkpoint_file_sha256",
+          "reference_state_sha256",
+          "reference_frame",
+          "frames",
+          "port_zero_start_frames",
+          "init_profile",
+          "input_boot_checkpoint_verified",
+          "original_kernel_sha256",
+          "completed_original_frames",
+          "original_game_bytes_executed",
+          "original_execution_attempted",
+          "av",
+          "imported_state_bytes",
+          "imported_state_sha256",
+          "final_state_sha256",
+          "frame_observations_sha256",
+          "video_sha256",
+          "audio_sha256",
+          "audio_frames",
+          "resident_code_before",
+          "kernel_witness_complete_before",
+          "resident_code_after",
+          "input_polls",
+          "delivered_masks"
+        ],
+        "frames_per_run": 600,
+        "init_profile": 2,
+        "instrumented_core_sha256": "083127e15f1d4844b774da83cff8403920706ebd520040ab4e68115000e7df2f",
+        "median_emulation_wall_seconds": {
+          "disabled": 6.689322866499424,
+          "enabled": 6.113017969764769,
+          "reference": 6.446359005756676
+        },
+        "reference_core_sha256": "c862380e94ba749e020e58ba5b2ec483f88a60ced38171fc63fda306b2f54f5e",
+        "repeats_per_mode": 2,
+        "runs": 6,
+        "schema": "neptune.init-observer-comparison.v1",
+        "scope": "one natural initialization boundary; internal semantics and hardware/gameplay parity remain unresolved",
+        "status": "success",
+        "trace_sha256": "fc09ea64cfa44689bb4957fc64378a65c27b0e1935139c95f13f56ab0712cae5",
+        "whole_program_status": "active; incomplete"
+      },
+      "complete_RTS_restore_delay_and_SP_R14_PR_linkage_checked": true,
+      "control_count": 21,
+      "driver_sha256": "f08c34005123f22da7469aa1b43f75db8bf3cb33ea301a64d8035936273d6631",
+      "entry": "06095B04",
+      "entry_frame": 1247,
+      "natural96AC0_sample_matches_prior_independent_scalar_contract": true,
+      "natural_count": 16,
+      "only_first16_of24_sampled_marker_positions_are_active_slots": true,
+      "pending_native_hooks": 4007492,
+      "records": 24,
+      "return_frame": 1264,
+      "return_pc": "06008A18",
+      "returned_r0": "0000001A",
+      "selected_boundary_scalars": [
+        {
+          "frame": 1247,
+          "kind": 1,
+          "pc": "06095B04",
+          "pr": "06008A18",
+          "r0": "060BF00C",
+          "r4_r5_r6": [
+            "00000010",
+            "060BD92C",
+            "060BF00C"
+          ],
+          "sp": "060BBF14",
+          "target": "00000000"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "060007C0",
+          "pr": "06095B5E",
+          "r0": "060BF198",
+          "r4_r5_r6": [
+            "FFFFF7FF",
+            "00000000",
+            "060BF00C"
+          ],
+          "sp": "060BBF04",
+          "target": "060007C0"
+        },
+        {
+          "frame": 1247,
+          "kind": 5,
+          "pc": "06095B5E",
+          "pr": "06095B5E",
+          "r0": "25FE00A0",
+          "r4_r5_r6": [
+            "FFFFF7FF",
+            "00000000",
+            "060BF00C"
+          ],
+          "sp": "060BBF04",
+          "target": "060007C0"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "06096AC0",
+          "pr": "06095B6A",
+          "r0": "25FE00A0",
+          "r4_r5_r6": [
+            "00000010",
+            "00000000",
+            "060BF00C"
+          ],
+          "sp": "060BBF04",
+          "target": "06096AC0"
+        },
+        {
+          "frame": 1247,
+          "kind": 5,
+          "pc": "06095B6A",
+          "pr": "06095B6A",
+          "r0": "000000C4",
+          "r4_r5_r6": [
+            "00000000",
+            "060BDD78",
+            "00000010"
+          ],
+          "sp": "060BBF04",
+          "target": "06096AC0"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "060A6790",
+          "pr": "06095B7A",
+          "r0": "000000C4",
+          "r4_r5_r6": [
+            "00000000",
+            "060BDD78",
+            "00000010"
+          ],
+          "sp": "060BBF04",
+          "target": "060A6790"
+        },
+        {
+          "frame": 1247,
+          "kind": 5,
+          "pc": "06095B7A",
+          "pr": "06095B7A",
+          "r0": "00000000",
+          "r4_r5_r6": [
+            "00000000",
+            "FFFFFFF3",
+            "00000BC5"
+          ],
+          "sp": "060BBF04",
+          "target": "060A6790"
+        },
+        {
+          "frame": 1247,
+          "kind": 4,
+          "pc": "060969E0",
+          "pr": "06095B9E",
+          "r0": "00000001",
+          "r4_r5_r6": [
+            "060BF00C",
+            "FFFFFFF3",
+            "00000BC5"
+          ],
+          "sp": "060BBF04",
+          "target": "060969E0"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06095B9E",
+          "pr": "06095B9E",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF04",
+          "target": "060969E0"
+        },
+        {
+          "frame": 1264,
+          "kind": 4,
+          "pc": "06096C60",
+          "pr": "06095BB8",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF04",
+          "target": "06096C60"
+        },
+        {
+          "frame": 1264,
+          "kind": 5,
+          "pc": "06095BB8",
+          "pr": "06095BB8",
+          "r0": "00000000",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF04",
+          "target": "06096C60"
+        },
+        {
+          "frame": 1264,
+          "kind": 10,
+          "pc": "06008A18",
+          "pr": "06008A18",
+          "r0": "0000001A",
+          "r4_r5_r6": [
+            "00000000",
+            "060BF198",
+            "00000BD5"
+          ],
+          "sp": "060BBF14",
+          "target": "00000000"
+        }
+      ],
+      "source_checks": 25,
+      "source_mismatch_candidates": 0,
+      "source_modules": {
+        "boot_checkpoint_adapter": "6b8eefc95bb1c190d1624682774e4ca190f4b121084f290146e93a0c0ce1528b",
+        "kernel_identity": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "observer": "91e74363a832d9dd81b928637e484a897a770f93ee0d5790f1c490c93ee4a015",
+        "provisioner": "a3ad7be487f01272ecc41f827c20baaaa3239bc6ad78df5fbfcce99685eb8e73",
+        "reference_adapter": "c93cf2fb9303417a5a8f29d10095a3b56a121899f249f45074d1793896d2a5a5",
+        "state_parser": "bda2cf73a485c19a67a68074f650a936aa6b9de61e4caf12e723c5b8ee9c6e87"
+      }
+    }
+  },
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "retained_prior_failure": {
+    "correction": "verified preloader boot may lack last sectors; unchanged full witness required at native entry/every snapshot and final state",
+    "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile2-enabled-di7ne7tc",
+    "frozen_adapter": "/home/dev/neptune-research-private/660/adapter-218ac35bc1ee05ebba40a9470e00d0b9912d3f104cc0738e92a87f517028bf59",
+    "matched_words_at_frame1200": 2426,
+    "matched_words_at_frame1800": 2572,
+    "scope": "input witness rejected before core load or CPU execution",
+    "source_residency_audit": "/home/dev/neptune-research-private/660/source-residency-1200-1800.json",
+    "unloaded_words_at_frame1200": 146
+  },
+  "runs": [
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "init-trace.json": "fc09ea64cfa44689bb4957fc64378a65c27b0e1935139c95f13f56ab0712cae5",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "7f4985ed29fd5cd44709fb740af396075736e4f28edfb8a46fff843f005921b6"
+      },
+      "emulation_wall_seconds": 5.989965106360614,
+      "mode": "enabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile2-enabled-s7v0lqzg",
+      "profile": 2,
+      "result_sha256": "7f4985ed29fd5cd44709fb740af396075736e4f28edfb8a46fff843f005921b6",
+      "supervisor_sha256": "d7ca506056b847ed06d4b5cc5ea4c8204ed15160321625f16750208c3f41b732"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "828c01e68dfcb68b6b3f9b9b9e16307a27631ff23fde122ffe77170cb6ae1d44"
+      },
+      "emulation_wall_seconds": 6.4103274354711175,
+      "mode": "reference",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile2-reference-ptbnju7n",
+      "profile": 2,
+      "result_sha256": "828c01e68dfcb68b6b3f9b9b9e16307a27631ff23fde122ffe77170cb6ae1d44",
+      "supervisor_sha256": "74816d6cf08b618a27a3ddfe0ffd4e5444f6eb31b2c7ff8cf9332b3df2dc2061"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "0e552f789a0e37a6e0bcac385548d091b66ddf709fbfec496bd06c58b0709c64"
+      },
+      "emulation_wall_seconds": 6.482390576042235,
+      "mode": "reference",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile2-reference-le8b8qm2",
+      "profile": 2,
+      "result_sha256": "0e552f789a0e37a6e0bcac385548d091b66ddf709fbfec496bd06c58b0709c64",
+      "supervisor_sha256": "3bad0cd27e140962946d30c19ae6b800198e749d9ca64aef80536f3f773f8315"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "218870bf150d0099ab67d1562390f8caeb420ea3c1de67de4192260d530716af"
+      },
+      "emulation_wall_seconds": 7.410158781334758,
+      "mode": "disabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile2-disabled-pdu_zogc",
+      "profile": 2,
+      "result_sha256": "218870bf150d0099ab67d1562390f8caeb420ea3c1de67de4192260d530716af",
+      "supervisor_sha256": "56d603a7d86c238dad4219f6c948b19e36cd0a1f0c262f0310d342fe3f667a66"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "b9c182859a44e6d85cbea93d14318ba5f04580bbb61de14e17d0b9df9deebd5b"
+      },
+      "emulation_wall_seconds": 5.96848695166409,
+      "mode": "disabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile2-disabled-5ofn709h",
+      "profile": 2,
+      "result_sha256": "b9c182859a44e6d85cbea93d14318ba5f04580bbb61de14e17d0b9df9deebd5b",
+      "supervisor_sha256": "8883ce6bf8962ba4b6df08080da283de3184c97c439e37684db74b1a68c672b1"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "init-trace.json": "fc09ea64cfa44689bb4957fc64378a65c27b0e1935139c95f13f56ab0712cae5",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "d8f545dd7557f6b25228cfdddbe6f980bfe20855bbb37bde9c2268b9782f4b6b"
+      },
+      "emulation_wall_seconds": 6.236070833168924,
+      "mode": "enabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile2-enabled-oq3y3khx",
+      "profile": 2,
+      "result_sha256": "d8f545dd7557f6b25228cfdddbe6f980bfe20855bbb37bde9c2268b9782f4b6b",
+      "supervisor_sha256": "ef5fc6b2b03335e3729098977d10221e3ecc15a45607642ea17c40b05035b695"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "538d7e86b40624b9321bffa4941fa8ff8313af6203d26ce26535c952c5cbcf90"
+      },
+      "emulation_wall_seconds": 5.966887225396931,
+      "mode": "reference",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-reference-mu5kn4y5",
+      "profile": 1,
+      "result_sha256": "538d7e86b40624b9321bffa4941fa8ff8313af6203d26ce26535c952c5cbcf90",
+      "supervisor_sha256": "897c08940c30d881cd9d3d74084f5773eec0b1828306fd362225e6ed1df34f38"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "63c55d0f427a4de9186daa5aa1f302bc3f6d04ed160641e1758cf3c03a54eac5"
+      },
+      "emulation_wall_seconds": 5.815217392519116,
+      "mode": "reference",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-reference-oc8js8il",
+      "profile": 1,
+      "result_sha256": "63c55d0f427a4de9186daa5aa1f302bc3f6d04ed160641e1758cf3c03a54eac5",
+      "supervisor_sha256": "08a0bad162a98941b0e5d76c7b431e6ce7d92972b32926dd75efebdd9df90e34"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "8c120c3a8187df3fb1cd813e1740fd0f017f3e61ade88237fbfa8efb2fd0ca9a"
+      },
+      "emulation_wall_seconds": 6.042725614272058,
+      "mode": "disabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-disabled-tflrkzgp",
+      "profile": 1,
+      "result_sha256": "8c120c3a8187df3fb1cd813e1740fd0f017f3e61ade88237fbfa8efb2fd0ca9a",
+      "supervisor_sha256": "db123af01ca59fb361bc769a8f30f5315f926e989851b410d63a3ecc43cfe1f2"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "61b6feabd3cc4640d922e0d58fe23e048664c83fe622b714f889925f5062e79d"
+      },
+      "emulation_wall_seconds": 7.001590957865119,
+      "mode": "disabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-disabled-k88hehvw",
+      "profile": 1,
+      "result_sha256": "61b6feabd3cc4640d922e0d58fe23e048664c83fe622b714f889925f5062e79d",
+      "supervisor_sha256": "f91c0d0593d04cd09bdfcb7c1f3bdfef2d83a1577109fb5df646de3216b363fd"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "init-trace.json": "2719dde90a65dfe5020d4b93cd9ee9ce7774e820d5dfd1f5b489f36b8c050b3f",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "5894762c90327000908645f7e928c9876561a12b99e19becfe2fb50f7c6510f4"
+      },
+      "emulation_wall_seconds": 5.988297177478671,
+      "mode": "enabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-enabled-wmaopl8g",
+      "profile": 1,
+      "result_sha256": "5894762c90327000908645f7e928c9876561a12b99e19becfe2fb50f7c6510f4",
+      "supervisor_sha256": "129539a421935b7a8d5f2f74249070c89df41b2c3fd006fab8807cd6664c8867"
+    },
+    {
+      "artifacts": {
+        "final.state": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+        "imported.state": "5caef9e19892aac7bba8c774bb0189c11ebc71875320f219147d8cd74609b3c8",
+        "init-trace.json": "2719dde90a65dfe5020d4b93cd9ee9ce7774e820d5dfd1f5b489f36b8c050b3f",
+        "observations.json": "c1fdd3b9c05463bbbf80efe033f0e081ee2a87705ed6597f38453f23f67dac28",
+        "result.json": "72acb48c2d68713746bf5d4d4aed87b7501312041a9c96afeb7f1bddaf1e0865"
+      },
+      "emulation_wall_seconds": 6.125902093946934,
+      "mode": "enabled",
+      "private_directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-enabled-pkwjrr60",
+      "profile": 1,
+      "result_sha256": "72acb48c2d68713746bf5d4d4aed87b7501312041a9c96afeb7f1bddaf1e0865",
+      "supervisor_sha256": "5ebda41485e85dc00a7e8a8630032788746c15bc60e1f9ee5251e1fab921f7ee"
+    }
+  ],
+  "schema": "neptune.original-initialization-natural-derived.v1",
+  "tool_acceptance": {
+    "all_applicable_checks_success": true,
+    "check_count": 10,
+    "current_base_at_acceptance": "8e302930894dc93afe74e03a6f30f67430f73b9c",
+    "merge": "fed7932eaedd9728e6c06d877f37fd319d6356d6",
+    "merge_parent_equals_ci_base": true,
+    "merge_tree_equals_tested_head": true,
+    "merged_at": "2026-11-02T21:26:29Z",
+    "native_children": {
+      "call-trace": "success",
+      "context-trace": "success",
+      "ghidra": "success",
+      "init-trace": "success",
+      "ocr": "success",
+      "xvfb": "success"
+    },
+    "pr": 663,
+    "programme_status": "active; incomplete",
+    "schema": "neptune.exact-head-merged-validation.v1",
+    "status": "passed",
+    "strict_required_checks": [
+      {
+        "app_id": 15368,
+        "context": "Neptune merge gate"
+      },
+      {
+        "app_id": 15368,
+        "context": "Pinned Godot and Saturn installation"
+      }
+    ],
+    "tested_head": "44328ce3ddc1066caf4dd987493ddc42e2b79b8e"
+  },
+  "validation_limits": [
+    "One natural successful initialization per profile repeated twice, not exhaustive function semantics",
+    "Named direct boundaries and fixed sampled memory only; internal callbacks/device behavior remain unresolved",
+    "Wall measurements are two-run host observations, not hardware timing or a performance claim",
+    "Whole module/function/dynamic-target denominators and gameplay/Godot/hardware parity remain unknown"
+  ],
+  "validation_sha256": "fa9937230dd7137066551c46d091d3559003764645e7cadfe15ed7c82642a918"
+}
