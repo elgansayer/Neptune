@@ -60,8 +60,11 @@ B934 observer rejects these context entries. Issue649 now has a separate
 ABI2 observer (tool PR650 merged), with actual natural yield/resumed selection
 validated through12 fresh600-frame reference/disabled/enabled runs and exact
 root handoff continuity. See the current checkpoint for evidence/publication.
-Fresh6BE4 entry remains missing: continue bounded early-boot capture, then the
-larger root/task cycle, unresolved17F2 handlers and further original modules. The
+Fresh6BE4 entry is now observed at frame1247 through actual61C4 root save,
+61E6 record0 restore and transfer623A, with a further six exact repeated original
+reference/disabled/enabled windows and14 actual-trace controls. Resume the current
+checkpoint for publication and next first-task623A/89C8/helper/allocator work,
+then the larger root/task cycle, unresolved17F2 and further original modules. The
 all-original-code programme remains **active and incomplete**; no whole-module,
 natural gameplay, audio timing or hardware parity follows from these slices.
 
