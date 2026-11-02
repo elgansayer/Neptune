@@ -33,3 +33,44 @@ jobs:
         run: python3 tools/saturn_lab/check.py
       - name: Verify catalogue metadata and rejection cases
         run: python3 tools/research_catalog/check.py
+  sh2-record-adapter:
+    name: Pinned SH-2 adapter smoke (no game)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: callumjenkins/saturn-recomp
+          ref: f20de940e8013fc84103a5b39c4069ed8071b1f9
+          path: .sh2-source
+          sparse-checkout: src/saturnrecomp
+          persist-credentials: false
+          submodules: false
+      - name: Exercise actual pinned CPU and adapter without original inputs
+        run: |
+          python3 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0,'tools/saturn_lab')
+          import probe_kernel_records as records
+          emu=records.pinned.interpreter(Path('.sh2-source'))
+          result=records.owned_smoke(emu)
+          report={'schema':'neptune.owned-sh2-record-adapter.v1','original_game_bytes_executed':False,
+                  'interpreter_revision':records.pinned.INTERPRETER_REVISION,
+                  'interpreter_sources':records.pinned.SOURCE_HASHES,
+                  'probe_sha256':records.pinned.digest(Path(records.__file__).read_bytes()),'owned_smoke':result}
+          (Path(os.environ['RUNNER_TEMP'])/'sh2-record-adapter.json').write_text(json.dumps(report,indent=2,sort_keys=True)+'\n')
+          print('Owned pinned CPU/adapter guards, literal read and recovery passed; no original game bytes.')
+          PY
+      - name: Preserve source-only CPU evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sh2-record-adapter-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sh2-record-adapter.json
+          if-no-files-found: error
+          retention-days: 14

@@ -260,6 +260,42 @@ def run_case(data,emu,case):
             'unaffected_bytes_equal':True,'return_sentinel_reached':True}
 
 
+def owned_smoke(emu):
+    """Actual pinned CPU/adapter guards using only freshly authored instructions."""
+    data=bytearray(pinned.SIZE);offset=MARK-pinned.BASE
+    data[offset:offset+6]=bytes.fromhex('e007 000b 0009')  # owned MOV7,R0; RTS; NOP
+    before=initial(MARK,0,0);regions=[(SP-32,bytes([0xCD])*32)]
+    good=observe(data,emu,MARK,regions,before)
+    expected={**before,'r0':7,'pc':0xFFFFFFF0}
+    if (good['status']!='returned' or good['registers']!=expected or good['events'] or
+            good['trace']!=[[MARK,False],[MARK+2,False],[MARK+4,True]] or
+            good['regions_after']!=[regions[0][1]] or not good['original_unaffected_bytes_equal']):
+        raise ValueError('Owned CPU/adapter positive smoke failed')
+    controls={}
+    for name,words,target,budget,reason in (
+            ('short_loop','affe 0009',0x00204000,8,'Local instruction budget exceeded'),
+            ('full_loop','affe 0009',0x00204000,MAX_STEPS,'Local instruction budget exceeded'),
+            ('unmapped_read','6012',0x00204000,8,'Read outside original literals and declared inputs'),
+            ('unmapped_write','2102',0x00204000,8,'Write outside declared controlled RAM/stack'),
+            ('code_write','2102',MARK,8,'Write outside declared controlled RAM/stack'),
+            ('code_as_data','6012',MARK,8,'Read outside original literals and declared inputs'),
+            ('cache_alias_read','6012',MARK|0x20000000,8,'Read outside original literals and declared inputs')):
+        changed=bytearray(data);words=bytes.fromhex(words);changed[offset:offset+len(words)]=words
+        actual=observe(changed,emu,MARK,regions,{**before,'r1':target},budget=budget)
+        if actual['status']!='failed' or actual['error']['reason']!=reason or not actual['original_unaffected_bytes_equal']:
+            raise ValueError('Owned guard failed: '+name)
+        if name.endswith('loop') and len(actual['trace'])!=budget:raise ValueError('Owned instruction cap failed')
+        controls[name]={'status':actual['status'],'reason':reason,'executed_instructions':len(actual['trace'])}
+    literal=bytearray(data);literal[offset:offset+2]=bytes.fromhex('6012')
+    literal[0x06006B98-pinned.BASE:0x06006B9C-pinned.BASE]=bytes.fromhex('11223344')
+    actual=observe(literal,emu,MARK,regions,{**before,'r1':0x06006B98})
+    if (actual['status']!='returned' or actual['registers']['r0']!=0x11223344 or
+            actual['events']!=[[1,0x06006B98,4,0x11223344]]):raise ValueError('Owned literal read failed')
+    if observe(data,emu,MARK,regions,before)!=good:raise ValueError('Owned recovery after failures differs')
+    return {'original_game_bytes_executed':False,'positive_instructions':3,'owned_literal_read':True,
+            'failure_controls':controls,'fresh_after_failure':True,'native_cpu_sources_unchanged':True}
+
+
 def cases():
     rows=set()
     indices=sorted(set(range(18))|{127,255,371,372,373,0x7FFF,0x8000,0xFFFF,0x10000,0xFFFFFFFF,0x80000000})
@@ -337,6 +373,7 @@ def main(argv=None):
         phase='source_identity'
         try:
             data=pinned.kernel_bytes(args.kernel);emu=pinned.interpreter(args.saturn_recomp)
+            phase='owned_smoke';report['owned_smoke']=owned_smoke(emu)
             phase='original_execution';report.update(execute(data,emu,args.kind),status='success')
         except Exception as error:
             report['error']={'phase':phase,'type':type(error).__name__,'reason':'Identity, bounded execution or contract failed'}
