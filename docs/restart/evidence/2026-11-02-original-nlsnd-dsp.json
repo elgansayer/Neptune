@@ -1,5 +1,9 @@
 {
   "account_and_ci_spend": "unknown",
+  "current_private_generations": {
+    "original": "original-003",
+    "preparation": "native-003"
+  },
   "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
   "isolation": {
     "broker_auth_signing_authority_hidden": true,
@@ -16,10 +20,10 @@
       "wall_seconds": 75
     },
     "original_wall_seconds": [
-      14.704788974486291,
-      14.894326454028487
+      16.636401787400246,
+      16.59752102382481
     ],
-    "preparation_wall_seconds": 78.48948901053518,
+    "preparation_wall_seconds": 102.53888567350805,
     "shared_configured_limit": 3,
     "source_inputs_native_readonly": true
   },
@@ -113,6 +117,13 @@
         "name": "program_lanes",
         "reason": "Reference register effect differs from oracle",
         "semantic_rejected": true
+      },
+      {
+        "compiled": true,
+        "component_sha256": "be183e9957adc959ccd29f98de6b6dd54914fab62576abeb24e4225950205389",
+        "name": "ignore_identical_program",
+        "reason": "Identical program write did not invalidate decode",
+        "semantic_rejected": true
       }
     ],
     "cpu_word_cases": 640,
@@ -127,16 +138,17 @@
       "odd_word_read": "instruction-access",
       "odd_word_write": "instruction-access"
     },
+    "identical_program_word_cases": 1024,
     "model_calls": 0,
     "original_game_bytes_executed": false,
-    "receipt_sha256": "0144de070a95d4ee9dcdcd700c83a80eb7712acd919c5828e54d8dd3545fe5d0",
+    "receipt_sha256": "ddffc0e30b3f7e24ff2ee6d8d9cb503f354a6c77d23999ca7a37a5096e176383",
     "reference_word_cases": 17280,
     "reuse": true,
     "source_files": {
       "m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
       "m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
       "m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
-      "m68k_scsp_dsp.py": "4193cf37923df9bb092a002d68dc02e4702d0f2fc33cbf727b690bb0404685dd",
+      "m68k_scsp_dsp.py": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
       "m68k_scsp_fifo.py": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
       "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
       "scsp-dsp-source-lock.json": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
@@ -150,8 +162,8 @@
   "repeatability": {
     "fresh_processes": 2,
     "instructions_per_main_run": 762892,
-    "report_bytes": 291508,
-    "report_sha256": "6f20232cc2579829b6375f3868f308d14684f06a9523cac9282693713c7c31ad",
+    "report_bytes": 291603,
+    "report_sha256": "ca24be0c6940ee2538d72dbd9f967884656b4bc159684765c38522042bd32b71",
     "reports_identical": true,
     "samples": 36
   },
@@ -161,5 +173,6 @@
   ],
   "schema": "neptune.scsp-dsp-original-evidence.v1",
   "scope": "bounded pinned-reference register effects and constructed original command12 execution",
-  "source_head": "70e4e136661634fe44c9ee0d17a4a144f6bc92e0"
+  "source_head": "a0e02246a2f0529201d728fe5625017c74a276e3",
+  "stale_verifier_receipt_rejected_before_native_load": true
 }

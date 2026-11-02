@@ -30,14 +30,18 @@ COPYING are retained in the generation. It does not map device space as RAM.
 |800..BFE|128 64-bit MPROG entries, four big-endian word lanes each; set MPROG_Dirty even on identical writes|
 
 All640 even destinations were exercised with9 edge values and3 seeded states:
-17,280 actual reference-component cases, followed by640 owned CPU write/read/RTS
+17,280 actual reference-component cases,1,024 identical program-word writes,
+followed by640 owned CPU write/read/RTS
 cases. Full logical arrays, dirty state, and all other bytes of the projected DSP
 structure and surrounding canaries are compared. Unsupported byte/long accesses,
 addresses outside the profile, gap reads and odd accesses fail closed. Fresh
-compilation and cache reuse passed; truncation, dirty-flag and lane mutations
+compilation and cache reuse passed; truncation, dirty-flag, lane and skipped-identical-write mutations
 compiled successfully then failed the independent state oracle. The first native
 build failed because extraction selected a directive mention inside a comment;
 the failed stage was preserved and the complete macro-comment boundary corrected.
+The recipe also hashes its executable preparation module. After the verifier
+changed, the older ready receipt was rejected before any native load; the fresh
+generation and reuse passed the strengthened smoke.
 
 Device clocks are frozen. These register branches call no interrupt processing;
 slots, timers, DSP decode/execution and samples are absent. The full SCSP object
