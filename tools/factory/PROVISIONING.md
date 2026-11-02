@@ -94,6 +94,53 @@ receipt, binary and source-archive identities, then rerunning the existing real
 smoke/reuse path locally. This avoids another build when the VPS cannot retain
 its preparation reserve; it does not relax that reserve or certify game capture.
 
+### Headless Ghidra/JDK preparation
+
+`--tool ghidra` prepares official Ghidra12.2 and compatible Temurin25.0.5+8,
+checked against their official release metadata on 2 November. The existing lock
+records exact artifact URLs, bytes and SHA-256 values. Ghidra12.2 requires JDK25;
+this recipe supplies that reviewed JDK without root, host Java discovery, a new
+service or an MCP listener. Upstream notices remain in the complete payload.
+This is the preparation prerequisite for #481/#508, not a validated Saturn loader,
+PyGhidra/MCP adapter, original-game project or recovered semantics.
+
+```sh
+python3 tools/factory/provision.py --tool ghidra \
+  --cache /canonical/repo/.factory-tools/prepared \
+  --evidence /private/evidence/install-ghidra-001 --timeout 900
+```
+
+Run inside the existing coordinator preparation boundary and shared host gate.
+Allow3GiB preparation space **in addition to** the configured host reserve; the
+CLI's minimum-free check does not replace that reserve or a filesystem quota.
+Downloads, extraction and Java execution inherit the shared deadline and bounded
+logs. Archives have file/expansion limits and reject traversal, duplicate members,
+non-directory parents, devices, hardlinks and escaping/cyclic links. Internal JDK
+notice symlinks are resolved within the archive and materialised as regular files;
+the resulting cache contains no links. Interrupted staging never advertises ready.
+
+The staged dependency files/directories become read-only before the first smoke,
+so upstream skips installation-local language locks just as in a read-only mount.
+Every reuse verifies all payload file hashes, sizes and file/directory modes against the manifest
+bound to the published receipt, then runs real Java and headless analysis in a
+fresh private home/project. The returned `ghidra-headless` executable selects the
+bundled JDK directly, limits Java's heap to768MiB and active processors to one,
+uses explicit HOME/TMPDIR and ignores inherited Java option/classpath injection.
+Callers still own process/time/network isolation and must supply private writable
+HOME/TMPDIR outside the immutable payload. This is a deterministic launcher, not
+an arbitrary-script sandbox; workers receive no reference files implicitly.
+
+The independently specified public fixture is exactly `e0 2a 00 0b 00 09`:
+`mov #42,r0; rts; nop`. The smoke imports it at0x06004000 using the pinned
+`SuperH:BE:32:SH-2` language, checks each instruction/operand (including Ghidra’s explicit `_nop` delay-slot
+notation and a one-instruction return delay) and requires native
+headless decompilation to recover constant return42. Version output alone cannot
+pass. Fresh install/reuse and an actual changed-immediate rejection are required
+children of the existing installation aggregate. This validates that tool path
+only; real Saturn code requires separate input identities, projects, original
+execution and regression-detecting comparisons. VPS disk/adoption and research-job
+resume acceptance are reported separately from CI installation.
+
 ### Local original-screen OCR
 
 The #583 recipe builds [Tesseract 5.5.4](https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.4)

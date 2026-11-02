@@ -42,7 +42,8 @@ class ProvisionTests(unittest.TestCase):
                          "tools/godot/toolchain.json", "tools/factory/provision_call_trace.py",
                          "tools/factory/provision_call_trace.h", "tools/factory/provision_call_trace_abi.py",
                          "tools/factory/provision_context_trace.py", "tools/factory/provision_context_trace.h",
-                         "tools/factory/provision_context_trace_abi.py"):
+                         "tools/factory/provision_context_trace_abi.py", "tools/factory/provision_ghidra.py",
+                         "tools/factory/provision_ghidra_smoke.java"):
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(p.ROOT / relative, target)
@@ -129,6 +130,16 @@ class ProvisionTests(unittest.TestCase):
         header.write_bytes(header.read_bytes() + b"\n/* owned identity mutation */\n")
         self.assertNotEqual(key, p.identity(tool, self.root)[2])
 
+    def test_ghidra_uses_existing_publication_and_reuse_contract(self):
+        first = p.ensure("ghidra", self.cache, self.home / "first", root=self.root,
+                         installer=self.install, prober=self.probe)
+        again = p.ensure("ghidra", self.cache, self.home / "again", root=self.root,
+                         installer=self.install, prober=self.probe)
+        self.assertFalse(first["reused"])
+        self.assertTrue(again["reused"])
+        self.assertEqual((self.installs, self.probes), (1, 2))
+        self.assertEqual(Path(first["binary"]).name, "ghidra-headless")
+
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()
         Path(first["binary"]).write_bytes(b"tampered")
@@ -211,7 +222,7 @@ class ProvisionTests(unittest.TestCase):
 
     def test_unknown_tool_requests_recipe_without_executing_issue_text(self):
         with self.assertRaises(p.ProvisionError) as caught:
-            p.ensure("ghidra", self.cache, self.home / "unknown", root=self.root)
+            p.ensure("unregistered-tool", self.cache, self.home / "unknown", root=self.root)
         self.assertEqual(caught.exception.kind, "needs_recipe")
         self.assertEqual(json.loads((self.home / "unknown/report.json").read_text())["commands"], [])
 
