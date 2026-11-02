@@ -23,6 +23,36 @@
       "repository": "https://github.com/libretro/beetle-saturn-libretro.git",
       "commit": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
       "minimum_free_bytes": 2147483648
+    },
+    "tesseract": {
+      "kind": "tesseract-source",
+      "platform": "linux-x86_64",
+      "minimum_free_bytes": 1073741824,
+      "version": "5.5.4",
+      "leptonica_version": "1.87.0",
+      "cmake_version": "4.4.5",
+      "sources": {
+        "cmake": {
+          "url": "https://github.com/Kitware/CMake/releases/download/v4.4.5/cmake-4.4.5-linux-x86_64.tar.gz",
+          "sha256": "ed85135c5a5135b45e50423cb406dea04ca3338da0b8ef3c9ede963559680be0",
+          "bytes": 64865573
+        },
+        "leptonica": {
+          "url": "https://codeload.github.com/DanBloomberg/leptonica/tar.gz/13275a278eb55b5746e33f95fbf5a2c8f604b3ab",
+          "sha256": "e72242133adf678e8584081a506ca3a665c8f6f6de8c3fe7b47d1d5fcf9a4ce4",
+          "bytes": 13725547
+        },
+        "tesseract": {
+          "url": "https://codeload.github.com/tesseract-ocr/tesseract/tar.gz/7e548e6eff172f38f97664afe7f7ce40db36c8d6",
+          "sha256": "445603ab1d0a63df552e193a600d9d5c4021aff36e144f3091af149e5efb381a",
+          "bytes": 1971321
+        },
+        "english": {
+          "url": "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/eng.traineddata",
+          "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+          "bytes": 4113088
+        }
+      }
     }
   }
 }
