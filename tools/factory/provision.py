@@ -22,6 +22,7 @@ import tempfile
 import time
 import uuid
 import provision_xvfb as xvfb
+import provision_ocr as ocr
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = "neptune.tool-install.v1"
@@ -55,11 +56,11 @@ def write_json(path, value):
 
 
 def identity(tool, root):
-    if tool not in ("godot", "beetle-saturn", "xvfb"):
+    if tool not in ("godot", "beetle-saturn", "xvfb", "tesseract"):
         raise ProvisionError("needs_recipe", "Create/reuse a bounded trusted recipe task for: " + tool)
     path = root / "tools/factory/provision-lock.json"
     lock = json.loads(path.read_text())
-    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn", "xvfb"}:
+    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn", "xvfb", "tesseract"}:
         raise ProvisionError("invalid_recipe", "Unsupported recipe registry")
     recipe = lock["tools"][tool]
     fields = {"kind", "platform", "minimum_free_bytes"}
@@ -68,7 +69,10 @@ def identity(tool, root):
     if tool == "xvfb":
         xvfb.validate(recipe)
         fields = xvfb.FIELDS
-    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source", "xvfb": "debian-xvfb"}[tool]:
+    if tool == "tesseract":
+        ocr.validate(recipe)
+        fields = ocr.FIELDS
+    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source", "xvfb": "debian-xvfb", "tesseract": "tesseract-source"}[tool]:
         raise ProvisionError("invalid_recipe", "Unsupported installer/recipe fields")
     if recipe["platform"] != "linux-x86_64":
         raise ProvisionError("invalid_recipe", "Unsupported recipe platform")
@@ -82,6 +86,8 @@ def identity(tool, root):
         sources += ["tools/godot/install.py", "tools/godot/toolchain.json"]
     if tool == "xvfb":
         sources += ["tools/factory/provision_xvfb.py"]
+    if tool == "tesseract":
+        sources += ["tools/factory/provision_ocr.py"]
     record = {"tool": tool, "recipe": recipe, "installer_sources": {p: digest(root / p) for p in sources}}
     key = hashlib.sha256(json.dumps(record, sort_keys=True).encode()).hexdigest()
     return recipe, record, key
@@ -153,6 +159,8 @@ class Runner:
 
 
 def binary_name(tool, root):
+    if tool == "tesseract":
+        return "tesseract"
     if tool == "xvfb":
         return "Xvfb"
     if tool == "beetle-saturn":
@@ -165,6 +173,8 @@ def binary_name(tool, root):
 
 
 def smoke(tool, binary, runner, root):
+    if tool == "tesseract":
+        return ocr.smoke(identity(tool, root)[0], binary, runner)
     if tool == "xvfb":
         recipe = identity(tool, root)[0]
         xvfb.host_check(recipe)
@@ -194,6 +204,8 @@ def smoke(tool, binary, runner, root):
 
 
 def install(tool, recipe, payload, work, runner, root):
+    if tool == "tesseract":
+        return ocr.install(recipe, payload, work, runner, root)
     if tool == "xvfb":
         xvfb.host_check(recipe)
         recipe_path = work / "xvfb-recipe.json"

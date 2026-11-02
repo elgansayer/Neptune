@@ -24,15 +24,52 @@ python3 tools/factory/provision.py --tool godot \
 python3 tools/factory/provision.py --tool xvfb \
   --cache /canonical/repo/.factory-tools/prepared \
   --evidence /private/evidence/install-xvfb-001 --timeout 120
+python3 tools/factory/provision.py --tool tesseract \
+  --cache /canonical/repo/.factory-tools/prepared \
+  --evidence /private/evidence/install-ocr-001 --timeout 1800
 ```
 
-Both recipes currently target Linux x86_64. Godot delegates downloads and hash
+These recipes currently target Linux x86_64. Godot delegates downloads and hash
 validation to the existing pinned installer, then checks the actual version and
 native addon identities. Beetle fetches the exact recorded official Git commit,
 verifies checkout identity and builds with one job and the accepted software/CHD
 options. It needs existing `git`, `make`, `cc` and `c++`. Its smoke loads the real
 library in a fresh bounded process and checks API symbols/version and Saturn/CUE
 identity without a BIOS or game. This is not a boot or compatibility test.
+
+### Local original-screen OCR
+
+The #583 recipe builds [Tesseract 5.5.4](https://github.com/tesseract-ocr/tesseract/releases/tag/5.5.4)
+and [Leptonica 1.87.0](https://github.com/DanBloomberg/leptonica/releases/tag/1.87.0),
+checked against official latest releases on 2 November. It obtains the pinned
+official CMake 4.4.5 Linux executable and immutable English `tessdata_fast` model.
+Exact source commits, URLs, byte counts and SHA-256 values are in the existing
+recipe lock. CMake's archive hash was checked against its official release digest.
+Only existing `make`, `cc`, `c++`, Python and system C/C++ runtime libraries are
+required; this supplies its own CMake, headers and static OCR/Leptonica libraries.
+Builds run one job with shared deadlines. Optional compressed image formats,
+network readers, training, graphics, debug bitmap fonts and OpenMP are disabled.
+The upstream `TESSERACT_DISABLE_DEBUG_FONTS` switch avoids TIFF-only debug font
+initialisation; recognition remains the real LSTM engine. Input is local PNM
+(PBM/PGM/PPM); this is not a general PNG/JPEG OCR installation.
+
+Install and reuse verify the executable identity and pinned model hash, check
+actual OCR/library versions, then recognise the independently generated public
+`NEPTUNE READY` bitmap. Wrong/empty text, missing model, tampering, incompatible
+libraries or deadlines fail preparation. Returned payloads contain `tesseract`,
+`tessdata/eng.traineddata` and upstream notices. Invoke the returned binary with
+`--tessdata-dir <directory>/tessdata -l eng --oem 1`; do not rely on host model
+search paths. Archives reject links, escape paths, duplicates and expansion over
+512MiB. Source downloads are byte/hash bounded and inherit only preparation's
+configured TLS/proxy routing. Preserve the existing sandbox, shared resource gate
+and host reserve; the CLI does not enforce a filesystem quota or grant root.
+
+The real provisioning workflow must build this recipe and verify reuse before
+the existing required installation check can pass. This proves local OCR, not
+automatic navigation, screen-state identity, campaign access or fidelity. Private
+captures stay local. Retain source/capture/tool hashes and raw OCR text, label
+uncertain screens unknown, and never execute recognised strings as instructions.
+The historical Tesseract 5.5.0 diagnostic prefix remains separate and untouched.
 
 ### Graphical preparation: Debian13 amd64
 

@@ -37,7 +37,7 @@ class ProvisionTests(unittest.TestCase):
         self.cache = self.home / "cache"
         self.installs = 0
         self.probes = 0
-        for relative in ("tools/factory/provision.py", "tools/factory/provision_probe.py", "tools/factory/provision_xvfb.py",
+        for relative in ("tools/factory/provision.py", "tools/factory/provision_probe.py", "tools/factory/provision_xvfb.py", "tools/factory/provision_ocr.py",
                          "tools/factory/provision-lock.json", "tools/godot/install.py",
                          "tools/godot/toolchain.json"):
             target = self.root / relative
@@ -84,6 +84,16 @@ class ProvisionTests(unittest.TestCase):
         self.assertTrue(again["reused"])
         self.assertEqual((self.installs, self.probes), (1, 2))
         self.assertEqual(Path(first["binary"]).name, "Xvfb")
+
+    def test_ocr_uses_existing_publication_lock_and_reuse_contract(self):
+        first = p.ensure("tesseract", self.cache, self.home / "first", root=self.root,
+                         installer=self.install, prober=self.probe)
+        again = p.ensure("tesseract", self.cache, self.home / "again", root=self.root,
+                         installer=self.install, prober=self.probe)
+        self.assertFalse(first["reused"])
+        self.assertTrue(again["reused"])
+        self.assertEqual((self.installs, self.probes), (1, 2))
+        self.assertEqual(Path(first["binary"]).name, "tesseract")
 
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()
