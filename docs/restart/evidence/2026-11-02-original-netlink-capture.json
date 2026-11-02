@@ -1,0 +1,126 @@
+{
+  "cases": 7522,
+  "contract_adapter_sha256": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "event_count_range": [
+    3,
+    67
+  ],
+  "experiment": "EXP-SAT-CODE-012",
+  "instruction_controls": {
+    "forward_fifteen_bytes": {
+      "address": "0x1386",
+      "mutated_driver_sha256": "e2059da10425b74b71e9f008a365eb984145030274f9f7aa93721927179ae40c",
+      "reasons": [
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 12,
+      "tested": 32
+    },
+    "handshake_bpl_to_beq": {
+      "address": "0x1312",
+      "mutated_driver_sha256": "9d8505811a8123f2afd6bfc967d528624f03d7cefacb4f819945a2ea9e0f2d0f",
+      "reasons": [
+        "Native guard: instruction-access",
+        "Register/SR result differs from independent contract"
+      ],
+      "rejected": 8,
+      "tested": 32
+    },
+    "missing_timestamp_clear": {
+      "address": "0x1368",
+      "mutated_driver_sha256": "cb76087db1fa5a161644278002d8b47835475bb87e9a13b3766875dd50ea78d4",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 24,
+      "tested": 32
+    },
+    "ring_increment_eight": {
+      "address": "0x135a",
+      "mutated_driver_sha256": "c6b580a1605535ddc3328f188db6c20b43db2f3ae9a5cf5cca36b59d54c934d5",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 24,
+      "tested": 32
+    },
+    "ring_mask_3F0": {
+      "address": "0x1340",
+      "mutated_driver_sha256": "0e9bef056dc2765160cd73d45e6f0a4b3ddc04f3bd813419290752c7eb099730",
+      "reasons": [
+        "Output or unaffected mapped byte differs"
+      ],
+      "rejected": 24,
+      "tested": 32
+    }
+  },
+  "instruction_count_range": [
+    5,
+    119
+  ],
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Complete empty/unready returns; active capture stops before JSR17F2 at139A",
+    "Constructed RAM/registers, no natural command, boot, audio or hardware validation",
+    "CPU-only fixed RAM; no SCSP/DSP/device timing, shared interpreter lineage",
+    "Whole-program/function/dynamic-target denominators unknown"
+  ],
+  "load_address": 0,
+  "module": "NLSND",
+  "native_identity": {
+    "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "flags": [
+      "-std=c11",
+      "-O2",
+      "-shared",
+      "-fPIC",
+      "-DM68K_INSTRUCTION_HOOK=1",
+      "-DM68K_SEPARATE_READS=1",
+      "-Wl,-z,defs"
+    ],
+    "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+  },
+  "original_game_bytes_executed": true,
+  "original_input_unchanged": true,
+  "outcomes": {
+    "capture-prefix": 5282,
+    "empty-return": 1536,
+    "unready-return": 704
+  },
+  "owned_smoke": {
+    "failure_controls": {
+      "execution_escape": "instruction-access",
+      "forbidden_write": "forbidden-write",
+      "nonreturning": "instruction-budget",
+      "unmapped_read": "unmapped-data-read"
+    },
+    "fresh_after_failure": true,
+    "original_game_bytes_executed": false,
+    "positive_steps": 2
+  },
+  "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+  "private_report_sha256": "76f1110702835bd30fee234ce039e3362be127eee8fe10253ad70081b0341353",
+  "probe_sha256": "0f125df4b66072b2353eb8848cc24863653121a5b98b1c2d4172a12d8a254186",
+  "range_sha256": "8d62fde60d32e62455b50c40d441bc5b75b2cac78a6481f6fed9045ddf5d399a",
+  "release": "usa-mk81070-v1003",
+  "results_sha256": "9339b6f17bf328cb957727a422bfb1640173c445eeafda245e65bc89be890b87",
+  "schema": "neptune.original-m68k-capture.v1",
+  "source_execution_head": "2b8405d72c4cc3a08f6dafaad7c0092a36c742f4",
+  "source_path": "NETLINK/SNDDRV.BIN",
+  "status": "success",
+  "two_complete_reports_equal": true,
+  "variants": [
+    [
+      32768,
+      10015,
+      41342
+    ],
+    [
+      65536,
+      8192,
+      24193
+    ]
+  ]
+}
