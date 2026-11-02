@@ -1,5 +1,21 @@
 # Codex execution handoff: community Bomberman
 
+## Current primary goal: factory development and Saturn research
+
+Owner direction, 2 November: follow
+[FACTORY_FIRST_GOAL.md](FACTORY_FIRST_GOAL.md). Prioritise the shared AI factory,
+its supervision/accounting/recovery and tool preparation, then real Saturn
+reverse-engineering experiments and measured Godot comparisons. Complete active
+bounded work without disturbing its owner. Select ordinary feature/UI/workshop
+or Power expansion only when it removes a demonstrated pipeline blocker or tests
+a named recovered scenario. The complete product scope below remains required.
+
+Use #33/#536, #75/#518, #76/#511, #477/#464 and #508 as the current queues.
+Add justified tools/packages through the existing trusted provisioning boundary,
+not arbitrary installs or a competing scheduler. Each factory change names the
+research job it unblocks and an executable operational check. Prove real shared
+accounting and restart/provider-failure recovery before continuity/concurrency.
+
 Use this as the next instruction for the existing server Codex session or a
 repository-connected worker. A saved prompt or GitHub mention does not establish
 that a task started or that a continuous factory is running.
