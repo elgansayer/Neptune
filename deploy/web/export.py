@@ -14,9 +14,12 @@ def main():
     args = parser.parse_args()
     output = ROOT / 'build/web'
     output.mkdir(parents=True, exist_ok=True)
+    server = ROOT / 'build/server'
+    server.mkdir(parents=True, exist_ok=True)
     for command in [
         [args.godot, '--headless', '--path', str(ROOT), '--editor', '--import'],
         [args.godot, '--headless', '--path', str(ROOT), '--export-release', 'Web', str(output / 'index.html')],
+        [args.godot, '--headless', '--path', str(ROOT), '--export-release', 'Linux', str(server / 'neptune.x86_64')],
     ]:
         result = subprocess.run(command, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=420)
         print(result.stdout, flush=True)

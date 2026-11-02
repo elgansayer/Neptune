@@ -29,22 +29,33 @@ jobs:
           python3 -c 'import json; print("GODOT_BINARY=" + json.load(open("tools/godot/toolchain.json"))["binary_name"])' >> "$GITHUB_ENV"
       - name: Import and export current project
         run: python3 deploy/web/export.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY"
+      - name: Verify transport configuration contracts
+        run: bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_web_transport
       - name: Build serving image
-        run: docker build -f deploy/web/Dockerfile -t neptune-web-candidate .
+        run: |
+          docker build -f deploy/web/Dockerfile -t neptune-web-candidate .
+          docker build -f deploy/web/Dockerfile.server -t neptune-server-candidate .
       - name: Exercise real browser startup
         run: |
-          docker run -d --name web-candidate -p 127.0.0.1:8765:80 neptune-web-candidate
+          docker network create neptune-smoke
+          docker run -d --name server-candidate --network neptune-smoke --network-alias server neptune-server-candidate
+          docker run -d --name web-candidate --network neptune-smoke -p 127.0.0.1:8765:80 neptune-web-candidate
           mkdir -p "$RUNNER_TEMP/web-smoke"
           cp deploy/web/smoke.mjs "$RUNNER_TEMP/web-smoke/"
           cd "$RUNNER_TEMP/web-smoke"
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps chromium
           node smoke.mjs
+      - name: Collect real server diagnostics
+        if: always()
+        run: docker logs server-candidate > "$RUNNER_TEMP/web-smoke/server.log" 2>&1 || true
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: web-startup-evidence
-          path: ${{ runner.temp }}/web-smoke/browser-startup.png
+          path: |
+            ${{ runner.temp }}/web-smoke/browser-startup.png
+            ${{ runner.temp }}/web-smoke/server.log
           if-no-files-found: warn
       - uses: docker/login-action@v3
         if: github.event_name != 'pull_request'
@@ -58,5 +69,10 @@ jobs:
           image=ghcr.io/elgansayer/neptune-bomberman-web
           docker tag neptune-web-candidate "$image:sha-$GITHUB_SHA"
           docker tag neptune-web-candidate "$image:latest"
+          docker push "$image:sha-$GITHUB_SHA"
+          docker push "$image:latest"
+          image=ghcr.io/elgansayer/neptune-bomberman-server
+          docker tag neptune-server-candidate "$image:sha-$GITHUB_SHA"
+          docker tag neptune-server-candidate "$image:latest"
           docker push "$image:sha-$GITHUB_SHA"
           docker push "$image:latest"
