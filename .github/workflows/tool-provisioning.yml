@@ -183,9 +183,72 @@ jobs:
           path: /tmp/xvfb-evidence
           if-no-files-found: error
           retention-days: 14
+  ghidra:
+    needs: applicability
+    if: needs.applicability.outputs.required == 'true'
+    name: Real pinned Ghidra SH-2 preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Install and reuse the actual headless tool with its pinned JDK
+        run: |
+          python3 tools/factory/provision.py --tool ghidra --cache "$RUNNER_TEMP/ghidra-tools" --evidence "$RUNNER_TEMP/ghidra-evidence/first" --timeout 900
+          python3 tools/factory/provision.py --tool ghidra --cache "$RUNNER_TEMP/ghidra-tools" --evidence "$RUNNER_TEMP/ghidra-evidence/reuse" --timeout 180
+          python3 - <<'PYTHON'
+          import json, os
+          from pathlib import Path
+          first, again = [json.loads((Path(os.environ['RUNNER_TEMP']) / 'ghidra-evidence' / name / 'report.json').read_text()) for name in ('first', 'reuse')]
+          assert first['conclusion'] == again['conclusion'] == 'success'
+          assert first['reused'] is False and again['reused'] is True
+          assert first['binary_sha256'] == again['binary_sha256']
+          assert first['recipe_sha256'] == again['recipe_sha256']
+          assert first['smoke'] == again['smoke']
+          assert again['smoke']['language'] == 'SuperH:BE:32:SH-2'
+          assert again['smoke']['constant_return'] == 42
+          assert len(again['commands']) == 2
+          PYTHON
+      - name: Prove changed fixture bytes cannot pass the actual headless smoke
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, str(Path('tools/factory').absolute()))
+          import provision as p
+          import provision_ghidra as g
+          temp = Path(os.environ['RUNNER_TEMP'])
+          first = json.loads((temp / 'ghidra-evidence/first/report.json').read_text())
+          evidence = temp / 'ghidra-evidence/mutation'
+          evidence.mkdir()
+          recipe = p.identity('ghidra', p.ROOT)[0]
+          report = {'commands': []}
+          import time
+          runner = p.Runner(evidence, report, evidence, time.monotonic() + 150)
+          g.FIXTURE = bytes.fromhex('e02b000b0009')
+          try:
+              g.smoke(recipe, Path(first['binary']), runner, p.ROOT)
+          except (ValueError, OSError) as error:
+              log = evidence / report['commands'][-1]['log']
+              assert 'Wrong constant/register decoding' in log.read_text(), 'Negative control failed for an unrelated reason'
+              assert not (evidence / 'ghidra-public-sh2.json').exists()
+              (evidence / 'rejected.json').write_text(json.dumps({'rejected': True, 'error': str(error)}))
+          else:
+              raise SystemExit('Changed SH-2 immediate falsely passed')
+          PYTHON
+      - name: Preserve headless installation, reuse and negative-control evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ghidra-provisioning-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ghidra-evidence
+          if-no-files-found: error
+          retention-days: 14
   install:
     name: Pinned Godot and Saturn installation
-    needs: [applicability, xvfb, ocr, call-trace, context-trace]
+    needs: [applicability, xvfb, ocr, call-trace, context-trace, ghidra]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 30

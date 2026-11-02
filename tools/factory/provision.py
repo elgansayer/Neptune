@@ -24,6 +24,7 @@ import time
 import uuid
 import provision_xvfb as xvfb
 import provision_ocr as ocr
+import provision_ghidra as ghidra
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA = "neptune.tool-install.v1"
@@ -57,11 +58,11 @@ def write_json(path, value):
 
 
 def identity(tool, root):
-    if tool not in ("godot", "beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace", "xvfb", "tesseract"):
+    if tool not in ("godot", "beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace", "xvfb", "tesseract", "ghidra"):
         raise ProvisionError("needs_recipe", "Create/reuse a bounded trusted recipe task for: " + tool)
     path = root / "tools/factory/provision-lock.json"
     lock = json.loads(path.read_text())
-    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace", "xvfb", "tesseract"}:
+    if lock.get("schema") != "neptune.tool-recipes.v1" or set(lock.get("tools", {})) != {"godot", "beetle-saturn", "beetle-saturn-call-trace", "beetle-saturn-context-trace", "xvfb", "tesseract", "ghidra"}:
         raise ProvisionError("invalid_recipe", "Unsupported recipe registry")
     recipe = lock["tools"][tool]
     fields = {"kind", "platform", "minimum_free_bytes"}
@@ -73,7 +74,10 @@ def identity(tool, root):
     if tool == "tesseract":
         ocr.validate(recipe)
         fields = ocr.FIELDS
-    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source", "beetle-saturn-call-trace": "beetle-call-trace", "beetle-saturn-context-trace": "beetle-context-trace", "xvfb": "debian-xvfb", "tesseract": "tesseract-source"}[tool]:
+    if tool == "ghidra":
+        ghidra.validate(recipe)
+        fields = ghidra.FIELDS
+    if set(recipe) != fields or recipe["kind"] != {"godot": "godot-locked", "beetle-saturn": "beetle-source", "beetle-saturn-call-trace": "beetle-call-trace", "beetle-saturn-context-trace": "beetle-context-trace", "xvfb": "debian-xvfb", "tesseract": "tesseract-source", "ghidra": "ghidra-jdk"}[tool]:
         raise ProvisionError("invalid_recipe", "Unsupported installer/recipe fields")
     if recipe["platform"] != "linux-x86_64":
         raise ProvisionError("invalid_recipe", "Unsupported recipe platform")
@@ -85,6 +89,8 @@ def identity(tool, root):
     sources = ["tools/factory/provision.py", "tools/factory/provision_probe.py"]
     if tool == "godot":
         sources += ["tools/godot/install.py", "tools/godot/toolchain.json"]
+    if tool == "ghidra":
+        sources += ["tools/factory/provision_ghidra.py", "tools/factory/provision_ghidra_smoke.java"]
     if tool == "xvfb":
         sources += ["tools/factory/provision_xvfb.py"]
     if tool == "tesseract":
@@ -166,6 +172,8 @@ class Runner:
 
 
 def binary_name(tool, root):
+    if tool == "ghidra":
+        return "ghidra-headless"
     if tool == "tesseract":
         return "tesseract"
     if tool == "xvfb":
@@ -180,6 +188,8 @@ def binary_name(tool, root):
 
 
 def smoke(tool, binary, runner, root):
+    if tool == "ghidra":
+        return ghidra.smoke(identity(tool, root)[0], binary, runner, root)
     if tool == "tesseract":
         return ocr.smoke(identity(tool, root)[0], binary, runner)
     if tool == "xvfb":
@@ -225,6 +235,8 @@ def smoke(tool, binary, runner, root):
 
 
 def install(tool, recipe, payload, work, runner, root):
+    if tool == "ghidra":
+        return ghidra.install(recipe, payload, work, runner, root)
     if tool == "tesseract":
         return ocr.install(recipe, payload, work, runner, root)
     if tool == "xvfb":

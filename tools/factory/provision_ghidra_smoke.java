@@ -1,0 +1,86 @@
+// Public, independently specified SH-2 fixture. No original-game bytes or semantics.
+// @category Neptune
+import ghidra.app.script.GhidraScript;
+import ghidra.app.decompiler.DecompInterface;
+import ghidra.framework.Application;
+import ghidra.program.model.address.Address;
+import ghidra.program.model.data.UnsignedIntegerDataType;
+import ghidra.program.model.listing.Function;
+import ghidra.program.model.listing.Instruction;
+import ghidra.program.model.lang.Register;
+import ghidra.program.model.pcode.PcodeOp;
+import ghidra.program.model.pcode.PcodeOpAST;
+import ghidra.program.model.pcode.Varnode;
+import ghidra.program.model.scalar.Scalar;
+import ghidra.program.model.symbol.SourceType;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Iterator;
+
+public class provision_ghidra_smoke extends GhidraScript {
+    @Override
+    public void run() throws Exception {
+        if (getScriptArgs().length != 1) throw new Exception("One fresh observation path required");
+        Address base = toAddr(0x06004000L);
+        if (!currentProgram.getLanguageID().toString().equals("SuperH:BE:32:SH-2") ||
+            !currentProgram.getMinAddress().equals(base) || currentProgram.getMemory().getSize() != 6)
+            throw new Exception("Wrong SH-2 import identity");
+        if (!disassemble(base)) throw new Exception("Disassembly failed");
+        // Pinned SleighInstructionPrototype prefixes instructions in a delay slot with "_".
+        String[] expected = {"mov", "rts", "_nop"};
+        for (int i = 0; i < expected.length; ++i) {
+            Instruction instruction = getInstructionAt(base.add(2 * i));
+            if (instruction == null || instruction.getLength() != 2 ||
+                !instruction.getMnemonicString().equalsIgnoreCase(expected[i]) ||
+                instruction.isInDelaySlot() != (i == 2))
+                throw new Exception("Wrong instruction/delay metadata at " + i + ": " + instruction);
+        }
+        if (getInstructionAt(base.add(2)).getDelaySlotDepth() != 1)
+            throw new Exception("Wrong return delay-slot depth");
+        Instruction first = getInstructionAt(base);
+        Object[] immediate = first.getOpObjects(0), register = first.getOpObjects(1);
+        if (immediate.length != 1 || !(immediate[0] instanceof Scalar) ||
+            ((Scalar)immediate[0]).getUnsignedValue() != 42 || register.length != 1 ||
+            !(register[0] instanceof Register) || !((Register)register[0]).getName().equalsIgnoreCase("r0"))
+            throw new Exception("Wrong constant/register decoding");
+        Function function = createFunction(base, "public_constant");
+        if (function == null) throw new Exception("Missing public fixture function");
+        function.setCallingConvention("__stdcall");
+        function.setReturnType(UnsignedIntegerDataType.dataType, SourceType.USER_DEFINED);
+        DecompInterface decompiler = new DecompInterface();
+        boolean returned42 = false;
+        int returnCount = 0;
+        try {
+            if (!decompiler.openProgram(currentProgram)) throw new Exception("Decompiler unavailable");
+            var result = decompiler.decompileFunction(function, 15, monitor);
+            if (!result.decompileCompleted() || result.getHighFunction() == null)
+                throw new Exception("Headless decompilation failed");
+            // Public six-byte fixture only: bounded diagnostics distinguish tool failures.
+            String c = result.getDecompiledFunction().getC();
+            if (c.length() > 4096) throw new Exception("Oversized public decompiler result");
+            println("PUBLIC_FIXTURE_DECOMPILED_C=" + c);
+            int operationCount = 0;
+            Iterator<PcodeOpAST> operations = result.getHighFunction().getPcodeOps();
+            while (operations.hasNext()) {
+                PcodeOpAST operation = operations.next();
+                if (++operationCount > 64) throw new Exception("Oversized public pcode result");
+                println("PUBLIC_FIXTURE_PCODE=" + operation);
+                if (operation.getOpcode() == PcodeOp.RETURN && operation.getNumInputs() == 2) {
+                    ++returnCount;
+                    Varnode value = operation.getInput(1);
+                    // Observed12.2 keeps the ABI output COPY before RETURN (even when C is literal).
+                    PcodeOp definition = value.getDef();
+                    if (!value.isConstant() && definition != null &&
+                        definition.getOpcode() == PcodeOp.COPY && definition.getNumInputs() == 1)
+                        value = definition.getInput(0);
+                    returned42 = value.isConstant() && value.getSize() == 4 && value.getOffset() == 42;
+                }
+            }
+        } finally { decompiler.dispose(); }
+        if (!returned42 || returnCount != 1) throw new Exception("Decompiler did not recover constant return42");
+        String json = "{\"version\":\"" + Application.getApplicationVersion() +
+            "\",\"language\":\"SuperH:BE:32:SH-2\",\"base\":\"06004000\"," +
+            "\"instructions\":[\"mov\",\"rts\",\"nop\"],\"constant_return\":42,\"delay_slot_depth\":1}\n";
+        Files.writeString(Path.of(getScriptArgs()[0]), json, java.nio.file.StandardOpenOption.CREATE_NEW);
+    }
+}
