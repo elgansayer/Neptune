@@ -272,7 +272,7 @@ jobs:
           python3 tools/factory/provision.py --tool beetle-saturn-call-trace --cache "$RUNNER_TEMP/call-trace-tools" --evidence "$RUNNER_TEMP/call-trace-evidence/first" --timeout 1500
           python3 tools/factory/provision.py --tool beetle-saturn-call-trace --cache "$RUNNER_TEMP/call-trace-tools" --evidence "$RUNNER_TEMP/call-trace-evidence/reuse" --timeout 60
           python3 - <<'PY'
-          import json, os
+          import hashlib, json, os, shutil
           from pathlib import Path
           first, again = [json.loads((Path(os.environ['RUNNER_TEMP']) / 'call-trace-evidence' / name / 'report.json').read_text()) for name in ('first', 'reuse')]
           assert first['conclusion'] == again['conclusion'] == 'success'
@@ -281,7 +281,24 @@ jobs:
           assert first['recipe_sha256'] == again['recipe_sha256']
           assert first['smoke'] == again['smoke']
           assert again['smoke']['observer']['rejected_invalid_entry_budget_and_frame'] is True
+          assert again['smoke']['observer']['accepted_inspected_entries'] == ['0x0600b934', '0x0600a0ec']
           assert len(again['commands']) == 2
+          cache = Path(os.environ['RUNNER_TEMP']) / 'call-trace-tools'
+          target = cache / ('beetle-saturn-call-trace-' + first['recipe_sha256'])
+          prepared = Path(os.environ['RUNNER_TEMP']) / 'call-trace-evidence' / 'prepared'
+          prepared.mkdir()
+          binary = target / 'mednafen_saturn_libretro.so'
+          assert Path(first['binary']).resolve() == binary.resolve()
+          receipt = json.loads((target / 'receipt.json').read_text())
+          assert receipt['binary_sha256'] == first['binary_sha256']
+          shutil.copy2(binary, prepared / binary.name)
+          shutil.copy2(target / 'receipt.json', prepared / 'receipt.json')
+          for name in ('COPYING', 'corresponding-source.tar.gz', 'call-trace-build.json'):
+              shutil.copy2(target / name, prepared / name)
+          assert hashlib.sha256((prepared / binary.name).read_bytes()).hexdigest() == first['binary_sha256']
+          build = json.loads((prepared / 'call-trace-build.json').read_text())
+          assert hashlib.sha256((prepared / 'corresponding-source.tar.gz').read_bytes()).hexdigest() == build['corresponding_source_sha256']
+          assert hashlib.sha256((prepared / 'COPYING').read_bytes()).hexdigest() == build['licence_sha256']
           PY
       - name: Preserve matched-core preparation evidence, including failures
         if: always()

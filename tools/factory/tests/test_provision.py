@@ -115,6 +115,27 @@ class ProvisionTests(unittest.TestCase):
         self.assertTrue(again["reused"])
         self.assertEqual((self.installs, self.probes), (1, 2))
 
+    def test_call_trace_preparation_keeps_matching_patched_source_and_license(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, payload = root / "source", root / "payload"
+            source.mkdir(); payload.mkdir()
+            (source / "COPYING").write_text("pinned upstream license")
+            (source / "mednafen").mkdir()
+            (source / "mednafen" / "observer.c").write_text("patched upstream source")
+            (source / ".git").mkdir()
+            (source / ".git" / "private").write_text("not archived")
+            patched = {"reference_revision": "0123456789012345678901234567890123456789"}
+            p.archive_call_trace_source(source, payload, patched)
+            archive_path = payload / "corresponding-source.tar.gz"
+            with tarfile.open(archive_path, "r:gz") as archive:
+                names = archive.getnames()
+                self.assertIn("beetle-saturn/mednafen/observer.c", names)
+                self.assertNotIn("beetle-saturn/.git/private", names)
+            self.assertEqual(patched["corresponding_source_sha256"], p.digest(archive_path))
+            self.assertEqual(patched["licence_sha256"], p.digest(payload / "COPYING"))
+            self.assertEqual(json.loads((payload / "call-trace-build.json").read_text()), patched)
+
     def test_context_core_is_separate_and_all_patch_dependencies_are_keyed(self):
         tool = "beetle-saturn-context-trace"
         recipe, inputs, key = p.identity(tool, self.root)

@@ -33,7 +33,7 @@ typedef struct {
 static struct {
  NeptuneCallRecord records[NEPTUNE_TRACE_RECORDS];
  uint32_t count, dropped, errors, pending, completed, active;
- uint32_t frame_known, frame, requested, return_pc, steps, saw_rts, saw_restore;
+ uint32_t frame_known, frame, requested, entry, return_pc, steps, saw_rts, saw_delay;
  uint32_t master_dispatches;
 } neptune_call_trace;
 
@@ -43,16 +43,19 @@ static void neptune_call_error(void)
  neptune_call_trace.active = 0;
 }
 
-/* Entry is deliberately limited to the original helper whose bytes/ABI have
- * been inspected. This is master-interpreter observation, not slave/JIT tracing.
+/* Entries are deliberately limited to original helpers whose byte boundaries
+ * and return-delay contracts have been inspected. This is master-interpreter
+ * observation, not slave/JIT tracing.
  */
 NEPTUNE_TRACE_EXPORT uint32_t neptune_call_begin(uint32_t entry, uint32_t pairs)
 {
- if(entry != 0x0600B934 || pairs == 0 || pairs > NEPTUNE_TRACE_RECORDS / 2 ||
+ if((entry != 0x0600B934 && entry != 0x0600A0EC) ||
+    pairs == 0 || pairs > NEPTUNE_TRACE_RECORDS / 2 ||
     neptune_call_trace.active || setting_sh2_jit)
   return 0;
  memset(&neptune_call_trace, 0, sizeof(neptune_call_trace));
  neptune_call_trace.requested = pairs;
+ neptune_call_trace.entry = entry;
  neptune_call_trace.active = 1;
  return 1;
 }
@@ -166,16 +169,22 @@ static INLINE void neptune_call_step(SH7095* z)
   {
    if(++neptune_call_trace.steps > NEPTUNE_TRACE_STEP_LIMIT)
     neptune_call_error();
-   else if(neptune_call_trace.saw_rts &&
-           (z->Pipe_ID & 0xFFFF) == 0x4F16 && z->PC == neptune_call_trace.return_pc + 2)
-    neptune_call_trace.saw_restore = 1;
+   else if(neptune_call_trace.saw_rts)
+   {
+    uint32_t expected_delay = neptune_call_trace.entry == 0x0600B934 ? 0x4F16 : 0x0009;
+    if((z->Pipe_ID & 0xFFFF) != expected_delay ||
+       z->PC != neptune_call_trace.return_pc + 2)
+     neptune_call_error();
+    else
+     neptune_call_trace.saw_delay = 1;
+   }
   }
   return;
  }
  pc = z->PC - 4;
  if(neptune_call_trace.pending && pc == neptune_call_trace.return_pc)
  {
-  if(!neptune_call_trace.saw_rts || !neptune_call_trace.saw_restore)
+  if(!neptune_call_trace.saw_rts || !neptune_call_trace.saw_delay)
   {
    neptune_call_error();
    return;
@@ -191,9 +200,10 @@ static INLINE void neptune_call_step(SH7095* z)
   neptune_call_error();
   return;
  }
- if(pc == 0x0600B934)
+ if(pc == neptune_call_trace.entry)
  {
-  if(neptune_call_trace.pending || (z->Pipe_ID & 0xFFFF) != 0x4F12 ||
+  uint32_t expected_entry = neptune_call_trace.entry == 0x0600B934 ? 0x4F12 : 0x4F22;
+  if(neptune_call_trace.pending || (z->Pipe_ID & 0xFFFF) != expected_entry ||
      (z->PR & 1) || z->PR == pc)
   {
    neptune_call_error();
@@ -201,13 +211,14 @@ static INLINE void neptune_call_step(SH7095* z)
   }
   neptune_call_trace.pending = 1;
   neptune_call_trace.return_pc = z->PR;
-  neptune_call_trace.saw_rts = neptune_call_trace.saw_restore = 0;
+  neptune_call_trace.saw_rts = neptune_call_trace.saw_delay = 0;
   neptune_call_trace.steps = 1;
   neptune_call_record(z, 1, pc);
  }
- else if(neptune_call_trace.pending && pc == 0x0600B94C)
+ else if(neptune_call_trace.pending &&
+         pc == (neptune_call_trace.entry == 0x0600B934 ? 0x0600B94C : 0x0600A10A))
  {
-  if((z->Pipe_ID & 0xFFFF) != 0x000B)
+  if((z->Pipe_ID & 0xFFFF) != 0x000B || z->PR != neptune_call_trace.return_pc)
    neptune_call_error();
   else
    neptune_call_trace.saw_rts = 1;

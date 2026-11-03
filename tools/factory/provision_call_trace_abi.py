@@ -2,6 +2,7 @@
 import ctypes as C
 
 ENTRY = 0x0600B934
+RNG_ENTRY = 0x0600A0EC
 CAPACITY = 128
 STEP_LIMIT = 4096
 
@@ -25,7 +26,9 @@ def serialise(record):
             for name, _ in record._fields_ for value in (getattr(record, name),)}
 
 
-def validate(records, status):
+def validate(records, status, entry=ENTRY):
+    if entry not in (ENTRY, RNG_ENTRY):
+        raise ValueError("Unsupported observed call entry")
     if (status.abi != 2 or status.record_bytes != C.sizeof(Record) or
             status.capacity != CAPACITY or status.step_limit != STEP_LIMIT):
         raise ValueError("Unsupported trace ABI/layout")
@@ -36,14 +39,21 @@ def validate(records, status):
         raise ValueError("Empty, incomplete, ambiguous or overflowed call trace")
     for index in range(0, len(records), 2):
         before, after = records[index:index + 2]
+        expected_opcode = 0x4F12 if entry == ENTRY else 0x4F22
         if (before.sequence != index or after.sequence != index + 1 or
                 before.kind != 1 or after.kind != 2 or before.cpu or after.cpu or
-                before.pc != ENTRY or before.opcode != 0x4F12 or
+                before.pc != entry or before.opcode != expected_opcode or
                 after.pc != before.pr or after.pr != before.pr or
                 after.frame < before.frame or after.frame > status.frame or
                 (after.frame == before.frame and after.timestamp < before.timestamp) or
-                before.dispatch_steps != 1 or not 14 <= after.dispatch_steps <= STEP_LIMIT):
+                before.dispatch_steps != 1 or not 1 <= after.dispatch_steps <= STEP_LIMIT):
             raise ValueError("Call/return boundary, order, CPU or clock mismatch")
+        if entry == RNG_ENTRY:
+            if after.r[15] != before.r[15] or after.mach != before.mach:
+                raise ValueError("Natural RNG call failed its observed stack/MACH restore")
+            continue
+        if after.dispatch_steps < 14:
+            raise ValueError("Natural table helper returned before its inspected minimum")
         n, m = before.r[4], before.r[5]
         expected = ((10 * n + m) * 152 + 0x00207F74) & 0xFFFFFFFF
         if after.r[0] != expected or after.r[2] != 152 or after.r[3] != n or after.r[6] != 0x00207F74:
@@ -53,7 +63,7 @@ def validate(records, status):
                 any(getattr(before, name) != getattr(after, name) for name in ("gbr", "vbr", "mach", "macl")) or
                 after.sr != expected_sr):
             raise ValueError("Natural call SP/MACL/register/condition preservation mismatch")
-    return {"schema": "neptune.original-master-call-trace.v2", "entry": f"0x{ENTRY:08x}",
+    return {"schema": "neptune.original-master-call-trace.v2", "entry": f"0x{entry:08x}",
             "cpu": "master SH-2 interpreter", "pairs": status.completed,
             "timestamp_unit": "signed core SH-2 scheduler timestamps, rebased each emulated frame",
             "dispatch_steps": "master hook dispatches, not hardware cycles; may include interruption",
@@ -88,12 +98,15 @@ class Trace:
             raise ValueError("Core refused exact-sized status observation")
         return status
 
-    def start(self, pairs=64):
+    def start(self, pairs=64, *, entry=ENTRY):
         if self.started or type(pairs) is not int or not 1 <= pairs <= CAPACITY // 2:
             raise ValueError("One bounded trace with 1..64 pairs per core instance")
-        if self.dll.neptune_call_begin(ENTRY, pairs) != 1:
+        if entry not in (ENTRY, RNG_ENTRY):
+            raise ValueError("Only inspected original helper entries may be traced")
+        if self.dll.neptune_call_begin(entry, pairs) != 1:
             raise ValueError("Core rejected trace; active/JIT/unsupported mode")
         self.started = True
+        self.entry = entry
 
     def frame(self, frame):
         if not self.started or type(frame) is not int or not 0 <= frame <= 0xFFFFFFFF:
@@ -110,14 +123,16 @@ class Trace:
         count = self.dll.neptune_call_records(records, CAPACITY)
         if count > CAPACITY or count != status.count:
             raise ValueError("Core returned a partial or oversized trace")
-        return validate(list(records)[:count], status)
+        return validate(list(records)[:count], status, self.entry)
 
 
 def probe_library(path):
     """Real exported ABI/argument/clock fences; no CPU or original media is run."""
     observer = Trace(C.CDLL(str(path)))
     if (observer.dll.neptune_call_begin(ENTRY, 0) != 0 or
+            observer.dll.neptune_call_begin(RNG_ENTRY, 0) != 0 or
             observer.dll.neptune_call_begin(ENTRY + 2, 1) != 0 or
+            observer.dll.neptune_call_begin(0x06000000, 1) != 0 or
             observer.dll.neptune_call_begin(ENTRY, 65) != 0):
         raise ValueError("Observer accepted unsupported entry/budget")
     observer.start(1)
@@ -131,10 +146,17 @@ def probe_library(path):
     status = observer.status()
     if status.errors != 1 or status.active or status.count or status.pending:
         raise ValueError("Observer did not retain its failed boundary")
+    accepted = []
+    for entry in (ENTRY, RNG_ENTRY):
+        if observer.dll.neptune_call_begin(entry, 1) != 1:
+            raise ValueError("Observer refused an inspected entry")
+        observer.dll.neptune_call_stop()
+        accepted.append(f"0x{entry:08x}")
     return {"scope": "libretro observer ABI and argument/frame fences only; no media execution",
             "abi": status.abi, "record_bytes": status.record_bytes,
             "capacity": status.capacity, "step_limit": status.step_limit,
-            "rejected_invalid_entry_budget_and_frame": True}
+            "rejected_invalid_entry_budget_and_frame": True,
+            "accepted_inspected_entries": accepted}
 
 
 if __name__ == "__main__":
