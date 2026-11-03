@@ -119,8 +119,11 @@ this contract or a presentation-only regression check.
 
 [3 November remote-motion evidence](evidence/2026-11-03-remote-motion.json) records
 the matched synthetic presentation comparison, passing focused tests and native
-connection probes. Candidate full-suite bot timing failures remain an unresolved
-merge blocker; these results do not establish competitive release readiness.
+connection probes, retaining the original full-suite bot timing failures.
+[Retry and wait-state evidence](evidence/2026-11-03-netplay-retry.json) records
+a reproduced stale-counter defect, its bounded correction and a passing 582-check
+native suite with current game code. Published-head/current-base CI remains the
+merge gate; these results do not establish competitive release readiness.
 
 ## Architecture decision to measure
 

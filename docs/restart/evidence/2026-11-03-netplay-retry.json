@@ -1,0 +1,136 @@
+{
+  "baseline": "ab3e0dd18553ab3b97bc33eb3dd255109f64d5b1",
+  "engine": "4.7.2.stable.official.ed1daf0bf",
+  "production": {
+    "path": "ai/tasks/actions/bt_move_to_cell.gd",
+    "sha256": "7155ad5cbb237282973facd2af6d919cf9efacef137a31dd9deba7c311aa0eda"
+  },
+  "regression": {
+    "path": "tests/test_bot_route_wait.gd",
+    "sha256": "77670878fc42d49d13a853f92554f49cdfdd042416d618656c54cec20cd0b68a"
+  },
+  "runs": [
+    {
+      "log": "work/fixed-test_bot_attack_positioning-60.log",
+      "sha256": "713465be0effaf2813bce81ca475bb2ed520e2c3724428d8d77c8923a53cedb4",
+      "passed": 9,
+      "failed": 0,
+      "files": 1
+    },
+    {
+      "log": "work/fixed-test_bot_item_collection-60.log",
+      "sha256": "9dfb3f6ea162908ecf13369bf8b92b66ecdaa339159025a913cd2d8badf16dee",
+      "passed": 6,
+      "failed": 0,
+      "files": 1
+    },
+    {
+      "log": "work/fixed-test_bot_route_wait-144.log",
+      "sha256": "a7a94fc202e979406ed3f38b240ca836b0887061a1cd49f73820299deb34c83a",
+      "passed": 3,
+      "failed": 0,
+      "files": 1
+    },
+    {
+      "log": "work/fixed-test_bot_route_wait-30.log",
+      "sha256": "50dc2031a6224ca41d01132733a8cf027aa91069dd36f751128aa0bb361153d9",
+      "passed": 3,
+      "failed": 0,
+      "files": 1
+    },
+    {
+      "log": "work/fixed-test_bot_route_wait-60.log",
+      "sha256": "862e48d364a086345bd702d682828c26f531b708ae62c9ed77a2c2c5ec76eb11",
+      "passed": 3,
+      "failed": 0,
+      "files": 1
+    },
+    {
+      "log": "work/fixed-test_temporal_route_runtime-60.log",
+      "sha256": "8ad91eca344788442a00af480f83cc22e8f82dae9b945f3f64ae328729830109",
+      "passed": 8,
+      "failed": 0,
+      "files": 1
+    }
+  ],
+  "checked_at": "2026-11-03",
+  "integrated_main": "67dd0c9ccb2c0abb0d1bd133c78d23e12859dfdd",
+  "candidate_code_commit": "7f30c8af3387b41627b625c225d4677b554dae50",
+  "description": "Reset stuck counters with timestamps when entering and continuing planned safe-interval waits. Departure starts a fresh stall window without changing the existing 500ms timeout, physics or target penalties.",
+  "baseline_regression": {
+    "passed": 1,
+    "failed": 2,
+    "exit": 1,
+    "log_path": "/workspace/work/netplay-wait-fix/work/route-wait-baseline-final.log",
+    "sha256": "091eec6499148257cb98be9b044fc62d48bfa38d4f0a79ea29952b057e00f9c4",
+    "expected_failure": "Legal departure inherited stale stuck counter and simulation timestamp zero after public flame forced a wait; real 500ms stall control still passed."
+  },
+  "native_runtime": {
+    "exit": 0,
+    "command": "python3 tools/godot/check_runtime.py --godot /workspace/.tools/godot-4.5/Godot_v4.7.2-stable_linux.x86_64 --evidence work/netplay-wait-fixed-runtime",
+    "graphical": false,
+    "browser": false,
+    "scope": [
+      "native client/server startup and round trips",
+      "protocol and configuration refusal",
+      "twelve-seat rooms",
+      "mixed bot rooms",
+      "clean-client content sharing, interruption/resume and cache reuse"
+    ],
+    "server_log_sha256": "3ac50fd3bce906c0a50989aafa33beef358a157cf8ff9ab62bcebbe0ff67cd05",
+    "server_log_engine_errors_observed": false
+  },
+  "production_sources_sha256": {
+    "ai/tasks/actions/bt_move_to_cell.gd": "7155ad5cbb237282973facd2af6d919cf9efacef137a31dd9deba7c311aa0eda",
+    "client/game_view.gd": "5c7b4b43f4f71de0b4dd406a7286a589ee7ba42fdd3a0f5cc6820532397fd678",
+    "client/prediction/entity_interpolator.gd": "0172ef479402d38f68b20822d8089c6d769efc0a71c9deb3efb39563a04e1019",
+    "tests/test_bot_route_wait.gd": "77670878fc42d49d13a853f92554f49cdfdd042416d618656c54cec20cd0b68a",
+    "tests/test_remote_motion.gd": "1e91bfb012eec89896a7accaac8008c299cc08378cc167cee2ab8d3107bab6ca"
+  },
+  "publication_base": "72af05df58bd4c5459a9352e7067badeffb56352",
+  "integration_note": "Main advanced from 67dd0c9 to 72af05d with original Saturn context research only; integrated before publication. Production game/test source hashes below are unchanged from the passing candidate run.",
+  "full_candidate": {
+    "exit": 0,
+    "command": "python3 tools/godot/run_bot_tests.py --godot /workspace/.tools/godot-4.5/Godot_v4.7.2-stable_linux.x86_64 --timeout 360 --max-log-mib 16 --log work/netplay-wait-fixed-full.log",
+    "log_path": "/workspace/work/neptune-netplay-validated/work/netplay-wait-fixed-full.log",
+    "sha256": "b63578b06ab6bca70aa8a843ce487ce0d61215d01918556b93d457d4604a9acd",
+    "failed": 0,
+    "files": 66,
+    "passed": 582,
+    "schema": 1,
+    "failures": {}
+  },
+  "unchanged_retry": {
+    "commit": "ab3e0dd18553ab3b97bc33eb3dd255109f64d5b1",
+    "exit": 0,
+    "log_path": "/workspace/work/neptune-netplay/work/netplay-retry-full.log",
+    "sha256": "7872a15183254d3ee52f23aece768b3183b38b7a81c6698bc94788162b5e26c3",
+    "failed": 0,
+    "files": 63,
+    "passed": 565,
+    "schema": 1,
+    "failures": {},
+    "interpretation": "A passing retry alone did not disprove the intermittent historical failures; the separate controlled wait-state regression reproduced an actual defect and retained true-stall controls."
+  },
+  "native_project_contracts": {
+    "exit": 0,
+    "checks": [
+      "null test must fail",
+      "explicit true test must pass",
+      "actual native addons load"
+    ]
+  },
+  "runner_contracts": {
+    "exit": 0,
+    "tests": 25
+  },
+  "merge_gate_contracts": {
+    "exit": 0,
+    "tests": 20
+  },
+  "remaining_limits": [
+    "Full CI at the published head/current base remains required before merge.",
+    "This is a bounded wait-state correction and remote presentation improvement; held-out whole-policy quality, WAN impairment, browser transport, local movement prediction and esports readiness remain separate acceptance.",
+    "Historical failures and original raw samples are retained; no gameplay rule, timeout, assertion or reference tolerance was weakened."
+  ]
+}

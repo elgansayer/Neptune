@@ -292,5 +292,7 @@
       "baseline_exit": 0,
       "tests": 6
     }
-  }
+  },
+  "followup_evidence": "2026-11-03-netplay-retry.json",
+  "status_note": "This is the original pre-publication result snapshot; see followup_evidence for the authorised push, passing retry, reproduced wait defect and validated follow-up."
 }

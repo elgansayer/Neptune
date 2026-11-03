@@ -67,6 +67,15 @@ snapping or teleporting is added. Unstoppable-virus actors cannot schedule a
 stationary wait. Movement tests that freeze the game clock must advance that
 clock explicitly when exercising real motor callbacks.
 
+Entering or continuing an intentional wait resets both the stuck counter and its
+timestamp. Legal departure then starts a fresh 500 ms nonmovement window; time
+spent waiting cannot abandon or penalise a valid target. Actual stalls retain
+the same deadline and penalty. `test_bot_route_wait` reproduces a brief idle
+followed by a new public flame, repeated scheduled waits, real motor resumption
+and genuine stalls before and after a wait without changing those thresholds.
+The [retry receipt](evidence/2026-11-03-netplay-retry.json) retains the failing
+baseline, cadence checks, related movement scenarios and passing full native run.
+
 The existing escape search keeps its established conservative refuge choices.
 When a single lethal deadline cannot find a refuge, a bounded multi-goal interval
 search can wait for temporary fire to clear, while requiring the final refuge's
@@ -75,7 +84,7 @@ arrives before the corridor clears still refuses this wait.
 
 ## Evidence and limits
 
-Focused suites are `test_temporal_navigation`, `test_temporal_route_runtime`
+Focused suites are `test_bot_route_wait`, `test_temporal_navigation`, `test_temporal_route_runtime`
 and `test_hazard_intervals`; retain `test_bomb_forecast` and
 `test_public_observations` as forecast/fairness regressions. They cover detours,
 separate/overlapping flames, inclusive expiry, search bounds, deterministic
