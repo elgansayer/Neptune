@@ -9,7 +9,7 @@ the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
 
-## Current continuation: natural returns accepted; broader status contracts tested
+## Current continuation: status accepted; slot contracts executed twice
 
 PR663's separate native observer mergedfed7932, followed by driver/evidence
 PR667 mergedb6a8e253b558b925439acb3225937a91d782f124 at22:13:18 UTC. All12
@@ -45,13 +45,50 @@ All four own jobs released their leases, preserving shared3, own180seconds,
 60-second/nice10/downward2GiB, offline/read-only mounts and hidden authority.
 Accepted128/1024 guards, native generations and historical locks are unchanged.
 
-Next publish/merge these tested contracts with exact-head/current-base gates,
-then implement original96B9C slot selection supporting the natural95E5A path.
-Static leads already retained in`.../655/library-dependency-source-leads.json`
-and`.../655/positive-library-source-leads.json` execute no instructions. Follow
-actual signed count and full/no-free behavior,0xA8 stride and marker writes;
-never assume count<=0 or map devices as RAM. Then continue96D74,
-A56CA/A56D8,95CBC,A6790,969E0/BIOS and293A4 dependencies, full89C8 semantics,
+PR669 subsequently mergedb1618808bee47f67fcf3f5d51752782ddfb7d013 at08:07:15 UTC
+on3 November, testedc1e55cd against main49bc098. All13 checks completed;
+seven native skips have exact non-applicability proof and both required aggregates
+passed. Merge parent/tree match CI base/head. Receipt:
+`.../code655-20261102/pr669-acceptance-verified.json`. Preserve the prior behind-
+base CI failures and other owners' intervening NLSND/DSP merges; do not relabel
+old receipts as current.655 stays open for complete semantic recovery.
+
+Original96B9C selection and96BCE release now complete3,918 cases per run twice,
+with identical paired reports and seven non-budget mutation rejections. Read
+[the result](../research/2026-11-03-library-slot-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-slot-contracts.json).
+Source6d1b20a was tested/pushed before jobs; six owned tests and411 research
+tests pass. Frozen adapter:
+`/home/dev/neptune-research-private/655/adapter-3e7e4952c0614649ee575d6865fdbd0c994b860d365498d9e72b8cd726cb7be9`.
+Batch:`.../655/slot-batch-hfgeci8y/batch.json`; reports are on the volume under
+`/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/`.
+The first three-foreign-slot admission deferral is retained; a bounded55-second
+wait then used normal admission. All four own leases released. Preserve live
+coordinator686/PR687 and newer claims; never clear foreign gate entries.
+
+Selection covers counts0..24, every first-free/full path, all256 eight-slot
+bitmaps, three marker values and54 signed-negative adversarial cases. Zero count
+returns0; tested negative counts skip scanning but write1 at the first marker
+and return its address. Release has the actual three-instruction store delay.
+The old128 profile retains128 recorded executions/129 CPU step attempts and its
+real refusal; the separate accepted1024 profile completes selection with explicit
+256 budget. Guards/aliases/device behavior are unchanged. Natural95E5A's sampled
+count16, first marker0→1 and returned060BE58C agree; its internal96B9C entry was
+not directly traced.
+
+Next publish/merge the tested slot result through exact-head/current-base CI,
+then recover real96D74/A5EEC/A681A and95E5A dependencies. This exact static-lead
+command is runnable with a fresh report path; it executes no CPU instructions:
+
+```sh
+python3 /home/dev/neptune-evidence/code655-20261102/inspect-slot-dependencies.py \
+  --report /home/dev/neptune-research-private/655/slot-positive-dependencies-20261103.json
+```
+
+The96D74 source is retained in`.../655/slot-caller-96D74-source.json`;
+other leads are`.../655/library-dependency-source-leads.json` and
+`.../655/positive-library-source-leads.json`. Continue actual calls without stubs,
+including A56CA/A56D8,95CBC,A6790,969E0/BIOS and293A4, full89C8 semantics,
 623A/root cycles and further original modules. Denominators and exact hardware/
 gameplay/Godot parity remain unknown. The older sections below record historical
 stages and commands; do not repeat them as new progress.
