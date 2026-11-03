@@ -21,6 +21,8 @@ POLL_SITE=0x06095A94
 SERVICE_ENTRY=0x06095992
 SERVICE_CALLSITE=0x060959AA
 SERVICE_READ=0x060959DE
+REGISTERS_ENTRY=0x06095ACE
+REGISTERS_CALLSITE=0x06095A4E
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 def read_json(path):
@@ -89,10 +91,26 @@ def run(kernel_path,source_root,result_path,records_path,out):
     service_disp=service_words[0]&0x0fff; service_disp=service_disp-0x1000 if service_disp&0x0800 else service_disp
     service_target=SERVICE_CALLSITE+4+service_disp*2; service_return=SERVICE_CALLSITE+4
     natural_service_reads=[r for r in rows if r['kind']==2 and r['pc']==SERVICE_READ and r['transfer_address']==DEVICE]
+    register_reads=[r for r in rows if r['kind']==2 and r['pr']==0x06095A52 and
+                    r['pc'] in (0x06095AD2,0x06095AD6,0x06095ADC,0x06095AE0)]
+    register_groups=[]; current_registers=[]
+    for row in register_reads:
+        if row['pc']==0x06095AD2 and current_registers:
+            register_groups.append(current_registers);current_registers=[]
+        current_registers.append(row)
+    if current_registers:register_groups.append(current_registers)
+    register_words=[int.from_bytes(kernel[REGISTERS_ENTRY-probe_kernel.BASE+i:REGISTERS_ENTRY-probe_kernel.BASE+i+2],'big') for i in range(0,24,2)]
+    reg_call_off=REGISTERS_CALLSITE-probe_kernel.BASE
+    reg_call_words=[int.from_bytes(kernel[reg_call_off+i:reg_call_off+i+2],'big') for i in (0,2)]
+    reg_disp=reg_call_words[0]&0x0fff; reg_disp=reg_disp-0x1000 if reg_disp&0x0800 else reg_disp
+    reg_target=REGISTERS_CALLSITE+4+reg_disp*2
     poll_base=0x060BFD00
     if (poll_actual!=poll_words or call_words!=[0xB021,0x64D3] or call_target!=POLL_ENTRY or
         service_words!=[0xB00E,0x0009] or service_target!=0x060959CA or
         len(natural_service_reads)<3 or any(r['pr']!=service_return for r in natural_service_reads) or
+        register_words!=[0xD10A,0xD20A,0x6311,0x2431,0x6021,0xD309,0x8141,0x6031,0x8142,0x8516,0x000B,0x8143] or
+        reg_call_words!=[0xB03E,0x0009] or reg_target!=REGISTERS_ENTRY or
+        len(register_groups)!=3 or any(len(g)!=4 for g in register_groups) or
         len(groups)!=3 or any(len(g)!=8 for g in groups) or
         any(any(r['r'][4]!=1 or r['r'][7]!=i for i,r in enumerate(g)) for g in groups)):
         raise ValueError('Original natural status-poll groups/source do not satisfy the selected bounded contract')
@@ -121,6 +139,32 @@ def run(kernel_path,source_root,result_path,records_path,out):
             raise ValueError('Original poll helper did not follow the captured transition to a successful return')
         poll_results.append({'output_pointer':f'0x{pointer:08x}','observed_read_words':[f'0x{x:04x}' for x in sequence],
             'read_count':len(memory.device_reads),'result':actual,'stored_status_word':f'0x{output:04x}','steps':cpu.steps})
+    register_results=[]
+    for group in register_groups:
+        first=group[0]; pointer=first['r'][4]; sequence=[r['transfer_value'] for r in group]
+        expected_addresses=(0x25890018,0x2589001C,0x25890020,0x25890024)
+        if (tuple(r['pc'] for r in group)!=(0x06095AD2,0x06095AD6,0x06095ADC,0x06095AE0) or
+            tuple(r['transfer_address'] for r in group)!=expected_addresses or
+            any(r['r'][4]!=pointer or r['pr']!=0x06095A52 for r in group)):
+            raise ValueError('Original four-register transfer group/caller evidence differs')
+        class RegisterMemory(emu.Memory):
+            def __init__(self): super().__init__(); self.reads=[]
+            def read(self,addr,size):
+                if (addr,size) in tuple((a,2) for a in expected_addresses):
+                    i=len(self.reads)
+                    if i>=4 or addr!=expected_addresses[i]: raise ValueError('Original register-read order changed')
+                    self.reads.append((addr,size)); return sequence[i]
+                return super().read(addr,size)
+        memory=RegisterMemory(); memory.add(0x060BFD00,0x200,bytes(0x200));memory.add(probe_kernel.BASE,len(kernel),kernel);memory.log=[]
+        cpu=emu.CPU(memory);cpu.r[15]=first['r'][15]
+        actual=cpu.call(REGISTERS_ENTRY,max_steps=16,r4=pointer)
+        writes=[item for item in memory.log if item[0]=='w' and pointer<=item[1]<pointer+8]
+        dest=[int.from_bytes(memory._find(pointer+2*i,2)[0][memory._find(pointer+2*i,2)[1]:memory._find(pointer+2*i,2)[1]+2],'big') for i in range(4)]
+        expected_writes=[('w',pointer+2*i,2,sequence[i]) for i in range(4)]
+        if len(memory.reads)!=4 or actual!=sequence[3] or dest!=sequence or writes!=expected_writes:
+            raise ValueError('Original four-register helper differs from natural transfer sequence')
+        register_results.append({'output_pointer':f'0x{pointer:08x}','observed_register_words':[f'0x{x:04x}' for x in sequence],
+            'stored_words':[f'0x{x:04x}' for x in dest],'returned_word':f'0x{actual:04x}','steps':cpu.steps})
     report={'schema':'neptune.original-cd-word-helpers-contract.v3','status':'success',
             'probe_sha256':sha(Path(__file__).read_bytes()),
             'entry':f'0x{ENTRY:08x}','source_instructions':[f'0x{x:04x}' for x in words],
@@ -146,6 +190,11 @@ def run(kernel_path,source_root,result_path,records_path,out):
                 'natural_read_site':f'0x{SERVICE_READ:08x}','natural_read_count':len(natural_service_reads),
                 'recorded_pr_returns':[f"0x{r['pr']:08x}" for r in natural_service_reads]},
               'scope':'three exact eight-read groups captured at the original read site; each transitions from bit0 clear to set'},
+            'four_register_snapshot_helper':{'entry':f'0x{REGISTERS_ENTRY:08x}','source_instructions':[f'0x{x:04x}' for x in register_words],
+              'device_addresses':[f'0x{x:08x}' for x in (0x25890018,0x2589001C,0x25890020,0x25890024)],
+              'caller_link':{'bsr_site':f'0x{REGISTERS_CALLSITE:08x}','bsr_and_delay':[f'0x{x:04x}' for x in reg_call_words],
+                 'computed_target':f'0x{reg_target:08x}','recorded_pr_return':'0x06095a52'},
+              'natural_samples':register_results,'scope':'three actual four-register sequences; CPU-only execution on original source bytes'},
             'scope':'one complete three-instruction word-read helper on original SH-2 bytes using only values captured from the natural run; CPU-only isolated memory; no hardware semantics, CD protocol meaning, caller equivalence or complete command root claimed',
             'whole_program_status':'active; incomplete'}
     fd=os.open(out,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
