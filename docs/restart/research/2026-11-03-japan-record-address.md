@@ -404,6 +404,12 @@ Retained decode digests: EFC0 `5936c70fa7ec7f0132b20b86104260499aaa97f1b2231d846
 F338 `f28b0b5a21b10d7e142389f9fc3700a4ca84bb98d2b4f8a0b150fe6178df5a33`,
 9BF28 `5eb8b16c3c24e19484a0f2f79026073f23155065eef660a97d37d53edd631c40`,
 and 9CF44 `a4b7e48ac979c9496aa3f16c9b13e0ac135ce9b797260c036e00e7662f07ae64`.
+The first 56 instructions at `0x0609E180` repeatedly call `0x06095C24` with
+selector `0x0101` and different source/destination pointers, masking 16-bit
+values at `0x060FC570` and `0x060FC5A0` with `0xFFF0` and `0xF0FF` before
+writing them back. This is a static word-transform/control-flow observation;
+the hardware register meaning is unresolved. Decode SHA-256:
+`1fe8e4b5d4dbd9aeadf0a10de20d087eaa8eac5458add784b6fe001243bdc78b`.
 
 ## Limits and continuation
 
