@@ -400,6 +400,21 @@ This demonstrates only the constructed 18-record counter-update contract; it
 does not establish the natural counter producer, timing, caller frequency, or
 gameplay meaning.
 
+The B150 continuation of the A312 startup loop connects cache-through counters,
+the 12-state table, BIOS callback dispatch, VBR-selected words, record state,
+and the original B256 reset helper. B256 clears six halfwords in the 12-byte
+`0x060BDDB4` state area using original literal pointers. Its original-byte
+probe checks 64 distinct initial patterns twice per report, exact pointer reads
+and store order `(4,2,0,10,8,6)`, sampled register/SR preservation, and a
+removed-store mutation. Paired reports in execution-069/070 match at SHA-256
+`191ce4cd19efc0f49bc18ccddd4bd454a5afbc05202f54682e2276891179d621`; the
+result rows hash to
+`974d516a2ad89e8ba6e0c55b32b1326aab8353ddabef08711b07eeb1d99280ae`.
+The probe tests the bounded clear helper only; the reset fields' natural owners
+and caller timing remain unresolved. Continuing B150 also exposes BIOS and
+cache-through dependent state transitions that require caller/runtime
+evidence, so those paths remain static pending further contract work.
+
 The A1DA callback literal at `0x0600A2B4` resolves to original target
 `0x0600CCD2`. Its static entry zeroes four words at `0x060BEA3C`, initializes
 six short entries at `0x060BEA7C` and associated pointer records, then calls

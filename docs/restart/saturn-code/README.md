@@ -245,3 +245,8 @@ Follow-through in the same Japan record path now also covers original AB30's
 18-record counter adjustment: 320 constructed cases twice per report with
 paired execution evidence. See the research note for its write contract and
 limits; the natural counter producer and timing remain open.
+
+The B150 main-loop continuation also includes a bounded B256 state clear helper,
+tested over 64 initial patterns in paired original-byte reports. Its six state
+fields' natural ownership and the surrounding BIOS/cache-through transitions
+remain open in the [Japan kernel study](../research/2026-11-03-japan-record-address.md).
