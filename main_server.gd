@@ -307,6 +307,9 @@ func _build_shared_game(runtime: Dictionary, previous: Node = null) -> Dictionar
 	new_game.results_duration = float(runtime.get("room_intermission", 5))
 	new_game.match_duration = float(runtime.get("room_duration", 180))
 	new_game.match_time_remaining = new_game.match_duration
+	# Keep the normal final-minute hurry phase; short trusted demo/CI battles
+	# retain the same final-third relationship instead of starting in hurry.
+	new_game.hurry_trigger_time = minf(60.0, new_game.match_duration / 3.0)
 	new_game.room_map_path = runtime.get("room_map", "")
 	new_game.room_pack_paths = runtime.get("room_pack_paths", []).duplicate()
 	new_game.room_arena_id = runtime.get("room_arena", "")

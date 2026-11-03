@@ -31,7 +31,7 @@ const origin = new URL(process.env.SMOKE_BASE_URL || 'http://127.0.0.1:8765').or
 const evidenceDir = path.resolve(evidenceDirectory || process.env.SMOKE_EVIDENCE_DIR || 'web-smoke-evidence');
 const timeout = Number(process.env.SMOKE_TIMEOUT_MS || '240000');
 const expectedDuration = Number(process.env.SMOKE_EXPECT_DURATION || '20');
-const expectedCountdown = Number(process.env.SMOKE_EXPECT_COUNTDOWN || '1');
+const expectedCountdown = Number(process.env.SMOKE_EXPECT_COUNTDOWN || '3');
 const expectedIntermission = Number(process.env.SMOKE_EXPECT_INTERMISSION || '1');
 const expectedRevision = process.env.SMOKE_EXPECT_REVISION || '';
 const mode = process.env.SMOKE_MODE || 'full';
@@ -77,7 +77,7 @@ async function openVisitor(name, context) {
   const visitor = {name, page, snapshots: [], logs: [], logBytes: 0, loaded: new Set(), authCount: 0, connectedCount: 0,
     mapCount: 0, navigations: 0, sockets: [], context};
   visitors.push(visitor);
-  page.on('pageerror', error => errors.push(`[${name}] ${error}`));
+  page.on('pageerror', error => errors.push(`[${name}] ${error.stack || error}`));
   page.on('framenavigated', frame => { if (frame === page.mainFrame()) visitor.navigations++; });
   page.on('websocket', socket => {
     const entry = {url: socket.url(), opened_at: new Date().toISOString(), closed: false};

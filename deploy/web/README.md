@@ -47,7 +47,7 @@ there is no deployment-only path filter that can omit it.
 The gate installs the compatible hash-pinned Godot editor and matching templates,
 exports the actual client and Linux server, builds the two existing Docker
 images, and uses Chromium against Nginx and the real authority. CI uses explicit
-20/1/1-second battle/countdown/results durations while retaining four real seats
+20/3/1-second battle/countdown/results durations while retaining four real seats
 and the production bot controller. No global time scaling or injected successful
 actions is used.
 

@@ -320,3 +320,15 @@ func test_results_interval_and_pending_content_gate_the_actual_next_epoch() -> V
 	return assert_true(advanced.accepted and next != current and next.players.has(-901)
 		and next.round_epoch == current.round_epoch + 1 and next.get_round_state().phase == "countdown",
 		"Completing the bounded content wait must resume the same human in a fresh authority")
+
+func test_short_battles_keep_hurry_in_the_final_third() -> Variant:
+	for duration in [12, 20, 180, 300]:
+		var built: Dictionary = server._build_shared_game({"room_duration": duration})
+		if not built.accepted: return "Could not configure trusted battle duration"
+		var room = built.game
+		room.set_physics_process(false)
+		room.bot_manager.set_physics_process(false)
+		var correct: bool = is_equal_approx(room.hurry_trigger_time, minf(60.0, duration / 3.0))
+		room.queue_free()
+		if not correct: return "Short battle started in hurry or changed the normal final-minute rule"
+	return true
