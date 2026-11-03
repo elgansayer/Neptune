@@ -77,3 +77,13 @@ baseline logs are not emulator or reference-parity evidence. Focused runs at
 30/60/144 render FPS, the existing full native suite and bounded server/client
 checks are the applicable verification. CI must run its required gameplay gate
 for the exact candidate head and current base; documentation alone is not a pass.
+
+## Hosted repeat play
+
+The terminal snapshot now also carries its server-owned round `epoch` and is
+included in the authoritative client-facing round envelope. Hosted rooms preserve
+this committed result through their configured results interval, then replace the
+complete authority while transferring the same authenticated connections. See
+[ROOM_LIFECYCLE.md](ROOM_LIFECYCLE.md). This supersedes the earlier description
+above that the result was server-local and repeat-play transition was future work;
+the atomic completed-tick settlement rules remain unchanged.

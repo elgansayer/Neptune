@@ -1,0 +1,10 @@
+{
+  "schema": "neptune.release/1",
+  "revision": "e6bc43980e197e1b14db6be3ff12b29c1b9a4438",
+  "images": {
+    "web": "ghcr.io/elgansayer/neptune-bomberman-web:sha-e6bc43980e197e1b14db6be3ff12b29c1b9a4438",
+    "server": "ghcr.io/elgansayer/neptune-bomberman-server:sha-e6bc43980e197e1b14db6be3ff12b29c1b9a4438"
+  },
+  "provenance": "Known accepted main image pair before /release.json existed; image publication succeeded in the linked run. This does not assert the host rollout completed.",
+  "publication_run": "https://github.com/elgansayer/Neptune-Bomberman/actions/runs/41605380884"
+}
