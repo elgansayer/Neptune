@@ -457,3 +457,36 @@ inputs; it is separate from private original-helper and command10 comparisons.
 Missing/skipped/failed applicable preparation blocks the protected merge gate.
 Full command10, low0780 data/code classification, DSP longword/TEMP effects,
 natural callers/timing/audio and whole-game reconstruction remain open.
+
+### Frozen DSP longword and TEMP effects (ABI8, #683)
+
+`tools/saturn_lab/m68k_scsp_long.py` preserves ABIs1..7 and adds an independently
+identified library/receipt for normal aligned MOVE.L stores to the selected DSP
+register/work-buffer range. It exposes signed24-bit TEMP state and a separate
+bounded reference16-bit bus trace. The source lock pins the upstream sign helper,
+normal long-store function, addressing/MOVE dispatch and SoundCPU wrapper as well
+as complete affected DSP declarations/branches. Unsupported widths, alignment,
+long reads and CPU predecrement/non-MOVE long stores guard before device effects.
+The reference component is clock-frozen; no hardware bus/timing/audio claim follows.
+
+Use the existing offline preparation boundary without original inputs:
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_long.py \
+  --sources "$NEPTUNE_PINNED_CPU_SOURCE" \
+  --scsp-sources "$NEPTUNE_PINNED_SCSP_SOURCE" \
+  --cache "$NEPTUNE_NEW_ABI8_PREPARED"
+```
+
+Cache identity includes the separate ABI, wrapper/backend/component/source-lock
+hashes,353 DSP snapshot values and8192 reference-bus words. Preserve the old
+caches; stale receipts/components/binaries fail. Actual fresh/reuse runs in the
+existing required `scsp-dsp` job, with exact applicability for the new module,
+lock and tests. Its sparse upstream checkout includes all five new wrapper/helper
+files; omission fails preparation. `bounded-scsp-long-RUN-ATTEMPT` retains the
+library, C/header sources, notices, receipt, smoke/reuse and failure diagnostics.
+No skipped/missing/failed applicable job is a pass. See the
+[real original reset result](../../docs/restart/research/2026-11-03-original-dsp-reset.md)
+for qualified counts, construction limits, private input/result identities and
+actual resource budgets. Metadata and native tool smokes do not finish natural
+sound/game parity or continuous-factory acceptance.

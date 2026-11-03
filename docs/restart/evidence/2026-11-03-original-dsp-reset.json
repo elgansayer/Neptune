@@ -1,0 +1,547 @@
+{
+  "account_CI_review_spend": "unknown",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "focused_contract_tests": 15,
+  "issue": 683,
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Complete constructed helpers; natural boot/callers/traffic and hardware corroboration not established",
+    "Frozen reference word-bus dispatch separate from CPU operand records; no physical bus clock/audio proof",
+    "TEMP normalised24-bit fixtures differ from ABI7 hidden untouched bytes; common fields and each profile untouched invariants explicitly compared",
+    "128 returns are diagnostic, not independently complete command10 semantics",
+    "No DSP execution, envelopes/key clocks, PCM or Godot campaign/battle/pixel/audio/full-game/code acceptance"
+  ],
+  "limits": {
+    "broker_credentials_signing_authority_hidden": true,
+    "command10_instruction_budget": 8192,
+    "disk_reserve_per_filesystem_bytes": 5368709120,
+    "guard_seconds": 5,
+    "helper_instruction_budget": 600,
+    "network_only_lo": true,
+    "original_CPU_seconds": 40,
+    "original_address_space_bytes": 536870912,
+    "original_file_bytes": 4194304,
+    "original_host_lease_seconds": 300,
+    "original_wall_seconds": 45,
+    "preparation_CPU_seconds": 400,
+    "preparation_address_space_bytes": 2147483648,
+    "preparation_host_lease_seconds": 600,
+    "preparation_wall_seconds": 420,
+    "shared_host_limit": 3,
+    "source_inputs_native_readonly": true
+  },
+  "load_address": 0,
+  "model_calls_by_tests": 0,
+  "module": "NLSND",
+  "native_preparation": {
+    "all_prepared_files_identical_on_home_copy": true,
+    "binary_sha256": "82291cfcc35cbf6f24e326eb49f2fa01720e43bf62fc8c9a79ea89eb0e97e21f",
+    "identity": {
+      "abi": 8,
+      "accepted_slot_identity": {
+        "abi": 7,
+        "capacity_identity": {
+          "abi": 6,
+          "accepted_state_identity": {
+            "abi": 5,
+            "capacity_adapter_sha256": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+            "derived_backend_sha256": "27828ba253cc29264d7dee2f574c80bc7706268deeb353085dcb39bc4c1434fc",
+            "device_identity": {
+              "abi": 4,
+              "base_identity": {
+                "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+                "flags": [
+                  "-std=c11",
+                  "-O2",
+                  "-shared",
+                  "-fPIC",
+                  "-DM68K_INSTRUCTION_HOOK=1",
+                  "-DM68K_SEPARATE_READS=1",
+                  "-Wl,-z,defs"
+                ],
+                "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+              },
+              "component_sha256": "bcca52cb908e85249ae492e1db50a504f55b7900a5ebba25c649228135c9608e",
+              "derived_backend_sha256": "f8df4faf406a780ad1171f5210de073baeec08f02f8bfc3ca260040f16adfb95",
+              "preparation_module_sha256": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+              "profile": "SCSP-DSP-even-word-registers-clock-frozen-no-gap-read",
+              "scsp_source_lock_sha256": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
+            },
+            "max_events": 1024,
+            "max_ranges": 16,
+            "max_regions": 16,
+            "max_steps": 2048,
+            "preparation_module_sha256": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+            "profile": "NLSND-state-call-disjoint-code-data-frozen-SCSP-word-effects"
+          },
+          "derived_backend_sha256": "7a9fd4277d3f28da60b880e9562c06f3331b8a3d44c7303653e8a69a84ab68f9",
+          "max_events": 4096,
+          "max_ranges": 16,
+          "max_regions": 16,
+          "max_steps": 8192,
+          "preparation_module_sha256": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+          "profile": "NLSND-command10-reset-trace-capacity-unchanged-frozen-SCSP-word-effects"
+        },
+        "component_sha256": "d7440fed56b2f9f444bc19d2a99ddc15cfb055ea623da1145b06321277be1484",
+        "derived_backend_sha256": "da49b38f3ae2c1727b28e6fc63d903aee2852ba60bcef1f725fc685fede52e5f",
+        "max_events": 4096,
+        "max_ranges": 16,
+        "max_regions": 16,
+        "max_steps": 8192,
+        "preparation_module_sha256": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+        "profile": "NLSND-slot-byte00-0B-15-17-clock-frozen-with-unchanged-DSP-words",
+        "scsp_slot_source_lock_sha256": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+        "slot_fields": [
+          "StartAddr",
+          "KeyBit",
+          "WF8Bit",
+          "LoopMode",
+          "SourceControl",
+          "SBXOR",
+          "EnvRates[3]",
+          "DecayLevel",
+          "KRS",
+          "AttackLoopLink",
+          "EGBypass",
+          "ToDSPSelect",
+          "ToDSPLevel",
+          "DirectVolume[0]",
+          "DirectVolume[1]",
+          "EffectVolume[0]",
+          "EffectVolume[1]"
+        ],
+        "slot_snapshot_values": 1057,
+        "slot_state_bytes": 3400
+      },
+      "bus_word_capacity": 8192,
+      "component_sha256": "1c6f90135b29d70f364b81eb72948ae34c759a5a890e5252582ec8e5b74fb3f5",
+      "derived_backend_sha256": "a96f60dce3566552f4ac92722031d6fca70341369b9f7b4f13e6d95fa2c206cd",
+      "dsp_snapshot_values": 353,
+      "preparation_module_sha256": "5ac3dd8041587a08908ed0e486bd96ccfde10d8da8f52cd11cc35a4589ea9dd6",
+      "profile": "NLSND-frozen-DSP-word-and-aligned-normal-MOVE-long-writes-TEMP-explicit",
+      "source_lock_sha256": "b7e3043a08074a166093d488a2e9f74f5184fef737f55e888539d4712582899b"
+    },
+    "owned_smoke": {
+      "capacity": {
+        "failure_controls": {
+          "execution_escape": "instruction-access",
+          "forbidden_write": "forbidden-write",
+          "nonreturning": "instruction-budget",
+          "unmapped_read": "unmapped-data-read"
+        },
+        "fresh_after_failure": true,
+        "fresh_after_full_overflow": true,
+        "full_event_limit_rejected": 4096,
+        "full_instruction_limit_rejected": 8192,
+        "original_game_bytes_executed": false,
+        "positive_steps": 2
+      },
+      "dsp_invalid_access_guards": 26,
+      "identical_program_word_cases": 1536,
+      "max_ranges_executed": 16,
+      "max_regions_read": 16,
+      "missing_range_guarded": true,
+      "native_excess_rejections": {
+        "17_ranges": true,
+        "17_regions": true
+      },
+      "native_fake_device_ram_rejections": 2,
+      "normal_longword_cpu_cases": 2688,
+      "original_game_bytes_executed": false,
+      "predecrement_guarded": true,
+      "reference_bus_recovered": true,
+      "reference_word_bus_capacity_rejected": 8192,
+      "reference_write_cases": 26880,
+      "slot_cpu_cases": 1024,
+      "slot_key_latch_sequence": 5,
+      "slot_raw_rejections": 18,
+      "slot_reference_byte_cases": 98304,
+      "slot_rmw_cases": 96,
+      "slot_width_cpu_guards": 6
+    },
+    "preparation_has_original_inputs": false,
+    "receipt_sha256": "a5ad48ab1431fe6f81d616968efb56b569df3f7ef3a9c06972b1a025e6199c75",
+    "supervisor": {
+      "admitted_at": 1793685052.122906,
+      "all_guardians_terminal": true,
+      "configured_host_shared_limit": 3,
+      "finished_at": 1793685157.9589396,
+      "guardians": [
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1562598,
+          "start_ticks": 586126031,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1562696,
+          "start_ticks": 586126085,
+          "uid": 1000
+        }
+      ],
+      "heartbeat_at": 1793685156.9670725,
+      "input_sha256": "0d98c1bfd104929ca393ab6020c05adaa3de5433961cbf924d0ab78a82778405",
+      "isolation": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.5088932942599058,
+        "timed_out": false,
+        "truncated": false
+      },
+      "issue": 683,
+      "lease_seconds": 600,
+      "model_calls": 0,
+      "original_game_bytes_executed": false,
+      "owner": "code683:preparation:1561360",
+      "phase": "preparation",
+      "pid": 1561360,
+      "preparation": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 105.23829062469304,
+        "timed_out": false,
+        "truncated": false
+      },
+      "schema": "neptune.original-code-supervised.v1",
+      "source_head": "f0284c5bc625dad1d1f1252116f5a06c79fa9868",
+      "started_at": 1793684981.2959232,
+      "state": "bounded-native-preparation-complete"
+    }
+  },
+  "native_preparation_source_qualified": "f0284c5bc625dad1d1f1252116f5a06c79fa9868",
+  "original": {
+    "command10": {
+      "cases": 128,
+      "diagnostic_returns": 128,
+      "extended_DSP_guards": 64,
+      "fixture_difference": "ABI8 normalises TEMP to24-bit signed and removes TEMP from untouched hash; common fields compared directly and previously untouched bytes/TEMP checked unchanged within each profile",
+      "full_semantic_contract_accepted": false,
+      "outcomes": {
+        "stop-reached@0x0": 128
+      },
+      "previous_complete_CPU_RAM_common_device_identical": 64
+    },
+    "helpers": {
+      "all_registers_sr_pcs_operands_reference_bus_ram_device_compared": true,
+      "cases": 414,
+      "cases_by_mode": {
+        "coef": 40,
+        "madrs": 40,
+        "program": 40,
+        "temp": 294
+      },
+      "common_loop_sha256": "048143e579ca9f6add854f814cd14411b8c4e296e36ac0d424c11c62936ce4b0",
+      "instructions": {
+        "coef": 69,
+        "madrs": 69,
+        "program": 517,
+        "temp": 260
+      },
+      "model_cycles": {
+        "coef": [
+          750
+        ],
+        "madrs": [
+          750
+        ],
+        "program": [
+          5682
+        ],
+        "temp": [
+          2852
+        ]
+      },
+      "natural_execution": false,
+      "observations_sha256": "3dd180bebe63301fe78f63a8d48a1acd963b0fe8d2e9101d541b1de9959eee28",
+      "prefixes_sha256": {
+        "coef": "8d03cdced684839321376677e579aa072793b0f44ff9272f548664d5624e0645",
+        "madrs": "b7d270e9ef43e12b6cda4cc20b3f6471f052aa977ded026eecdfd8f1a0f977f8",
+        "program": "ebbe2d14b520f2cc00ba28dea7c31b6e2177f6b8fde304b94c19911190d92348",
+        "temp": "5537ee4078895823082f208a097d080962d08258a4d9e8db255677397d42d698"
+      },
+      "terminal_mutations": {
+        "coef_branch": {
+          "changed_source_sha256": "5e4c6446f00f291724918241c33bf688eb8b29d272c5ad4f611ba095e903fe4e",
+          "offset": "0x35ab",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "08",
+          "terminal_tested": 4
+        },
+        "coef_count": {
+          "changed_source_sha256": "3caa1fb19bb361dcfb7ce5bfb7850a91a8ef501480821c1804ad63ba81cc9101",
+          "offset": "0x35a9",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "1e",
+          "terminal_tested": 4
+        },
+        "coef_destination": {
+          "changed_source_sha256": "829480e28fbc44649062cb9c0fdc1ed15f5679c5cbfe60879a425bb8cc088487",
+          "offset": "0x35a6",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "0780",
+          "terminal_tested": 4
+        },
+        "coef_value": {
+          "changed_source_sha256": "6166b2fb0f12edb272d17388bd8f678e416f04245acf3e7a9add6755ec082b28",
+          "offset": "0x35b3",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "01",
+          "terminal_tested": 4
+        },
+        "madrs_branch": {
+          "changed_source_sha256": "ec06b0417a056c0afccf6602f82440f0f330a9af954f3c4085bb9947a97118b9",
+          "offset": "0x35a3",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "10",
+          "terminal_tested": 4
+        },
+        "madrs_count": {
+          "changed_source_sha256": "730c156e54d6cdbea9d6e157659632c29c0dc764f9199212692b888f0ca95271",
+          "offset": "0x35a1",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "1e",
+          "terminal_tested": 4
+        },
+        "madrs_destination": {
+          "changed_source_sha256": "dd406c814f14e4fabd168841807cc432e2c6e457b5ccc91f10ba3e22add1f38d",
+          "offset": "0x359e",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "0700",
+          "terminal_tested": 4
+        },
+        "madrs_value": {
+          "changed_source_sha256": "6166b2fb0f12edb272d17388bd8f678e416f04245acf3e7a9add6755ec082b28",
+          "offset": "0x35b3",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "01",
+          "terminal_tested": 4
+        },
+        "program_branch": {
+          "changed_source_sha256": "99efeec8563d75ffa4e89a5d1ba70c68fcfab9c4182a75999b068f09a93b4260",
+          "offset": "0x359b",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "18",
+          "terminal_tested": 4
+        },
+        "program_count": {
+          "changed_source_sha256": "5558361be0b2d42181feda41df9f45da91685395c4f463414acba86105776bda",
+          "offset": "0x3599",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "fe",
+          "terminal_tested": 4
+        },
+        "program_destination": {
+          "changed_source_sha256": "405ce1950e03ef9889ecc2c41a54a196aa21d9580f5928c3375e41cc42a6da07",
+          "offset": "0x3594",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "0880",
+          "terminal_tested": 4
+        },
+        "program_value": {
+          "changed_source_sha256": "6166b2fb0f12edb272d17388bd8f678e416f04245acf3e7a9add6755ec082b28",
+          "offset": "0x35b3",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "01",
+          "terminal_tested": 4
+        },
+        "temp_count": {
+          "changed_source_sha256": "6e2dc42244c5e90aa4d34a8f61c943273f78f9b7cf0fb9673f87d11246427f5a",
+          "offset": "0x35b1",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "7e",
+          "terminal_tested": 4
+        },
+        "temp_destination": {
+          "changed_source_sha256": "66da2df63b33f045dba7b432a437c61a770e7cb309cbdb149ddc76e95ab7da12",
+          "offset": "0x35ae",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "0a00",
+          "terminal_tested": 4
+        },
+        "temp_value": {
+          "changed_source_sha256": "6166b2fb0f12edb272d17388bd8f678e416f04245acf3e7a9add6755ec082b28",
+          "offset": "0x35b3",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "01",
+          "terminal_tested": 4
+        }
+      }
+    },
+    "report_sha256": "10a22a79aaae176f5897759caad5cd5fd4f7492aaf4edd5f5a0a174c64a9637f",
+    "reports_equal": true,
+    "supervisor": {
+      "admitted_at": 1793685348.722132,
+      "all_guardians_terminal": true,
+      "comparison-001": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 3.5718377251178026,
+        "timed_out": false,
+        "truncated": false
+      },
+      "comparison-002": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 3.599337543360889,
+        "timed_out": false,
+        "truncated": false
+      },
+      "configured_host_shared_limit": 3,
+      "finished_at": 1793685386.4798348,
+      "guardians": [
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1568946,
+          "start_ticks": 586155687,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1569126,
+          "start_ticks": 586155739,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1569283,
+          "start_ticks": 586155802,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1570442,
+          "start_ticks": 586158743,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1570590,
+          "start_ticks": 586159101,
+          "uid": 1000
+        }
+      ],
+      "heartbeat_at": 1793685385.9104078,
+      "input_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+      "isolation": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.5180076463147998,
+        "timed_out": false,
+        "truncated": false
+      },
+      "issue": 683,
+      "lease_seconds": 300,
+      "model_calls": 0,
+      "native-load": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.6192609630525112,
+        "timed_out": false,
+        "truncated": false
+      },
+      "original_game_bytes_executed": true,
+      "owner": "code683:original:1568798",
+      "phase": "comparison-002",
+      "pid": 1568798,
+      "report_sha256": "10a22a79aaae176f5897759caad5cd5fd4f7492aaf4edd5f5a0a174c64a9637f",
+      "schema": "neptune.original-code-supervised.v1",
+      "source_head": "9ed8b8f829da1c72f8a21955514b4aab3ac69993",
+      "started_at": 1793685348.7023408,
+      "state": "bounded-original-DSP-helper-comparison-complete",
+      "tooling": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 29.403668676503003,
+        "timed_out": false,
+        "truncated": false
+      }
+    }
+  },
+  "parent": 665,
+  "publication_only_changes": "Research/evidence/provisioning guide documents only after source-qualified original execution; executable dependencies and assertions unchanged. Final exact-head CI revalidates.",
+  "release": "USA MK81070 V1.003",
+  "research_tooling_tests": 399,
+  "retained_diagnostics": {
+    "first_CI": "41586261821/job125752472434 failed missing m68k_ham_body.inc.h in sparse upstream checkout; all5 newly pinned wrapper/helper sources added.",
+    "native001_002": "Raw sweeps passed; nonzero CPU operand trace still used inherited16-bit mask. ABI8-only trace repaired; failed attempts retained.",
+    "native003": "CPU predecrement arrived as two word callbacks and bypassed width-only guard. Opcode fence now precedes both callbacks.",
+    "native004": "Own queued coordinator interrupted before any admission/child after source inspection found ctypes count fixture using parentResult. Owner absence verified; not passing.",
+    "native005": "Fresh/reuse passed105s, terminal guardians and exact saved receipt.",
+    "original001": "Home-mount validator rejected a symlink resolving outside home before child launch; no weakening. Copy8qualified files702375bytes and verify every hash, then mount proper home directory read-only.",
+    "original002": "All phases passed with identical reports and terminal guardians.",
+    "selection_invocation": "Initial standalone unit command omitted normal tools/factory module path; corrected invocation passes original assertions."
+  },
+  "schema": "neptune.original-DSP-reset-evidence.v1",
+  "source_files_sha256": {
+    "tools/saturn_lab/analyze_sound_driver.py": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+    "tools/saturn_lab/m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
+    "tools/saturn_lab/m68k_consumer_native.py": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "tools/saturn_lab/m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+    "tools/saturn_lab/m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "tools/saturn_lab/m68k_reset_capacity.py": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+    "tools/saturn_lab/m68k_scsp_dsp.py": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+    "tools/saturn_lab/m68k_scsp_fifo.py": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
+    "tools/saturn_lab/m68k_scsp_long.py": "5ac3dd8041587a08908ed0e486bd96ccfde10d8da8f52cd11cc35a4589ea9dd6",
+    "tools/saturn_lab/m68k_scsp_slots.py": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+    "tools/saturn_lab/m68k_scsp_state.py": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "tools/saturn_lab/probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "tools/saturn_lab/probe_netlink_dsp_reset.py": "7e05bce49ca998891c547202b7bee042fa98e9c507b70d49aa21aa865f93b266",
+    "tools/saturn_lab/probe_netlink_low_reset.py": "7b231c810cb64ae074009729abeb7c14ab52532098f342fd61ca0914aa12af50",
+    "tools/saturn_lab/probe_netlink_pointer.py": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+    "tools/saturn_lab/probe_netlink_records.py": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+    "tools/saturn_lab/probe_netlink_slot_effects.py": "1bf15aa3490dd865832b5afcfbf06c79bee4309c1ef4ccdc6f8e6e30315536eb",
+    "tools/saturn_lab/scsp-dsp-source-lock.json": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4",
+    "tools/saturn_lab/scsp-long-source-lock.json": "b7e3043a08074a166093d488a2e9f74f5184fef737f55e888539d4712582899b",
+    "tools/saturn_lab/scsp-slot-source-lock.json": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+    "tools/saturn_lab/tests/test_m68k_scsp_long.py": "70fa6b24abb29e7b135e1e1ef97f16a2ee7bcbe3f642a9b61b41769037f39464",
+    "tools/saturn_lab/tests/test_probe_netlink_dsp_reset.py": "8e63b7915fff42cdf7134fecda57d6286d81c92c8a3d36a073fd359487426af0"
+  },
+  "source_qualified": "9ed8b8f829da1c72f8a21955514b4aab3ac69993"
+}
