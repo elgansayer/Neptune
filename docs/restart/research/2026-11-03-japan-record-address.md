@@ -436,6 +436,12 @@ and conditionally updates VDP1 `FBCR` before clearing the same state and
 `fa14cc6ae4d855ad67f9c79f4de094d5c383b210050c810e069f99ed87c25f93`. These
 paths remain unexecuted because their branches depend on device state and
 callback lifetimes not modeled by the isolated helper probe.
+The next original `0x0609EB80` routine takes a mode in R4, saves caller state,
+and builds one of two buffer layouts under `0x060FB724`; it tests status word
+`0x060BC65A` against `0x0160` before choosing an update path. The 72-instruction
+static decode has digest
+`d3a4913018fa77163c1800b16d683e3b9cabdc2da578988f6139bdaab5f993cb`.
+Its mode semantics, buffer lifetime, and device interactions remain unknown.
 The shared helper at `0x06095C24` is now original-byte tested separately from
 VDP/MMIO behavior. Its packed R1 low byte supplies field width, the high byte
 supplies the gap below the high end of the word, R0 supplies inserted low bits,
