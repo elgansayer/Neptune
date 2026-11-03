@@ -88,6 +88,12 @@ and [resident decompression comparisons](../evidence/2026-10-30-gemini-program-b
 remain useful accepted evidence. They do not increase this census into a verified
 whole-program function total. Unknown denominators remain `null`.
 
+The current Japan kernel continuation includes paired original-byte execution of
+the eight-byte record update helper AB1B4; see the
+[2026-11-03 Japan record and VDP investigation](../research/2026-11-03-japan-record-address.md).
+This bounded helper result does not close its caller semantics, the Japan kernel,
+or any other module in this census.
+
 The [2 November original memory-helper/caller result](../research/2026-11-02-original-position-bounds.md) adds two isolated-tested USA kernel entries and their explicit controlled-memory limits. It does not establish natural gameplay validation or a whole-program function denominator.
 
 The [natural first-task/library result](../research/2026-11-02-first-task-natural-init.md)

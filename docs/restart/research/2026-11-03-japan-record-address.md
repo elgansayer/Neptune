@@ -465,6 +465,26 @@ are AB1B4 `f3edb4b9c0411b4b53392d828f3a4ca7f413f82c9709ded2fc2928c3733b1347`
 and AB1EE `5d113622b5284045fb593723a92380f173b9c8bdff48092079d428e229255cdb`.
 The complete helper boundary and field meanings remain unresolved; no runtime
 semantics are inferred from these decodes.
+
+The complete bounded AB1B4 body through its RTS delay slot at AB318 is now
+executed from the original Japanese kernel bytes. The probe checks an eight-byte
+R6 record and the single caller mask byte at SP+3, with no MMIO mapped. Across
+all 1,024 combinations of the ten observed R5 mask bits, three R4 flag patterns,
+two R7 byte values, two mask bytes, and two initial records, it executes 24,576
+distinct cases twice per report. The independent byte oracle confirms that each
+active gate updates its observed byte offset in original instruction order:
+R4 selects OR with low R7 or AND with the caller mask. This reports the observed
+R4/R5 masks as ten independent bits, including simultaneous alias bits; it does
+not assign natural field names or caller-level meaning. R6, R8–R14, SP, PR,
+MACH, and MACL were sampled unchanged, and two instruction mutations changed
+the bounded result. Paired reports at execution-055/056 are identical, SHA-256
+`bac17e3a58faf3df34625c4a4989cbc779d6ff20241c276ee8de0711cab5bb2d`; the
+result rows hash to `10c0330738be35f6b5608e17708a576365d4d60ac055cb0c36e0d20628dd2f71`.
+The source probe is `tools/saturn_lab/probe_japan_record_flag_bytes.py`.
+Initial literal-read validator failures in execution-042–052 are retained; the
+successful harness constrains permitted literal addresses and widths while the
+byte oracle and record access trace establish the output behavior.
+
 The shared helper at `0x06095C24` is now original-byte tested separately from
 VDP/MMIO behavior. Its packed R1 low byte supplies field width, the high byte
 supplies the gap below the high end of the word, R0 supplies inserted low bits,
