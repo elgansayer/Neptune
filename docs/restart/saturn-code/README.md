@@ -178,3 +178,10 @@ context restore. Its 31-pattern constructed probe executes all 18 original
 instructions twice per case in paired reports, checks R8–R15/MACH/MACL/PR/R4
 restoration and the R5-to-R0 return delay slot, and detects two mutations.
 Natural task-switch reachability remains unresolved.
+
+The [Japanese record result](../research/2026-11-03-japan-record-address.md)
+now also covers original `0x0600ADB0`: 360 constructed valid-record cases in
+two byte-identical reports, with exact memory transaction/stack checks and
+three original-instruction mutation controls. It is a Japan-mapped helper
+contract; signed-negative index memory behavior and natural callers remain
+open. The original all-code programme remains active and incomplete.

@@ -166,6 +166,46 @@ continues the surrounding service and callback candidates but does not establish
 the helper's natural callers. Local focused tests cover the probe's case,
 range, and bound definitions; they do not execute or validate game behavior.
 
+## Original Japanese record transition at ADB0
+
+Static decode of the Japanese kernel places a second record transition at
+`0x0600ADB0`, called by the `AAEA` tag scan. It compares signed `r4` against
+18, uses the Japan literal at `[0x0600AF04,0x0600AF08)` for table base
+`0x060BCEEC`, and indexes 88-byte records using the sign-extended low 16 bits
+of the signed-word product. For a selected record, it reads byte `+80`. If that
+byte is exactly 1, it changes it to 2, clears byte `+81`, and returns zero;
+otherwise it returns `0xFFFFFFFF`. The routine spills MACL at `[SP-4]` and
+restores it in both RTS delay slots. The bound is signed 32-bit, so negative
+indices also pass that comparison; this experiment does not model their
+out-of-table memory effects.
+
+`tools/saturn_lab/probe_japan_record_transition.py` maps only the original
+instruction range and literal, plus one constructed 88-byte record and the
+exact four-byte stack slot. It executes every index 0–17 against activity
+bytes 0, 1, 2, 3, and 255 and four tag-byte values (360 cases), retaining exact
+instruction paths, memory transactions, record state, MACL and stack evidence.
+The signed upper-bound refusal at index 18 is included in an original
+instruction mutation control. The controls alter the bound branch, active
+comparison, and stored transition value; all three are rejected. The full-match
+scan that calls this helper is a separate probe and does not make these
+constructed calls natural.
+
+The paired reports under
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-016/`
+are byte-identical at SHA-256
+`11643ddedfc846bc7e22087cf82eb2c1dcb4c35ec15bd7085142a39f5fcced7a`.
+Each has 360 original calls, a maximum of 24 instructions per call, and three
+non-budget mutation controls. The Japan kernel SHA-256 remains
+`23685e15fb4f0c49d16859b4e5bbb6ded619611f99ac830e8c93a00590ca44fb`; source
+code SHA-256 is `9ccfcdb76cd0a080e6824c99457713e1d9297df632f30d819d1a5380ef682591`,
+literal SHA-256 is `467250026107641638b8e76ad43aaf4a5e5e765762adb4d0516bac605166bc2c`,
+and probe SHA-256 is `80bb9e8894dfbd2ab0ce136c75363e730d6defd44d6468136e4f4413bf390202`.
+The report does not
+establish negative-index memory behavior, natural caller/runtime behavior,
+device or BIOS semantics, timing, gameplay, or independent-emulator agreement.
+The repository research suite passes 522 tests; that count is separate from
+original execution evidence.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed
