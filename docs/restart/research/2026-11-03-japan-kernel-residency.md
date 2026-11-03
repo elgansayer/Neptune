@@ -161,6 +161,15 @@ not instruction or function counts: this decoder scans every aligned word,
 including data, and these literal candidates need reachability and runtime
 validation. Full private candidate lists remain in `analysis/japan-*-literal-candidates.txt`.
 
+The word at `0x0600A788` is the SCU PDD literal loaded by `0x0600A728`, not a
+code entry. The `0x0600A79C` word is a self-branch. `0x0600A7A0` begins the next
+instruction-looking block with an SH-2 register-save prologue and WorkRAM
+cache-through stores, then calls `0x0600A164` and `0x06095610`. This is a
+static entry candidate only; its incoming edge, data-table layout and natural
+runtime execution remain unverified. Its 96-instruction decode is retained as
+`analysis/japan-a7a0-disassembly.txt` (SHA-256
+`03c566c4085aab95e717e894191358541bf47cce763a5129ac860b8b282bd37f`).
+
 Next, add a bounded Japanese-specific observation of the startup path around
 `0x0600A312`, after verifying its DVCR, VDP2 and BIOS side effects, then map
 further Japan-only ranges and overlays. Keep the Japanese kernel distinct from
