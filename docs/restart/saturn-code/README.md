@@ -95,3 +95,9 @@ compares36,127 constructed complete calls across five entry modes, repeated in
 fresh pinned CPU/frozen-SCSP processes with44 terminal mutation rejections. Natural
 sound roles/traffic, command10, audio timing and the whole-code denominator remain
 open. These isolated calls do not establish campaign/battle Godot fidelity.
+
+The [command10 trace-capacity dependency](../research/2026-11-03-command10-trace-capacity.md)
+adds a separately qualified ABI6 profile. Two fresh paired128-case experiments
+preserve96 non-capacity results exactly and advance32 event-limited scans to the
+same explicit unsupported device read. This is tooling/diagnostic progress;
+parent665's complete device/command10 semantics remain open.
