@@ -9,68 +9,59 @@ the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
 
-## Current pool/context continuation: nine actual jobs retained
+## Current pool/context continuation: all twelve original jobs retained
 
-Arithmetic result PR695 remains open atde5bac91182a6028e7a2515fabe918bc81f3f6b1.
-The research/preparation/font checks passed, but the newly required exported
-browser test failed: production bots placed no authoritative bomb. The merge
-aggregate correctly failed; no bypass or auto-merge request was made. Preserve
-`.../code655-20261102/pr695-web-failure-001/` and`pr695-failed-checks.json`.
-The active web-demo owner already has this artifact and is extending PR696 at
-1929e7c with playable casual starts/browser focus. Preserve that work and newer
-NLSND owner694/PR697. Integrate accepted main normally and rerun exact-head/
-current-base applicable checks before merging695. No product files were changed
-by this code-recovery continuation.
-
-Pool source84c8499f27f6d95509ee19c881154f5e5a126abb is tested/pushed:8 owned
-and448 research tests pass. `probe_library_pools.py` covers original945B4 forward
-byte copy, A77E0/A777E24-byte allocations, A77B0 indexed release, and realA6FE0
-first-pool-exhaustion return or pending A777E handoff. Frozen78-file adapter:
+Source84c8499f27f6d95509ee19c881154f5e5a126abb now has all six byte-identical
+original report pairs:29,060 cases/run,27,764 complete returns and1,296 unfinished
+A777E handoffs, with23 non-budget control combinations. Read
+[the result](../research/2026-11-03-library-pool-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-pool-contracts.json).
+8 owned/448 research tests pass; later documentation preserves those source/test
+bytes. Frozen78-file adapter:
 `.../655/adapter-5823f81ce329a8f17cd42c1b6461d1c12405492ff8b445afbc2e8b2ab3c5a5b4`.
+Completed manifest:`.../655/pools-batch-continue-2fdcc4ck/batch.json`. Do not rerun
+it as new work. Parent2fuwvuxq terminal storage failure and all later deferrals
+remain retained. The earlier partial9-job audit is historical, not final scope.
 
-Nine actual successful jobs are retained. Copy3,752, alloc0 5,076, alloc24 5,076
-and release12,324 have byte-identical paired reports:26,228 complete returns per
-run and14 non-budget family/control combinations. A6FE0 exhaustion has one
-successful1,536-case run, pending its repeat. Context-success prefix has no
-original result yet;1,296 selected cases are prepared. Do not claim all six
-families have paired acceptance. Private partial audit:
-`.../code655-20261102/pools-partial-20261103-001.json`.
+945B4 copy, A77E0/A777E byte-pool allocation and A77B0 indexed release complete.
+A6FE0 executes real945B4/A77E0: exhaustion returns0 in270 instructions; success
+stops at the real next A777E call withPR7054/SPbefore-28. Full success/services
+remain open. Old128 guard unchanged; separate accepted1024 profile with local
+256/512 budgets, release128. All own leases released after completion. Preserve
+shared3/180-second/60-second/nice10/2GiB/offline/read-only/hidden-authority limits,
+5GiB+64MiB output reserve and live owners. No provider or native build.
 
-Initial batch`.../655/pools-batch-2fuwvuxq/batch.json` first deferred at index0
-for live foreign exclusive1885613. After legitimate release it completed five
-jobs, then retained a terminal storage preflight refusal at index5 before worker
-or original execution. That failed manifest/stderr remain unchanged. A derived
-continuation preserves those five successful paths, parent/stderr hashes and
-attempt history, and runs only remaining selections on whichever of the two
-approved private filesystems satisfies the unchanged5GiB+64MiB reserve.
-Current manifest:`.../655/pools-batch-continue-2fdcc4ck/batch.json`. A later
-exclusive reservation deferred at index9. Do not clear/adopt reservations.
-This exact command resumes only incomplete selections:
+Composed source29d7bdb474f459d415eb84c4e6baab42233feae7 is separately tested/
+pushed at`research/saturn-library-record-setup-655`:7 owned/455 research tests.
+It models complete nonnullA681A/96D74 failure through all real arithmetic,
+format/context/copy/first-pool-exhaustion calls. Frozen79-file adapter:
+`.../655/adapter-eef51aac2f7d8e50d3a736a2aaf8761961d08a292d49cfd7c2b3c172e14aaa8f`.
+Its first original batch is **running, not an accepted result**:
+`/home/dev/neptune-research-private/655/record-batch-db1wg3j_/batch.json`.
+Inspect tool71551/current process and manifest before any restart. If terminal
+resource/admission-deferred, resume with:
 
 ```sh
 unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
-  /home/dev/neptune-evidence/code655-20261102/run-pools-batch.py \
-  --manifest /home/dev/neptune-research-private/655/pools-batch-continue-2fdcc4ck/batch.json
+  /home/dev/neptune-evidence/code655-20261102/run-record-batch.py \
+  --manifest /home/dev/neptune-research-private/655/record-batch-db1wg3j_/batch.json
 ```
 
-Inspect current process/manifest first to avoid a duplicate. The old128 guard
-remains unchanged; the already accepted1024 profile is used with256 copy/pool
-and512 context budgets, release128. Actual short128 refusals are retained in
-completed allocator reports. Normal shared3/180-second/60-second/nice10/2GiB/
-offline/read-only/hidden-authority limits stay intact. No provider dispatch,
-native build, callee stub, device RAM or configured-limit change.
+Chosen composed768 budget is below the accepted1024 cap; source/data islands
+remain non-executable. Future composed reports are archived losslessly after
+worker completion, with exact raw/archive hashes, roundtrip verification and
+`gzip -dk report.json.gz` restore command. This storage step changes no original
+input/execution/guard; owned archive checks are separate from game evidence.
 
-Further composed source29d7bdb474f459d415eb84c4e6baab42233feae7 is separately
-pushed at`research/saturn-library-record-setup-655`:7 owned/455 research tests
-pass. This is **prepared expectation, zero original composed execution**.
-It models nonnullA681A and complete96D74 failure through actual quotient/
-remainder/format/context/copy/first-pool exhaustion. Frozen79-file adapter:
-`.../655/adapter-eef51aac2f7d8e50d3a736a2aaf8761961d08a292d49cfd7c2b3c172e14aaa8f`.
-After pool pairs are complete and inspected, original command is
-`unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 /home/dev/neptune-evidence/code655-20261102/run-record-batch.py`.
-The composed768 budget is below the separate accepted1024 cap; literal islands
-remain non-executable. Null record/A7F4E, successfulA6FE0 services, full95E5A/
-89C8 and all-module denominators remain open. The programme stays active.
+Arithmetic PR695 remains open atde5bac9: research/preparation/font checks pass,
+but the newly required browser bot-bomb liveness check and merge aggregate failed.
+No bypass/auto-merge request. Retain`.../code655-20261102/pr695-web-failure-001/`
+and`pr695-failed-checks.json`. Active web owner has the failure and is extending
+PR696 with playable starts/browser focus; preserve that and newerNLSND694/PR697.
+Integrate accepted main normally, then recheck every exact-head/current-base
+applicable gate before merging695 and these dependent slices. No product files
+were changed by this continuation.655 and the programme remain active; null
+record/A7F4E, successful services, full95E5A/89C8 and all-code denominators stay open.
 
 ## Current arithmetic contracts: all original pairs retained
 
