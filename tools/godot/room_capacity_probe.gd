@@ -105,7 +105,7 @@ func _create_peer(index: int) -> void:
 	api.multiplayer_peer = peer
 
 func _connected(index: int, router: Node, _api: SceneMultiplayer, gate: Node) -> void:
-	if gate.selected_version(1) != 2:
+	if gate.selected_version(1) != 3:
 		fail("missing actual negotiated version")
 		return
 	router.rpc_id(1, "authenticate_request", "CapacityProbe%d" % index, "fixture-password")

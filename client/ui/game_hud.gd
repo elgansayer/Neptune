@@ -45,6 +45,9 @@ var virus_flash_tween: Tween = null
 # Lag indicator UI elements
 var latency_label: Label = null
 var latency_icon: ColorRect = null
+var round_status: Label = null
+var controls_label: Label = null
+var _round_tweens: Array[Tween] = []
 
 func _ready():
 	# HUD should be above the map but BELOW players.
@@ -202,6 +205,85 @@ func _ready():
 	latency_label.add_theme_font_size_override("font_size", 10)
 	latency_label.add_theme_color_override("font_color", Color.WHITE)
 	latency_container.add_child(latency_label)
+	# Compact demo information remains available during play and intermission.
+	controls_label = Label.new()
+	controls_label.name = "ControlsLabel"
+	controls_label.anchor_top = 1.0
+	controls_label.anchor_right = 1.0
+	controls_label.anchor_bottom = 1.0
+	controls_label.offset_top = -10
+	controls_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	controls_label.add_theme_font_size_override("font_size", 6)
+	controls_label.add_theme_color_override("font_outline_color", Color.BLACK)
+	controls_label.add_theme_constant_override("outline_size", 2)
+	controls_label.text = "Click arena to focus · Arrows move · Space bomb · Shift/E action"
+	controls_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(controls_label)
+	round_status = Label.new()
+	round_status.name = "RoundStatus"
+	round_status.anchor_top = 1.0
+	round_status.anchor_right = 1.0
+	round_status.anchor_bottom = 1.0
+	round_status.offset_top = -20
+	round_status.offset_bottom = -10
+	round_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	round_status.add_theme_font_size_override("font_size", 6)
+	round_status.add_theme_color_override("font_outline_color", Color.BLACK)
+	round_status.add_theme_constant_override("outline_size", 2)
+	round_status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(round_status)
+	round_status.text = "Casual development demo · Waiting"
+
+func controls_visible() -> bool:
+	return is_instance_valid(controls_label) and controls_label.visible
+
+func _new_round_tween() -> Tween:
+	var tween := create_tween()
+	_round_tweens = _round_tweens.filter(func(existing: Tween): return existing.is_valid() and existing.is_running())
+	_round_tweens.append(tween)
+	return tween
+
+func reset_round() -> void:
+	for tween in _round_tweens:
+		if tween.is_valid(): tween.kill()
+	_round_tweens.clear()
+	game_over_shown = false
+	clear_all_player_faces()
+	hide_hurry_mode()
+	hide_spectator_mode()
+	update_virus_status(0, 0.0)
+	last_countdown_value = -1
+	if countdown_label: countdown_label.visible = false
+	if countdown_bg: countdown_bg.visible = false
+	for node_name in ["GameOverBackground", "GameOverLabel", "WinnerLabel"]:
+		var node := get_node_or_null(node_name)
+		if node:
+			remove_child(node)
+			node.queue_free()
+	update_timer(180.0)
+
+func update_round(round_data: Dictionary, compact_build: String, waiting_for_seat: bool = false) -> void:
+	var phase: String = round_data.get("phase", "waiting")
+	var remaining: float = round_data.get("remaining", 0.0)
+	var description := "Waiting for players"
+	match phase:
+		"countdown":
+			description = "Starts in %d" % ceili(remaining)
+			show_countdown(remaining)
+		"active":
+			description = "Battle"
+			update_timer(remaining)
+			if countdown_label: countdown_label.visible = false
+			if countdown_bg: countdown_bg.visible = false
+		"results":
+			description = "Next round in %d" % ceili(remaining)
+			if countdown_label: countdown_label.visible = false
+			if countdown_bg: countdown_bg.visible = false
+	if waiting_for_seat: description = "SPECTATING · joins next round"
+	round_status.text = "DEMO · %s · Round %d · %s" % [compact_build, round_data.get("epoch", 0), description]
+	# Result panels are created later than this permanent footer.
+	move_child(round_status, -1)
+	move_child(controls_label, -1)
 # ============================================================================
 # PLAYER FACE MANAGEMENT
 # ============================================================================
@@ -308,6 +390,18 @@ func _update_participant_label(peer_id: String, username: String, participant: D
 		face.add_child(badge)
 	# Only explicit authority metadata identifies bots; names/peer IDs do not.
 	badge.visible = participant.get("type", "") == "bot"
+	var human_badge := face.get_node_or_null("HumanBadge") as Label
+	if human_badge == null:
+		human_badge = Label.new()
+		human_badge.name = "HumanBadge"
+		human_badge.position = Vector2(0, 11)
+		human_badge.add_theme_font_size_override("font_size", 6)
+		human_badge.add_theme_color_override("font_outline_color", Color.BLACK)
+		human_badge.add_theme_constant_override("outline_size", 1)
+		human_badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		face.add_child(human_badge)
+	human_badge.text = "YOU" if peer_id == str(multiplayer.get_unique_id()) else "P"
+	human_badge.visible = participant.get("type", "") == "human"
 	var description := username
 	if badge.visible:
 		description += " — Bot"
@@ -417,7 +511,7 @@ func show_countdown(time_remaining: float):
 		countdown_label.modulate = Color(0.2, 1.0, 0.2, 0.0) # Start transparent green
 		
 		# Explosive animation
-		var tween = create_tween()
+		var tween = _new_round_tween()
 		tween.set_parallel(true)
 		tween.tween_property(countdown_label, "scale", Vector2(1.5, 1.5), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
 		tween.tween_property(countdown_label, "modulate", Color(0.0, 1.0, 0.0, 1.0), 0.2)
@@ -433,6 +527,7 @@ func show_countdown(time_remaining: float):
 			last_countdown_value = -1
 		)
 		return
+	if last_countdown_value == -999: return
 	
 	# Only animate on value change for numbers
 	if int(seconds) != last_countdown_value and seconds > 0:
@@ -449,7 +544,7 @@ func show_countdown(time_remaining: float):
 		countdown_label.modulate = Color(1.0, 1.0, 0.2, 0.0) # Start transparent yellow
 		
 		# Animate: scale up and fade in
-		var tween = create_tween()
+		var tween = _new_round_tween()
 		tween.set_parallel(true)
 		tween.tween_property(countdown_label, "scale", Vector2(1.2, 1.2), 0.2).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
 		tween.tween_property(countdown_label, "modulate", Color(1.0, 0.8, 0.0, 1.0), 0.2)
@@ -473,7 +568,7 @@ func show_hurry_mode():
 	hurry_label.pivot_offset = hurry_label.size / 2
 	
 	# Flash animation
-	var tween = create_tween()
+	var tween = _new_round_tween()
 	tween.set_parallel(true)
 	tween.tween_property(hurry_overlay, "modulate", Color(1, 1, 1, 1), 0.2)
 	tween.tween_property(hurry_label, "scale", Vector2(1.2, 1.2), 0.3).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_ELASTIC)
@@ -496,7 +591,7 @@ func _start_hurry_flash():
 	if hurry_flash_tween and hurry_flash_tween.is_valid():
 		hurry_flash_tween.kill()
 	
-	hurry_flash_tween = create_tween()
+	hurry_flash_tween = _new_round_tween()
 	hurry_flash_tween.set_loops() # Loop forever
 	hurry_flash_tween.tween_property(hurry_overlay, "color", Color(1.0, 0.0, 0.0, 0.9), 0.3)
 	hurry_flash_tween.tween_property(hurry_overlay, "color", Color(0.8, 0.0, 0.0, 0.6), 0.3)
@@ -542,8 +637,9 @@ func set_player_name(player_name_text: String):
 	"""Set the local player's name display"""
 	player_name.text = player_name_text
 
-func show_spectator_mode():
+func show_spectator_mode(message: String = "ELIMINATED - NEXT ROUND SOON"):
 	"""Show spectator mode overlay when local player is eliminated"""
+	if spectator_label: spectator_label.text = message
 	if is_spectating:
 		return # Already spectating
 	
@@ -557,14 +653,14 @@ func show_spectator_mode():
 		spectator_overlay.visible = true
 		spectator_overlay.modulate = Color(1, 1, 1, 0)
 		# Tween is automatically cleaned up when complete or when node is freed
-		create_tween().tween_property(spectator_overlay, "modulate", Color(1, 1, 1, 1), 0.5)
+		_new_round_tween().tween_property(spectator_overlay, "modulate", Color(1, 1, 1, 1), 0.5)
 	
 	print("[HUD] Entered spectator mode")
 
 func hide_spectator_mode():
 	"""Hide spectator mode overlay (for next round or restart)"""
 	is_spectating = false
-	$BottomLeft.visible = true
+	$BottomLeft.visible = false
 	if spectator_overlay:
 		spectator_overlay.visible = false
 
@@ -622,7 +718,7 @@ func _start_virus_flash() -> void:
 	"""Create looping flash animation for virus status"""
 	_stop_virus_flash()
 	
-	virus_flash_tween = create_tween()
+	virus_flash_tween = _new_round_tween()
 	virus_flash_tween.set_loops() # Loop forever
 	virus_flash_tween.tween_property(virus_overlay, "color", Color(0.7, 0.0, 0.7, 0.95), 0.2)
 	virus_flash_tween.tween_property(virus_overlay, "color", Color(0.3, 0.0, 0.3, 0.8), 0.2)
@@ -706,7 +802,7 @@ func show_game_over(winner_name: String):
 		winner_label.text = "🏆 Winner: %s 🏆" % winner_name
 		winner_label.add_theme_color_override("font_color", Color(0.2, 1.0, 0.2)) # Green
 	else:
-		winner_label.text = "💀 DRAW - No Survivors! 💀"
+		winner_label.text = "DRAW"
 		winner_label.add_theme_color_override("font_color", Color(1.0, 0.3, 0.3)) # Red
 	
 	add_child(winner_label)
@@ -717,7 +813,7 @@ func show_game_over(winner_name: String):
 	game_over_label.modulate = Color(1, 1, 1, 0)
 	winner_label.modulate = Color(1, 1, 1, 0)
 	
-	var tween = create_tween()
+	var tween = _new_round_tween()
 	tween.set_parallel(true)
 	tween.tween_property(game_over_bg, "modulate", Color(1, 1, 1, 1), 0.5)
 	tween.tween_property(game_over_label, "modulate", Color(1, 1, 1, 1), 0.5).set_delay(0.2)

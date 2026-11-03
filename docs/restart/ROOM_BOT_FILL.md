@@ -74,3 +74,12 @@ identity rather than retaining a departed bot's label.
 identity, tooltip personality, score refresh, snapshot removal, slot reuse and
 layout bounds for twelve participants. These headless checks do not establish
 visual polish, browser rendering, difficulty selection or safe human replacement.
+
+## Hosted subsequent rounds and human seats
+
+Hosted casual repeat play now uses a fresh authority per round, as described in
+[ROOM_LIFECYCLE.md](ROOM_LIFECYCLE.md). Filling remains initial-only within each
+authority. Connected humans and waiting spectators receive next-round seats
+before that authority fills missing seats with the existing production bots.
+This implements the bounded casual late-join and bot-seat replacement policy;
+ranked takeover, reconnect grace and persistent reservations remain separate.
