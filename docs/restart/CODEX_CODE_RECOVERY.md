@@ -92,6 +92,14 @@ combinations, an actual old128 refusal and matching natural95E5A projection.
 Keep the initial admission deferral and signed-negative count behavior explicit.
 Resume the current655 checkpoint for slot-result publication and real96D74/
 A5EEC/A681A/A56CA/A56D8 dependencies toward composed95E5A semantics.
+Slot PR689 is now accepted atf46ad9d. The next context/index/caller probe is
+tested/pushed at sourcea5a38d7 (10 owned/431 research tests), with a frozen76-file
+adapter and resumable batch. Its10,504 planned cases have **not executed**:
+normal admission was deferred at index0, followed by a verified foreign exclusive
+factory reservation. Preserve that owner and configured limits, resume the
+existing manifest only after checking live state, and retain real failures.
+Continue independent arithmetic/sector/context dependency recovery meanwhile;
+do not count prepared models or CI as original-game evidence.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
