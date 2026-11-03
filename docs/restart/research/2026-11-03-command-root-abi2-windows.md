@@ -143,6 +143,26 @@ matched observer build from the same emulator lineage; no second emulator was
 available locally as an independent oracle. These results provide
 instrumented-versus-reference parity, not an independent emulator cross-check.
 
+## Complete captured command-root CPU replay
+
+Starting from the profile 1 natural root at `0x060A4FAC`, a guarded replay now
+executes the original `0x060A4FAC` and `0x060A4FBE` code, the `0x06095992`/
+`0x060959CA` service and its observed leaf helpers, then returns to the captured
+caller at `0x060AE698`. It executes 268 original SH-2 instructions and
+reproduces all 18 captured device transfers in order. The replay's 16 return
+registers, SR and PR all match the natural return capture; it also reproduces
+the global word change `0x0FD4` to `0x0F94`. The current ABI2 natural trace root
+registers, SR, PR and command bytes match an earlier full-register natural
+capture before its special registers are used to seed this replay. Report:
+`/home/dev/neptune-research-private/707/command-root-return-replay-003/report.json`
+(SHA256 `d26a162e3ba36c292b6073a001f94652d3cc0b25254cb1c85369aec087c6e26d`).
+
+This closes the caller-return gap for this one captured command path. The replay
+seeds its command bytes and two response-stack words from actual observations,
+and supplies the exact captured CD values to a CPU-only interpreter. It does
+not model CD hardware, cycles or physical timeout behavior; other command and
+error branches remain open.
+
 ## Poll timeout source lead and bounded replay attempts
 
 The natural wrapper input at `0x06095992` is now also used for bounded
