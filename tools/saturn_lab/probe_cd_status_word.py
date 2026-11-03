@@ -18,6 +18,9 @@ STORE_SITE=0x06095906
 STORE_LITERAL=0x06095A08
 POLL_ENTRY=0x06095A84
 POLL_SITE=0x06095A94
+SERVICE_ENTRY=0x06095992
+SERVICE_CALLSITE=0x060959AA
+SERVICE_READ=0x060959DE
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 def read_json(path):
@@ -81,8 +84,15 @@ def run(kernel_path,source_root,result_path,records_path,out):
     call_words=[int.from_bytes(kernel[call_off+i:call_off+i+2],'big') for i in (0,2)]
     disp=call_words[0]&0x0fff; disp=disp-0x1000 if disp&0x0800 else disp
     call_target=callsite+4+disp*2; call_return=callsite+4
+    service_off=SERVICE_CALLSITE-probe_kernel.BASE
+    service_words=[int.from_bytes(kernel[service_off+i:service_off+i+2],'big') for i in (0,2)]
+    service_disp=service_words[0]&0x0fff; service_disp=service_disp-0x1000 if service_disp&0x0800 else service_disp
+    service_target=SERVICE_CALLSITE+4+service_disp*2; service_return=SERVICE_CALLSITE+4
+    natural_service_reads=[r for r in rows if r['kind']==2 and r['pc']==SERVICE_READ and r['transfer_address']==DEVICE]
     poll_base=0x060BFD00
     if (poll_actual!=poll_words or call_words!=[0xB021,0x64D3] or call_target!=POLL_ENTRY or
+        service_words!=[0xB00E,0x0009] or service_target!=0x060959CA or
+        len(natural_service_reads)<3 or any(r['pr']!=service_return for r in natural_service_reads) or
         len(groups)!=3 or any(len(g)!=8 for g in groups) or
         any(any(r['r'][4]!=1 or r['r'][7]!=i for i,r in enumerate(g)) for g in groups)):
         raise ValueError('Original natural status-poll groups/source do not satisfy the selected bounded contract')
@@ -131,6 +141,10 @@ def run(kernel_path,source_root,result_path,records_path,out):
               'observed_caller_link':{'bsr_site':f'0x{callsite:08x}','bsr_and_delay':[f'0x{x:04x}' for x in call_words],
                 'computed_target':f'0x{call_target:08x}','recorded_pr_return':f'0x{call_return:08x}',
                 'actual_r4_mask':1,'actual_r5_destinations':[f"0x{g[0]['r'][5]:08x}" for g in groups]},
+              'outer_service_link':{'entry':f'0x{SERVICE_ENTRY:08x}','call_site':f'0x{SERVICE_CALLSITE:08x}',
+                'bsr_and_delay':[f'0x{x:04x}' for x in service_words],'computed_target':f'0x{service_target:08x}',
+                'natural_read_site':f'0x{SERVICE_READ:08x}','natural_read_count':len(natural_service_reads),
+                'recorded_pr_returns':[f"0x{r['pr']:08x}" for r in natural_service_reads]},
               'scope':'three exact eight-read groups captured at the original read site; each transitions from bit0 clear to set'},
             'scope':'one complete three-instruction word-read helper on original SH-2 bytes using only values captured from the natural run; CPU-only isolated memory; no hardware semantics, CD protocol meaning, caller equivalence or complete command root claimed',
             'whole_program_status':'active; incomplete'}
