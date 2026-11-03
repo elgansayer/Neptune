@@ -41,8 +41,16 @@ gameplay. The frame-1800 state SHA-256 is
 `da61fd983f32c79ec6ffd145a169e63484fe621ed2662a827ef38fedd994270c`; frame 2400
 is `8749b0430e45ec67726c9b9b3fb39d2b706acd3b179e41cc4e0219fb9c19bd6d`. The
 second run delivered masks `[0,64,256]` to the first port. Its first setup
-attempt, which lacked a read-only mount for the source checkpoint, is retained
-as a preflight failure and was not counted as an emulator execution.
+attempt could not access the source checkpoint because its directory was not
+mounted into the worker. That failed worker receipt is retained at
+`continuation-004/supervisor.json`; the run stopped before emulation and is not
+counted as an original execution.
+
+The same residency comparer found 729,974 exact source bytes in three ranges at
+both frame 1800 and frame 2400. This confirms the previously observed partial
+mapping persisted through these windows; it still does not show which resident
+instructions ran. Reports are retained as `analysis/frame1800-residency.json`
+and `analysis/frame2400-residency.json` beside the earlier comparisons.
 
 At mapping `0x0600A000`, the frame-600 WorkRAM-H state matched 573,440 source
 bytes in two exact ranges of at least 4 KiB:
@@ -107,5 +115,14 @@ Next, add a bounded Japanese-specific observation of the startup path around
 `0x0600A312`, after verifying its DVCR, VDP2 and BIOS side effects, then map
 further Japan-only ranges and overlays. Keep the Japanese kernel distinct from
 USA `0KRNL.BIN`, and keep asset extraction/provenance work separate from
-code-byte residency. Only the pinned Beetle/Mednafen lineage is currently
-available on this host; no independent emulator cross-check was used.
+code-byte residency.
+
+The user's suggestion to use another Saturn emulator is useful here. Yabause is
+an independent candidate to the current Beetle/Mednafen lineage. Its upstream
+debugger-interpreter documentation describes SH-2 register/disassembly views,
+code and memory breakpoints, and per-instruction trace logging ([project](https://github.com/Yabause/yabause),
+[debugger guide](https://wiki.yabause.org/index.php5?title=Readme_QT#Debug_Windows)).
+It is not installed or validated on this host yet. Prepare a pinned build
+through the existing provisioning boundary, keep its inputs read-only, and use
+it for independent startup observations; do not treat its save states as
+interchangeable with Beetle/Mednafen states.
