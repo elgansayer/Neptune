@@ -240,3 +240,8 @@ shows SR masking, VDP2 TVSTAT selection, BIOS interrupt calls, and later VDP1,
 SMPC and SCSP dependencies. Retained disassemblies and limits are recorded in
 the [Japanese kernel study](../research/2026-11-03-japan-record-address.md);
 this path needs an explicit device/runtime model before original execution.
+
+Follow-through in the same Japan record path now also covers original AB30's
+18-record counter adjustment: 320 constructed cases twice per report with
+paired execution evidence. See the research note for its write contract and
+limits; the natural counter producer and timing remain open.
