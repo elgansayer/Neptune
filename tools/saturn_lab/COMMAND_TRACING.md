@@ -61,7 +61,7 @@ Current patch/header/ABI validation is separate from native readiness:
   compiled baseline/observed transfer fixtures:
   one address evaluation, one actual mock bus operation, identical CPU/RAM/WB
   results, correct signed-load/truncated-store values and no slave callbacks.
-- The focused10-test suite passes after ABI v2 lossless-run changes. The earlier39 related/221 factory checks cover ABI v1 and have not been rerun for v2. Exact-head run`41658156944` passed, and provisioning run`41658156759` built and loaded the ABI v2 core, but its post-build check failed because`provision.py` still expected ABI1. That validator now expects ABI2 with the unchanged216-byte record/128-slot/424-word layout; its regression test passes. A fresh exact-head build/smoke is required before native-game windows.
+- The focused10-test suite passes after ABI v2 lossless-run changes. The earlier39 related/221 factory checks cover ABI v1 and have not been rerun for v2. Exact-head run`41658156944` passed, and provisioning run`41658156759` built and loaded the ABI v2 core. Its actual no-media smoke reported ABI2, 288-byte records, capacity128 and a424-word witness, but the post-build validator still expected ABI1/216 bytes. The validator now expects the observed ABI2/288-byte layout; its regression test passes. A fresh exact-head build/smoke is required before native-game windows.
 - The header requires the profile-specific source JSR and delay, A4FAC root, A4FBA
   RTS/NOP delay and return, service boundaries, and actual transfers. An owned compiled semantic fixture drives that event order through the exported ABI and verifies that final source-witness mismatches fail. Transfer PC/opcode
   comes from the master prehook; command/response words carry validity tags and are

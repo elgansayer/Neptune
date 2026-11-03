@@ -236,7 +236,7 @@ def smoke(tool, binary, runner, root):
         if tool == "beetle-saturn-command-trace":
             observer = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_command_trace_abi.py"),
                                               "--probe-core", str(binary)], binary.parent, 30))
-            if (observer.get("abi") != 2 or observer.get("record_bytes") != 216 or
+            if (observer.get("abi") != 2 or observer.get("record_bytes") != 288 or
                     observer.get("capacity") != 128 or observer.get("witness_words") != 424 or
                     observer.get("rejected_invalid_profile_witness_and_frame") is not True):
                 raise ProvisionError("smoke_failed", "Missing actual bounded command observer ABI/fence result")

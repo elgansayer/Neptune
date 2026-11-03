@@ -766,9 +766,10 @@ and89C8 through its real return. Do not rerun completed658 reports as new work.
 
 ABI v2 commit`74999fd` passed exact-head tests (run`41658156944`). Provisioning
 run`41658156759` built and loaded its matched-core ABI, then failed the post-build
-smoke because`provision.py` still expected ABI1. This was a stale validator
-expectation, not a compiler or ABI-fence failure. This source update requires
-ABI2 and adds an owned regression check. Focused provisioning
+smoke because`provision.py` still expected ABI1/216-byte records. This was a
+stale validator expectation, not a compiler or ABI-fence failure. This source
+update requires ABI2/288-byte records and adds an owned regression check. The failed job's smoke
+log reported ABI2/288 bytes, capacity128 and424 witness words. Focused provisioning
 plus command-trace tests pass48 tests; fresh exact-head build/smoke is required
 before any ABI v2 game window. The failed job's retained artifact confirms the
 build and ABI probe completed, but does not contain a reusable native core.
