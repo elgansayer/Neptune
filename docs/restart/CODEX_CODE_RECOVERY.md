@@ -156,6 +156,14 @@ Read [the record-access result](research/2026-11-03-library-record-access-contra
 and current655 checkpoint.95D9C's mode1/other-mode rule differs from95E5A;
 retain those distinct contracts. Continue actualA780A/A7BB0/A85E4/A805C service
 and cleanup dependencies; prepared static windows are not additional execution.
+Record-access PR702 merged0911981 with all15 exact-head/currentbase checks.
+FurtherA81FE/A7C20/A7BB0 original results retain3,288 complete returns and144
+unfinished A85E4 handoffs/run twice, three identical raw/archive pairs and10
+controls. Sourcee42f90b had7 focused/491 research tests. Read
+[the request-state result](research/2026-11-03-library-request-state-contracts.md)
+and current655 checkpoint; pending service linkage is not successful execution.
+Continue A85E4/AE676/AE908/A4FAC, A8C10/9546E and real cleanup/device dependencies,
+then further functions/modules. Old128 guard and configured limits remain.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
