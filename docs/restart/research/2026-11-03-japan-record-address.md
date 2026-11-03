@@ -136,6 +136,29 @@ Probe source SHA-256 is
 research tooling suite passes 518 tests; this is separate from the original
 execution evidence.
 
+## Original Japanese context restore
+
+Following the `AB78` static tail jump led to original code at `0x0600A186`.
+The inspected range `[0x0600A186,0x0600A1AA)` contains 18 instructions
+including the RTS delay slot. It reads exactly 12 longwords from a 48-byte
+context, restores `r8`–`r15`, MACL, MACH, PR and `r4`, then the delay slot
+overwrites `r0` with incoming `r5`. It performs no memory writes.
+
+`tools/saturn_lab/probe_japan_context_restore.py` tests 31 distinct constructed
+contexts twice in each of two identical reports. Each context contains distinct
+patterns in the saved fields and uses the interpreter return sentinel as PR.
+Two original-byte controls reject an altered `r8` offset and removal of the
+return delay-slot move.
+
+Reports
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-013/japan-context-restore-run1.json`
+and `japan-context-restore-run2.json` match at SHA-256
+`a1d0baa9373310749a7fc67705cba37ea2c86455c9b134e6f697861f908c676a`.
+Probe source SHA-256 is
+`579bfad6f0eb2e32c225f0d9b8369e5fd7f8fba38e56bb9daf5433d7aa40ba24`.
+This confirms only the constructed leaf contract; it does not prove natural
+task-switch reachability or live task-context lifetime.
+
 The pinned decoder window at `0x0600B4EC` is retained privately at
 `analysis/japan-b4ec-disassembly.txt`, SHA-256
 `bdc400dad5a815dc45a5e32f2a57324278c1d211834054252cf94f23b5fff8e0`. It
