@@ -1,0 +1,291 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-1928ddc4ca2d102474c4e2bae9fe5fdf954bee235c1e3d37170f5f31157f9ee0",
+    "files": 77,
+    "source_head": "7860d2a212f63e37b51beecda134d33dcc03ebdc",
+    "source_manifest_sha256": "1928ddc4ca2d102474c4e2bae9fe5fdf954bee235c1e3d37170f5f31157f9ee0"
+  },
+  "batch": "/home/dev/neptune-research-private/655/arithmetic-batch-ay2cbb78/batch.json",
+  "batch_manifest_sha256": "29194ee33d41f288b1ddb989ab10bc44f573d327d679df1f69bcfc2fb2ed515a",
+  "contracts": {
+    "arguments": "division entries R0=divisor,R1=numerator; signed32, truncation toward zero; arithmetic wraps modulo2^32",
+    "format": "A6DA6 bit64 dominates:2352; else bit16+bit8 gives0; else bit16 gives2324; otherwise2048; full path-specific register/T clobbers checked",
+    "overflow_representation": "INT_MIN/-1 returns quotient80000000 and remainder0; machine representation, not host C signed-overflow semantics",
+    "quotient": "9410C R0=R1=quotient; saves/restoresR2/R3; fullSR/M/Q/T,PR,SP,MAC and every mapped byte checked",
+    "remainder": "94268 R0=n-q*d; R1 retains intermediate quotient bits; saves/restoresR2/R3/R4; actual optional sign-correction DIV1 and full flags checked",
+    "zero_divisor": "both routines returnR0=0,R1=060FA8B4 and write0000044E to that high-RAM cell; prior M/Q preserved,T=1; real RTS/POP-R2 delay"
+  },
+  "cpu": "sh2",
+  "expected_model": {
+    "independence": "DIV1 expected flags use a carry/borrow reduction from primary ISA; signed scalar quotient/remainder separately use absolute integer division and n-q*d. Vendor DIV1 body unchanged, not read/copied for the expected model.",
+    "manual": "REJ09B0171-0500O, sections6.1.17-19",
+    "owned_math_cases": "552 earlier model-only pairs are not counted as original executions",
+    "primary_ISA": "https://www.renesas.com/en/document/mah/sh-1sh-2sh-dsp-software-manual"
+  },
+  "families": {
+    "format": {
+      "cases_per_run": 3072,
+      "complete_returns_per_run": 3072,
+      "controls": {
+        "changed-bit64-mask": {
+          "mutated_kernel_sha256": "db028e484734a3852442da1c65e0dc90520cc193dd3ec98bdf192bbafa544b8f",
+          "nonbudget_rejections": 158,
+          "pc": 101346726,
+          "tested": 158
+        },
+        "lost-bit8-delay": {
+          "mutated_kernel_sha256": "f5d252846ebc08d95f612a4c0b7f15d7b5d8e775f42df37678f28f405f849bce",
+          "nonbudget_rejections": 47,
+          "pc": 101346764,
+          "tested": 158
+        },
+        "lost-invalid-zero-delay": {
+          "mutated_kernel_sha256": "a9e6796841192d86dacb750882a8938c257583348d6f17976db4b2bc4ac70393",
+          "nonbudget_rejections": 8,
+          "pc": 101346772,
+          "tested": 158
+        },
+        "lost-result-delay": {
+          "mutated_kernel_sha256": "c1f0ba97e7862a5550962694e5a2992d0985595f15752362eb8da74581194f33",
+          "nonbudget_rejections": 158,
+          "pc": 101346788,
+          "tested": 158
+        }
+      },
+      "instruction_counts": {
+        "8": 1536,
+        "13": 768,
+        "14": 384,
+        "15": 384
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "0520584f64dc2a39b49700ddef9e1803d6784bbbf4b37c04147b63bc5fd47138",
+      "return_counts": {
+        "0": 384,
+        "2048": 768,
+        "2324": 384,
+        "2352": 1536
+      },
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/arithmetic-contracts-format-w14kcd1c",
+          "isolation_sha256": "5d471a99f0013f9d1e267050a53d86017e072a8bb30cefc2761d4fe67466b160",
+          "report_sha256": "342f1f026980c3bb3d2cd94ec9ff7fadace2ae2346e79823ed995f39d59162ca",
+          "supervisor_sha256": "1b72d3fa83f21fa2023c0cd9e98ef321fcd8be176b903b4e38bbce2a0418a01e"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/arithmetic-contracts-format-lh2fozdd",
+          "isolation_sha256": "5d471a99f0013f9d1e267050a53d86017e072a8bb30cefc2761d4fe67466b160",
+          "report_sha256": "342f1f026980c3bb3d2cd94ec9ff7fadace2ae2346e79823ed995f39d59162ca",
+          "supervisor_sha256": "66b8b2c5c3d9a5810fbb4f70fe8da1713adc4bab183da76842c20776461c28db"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_arithmetic.py": "75e6cf0a5926f6e8eaf734f7e002aab8a2e05866f2c89fb53a6ae1d68cf984e4",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      }
+    },
+    "quotient": {
+      "cases_per_run": 7032,
+      "complete_returns_per_run": 7032,
+      "controls": {
+        "lost-R2-delay": {
+          "mutated_kernel_sha256": "1fd03dd60d7e0c2ec4b9262cb9bef08d021afc591b82ffd015a3aaaf219759cd",
+          "nonbudget_rejections": 88,
+          "pc": 101269928,
+          "tested": 159
+        },
+        "lost-final-carry": {
+          "mutated_kernel_sha256": "8795fa526eb9ae678294222e13c469d72b2ede4570dccda1f1cb33df08392e39",
+          "nonbudget_rejections": 45,
+          "pc": 101269920,
+          "tested": 159
+        },
+        "lost-first-DIV1": {
+          "mutated_kernel_sha256": "81006de106339887efc76ace22aa717582f072689e7ebe032a5db080638f1784",
+          "nonbudget_rejections": 44,
+          "pc": 101269792,
+          "tested": 159
+        },
+        "lost-zero-error-store": {
+          "mutated_kernel_sha256": "429aa2df1498860ac24675a86df02ec93d05be3b09771012000a3256aea38dce",
+          "nonbudget_rejections": 71,
+          "pc": 101269936,
+          "tested": 159
+        }
+      },
+      "instruction_counts": {
+        "9": 600,
+        "79": 6432
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "23144aa5e04670b5a1bbcdeccc7f58796070e37905665ce20bf7f1ccd5995bf8",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/arithmetic-contracts-quotient-v6ekufcr",
+          "isolation_sha256": "c571aea52c7db32476f15608043fde2f8ee3fa3a2de37557da3cccde860c50e7",
+          "report_sha256": "9fd7c8f14e081222ca133b629df9fd8807ea9e1cebdb673f67502c442d6f4c1c",
+          "supervisor_sha256": "20f794111ab9dd94331aede1da9331bc7720a2711681ce31624db1f99528135d"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/arithmetic-contracts-quotient-6vuv630x",
+          "isolation_sha256": "c571aea52c7db32476f15608043fde2f8ee3fa3a2de37557da3cccde860c50e7",
+          "report_sha256": "9fd7c8f14e081222ca133b629df9fd8807ea9e1cebdb673f67502c442d6f4c1c",
+          "supervisor_sha256": "07464444ef6e57f49e018e469fdd2a5f76f0d09cbacaf128f362e4e338784b56"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_arithmetic.py": "75e6cf0a5926f6e8eaf734f7e002aab8a2e05866f2c89fb53a6ae1d68cf984e4",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "zero_divisor_cases_per_run": 600
+    },
+    "remainder": {
+      "cases_per_run": 7032,
+      "complete_returns_per_run": 7032,
+      "controls": {
+        "lost-R2-delay": {
+          "mutated_kernel_sha256": "6fa149ac8701c25006b9462ae781a424daf627cd60bb71ee9d3bbf636b7f5c92",
+          "nonbudget_rejections": 88,
+          "pc": 101270296,
+          "tested": 159
+        },
+        "lost-R4-restore": {
+          "mutated_kernel_sha256": "249596f563b3dacfb50e39839f7efc61fd848fe8203f30022a4514217dff317f",
+          "nonbudget_rejections": 88,
+          "pc": 101270290,
+          "tested": 159
+        },
+        "lost-first-DIV1": {
+          "mutated_kernel_sha256": "2aa67148e4de7e6097255aed33f75959c174381ead1f127202436b0aa0bcb455",
+          "nonbudget_rejections": 44,
+          "pc": 101270144,
+          "tested": 159
+        },
+        "lost-sign-adjust": {
+          "mutated_kernel_sha256": "5c08ac4d18a9e08fa16875af1ae90e5e9a07f011ded15ee8db90e8bc4597b254",
+          "nonbudget_rejections": 60,
+          "pc": 101270286,
+          "tested": 159
+        },
+        "lost-zero-error-store": {
+          "mutated_kernel_sha256": "e55f0336f135be074d409a754eb8957a5a0eb3debbd2d1a796519ae1ccb77b0a",
+          "nonbudget_rejections": 71,
+          "pc": 101270304,
+          "tested": 159
+        }
+      },
+      "instruction_counts": {
+        "9": 600,
+        "86": 2144,
+        "89": 4288
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "eff6e8e317c10d10e0435bddff15b6b49aa3ee2ac39176ee8fb57b817ce71b72",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/arithmetic-contracts-remainder-2iw2n2no",
+          "isolation_sha256": "f46bedaeb5c7202af74261eeeec8eca0eff1ed72594310ae866d6cdb6a5fee29",
+          "report_sha256": "8b3f581c24ff2c855f138247752a852d24bf95bcedc143a379ae6e93a8087a82",
+          "supervisor_sha256": "fa470769c935351a6480c49cedc188e14e993455d013728673f54c4568a122a7"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/arithmetic-contracts-remainder-vvwq40l_",
+          "isolation_sha256": "f46bedaeb5c7202af74261eeeec8eca0eff1ed72594310ae866d6cdb6a5fee29",
+          "report_sha256": "8b3f581c24ff2c855f138247752a852d24bf95bcedc143a379ae6e93a8087a82",
+          "supervisor_sha256": "106438a433f5612b21ff727c1dc154d0393a2afc7c056ed86fda3e8990283255"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_arithmetic.py": "75e6cf0a5926f6e8eaf734f7e002aab8a2e05866f2c89fb53a6ae1d68cf984e4",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "zero_divisor_cases_per_run": 600
+    }
+  },
+  "family_control_combinations": 13,
+  "guard": {
+    "accepted128_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "chosen_budget": 128,
+    "explicit_aliases": [],
+    "format_literal_island": "060A6DB2..060A6DC4 excluded from executable ranges",
+    "maximum_unchanged": 128
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "native_builds": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "shared_host_limit": 3,
+    "source_originals_dependencies_readonly": true,
+    "storage_reserve_bytes": 5435817984
+  },
+  "literals_sha256": {
+    "060941B8:4": "d8294b84b414bac54c99064e4d6f82be31453809f8464e713c4f9ece9be15203",
+    "060941BC:4": "8e74e8e7c96415fdf8293716e85b9f920d3aba3cf8d5a877e1a7d4495a4ec828",
+    "06094328:4": "d8294b84b414bac54c99064e4d6f82be31453809f8464e713c4f9ece9be15203",
+    "0609432C:4": "8e74e8e7c96415fdf8293716e85b9f920d3aba3cf8d5a877e1a7d4495a4ec828",
+    "060A6DB2:2": "61e26e040e497ec58601052bde329eebb48ad3b748c4d143eb0bc5016110cd4e",
+    "060A6E8E:2": "1d3ca788db08546310207f0e1d4b2c3728875e5f8957edec0f25e2f61526a819",
+    "060A6E90:2": "e545d395bb3fd971f91bf9a2b6722831df704efae6c1aa9da0989ed0970b77bb"
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "retained_preflight": {
+    "batch": "/home/dev/neptune-research-private/655/arithmetic-batch-87zatfsj/batch.json",
+    "original_game_bytes_executed": false,
+    "reason": "evidence volume below retained reserve; refused before admission/worker",
+    "recovery": "own clean worktree binary/font exclusions plus byte-verified hardlinks for completed own reports/states; every capture path/content retained; original limits unchanged; fresh outputs on root filesystem"
+  },
+  "schema": "neptune.original-library-arithmetic-derived.v1",
+  "scope_limits": [
+    "Constructed arguments/error-cell/stack; full32-bit input domain not exhaustively executed",
+    "Independent source/manual expectation compared with pinned interpreter; no physical Saturn or instruction-cycle timing claim",
+    "A681A/95E5A/89C8 service/context/callback/device dependencies, other modules and whole-program denominators remain open"
+  ],
+  "source_head": "7860d2a212f63e37b51beecda134d33dcc03ebdc",
+  "source_ranges_sha256": {
+    "0609410C..060941B6": "7edbc4e84d1c25875e75cb3e96aaddc9a0ea0d008a36b0d299dc3e4b0e27736a",
+    "06094268..06094326": "e52cea1f57269a5c384d4cb3b90c8860020ff475c15ff6b77aa9f68be5c334df",
+    "060A6DA6..060A6DB2": "45f5651d4102e2736c0d13857b27ff36b8baaa3c0d2faa89e98564a891bc9ab9",
+    "060A6DC4..060A6DE6": "0309c5a1062b008d736a2f3f3348be464c96ac48292a25d53cfd892984372113"
+  },
+  "total_complete_returns_per_run": 17136
+}

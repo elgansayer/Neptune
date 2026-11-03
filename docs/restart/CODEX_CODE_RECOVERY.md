@@ -103,6 +103,17 @@ release. The accepted128 guard remains unchanged, chosen budget64. Read the
 checkpoint. Continue full9410C/94268 arithmetic, A6DA6 format,A6FE0 context and
 A7F4E service dependencies toward A681A/96D74/95E5A. Do not count owned ISA/math
 development, prepared models or CI as additional original-game evidence.
+Setup PR691 subsequently merged72af05d with exact13-check/current-base
+acceptance. Original9410C quotient/94268 remainder/A6DA6 format now complete
+17,136 constructed cases per run twice, with identical paired reports and13
+non-budget mutation-control combinations. Source6705403 has9 owned/440 research
+tests. The unchanged128 guard, configured limits and private originals remain.
+The first storage preflight refusal executed zero original instructions; lossless
+own capture deduplication and clean research-worktree binary exclusions retained
+every capture path/hash and restored capacity without touching foreign data.
+Read [the arithmetic result](research/2026-11-03-library-arithmetic-contracts.md)
+and current655 checkpoint. Continue A6FE0/A7F4E through realA681A/96D74/95E5A;
+model-only development and static windows are not additional original executions.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
