@@ -490,3 +490,10 @@ No skipped/missing/failed applicable job is a pass. See the
 for qualified counts, construction limits, private input/result identities and
 actual resource budgets. Metadata and native tool smokes do not finish natural
 sound/game parity or continuous-factory acceptance.
+
+
+The [complete constructed command10 probe](../../docs/restart/research/2026-11-03-original-command10.md)
+reuses this qualified ABI8 generation and private inputs; it introduces no tool
+preparation recipe or fresh-native requirement. Its original comparisons still
+require shared admission, bounded offline/read-only execution, hidden broker/auth
+and reserve checks. Preparation non-applicability is not original-call acceptance.
