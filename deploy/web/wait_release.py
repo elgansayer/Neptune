@@ -31,7 +31,8 @@ def main():
     last_error = 'No response'
     while time.monotonic() < deadline:
         request = urllib.request.Request(args.origin.rstrip('/') + '/release.json?revision=' + args.revision,
-                                         headers={'Cache-Control': 'no-cache', 'Accept': 'application/json'})
+                                         headers={'Cache-Control': 'no-cache', 'Accept': 'application/json',
+                                                  'User-Agent': 'NeptuneRelease/1.0'})
         try:
             with urllib.request.urlopen(request, timeout=min(10, max(0.1, deadline - time.monotonic()))) as response:
                 if response.headers.get_content_type() != 'application/json':
