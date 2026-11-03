@@ -190,3 +190,29 @@ distinct poll timeout/error and outer caller-return branches, then adjacent
 resident kernel functions and other original code-bearing modules. Preserve all
 empty/overflow diagnostics, owners and configured limits. The all-original-code
 programme remains active and incomplete.
+
+
+## Original graphics checkpoint extraction
+
+The already retained frame-1800 original USA boot checkpoint
+`/home/dev/neptune-research-private/707/reference-window-frame1200-1800/capture/checkpoint.json`
+was adapted with the pinned state parser and unchanged USA kernel witness. The
+private capture is `.../707/gfx-boot1800-001/`; its `manifest.json` has SHA-256
+`83fa692325cf6d6acfb476689263af4f1eda96acc2613ae10f50b2d0939f103e`, and its
+normalized 512 KiB VDP1 VRAM is SHA-256
+`eee37e0e12cc152b70d9821f8282db8c626c85a0af5e379634c75e548c93b1a7`. The
+adapter reported `original-code-span-matched`; capture metadata binds frame
+1800, the input lock, core, VDP2 state and VRAM hashes. This reuses an actual
+previously executed checkpoint; it is not a newly executed gameplay frame.
+
+A bounded 32-byte-aligned scan found a valid RGB555 sprite command at VDP1 VRAM
+offset `0x60`. The first attempted offset `0x80` was not a sprite command and
+was correctly rejected. Lossless export at `0x60` produced a 320x160 RGB555
+native pattern from source offset `0x8000`, 102400 bytes, plus preview. The
+private export manifest SHA-256 is
+`ac4c6ad81b3365143f77a5178220152fbec65bf511a7224ea87f0fd496b1898e`; preview
+SHA-256 is `d2ead4170c02e23ca434c067183aa55d687a66568a3f024a45ab170540693187`.
+It visibly contains original scene art, but is not yet semantically identified
+or palette/composition validated. This is one extracted pattern, not complete
+asset recovery. The all-code objective remains primary; asset extraction and
+other scenes remain open.
