@@ -124,6 +124,13 @@ original execution. Arithmetic PR695 is now accepted at a3b765e after all15
 current-base checks, including the web owner696 repair. Retain its original
 browser failure/stale-base receipts. Publish dependent pool698 and composed699
 through their own exact-head/current-base gates;655 stays open.
+Pool PR698 is now accepted atbc0b8e2 with all15 current-base checks. Composed
+A681A/96D74 original results retain3,344 complete returns/run twice and12
+semantic controls; [PR699](https://github.com/elgansayer/Neptune-Bomberman/pull/699)
+carries that separate tested evidence and now targets main. Next95E5A source
+c31655e has8 owned/469 research tests and a guarded original batch in progress;
+inspect the current655 checkpoint and manifest before resuming. Do not count
+prepared models or partial runs as completed whole-function/programme recovery.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The

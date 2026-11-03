@@ -1,0 +1,301 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-eef51aac2f7d8e50d3a736a2aaf8761961d08a292d49cfd7c2b3c172e14aaa8f",
+    "files": 79,
+    "source_head": "29d7bdb474f459d415eb84c4e6baab42233feae7",
+    "source_manifest_sha256": "eef51aac2f7d8e50d3a736a2aaf8761961d08a292d49cfd7c2b3c172e14aaa8f"
+  },
+  "batch": "/home/dev/neptune-research-private/655/record-batch-db1wg3j_/batch.json",
+  "batch_manifest_sha256": "0abb285493aa55b82b10f02e82496111f22692eb84588eefddd4fa270812a1cb",
+  "complete_returns_per_run": 3344,
+  "contracts": {
+    "caller": "96D74 executes realA5EEC/A5F22/A5F2E atslot+108 and actualA681A atslot+12, then complete zero-return failure branch; slotfirst12bytes and childfield48 preserved",
+    "context": "actualA6FE0/945B4/A77E0 full first-pool-exhaustion returns0; partial context fields remain; source record/pools untouched",
+    "effective_length": "recordword4 unless recordflagbit128; then 2048*trunc_signed32(((length+2047)mod2^32)/2048) modulo2^32, through actual9410C and MUL.L",
+    "header": "offset0=index,4=recordword0,8=effective length,12..15=recordbytes8..11,16=format,20=((effective_length+2047)mod2^32)>>11,24=padding",
+    "padding": "0 if originalA6DA6 format result0, else(-effective_length)&2047; actualtwo94268 calls execute for nonzero format",
+    "record_arguments": "A681A R4=96-byte object,R5=nonnull12-byte record,R6=index; first24-byte pool entirely nonzero",
+    "returns": "A681A returns0, restoresR9..R14/PR/SP with actualR14 delay; fullSR/PC/MAC checked; MACL=effective length only for flag128, otherwise preserved"
+  },
+  "cpu": "sh2",
+  "families": {
+    "caller-failure": {
+      "archives_byte_identical": true,
+      "cases_per_run": 1672,
+      "complete_returns_per_run": 1672,
+      "controls": {
+        "lost-context-state52": {
+          "mutated_kernel_sha256": "d53420e626e586990e68001c35b7b2323eae9ce877b22f63d6ba94fc2edb8069",
+          "nonbudget_rejections": 95,
+          "pc": 101347316,
+          "tested": 95
+        },
+        "lost-flag-copy": {
+          "mutated_kernel_sha256": "a4e4c11ed0219fdb208aa8b6ef2268faa298a9b7589661579781e1e7f2edbcac",
+          "nonbudget_rejections": 95,
+          "pc": 101270980,
+          "tested": 95
+        },
+        "lost-format-store": {
+          "mutated_kernel_sha256": "7ff5c352dbba670a565699afeb8404626435d8bd3a6dbdba5a0147d37034bbca",
+          "nonbudget_rejections": 95,
+          "pc": 101345412,
+          "tested": 95
+        },
+        "lost-length-store": {
+          "mutated_kernel_sha256": "2d69c37b321f6f5d6eef3f62367a941cf84b4731d12d452910663b8e112d7414",
+          "nonbudget_rejections": 95,
+          "pc": 101345388,
+          "tested": 95
+        },
+        "lost-padding-store": {
+          "mutated_kernel_sha256": "97044e027a5035ed461219b255230eb5ada172f490fc340c399e56341c647942",
+          "nonbudget_rejections": 84,
+          "pc": 101345482,
+          "tested": 95
+        },
+        "lost-root-R14-delay": {
+          "mutated_kernel_sha256": "88400a6490e34b1f746d5b9d6e540a782682f9e35a439a1e3dd821ce935d7bfa",
+          "nonbudget_rejections": 95,
+          "pc": 101281200,
+          "tested": 95
+        }
+      },
+      "instruction_counts": {
+        "407": 136,
+        "493": 136,
+        "581": 18,
+        "584": 298,
+        "586": 36,
+        "587": 12,
+        "588": 18,
+        "589": 212,
+        "591": 106,
+        "592": 24,
+        "594": 12,
+        "667": 84,
+        "670": 316,
+        "672": 42,
+        "675": 158,
+        "677": 64
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "7279e1fecb7e1a6d5abbd91ed06c9ab57e5d6c6efeae88bad602fe24485f1bed",
+      "runs": [
+        {
+          "archive_bytes": 500000,
+          "archive_index_sha256": "913263a35dbea926b1603d4d5a9a1b96cae144c885c9861c1428d90e7cc4a9a5",
+          "archive_sha256": "acfbf045f868788415d0cd36406b71b314d069b89a84134ca628cc39745fe394",
+          "directory": "/home/dev/neptune-research-private/655/record-contracts-caller-failure-gsedrw91",
+          "isolation_sha256": "d485a206929b2148a899a5de37abb9e2b94ddd8e20065bb95384a9f76bb57236",
+          "supervisor_sha256": "29e04cf624af8ed2a5373c7cc8589e329aba0d54ffdd096ec2c24343a31fad1c",
+          "uncompressed_bytes": 27612811,
+          "uncompressed_report_sha256": "601e92ae6090beddbdf8c835b6818beda622c442ee20f5fd095d15e0d24b0ba0"
+        },
+        {
+          "archive_bytes": 500000,
+          "archive_index_sha256": "913263a35dbea926b1603d4d5a9a1b96cae144c885c9861c1428d90e7cc4a9a5",
+          "archive_sha256": "acfbf045f868788415d0cd36406b71b314d069b89a84134ca628cc39745fe394",
+          "directory": "/home/dev/neptune-research-private/655/record-contracts-caller-failure-r7rqre_w",
+          "isolation_sha256": "d485a206929b2148a899a5de37abb9e2b94ddd8e20065bb95384a9f76bb57236",
+          "supervisor_sha256": "159ba9d8603cf2db10cf30d766bc790b8768a87f89870fe7e60e0d508113b15c",
+          "uncompressed_bytes": 27612811,
+          "uncompressed_report_sha256": "601e92ae6090beddbdf8c835b6818beda622c442ee20f5fd095d15e0d24b0ba0"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "06094282",
+        "last_trace_pc": "06094280",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_arithmetic.py": "75e6cf0a5926f6e8eaf734f7e002aab8a2e05866f2c89fb53a6ae1d68cf984e4",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "probe_library_record_setup.py": "dd6b922c6a53c7976c7e43fd67dfc61e1345ace8b8040af7fb45ef3c1f99f759",
+        "probe_library_setup.py": "888b2db30136a245c71a0672dfa43cb44f50f3ab3df61b21ee46dae751e838e4",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    },
+    "record-failure": {
+      "archives_byte_identical": true,
+      "cases_per_run": 1672,
+      "complete_returns_per_run": 1672,
+      "controls": {
+        "lost-context-state52": {
+          "mutated_kernel_sha256": "d53420e626e586990e68001c35b7b2323eae9ce877b22f63d6ba94fc2edb8069",
+          "nonbudget_rejections": 95,
+          "pc": 101347316,
+          "tested": 95
+        },
+        "lost-flag-copy": {
+          "mutated_kernel_sha256": "a4e4c11ed0219fdb208aa8b6ef2268faa298a9b7589661579781e1e7f2edbcac",
+          "nonbudget_rejections": 95,
+          "pc": 101270980,
+          "tested": 95
+        },
+        "lost-format-store": {
+          "mutated_kernel_sha256": "7ff5c352dbba670a565699afeb8404626435d8bd3a6dbdba5a0147d37034bbca",
+          "nonbudget_rejections": 95,
+          "pc": 101345412,
+          "tested": 95
+        },
+        "lost-length-store": {
+          "mutated_kernel_sha256": "2d69c37b321f6f5d6eef3f62367a941cf84b4731d12d452910663b8e112d7414",
+          "nonbudget_rejections": 95,
+          "pc": 101345388,
+          "tested": 95
+        },
+        "lost-padding-store": {
+          "mutated_kernel_sha256": "97044e027a5035ed461219b255230eb5ada172f490fc340c399e56341c647942",
+          "nonbudget_rejections": 84,
+          "pc": 101345482,
+          "tested": 95
+        },
+        "lost-record-R14-delay": {
+          "mutated_kernel_sha256": "6f325f3ad6397e64eb93fc8f38bbc003a510d140e6f4c3eb30c21f444c08152f",
+          "nonbudget_rejections": 95,
+          "pc": 101345536,
+          "tested": 95
+        }
+      },
+      "instruction_counts": {
+        "346": 136,
+        "432": 136,
+        "520": 18,
+        "523": 298,
+        "525": 36,
+        "526": 12,
+        "527": 18,
+        "528": 212,
+        "530": 106,
+        "531": 24,
+        "533": 12,
+        "606": 84,
+        "609": 316,
+        "611": 42,
+        "614": 158,
+        "616": 64
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "310d4d2b7099aa75f23783ae9fd4e774606bcf77c3c2830e2b418bd407883da9",
+      "runs": [
+        {
+          "archive_bytes": 419276,
+          "archive_index_sha256": "851f3f383206491456fcdc547f5a07058b86405f1777fbe813b7dd411d1d50eb",
+          "archive_sha256": "16dbf287a9e2da4fa1fd18d034d5bad34edbab9fdb2b0c468fb914ddc7a3978f",
+          "directory": "/home/dev/neptune-research-private/655/record-contracts-record-failure-4_7jdvk9",
+          "isolation_sha256": "ee7d9038994d0bd7fd47523c10336d4235c14d56494946c0b3dbd8b8c61ebe89",
+          "supervisor_sha256": "c51540e5cbbbd874e335c84b23f443529a73b5dfab12447250a895c74a6cf429",
+          "uncompressed_bytes": 24647510,
+          "uncompressed_report_sha256": "2cd44a7c3ac88300a21778751ac4a7cc05fb98d78ef6bc6e3f3de24b86d2a155"
+        },
+        {
+          "archive_bytes": 419276,
+          "archive_index_sha256": "851f3f383206491456fcdc547f5a07058b86405f1777fbe813b7dd411d1d50eb",
+          "archive_sha256": "16dbf287a9e2da4fa1fd18d034d5bad34edbab9fdb2b0c468fb914ddc7a3978f",
+          "directory": "/home/dev/neptune-research-private/655/record-contracts-record-failure-g7o23r39",
+          "isolation_sha256": "ee7d9038994d0bd7fd47523c10336d4235c14d56494946c0b3dbd8b8c61ebe89",
+          "supervisor_sha256": "ab62ced0ad647cf04c73cd9b9fbc7d931f8c6b78867f330cd522269072ca094c",
+          "uncompressed_bytes": 24647510,
+          "uncompressed_report_sha256": "2cd44a7c3ac88300a21778751ac4a7cc05fb98d78ef6bc6e3f3de24b86d2a155"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "060942EC",
+        "last_trace_pc": "060942EA",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_arithmetic.py": "75e6cf0a5926f6e8eaf734f7e002aab8a2e05866f2c89fb53a6ae1d68cf984e4",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "probe_library_record_setup.py": "dd6b922c6a53c7976c7e43fd67dfc61e1345ace8b8040af7fb45ef3c1f99f759",
+        "probe_library_setup.py": "888b2db30136a245c71a0672dfa43cb44f50f3ab3df61b21ee46dae751e838e4",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    }
+  },
+  "family_control_combinations": 12,
+  "guard": {
+    "aliases": [],
+    "chosen_budget": 768,
+    "derived_sha256": "d744a4235e5df6709adaf66a272abdc56b8ee2bd0413f2980aac5ae5fba11c21",
+    "literal_islands_excluded": [
+      "060A689E..060A68B8",
+      "060A6DB2..060A6DC4"
+    ],
+    "old128_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "old128_unchanged": true,
+    "separate_accepted_cap": 1024
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "native_builds": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "shared_host_limit": 3,
+    "source_originals_dependencies_readonly": true,
+    "storage_reserve_bytes": 5435817984
+  },
+  "literal_sha256": {
+    "060A68A2:2": "e545d395bb3fd971f91bf9a2b6722831df704efae6c1aa9da0989ed0970b77bb",
+    "060A68A4:2": "ee6e7ccff2d1602988459661ab48e03593f277edc8ec0bf704a7c48b15e2b5b0",
+    "060A68B4:4": "fc2f99fd7a7a820dae6653990622d051658f05d6d65af1c374c40d868b2122d4",
+    "060A6A5C:4": "ec87e72ce36821507e9303129610a8f41fad7d82dd4d13acf5a2a2743ead46e0",
+    "060A6A60:4": "3bd2d3d9e952b02a6dbc879f87461202c94ad03efdf271d103bc1380609b0dac"
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "schema": "neptune.original-library-record-setup-derived.v1",
+  "scope_limits": [
+    "Only nonnull constructed records and first-pool-exhausted state; not all A681A/96D74 paths",
+    "All nested selected callees execute actual originals; no external return, BIOS or device model substituted",
+    "Null record/A7F4E, successfulA6FE0 services, full95E5A/89C8, other modules and denominators remain open",
+    "No natural interior traffic, physical Saturn timing, gameplay or Godot parity claim"
+  ],
+  "source_head": "29d7bdb474f459d415eb84c4e6baab42233feae7",
+  "source_ranges_sha256": {
+    "06096D74..06096DB2": "9d3d364052df6ca853c5b8029cd8e0a03ab8a6ba9e672890e7ace7ed1107dcd6",
+    "060A681A..060A689E": "672befcfaef1a0718bcd2456cca0e9c7612de808dcffba766c716a8c0d90a432",
+    "060A68B8..060A6902": "c0fab2024e8df1d6618c320db3818326a6142716285b8cae0db9054d1a38f9de"
+  },
+  "storage": {
+    "helper_sha256": "3762b603363c7d94cc09ee760cb3341921ba6e054e36112ce0e9198bc6f033f4",
+    "mode": "verified lossless gzip of completed raw reports; exact raw/archive hashes retained; no executed source/CPU/input change",
+    "owned_archive_roundtrip": "owned-report-archive-iny8u22m; zero original instruction execution",
+    "recovery": "own completed609 parser worktree clean/no live cwd; verified tracked addon/font exclusions with restore receipt; no foreign data or limits changed",
+    "restore_command": "gzip -dk report.json.gz",
+    "retained_deferrals": "last caller repeat deferred twice for storage before admission/CPU; prior three successful jobs retained; only final selection resumed"
+  }
+}

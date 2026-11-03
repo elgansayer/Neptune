@@ -2,12 +2,75 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-context-pools-655`, workspace
+`research/saturn-library-record-setup-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Next95E5A original job is running
+
+Sourcec31655eb810e25566ecc2851f9572bada08b4f4d is pushed/tested:8 focused
+owned tests and469 full research tests pass. Frozen80-file adapter:
+`.../655/adapter-eab34896f873a421c1359c42a82ffa28c70f5b61415b40db72c341edf3479018`.
+Original batch:`/home/dev/neptune-research-private/655/open-batch-t5qbt9rr/batch.json`,
+tool5341. At this checkpoint it is running with partial original results; inspect
+manifest/current process before any restart. Only if terminal resource/admission-
+deferred, resume the incomplete selections with:
+
+```sh
+unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
+  /home/dev/neptune-evidence/code655-20261102/run-open-batch.py \
+  --manifest /home/dev/neptune-research-private/655/open-batch-t5qbt9rr/batch.json
+```
+
+Selections are1,744 each12/24-stride composition,1,344 invalid-index and1,050
+no-slot cases per run. The constructed record-table count is24; that is not a
+universal file-count limit. Successful context services/null record/callbacks
+remain outside this returning-error corpus. Chosen1024 cap is the existing
+accepted profile; old128 guard unchanged. Owned predicted maximum991/990 and
+report sizing under64MiB are development checks, not original totals. Actual
+reports must pass before publication. All prior original batches are terminal
+success; earlier running/deferred sections below are retained history.
+
+## Current composed record/caller result: four original jobs retained
+
+A681A and96D74 now each complete1,672 selected nonnull-record/first-pool-
+exhaustion cases twice, with byte-identical raw reports and lossless archive
+pairs.3,344 complete returns per run,12 non-budget controls. Read
+[the result](../research/2026-11-03-library-record-setup-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-record-setup-contracts.json).
+Actual instruction ranges346–616/407–677; original128 refusals retained,
+accepted128 guard unchanged, separate1024 profile/local768 budget. All nested
+arithmetic/format/context/copy/pool/initializer calls execute originals.
+
+Source29d7bdb474f459d415eb84c4e6baab42233feae7 was tested/pushed before jobs:
+7 owned/455 research tests. Later docs/base changes preserve production/test
+bytes. Frozen79-file adaptereef51aac; completed manifest:
+`/home/dev/neptune-research-private/655/record-batch-db1wg3j_/batch.json`.
+Tools33343 completed final repeat after storage admission resumed. Do not rerun
+completed originals as new progress. Reports are`report.json.gz`, with raw/archive
+hashes, exact roundtrip and `gzip -dk report.json.gz` restore; raw/report sources
+and every prior deferral remain retained. Own completed609 addon/font exclusions
+restore root headroom; receipt`.../code655-20261102/storage-owned-parser609-exclusions-001.json`.
+No active/foreign worktree or configured limit changed. All own leases released.
+
+Pool698 mergedbc0b8e2330ca85cc4166b9b249752dbbfd6bf4d3 at11:41:05 UTC,
+tested840abe2 againsta3b765e. All15 checks and seven exact non-applicability
+proofs pass; merge parent/tree verified in`.../code655-20261102/pr698-acceptance-verified.json`.
+Arithmetic695 is already accepted. Record/caller699 now targets main; its exact
+original-tested production/test bytes remain unchanged. All applicable exact-
+head/current-base checks remain required before merge. No bypass.
+
+Next inspect complete95E5A's real selection/indexing/96D74/96C60 graph; recover
+an actual composed returning error path before claiming broader successful open
+semantics. Static source is`.../655/positive-library-source-leads.json` (bounded
+linear windows, literal classification still required). Fresh source inspection
+command remains`python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-open.py`.
+Null record/A7F4E, successful context services, full89C8, BIOS/callbacks, root/
+task cycles and all-module denominators stay open. The programme remains active.
+Older running/deferred snapshots below are historical; current manifest is terminal.
 
 ## Arithmetic695 accepted; dependent pool publication continues
 
