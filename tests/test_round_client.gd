@@ -141,3 +141,14 @@ func test_previous_round_hurry_callbacks_and_camera_tween_are_cancelled() -> Var
 	return assert_true(not old_tween.is_running() and view.camera.offset == Vector2.ZERO
 		and view.hurry_falling_blocks.is_empty() and view.hurry_pending_shadows.is_empty(),
 		"Retired warning callbacks and shake tweens cannot populate the fresh round")
+
+func test_demo_footer_and_participant_labels_fit_the_native_viewport() -> Variant:
+	view.hud.add_player_face("42", "Bot", 0, {"type": "bot", "personality": "BALANCED"})
+	await get_tree().process_frame
+	var controls: Rect2 = view.hud.controls_label.get_global_rect()
+	var status: Rect2 = view.hud.round_status.get_global_rect()
+	var face = view.hud.player_face_slots[view.hud.player_face_mapping["42"]].get_node("FaceViewport")
+	var badge: Label = face.get_node("BotBadge")
+	return assert_true(view.hud.controls_visible() and viewport.get_visible_rect().encloses(status)
+		and not status.intersects(controls) and face.get_global_rect().encloses(badge.get_global_rect()),
+		"Focus/build/bot labels must fit 320x224: controls=%s status=%s face=%s badge=%s" % [controls, status, face.get_global_rect(), badge.get_global_rect()])

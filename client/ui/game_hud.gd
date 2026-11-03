@@ -211,12 +211,13 @@ func _ready():
 	controls_label.anchor_top = 1.0
 	controls_label.anchor_right = 1.0
 	controls_label.anchor_bottom = 1.0
-	controls_label.offset_top = -10
+	controls_label.offset_top = -20
+	controls_label.offset_bottom = -2
 	controls_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	controls_label.add_theme_font_size_override("font_size", 6)
 	controls_label.add_theme_color_override("font_outline_color", Color.BLACK)
 	controls_label.add_theme_constant_override("outline_size", 2)
-	controls_label.text = "Click arena to focus · Arrows move · Space bomb · Shift/E action"
+	controls_label.text = "Click to focus · Arrows move · Space bomb · Shift/E action"
 	controls_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(controls_label)
 	round_status = Label.new()
@@ -224,8 +225,8 @@ func _ready():
 	round_status.anchor_top = 1.0
 	round_status.anchor_right = 1.0
 	round_status.anchor_bottom = 1.0
-	round_status.offset_top = -20
-	round_status.offset_bottom = -10
+	round_status.offset_top = -40
+	round_status.offset_bottom = -22
 	round_status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	round_status.add_theme_font_size_override("font_size", 6)
 	round_status.add_theme_color_override("font_outline_color", Color.BLACK)
@@ -235,7 +236,7 @@ func _ready():
 	round_status.text = "Casual development demo · Waiting"
 
 func controls_visible() -> bool:
-	return is_instance_valid(controls_label) and controls_label.visible
+	return is_instance_valid(controls_label) and controls_label.visible and get_viewport().get_visible_rect().encloses(controls_label.get_global_rect())
 
 func _new_round_tween() -> Tween:
 	var tween := create_tween()
@@ -382,7 +383,7 @@ func _update_participant_label(peer_id: String, username: String, participant: D
 		badge = Label.new()
 		badge.name = "BotBadge"
 		badge.text = "BOT"
-		badge.position = Vector2(0, 11)
+		badge.position = Vector2(0, 4)
 		badge.add_theme_font_size_override("font_size", 6)
 		badge.add_theme_color_override("font_outline_color", Color.BLACK)
 		badge.add_theme_constant_override("outline_size", 1)
@@ -394,7 +395,7 @@ func _update_participant_label(peer_id: String, username: String, participant: D
 	if human_badge == null:
 		human_badge = Label.new()
 		human_badge.name = "HumanBadge"
-		human_badge.position = Vector2(0, 11)
+		human_badge.position = Vector2(0, 4)
 		human_badge.add_theme_font_size_override("font_size", 6)
 		human_badge.add_theme_color_override("font_outline_color", Color.BLACK)
 		human_badge.add_theme_constant_override("outline_size", 1)

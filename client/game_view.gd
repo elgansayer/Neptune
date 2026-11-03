@@ -1763,7 +1763,7 @@ func _connect_arena_framing() -> void:
 func _update_arena_framing() -> void:
 	if arena_pixel_size == Vector2.ZERO or not is_instance_valid(camera): return
 	var top_inset: float = hud.get_node("TopBar").offset_bottom if is_instance_valid(hud) else 24.0
-	var layout: Dictionary = preload("res://client/arena_framing.gd").fit(arena_pixel_size, get_viewport().get_visible_rect().size - Vector2(0, 20), top_inset)
+	var layout: Dictionary = preload("res://client/arena_framing.gd").fit(arena_pixel_size, get_viewport().get_visible_rect().size - Vector2(0, 42), top_inset)
 	if not layout.accepted: return # A minimized/zero-size viewport cannot be framed yet.
 	camera.position = layout.position
 	camera.zoom = layout.zoom
