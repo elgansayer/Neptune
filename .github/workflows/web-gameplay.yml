@@ -34,7 +34,9 @@ jobs:
           python3 -c 'import json; print("GODOT_BINARY=" + json.load(open("tools/godot/toolchain.json"))["binary_name"])' >> "$GITHUB_ENV"
       - name: Verify transport and release provenance contracts
         run: |
+          node deploy/web/smoke.test.mjs
           python3 deploy/web/test_release.py
+          "$RUNNER_TEMP/godot/$GODOT_BINARY" --headless --path . --editor --import --quit
           bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_web_transport
       - name: Export the same real client and dedicated server
         run: python3 deploy/web/export.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY"

@@ -13,7 +13,7 @@ const HazardPredictorScript = preload("res://shared/ai/perception/hazard_predict
 const OpponentTrackerScript = preload("res://shared/ai/perception/opponent_tracker.gd")
 const BombPlannerScript = preload("res://shared/ai/perception/bomb_planner.gd")
 const BombSafetyCheckerScript = preload("res://shared/ai/planning/bomb_safety_checker.gd")
-const POLICY_VERSION := "neptune-heuristic-v2"
+const POLICY_VERSION := "neptune-heuristic-v3"
 const POLICY_STATE_FORMAT := "neptune.bot-policy-rng/1"
 
 # Each participant owns its stream. Neither provisioning nor decisions consume

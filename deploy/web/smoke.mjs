@@ -1,11 +1,34 @@
 import assert from 'node:assert/strict';
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
-import {chromium} from 'playwright';
+import {pathToFileURL} from 'node:url';
 import {STATE_MARKER, parseDiagnostic, position, distance, checkRelease, checkConfiguration, checkRoster, checkFreshCountdown, checkCompleteCycle} from './smoke_evidence.mjs';
 
+export function consoleFailure(type, message) {
+  return type === 'error' || /(?:^|\n)\s*(?:(?:SCRIPT|USER|SHADER) )?ERROR:|Parse Error:|Failed to load script|Failed to instantiate|Aborted\(|query.?flush|flushing queries/.test(message);
+}
+
+// Every real smoke first checks the actual engine diagnostic that the previous
+// gate accepted as healthy. Warnings and ordinary log text remain diagnostics.
+export function verifyErrorContract() {
+  for (const [type, message, expected] of [
+    ['error', "ERROR: Animation 'default' doesn't exist.", true],
+    ['log', "ERROR: Animation 'default' doesn't exist.\n   at: get_frame_count (scene/resources/sprite_frames.cpp:71)", true],
+    ['log', 'SCRIPT ERROR: Invalid access to property playing', true],
+    ['error', 'WebAssembly exception', true],
+    ['log', '[Client] Connected to server!', false],
+    ['warning', 'WebGL fallback selected', false],
+    ['log', 'Native assertions: 0 errors', false],
+  ]) {
+    if (consoleFailure(type, message) !== expected) throw new Error(`Browser error detector rejected its contract: ${message}`);
+  }
+}
+
+export async function runSmoke({browserType, evidenceDirectory} = {}) {
+verifyErrorContract();
+const chromium = browserType || (await import('playwright')).chromium;
 const origin = new URL(process.env.SMOKE_BASE_URL || 'http://127.0.0.1:8765').origin;
-const evidenceDir = path.resolve(process.env.SMOKE_EVIDENCE_DIR || 'web-smoke-evidence');
+const evidenceDir = path.resolve(evidenceDirectory || process.env.SMOKE_EVIDENCE_DIR || 'web-smoke-evidence');
 const timeout = Number(process.env.SMOKE_TIMEOUT_MS || '240000');
 const expectedDuration = Number(process.env.SMOKE_EXPECT_DURATION || '20');
 const expectedCountdown = Number(process.env.SMOKE_EXPECT_COUNTDOWN || '1');
@@ -73,7 +96,7 @@ async function openVisitor(name, context) {
     if (line.includes('[Client] Connected to server!')) visitor.connectedCount++;
     if (line.includes('[Client] Authentication successful!')) visitor.authCount++;
     if (line.includes('[GameView] Map rendered')) visitor.mapCount++;
-    if (/SCRIPT ERROR:|Parse Error:|Failed to load script|Failed to instantiate|Aborted\(|ERROR:|query.?flush|flushing queries/i.test(line)) errors.push(`[${name}] ${line}`);
+    if (consoleFailure(message.type(), line)) errors.push(`[${name}] ${line}`);
     if (line.startsWith(STATE_MARKER)) {
       try {
         const diagnostic = parseDiagnostic(line);
@@ -227,8 +250,7 @@ try {
   console.log(`PASS: ${mode} browser acceptance${mode === 'full' ? ', two full rounds on one authenticated connection' : ', matching public client/server identity'}.`);
 } catch (error) {
   report.error = String(error.stack || error);
-  process.exitCode = 1;
-  console.error(report.error);
+  throw error;
 } finally {
   for (const visitor of visitors) {
     if (!visitor.page.isClosed()) await screenshot(visitor, 'final').catch(error => errors.push(String(error)));
@@ -238,10 +260,17 @@ try {
     report.visits.push(summary);
     await writeFile(path.join(evidenceDir, `${visitor.name}.log`), visitor.logs.join('\n') + '\n');
     await writeFile(path.join(evidenceDir, `${visitor.name}-states.json`), JSON.stringify(visitor.snapshots, null, 2) + '\n');
+    await visitor.page.close();
   }
   report.failures = errors;
-  if (errors.length) { report.passing = false; process.exitCode = 1; }
+  if (errors.length) { report.passing = false; }
   report.wall_seconds = (Date.now() - started) / 1000;
   await writeFile(path.join(evidenceDir, 'report.json'), JSON.stringify(report, null, 2) + '\n');
   if (browser) await browser.close();
+}
+
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  runSmoke().catch(error => { console.error(error); process.exitCode = 1; });
 }

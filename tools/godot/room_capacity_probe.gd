@@ -17,6 +17,9 @@ var snapshots := {}
 var extra_started := false
 var bots_requested := false
 var refused := false
+var spectator_authenticated := false
+var spectator_map := false
+var spectator_snapshot := false
 var finished := false
 var policy_identity := {}
 var auto_fill := false
@@ -121,10 +124,16 @@ func content_received(index: int, message: Dictionary) -> void:
 
 func auth_received(index: int, data: Dictionary) -> void:
 	if index == humans:
-		if data.get("success", true) or data.get("error", "") != "room_full":
-			fail("extra transport peer was not clearly refused at room admission")
-			return
-		refused = true
+		if bots > 0:
+			if not data.get("success", false) or not peers[index].api.get_unique_id() in data.get("room", {}).get("spectators", []):
+				fail("late human did not receive explicit capacity-safe spectator admission")
+				return
+			spectator_authenticated = true
+		else:
+			if data.get("success", true) or data.get("error", "") != "room_full":
+				fail("extra transport peer was not clearly refused at room admission")
+				return
+			refused = true
 	else:
 		if not data.get("success", false) or data.get("room", {}).get("seats", 0) != seats:
 			fail("supported human auth/admission failed")
@@ -141,7 +150,7 @@ func auth_received(index: int, data: Dictionary) -> void:
 	_check_complete()
 
 func map_received(index: int, data: Dictionary) -> void:
-	if index == humans:
+	if index == humans and bots == 0:
 		fail("refused peer received a map")
 		return
 	if data.get("room", {}).get("seats", 0) != seats or data.get("map_width", 0) != expected_width or data.get("map_height", 0) != expected_height or data.get("map_config", {}).get("render_geometry", false) != true:
@@ -169,12 +178,24 @@ func map_received(index: int, data: Dictionary) -> void:
 	elif data.get("map_config", {}).has("lock") or data.get("map_config", {}).has("lock_sha256"):
 		fail("legacy room unexpectedly acquired a pack lock")
 		return
-	maps[index] = true
+	if index == humans:
+		spectator_map = true
+	else:
+		maps[index] = true
 	_check_complete()
 
 func state_received(index: int, state: Dictionary) -> void:
 	if index == humans:
-		fail("refused peer received gameplay state")
+		if bots == 0:
+			fail("refused peer received gameplay state")
+			return
+		var id: int = peers[index].api.get_unique_id()
+		if state.get("round", {}).get("phase", "") != "active": return
+		if not id in state.get("room", {}).get("spectators", []) or state.get("p", {}).has(str(id)) or state.get("p", {}).size() != seats:
+			fail("late spectator changed the live roster or lacked explicit waiting metadata")
+			return
+		spectator_snapshot = true
+		_check_complete()
 		return
 	if not expected_content.is_empty() and peers[index].download.receipt().get("state", "") != "ready":
 		fail("registered arena state arrived before content readiness")
@@ -183,7 +204,7 @@ func state_received(index: int, state: Dictionary) -> void:
 	var capacity: Dictionary = state.get("room", {})
 	if roster.size() != seats or not state.get("a", false): return # Require the real countdown/round start.
 	var policy := {"bot_policy": capacity.get("bot_policy", ""), "bot_policy_seed": capacity.get("bot_policy_seed", "")}
-	if policy.bot_policy != "neptune-heuristic-v2" or not str(policy.bot_policy_seed).is_valid_int() or (not policy_identity.is_empty() and policy_identity != policy):
+	if policy.bot_policy != "neptune-heuristic-v3" or not str(policy.bot_policy_seed).is_valid_int() or (not policy_identity.is_empty() and policy_identity != policy):
 		fail("missing/inconsistent policy identity for repeatable evidence")
 		return
 	policy_identity = policy
@@ -219,9 +240,10 @@ func _start_extra() -> void:
 		_create_peer(humans)
 
 func _check_complete() -> void:
-	if finished or not refused or accepted.size() != humans or maps.size() != humans or snapshots.size() != humans: return
+	var extra_verified := (spectator_authenticated and spectator_map and spectator_snapshot) if bots > 0 else refused
+	if finished or not extra_verified or accepted.size() != humans or maps.size() != humans or snapshots.size() != humans: return
 	finished = true
-	var receipt := {"seats": seats, "humans": humans, "bots": bots, "preset_limit": preset, "protocol_limit": 12, "accepted": accepted.size(), "refused": 1, "snapshots": snapshots.size(), "maps": maps.size(), "active": true}
+	var receipt := {"seats": seats, "humans": humans, "bots": bots, "preset_limit": preset, "protocol_limit": 12, "accepted": accepted.size(), "refused": 0 if bots > 0 else 1, "spectators": 1 if bots > 0 else 0, "snapshots": snapshots.size(), "maps": maps.size(), "active": true}
 	receipt.merge(policy_identity)
 	if auto_fill: receipt["auto_fill"] = true
 	if not expected_content.is_empty():
