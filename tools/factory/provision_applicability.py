@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SPEC = importlib.util.spec_from_file_location("neptune_provision_checkout", ROOT / "tools/merge_gate/run.py")
 GATE = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(GATE)
-CHILDREN = ("xvfb", "ocr", "call-trace", "context-trace", "init-trace", "ghidra", "scsp-dsp")
+CHILDREN = ("xvfb", "ocr", "call-trace", "context-trace", "init-trace", "command-trace", "ghidra", "scsp-dsp")
 EXACT = {"tools/godot/install.py", "tools/godot/toolchain.json", ".github/workflows/tool-provisioning.yml",
          "tools/saturn_lab/m68k_scsp_dsp.py", "tools/saturn_lab/m68k_scsp_state.py",
          "tools/saturn_lab/m68k_reset_capacity.py", "tools/saturn_lab/tests/test_m68k_reset_capacity.py",

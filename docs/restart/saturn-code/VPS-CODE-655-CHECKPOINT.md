@@ -2,12 +2,45 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-cd-command-packing-655`, workspace
+`research/saturn-command-observer-707`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Native command observer707 in progress; not installed/ready
+
+Commandpacking PR706 mergedf734628 at tested7685ddb against9be7645; all15 exact-
+head/currentbase checks and mergeparent/tree verified. Retain the first validation
+HTTP503 before any merge request; freshprefixpr706-current2 completed validation.
+All originalpacking reports remain terminal. Do not restart them as new progress.
+
+Bounded [707](https://github.com/elgansayer/Neptune-Bomberman/issues/707) now owns
+a separate native command observer, claim through15:30UTC3November. Preserve
+NLSND703/PR705 and all other owners. The native observer is **not ready**: its
+source patch component, separate GPL header, ctypes ABI, and compiled fixtures are
+implemented. Read
+[the concrete protocol/remaining work](../../../tools/saturn_lab/COMMAND_TRACING.md).
+10 focused/39 related/221 factory tests pass, including compiled header ABI fences and
+compiled address/bus/CPU/RAM/WB nonmutation fixtures. Exact-head provisioning run41648585340 and native checks/aggregate run41648585631 passed; job125960585219 built the matched core, passed no-media ABI/fence smoke and first-build/reuse identity. Verified transfer receipt is`/home/dev/neptune-research-private/707/ci-preparation-001/command-trace-transfer-verification.json`; binary SHA256`3a95acef8cc6e20297d907a9658f6ae6c067f8ae1a72dbb84a594b742938184a`. Two guarded local cache reuses passed with that hash. CI received no original media/BIOS. Logs are
+`/home/dev/neptune-evidence/code655-20261102/command-observer-provision-focused-001.log`
+and`/home/dev/neptune-evidence/code655-20261102/command-observer-provision-factory-002.log`.
+A retained GPL source-archive proof restores all six
+original source-pin hashes before applying the component with an owned nonobserver
+header: `.../707/patcher-pin-_bb68yfc/report.json`. The separate generation was built in CI and reused locally. A guarded reference-only continuation from the accepted frame1200 seed reached frame1800 and produced a verified full-kernel-resident checkpoint. Two identical command-observer runs then executed600 original frames from frame1800 and overflowed the128-record buffer at129 actual CD word transfers before a complete root. Their frame/audio/video/final-state hashes match; the retained repeat has111 reads and17 writes, including46 reads of25890008 returning0BC1 at060958EC. Two reference and two observer-disabled600-frame controls with the same eight-frame Start pulse match all those enabled-run frame/audio/video/final-state hashes. Evidence is under`/home/dev/neptune-research-private/707/`; this repeatable polling lead is not an accepted root. Adjacent leaves060958EC (`mov.w @r3,r0; rts; extu.w r0,r0`) and06095904 (`mov.l literal,r3; rts; mov.w r4,@r3`) were executed through the pinned interpreter against original kernel bytes and actually observed words. The read returns each of three observed values unchanged; the write emits each of four observed values to25890008 in its real return delay slot; both take3 instructions. Probe:`tools/saturn_lab/probe_cd_status_word.py`; private report:`/home/dev/neptune-research-private/707/cd-word-helper-output-004/report.json` (SHA256`d62a6313cb293a43ec83d9684281543911004c6f37a0cf87c9f91bee297a1c0e`). The larger poll helper06095A84 also executes successfully on all three exact eight-read sequences recorded at06095A94 withR4=1: seven reads without bit0, then the eighth with bit0 set. It returns0 and writes the final status word throughR5 in77 interpreter steps. The original call at06095A3E is a BSR/delay-slot pair to06095A84, and the actual PR at the read site is06095A42. At060959DE, actual transfer records retainPR=060959AE; original code at060959AA calls060959CA, linking natural execution from service entry06095992 through060959CA to the poll helper. The outer service return is not yet observed. The adjacent packet writer06095AB4 also replays three retained four-word transfer sequences through13 original SH-2 instructions; its BSR at06095A36 matches recordedPR06095A3A. Source words are reconstructed from captured output transfers, so this does not independently validate the caller buffer. The adjacent helper06095ACE executes in three natural call contexts: it reads25890018/1C/20/24, stores each word in order through observedR4, returns the fourth, and takes12 interpreter steps; its callsite06095A4E and recordedPR06095A52 match. The timeout path and wider device meaning remain open. The fixed profile2 path now has two reference controls, two observer-disabled controls and two enabled original runs, all from frame1800 with the same eight-frame Start pulse and each executing600 original frames. Reference/disabled controls succeeded; all six runs have identical frame (`56f7f663f4c9efad393cee9edaad972cd04bd6c792aa4a3d9434db284730a5cc`), video (`0939dcfcc86c6faae671b242573817477a7015acf574a5d829e5d1153fbe5e6e`), audio (`eafc18cc2ff4305e000446326d97be2a3b884cf8b114ec1ecf794d626a3b393d`) and final-state (`207d3e58bbb24ad85791c131a91b3903ee0419242ff2988e446715fd0e252802`) hashes. Both enabled profile2 traces overflow at transfer129 with128 records and no root; their complete record arrays and status are identical. The normalized profile1/profile2 comparison also matches all128 records and these four outputs, so changing profiles does not avoid this polling overflow. Guarded profile2 receipt `/home/dev/neptune-research-private/707/profile2-validation/supervisor.json` (SHA256`c67e34cfd5f8cfc8703db34dcf958e629a1c77d4f1054932241a61cd31fb046b`); original captures and the pairwise profile1/profile2 receipt remain under `/home/dev/neptune-research-private/707/`. No command root was accepted. ABI v2 now keeps the native cap at128 storage slots while losslessly encoding consecutive transfer records when sequence, timestamp and register values follow exact integer steps and every other captured field is identical; otherwise a new slot is required. The exported trace carries the repeat count, timestamp step and per-register steps, so each original event is reconstructible and counted. A check of the retained original capture found40 consecutive reads (sequences88–127) at060958EC/25890008, all0BC1, with timestamp step33 and only R14 changing by+1; this group can occupy one slot and preserve all40 observations. Private evidence:`/home/dev/neptune-research-private/707/lossless-repeat-candidate.json` (SHA256`3222b7f495d1273e1dc47db10ac2bf666ec8b02aa8a51cd30c10725012fc7be9`). A compiled owned C fixture covers the same timestamp/R14 progression, decoder reconstruction and unchanged128-slot overflow fence; the focused10-test suite passed. ABI v2 has not yet been rebuilt into a matched core or run against the game; exact-head CI and fresh original windows remain necessary.  Updated probe/report:`/home/dev/neptune-research-private/707/cd-word-helper-output-009/report.json` (SHA256`b92517d7748d515aa506a48b667afb4480b738a631a4a2cd9133da2a530642ad`). These CPU-only slices do not establish CD hardware behavior.
+
+The pinned core fuses load→compare→branch. Capturing only at the next dispatch
+could miss the immediate postload. The patcher observes the actualMemRead16 result
+afterWB_WRITE and actualMemWrite16 value after transfer, with one address evaluation,
+no secondbusaccess and byte-identical existing tripletfusion. The header retains the
+master prehook PC/opcode, fusedNOP continuity, source-call/return boundaries, and
+actual command/response snapshots with validity tags and a final source-witness recheck. Compiled fixtures do not yet
+validate these hooks inside the matched core. Next continue source/data recovery around060958EC and retain root-relevant transfers without dropping repeated polls or raising the configured128-record limit, then run freshreference/disabled/enabled original windows from the verified frame1800 seed, preserving all modes and repeats. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
+corebuild below configured preparation reserve. Exact inspection command:
+`python3 /home/dev/neptune-evidence/code655-20261102/check-command-patcher-pin.py`.
+It creates fresh private matched-source component proof, not originalexecution.
+655 and the all-original-code programme remain active and incomplete.
 
 ## Current command packing: eight original jobs retained, device transfer pending
 
@@ -728,6 +761,41 @@ unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
 Retain any real mismatch; broaden the closed-path contract and callback handoff
 without substituting callees, then recover95B04's actual BIOS/A6790/969E0 graph
 and89C8 through its real return. Do not rerun completed658 reports as new work.
+
+## 3 November command-service CPU replay and ABI v2 provisioning correction
+
+ABI v2 commit`74999fd` passed exact-head tests (run`41658156944`). Provisioning
+run`41658156759` built and loaded its matched-core ABI, then failed the post-build
+smoke because`provision.py` still expected ABI1/216-byte records. This was a
+stale validator expectation, not a compiler or ABI-fence failure. This source
+update requires ABI2/288-byte records and adds an owned regression check. The failed job's smoke
+log reported ABI2/288 bytes, capacity128 and424 witness words. Focused provisioning
+plus command-trace tests pass48 tests; fresh exact-head build/smoke is required
+before any ABI v2 game window. The failed job's retained artifact confirms the
+build and ABI probe completed, but does not contain a reusable native core.
+
+Using the existing ABI v1 actual transfer capture, a separate guarded CPU-only
+replay executed171 original SH-2 instructions from`060959CA` and returned to
+the captured caller PC`060959AE` withR0=0. It used the actual frame-1800
+checkpoint's`060FA8B8` word`0FD4`, original kernel hash
+`20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7`, and
+the captured call's status read, eight poll words, four register reads and five
+device writes. It reproduced the captured transfer order; this path left the
+shared word at`0F94`. The RTS-delay-slot stores execute at`06095908` and
+`06095ACC`; the transfer trace records the preceding RTS addresses`06095906`
+and`06095ACA`. The four packet source words were reconstructed from actual
+device writes, and two saved caller registers were preservation canaries. This
+does not independently validate natural caller-buffer construction, the timeout
+path, the complete outer root, device timing or gameplay meaning.
+
+Private report`/home/dev/neptune-research-private/707/cd-service-replay-001/report.json`
+(SHA256`b6c09a61b08cb59887e4c91d9e9f2a23565d719adc3d60ef29524851e12c0979`),
+worker`.../worker.py` (SHA256`eb0219fa3a4671d3a07b0857691a35b7039843661be485348ec3fd81661b0678`)
+and supervisor receipt`.../supervisor.json` preserve inputs, actual execution
+path, transfer comparison and limits. The host lease was released; no provider
+calls or local core builds were made. Continue the distinct service timeout,
+error and outer-return branches, then adjacent kernel and module code. The
+all-code programme stays active and incomplete.
 
 Then continue623A's complete body/roles, other libraries, slave/loader/overlays,
 remaining68000/DSP and regional network/menu/save code. Native caches/history
