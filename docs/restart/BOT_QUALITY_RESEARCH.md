@@ -342,3 +342,69 @@ intelligence defects. Complete moving/special-hazard prediction, tuned difficult
 team/objective roles,
 human replacement, held-out promotion and load/experience gates above remain
 separate work until their stated evidence exists.
+
+## First merged release evidence: 3 November
+
+[PR #690](https://github.com/elgansayer/Neptune-Bomberman/pull/690) merged as
+`e6bc43980e197e1b14db6be3ff12b29c1b9a4438`. Its tested head was
+`bcd488f3c821796a2162b587bf9e07e97b827be0`, with candidate merge
+`0f0743860e0cdb96145c00bf65a6f40e946ab7a9` against
+`f46ad9d2896619bec943969e59c5d973a6c61cd3`.
+The [Neptune merge gate](https://github.com/elgansayer/Neptune-Bomberman/actions/runs/41604394029/job/125810520614)
+and [pinned installation check](https://github.com/elgansayer/Neptune-Bomberman/actions/runs/41604394033/job/125810652659)
+passed. The retained [gate artifact](https://github.com/elgansayer/Neptune-Bomberman/actions/runs/41604394029/artifacts/13215972901)
+has archive SHA-256
+`ac37ab082b0bb9f4a936c3c4c4de6e399931f85a8232bde436b4284a4bfa67d1`.
+
+The pinned native suite executed **555 passing assertions across 62 files**.
+Two eight-second native liveness scenarios recorded:
+
+| Participants / seed | Observed behavior | Manager p95 / p99 |
+| --- | --- | --- |
+| 4 / 46271 | All bots changed tiles; 2,030 accepted moves, 4 accepted bombs, no refused commands | 2.227 / 5.719 ms |
+| 12 / 81439 | All bots changed tiles; 5,944 accepted moves, 18 accepted bombs, no refused commands | 8.483 / 21.672 ms |
+
+These are actual short-match receipts, not held-out strength or AAA-quality
+certification. Twelve-seat tail latency remains above the proposed target.
+The receipts do not certify complete match lifecycle, special mechanics,
+browser presentation or Saturn fidelity.
+
+## Follow-up: production Power Glove execution
+
+The first merged release still had a production throw mismatch: attack setup
+predicted up to nine straight tiles, while native throws start two tiles away,
+bounce forward over occupied destinations and can wrap. Its multi-tick
+place/pickup sequence could also lose control to the immediate survival branch
+before pickup, and the ordinary attack gate could not resume a carried bomb.
+
+The follow-up extracts the existing deterministic waypoint builder into
+`shared/throw_trajectory.gd`, called by both `ServerBomb` and the public-state
+planner. It preserves authoritative movement, normal inventory, fuses, wrap
+ordering and bounce limits. The public flight envelope now covers the real
+interior of an initially wrapped arc: native physics interpolates that first
+arc, whereas only later long segments teleport. An exhausted bounce cap is
+an explicit policy refusal.
+
+The production tree faces through ordinary movement physics, then uses the
+same validated human commands to place, pick up and throw in one update.
+Preparation rechecks public terrain, actors, bombs, chain/fire intervals,
+every possible landing, actual escape speed and the facing step's swept body
+footprint. If pickup fails, a grounded escape was required before placing.
+If the final command is refused after pickup, a bounded, identity-specific
+recovery marker can release that same carried bomb. It cannot create another
+bomb or start an unrelated goal; a newly threatening external hazard keeps
+the normal survival branch in control. Ordinary new goals retain the strategic
+reaction wait. Only normal bombs have a supported offensive throw preview;
+other bomb types remain explicit refusals.
+
+`test_bot_power_throw` exercises the real production tree, actual native
+facing/landing physics and command receipts, including collection of the real
+glove item. Its twelve cases cover normal two-tile throws, wall/player bounces,
+initial wrapping, active fire, a normally timed native chain source, pickup
+refusal, final-throw recovery, genuine emergency preemption, recovery expiry,
+unsafe off-center facing and exhausted trajectories. All twelve assertions
+passed in the local Godot 4.6.3 diagnostic. The supervisor still correctly
+rejects that environment because the SQLite addon requires Godot 4.7; this is
+not a passing pinned-engine merge gate. Exact candidate CI must establish the
+follow-up's final release status. These finite scenarios do not predict an
+adversary's future movement or certify every throw interaction.

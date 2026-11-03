@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=68 format=3 uid="uid://chqxceh757yg0"]
+[gd_resource type="BehaviorTree" load_steps=69 format=3 uid="uid://chqxceh757yg0"]
 
 [ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://ai/tasks/conditions/bt_is_in_danger.gd" id="1_danger"]
 [ext_resource type="Script" uid="uid://3btukveudf74" path="res://ai/tasks/actions/bt_find_escape_route.gd" id="2_escape"]
@@ -257,9 +257,14 @@ children = [SubResource("BTAction_remote"), SubResource("BTSequence_attack"), Su
 custom_name = "Strategic Decision And Execution"
 children = [SubResource("BTAction_decision_wait"), SubResource("BTSelector_objectives")]
 
+[sub_resource type="BTAction" id="BTAction_throw_recovery"]
+custom_name = "Safely Complete An Already Carried Throw"
+script = ExtResource("18_throw_bomb")
+recovery_only = true
+
 [sub_resource type="BTDynamicSelector" id="BTSelector_root"]
 custom_name = "Immediate Hazard Reflex Before Strategic Goals"
-children = [SubResource("BTSelector_escape"), SubResource("BTSequence_intentional")]
+children = [SubResource("BTAction_throw_recovery"), SubResource("BTSelector_escape"), SubResource("BTSequence_intentional")]
 
 [sub_resource type="BTRepeatUntilFailure" id="BTRepeatUntilFailure_loop"]
 custom_name = "Continuous Loop"
