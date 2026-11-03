@@ -204,3 +204,13 @@ The AB78 caller path now composes its exact stack prologue and A164 call across
 31 additional constructed patterns, checking the frame at `0x060BDD7C`, its
 40-byte saved stack, and the A164 return boundary. Neither caller establishes
 natural task-switch behavior.
+
+Static follow-through also found a third caller at `0x0600AD26`: it derives a
+two-entry cache-through slot index from VBR, loads that frame pointer, and calls
+A164 with a 32-byte delay-slot advance. The bounded composed probe covers 31
+register patterns for each of two constructed VBR values, twice per case in
+paired reports, with two instruction mutation controls. The reports match at
+SHA-256 `573494700d714b29edbe46e31e19bd3ae54e3a5f9211a5fe7e2bb8e7feb16827`.
+The table contents, VBR values, task identity, and frame lifetime are
+constructed; natural task scheduling remains unproven. Failed harness attempts
+are retained in `execution-026` and `execution-027`.

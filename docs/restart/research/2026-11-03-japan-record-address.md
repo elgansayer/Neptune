@@ -312,6 +312,24 @@ These are constructed caller paths; natural task switching and context
 lifetime remain unresolved. The full research suite passes 526 tests, separate
 from original execution evidence.
 
+## Japanese AD34 VBR-selected context-save callsite
+
+The third original caller starts at `0x0600AD26`. It reads VBR, derives a
+one-bit index, loads a frame pointer from cache-through table `0x2600A020`, and
+calls A164. The JSR delay slot advances the selected frame pointer by 32 bytes.
+The exact target literal at `0x0600AD8C` points to A164.
+
+`tools/saturn_lab/probe_japan_vbr_context_save.py` composes this caller and
+callee for 31 constructed register patterns at each of two VBR values, twice
+per case in byte-identical paired reports. It verifies the selected frame,
+ordered stores, table/literal read sequence, and return boundary, and includes
+two instruction mutation controls. The paired execution-028 report hash is
+`573494700d714b29edbe46e31e19bd3ae54e3a5f9211a5fe7e2bb8e7feb16827`.
+Attempts in execution-026 and execution-027 are preserved; they exposed a
+harness backing-buffer mistake and its diagnostic, not a game-code result.
+The VBR values, table entries, and frame/task identity are constructed. This
+does not prove natural scheduler reachability or context lifetime.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed
