@@ -2,12 +2,39 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-name-655`, workspace
+`research/saturn-library-record-access-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current record access: six original jobs retained
+
+Name PR701 mergedd6cf5b3 at tested5a8bf9b against9da6098; all15 exact-head/
+currentbase checks and mergeparent/tree verified. Record-access source6fc5954
+(7 focused/484 research tests) then executed13,936 complete returns/run twice:
+949E0 move4,896,95D34 namepointer3,400,95D9C descriptorcopy5,640. All three
+full raw/archive pairs match;11 non-budget controls reject. Read
+[the result](../research/2026-11-03-library-record-access-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-record-access-contracts.json).
+Execution headdab7e591f01a6a8431c2dc33f66fc1afbf391bfd, frozen82-file adapter
+`.../655/adapter-73d6ea9d9c05d97d9119f15a695d9b38f394a0c4fd73c912f1c08a10023429ae`.
+Terminal manifest:`/home/dev/neptune-research-private/655/record-access-batch-zsy5mro9/batch.json`.
+All own leases released. Do not restart/recount completed jobs. Old128 refusals
+remain, existing1024 profile unchanged, selected512 budget, maximum302 observed.
+
+Next source command: `python3 /home/dev/neptune-evidence/code655-20261102/inspect-context-services.py`.
+It creates fresh private static source windows, zero original execution. Latest
+release/service windows:`.../655/context-release-source-z5zlbit0/source.json` and
+`.../655/context-service-source-67bfvhmj/source.json`. A6FE0 second-pool failure
+calls actualA780A, whose positive release reaches A7BB0/A85E4/A805C and additional
+services. Recover explicit fields/closed paths and actual pending boundaries;
+do not replace callbacks/CD/services with returns or flat device RAM. Pure
+A7C20/A81FE and A7BB0 closed errors are further eligible dependencies. Preserve
+all owners, originals, captures, tool generations and configured host/storage/
+provider limits. Publish record access through its own exact-head/currentbase
+gates;655 and all-original-code programme remain active and incomplete.
 
 ## Current name result: all eight corrected original jobs retained
 
