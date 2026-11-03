@@ -56,7 +56,7 @@ func score_get_powerup(
 	pathfinder.path_start_pos = bot_pos
 	pathfinder.bot_speed_msec_per_tile = 200.0
 	
-	var path = pathfinder.get_point_path(bot_pos, powerup_pos)
+	var path = pathfinder.get_timed_point_path(bot_pos, powerup_pos)
 	if path.is_empty():
 		return 0.0  # No path = impossible
 	

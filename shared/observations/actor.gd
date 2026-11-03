@@ -53,6 +53,9 @@ func set_input(x: Variant, y: Variant) -> Dictionary:
 func request_bomb_placement() -> Dictionary:
 	return _submit({"action": "place_bomb"})
 
+func request_remote_detonation() -> Dictionary:
+	return _submit({"action": "detonate_remote"})
+
 func can_place_bomb() -> bool:
 	return _record != null and not _record.is_dead and not _record.placement_disabled and _record.bombs_placed < _record.max_bombs
 

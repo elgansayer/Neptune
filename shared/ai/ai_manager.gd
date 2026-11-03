@@ -13,6 +13,12 @@ const OpponentProfileScript = preload("res://shared/ai/intel/opponent_profile.gd
 # Global threat data: Vector2i -> time in milliseconds when tile becomes lethal
 # If tile not in dictionary, it's safe (threat time = INF)
 var threat_matrix: Dictionary = {}
+var hazard_intervals: Dictionary = {}
+var forecast_uncertainty: Array = []
+const MAX_FORECAST_CACHE_ENTRIES := 128
+var _forecast_query_cache: Dictionary = {}
+var _forecast_query_revision := -1
+var _forecast_query_time := -INF
 
 # Time-aware pathfinder (configured once at setup)
 var pathfinder: DangerAwareAStarScript = null
@@ -31,6 +37,9 @@ var _map_width: int = 0
 var _map_height: int = 0
 
 func configure(game_instance: Node, grid_sampler, map_width: int, map_height: int) -> void:
+	_forecast_query_cache.clear()
+	_forecast_query_revision = -1
+	_forecast_query_time = -INF
 	_game_instance = game_instance
 	_grid_sampler = grid_sampler
 	_map_width = map_width
@@ -65,7 +74,10 @@ func _initialize_pathfinder_walls() -> void:
 ## Update ThreatMatrix based on current bomb state
 ## Called every physics frame
 func refresh_threat_matrix(current_time_msec: float) -> void:
-	threat_matrix = BombForecast.build(_game_instance, _grid_sampler, current_time_msec)
+	var timeline := BombForecast.build_timeline(_game_instance, _grid_sampler, current_time_msec)
+	threat_matrix = timeline.deadlines
+	hazard_intervals = timeline.intervals
+	forecast_uncertainty = timeline.uncertain
 
 ## Get all tiles affected by bomb blast
 func _get_blast_tiles(center: Vector2i, range_val: int, debug_log: bool = false) -> Array[Vector2i]:
@@ -120,10 +132,44 @@ func _find_bomb_at_tile(tile: Vector2i):
 ## Simulate ThreatMatrix with hypothetical bomb placement
 ## Used for "what-if" planning before committing to bomb placement
 func simulate_threat_matrix(hypothetical_bomb_pos: Vector2i, bomb_range: int, current_time_msec: float, fuse_lower_bound: float = Constants.BOMB_TIMER) -> Dictionary:
+	var cached: bool = _prepare_forecast_query_cache(current_time_msec)
+	var key := ["hypothetical", hypothetical_bomb_pos, bomb_range, fuse_lower_bound]
+	if cached and _forecast_query_cache.has(key):
+		return _forecast_query_cache[key].duplicate(true)
+	var result := _build_hypothetical_forecast(hypothetical_bomb_pos, bomb_range, current_time_msec, fuse_lower_bound)
+	if cached and _forecast_query_cache.size() < MAX_FORECAST_CACHE_ENTRIES:
+		_forecast_query_cache[key] = result
+		return result.duplicate(true)
+	return result
+
+func _build_hypothetical_forecast(hypothetical_bomb_pos: Vector2i, bomb_range: int, current_time_msec: float, fuse_lower_bound: float) -> Dictionary:
 	return BombForecast.build(_game_instance, _grid_sampler, current_time_msec, {
 		"cell": hypothetical_bomb_pos, "range": bomb_range,
 		"fuse_lower_bound": fuse_lower_bound, "elapsed": 0.0
 	})
+
+func get_placement_capability(cell: Vector2i, current_time_msec: float) -> Dictionary:
+	var cached: bool = _prepare_forecast_query_cache(current_time_msec)
+	var key := ["capability", cell]
+	if cached and _forecast_query_cache.has(key):
+		return _forecast_query_cache[key].duplicate(true)
+	var result: Dictionary = BombForecast.placement_capability(_game_instance, _grid_sampler, cell)
+	if cached and _forecast_query_cache.size() < MAX_FORECAST_CACHE_ENTRIES:
+		_forecast_query_cache[key] = result
+		return result.duplicate(true)
+	return result
+
+func _prepare_forecast_query_cache(current_time_msec: float) -> bool:
+	# A raw authority or legacy fixture has no revision contract: calculate
+	# afresh rather than infer validity from a frozen simulation timestamp.
+	if _game_instance == null or not _game_instance.has_method("get_observation_revision") or not is_finite(current_time_msec):
+		return false
+	var revision: int = _game_instance.get_observation_revision()
+	if revision != _forecast_query_revision or current_time_msec != _forecast_query_time:
+		_forecast_query_cache.clear()
+		_forecast_query_revision = revision
+		_forecast_query_time = current_time_msec
+	return true
 
 ## Get current ThreatMatrix (for external queries)
 func get_current_threat_matrix() -> Dictionary:
@@ -145,34 +191,38 @@ func get_opponent_profile(player_id: int, player_name: String = "") -> OpponentP
 func update_opponent_intel(bot_positions: Dictionary, all_players: Dictionary, delta: float) -> void:
 	# bot_positions: bot_id -> Vector2i position
 	# all_players: player_id -> player_node
-	for bot_id in bot_positions:
-		var bot_pos: Vector2i = bot_positions[bot_id]
-		
-		for player_id in all_players:
-			if player_id == bot_id:
-				continue # Don't profile self
-			
-			var player = all_players[player_id]
-			if not is_instance_valid(player) or player.is_dead:
+	# Profiles are shared, so observe each player once, independently of bot
+	# count/order. Repeating the update per bot inflated spatial time and made
+	# the first observer overwrite the previous position before others used it.
+	var observer_ids: Array = bot_positions.keys()
+	observer_ids.sort()
+	for player_id in all_players:
+		var player = all_players[player_id]
+		if not is_instance_valid(player) or player.is_dead:
+			continue
+		var player_pos: Vector2i = player.get_tile_position()
+		var observer_pos := Vector2i.ZERO
+		var nearest_distance := INF
+		for bot_id in observer_ids:
+			if bot_id == player_id:
 				continue
-			
-			var profile := get_opponent_profile(player_id, player.player_name)
-			var player_pos: Vector2i = player.get_tile_position()
-			
-			# Update last seen
-			profile.last_seen_pos = player_pos
-			profile.last_seen_time = _game_instance.get_simulation_time_sec()
-			
-			# Calculate distance for aggression scoring
-			var dist_now := float(abs(bot_pos.x - player_pos.x) + abs(bot_pos.y - player_pos.y))
-			
-			# Update aggression based on distance change from last seen
-			var last_dist := float(abs(bot_pos.x - profile.last_seen_pos.x) + abs(bot_pos.y - profile.last_seen_pos.y))
-			profile.update_aggression(dist_now, last_dist, 0.05)
-			
-			# Update quadrant tracking
-			var quadrant := _get_quadrant(player_pos)
-			profile.update_quadrant_time(quadrant, delta)
+			var candidate: Vector2i = bot_positions[bot_id]
+			var distance := float(abs(candidate.x - player_pos.x) + abs(candidate.y - player_pos.y))
+			if distance < nearest_distance:
+				nearest_distance = distance
+				observer_pos = candidate
+		if nearest_distance == INF:
+			continue
+		var profile := get_opponent_profile(player_id, player.player_name)
+		if profile.has_observation:
+			# Use the same observer position for both measurements: our own
+			# motion cannot be mistaken for the opponent approaching/fleeing.
+			var previous_distance := float(abs(observer_pos.x - profile.last_seen_pos.x) + abs(observer_pos.y - profile.last_seen_pos.y))
+			profile.update_aggression(nearest_distance, previous_distance, 0.05)
+		profile.last_seen_pos = player_pos
+		profile.last_seen_time = _game_instance.get_simulation_time_sec()
+		profile.has_observation = true
+		profile.update_quadrant_time(_get_quadrant(player_pos), delta)
 
 ## Determine which map quadrant a position is in
 func _get_quadrant(pos: Vector2i) -> int:

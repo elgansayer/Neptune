@@ -38,11 +38,14 @@ by the legacy forecast's verbose output in #51 run 40855908555. Both the origina
 failure and artifacts are retained. Separate files prevent two writers corrupting
 the same log; the larger finite log cap does not change a gameplay assertion.
 
-The full native suite now has140 cases, including public-observation/privacy and
-twelve-controller probes. Its aggregate supervisor budget is300 seconds (330 for
-the containing subprocess), increased explicitly from240 after the expanded suite
-reached the final clock tests at that limit. Individual scenario durations,
-assertions and reference tolerances remain unchanged. Timeout still fails the gate.
+The expanded native suite includes public-observation/privacy, twelve-controller,
+real four/twelve-bot match, interval-waiting and ability scenarios. Its aggregate
+supervisor budget is360 seconds (390 for the containing subprocess). The new
+real-physics cohorts add sixteen active simulation seconds plus their setup and
+focused regressions. A 3 November diagnostic reached late temporal cases at the
+old300-second limit and correctly failed without a complete summary. This budget
+increase preserves every scenario duration, assertion, error check, output bound
+and reference tolerance. Timeout and incomplete evidence still fail the gate.
 
 ```sh
 python3 tools/merge_gate/check.py

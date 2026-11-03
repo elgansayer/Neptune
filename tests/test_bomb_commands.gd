@@ -96,14 +96,18 @@ func test_valid_control_keeps_real_capacity_and_collision_hooks() -> Variant:
 	return assert_true(actor.get_collision_exceptions().has(bomb), "Owner must retain the production overlap escape exception")
 
 func _plant_task() -> Dictionary:
+	# Give the policy a real farming objective and its production escape
+	# checker, so acceptance/refusal reaches the authoritative command boundary.
+	set_tile(8, 6, 2)
+	bot_manager.refresh_perception()
 	var board = ClassDB.instantiate("Blackboard")
 	board.set_var("player", actor)
 	board.set_var("game_instance", game_instance)
 	board.set_var("grid_sampler", bot_manager.grid_sampler)
-	board.set_var("bomb_safety_checker", null)
+	board.set_var("bomb_safety_checker", bot_manager.bomb_safety_checker)
 	board.set_var("opponent_tracker", null)
 	board.set_var("target_cell", actor.get_tile_position())
-	board.set_var("tactical_plan", "AGGRESSIVE_CHASE")
+	board.set_var("tactical_plan", "NONE")
 	board.set_var("last_bomb_placed_time", 123.0)
 	board.set_var("in_danger", false)
 	var task = preload("res://ai/tasks/actions/bt_place_bomb.gd").new()
@@ -122,6 +126,8 @@ func test_native_task_cannot_report_an_inactive_placement_as_success() -> Varian
 		return "Native task reported success although the inactive authority placed no bomb"
 	if _world_state() != before or fixture.board.get_var("last_bomb_placed_time") != 123.0 or fixture.board.get_var("in_danger"):
 		return "Rejected native planting fabricated plant time/escape state or mutated the world"
+	if fixture.board.get_var("last_bomb_rejection", "") != "match_inactive":
+		return "The real policy fixture never reached the authority's inactive-match refusal"
 	return true
 
 func test_native_policy_flags_cannot_disable_authority_capacity() -> Variant:
@@ -131,6 +137,8 @@ func test_native_policy_flags_cannot_disable_authority_capacity() -> Variant:
 	var status: int = fixture.task.execute(0.02)
 	if status != ClassDB.class_get_integer_constant("BT", "FAILURE") or _world_state() != before:
 		return "Native policy precheck flags bypassed authority capacity"
+	if fixture.board.get_var("last_bomb_rejection", "") != "capacity":
+		return "The real policy fixture never reached the authority's capacity refusal"
 	return true
 
 func test_valid_placement_returns_the_actual_created_id() -> Variant:

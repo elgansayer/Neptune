@@ -65,10 +65,10 @@ static func capture(game: Node) -> Dictionary:
 		var data := {"kind": "bomb", "bomb_id": str(id), "owner_id": state.owner_id,
 			"position": xy(bomb.position), "velocity": xy(bomb.velocity), "range": state.range,
 			"state": state.state, "carrier_id": state.carrier_id,
-			"fuse_lower_bound": state.fuse_lower_bound, "elapsed": state.timer,
+			"fuse_lower_bound": state.fuse_lower_bound, "fuse_upper_bound": state.fuse_upper_bound, "elapsed": state.timer,
 			"exploded": bomb.has_exploded, "kick_direction": xy(bomb.kick_direction),
 			"collision_layer": bomb.collision_layer, "overlap_exemptions": exemptions,
-			"bomb_type": bomb.bomb_type}
+			"bomb_type": bomb.bomb_type, "blast_cells": state.blast_cells, "flight": state.flight}
 		out.bombs[str(id)] = data
 		if bomb.bomb_state == ServerBomb.BombState.THROWN:
 			out.projectiles[str(id)] = {"kind": "bomb_projectile", "id": str(id), "position": data.position.duplicate(), "collision_layer": bomb.collision_layer}

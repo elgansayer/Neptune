@@ -3,6 +3,7 @@ extends BTCondition
 class_name BTIsSafeToAttack
 
 const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+const MovementTiming = preload("res://shared/ai/movement_timing.gd")
 
 ## Validates that attacking won't trap the bot
 ## Checks escape routes and safety margins before committing to offensive action
@@ -22,6 +23,12 @@ func _tick(_delta: float) -> int:
 	var personality_config = blackboard.get_var("personality_config")
 	
 	if not player or not grid_sampler or not ai_manager or not bomb_safety_checker:
+		return FAILURE
+	# Do not run hypothetical planting searches when no offensive command can
+	# consume them. Contact kicks and a carried glove bomb remain available.
+	if not player.can_place_bomb() and not player.has_bomb_kicker \
+			and not (player.has_power_glove and player.is_carrying_bomb()):
+		blackboard.set_var("was_safe_to_attack", false)
 		return FAILURE
 	
 	var player_tile = player.get_tile_position()
@@ -69,7 +76,8 @@ func _tick(_delta: float) -> int:
 	
 	# Check if we can safely place a bomb here
 	var bomb_range = player.get_effective_bomb_range() if player else 2
-	var bot_speed = 5.0 # tiles per second
+	var bot_speed := MovementTiming.tiles_per_second(player)
+	if bot_speed <= 0.0: return FAILURE
 	
 	var safety_check = bomb_safety_checker.check_plant_safety_detailed(
 		player_tile,
@@ -77,17 +85,15 @@ func _tick(_delta: float) -> int:
 		bomb_range,
 		bot_speed,
 		current_time_msec,
-		false, player.get_bomb_fuse_lower_bound()
+		false, player.get_bomb_fuse_lower_bound(), player
 	)
 	
-	if not safety_check.get("safe", false):
-		var margin_ms = safety_check.get("margin_ms", 0.0)
-		var margin_sec = margin_ms / 1000.0
-		
-		if margin_sec < effective_margin * 1000.0:
-			# print("[IsSafeToAttack] ✗ UNSAFE: Escape margin too small (", margin_sec, "s < ", effective_margin, "s)")
-			blackboard.set_var("was_safe_to_attack", false)
-			return FAILURE
+	# Reachability is a hard constraint, and finite margins use one unit.
+	# Previously successful checks skipped the margin completely, while failed
+	# checks compared seconds against milliseconds.
+	if not safety_check.get("safe", false) or float(safety_check.get("margin_ms", 0.0)) < effective_margin * 1000.0:
+		blackboard.set_var("was_safe_to_attack", false)
+		return FAILURE
 	
 	# Count current escape routes
 	var escape_routes = _count_escape_routes(player_tile, grid_sampler, ai_manager)

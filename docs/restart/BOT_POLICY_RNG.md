@@ -12,7 +12,9 @@ empty roster. It does not reseed the global gameplay RNG.
 
 The manager provisions one RandomNumberGenerator per participant into its native
 controller blackboard as `policy_rng`, with policy version
-`neptune-heuristic-rng-v1`. Stream seeds use the first 60 SHA-256 bits of
+`neptune-heuristic-v2`. The version includes the temporal routing, objective
+selection and strategic reaction changes; it deliberately rejects v1 snapshots.
+Stream seeds use the first 60 SHA-256 bits of
 `<policy-version>:<decimal-match-seed>:<decimal-peer-id>`. Reproduction requires the
 same stable participant IDs as well as the same match seed, policy and engine.
 A second participant's planning never advances the first participant's stream.

@@ -53,6 +53,87 @@ func test_finished_empty_room_admits_a_new_visitor_with_fresh_authority() -> Var
 		and current.countdown_time > 0.0,
 		"A later visitor must get a clean joinable authority, not round_finished")
 
+func test_hosted_default_fill_reaches_authority_and_respects_two_seat_capacity() -> Variant:
+	game_instance.end_match()
+	var options := preload("res://shared/runtime_config.gd").parse_arguments([
+		"--room-map=res://maps/neptune_standard.json", "--room-seats=2"], "res://main_server.tscn")
+	var prepared: Dictionary = server._prepare_shared_game(options)
+	if not prepared.accepted: return "Default hosted fill could not prepare a two-seat room"
+	var current = server.active_games["shared_game"]
+	current.set_physics_process(false)
+	current.bot_manager.set_physics_process(false)
+	var admitted: Dictionary = current.add_player(901, "DefaultFillVisitor")
+	if not admitted.accepted or not current.start_room_countdown().accepted:
+		return "Default hosted fill could not admit/start its human"
+	current._physics_process(1.1)
+	var state: Dictionary = current.get_room_capacity()
+	var bot_id: int = current.bot_manager.next_bot_peer_id + 1
+	return assert_true(current.match_active and state.seats == 2 and state.humans == 1
+		and state.bots == 1 and state.bot_fill.target == 2 and state.bot_fill.applied
+		and state.bot_fill.personality == "BALANCED"
+		and is_instance_valid(current.bot_manager.get_bot_controller(bot_id)),
+		"Hosted defaults must provision a real bot after resolving the selected map/room capacity")
+
+func test_hosted_omitted_options_create_three_controllers_on_the_default_map() -> Variant:
+	game_instance.end_match()
+	var prepared: Dictionary = server._prepare_shared_game()
+	if not prepared.accepted: return "The actual default map could not prepare its casual room"
+	var current = server.active_games["shared_game"]
+	current.set_physics_process(false)
+	current.bot_manager.set_physics_process(false)
+	if not current.add_player(901, "DefaultVisitor").accepted or not current.start_room_countdown().accepted:
+		return "The default casual room could not admit/start its human"
+	current._physics_process(1.1)
+	var state: Dictionary = current.get_room_capacity()
+	if not current.match_active or state.humans != 1 or state.bots != 3 or state.bot_fill.target != 4:
+		return "Omitted hosted options did not fill the actual default map to four participants"
+	for peer_id in current.players:
+		if peer_id >= 0: continue
+		var controller = current.bot_manager.get_bot_controller(peer_id)
+		if not is_instance_valid(controller) or current.players[peer_id].bot_personality != "BALANCED":
+			return "A default bot lacks its real BALANCED policy controller"
+	return true
+
+func test_hosted_explicit_zero_remains_human_only_after_authority_configuration() -> Variant:
+	game_instance.end_match()
+	var options := preload("res://shared/runtime_config.gd").parse_arguments([
+		"--room-fill-to=0"], "res://main_server.tscn")
+	var prepared: Dictionary = server._prepare_shared_game(options)
+	if not prepared.accepted: return "Explicit zero could not prepare its room"
+	var current = server.active_games["shared_game"]
+	current.set_physics_process(false)
+	current.bot_manager.set_physics_process(false)
+	if not current.add_player(901, "HumanOnlyVisitor").accepted or not current.start_room_countdown().accepted:
+		return "The explicit human-only room could not start"
+	current._physics_process(1.1)
+	var state: Dictionary = current.get_room_capacity()
+	return assert_true(current.match_active and state.humans == 1 and state.bots == 0
+		and state.bot_fill.target == 0 and current.bot_manager._bot_players.is_empty(),
+		"Explicit zero must reach the authority without falling back to four")
+
+func test_fresh_room_after_a_finished_bot_round_applies_the_default_again() -> Variant:
+	game_instance.end_match()
+	if not server._prepare_shared_game().accepted: return "First default room could not prepare"
+	var first = server.active_games["shared_game"]
+	first.set_physics_process(false)
+	first.bot_manager.set_physics_process(false)
+	if not first.add_player(901, "FirstVisitor").accepted or not first.start_room_countdown().accepted:
+		return "First default room could not start"
+	first._physics_process(1.1)
+	if first.get_room_capacity().bots != 3: return "First default round did not spawn its three bots"
+	first.end_match()
+	if not server._prepare_shared_game().accepted: return "Next default room could not prepare"
+	var next = server.active_games["shared_game"]
+	next.set_physics_process(false)
+	next.bot_manager.set_physics_process(false)
+	if not next.add_player(902, "NextVisitor").accepted or not next.start_room_countdown().accepted:
+		return "Next default room could not start"
+	next._physics_process(1.1)
+	var state: Dictionary = next.get_room_capacity()
+	return assert_true(next.get_instance_id() != first.get_instance_id() and next.match_active
+		and state.humans == 1 and state.bots == 3 and state.bot_fill.applied,
+		"A completed bot roster must not suppress filling in the next fresh authority")
+
 func test_live_room_is_never_replaced_by_a_new_join() -> Variant:
 	var old_id := game_instance.get_instance_id()
 	var prepared: Dictionary = server._prepare_shared_game()

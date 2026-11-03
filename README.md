@@ -40,6 +40,12 @@ godot --headless --path . res://main_server.tscn
 godot --path .
 ```
 
+Casual rooms fill to four total participants when the first player's countdown
+finishes, using server-controlled `BALANCED` bots for empty seats. The default
+is capped by the selected room/map capacity. Start the server with user argument
+`--room-fill-to=0` for human-only play, or `--room-fill-to=12` with a compatible
+twelve-seat map to choose a larger target. See [room bot filling](docs/restart/ROOM_BOT_FILL.md).
+
 The main scene selects the runtime role independently of the display driver.
 The login scene is a client, `main_server.tscn` is a server, and the bot runner is
 a test process. Explicit automation overrides use user arguments, for example:
