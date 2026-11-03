@@ -9,6 +9,31 @@ the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
 
+## Next95E5A original job is running
+
+Sourcec31655eb810e25566ecc2851f9572bada08b4f4d is pushed/tested:8 focused
+owned tests and469 full research tests pass. Frozen80-file adapter:
+`.../655/adapter-eab34896f873a421c1359c42a82ffa28c70f5b61415b40db72c341edf3479018`.
+Original batch:`/home/dev/neptune-research-private/655/open-batch-t5qbt9rr/batch.json`,
+tool5341. At this checkpoint it is running with partial original results; inspect
+manifest/current process before any restart. Only if terminal resource/admission-
+deferred, resume the incomplete selections with:
+
+```sh
+unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
+  /home/dev/neptune-evidence/code655-20261102/run-open-batch.py \
+  --manifest /home/dev/neptune-research-private/655/open-batch-t5qbt9rr/batch.json
+```
+
+Selections are1,744 each12/24-stride composition,1,344 invalid-index and1,050
+no-slot cases per run. The constructed record-table count is24; that is not a
+universal file-count limit. Successful context services/null record/callbacks
+remain outside this returning-error corpus. Chosen1024 cap is the existing
+accepted profile; old128 guard unchanged. Owned predicted maximum991/990 and
+report sizing under64MiB are development checks, not original totals. Actual
+reports must pass before publication. All prior original batches are terminal
+success; earlier running/deferred sections below are retained history.
+
 ## Current composed record/caller result: four original jobs retained
 
 A681A and96D74 now each complete1,672 selected nonnull-record/first-pool-
@@ -31,20 +56,56 @@ and every prior deferral remain retained. Own completed609 addon/font exclusions
 restore root headroom; receipt`.../code655-20261102/storage-owned-parser609-exclusions-001.json`.
 No active/foreign worktree or configured limit changed. All own leases released.
 
-Pool result is draftPR698, depending on arithmetic695. Arithmetic's required
-browser failure remains retained; active web owner696 is repairing playable
-starts/browser input. Preserve owners and integrate their accepted main normally.
-Retarget each dependent draft to main only after its parent is accepted, and
-merge only after all applicable exact-head/current-base checks pass. No bypass.
+Pool698 mergedbc0b8e2330ca85cc4166b9b249752dbbfd6bf4d3 at11:41:05 UTC,
+tested840abe2 againsta3b765e. All15 checks and seven exact non-applicability
+proofs pass; merge parent/tree verified in`.../code655-20261102/pr698-acceptance-verified.json`.
+Arithmetic695 is already accepted. Record/caller699 now targets main; its exact
+original-tested production/test bytes remain unchanged. All applicable exact-
+head/current-base checks remain required before merge. No bypass.
 
 Next inspect complete95E5A's real selection/indexing/96D74/96C60 graph; recover
 an actual composed returning error path before claiming broader successful open
 semantics. Static source is`.../655/positive-library-source-leads.json` (bounded
 linear windows, literal classification still required). Fresh source inspection
-command remains`python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-context.py`.
+command remains`python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-open.py`.
 Null record/A7F4E, successful context services, full89C8, BIOS/callbacks, root/
 task cycles and all-module denominators stay open. The programme remains active.
 Older running/deferred snapshots below are historical; current manifest is terminal.
+
+## Arithmetic695 accepted; dependent pool publication continues
+
+PR695 mergeda3b765e826f5855444c88d16c8918bac8f0c8df8 at11:19:27 UTC,
+tested88c4fb4 against15b7706. All15 exact-head checks completed: eight successes
+including real browser gameplay, seven preparation skips with exact non-
+applicability proof. Strict app15368 requirements/current base and zero mandatory
+reviews preserved. Merge parent/tree verified; receipt:
+`.../code655-20261102/pr695-acceptance-verified.json`.
+Retain the first actual browser failure and green-but-stale987 head; no merge
+request was made for either. Active web owner696 repaired playable casual starts/
+browser focus and mergedce89f92; newer NLSND697 merged15b7706. Their work is
+preserved. Pool draft698 can now target main and pass its own current-base gates;
+composed record/caller draft699 follows698. All originals remain retained.
+
+Composed original batchdb1wg3j_ subsequently completed all four jobs:1,672 cases
+per entry twice,3,344 complete returns/run,12 semantic controls, exact raw/archive
+pairs. Source29d7bdb/7 owned/455 research tests and79-file adaptereef51aac stay
+unchanged. Read [PR699](https://github.com/elgansayer/Neptune-Bomberman/pull/699)
+for that dependent evidence. It is not yet accepted on main. Current next code
+question is complete95E5A returning errors through selection/index/setup/status.
+The new static command is `python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-open.py`;
+source windows are not original execution. Earlier running/deferred prose below
+is retained history; both pool and composed manifests are terminal success.
+
+Pool698 now targets protected main after695 acceptance. The first3cf4fb3
+workflow events straddled its old dependent base and retargeting; full39-check
+history and old-base failure log are retained in`.../code655-20261102/pr698-oldbase-*`.
+Current-base runs passed; this checkpoint reconciliation gets one final head
+against main for the exact-head validator. No earlier failure is hidden or counted
+as current success, and all original-tested source/test bytes remain unchanged.
+Next fresh source command is`python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-open.py`.
+Its owned95E5A model covers distinct12/24-stride records, invalid indices, empty/
+full slots and callback-null status mappings;8 focused owned tests pass, with
+zero original95E5A execution yet. Keep original versus owned counts separate.
 
 ## Current pool/context continuation: all twelve original jobs retained
 

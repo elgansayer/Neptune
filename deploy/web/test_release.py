@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """Provenance and immutable-pair rejection checks; these do not certify gameplay."""
 import importlib.util
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
+from threading import Thread
 import unittest
 
 HERE = Path(__file__).resolve().parent
@@ -22,6 +25,42 @@ wait_release = module('wait_release')
 
 
 class ReleaseContracts(unittest.TestCase):
+    def test_public_readiness_identifies_its_http_client(self):
+        revision = 'a' * 40
+        received = []
+
+        class Handler(BaseHTTPRequestHandler):
+            def do_GET(self):
+                received.append(dict(self.headers))
+                if self.headers.get('User-Agent') != 'NeptuneRelease/1.0':
+                    self.send_error(403)
+                    return
+                body = json.dumps(export.metadata(revision)).encode()
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.send_header('Content-Length', str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *_args):
+                pass
+
+        server = ThreadingHTTPServer(('127.0.0.1', 0), Handler)
+        thread = Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            result = subprocess.run([sys.executable, str(HERE / 'wait_release.py'),
+                                     '--revision', revision, '--timeout', '1',
+                                     '--origin', f'http://127.0.0.1:{server.server_port}'],
+                                    text=True, capture_output=True, timeout=5)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(received[0]['Cache-Control'], 'no-cache')
+            self.assertEqual(received[0]['Accept'], 'application/json')
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+
     def test_source_must_be_committed(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
