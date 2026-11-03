@@ -334,7 +334,6 @@ func update_game_state(state: Dictionary):
 	# Expand compact egg format to usable format
 	# Server sends: eg_id -> [tile_x, tile_y]
 	if state.has("eg") and not state.has("eggs"):
-		print("[GameView] Expanding ", state.eg.size(), " eggs")
 		state["eggs"] = {}
 		if state.eg is Dictionary:
 			for eg_id in state.eg:
@@ -613,7 +612,6 @@ func update_game_state(state: Dictionary):
 
 	# Update eggs (Tirra eggs)
 	if state.has("eggs"):
-		print("[GameView] Processing ", state.eggs.size(), " eggs")
 		for egg_id in state.eggs:
 			var egg_data = state.eggs[egg_id]
 			update_egg(egg_id, egg_data)
@@ -1808,7 +1806,6 @@ func bomb_safety_update(safety_data: Dictionary) -> void:
 		print("[GameView] WARNING: bomb_safety_visualizer not ready or missing method")
 
 func update_powerup(powerup_id: String, data: Dictionary):
-	print("[GameView] update_powerup called: id=", powerup_id, " type=", data.type, " pos=", data.position)
 	var powerup_node
 	
 	if not powerup_nodes.has(powerup_id):
@@ -1830,7 +1827,6 @@ func update_powerup(powerup_id: String, data: Dictionary):
 
 func update_egg(egg_id: String, data: Dictionary):
 	"""Update or create a Tirra egg visual on the client side"""
-	print("[GameView] update_egg called: id=", egg_id, " pos=", data.position)
 	var egg_node
 	
 	if not egg_nodes.has(egg_id):

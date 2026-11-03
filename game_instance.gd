@@ -232,6 +232,8 @@ func _ready():
 				pattern,
 				density
 			)
+			if continuous_room:
+				active_soft_blocks = MapPackLoader.reserve_casual_spawn_clearance(active_soft_blocks, map_data.spawn_points, map_data.tile_size)
 			
 			# Apply soft blocks to grid
 			# First clear all soft slots

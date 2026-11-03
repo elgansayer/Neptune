@@ -47,12 +47,12 @@ jobs:
       - name: Exercise real repeated-round browser gameplay
         env:
           SMOKE_EXPECT_REVISION: ${{ steps.source.outputs.revision }}
-          SMOKE_EXPECT_DURATION: '20'
+          SMOKE_EXPECT_DURATION: '60'
           SMOKE_EXPECT_COUNTDOWN: '3'
           SMOKE_EXPECT_INTERMISSION: '1'
         run: |
           docker network create neptune-smoke
-          docker run -d --name server-candidate --network neptune-smoke --network-alias server neptune-server-candidate --room-duration=20 --room-countdown=3 --room-intermission=1
+          docker run -d --name server-candidate --network neptune-smoke --network-alias server neptune-server-candidate --room-duration=60 --room-countdown=3 --room-intermission=1
           docker run -d --name web-candidate --network neptune-smoke -p 127.0.0.1:8765:80 neptune-web-candidate
           mkdir -p "$RUNNER_TEMP/web-smoke"
           for attempt in $(seq 1 30); do
