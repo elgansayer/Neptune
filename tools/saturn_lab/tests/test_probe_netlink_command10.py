@@ -48,6 +48,13 @@ class Command10Contracts(unittest.TestCase):
         self.assertIn([1,0x40004,1,1],result['events'])
         self.assertNotIn(0x1646,result['pcs'])
 
+    def test_slot_helper_moveq_clears_d7_upper_bits_in_complete_composition(self):
+        for profile in (0,1):
+            for controls in ((1,0,0,0,0),(0,0,0,0,1)):
+                contract,result=self.model(controls,profile=profile)
+                self.assertNotEqual(contract.before[7]&0xFFFF0000,0)
+                self.assertEqual(result['registers'][7],65535)
+
     def test_alias_is_read_after_prior_clear_and_first_control_restores_its_pointer(self):
         contract,result=self.model((1,1,1,1,1),location=5)
         self.assertEqual(result['registers'][8],0x785)
