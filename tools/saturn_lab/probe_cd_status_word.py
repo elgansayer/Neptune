@@ -23,6 +23,8 @@ SERVICE_CALLSITE=0x060959AA
 SERVICE_READ=0x060959DE
 REGISTERS_ENTRY=0x06095ACE
 REGISTERS_CALLSITE=0x06095A4E
+WRITE_PACKET_ENTRY=0x06095AB4
+WRITE_PACKET_CALLSITE=0x06095A36
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 def read_json(path):
@@ -104,6 +106,19 @@ def run(kernel_path,source_root,result_path,records_path,out):
     reg_call_words=[int.from_bytes(kernel[reg_call_off+i:reg_call_off+i+2],'big') for i in (0,2)]
     reg_disp=reg_call_words[0]&0x0fff; reg_disp=reg_disp-0x1000 if reg_disp&0x0800 else reg_disp
     reg_target=REGISTERS_CALLSITE+4+reg_disp*2
+    packet_sites=(0x06095ABA,0x06095AC2,0x06095AC6,0x06095ACA)
+    packet_writes=[r for r in rows if r['kind']==3 and r['pc'] in packet_sites]
+    packet_groups=[]; current_packet=[]
+    for row in packet_writes:
+        if row['pc']==packet_sites[0] and current_packet:
+            packet_groups.append(current_packet);current_packet=[]
+        current_packet.append(row)
+    if current_packet:packet_groups.append(current_packet)
+    packet_words=[int.from_bytes(kernel[WRITE_PACKET_ENTRY-probe_kernel.BASE+i:WRITE_PACKET_ENTRY-probe_kernel.BASE+i+2],'big') for i in range(0,26,2)]
+    packet_call_off=WRITE_PACKET_CALLSITE-probe_kernel.BASE
+    packet_call_words=[int.from_bytes(kernel[packet_call_off+i:packet_call_off+i+2],'big') for i in (0,2)]
+    packet_disp=packet_call_words[0]&0x0fff;packet_disp=packet_disp-0x1000 if packet_disp&0x0800 else packet_disp
+    packet_target=WRITE_PACKET_CALLSITE+4+packet_disp*2
     poll_base=0x060BFD00
     if (poll_actual!=poll_words or call_words!=[0xB021,0x64D3] or call_target!=POLL_ENTRY or
         service_words!=[0xB00E,0x0009] or service_target!=0x060959CA or
@@ -111,6 +126,9 @@ def run(kernel_path,source_root,result_path,records_path,out):
         register_words!=[0xD10A,0xD20A,0x6311,0x2431,0x6021,0xD309,0x8141,0x6031,0x8142,0x8516,0x000B,0x8143] or
         reg_call_words!=[0xB03E,0x0009] or reg_target!=REGISTERS_ENTRY or
         len(register_groups)!=3 or any(len(g)!=4 for g in register_groups) or
+        packet_words!=[0x6341,0xD210,0xD110,0x2231,0x8541,0x720C,0xD30F,0x2101,0x8542,0x2301,0x8543,0x000B,0x2201] or
+        packet_call_words!=[0xB03D,0x0009] or packet_target!=WRITE_PACKET_ENTRY or
+        len(packet_groups)!=3 or any(len(g)!=4 for g in packet_groups) or
         len(groups)!=3 or any(len(g)!=8 for g in groups) or
         any(any(r['r'][4]!=1 or r['r'][7]!=i for i,r in enumerate(g)) for g in groups)):
         raise ValueError('Original natural status-poll groups/source do not satisfy the selected bounded contract')
@@ -165,6 +183,27 @@ def run(kernel_path,source_root,result_path,records_path,out):
             raise ValueError('Original four-register helper differs from natural transfer sequence')
         register_results.append({'output_pointer':f'0x{pointer:08x}','observed_register_words':[f'0x{x:04x}' for x in sequence],
             'stored_words':[f'0x{x:04x}' for x in dest],'returned_word':f'0x{actual:04x}','steps':cpu.steps})
+    packet_results=[]
+    packet_addresses=(0x25890018,0x2589001C,0x25890020,0x25890024)
+    for group in packet_groups:
+        pointer=group[0]['r'][4]; values=[r['transfer_value'] for r in group]
+        if (tuple(r['pc'] for r in group)!=packet_sites or tuple(r['transfer_address'] for r in group)!=packet_addresses or
+            any(r['r'][4]!=pointer or r['pr']!=WRITE_PACKET_CALLSITE+4 for r in group)):
+            raise ValueError('Original four-word device-packet call/transfer continuity differs')
+        source=bytearray().join(v.to_bytes(2,'big') for v in values)
+        class PacketMemory(emu.Memory):
+            def __init__(self): super().__init__();self.writes=[]
+            def write(self,addr,size,value):
+                if addr in packet_addresses and size==2: self.writes.append((addr,value&0xffff));return
+                return super().write(addr,size,value)
+        memory=PacketMemory();memory.add(pointer,len(source),bytes(source));memory.add(probe_kernel.BASE,len(kernel),kernel)
+        cpu=emu.CPU(memory);actual=cpu.call(WRITE_PACKET_ENTRY,max_steps=32,r4=pointer)
+        expected=list(zip(packet_addresses,values))
+        if memory.writes!=expected or cpu.steps!=13:
+            raise ValueError('Original packet writer did not reproduce the four retained device transfers')
+        packet_results.append({'observed_source_address':f'0x{pointer:08x}','observed_transfer_words':[f'0x{x:04x}' for x in values],
+            'actual_ordered_writes':[{'address':f'0x{a:08x}','value':f'0x{v:04x}'} for a,v in memory.writes],
+            'return_register_r0':actual,'steps':cpu.steps})
     report={'schema':'neptune.original-cd-word-helpers-contract.v3','status':'success',
             'probe_sha256':sha(Path(__file__).read_bytes()),
             'entry':f'0x{ENTRY:08x}','source_instructions':[f'0x{x:04x}' for x in words],
@@ -195,6 +234,11 @@ def run(kernel_path,source_root,result_path,records_path,out):
               'caller_link':{'bsr_site':f'0x{REGISTERS_CALLSITE:08x}','bsr_and_delay':[f'0x{x:04x}' for x in reg_call_words],
                  'computed_target':f'0x{reg_target:08x}','recorded_pr_return':'0x06095a52'},
               'natural_samples':register_results,'scope':'three actual four-register sequences; CPU-only execution on original source bytes'},
+            'four_word_device_packet_writer':{'entry':f'0x{WRITE_PACKET_ENTRY:08x}','source_instructions':[f'0x{x:04x}' for x in packet_words],
+              'device_addresses':[f'0x{x:08x}' for x in packet_addresses],
+              'caller_link':{'bsr_site':f'0x{WRITE_PACKET_CALLSITE:08x}','bsr_and_delay':[f'0x{x:04x}' for x in packet_call_words],
+                'computed_target':f'0x{packet_target:08x}','recorded_pr_return':f'0x{WRITE_PACKET_CALLSITE+4:08x}'},
+              'natural_samples':packet_results,'scope':'three complete observed four-word write sequences replayed through the original SH-2 instructions with source words reconstructed from those actual transfers'},
             'scope':'one complete three-instruction word-read helper on original SH-2 bytes using only values captured from the natural run; CPU-only isolated memory; no hardware semantics, CD protocol meaning, caller equivalence or complete command root claimed',
             'whole_program_status':'active; incomplete'}
     fd=os.open(out,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
