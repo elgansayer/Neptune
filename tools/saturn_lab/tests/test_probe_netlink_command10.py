@@ -103,7 +103,7 @@ class Command10Contracts(unittest.TestCase):
         for mode in ('handler','dispatcher'):
             self.assertEqual({tuple((mask>>i)&1 for i in range(5)) for mask in range(32)},
                              {c for m,c,profile,sr,location,word in rows if m==mode and profile==0 and sr==0x271F and location==0 and word==0 and len(c)==5 and set(c)<={0,1}})
-            for index in range(5):self.assertEqual({c[index] for m,c,*_ in rows if m==mode},set(range(256)))
+            for index in range(5):self.assertEqual({c[index] for m,c,*_ in rows if m==mode and len(c)==5},set(range(256)))
             self.assertTrue(any(m==mode and len(c)==4 for m,c,*_ in rows))
         self.assertEqual({r[4] for r in rows},set(range(6)))
         for case in [('bad',(0,)*5,0,0x271F,0,0),('handler',(0,)*4,0,0x271F,0,0),
