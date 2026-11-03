@@ -366,8 +366,14 @@ and `analysis/japan-a638-sr-continuation.txt`
 (`5f59a6db9b28cbe7741ed10bf385b1ed197f2f6905866b8e347c9a10b45f822b`).
 The dynamic A312 path requires explicit SR, VDP2, BIOS, SCU, cache-through,
 VDP1, SMPC and SCSP behavior; no flat-RAM execution or guessed device model is
-claimed. Continue with original-byte static range/call-target reconciliation
-until an existing approved emulator capture can support a bounded natural probe.
+claimed. Follow-through at `0x0600A410` shows the tail registering interrupt
+handlers `0x0600B2FC`, `0x0600B344`, and `0x0600B3BC`, calling `0x0600A946`
+with an A1DA callback/context, storing the `0x0600B2C8` result at `0x060BCC80`,
+calling A1AC, and tail-jumping to AB78 after restoring saved registers. The
+retained A410 decode SHA-256 is
+`466e7c0b26825a97efc5db9b2a7011fa7f502ec31b85a5cafa39199e4eadb5b9`. Continue
+with original-byte static range/call-target reconciliation until an existing
+approved emulator capture can support a bounded natural probe.
 
 ## Limits and continuation
 
