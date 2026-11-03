@@ -10,6 +10,7 @@ from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import provision_command_trace as p
 import provision_command_trace_abi as abi
+import provision as provisioner
 
 
 OPS=(b'#if 1\r\n #define FUSE_DELAY_SLOT_NOP() \\\r\n   z->PC += 2;\r\n'
@@ -30,6 +31,15 @@ def fixture(root):
 
 
 class CommandObserverPatch(unittest.TestCase):
+    def test_separate_recipe_keys_all_command_observer_sources(self):
+        root=Path(__file__).resolve().parents[3]
+        recipe,inputs,key=provisioner.identity('beetle-saturn-command-trace',root)
+        self.assertEqual(recipe['kind'],'beetle-command-trace')
+        self.assertEqual(recipe['commit'],p.REVISION)
+        self.assertIn('tools/factory/provision_command_trace.h',inputs['installer_sources'])
+        self.assertIn('tools/factory/provision_command_trace_abi.py',inputs['installer_sources'])
+        self.assertNotEqual(key,provisioner.identity('beetle-saturn-init-trace',root)[2])
+
     def test_command_abi_layout_and_bounds(self):
         self.assertEqual(abi.WITNESS_WORDS,424)
         self.assertEqual(CAPACITY:=abi.CAPACITY,128)
@@ -49,6 +59,8 @@ class CommandObserverPatch(unittest.TestCase):
         source.write_text(prefix+header+'\nvoid fixture_corrupt(void){WorkRAMH[(0x06095904-0x06000000)>>1]=1;}\n')
         binary=source.with_suffix('.so')
         subprocess.run([compiler,'-std=c11','-shared','-fPIC','-Werror','-x','c',str(source),'-o',str(binary)],check=True,capture_output=True,timeout=30)
+        smoke=abi.probe_library(binary)
+        self.assertEqual((smoke['abi'],smoke['record_bytes'],smoke['capacity'],smoke['witness_words']),(1,216,128,424))
         dll=abi.C.CDLL(str(binary));trace=abi.Trace(dll)
         self.assertEqual(dll.neptune_command_begin(0,None,abi.WITNESS_WORDS),0)
         zeros=[0]*abi.WITNESS_WORDS

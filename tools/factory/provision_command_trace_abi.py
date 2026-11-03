@@ -91,3 +91,26 @@ class Trace:
         if actual!=list(self.expected): raise ValueError('Final command source witness differs from the original')
         rows,status=self.snapshot();return validate(rows,status,self.expected)
 
+
+def probe_library(path):
+    """Exercise only exported observer fences; never opens Saturn media."""
+    observer=Trace(C.CDLL(str(path))); words=(C.c_uint16*WITNESS_WORDS)()
+    invalid=(observer.dll.neptune_command_begin(0,words,WITNESS_WORDS)==0 and
+             observer.dll.neptune_command_begin(1,words,WITNESS_WORDS-1)==0)
+    if not invalid or observer.dll.neptune_command_begin(1,words,WITNESS_WORDS)!=1:
+        raise ValueError('Command observer accepted an invalid profile/witness or refused its fixed ABI')
+    frame_ok=observer.dll.neptune_command_frame(1200)==1
+    frame_rejected=observer.dll.neptune_command_frame(1202)==0
+    status=observer.status();observer.dll.neptune_command_stop()
+    if not frame_ok or not frame_rejected or not status.errors or status.last_error!=1:
+        raise ValueError('Command observer did not reject skipped frames with retained diagnostics')
+    return {'abi':status.abi,'record_bytes':status.record_bytes,'capacity':status.capacity,
+            'witness_words':status.witness_words,'rejected_invalid_profile_witness_and_frame':True,
+            'scope':'no-media observer ABI/fence smoke only'}
+
+if __name__=='__main__':
+    import argparse,json
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--probe-core',required=True)
+    args=parser.parse_args()
+    try: print(json.dumps(probe_library(args.probe_core),sort_keys=True))
+    except (ValueError,OSError) as error: print('FAIL: '+str(error),file=__import__('sys').stderr);raise SystemExit(1)

@@ -1,9 +1,8 @@
 # Separate native command observation under707
 
 **Not an installed or ready native observer.** The source patch component, separate
-GPL header, ctypes ABI, and owned compiled fixtures are implemented. Trusted recipe
-integration, actual matched-core native build/smoke/reuse, and the original experiment
-remain required work.
+GPL header, ctypes ABI, and owned compiled fixtures are implemented. The trusted recipe and exact-head CI workflow are now integrated; an actual CI run,
+verified artifact transfer/local reuse, and the original experiment remain required.
 The all-original-code programme and655 remain active and incomplete.
 
 Original command-packing PR706 retains9,152 pending-boundary cases/run twice.
@@ -62,7 +61,7 @@ Current patch/header/ABI validation is separate from native readiness:
   compiled baseline/observed transfer fixtures:
   one address evaluation, one actual mock bus operation, identical CPU/RAM/WB
   results, correct signed-load/truncated-store values and no slave callbacks.
-- 39 related observer tests and219 factory tests pass. No game instructions run.
+- 39 related observer tests and221 factory tests pass. No game instructions run.
 - The header requires the profile-specific source JSR and delay, A4FAC root, A4FBA
   RTS/NOP delay and return, service boundaries, and actual transfers. An owned compiled semantic fixture drives that event order through the exported ABI and verifies that final source-witness mismatches fail. Transfer PC/opcode
   comes from the master prehook; command/response words carry validity tags and are
@@ -74,9 +73,9 @@ Current patch/header/ABI validation is separate from native readiness:
 - Private receipt:`/home/dev/neptune-research-private/707/patcher-pin-_bb68yfc/report.json`;
   SHA256`fb5da294b45597d0ac1e06479028d2613067400161df6a5802c36027645c3e23`.
 
-Next integrate the separate trusted recipe and exact-head CI preparation.
-Require real no-media ABI/fence smoke, verified artifact transfer with matching
-binary/source/recipe receipts and real local reuse. CI receives no game/BIOS.
+Next require the exact-head CI run to prove real no-media ABI/fence smoke and
+first-build/reuse identity. Then transfer the artifact with matching binary/source/
+recipe receipts and perform guarded local reuse. CI receives no game/BIOS.
 Finally run two fresh reference/disabled/enabled600-frame windows per profile from
 the accepted frame1200 seed. Compare exact canonical import/final state and every
 native video/audio/input observation, repeat enabled traces, verify independent

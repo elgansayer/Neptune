@@ -22,10 +22,10 @@ NLSND703/PR705 and all other owners. The native observer is **not ready**: its
 source patch component, separate GPL header, ctypes ABI, and compiled fixtures are
 implemented. Read
 [the concrete protocol/remaining work](../../../tools/saturn_lab/COMMAND_TRACING.md).
-8 focused/39 related/219 factory tests pass, including compiled header ABI fences and
+9 focused/39 related/221 factory tests pass, including compiled header ABI fences and
 compiled address/bus/CPU/RAM/WB nonmutation fixtures. Logs are
-`/home/dev/neptune-evidence/code655-20261102/command-observer-abi-owned-008.log`
-and`/home/dev/neptune-evidence/code655-20261102/command-observer-abi-factory-010.log`.
+`/home/dev/neptune-evidence/code655-20261102/command-observer-provision-focused-001.log`
+and`/home/dev/neptune-evidence/code655-20261102/command-observer-provision-factory-002.log`.
 A retained GPL source-archive proof restores all six
 original source-pin hashes before applying the component with an owned nonobserver
 header: `.../707/patcher-pin-_bb68yfc/report.json`. No core/native generation was
@@ -37,9 +37,9 @@ afterWB_WRITE and actualMemWrite16 value after transfer, with one address evalua
 no secondbusaccess and byte-identical existing tripletfusion. The header retains the
 master prehook PC/opcode, fusedNOP continuity, source-call/return boundaries, and
 actual command/response snapshots with validity tags and a final source-witness recheck. Compiled fixtures do not yet
-validate these hooks inside the matched core. Next integrate the separate trusted
-recipe, actualCI native build/smoke/reuse, then freshreference/disabled/enabled
-original windows. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
+validate these hooks inside the matched core. Next obtain exact-head CI native
+build/smoke/reuse evidence, transfer and verify that artifact, perform guarded local
+reuse, then run freshreference/disabled/enabled original windows. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
 corebuild below configured preparation reserve. Exact inspection command:
 `python3 /home/dev/neptune-evidence/code655-20261102/check-command-patcher-pin.py`.
 It creates fresh private matched-source component proof, not originalexecution.
