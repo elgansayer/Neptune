@@ -410,6 +410,14 @@ values at `0x060FC570` and `0x060FC5A0` with `0xFFF0` and `0xF0FF` before
 writing them back. This is a static word-transform/control-flow observation;
 the hardware register meaning is unresolved. Decode SHA-256:
 `1fe8e4b5d4dbd9aeadf0a10de20d087eaa8eac5458add784b6fe001243bdc78b`.
+Adjacent helper `0x0609E25C` similarly calls `0x06095C24` with selector
+`0x0201` and updates the word pair at `0x060FC578`; `0x0609E2EC` uses selector
+`0x0301` and pair `0x060FC57E`. Both preserve selected byte/word fields using
+immediate masks and are separate original routines, not one inferred semantic
+register. Their static decodes are retained as
+`analysis/japan-9e25c-vdp-helper.txt` (SHA-256
+`5d4d6e08c32d458872915a3614dfe4ff3795966604cc43d449b8d0d0b9180fd4`) and
+`analysis/japan-9e2ec-vdp-helper.txt` (`9babaa54b89146e80c84185eb3fb1332267f41dde25e8e6eb03450cbc1361a41`).
 
 ## Limits and continuation
 
