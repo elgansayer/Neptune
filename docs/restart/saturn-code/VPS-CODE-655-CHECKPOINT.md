@@ -2,12 +2,40 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-record-access-655`, workspace
+`research/saturn-library-request-state-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current request state: six original jobs retained, service body pending
+
+Record-access PR702 merged0911981 at testedd22697b againstd6cf5b3; all15
+exact-head/currentbase checks and mergeparent/tree verified. Request-state source
+e42f90b21f89b499c5b5882f133d76190c9f03bb (7 focused/491 research tests) then
+executed3,432 cases/run twice:3,288 complete returns and144 unfinished actual
+A85E4 handoffs. All three full raw/archive pairs match;10 non-budget controls
+reject. Read [the result](../research/2026-11-03-library-request-state-contracts.md)
+and [derived evidence](../evidence/2026-11-03-library-request-state-contracts.json).
+Frozen83-file adapter:`.../655/adapter-8c9e29c824380464542a10ca8dfabf64c8ebadf4a3c7ab16c40e30b21c229a23`.
+Terminal manifest:`/home/dev/neptune-research-private/655/request-state-batch-teu5qfdp/batch.json`.
+All own leases released. Preserve completed batches; do not resume/recount.
+The original128 guard is unchanged, chosen64, actual maximum26 instructions.
+
+A81FE stores object+60 in the real return delay; A7C20 queries nonzero+338 and
+exactindex+33C; A7BB0 returns-1 forbusy/-5 forsameactiveindex, otherwise queues
+fields and reaches actualA85E4 with intact pending frame. A85E4 is not executed
+or substituted. Newly retained source`.../655/request-service-source-9x1169v0/source.json`
+identifies closed A85E4 memory paths and realAE676/AE908 command wrappers toA4FAC,
+plusA8C10→9546E and flag/device dependencies. Static windows are not new execution.
+Exact next command: `python3 /home/dev/neptune-evidence/code655-20261102/inspect-request-services.py`.
+It creates a fresh private source report. Classify literals before executable
+ranges, then recover closed paths/real command packing/pending service boundaries;
+never invent hardware RAM or replace a callee with success. Publish this request
+slice through its own exact-head/currentbase gates. Preserve active owners,
+configured host/provider/storage limits, every original/failure capture and native
+tool generation.655 and all-original-code programme remain active and incomplete.
 
 ## Current record access: six original jobs retained
 
