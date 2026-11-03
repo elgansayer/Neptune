@@ -77,8 +77,13 @@ def run(kernel_path,source_root,result_path,records_path,out):
     poll_words=[0x2FE6,0xEE00,0xD11A,0x67E3,0x2FC6,0xECFD,0x2FB6,0xDB17]
     poll_src=POLL_ENTRY-probe_kernel.BASE
     poll_actual=[int.from_bytes(kernel[poll_src+i:poll_src+i+2],'big') for i in range(0,16,2)]
+    callsite=0x06095A3E; call_off=callsite-probe_kernel.BASE
+    call_words=[int.from_bytes(kernel[call_off+i:call_off+i+2],'big') for i in (0,2)]
+    disp=call_words[0]&0x0fff; disp=disp-0x1000 if disp&0x0800 else disp
+    call_target=callsite+4+disp*2; call_return=callsite+4
     poll_base=0x060BFD00
-    if (poll_actual!=poll_words or len(groups)!=3 or any(len(g)!=8 for g in groups) or
+    if (poll_actual!=poll_words or call_words!=[0xB021,0x64D3] or call_target!=POLL_ENTRY or
+        len(groups)!=3 or any(len(g)!=8 for g in groups) or
         any(any(r['r'][4]!=1 or r['r'][7]!=i for i,r in enumerate(g)) for g in groups)):
         raise ValueError('Original natural status-poll groups/source do not satisfy the selected bounded contract')
     poll_results=[]
@@ -87,7 +92,8 @@ def run(kernel_path,source_root,result_path,records_path,out):
         if any(value&1 for value in sequence[:-1]) or not sequence[-1]&1:
             raise ValueError('Captured original polling values do not show the observed bit transition')
         pointer=group[0]['r'][5]
-        if any(r['r'][5]!=pointer for r in group): raise ValueError('Original polling output pointer changed within one call')
+        if any(r['r'][5]!=pointer or r['pr']!=call_return for r in group):
+            raise ValueError('Original poll output pointer/call-return continuity changed within one call')
         class SequenceMemory(emu.Memory):
             def __init__(self): super().__init__(); self.device_reads=[]
             def read(self,addr,size):
@@ -122,6 +128,9 @@ def run(kernel_path,source_root,result_path,records_path,out):
               'isolated_cpu_results':store_outputs},
             'status_poll_helper':{'entry':f'0x{POLL_ENTRY:08x}','source_instructions':[f'0x{x:04x}' for x in poll_actual],
               'device_address':f'0x{DEVICE:08x}','mask':1,'observed_original_sequences':poll_results,
+              'observed_caller_link':{'bsr_site':f'0x{callsite:08x}','bsr_and_delay':[f'0x{x:04x}' for x in call_words],
+                'computed_target':f'0x{call_target:08x}','recorded_pr_return':f'0x{call_return:08x}',
+                'actual_r4_mask':1,'actual_r5_destinations':[f"0x{g[0]['r'][5]:08x}" for g in groups]},
               'scope':'three exact eight-read groups captured at the original read site; each transitions from bit0 clear to set'},
             'scope':'one complete three-instruction word-read helper on original SH-2 bytes using only values captured from the natural run; CPU-only isolated memory; no hardware semantics, CD protocol meaning, caller equivalence or complete command root claimed',
             'whole_program_status':'active; incomplete'}
