@@ -32,6 +32,18 @@ the shared host gate (limit 3, 180-second lease). The private run receipts and
 states remain under
 `/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/`.
 
+Two more 600-frame windows continued from the frame-1200 checkpoint. A one-frame
+confirm was delivered in the first, and a short horizontal selection followed
+by confirm in the second. The screens remained at the backup-memory choice at
+frames 1800 and 2400. These runs prove continued original execution and preserve
+the input/output states; they do not establish a successful menu transition or
+gameplay. The frame-1800 state SHA-256 is
+`da61fd983f32c79ec6ffd145a169e63484fe621ed2662a827ef38fedd994270c`; frame 2400
+is `8749b0430e45ec67726c9b9b3fb39d2b706acd3b179e41cc4e0219fb9c19bd6d`. The
+second run delivered masks `[0,64,256]` to the first port. Its first setup
+attempt, which lacked a read-only mount for the source checkpoint, is retained
+as a preflight failure and was not counted as an emulator execution.
+
 At mapping `0x0600A000`, the frame-600 WorkRAM-H state matched 573,440 source
 bytes in two exact ranges of at least 4 KiB:
 
@@ -91,8 +103,9 @@ output is retained at
 `/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/analysis/next-kernel-functions.txt`
 (SHA-256 `15b8f624d261a31e6ea5600ebfd442d02d6c1a39b3963be29ada660df3c035d2`).
 
-Next, identify the executed Japanese startup path around `0x0600A312`, verify
-its device interactions before direct replay, and map further Japan-only ranges
-and overlays. Keep the Japanese kernel distinct from USA `0KRNL.BIN`, and keep
-asset extraction/provenance work separate from code-byte residency. No second
-Saturn emulator was used for this result.
+Next, add a bounded Japanese-specific observation of the startup path around
+`0x0600A312`, after verifying its DVCR, VDP2 and BIOS side effects, then map
+further Japan-only ranges and overlays. Keep the Japanese kernel distinct from
+USA `0KRNL.BIN`, and keep asset extraction/provenance work separate from
+code-byte residency. Only the pinned Beetle/Mednafen lineage is currently
+available on this host; no independent emulator cross-check was used.
