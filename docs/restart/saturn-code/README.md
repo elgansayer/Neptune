@@ -196,3 +196,7 @@ It also adds original `0x0600A164` context save over 31 constructed register
 patterns twice per case in paired reports. The exact 48-byte write order
 preserves the source's duplicate R8 at offsets 0 and 4. The existing A186
 restore slice remains separate; natural task-switch reachability is unresolved.
+The A7D0 literal/JSR/delay-slot caller is now composed with A164 across 31
+patterns and two original instruction controls; execution stops at its actual
+callee return boundary. Natural boot reachability and task-frame lifetime
+remain unresolved.

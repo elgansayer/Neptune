@@ -261,6 +261,31 @@ no natural task-switch/caller or live frame-lifetime proof. After this probe,
 the full research suite passes 524 tests; this remains separate from original
 execution evidence.
 
+## Japanese A7D0 context-save callsite
+
+Static caller inspection found A7D0 loading the original A164 target from
+literal `0x0600A8D4`, then executing `JSR @R3`; the delay slot advances R4 by
+32 from the task-frame base at `0x060BDD24`. The resulting save frame begins at
+`0x060BDD44`.
+
+`tools/saturn_lab/probe_japan_context_callsite.py` composes the exact original
+A7D0 load/JSR/delay path with A164 and stops at A7D6 immediately after A164's
+actual RTS return, before executing the next caller instruction. It checks 31
+constructed register patterns twice per case in paired reports, the literal
+target, frame pointer, PR return address, all 12 ordered context writes, and
+the untouched first 32 bytes of the task record. Two original instruction
+mutations are rejected. Paired reports under
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-021/`
+match at SHA-256
+`b8bf97eda6f4c1b5be0b213dc5d09f7f707977bc5dd6ff82a4501135e8af21d9`.
+Probe SHA-256 is
+`9472ba56d97732f683d0a60c5dfe9709d7cc0fd423db7139166d52f15560b43d`.
+
+This is a constructed original caller/callee path, not proof the startup path
+naturally reaches A7D0 or that the frame remains live across a task switch. The
+full research suite passes 525 tests; tooling tests are separate from these
+original execution reports.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed
