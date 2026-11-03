@@ -224,6 +224,25 @@ class Library(slots.Library):
                 'device_before':before,'device_after':self.snapshot(),'reference_bus_events':self.bus_trace()}
 
 
+def reject_native_counts(library,nranges,nregions):
+    # Exercise the native boundary directly; Python's own count checks are not proof.
+    code,regs,regions,ranges,*_=slots.owned_case(nranges,nregions)
+    memory=(c.c_uint8*len(code)).from_buffer_copy(code)
+    buffers=[(c.c_uint8*len(data)).from_buffer_copy(data) for _,data,_ in regions]
+    mapped=(short.Region*len(regions))(*[short.Region(lo,len(data),int(w),buf)
+        for (lo,data,w),buf in zip(regions,buffers)])
+    allowed=(short.Range*len(ranges))(*[short.Range(lo,end) for lo,end in ranges])
+    request=short.Request(memory,len(code),mapped,len(regions),allowed,len(ranges),0x100,0xFFF000,128,
+                          (c.c_uint32*18)(*regs))
+    result=Result();before=library.snapshot()
+    returned=library.library.neptune_m68k_run(c.byref(request),c.byref(result))
+    if (returned!=8 or result.status!=8 or result.steps or result.event_count or
+            bytes(memory)!=code or [bytes(b) for b in buffers]!=[data for _,data,_ in regions]
+            or library.snapshot()!=before):
+        raise ValueError('Native over-capacity request did not reject before execution')
+    return True
+
+
 def read_word(before,address):
     if address<0x100780:return before['coef'][(address-0x100700)//2]<<3
     if address<0x1007C0:return before['madrs'][(address-0x100780)//2]
@@ -305,7 +324,7 @@ def smoke(library):
             or actual['pcs']!=pcs or not actual['code_unchanged'] or actual['device_before']!=actual['device_after']):raise ValueError('Disjoint native capacity contract changed')
     missing=library.run(owned_code,0x100,0xFFF000,ranges[:-1],regions,regs,budget=64)
     if missing['status_code']!=3:raise ValueError('Missing code range did not guard')
-    excess={'17_ranges':slots.reject_native_counts(library,17,16),'17_regions':slots.reject_native_counts(library,16,17)}
+    excess={'17_ranges':reject_native_counts(library,17,16),'17_regions':reject_native_counts(library,16,17)}
     return {'original_game_bytes_executed':False,'reference_write_cases':raw_cases,'identical_program_word_cases':identical,
             'normal_longword_cpu_cases':cpu_cases,'dsp_invalid_access_guards':guards,'predecrement_guarded':True,
             'reference_word_bus_capacity_rejected':BUS_LIMIT,'reference_bus_recovered':True,'native_excess_rejections':excess,
