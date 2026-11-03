@@ -28,6 +28,7 @@ FIELDS=('StartAddr','KeyBit','WF8Bit','LoopMode','SourceControl','SBXOR','EnvRat
         'DirectVolume[0]','DirectVolume[1]','EffectVolume[0]','EffectVolume[1]')
 STRIDE=16+len(FIELDS)
 VALUES=32*STRIDE+1
+SLOT_STATE_BYTES=3400  # Pinned43-field,72-byte slot;32 slots plus registers/guards/latch.
 
 
 def between(source,start,end):
@@ -132,7 +133,7 @@ def identity():
     return {'abi':ABI,'capacity_identity':capacity.identity(),'preparation_module_sha256':pinned.digest(Path(__file__).read_bytes()),
             'scsp_slot_source_lock_sha256':pinned.digest(LOCK.read_bytes()),'component_sha256':json.loads(LOCK.read_text())['component_sha256'],
             'derived_backend_sha256':pinned.digest(generated_source()),'max_steps':MAX_STEPS,'max_events':MAX_EVENTS,
-            'max_ranges':MAX_RANGES,'max_regions':MAX_REGIONS,'slot_snapshot_values':VALUES,
+            'max_ranges':MAX_RANGES,'max_regions':MAX_REGIONS,'slot_snapshot_values':VALUES,'slot_state_bytes':SLOT_STATE_BYTES,
             'slot_fields':list(FIELDS),'profile':'NLSND-slot-byte00-0B-15-17-clock-frozen-with-unchanged-DSP-words'}
 
 
@@ -203,7 +204,7 @@ class Library(device.Library):
         self.library.neptune_dsp_access.argtypes=[c.c_uint32]*3+[c.POINTER(c.c_uint32)];self.library.neptune_dsp_access.restype=c.c_int
         self.library.neptune_slot_configure.argtypes=[c.c_uint32];self.library.neptune_slot_configure.restype=c.c_int
         self.library.neptune_slot_state_size.restype=c.c_uint32;self.slot_size=self.library.neptune_slot_state_size()
-        if not 4000<=self.slot_size<=16384:raise ValueError('Unexpected slot state size')
+        if self.slot_size!=SLOT_STATE_BYTES:raise ValueError('Unexpected pinned slot state size: '+str(self.slot_size))
         self.library.neptune_slot_snapshot.argtypes=[c.POINTER(c.c_uint32),c.POINTER(c.c_uint8)];self.library.neptune_slot_snapshot.restype=None
         self.library.neptune_slot_access.argtypes=[c.c_uint32]*3+[c.POINTER(c.c_uint32)];self.library.neptune_slot_access.restype=c.c_int
 
