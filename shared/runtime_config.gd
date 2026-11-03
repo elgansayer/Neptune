@@ -27,7 +27,9 @@ static func parse_arguments(arguments: Array, scene: String = "", default_transp
 	var room_map := ""
 	var room_pack_paths: Array = []
 	var room_arena := ""
-	var fill_to := 0
+	# Casual quick-start rooms have opponents without a debug spawn command.
+	# Resolve the omitted target against the selected map's capacity on authority.
+	var fill_to := 4
 	var bot_personality := "BALANCED"
 	var room_options := {}
 	for arg in arguments:
@@ -105,7 +107,7 @@ static func parse_arguments(arguments: Array, scene: String = "", default_transp
 		return {"error": "--room-pack and --room-arena must be supplied together"}
 	if not room_pack_paths.is_empty() and not room_map.is_empty():
 		return {"error": "Choose --room-map or --room-pack/--room-arena, not both"}
-	return {"role": role, "port": port, "transport": transport, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack_paths": room_pack_paths, "room_arena": room_arena, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}
+	return {"role": role, "port": port, "transport": transport, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack_paths": room_pack_paths, "room_arena": room_arena, "room_fill_to": fill_to, "room_fill_default": not room_options.has("--room-fill-to"), "room_bot_personality": bot_personality, "error": ""}
 
 static func _valid_pack_manifest_path(path: String) -> bool:
 	return preload("res://shared/content/pack_manifest.gd").valid_manifest_path(path)

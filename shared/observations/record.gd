@@ -5,8 +5,10 @@ var _properties: Array[Dictionary] = []
 var _vectors: Dictionary = {}
 var _tile := Vector2i.ZERO
 
-func update(data: Dictionary) -> void:
-	_data = data.duplicate(true)
+func update(data: Dictionary, shared_immutable: bool = false) -> void:
+	# Only the internal World path passes recursively frozen source payloads.
+	# Ordinary callers retain the copy boundary even for a read-only outer map.
+	_data = data if shared_immutable and data.is_read_only() else data.duplicate(true)
 	for key in ["position", "velocity", "kick_direction", "facing"]:
 		var value: Array = _data.get(key, [0, 0])
 		_vectors[key] = Vector2(float(value[0]), float(value[1]))
@@ -30,7 +32,8 @@ func _get(key: StringName) -> Variant:
 		"explosion_timer": return _data.get("elapsed", 0.0)
 		"has_exploded": return _data.get("exploded", false)
 		"kick_speed": return _get("velocity").length()
-	return _data.get(str(key))
+	var value: Variant = _data.get(str(key))
+	return value.duplicate(true) if value is Array or value is Dictionary else value
 
 func public_properties() -> Array[Dictionary]:
 	return _properties
@@ -50,7 +53,11 @@ func get_tile_position() -> Vector2i:
 	return _tile
 
 func get_forecast_observation() -> Dictionary:
-	return {"cell": get_tile_position(), "range": _get("explosion_range"), "fuse_lower_bound": _data.fuse_lower_bound, "elapsed": _data.elapsed}
+	return {"cell": get_tile_position(), "range": _get("explosion_range"), "fuse_lower_bound": _data.fuse_lower_bound,
+		"fuse_upper_bound": _data.get("fuse_upper_bound", INF), "elapsed": _data.elapsed,
+		"state": _data.get("state", 0), "bomb_type": _data.get("bomb_type", 0),
+		"kick_direction": _get("kick_direction"), "blast_cells": _data.get("blast_cells", []).duplicate(true),
+		"flight": _data.get("flight", {}).duplicate(true)}
 
 func can_be_picked_up() -> bool:
 	return _data.get("state", -1) == ServerBomb.BombState.PLANTED and not _data.get("exploded", false)

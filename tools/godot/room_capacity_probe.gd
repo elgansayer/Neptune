@@ -20,6 +20,7 @@ var refused := false
 var finished := false
 var policy_identity := {}
 var auto_fill := false
+var expected_personality := "DEFENSIVE"
 var expected_width := 17
 var expected_height := 13
 var expected_content: Dictionary = {}
@@ -50,6 +51,7 @@ func _ready() -> void:
 		if arg.begins_with("--probe-selection-count="):
 			expected_selection_count = arg.get_slice("=", 1).to_int()
 		if arg == "--probe-auto-fill": auto_fill = true
+		if arg.begins_with("--probe-personality="): expected_personality = arg.get_slice("=", 1)
 		if arg.begins_with("--probe-map-width="): expected_width = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-map-height="): expected_height = arg.get_slice("=", 1).to_int()
 		if arg.begins_with("--probe-humans="): humans = arg.get_slice("=", 1).to_int()
@@ -181,13 +183,13 @@ func state_received(index: int, state: Dictionary) -> void:
 	var capacity: Dictionary = state.get("room", {})
 	if roster.size() != seats or not state.get("a", false): return # Require the real countdown/round start.
 	var policy := {"bot_policy": capacity.get("bot_policy", ""), "bot_policy_seed": capacity.get("bot_policy_seed", "")}
-	if policy.bot_policy != "neptune-heuristic-rng-v1" or not str(policy.bot_policy_seed).is_valid_int() or (not policy_identity.is_empty() and policy_identity != policy):
+	if policy.bot_policy != "neptune-heuristic-v2" or not str(policy.bot_policy_seed).is_valid_int() or (not policy_identity.is_empty() and policy_identity != policy):
 		fail("missing/inconsistent policy identity for repeatable evidence")
 		return
 	policy_identity = policy
 	if auto_fill:
 		var fill: Dictionary = capacity.get("bot_fill", {})
-		if fill.get("target", 0) != seats or fill.get("personality", "") != "DEFENSIVE" or not fill.get("applied", false):
+		if fill.get("target", 0) != seats or fill.get("personality", "") != expected_personality or not fill.get("applied", false):
 			fail("automatic fill policy was not applied at the round boundary")
 			return
 	if capacity.get("seats", 0) != seats or capacity.get("preset_limit", 0) != preset or capacity.get("protocol_limit", 0) != 12 or capacity.get("occupied", 0) != seats or capacity.get("humans", 0) != humans or capacity.get("bots", 0) != bots:
@@ -201,7 +203,7 @@ func state_received(index: int, state: Dictionary) -> void:
 		if auto_fill:
 			var participant: Dictionary = capacity.get("participants", {}).get(str(id), {})
 			var bot: bool = str(id).to_int() < 0
-			if participant.get("type", "") != ("bot" if bot else "human") or (bot and participant.get("personality", "") != "DEFENSIVE"):
+			if participant.get("type", "") != ("bot" if bot else "human") or (bot and participant.get("personality", "") != expected_personality):
 				fail("missing/inconsistent explicit bot participant metadata")
 				return
 	if bot_count != bots or not roster.has(str(peers[index].api.get_unique_id())) or positions.size() != seats:

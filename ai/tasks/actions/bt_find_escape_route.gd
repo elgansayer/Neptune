@@ -9,7 +9,7 @@ const SimulationTime = preload("res://shared/ai/simulation_time.gd")
 
 @export var escape_radius: int = 8 ## How far to search for safety
 @export var target_cell_var: StringName = &"target_cell" ## Where to store the escape destination
-@export var debug_logging: bool = true
+@export var debug_logging: bool = false
 
 static var _tick_count: int = 0
 
@@ -30,7 +30,8 @@ func _tick(_delta: float) -> int:
 	var current_time_msec = SimulationTime.milliseconds(blackboard)
 	# Calculate msec_per_tile based on bot speed (tiles per second = speed / tile_size)
 	# Default: BASE_SPEED=45 px/s, TILE_SIZE=16px → 45/16 = 2.8125 tiles/s → 355ms/tile
-	var bot_speed_tiles_per_sec = GameConfig.BASE_SPEED / GameConfig.TILE_SIZE
+	var actor_speed: float = GameConfig.BASE_SPEED * GameConfig.get_skate_speed_multiplier(player.skate_count) * player.get_virus_speed_modifier() if player else GameConfig.BASE_SPEED
+	var bot_speed_tiles_per_sec = maxf(actor_speed, 1.0) / GameConfig.TILE_SIZE
 	var msec_per_tile = (1.0 / bot_speed_tiles_per_sec) * 1000.0
 	var hazard_predictor = blackboard.get_var("hazard_predictor")
 	
@@ -65,7 +66,7 @@ func _tick(_delta: float) -> int:
 			# CRITICAL: Also verify the PATH to the target is still valid!
 			# This prevents the bot from being trapped when another bomb blocks the path.
 			var path_valid = true
-			var path_to_target = grid_sampler.find_path(player_tile, current_escape_target, escape_radius, player)
+			var path_to_target = grid_sampler.find_path(player_tile, current_escape_target, escape_radius, player, false, current_time_msec, msec_per_tile)
 			if path_to_target.is_empty() and player_tile != current_escape_target:
 				path_valid = false
 				if debug_logging:
@@ -129,7 +130,7 @@ func _tick(_delta: float) -> int:
 		
 		var current_key := _tile_key(current_pos)
 		var arrival_time: float = visited[current_key]
-		var distance_from_start: int = abs(current_pos.x - player_tile.x) + abs(current_pos.y - player_tile.y)
+		var distance_from_start: int = roundi((arrival_time - current_time_msec) / msec_per_tile)
 		
 		# CRITICAL: Never consider current tile as escape destination - bot MUST move
 		if current_pos == player_tile:
@@ -237,6 +238,11 @@ func _tick(_delta: float) -> int:
 				
 				var next_key := _tile_key(next_pos)
 				var next_arrival_time: float = arrival_time + msec_per_tile
+				# Reject paths that cross an already lethal tile or leave the
+				# current cell after its deadline. Check BEFORE considering
+				# a future safe destination reached through that cell.
+				if next_arrival_time + 100.0 >= float(threat_matrix.get(current_key, INF)) or next_arrival_time + 100.0 >= float(threat_matrix.get(next_key, INF)):
+					continue
 				
 				if visited.has(next_key) and visited[next_key] <= next_arrival_time:
 					if debug_logging and current_pos == player_tile:
@@ -290,6 +296,14 @@ func _tick(_delta: float) -> int:
 	elif best_panic_tile != Vector2i(-1, -1):
 		final_target = best_panic_tile
 		is_panic = true
+	if final_target == Vector2i(-1, -1) and "hazard_intervals" in ai_manager:
+		# A lethal deadline cannot represent waiting for a temporary fire to
+		# clear. The bounded interval fallback seeks a refuge with no later
+		# known hazard, while keeping the source safe during the entire wait.
+		var interval_route: Dictionary = grid_sampler.find_timed_escape_route(player_tile, escape_radius, player, current_time_msec, msec_per_tile)
+		blackboard.set_var("escape_search_status", interval_route.status)
+		if interval_route.status == "found" and not interval_route.cells.is_empty():
+			final_target = interval_route.cells.back()
 		
 	if final_target != Vector2i(-1, -1):
 		# CRITICAL: Verify escape tile is not the current tile or a bomb location
@@ -389,7 +403,7 @@ func _improve_refuge(refuge: Vector2i, start: Vector2i, threats: Dictionary, sam
 		var count := _adjacent_threat_count(candidate, threats)
 		if count >= best_count:
 			continue
-		var path: Array[Vector2i] = sampler.find_path(start, candidate, escape_radius, player)
+		var path: Array[Vector2i] = sampler.find_path(start, candidate, escape_radius, player, false, now_msec, msec_per_tile)
 		if path.is_empty() or path.size() > escape_radius:
 			continue
 		var safe := true

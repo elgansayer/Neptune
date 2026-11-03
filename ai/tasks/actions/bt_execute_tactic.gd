@@ -2,6 +2,9 @@
 extends BTAction
 class_name BTExecuteTactic
 
+const PositionPlanner = preload("res://shared/ai/decision/tactical_position_planner.gd")
+const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+
 ## Executes the chosen tactic from tactical assessment
 ## Implements specific attack patterns for each strategy
 
@@ -12,6 +15,8 @@ func _generate_name() -> String:
 	return "ExecuteTactic (%s)" % tactic_var
 
 func _tick(_delta: float) -> int:
+	# A failed or invalidated tactic must release its previous movement target.
+	blackboard.set_var(target_var, null)
 	var player = blackboard.get_var("player")
 	var opponent_tracker = blackboard.get_var("opponent_tracker")
 	var grid_sampler = blackboard.get_var("grid_sampler")
@@ -43,6 +48,7 @@ func _tick(_delta: float) -> int:
 				# Store kick info for BTKickBomb to use
 				blackboard.set_var("kick_target", opponent_tile)
 				blackboard.set_var("kick_direction", kick_result.kick_direction)
+				blackboard.set_var(target_var, player_tile)
 				print("[ExecuteTactic] ⚽ KICK_SNIPE: Kicking toward %s" % opponent_tile)
 				return SUCCESS  # BTKickBomb will handle the actual kick
 			return FAILURE
@@ -105,12 +111,16 @@ func _tick(_delta: float) -> int:
 	
 	# If the specific tactic failed to find a valid position, fall back to AGGRESSIVE_CHASE
 	# This prevents the tree from cycling through alternatives and causing oscillation
-	if target_tile == Vector2i.ZERO or target_tile == Vector2i(-1, -1):
+	# Legacy tactic helpers use ZERO as failure. The bounded planner uses an
+	# explicit invalid tile, allowing valid custom-map firing cells at (0, 0).
+	var invalid_target: bool = target_tile == Vector2i(-1, -1) or (target_tile == Vector2i.ZERO and tactic != "AGGRESSIVE_CHASE")
+	if invalid_target and tactic != "AGGRESSIVE_CHASE":
 		print("[ExecuteTactic] ⚠ Tactic %s failed to find position, falling back to AGGRESSIVE_CHASE" % tactic)
 		target_tile = _execute_aggressive_chase(player_tile, opponent_tile, grid_sampler)
+		invalid_target = target_tile == Vector2i(-1, -1)
 	
 	# If even AGGRESSIVE_CHASE failed, we truly have no valid target
-	if target_tile == Vector2i.ZERO or target_tile == Vector2i(-1, -1):
+	if invalid_target:
 		return FAILURE
 	
 	blackboard.set_var(target_var, target_tile)
@@ -429,118 +439,16 @@ func _execute_stutter_trap(player_tile: Vector2i, opponent_tile: Vector2i, oppon
 
 ## Chase aggressively with multiple bombs
 ## This is an ATTACK tactic - we want to find a position where we can BOMB the opponent!
-func _execute_aggressive_chase(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler) -> Vector2i:
-	var direction = opponent_tile - player_tile
-	var manhattan_dist = abs(direction.x) + abs(direction.y)
-	
-	# Get player's bomb range from blackboard
-	var player = blackboard.get_var("player")
-	var bomb_range = player.bomb_range if player else 2
-	
-	# If we're ALREADY in bombing range, find the best attack position!
-	# We need a tile where our bomb explosion would hit the opponent
-	if manhattan_dist <= bomb_range + 2:
-		# We're close! Find a tile where:
-		# 1. We can place a bomb that threatens the opponent
-		# 2. We have an escape route
-		var best_attack_pos = _find_attack_position(player_tile, opponent_tile, bomb_range, grid_sampler)
-		if best_attack_pos != Vector2i.ZERO and best_attack_pos != Vector2i(-1, -1):
-			print("[AggressiveChase] 🎯 Attack position found: %s (range to target: %d)" % [best_attack_pos, manhattan_dist])
-			return best_attack_pos
-	
-	# Not in bombing range yet - chase toward opponent
-	# Find the best path tile toward the opponent
-	var next_tile = player_tile
-	
-	# Primary direction: the axis with the larger gap
-	var primary_dir: Vector2i
-	var secondary_dir: Vector2i
-	
-	if abs(direction.x) > abs(direction.y):
-		primary_dir = Vector2i(sign(direction.x), 0)
-		secondary_dir = Vector2i(0, sign(direction.y)) if direction.y != 0 else Vector2i(0, 1)
-	else:
-		primary_dir = Vector2i(0, sign(direction.y))
-		secondary_dir = Vector2i(sign(direction.x), 0) if direction.x != 0 else Vector2i(1, 0)
-	
-	# Try primary direction
-	next_tile = player_tile + primary_dir
-	if grid_sampler.is_tile_safe_for_target(next_tile):
-		return next_tile
-	
-	# Try secondary direction (flanking approach)
-	next_tile = player_tile + secondary_dir
-	if grid_sampler.is_tile_safe_for_target(next_tile):
-		return next_tile
-	
-	# Try opposite of secondary (other flank)
-	next_tile = player_tile - secondary_dir
-	if grid_sampler.is_tile_safe_for_target(next_tile):
-		return next_tile
-	
-	# All directions blocked - stay in place
-	return player_tile
-
-## Find the best position to attack opponent from
-## Returns a tile where a bomb would threaten the opponent AND we can escape
-func _find_attack_position(player_tile: Vector2i, opponent_tile: Vector2i, bomb_range: int, grid_sampler) -> Vector2i:
-	var ai_manager = blackboard.get_var("ai_manager")
-	var threat_matrix = ai_manager.get_current_threat_matrix() if ai_manager else {}
-	
-	# Check tiles along each cardinal direction from opponent
-	# These are positions where our bomb would hit them
-	var attack_positions: Array[Dictionary] = []
-	
-	for dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
-		for dist in range(1, bomb_range + 1):
-			var attack_tile = opponent_tile + (dir * dist)
-			
-			# Must be walkable and safe (no current threats)
-			if not grid_sampler.is_tile_safe_for_target(attack_tile):
-				break  # Can't pass through walls/blocks
-			
-			var key = "%d,%d" % [attack_tile.x, attack_tile.y]
-			if threat_matrix.has(key):
-				continue  # Don't stand in danger
-			
-			# Check if we can reach this position
-			var path = grid_sampler.find_path(player_tile, attack_tile, 20, null, false)
-			if path.is_empty():
-				continue  # Can't reach
-			
-			# Count escape routes from this position (excluding the direction toward opponent)
-			var escapes = 0
-			for escape_dir in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
-				if escape_dir == -dir:
-					continue  # Don't count going back toward explosion
-				var escape_tile = attack_tile + escape_dir
-				if grid_sampler.is_tile_safe_for_target(escape_tile):
-					var escape_key = "%d,%d" % [escape_tile.x, escape_tile.y]
-					if not threat_matrix.has(escape_key):
-						escapes += 1
-			
-			if escapes >= 1:
-				var path_len = path.size()
-				attack_positions.append({
-					"tile": attack_tile,
-					"dist_from_opp": dist,
-					"path_len": path_len,
-					"escapes": escapes
-				})
-	
-	if attack_positions.is_empty():
-		return Vector2i.ZERO
-	
-	# Sort by: closest to us (shortest path), then by escape options
-	attack_positions.sort_custom(func(a, b):
-		# First, shorter path is better
-		if a.path_len != b.path_len:
-			return a.path_len < b.path_len
-		# Then, more escapes is better
-		return a.escapes > b.escapes
-	)
-	
-	return attack_positions[0].tile
+func _execute_aggressive_chase(_player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler) -> Vector2i:
+	var player = blackboard.get_var("player", null)
+	var result: Dictionary = PositionPlanner.choose(player, opponent_tile, grid_sampler,
+		blackboard.get_var("ai_manager", null), blackboard.get_var("bomb_safety_checker", null),
+		SimulationTime.milliseconds(blackboard))
+	blackboard.set_var("tactical_position_evaluation", result)
+	# Returning a whole reachable firing position lets BTMoveToCell follow a
+	# detour. A greedy adjacent step could repeatedly pick opposite flanks.
+	# No reachable attack releases the branch so collection/farming can run.
+	return result.tile if result.found else Vector2i(-1, -1)
 
 ## Stay safe while opponent dies
 func _execute_wait_safe(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler, ai_manager) -> Vector2i:
@@ -758,7 +666,7 @@ func _execute_kick_snipe(player_tile: Vector2i, opponent_tile: Vector2i, grid_sa
 		# Check how far bomb would travel
 		var travel_distance = 0
 		var final_tile = bomb_tile
-		var bomb_range = found_bomb.bomb_range if found_bomb.has_method("get") else 2
+		var bomb_range: int = found_bomb.explosion_range
 		
 		for i in range(1, 10):
 			var check_tile = bomb_tile + Vector2i(kick_dir * float(i))

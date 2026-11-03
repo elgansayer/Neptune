@@ -257,6 +257,8 @@ func _set_tactic(tactic: String, time: float) -> void:
 func _get_priority(tactic: String) -> int:
 	match tactic:
 		"DEFENSIVE_RETREAT": return 100
+		"KICK_SNIPE": return 13
+		"POWER_THROW": return 12
 		"CORNER_TRAP": return 12
 		"BODY_BLOCK": return 11
 		"ONE_TILE_TRAP": return 11
@@ -267,8 +269,8 @@ func _get_priority(tactic: String) -> int:
 		"SPACE_DENIAL": return 6
 		"ITEM_HUNTER_TRAP": return 5
 		"WAIT_FOR_DEATH": return 4
-		"AGGRESSIVE_CHASE": return 3
-		"PREDICTIVE_INTERCEPT": return 2
+		"AGGRESSIVE_CHASE": return 5
+		"PREDICTIVE_INTERCEPT": return 3
 		"FARM_TOWARD_OPPONENT": return 2
 		_: return 0
 

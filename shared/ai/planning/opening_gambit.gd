@@ -222,7 +222,7 @@ func _can_path_to_target(from_pos: Vector2i, to_pos: Vector2i, current_time_msec
 	pathfinder.bot_speed_msec_per_tile = 200.0  # Default speed
 	
 	# Try to find path
-	var path: PackedVector2Array = pathfinder.get_point_path(from_pos, to_pos)
+	var path: PackedVector2Array = pathfinder.get_timed_point_path(from_pos, to_pos)
 	return not path.is_empty()
 
 ## Get cached first target (after spawn analysis)

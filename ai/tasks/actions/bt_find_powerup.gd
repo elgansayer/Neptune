@@ -11,6 +11,7 @@ const ServerPowerUpScript = preload("res://shared/entities/server_powerup.gd")
 @export var target_tile_var: StringName = &"target_cell"  ## Blackboard variable to store target tile
 @export var prioritize_type: String = ""  ## Preferred powerup type (empty = any)
 @export var min_value_threshold: float = 0.0  ## Minimum value to consider (filters negative items)
+@export var max_path_length: int = 40 ## Bound collection routes to the movement planner's horizon.
 
 func _generate_name() -> String:
 	if prioritize_type:
@@ -88,6 +89,10 @@ func _tick(_delta: float) -> int:
 	var game_instance = blackboard.get_var("game_instance")
 	var player = blackboard.get_var("player")
 	var grid_sampler = blackboard.get_var("grid_sampler")
+	var hazard_predictor = blackboard.get_var("hazard_predictor", null)
+	# A failed selection must not leave a previous item as a movement objective.
+	blackboard.set_var(target_tile_var, null)
+	blackboard.set_var("powerup_target", null)
 	
 	if not game_instance or not player or not grid_sampler:
 		return FAILURE
@@ -114,7 +119,18 @@ func _tick(_delta: float) -> int:
 			continue
 		
 		var powerup_tile = grid_sampler.world_to_tile(powerup.position)
-		var distance = grid_sampler.get_manhattan_distance(player_tile, powerup_tile)
+		if not grid_sampler.is_tile_safe_for_target(powerup_tile):
+			continue
+		if hazard_predictor and hazard_predictor.is_tile_threatened(powerup_tile):
+			continue
+		# Score real reachable routes. A high-value item behind a wall must not
+		# starve reachable loot, and a detour must be costed by its actual length.
+		var path: Array[Vector2i] = grid_sampler.find_path(player_tile, powerup_tile, max_path_length, player, true)
+		if player_tile != powerup_tile and path.is_empty():
+			continue
+		if path.size() > max_path_length:
+			continue
+		var distance := path.size()
 		
 		# Score = value - distance penalty (closer is better)
 		# Distance penalty is 5 points per tile
@@ -132,30 +148,9 @@ func _tick(_delta: float) -> int:
 	if best_powerup == null:
 		return FAILURE
 	
-	# Calculate intermediate target (move one step toward powerup)
-	var direction = (best_tile - player_tile)
-	var target: Vector2i
-	
-	if abs(direction.x) > abs(direction.y):
-		target = player_tile + Vector2i(sign(direction.x), 0)
-	else:
-		target = player_tile + Vector2i(0, sign(direction.y))
-	
-	# Validate target is walkable
-	var ai_manager = blackboard.get_var("ai_manager")
-	if ai_manager and not ai_manager.is_walkable(target):
-		# Try alternate direction
-		if abs(direction.x) > abs(direction.y):
-			target = player_tile + Vector2i(0, sign(direction.y))
-		else:
-			target = player_tile + Vector2i(sign(direction.x), 0)
-		
-		# If still blocked, just stay put (will retry next tick)
-		if not ai_manager.is_walkable(target):
-			target = player_tile
-	
-	# Store in blackboard
-	blackboard.set_var(target_tile_var, target)
+	# The production movement task follows the route to the actual item; an
+	# adjacent greedy step cannot navigate around obstacles and can oscillate.
+	blackboard.set_var(target_tile_var, best_tile)
 	blackboard.set_var("powerup_target", best_tile)
 	blackboard.set_var("powerup_type", best_powerup.powerup_type if "powerup_type" in best_powerup else 0)
 	blackboard.set_var("powerup_value", best_score)

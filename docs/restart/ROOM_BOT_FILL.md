@@ -1,7 +1,11 @@
 # Initial-round bot filling
 
-Issue #469 implements the first slice of #31. A trusted server operator can set
-a total reserved-participant target for the initial round:
+Issue #469 implements the first slice of #31. Hosted casual rooms now default
+to a total of four reserved participants, capped by the selected map, room and
+preset capacity. A single human therefore starts with three `BALANCED` bots in
+a four-seat room. The server provisions them at the initial countdown boundary;
+no client debug command is needed. A trusted server operator can override the
+total reserved-participant target:
 
 ```sh
 "$GODOT" --headless --path . res://main_server.tscn -- \
@@ -9,9 +13,12 @@ a total reserved-participant target for the initial round:
   --room-fill-to=12 --room-bot-personality=DEFENSIVE
 ```
 
-`--room-fill-to=0` disables automatic additions and is the default. Other values
+`--room-fill-to=0` disables automatic additions. Other explicit values
 must be integers 1..12 within the actual room/map/preset capacity. This is a
 minimum initial target, not a limit on human admission or a fixed bot count.
+Only the omitted four-participant default is capped to smaller rooms; an explicit
+target above capacity is still an error. Omit `--room-bot-personality` to use
+`BALANCED`, or select a supported existing personality explicitly.
 Existing humans, bots and retained human reservations all count toward it.
 Invalid/duplicate/missing options or unsupported personality names fail before
 listening. The exact existing BotManager personality names are supported; unknown
@@ -48,8 +55,9 @@ not persistent stats, ranked eligibility or a player-facing roster UI.
 `tests/test_room_bot_fill.gd` uses actual native actors/controllers and a fixture
 that injects one structured provisioning refusal after successful real spawns.
 `tools/godot/check_room_capacity.py` retains previous native capacity scenarios
-and adds automatic 4/12-seat starts, explicit participant metadata, zero spawn-bot
-RPCs, extra-human refusal and invalid startup policy rejection. They do not prove
+and checks automatic 4/12-seat starts, omitted-target four/two-seat starts,
+explicit zero, explicit participant metadata, zero spawn-bot RPCs, extra-human
+refusal and invalid startup policy rejection. They do not prove
 browser transport, full rounds, held-out quality, latency/load budgets, host UI,
 human replacement or persistent ranked history. #31 remains open.
 
