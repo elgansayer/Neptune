@@ -30,9 +30,11 @@ gameplay semantics.
 
 Profile 2's enabled run also executed all 600 original frames, but exceeded the
 fixed 128-slot storage capacity: 1,810 logical events, 128 stored records,
-1,811 transfers observed and one dropped record. It remains rejected. The cap
-was not increased; the overflow evidence is retained for future instrumentation
-work.
+1,811 transfers observed and one dropped record. It remains rejected. A later
+no-input scan clarified that these slots were consumed by pre-root transfers:
+both profiles recorded 159 transfers and overflowed before any source-call/root
+entry, while the reference and disabled 600-frame controls matched. This scan is
+retained as a separate idle-path result, not a root. The cap was not increased.
 
 The natural trace captures the wrapper at `0x06095992`, its call to `0x060959CA`
 from `0x060959AA`, and continuation at `0x060959AE`. A guarded CPU-only replay
@@ -58,23 +60,30 @@ observed device writes. The report is
 This remains one service path and does not establish timeout behavior, CD
 hardware timing or gameplay meaning.
 
-The observer validator now finds the root sequence by its observed source call
-and following delay/entry events, allowing unrelated bus events earlier in the
-same frame while still requiring transfers inside the root. A compiled
-regression fixture covers leading unrelated transfers. Focused command-observer
-tests pass (10 tests).
+The observer validator finds the root sequence by its observed source call and
+following delay/entry events. The next instrumentation change arms transfer
+recording only after that source call, so earlier unrelated bus events cannot
+consume the fixed capacity; the 128-slot limit remains unchanged. A compiled
+regression fixture checks that pre-call device reads and writes are omitted,
+root transfers remain counted, and the existing overflow fence still rejects
+the 129th uncompressible event. The focused command-observer suite passes (10
+tests). This source change has not yet been built into a matched core or run
+against the original game.
 
 Private evidence directory:
 `/home/dev/neptune-research-private/707/original-command-abi2-windows-002`
 and `.../original-command-abi2-windows-003`. The retrospective accepted trace
 summary is `.../original-command-abi2-windows-002/profile1-enabled/retrospective-validation.json`;
-the profile 2 overflow diagnostic is in `.../original-command-abi2-windows-003/profile2-enabled/failed-command-records.json`.
+the profile 2 overflow diagnostic is in `.../original-command-abi2-windows-003/profile2-enabled/failed-command-records.json`. The no-input scan is under
+`/home/dev/neptune-research-private/707/original-command-idle-abi2-001`.
 
 Runs used the shared host limit of 3, a 180-second gate lease, offline network
 isolation, read-only original inputs and prepared core, no provider calls,
 60-second per-command limits, nice 10 and a 2 GiB address-space cap. All leases
 were released.
 
-Next: continue with the distinct timeout/error branches and adjacent resident
-kernel functions, then expand into other code-bearing modules. The all-original-
-code programme remains active and incomplete.
+Next: build and locally reuse the source-call-armed observer, rerun both profiles
+with and without Start, preserve no-root/overflow diagnostics, then continue with
+the distinct timeout/error branches and adjacent resident kernel functions.
+Expand into other code-bearing modules afterward. The all-original-code
+programme remains active and incomplete.

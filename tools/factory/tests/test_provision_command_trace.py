@@ -85,6 +85,7 @@ static uint16_t expected[NEPTUNE_COMMAND_WITNESS];
 void fixture_run(void) {
  neptune_command_begin(1,expected,NEPTUNE_COMMAND_WITNESS);neptune_command_frame(1200);
  cpu.R[15]=0x06001000;cpu.R[14]=0x06001234;cpu.R[0]=0x060A4FAC;cpu.R[5]=0x06002000;cpu.R[6]=0x06002008;cpu.PR=0x060AE698;
+ neptune_command_read(&cpu,0x25890008,0xDEAD);neptune_command_write(&cpu,0x25890018,0xBEEF);
  cpu.PC=0x060AE698;cpu.Pipe_ID=0x0000400B;neptune_command_step(&cpu);
  cpu.PC=0x060A4FAE;cpu.Pipe_ID=0x80006003;neptune_command_step(&cpu);
  cpu.PC=0x060A4FB0;cpu.Pipe_ID=0x00004F22;neptune_command_step(&cpu);
@@ -108,6 +109,9 @@ void fixture_run(void) {
             dll=abi.C.CDLL(str(binary));trace=abi.Trace(dll);dll.fixture_run()
             rows,status=trace.snapshot()
             self.assertEqual((status.errors,status.dropped,status.pending,status.completed),(0,0,0,1),[(r.kind,hex(r.pc),hex(r.pr)) for r in rows])
+            self.assertNotIn(0xDEAD,[r.transfer_value for r in rows])
+            self.assertNotIn(0xBEEF,[r.transfer_value for r in rows])
+            self.assertEqual(status.transfer_count,sum(r.repeat_count for r in rows if r.kind in (2,3)))
             kinds=[row.kind for row in rows]
             self.assertEqual(kinds[0:3],[8,9,1]);self.assertIn(2,kinds);self.assertEqual(kinds[-1],7)
             self.assertEqual(rows[-1].pc,0x060AE698)
@@ -141,6 +145,7 @@ void fixture_run(void) {
 static SH7095 cpu;static uint16_t expected[NEPTUNE_COMMAND_WITNESS];
 void fixture_runs(NeptuneCommandStatus* status,NeptuneCommandRecord* rows) {
  neptune_command_begin(2,expected,NEPTUNE_COMMAND_WITNESS);neptune_command_frame(1801);
+ neptune_command_trace.source_call=1;
  cpu.R[15]=0x06001000;neptune_command_trace.current_pc=0x060958EC;neptune_command_trace.current_opcode=0x6031;
  for(int i=0;i<40;i++){cpu.R[14]=i;cpu.timestamp=i*33;neptune_command_read(&cpu,0x25890008,0x0BC1);}
  cpu.R[4]=2;cpu.R[14]=40;cpu.timestamp=1320;neptune_command_read(&cpu,0x25890008,0x0BC1);
@@ -150,6 +155,7 @@ void fixture_runs(NeptuneCommandStatus* status,NeptuneCommandRecord* rows) {
 }
 void fixture_full_guard(NeptuneCommandStatus* status) {
  neptune_command_begin(2,expected,NEPTUNE_COMMAND_WITNESS);neptune_command_frame(1801);
+ neptune_command_trace.source_call=1;
  cpu.R[15]=0x06001000;neptune_command_trace.current_pc=0x060958EC;neptune_command_trace.current_opcode=0x6031;
  for(uint32_t i=0;i<129;i++){cpu.R[0]=i;cpu.timestamp=(int32_t)i;neptune_command_read(&cpu,(i&1)?0x2589000C:0x25890008,0x0BC1);}
  neptune_command_status(status,sizeof(*status));
