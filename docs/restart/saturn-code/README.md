@@ -191,3 +191,8 @@ The same Japanese startup study adds 520 original calls to the `0x0600A5E4`
 The larger `A312` startup path crosses SR, BIOS, VDP2, SCU and cache-through
 polling state; its static decode does not count as execution or establish those
 device contracts.
+
+It also adds original `0x0600A164` context save over 31 constructed register
+patterns twice per case in paired reports. The exact 48-byte write order
+preserves the source's duplicate R8 at offsets 0 and 4. The existing A186
+restore slice remains separate; natural task-switch reachability is unresolved.

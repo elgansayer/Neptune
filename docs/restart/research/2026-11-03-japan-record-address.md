@@ -231,8 +231,35 @@ decode and A492 tail are private static listings with SHA-256
 `cf5e2f9539007d142ffd7c4eedba82309452288b2b05ffcf5c1504d186defed9`,
 respectively. These do not substitute for runtime validation of BIOS, VDP,
 SCU, or synchronization behavior. The full repository research suite passes
-523 tests; this is separate from original execution reports. The all-code
+523 tests at that checkpoint; this is separate from original execution reports. The all-code
 programme remains incomplete.
+
+## Original Japanese context save at A164
+
+The static task path identifies `0x0600A164` as the context-save counterpart
+to the previously executed restore at `0x0600A186`. The exact range
+`[0x0600A164,0x0600A186)` writes 12 longwords to a bounded 48-byte frame:
+R8 is copied to both offsets 0 and 4; R9–R15 go to offsets 8–32; PR, MACH,
+and MACL are written at offsets 36, 40, and 44. The write order is 0–32,
+then 40, 44, 36. The RTS delay slot sets R0 to zero. This records the original
+routine’s duplicate R8 stores without inferring why the caller uses them.
+
+`tools/saturn_lab/probe_japan_context_save.py` executes 31 constructed register
+patterns twice per case in each paired report. It checks all 12 writes and
+their order, unchanged registers/special state, the return delay slot, and the
+exact frame bytes. Two original-instruction mutations are rejected. The first
+attempt is retained in `execution-019`; it exposed the non-offset-ascending
+write order and is not counted as a successful run. Corrected reports in
+`execution-020` match at SHA-256
+`117795f538d5fb7bd28ea6f20b3ffd6fdfca7eab083ef94ca40c2386141826fe`.
+Probe SHA-256 is
+`0bccacf6b12c79e54a48a985fc1ee0f297acecd5e5a1837745c6cd9f2df0d730` and code
+range SHA-256 is
+`0e41c89784b32e6f5a18b98cbd02170bcda3ce780b250c370f24d156274322ad`.
+Together A164/A186 now have separate bounded save and restore contracts, but
+no natural task-switch/caller or live frame-lifetime proof. After this probe,
+the full research suite passes 524 tests; this remains separate from original
+execution evidence.
 
 ## Limits and continuation
 
