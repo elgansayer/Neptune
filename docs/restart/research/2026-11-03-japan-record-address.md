@@ -166,6 +166,74 @@ continues the surrounding service and callback candidates but does not establish
 the helper's natural callers. Local focused tests cover the probe's case,
 range, and bound definitions; they do not execute or validate game behavior.
 
+## Original Japanese record transition at ADB0
+
+Static decode of the Japanese kernel places a second record transition at
+`0x0600ADB0`, called by the `AAEA` tag scan. It compares signed `r4` against
+18, uses the Japan literal at `[0x0600AF04,0x0600AF08)` for table base
+`0x060BCEEC`, and indexes 88-byte records using the sign-extended low 16 bits
+of the signed-word product. For a selected record, it reads byte `+80`. If that
+byte is exactly 1, it changes it to 2, clears byte `+81`, and returns zero;
+otherwise it returns `0xFFFFFFFF`. The routine spills MACL at `[SP-4]` and
+restores it in both RTS delay slots. The bound is signed 32-bit, so negative
+indices also pass that comparison; this experiment does not model their
+out-of-table memory effects.
+
+`tools/saturn_lab/probe_japan_record_transition.py` maps only the original
+instruction range and literal, plus one constructed 88-byte record and the
+exact four-byte stack slot. It executes every index 0–17 against activity
+bytes 0, 1, 2, 3, and 255 and four tag-byte values (360 cases), retaining exact
+instruction paths, memory transactions, record state, MACL and stack evidence.
+The signed upper-bound refusal at index 18 is included in an original
+instruction mutation control. The controls alter the bound branch, active
+comparison, and stored transition value; all three are rejected. The full-match
+scan that calls this helper is a separate probe and does not make these
+constructed calls natural.
+
+The paired reports under
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-016/`
+are byte-identical at SHA-256
+`11643ddedfc846bc7e22087cf82eb2c1dcb4c35ec15bd7085142a39f5fcced7a`.
+Each has 360 original calls, a maximum of 24 instructions per call, and three
+non-budget mutation controls. The Japan kernel SHA-256 remains
+`23685e15fb4f0c49d16859b4e5bbb6ded619611f99ac830e8c93a00590ca44fb`; source
+code SHA-256 is `9ccfcdb76cd0a080e6824c99457713e1d9297df632f30d819d1a5380ef682591`,
+literal SHA-256 is `467250026107641638b8e76ad43aaf4a5e5e765762adb4d0516bac605166bc2c`,
+and probe SHA-256 is `80bb9e8894dfbd2ab0ce136c75363e730d6defd44d6468136e4f4413bf390202`.
+The report does not
+establish negative-index memory behavior, natural caller/runtime behavior,
+device or BIOS semantics, timing, gameplay, or independent-emulator agreement.
+The repository research suite passes 522 tests; that count is separate from
+original execution evidence.
+
+## Original Japanese startup counter at A5E4
+
+The next startup decode from `0x0600A312` enters SH-2 SR/MMIO handling, calls
+BIOS indirect services, and polls cache-through synchronization words. The
+nearby helper at `0x0600A5E4` is a bounded leaf: it reads the Japan literal at
+`0x0600A62C` (`0x060B3D40`), reads one 16-bit word, adds one, and stores the
+low 16 bits in the RTS delay slot. It clobbers `r2`/`r3`; other GPRs and
+special registers remain unchanged in the constructed CPU contract.
+
+`tools/saturn_lab/probe_japan_word_counter.py` executes 520 cases over 0–255
+and wrap/sign boundaries (`0x7FFF`, `0x8000`, `0xFFFE`, `0xFFFF`), each with
+two register patterns. It checks the exact literal/global transactions, delay
+slot write, 16-bit wrap, and register preservation. Three instruction/literal
+mutations are rejected. Paired reports in
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-018/`
+match at SHA-256
+`d2c0e00dcb5aaf0813f8dbff8fee0eb3a10e8910fff6de0f0094cdf548a09a14`.
+The probe hash is
+`3c8c0c6b015a7ca86ec2d01ff31fe50eac0def14199535807a0284a21bd7dc96`;
+original code and literal hashes are embedded in the reports. The A312 startup
+decode and A492 tail are private static listings with SHA-256
+`668d6570080c03a7fbbee5f4e6c72e4270a0bdf3b2d44fc611fffc285fe39887` and
+`cf5e2f9539007d142ffd7c4eedba82309452288b2b05ffcf5c1504d186defed9`,
+respectively. These do not substitute for runtime validation of BIOS, VDP,
+SCU, or synchronization behavior. The full repository research suite passes
+523 tests; this is separate from original execution reports. The all-code
+programme remains incomplete.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed
