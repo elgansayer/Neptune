@@ -191,3 +191,46 @@ The same Japanese startup study adds 520 original calls to the `0x0600A5E4`
 The larger `A312` startup path crosses SR, BIOS, VDP2, SCU and cache-through
 polling state; its static decode does not count as execution or establish those
 device contracts.
+
+It also adds original `0x0600A164` context save over 31 constructed register
+patterns twice per case in paired reports. The exact 48-byte write order
+preserves the source's duplicate R8 at offsets 0 and 4. The existing A186
+restore slice remains separate; natural task-switch reachability is unresolved.
+The A7D0 literal/JSR/delay-slot caller is now composed with A164 across 31
+patterns and two original instruction controls; execution stops at its actual
+callee return boundary. Natural boot reachability and task-frame lifetime
+remain unresolved.
+The AB78 caller path now composes its exact stack prologue and A164 call across
+31 additional constructed patterns, checking the frame at `0x060BDD7C`, its
+40-byte saved stack, and the A164 return boundary. Neither caller establishes
+natural task-switch behavior.
+
+Static follow-through also found a third caller at `0x0600AD26`: it derives a
+two-entry cache-through slot index from VBR, loads that frame pointer, and calls
+A164 with a 32-byte delay-slot advance. The bounded composed probe covers 31
+register patterns for each of two constructed VBR values, twice per case in
+paired reports, with two instruction mutation controls. The reports match at
+SHA-256 `573494700d714b29edbe46e31e19bd3ae54e3a5f9211a5fe7e2bb8e7feb16827`.
+The table contents, VBR values, task identity, and frame lifetime are
+constructed; natural task scheduling remains unproven. Failed harness attempts
+are retained in `execution-026` and `execution-027`.
+
+The AD38 continuation is now composed with the original A186 restore and
+epilogue. A164's zero result takes the restore branch; a constructed nonzero
+result skips it. Thirty-two branch/seed cases run twice per report, with two
+branch mutations. Paired reports match at SHA-256
+`85ec5602db6ad65b4411c34c430979ad38e57b03aa7f2c0dea73e93d39755f1d`.
+Natural scheduler reachability and context lifetime remain open.
+
+The original Japanese `0x06095C24` bounded word-insert helper is now tested
+across its five selector values found in the VDP setup callers. It covers 640
+constructed input/old-word combinations twice in paired original-byte reports,
+with two original-instruction mutations. It proves only the helper's bounded
+memory/register contract; VDP selector meaning and natural startup behavior
+remain unresolved. See the [Japanese kernel study](../research/2026-11-03-japan-record-address.md).
+
+Static continuation into Japanese startup entry A312 and nested A472/A638 now
+shows SR masking, VDP2 TVSTAT selection, BIOS interrupt calls, and later VDP1,
+SMPC and SCSP dependencies. Retained disassemblies and limits are recorded in
+the [Japanese kernel study](../research/2026-11-03-japan-record-address.md);
+this path needs an explicit device/runtime model before original execution.
