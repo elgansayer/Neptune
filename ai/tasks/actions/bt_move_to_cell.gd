@@ -132,6 +132,7 @@ func _tick(_delta: float) -> int:
 		if _remaining_route_safe(player, grid_sampler):
 			# A scheduled interval wait is intentional progress, not a stuck bot.
 			player.set_input(0.0, 0.0)
+			_stuck_counter = 0
 			_stuck_start_time = 0.0
 			_last_position = player.position
 			return RUNNING
@@ -386,6 +387,9 @@ func _tick(_delta: float) -> int:
 		_waiting_until = float(_cached_departures[_current_waypoint_index])
 		if _waiting_until > SimulationTime.milliseconds(blackboard):
 			player.set_input(0.0, 0.0)
+			# Reset the counter with its timestamp so departure starts a fresh
+			# stall window instead of measuring from simulation time zero.
+			_stuck_counter = 0
 			_stuck_start_time = 0.0
 			_last_position = player.position
 			blackboard.set_var("route_wait_until_msec", _waiting_until)
