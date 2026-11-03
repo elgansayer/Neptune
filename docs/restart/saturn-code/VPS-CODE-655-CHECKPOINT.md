@@ -2,12 +2,54 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-record-setup-655`, workspace
+`research/saturn-library-open-errors-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current95E5A error result: all eight original jobs retained
+
+Sourcec31655eb810e25566ecc2851f9572bada08b4f4d now completes5,882 selected
+95E5A error cases/run twice:1,744 each12/24-stride setup path,1,344 invalid-index
+and1,050 no-slot cases. All four full raw/archive pairs match byte-for-byte;
+all20 non-budget mutation controls reject. Read
+[the result](../research/2026-11-03-library-open-error-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-open-error-contracts.json).
+Actual instruction ranges514–991,513–990,47–57 and72–295. The existing1024
+profile is unchanged; actual old128 refusals retained in three families.
+
+8 owned/469 research tests passed before original jobs. Frozen80-file adapter:
+`.../655/adapter-eab34896f873a421c1359c42a82ffa28c70f5b61415b40db72c341edf3479018`.
+Completed manifest:`/home/dev/neptune-research-private/655/open-batch-t5qbt9rr/batch.json`;
+tool5341 terminal success. All own leases released; do not resume/recount this
+completed batch. Raw reports are lossless archives with source/raw/archive hashes
+and `gzip -dk report.json.gz` restore. Scalars/trace/bytes/guards rechecked by
+`.../code655-20261102/derive-open-contracts.py`. The constructed file-table count24
+is a declared sample, not a universal capacity. Callback isnull and the first
+context pool isfull; successful/null-table/services and callbacks remain open.
+
+Arithmetic695 mergeda3b765e; pool698 mergedbc0b8e2, both with15 exact-head/
+current-base checks and seven explicit non-applicability proofs. Record699 merged7afac4c at tested96aa75f againstbc0b8e2; all15 checks
+and exact mergeparent/tree acceptance verified. Source29d7bdb bytes are retained.
+This new95E5A result follows699 through its own evidence PR and gates.
+
+Next source command, always a fresh private static report:
+
+```sh
+python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-name.py
+```
+
+Latest95CBC window:`.../655/name-source-2ea3j9e2/source.json`; linear decode/data
+classification only, zero original95CBC execution. Existing native init ABI1
+captures64 library words, including the header, but only24 slot markers rather
+than full slot bodies. Inspect retained source/runtime data before inventing
+service state or a new observer. Preserve all captures/core generations, owners,
+shared3/180-second/60-second/nice10/2GiB/64MiB/offline/read-only limits and5GiB+64MiB
+reserve. No provider, new native build or scheduler.655/programme stay active.
+The running/deferred snapshots below are historical; all four current original
+batches (arithmetic,pools,record,open-errors) are now complete, not the programme.
 
 ## Next95E5A original job is running
 

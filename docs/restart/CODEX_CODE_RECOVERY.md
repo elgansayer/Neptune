@@ -131,6 +131,15 @@ carries that separate tested evidence and now targets main. Next95E5A source
 c31655e has8 owned/469 research tests and a guarded original batch in progress;
 inspect the current655 checkpoint and manifest before resuming. Do not count
 prepared models or partial runs as completed whole-function/programme recovery.
+Record PR699 subsequently merged7afac4c with15 exact-head/current-base checks
+and verified mergeparent/tree.95E5A then completed all eight original jobs:5,882 selected complete error
+returns/run twice, four identical raw/archive pairs and20 non-budget controls.
+Read [the result](research/2026-11-03-library-open-error-contracts.md) and current655
+checkpoint. Sourcec31655e had8 owned/469 research tests before originals. The
+constructed24-entry table/callbacknull/exhausted-context state does not recover
+success/null-table/services/callbacks. Continue95CBC source/natural header data,
+then those successful dependencies and further root/task/module code. Completed
+batch manifests must not be restarted or counted as new progress.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
