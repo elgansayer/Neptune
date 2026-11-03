@@ -115,3 +115,10 @@ terminal mutation rejections. Direct original writers establish only the bounded
 NLSND0780..078F data profile. All prior680 observations are reproduced; the new
 command10 matrix has64 diagnostic returns and64 explicit DSP longword guards.
 Natural code/data lifetime, full command10 semantics and whole-code coverage remain open.
+
+The [DSP reset helper result](../research/2026-11-03-original-dsp-reset.md)
+adds414 complete original calls repeated in fresh processes and60 terminal
+mutation rejections, with a separate qualified frozen DSP longword/TEMP profile.
+All128 command10 scenarios now return diagnostically;64 prior CPU/RAM/common-device
+outcomes and64 prior guarded prefixes are preserved. This removes the measured
+width dependency, not the remaining independent command/natural/audio/Godot proof.
