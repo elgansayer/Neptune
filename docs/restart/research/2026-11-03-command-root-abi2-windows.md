@@ -216,3 +216,41 @@ It visibly contains original scene art, but is not yet semantically identified
 or palette/composition validated. This is one extracted pattern, not complete
 asset recovery. The all-code objective remains primary; asset extraction and
 other scenes remain open.
+
+## Original kernel bounded RNG draw slice
+
+A bounded original-byte replay now covers kernel entry `0x0600A0EC` and nested
+next-index helper `0x0600A08C`. Both ranges were checked against the unchanged USA
+`0KRNL.BIN` and the retained frame-1800 checkpoint; the parser also matched the
+existing 64-byte kernel residency witness at `0x0600A4B0`. It executes the pinned
+`saturn-recomp@f20de940e8013fc84103a5b39c4069ed8071b1f9` interpreter for 33 SH-2
+instructions per case.
+
+The checkpoint's candidate index word at `0x060BF4F4` is `55`; its selected
+word at `0x060BF5D4` is `0x000074E8`. Entering with index55 takes the original
+state-wrap helper and the initial bounded replay did not return within the
+preserved 512-instruction cap. That failed execution is retained at
+`/home/dev/neptune-research-private/707/rng-entry-replay-001/report.json` (SHA256
+`47d01f738c2020cf03438800b50b4bc27a884fc524f088031f364bed0768b67f`). No wrap
+result is claimed.
+
+To isolate the non-wrap draw path, six fresh CPU instances used constructed
+`r4` bounds `0, 1, 2, 10, 255, 256`, `r15=0x060FF000`, and a constructed
+predecessor index54 so the original helper advanced it to55. Remaining high Work
+RAM, including the selected table word, came from the retained original
+checkpoint. Returns were respectively `0, 0, 1, 9, 231, 232`, matching the
+independent calculation `((word & 0xff) * bound >> 8) & 0xff`. The global index
+was the only lasting RAM write; stack saves were restored. Replacing original
+`shlr8` at `0x0600A102` with `shlr2` returned68 for bound10 and was rejected by
+the formula control. Formal probe report:
+`/home/dev/neptune-research-private/707/rng-entry-replay-005/report.json` (SHA256
+`61f5b45039076bd9afa06d489c6e7c51fbe3e2c8fb4e060efd84fe695c58a02a`). The
+versioned probe is `tools/saturn_lab/probe_kernel_rng.py`; its SHA256 is
+`2d2043f351cebb64b473ff8db65718fe3ee31842c399d7bcde7b88a1defa7b8d`. The
+private one-off batch runner SHA256 is
+`6ca4e705eb7c7c3ddada405cbea14b6610eeadb27d082ece7da910f232881676`.
+
+This recovers only the bounded non-wrap arithmetic over one observed table word.
+The entry register context and pre-wrap index were constructed; no natural RNG
+caller, call ordering, seed routine, full recurrence, wrap behavior or regional
+variant has been established. The programme and #492 remain open.
