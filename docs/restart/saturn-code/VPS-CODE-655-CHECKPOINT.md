@@ -2,12 +2,63 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-slot-setup-655`, workspace
+`research/saturn-library-arithmetic-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current arithmetic contracts: all original pairs retained
+
+Setup PR691 merged72af05df58bd4c5459a9352e7067badeffb56352 at09:57:27 UTC
+on3 November, tested a19a7b1 against67dd0c9. All13 checks completed with seven
+proved non-applicable preparation children. Merge parent/tree match CI base/head;
+receipt:`.../code655-20261102/pr691-acceptance-verified.json`. Its10,504 cases
+per run remain accepted;655 and the programme stay open.
+
+Original9410C quotient,94268 remainder andA6DA6 format now complete17,136 cases
+per run, twice with byte-identical paired reports:7,032/7,032/3,072. All13
+family/control combinations reject without budget failures. Read
+[the result](../research/2026-11-03-library-arithmetic-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-arithmetic-contracts.json).
+There are600 zero-divisor cases in each division family, including all initial
+M/Q/T patterns. All23 registers, full flags, PC/delay paths, ordered transactions,
+stack/output/canaries and unaffected source bytes are checked. The old128 guard
+and chosen128 budget are unchanged; no device/callee substitute is introduced.
+
+Source6705403 was tested/pushed before originals:9 owned tests,440 research
+tests. Frozen execution head7860d2a212f63e37b51beecda134d33dcc03ebdc retains
+those exact production/test bytes.77-file adapter:
+`/home/dev/neptune-research-private/655/adapter-1928ddc4ca2d102474c4e2bae9fe5fdf954bee235c1e3d37170f5f31157f9ee0`.
+Completed batch:`.../655/arithmetic-batch-ay2cbb78/batch.json`; six outputs under
+`/home/dev/neptune-research-private/655/arithmetic-contracts-*`. Tools89636 is
+terminal success; do not restart that completed manifest as new progress.
+
+First batch87zatfsj refused the volume storage preflight before admission/CPU
+execution. Recovery omitted verified clean addon/font files from this research
+worktree and hard-linked76 identical completed own reports/states. All original
+capture paths/hashes are preserved. Receipts:
+`.../code655-20261102/storage-own-exclusions-20261103.json` and
+`storage-own-dedup-20261103.json`; restore worktree files with
+`git sparse-checkout disable` only when storage permits. Fresh jobs used root
+storage with the unchanged5GiB+64MiB reserve. No foreign data/claim was changed.
+All own leases released; shared3/180-second/60-second/nice10/2GiB/offline/
+read-only/hidden-authority limits remain. No provider call or native build.
+
+Next recoverA6FE0 andA7F4E, then compose originalA681A/96D74/95E5A with real
+callees. Initial bounded static windows, explicitly not executable coverage, are
+`.../655/context-source-584dequn/source.json`. This exact command always creates
+a fresh private report and executes no original CPU instructions:
+
+```sh
+python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-context.py
+```
+
+Classify literal islands and neighboring functions before declaring executable
+ranges. Keep full89C8 semantics, BIOS/device/callback bodies, root/task cycles,
+other modules and all-code denominators unresolved. Earlier sections below are
+historical snapshots; their completed commands are not next work.
 
 ## Current context/caller contracts: original pairs retained
 
