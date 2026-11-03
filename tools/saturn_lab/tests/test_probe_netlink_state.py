@@ -1,6 +1,10 @@
 """Owned contract examples only; these do not execute Saturn instructions."""
 from pathlib import Path
+from contextlib import redirect_stdout
+import io
+import json
 import sys
+import tempfile
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import probe_netlink_state as p
@@ -23,6 +27,13 @@ def code():
 
 
 class StateContractTests(unittest.TestCase):
+    def test_original_dispatch_prefix_clears_extend_before_disabled_handler(self):
+        case=p.base_case('dispatcher');case.update(gate=0,alias=False)
+        regs,*_=p.Contract(code(),case,device()).run()
+        # Original diagnostic002 reaches186C with SR2700. The two ADD.W index
+        # doublings clear X before the disabled handler's final OR.W.
+        self.assertEqual(regs[17],0x2700)
+
     def test_effects_use_independent_tables_registers_and_ordered_device_accesses(self):
         case=p.base_case('effects');case.update(flags=255,current=(10,20,30),target=(10,20,30))
         model=p.Contract(code(),case,device());regs,after,events,pcs,result=model.run()
@@ -79,7 +90,7 @@ class StateContractTests(unittest.TestCase):
             model=p.Contract(code(),case,device());regs,after,events,pcs,result=model.run()
             self.assertNotIn(p.STATE,pcs)
             self.assertEqual(regs[0],model.before[0])
-            self.assertEqual(regs[17],0x2718)
+            self.assertEqual(regs[17],0x2708 if mode=='dispatcher' else 0x2718)
             self.assertEqual(regs[15:17],[p.leaf.SP+4,p.leaf.STOP])
             self.assertEqual(regs[8],model.base)
             self.assertEqual(result,device())
@@ -87,6 +98,35 @@ class StateContractTests(unittest.TestCase):
                 self.assertEqual(regs[7]&65535,0x44)
                 self.assertEqual(regs[12],model.before[14])
                 self.assertEqual(regs[13:15],model.before[13:15])
+
+    def test_selection_has_all_entries_and_declared_byte_domains(self):
+        selected=p.cases()
+        self.assertEqual(len(selected),len({json.dumps(c,sort_keys=True) for c in selected}))
+        self.assertEqual({c['mode'] for c in selected},set(p.MODES))
+        for mode in p.MODES:
+            group=[c for c in selected if c['mode']==mode]
+            self.assertEqual({c['flags'] for c in group},set(range(256)))
+            for field,limit in [('current',128),('target',128),('steps',256),('magnitude',256),('remaining',256)]:
+                for axis in range(3):self.assertEqual({c[field][axis] for c in group},set(range(limit)))
+            if mode in ('helper','handler','dispatcher'):
+                self.assertEqual({c['gate'] for c in group},set(range(256)))
+
+    def test_undeclared_or_mistyped_case_stops_before_execution(self):
+        for field,value in [('gate',True),('gate',256),('current',(128,0,0)),
+                            ('offsets',(False,0)),('pending',1),('mode','other')]:
+            case=p.base_case();case[field]=value
+            with self.assertRaises(ValueError):p.Contract(code(),case,device())
+
+    def test_missing_input_is_failed_and_existing_evidence_is_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);report=root/'report.json'
+            args=['--source-file',str(root/'missing'),'--prepared',str(root/'missing-native'),'--report',str(report)]
+            with redirect_stdout(io.StringIO()):self.assertEqual(p.main(args),1)
+            before=report.read_bytes();value=json.loads(before)
+            self.assertEqual(value['status'],'failure');self.assertEqual(value['error']['phase'],'identity')
+            self.assertFalse(value.get('original_game_bytes_executed',False))
+            with self.assertRaises(FileExistsError):p.main(args)
+            self.assertEqual(report.read_bytes(),before)
 
 
 if __name__=='__main__':unittest.main()

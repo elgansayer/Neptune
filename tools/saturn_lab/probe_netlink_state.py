@@ -52,12 +52,14 @@ class Contract:
         if (case['mode'] not in MODES or case['sr'] not in records.SR_VALUES or
                 type(case['variant']) is not int or case['variant'] not in (0,1) or
                 type(case['alias']) is not bool or type(case['pending']) is not bool or
-                type(case['flags']) is not int or not 0<=case['flags']<=255):
+                type(case['flags']) is not int or not 0<=case['flags']<=255 or
+                type(case['gate']) is not int or not 0<=case['gate']<=255):
             raise ValueError('Undeclared state case')
         for name,limit in [('current',127),('target',127),('steps',255),('magnitude',255),('remaining',255)]:
             if len(case[name])!=3 or any(type(v) is not int or not 0<=v<=limit for v in case[name]):
                 raise ValueError('Undeclared '+name)
-        if (len(case['offsets'])!=2 or case['offsets'][0] not in (0,2,16,36) or
+        if (len(case['offsets'])!=2 or any(type(v) is not int for v in case['offsets']) or
+                case['offsets'][0] not in (0,2,16,36) or
                 case['offsets'][1] not in (0,2,16,52)):
             raise ValueError('Undeclared device offsets')
         self.base=0x10000 if case['variant'] else 0x8000;self.record=self.base+0x28
@@ -277,6 +279,9 @@ class Contract:
             self.regs[15]-=4;self.access(2,self.regs[15]+2,2,self.regs[reg]&65535)
             self.access(2,self.regs[15],2,self.regs[reg]>>16)
         self.push(0x1868);self.regs[7]=(self.regs[7]&0xFFFF0000)|0x44
+        # The original two ADD.W index doublings cannot carry for command11.
+        # Their X=0 survives the disabled helper's ANDI.B and final OR.W.
+        self.extend=0
         self.regs[12]=self.regs[14];self.handler();self.pcs += [0x1868,0x186C]
         self.regs[13]=self.pop();self.regs[14]=self.pop();self.ret()
 
@@ -298,7 +303,7 @@ def run_case(code,library,case,executed_code=None):
     if actual['device_before']!=before_device or actual['device_after']!=device_after:
         raise ValueError('Independent device state differs')
     return dict(case=case,registers=actual['registers'],events=actual['events'],pcs=actual['pcs'],
-                instructions=actual['steps'],regions_after=[b.hex() for b in actual['regions_after']],
+                instructions=actual['steps'],regions_after_sha256=[pinned.digest(b) for b in actual['regions_after']],
                 model_cycles=actual['model_cycles'],device_after=actual['device_after'],code_unchanged=actual['code_unchanged'])
 
 
