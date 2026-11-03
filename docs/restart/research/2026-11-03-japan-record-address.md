@@ -206,6 +206,34 @@ device or BIOS semantics, timing, gameplay, or independent-emulator agreement.
 The repository research suite passes 522 tests; that count is separate from
 original execution evidence.
 
+## Original Japanese startup counter at A5E4
+
+The next startup decode from `0x0600A312` enters SH-2 SR/MMIO handling, calls
+BIOS indirect services, and polls cache-through synchronization words. The
+nearby helper at `0x0600A5E4` is a bounded leaf: it reads the Japan literal at
+`0x0600A62C` (`0x060B3D40`), reads one 16-bit word, adds one, and stores the
+low 16 bits in the RTS delay slot. It clobbers `r2`/`r3`; other GPRs and
+special registers remain unchanged in the constructed CPU contract.
+
+`tools/saturn_lab/probe_japan_word_counter.py` executes 520 cases over 0–255
+and wrap/sign boundaries (`0x7FFF`, `0x8000`, `0xFFFE`, `0xFFFF`), each with
+two register patterns. It checks the exact literal/global transactions, delay
+slot write, 16-bit wrap, and register preservation. Three instruction/literal
+mutations are rejected. Paired reports in
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-018/`
+match at SHA-256
+`d2c0e00dcb5aaf0813f8dbff8fee0eb3a10e8910fff6de0f0094cdf548a09a14`.
+The probe hash is
+`3c8c0c6b015a7ca86ec2d01ff31fe50eac0def14199535807a0284a21bd7dc96`;
+original code and literal hashes are embedded in the reports. The A312 startup
+decode and A492 tail are private static listings with SHA-256
+`668d6570080c03a7fbbee5f4e6c72e4270a0bdf3b2d44fc611fffc285fe39887` and
+`cf5e2f9539007d142ffd7c4eedba82309452288b2b05ffcf5c1504d186defed9`,
+respectively. These do not substitute for runtime validation of BIOS, VDP,
+SCU, or synchronization behavior. The full repository research suite passes
+523 tests; this is separate from original execution reports. The all-code
+programme remains incomplete.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed

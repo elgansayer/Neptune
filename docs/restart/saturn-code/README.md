@@ -185,3 +185,9 @@ two byte-identical reports, with exact memory transaction/stack checks and
 three original-instruction mutation controls. It is a Japan-mapped helper
 contract; signed-negative index memory behavior and natural callers remain
 open. The original all-code programme remains active and incomplete.
+
+The same Japanese startup study adds 520 original calls to the `0x0600A5E4`
+16-bit counter helper, including wrap boundaries and three mutation controls.
+The larger `A312` startup path crosses SR, BIOS, VDP2, SCU and cache-through
+polling state; its static decode does not count as execution or establish those
+device contracts.
