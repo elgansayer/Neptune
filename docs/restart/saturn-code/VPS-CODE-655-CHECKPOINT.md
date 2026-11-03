@@ -31,9 +31,8 @@ is a declared sample, not a universal capacity. Callback isnull and the first
 context pool isfull; successful/null-table/services and callbacks remain open.
 
 Arithmetic695 mergeda3b765e; pool698 mergedbc0b8e2, both with15 exact-head/
-current-base checks and seven explicit non-applicability proofs. Record699 has
-been retargeted main and readied at96aa75f; inspect every applicable exacthead/
-currentbase check, preserve source29d7bdb bytes and merge only when eligible.
+current-base checks and seven explicit non-applicability proofs. Record699 merged7afac4c at tested96aa75f againstbc0b8e2; all15 checks
+and exact mergeparent/tree acceptance verified. Source29d7bdb bytes are retained.
 This new95E5A result follows699 through its own evidence PR and gates.
 
 Next source command, always a fresh private static report:
