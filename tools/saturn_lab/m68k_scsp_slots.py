@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 import re
 import subprocess
+import struct
 import tempfile
 import m68k_probe as short
 import m68k_scsp_dsp as device
@@ -212,6 +213,13 @@ class Library(device.Library):
         super().configure(fixture)
         if not self.library.neptune_slot_configure(fixture[0]):raise ValueError('Slot fixture rejected')
 
+    def raw_snapshot(self):
+        """Exact full captured values/untouched bytes, avoiding scalar iteration in sweeps."""
+        dv=(c.c_uint64*225)();du=(c.c_uint8*self.state_size)()
+        sv=(c.c_uint32*VALUES)();su=(c.c_uint8*self.slot_size)()
+        self.library.neptune_dsp_snapshot(dv,du);self.library.neptune_slot_snapshot(sv,su)
+        return bytes(dv),bytes(du),bytes(sv),bytes(su)
+
     def snapshot(self):
         v=(c.c_uint32*VALUES)();untouched=(c.c_uint8*self.slot_size)()
         self.library.neptune_slot_snapshot(v,untouched)
@@ -263,7 +271,7 @@ def reject_native_counts(library,nranges,nregions):
 def slot_smoke(library):
     reference_cases=0
     for seed,dirty in ((0,0),(0x12345678,0),(0xFFFFFFFF,1)):
-        library.configure((seed,dirty));baseline=library.snapshot()
+        library.configure((seed,dirty));baseline=library.snapshot();baseline_raw=library.raw_snapshot()
         for slot in range(32):
             base=slot*STRIDE
             if baseline['slot_values'][base:base+16]!=[(seed^(slot*257)^(j*0x1111))&65535 for j in range(16)]:
@@ -275,11 +283,12 @@ def slot_smoke(library):
                     if library.library.neptune_slot_access(1,address,1,c.byref(bus))!=1:
                         raise ValueError('Qualified slot write rejected')
                     expected=transition(baseline,address,value)
-                    if library.snapshot()!=expected:raise ValueError('Slot effect differs from independent contract')
+                    expected_raw=(*baseline_raw[:2],struct.pack('='+str(VALUES)+'I',*expected['slot_values']),baseline_raw[3])
+                    if library.raw_snapshot()!=expected_raw:raise ValueError('Slot effect differs from independent full-byte contract')
                     if lane==11:
                         if library.library.neptune_slot_access(0,address,1,c.byref(bus))!=1 or bus.value!=value:
                             raise ValueError('Slot read lane differs')
-                        if library.snapshot()!=expected:raise ValueError('Slot read modified state')
+                        if library.raw_snapshot()!=expected_raw:raise ValueError('Slot read modified state')
                     reference_cases+=1
     code=bytearray(0x200);regions=[(0x70000,(0xFFF000).to_bytes(4,'big'),False)]
     cpu=0
