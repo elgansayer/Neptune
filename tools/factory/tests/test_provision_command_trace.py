@@ -70,12 +70,13 @@ class CommandObserverPatch(unittest.TestCase):
         prefix=r'''
 #include <stdint.h>
 #include <stdio.h>
+#include <assert.h>
 typedef struct { uint32_t R[2],PC,WB_until[2],MA_until; } CPU;
 static uint16_t ram[16];static unsigned reads,writes,evals,hook_reads,hook_writes;
 static uint32_t hook_addr,hook_value,hook_reg;
 static void read16(uint32_t a,uint16_t* v) { reads++;*v=ram[a/2]; }
 static void write16(uint32_t a,uint32_t v) { writes++;ram[a/2]=(uint16_t)v; }
-static void neptune_command_read(const CPU* z,uint32_t a,uint16_t v) { hook_reads++;hook_addr=a;hook_value=v;hook_reg=z->R[0]; }
+static void neptune_command_read(const CPU* z,uint32_t a,uint16_t v) { assert(a==4 && v==0xff80 && z->R[0]==0xffffff80);hook_reads++;hook_addr=a;hook_value=v;hook_reg=z->R[0]; }
 static void neptune_command_write(const CPU* z,uint32_t a,uint16_t v) { hook_writes++;hook_addr=a;hook_value=v;hook_reg=z->R[0]; }
 static void neptune_command_fused_nop(const CPU* z) { (void)z; }
 #define MemRead16(a,v) read16((a),&(v))
@@ -85,10 +86,10 @@ static void neptune_command_fused_nop(const CPU* z) { (void)z; }
 #define END_OP }
 '''
         suffix=r'''
-static void load(CPU* z,int which) { WB_READ16(0,(evals++,4)); }
+static void load(CPU* z,int which) { WB_READ16(0,(evals++,z->R[0])); }
 int main(void) {
  for(int which=0;which<2;which++) {
-  CPU cpu={{0,0x12345678},99,{5,6},40};ram[2]=0xff80;ram[4]=0x1111;
+  CPU cpu={{4,0x12345678},99,{5,6},40};ram[2]=0xff80;ram[4]=0x1111;
   reads=writes=evals=hook_reads=hook_writes=0;hook_addr=hook_value=hook_reg=0;
   load(&cpu,which);store(&cpu,which);
   printf("%u %u %u %u %u %u %u %u %u %u %u %u %u %u %u\n",cpu.R[0],cpu.R[1],cpu.PC,cpu.WB_until[0],cpu.WB_until[1],cpu.MA_until,ram[2],ram[4],reads,writes,evals,hook_reads,hook_writes,hook_value,hook_reg);
