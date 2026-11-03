@@ -99,7 +99,8 @@ def resident(state, kernel):
     parsed = state_graphics.parse(state)
     high = state_graphics.cpu_words(state_graphics.field(parsed, "MAIN", "WorkRAMH", 0x100000), "little")
     regions = []
-    for address, size in ((0x0600B934, 28), (0x0600B96C, 2), (0x0600B984, 4)):
+    for address, size in ((0x0600B934, 28), (0x0600B96C, 2), (0x0600B984, 4),
+                          (0x0600A0EC, 34), (0x0600A08C, 40)):
         offset = address - probe_kernel.BASE
         expected = kernel[offset:offset + size]
         if high[address - 0x06000000:address - 0x06000000 + size] != expected:
@@ -118,8 +119,10 @@ def run(args):
     if args.output.exists():
         raise ValueError("Use fresh private experiment output; never overwrite reference evidence")
     args.output.mkdir(mode=0o700, parents=True)
+    entry = getattr(args, "entry", observer.ENTRY)
     result = {"schema": "neptune.explicit-call-trace-experiment.v2", "mode": args.mode,
               "status": "failure", "driver_sha256": sha(Path(__file__).read_bytes()),
+              "observed_entry": f"0x{entry:08x}",
               "port_zero_start_frames": args.start_frames,
               "source_modules": {"observer": sha((ROOT / "tools/factory/provision_call_trace_abi.py").read_bytes()),
                                  "state_parser": sha(Path(state_graphics.__file__).read_bytes()),
@@ -168,7 +171,7 @@ def run(args):
         if args.mode != "reference":
             tracer = observer.Trace(driver.dll)
             if args.mode == "enabled":
-                tracer.start(args.pairs)
+                tracer.start(args.pairs, entry=entry)
         phase = "original_frame_execution"
         frames = []
         started = time.monotonic()
@@ -223,7 +226,7 @@ def run(args):
             (args.output / "result.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
 
 
-def decoded_trace(value):
+def decoded_trace(value, entry=observer.ENTRY):
     records = []
     if value.get("schema") != "neptune.original-master-call-trace.v2" or not isinstance(value.get("records"), list):
         raise ValueError("Missing versioned original-call records")
@@ -254,7 +257,7 @@ def decoded_trace(value):
         if type(number) is not int or not 0 <= number <= 0xFFFFFFFF:
             raise ValueError("Invalid trace status scalar")
         setattr(status, name, number)
-    expected = observer.validate(records, status)
+    expected = observer.validate(records, status, entry)
     if value != expected:
         raise ValueError("Trace summary differs from independently validated records")
     return expected
@@ -294,7 +297,8 @@ def compare(directories):
             raise ValueError("Missing real bounded timing observation")
         if report["mode"] == "enabled":
             raw = probe_kernel.read_bounded(directory / "call-trace.json", 2 * 1024**2)
-            trace = decoded_trace(read_json(directory / "call-trace.json"))
+            trace = decoded_trace(read_json(directory / "call-trace.json"),
+                                  int(report.get("observed_entry", "0x0600b934"), 16))
             if sha(raw) != report["trace_sha256"] or trace["pairs"] != report["pairs"]:
                 raise ValueError("Original call trace differs from its report")
         runs.append(report)
@@ -305,6 +309,7 @@ def compare(directories):
     baseline = groups["reference"][0]
     equal = ("driver_sha256", "source_modules", "reference_identity", "reference_lock_file_sha256",
              "reference_checkpoint_file_sha256", "reference_state_sha256", "reference_frame", "frames", "port_zero_start_frames",
+             "observed_entry",
              "av", "imported_state_bytes", "imported_state_sha256", "final_state_sha256",
              "frame_observations_sha256", "video_sha256", "audio_sha256", "audio_frames",
              "resident_code_before", "resident_code_after", "input_polls", "delivered_masks")
@@ -364,6 +369,9 @@ def main(argv=None):
     parser.add_argument("--mode", choices=("reference", "disabled", "enabled"), required=True)
     parser.add_argument("--frames", type=int, default=120)
     parser.add_argument("--pairs", type=int, default=64)
+    parser.add_argument("--entry", type=lambda value: int(value, 0),
+                        choices=(observer.ENTRY, observer.RNG_ENTRY), default=observer.ENTRY,
+                        help="Inspected original master SH-2 function entry (default: B934 table helper)")
     parser.add_argument("--start-frames", type=int, default=0,
                         help="Press port-zero Start for this many initial frames, then release; no other inputs")
     parser.add_argument("--output", type=Path, required=True)

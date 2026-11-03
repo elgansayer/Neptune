@@ -193,6 +193,18 @@ def binary_name(tool, root):
     return name
 
 
+def archive_call_trace_source(source, payload, patched):
+    """Keep the exact patched upstream source and licence with observer binaries."""
+    archive_path = payload / "corresponding-source.tar.gz"
+    with tarfile.open(archive_path, "w:gz") as archive:
+        archive.add(source, arcname="beetle-saturn", filter=lambda item:
+                    None if ".git" in Path(item.name).parts else item)
+    shutil.copy2(source / "COPYING", payload / "COPYING")
+    patched["corresponding_source_sha256"] = digest(archive_path)
+    patched["licence_sha256"] = digest(payload / "COPYING")
+    write_json(payload / "call-trace-build.json", patched)
+
+
 def smoke(tool, binary, runner, root):
     if tool == "ghidra":
         return ghidra.smoke(identity(tool, root)[0], binary, runner, root)
@@ -216,7 +228,8 @@ def smoke(tool, binary, runner, root):
             observer = json.loads(runner.run([sys.executable, str(root / "tools/factory/provision_call_trace_abi.py"),
                                               "--probe-core", str(binary)], binary.parent, 30))
             if (observer.get("abi") != 2 or observer.get("record_bytes") != 120 or
-                    observer.get("rejected_invalid_entry_budget_and_frame") is not True):
+                    observer.get("rejected_invalid_entry_budget_and_frame") is not True or
+                    observer.get("accepted_inspected_entries") != ["0x0600b934", "0x0600a0ec"]):
                 raise ProvisionError("smoke_failed", "Missing actual bounded observer ABI/fence result")
             return {"libretro": result, "observer": observer}
         if tool == "beetle-saturn-context-trace":
@@ -288,7 +301,7 @@ def install(tool, recipe, payload, work, runner, root):
                                         "--source", str(source)], work, 30))
         if patched.get("reference_revision") != actual or patched.get("observer_abi") != 2:
             raise ProvisionError("source_mismatch", "Observer patch identity mismatch")
-        write_json(payload / "call-trace-build.json", patched)
+        archive_call_trace_source(source, payload, patched)
     if tool in ("beetle-saturn-context-trace", "beetle-saturn-init-trace"):
         name = "context" if tool == "beetle-saturn-context-trace" else "init"
         patched = json.loads(runner.run([sys.executable, str(root / ("tools/factory/provision_" + name + "_trace.py")),

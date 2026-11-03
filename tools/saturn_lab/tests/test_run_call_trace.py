@@ -43,6 +43,7 @@ class ExperimentTests(unittest.TestCase):
                 paths.append(path)
                 report = dict(schema="neptune.explicit-call-trace-experiment.v2", status="success", mode=mode,
                               driver_sha256="3" * 64, source_modules={}, reference_identity={},
+                              observed_entry="0x0600b934",
                               reference_lock_file_sha256="4" * 64, reference_checkpoint_file_sha256="5" * 64,
                               reference_state_sha256="6" * 64, reference_frame=100, frames=3,
                               port_zero_start_frames=1, av={}, imported_state_bytes=10,
@@ -140,7 +141,8 @@ class ExperimentTests(unittest.TestCase):
     def test_resident_code_literals_and_producer_word_order_are_checked(self):
         kernel = bytearray(experiment.probe_kernel.SIZE)
         high = bytearray(0x100000)
-        for address, size in ((0x0600B934, 28), (0x0600B96C, 2), (0x0600B984, 4)):
+        for address, size in ((0x0600B934, 28), (0x0600B96C, 2), (0x0600B984, 4),
+                              (0x0600A0EC, 34), (0x0600A08C, 40)):
             original = bytes(range(1, size + 1))
             kernel[address - experiment.probe_kernel.BASE:address - experiment.probe_kernel.BASE + size] = original
             high[address - 0x06000000:address - 0x06000000 + size] = original
@@ -150,7 +152,7 @@ class ExperimentTests(unittest.TestCase):
             fields = bytes([len(name)]) + name + struct.pack("<I", len(native)) + native
             section = b"MAIN".ljust(32, b"\0") + struct.pack("<I", len(fields)) + fields
             return b"MDFNSVST" + bytes(8) + struct.pack("<II", experiment.state_graphics.VERSION, 32 + len(section)) + bytes(8) + section
-        self.assertEqual(len(experiment.resident(state(high), bytes(kernel))), 3)
+        self.assertEqual(len(experiment.resident(state(high), bytes(kernel))), 5)
         high[0xB934] ^= 1
         with self.assertRaisesRegex(ValueError, "witness"):
             experiment.resident(state(high), bytes(kernel))
