@@ -391,6 +391,19 @@ words to `0x060C0738`–`0x060C0744`. This is a static address/field-flow
 description, not a validated table meaning or runtime contract. The retained
 F69A decode SHA-256 is
 `9f56414197cf26776ea11b4fc28b831908185b3da0d8bfaece44cbff7635ce24`.
+The CCD2 path also calls `0x0600EFC0`, whose static prefix loops over ten
+indices through `0x0600F69A`, then initializes a cache-through callback slot at
+`0x2600A0EC` and calls additional original entries including `0x0600F338`.
+The F338 prefix reserves 128 stack bytes, writes VDP2 VRAM at `0x25E00000`,
+and calls several kernel helpers before the decode ends. Its first helper at
+`0x0609BF28` clears a set of `0x060FC5xx` words and calls `0x0609E988` plus
+`0x0609CF44`; the latter calls five more entries in the `0x0609E...` range,
+fills eight words at `0x060FC5A8`, and clears `0x060FC5C8`/`0x060FC5F4`.
+These static dataflow notes do not assign display meaning to those fields.
+Retained decode digests: EFC0 `5936c70fa7ec7f0132b20b86104260499aaa97f1b2231d84674e8f49b25a3214`,
+F338 `f28b0b5a21b10d7e142389f9fc3700a4ca84bb98d2b4f8a0b150fe6178df5a33`,
+9BF28 `5eb8b16c3c24e19484a0f2f79026073f23155065eef660a97d37d53edd631c40`,
+and 9CF44 `a4b7e48ac979c9496aa3f16c9b13e0ac135ce9b797260c036e00e7662f07ae64`.
 
 ## Limits and continuation
 
