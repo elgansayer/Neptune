@@ -48,7 +48,7 @@ class SlotResetHelpers(unittest.TestCase):
     def test_each_required_field_and_terminal_status_is_enforced(self):
         _,_,regs,regions=p.helper_inputs('volume',0,0x271F,0,0)
         expected=p.helper_contract('volume',regs,regions,self.before())
-        actual={'status_code':1,'code_unchanged':True,**expected};p.compare(actual,expected)
+        actual={'status_code':1,'status':'stop-reached','code_unchanged':True,**expected};p.compare(actual,expected)
         for field in expected:
             changed=deepcopy(actual)
             if field=='device_after':changed[field]['slot_unrelated_sha256']='wrong'

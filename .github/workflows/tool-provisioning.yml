@@ -153,7 +153,7 @@ jobs:
           assert smoke['slot_reference_byte_cases']==98304
           assert smoke['slot_cpu_cases']==1024 and smoke['slot_rmw_cases']==96
           assert smoke['slot_raw_rejections']==18 and smoke['slot_width_cpu_guards']==6
-          assert smoke['slot_key_latch_sequence']==5
+          assert smoke['slot_key_latch_sequence']==5 and smoke['native_fake_device_ram_rejections']==2
           assert smoke['capacity']['full_instruction_limit_rejected']==8192
           assert smoke['capacity']['full_event_limit_rejected']==4096
           assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
@@ -171,6 +171,10 @@ jobs:
             ${{ runner.temp }}/slot-preparation/**/*.json
             ${{ runner.temp }}/slot-preparation/**/*.stdout
             ${{ runner.temp }}/slot-preparation/**/*.stderr
+            ${{ runner.temp }}/slot-preparation/prepared/*.so
+            ${{ runner.temp }}/slot-preparation/prepared/*.h
+            ${{ runner.temp }}/slot-preparation/prepared/*.c
+            ${{ runner.temp }}/slot-preparation/prepared/COPYING.SCSP
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14

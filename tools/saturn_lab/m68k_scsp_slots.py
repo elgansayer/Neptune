@@ -346,8 +346,17 @@ def slot_smoke(library):
         result=library.run(code,0x100,0xFFF000,[(0x100,0x100+len(words))],regions,regs)
         if result['status_code']!=status or result['device_before']!=result['device_after']:
             raise ValueError('Unsupported CPU slot width/address did not guard')
+    for destination in (0x100000,0x100700):
+        code[0x100:0x102]=bytes.fromhex('4e75')
+        regs=[0xA5A5A5A5]*18;regs[15:18]=[0x70000,0x100,0x271F]
+        mapped=regions+[(destination,b'\0',True)]
+        rejected=library.run(code,0x100,0xFFF000,[(0x100,0x102)],mapped,regs)
+        if (rejected['status_code']!=8 or rejected['steps'] or rejected['events'] or
+                rejected['regions_after']!=[v for _,v,_ in mapped] or not rejected['code_unchanged'] or
+                rejected['device_before']!=rejected['device_after']):
+            raise ValueError('Native request accepted fake device RAM')
     return {'slot_reference_byte_cases':reference_cases,'slot_cpu_cases':cpu,'slot_rmw_cases':rmw,
-            'slot_raw_rejections':rejections,'slot_key_latch_sequence':5,'slot_width_cpu_guards':6}
+            'slot_raw_rejections':rejections,'slot_key_latch_sequence':5,'slot_width_cpu_guards':6,'native_fake_device_ram_rejections':2}
 
 
 def smoke(library):

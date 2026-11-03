@@ -417,3 +417,43 @@ ABI4, ABI5 and ABI6; applicable missing/skipped/failed preparation cannot pass.
 Command10 continuation is a separate original-byte experiment: identical previous
 non-capacity outcomes and progression beyond the old fence do not establish
 complete device semantics, natural execution, clocks, audio or game fidelity.
+
+
+### Clock-frozen command10 slot bytes (ABI7, #680)
+
+The real ABI6 experiment stops at byte read10000B and byte writes100000,
+100015/100017/100217. `m68k_scsp_slots.py` adds a separate reference view for byte
+read lane0B and writes00/0B/15/17 across32 slots. It preserves the full source-pinned
+slot declaration and selected original case bodies, key-execute latch, sign-XOR
+table and volume helper. Masked slot words, decoded fields and all untouched view
+bytes are compared; slots are not flat RAM. The unchanged DSP word component is a
+separate retained static state. No clock, envelope/key processing or audio runs.
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_slots.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /private/new-slot-generation/prepared
+```
+
+Use the existing offline, credential-free preparation boundary and preserved CPU/
+SCSP historical reference sources. ABI7 retains8192steps/4096events/16ranges/16regions
+but checks its own98400-byte result class,3400-byte slot view,1057 snapshot values,
+component/backend/source hashes, identity and receipt. ABIs1–6 are unchanged.
+Fresh/reuse smoke requires98304 exhaustive slot byte cases,1024 owned CPU cases,
+96 read-modify-write cases, key-execute latch sequencing, raw and CPU width/address
+rejections, all inherited DSP word/trace/count guards and recovery. Full captured
+bytes are used in the exhaustive sweep; this avoids redundant scalar conversion
+without omitting state. A ready inner receipt does not override a failed parent.
+
+Applicable existing CI executes fresh/reuse and retains the prepared source,
+licence, binary, receipt and diagnostics in `bounded-scsp-slots-RUN-ATTEMPT`.
+A coordinator may reuse that tool only from its trusted preparation run at the
+exact coordinator-selected source head after required source/component/binary/recipe identity
+and actual smoke/reuse verification, compatible host architecture and guarded
+loading. An arbitrary issue/upload/PR artifact is not a trusted tool. Keep this
+artifact outside Git and read-only in original jobs. Preparation has no original
+inputs; it is separate from private original-helper and command10 comparisons.
+Missing/skipped/failed applicable preparation blocks the protected merge gate.
+Full command10, low0780 data/code classification, DSP longword/TEMP effects,
+natural callers/timing/audio and whole-game reconstruction remain open.
