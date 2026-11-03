@@ -2,6 +2,7 @@
 extends BTAction
 class_name BTExecuteTactic
 
+const ThrowPlan = preload("res://shared/ai/planning/throw_plan.gd")
 const PositionPlanner = preload("res://shared/ai/decision/tactical_position_planner.gd")
 const SimulationTime = preload("res://shared/ai/simulation_time.gd")
 
@@ -719,79 +720,10 @@ func _execute_kick_snipe(player_tile: Vector2i, opponent_tile: Vector2i, grid_sa
 	
 	return {}
 
-func _execute_power_throw(player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler, game_instance, player) -> Dictionary:
-	"""Find the best direction to throw a bomb toward opponent"""
-	if not player.has_power_glove:
+func _execute_power_throw(_player_tile: Vector2i, opponent_tile: Vector2i, grid_sampler, game_instance, player) -> Dictionary:
+	var plan: Dictionary = ThrowPlan.choose(player, game_instance, grid_sampler, opponent_tile)
+	if not plan.get("supported", false):
+		blackboard.set_var("last_throw_failure", plan.get("reason", "unsupported_throw"))
 		return {}
-	
-	var directions = [
-		Vector2(1, 0),   # Right
-		Vector2(-1, 0),  # Left
-		Vector2(0, 1),   # Down
-		Vector2(0, -1)   # Up
-	]
-	
-	var best_throw: Dictionary = {}
-	var best_score = -1.0
-	var bomb_range = player.bomb_range if player else 2
-	
-	for dir in directions:
-		var dir_i = Vector2i(int(dir.x), int(dir.y))
-		
-		# Check if throw direction aligns with opponent
-		var to_opponent = Vector2(opponent_tile - player_tile)
-		if to_opponent.length() < 0.1:
-			continue
-		
-		var alignment = dir.normalized().dot(to_opponent.normalized())
-		if alignment < 0.5:
-			continue  # Throwing away from opponent
-		
-		# Calculate throw trajectory
-		var travel_distance = 0
-		var landing_tile = player_tile
-		
-		for i in range(1, 10):
-			var check_tile = player_tile + dir_i * i
-			var tile_type = game_instance.get_tile_type(check_tile) if game_instance.has_method("get_tile_type") else -1
-			
-			if tile_type != 0:  # Not empty floor - bomb lands at previous tile
-				break
-			
-			travel_distance = i
-			landing_tile = check_tile
-		
-		if travel_distance < 3:
-			continue  # Need decent throw distance
-		
-		# Score based on how close bomb lands to opponent
-		var dist_to_opponent = abs(landing_tile.x - opponent_tile.x) + abs(landing_tile.y - opponent_tile.y)
-		var score = alignment * 0.3
-		
-		if dist_to_opponent == 0:
-			score += 1.5  # Direct hit!
-		elif dist_to_opponent <= bomb_range:
-			score += 1.0  # In blast radius
-		elif dist_to_opponent <= bomb_range + 2:
-			score += 0.5  # Near miss
-		
-		# Bonus for longer throws (harder to dodge)
-		if travel_distance >= 5:
-			score += 0.2
-		
-		if score > best_score:
-			best_score = score
-			best_throw = {
-				"throw_direction": dir,
-				"landing_tile": landing_tile,
-				"distance": travel_distance,
-				"score": score
-			}
-	
-	if best_score > 0.5:
-		print("[PowerThrow] 💣 Found throw: toward %s landing at %s (score=%.2f)" % [
-			opponent_tile, best_throw.landing_tile, best_throw.score
-		])
-		return best_throw
-	
-	return {}
+	plan["throw_direction"] = plan.direction
+	return plan

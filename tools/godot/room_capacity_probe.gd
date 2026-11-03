@@ -183,7 +183,7 @@ func state_received(index: int, state: Dictionary) -> void:
 	var capacity: Dictionary = state.get("room", {})
 	if roster.size() != seats or not state.get("a", false): return # Require the real countdown/round start.
 	var policy := {"bot_policy": capacity.get("bot_policy", ""), "bot_policy_seed": capacity.get("bot_policy_seed", "")}
-	if policy.bot_policy != "neptune-heuristic-v2" or not str(policy.bot_policy_seed).is_valid_int() or (not policy_identity.is_empty() and policy_identity != policy):
+	if policy.bot_policy != "neptune-heuristic-v3" or not str(policy.bot_policy_seed).is_valid_int() or (not policy_identity.is_empty() and policy_identity != policy):
 		fail("missing/inconsistent policy identity for repeatable evidence")
 		return
 	policy_identity = policy

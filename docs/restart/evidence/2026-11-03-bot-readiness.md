@@ -83,3 +83,24 @@ The final four/twelve-bot excerpts contain no script or physics-query errors.
 The native-suite supervisor budget is explicitly bounded at360 seconds after
 the expanded suite reached late temporal tests at the old300-second limit;
 scenario timings and error/assertion requirements remain unchanged.
+
+## Accepted pinned CI result for the first release
+
+PR690 subsequently passed pinned Godot4.7.2: **555 native tests in62files,
+zero failures**, plus all required tooling/native/runtime checks, for head
+`bcd488f3c821796a2162b587bf9e07e97b827be0`, then-current base
+`f46ad9d2896619bec943969e59c5d973a6c61cd3` and tested merge
+`0f0743860e0cdb96145c00bf65a6f40e946ab7a9`. Both required aggregates completed
+before GitHub auto-merged at08:43:17UTC as
+`e6bc43980e197e1b14db6be3ff12b29c1b9a4438`.
+[Exact CI run](https://github.com/elgansayer/Neptune-Bomberman/actions/runs/41604394029).
+
+The pinned four/twelve-bot cohorts all moved and placed4/18bombs with no command
+refusals or eliminations in those excerpts. Twelve-bot manager p95/p99 was
+8.483/21.672ms; reliable target-host tail performance is still a separate gate.
+The automatic e6bc Web release also connected two real Chromium visitors and
+observed three default bots placing seven bombs without server errors. Its
+previous smoke allowed682missing-animation browser errors; the follow-up
+fixes mounted Tirra animation queries and makes recorded browser errors fail.
+Only later actual follow-up CI may certify that browser repair. Image publication
+and an accepted202deployment webhook do not prove production rollout completion.

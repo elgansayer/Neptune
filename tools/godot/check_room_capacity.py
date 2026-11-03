@@ -110,7 +110,7 @@ def run_capacity_checks(base, env, evidence, bounded):
                 policy = receipt.pop("bot_policy", "")
                 seed = receipt.pop("bot_policy_seed", "")
                 if (code or ERROR.search(text) or len(markers) != 1 or receipt != expected
-                        or policy != "neptune-heuristic-v2" or not isinstance(seed, str)
+                        or policy != "neptune-heuristic-v3" or not isinstance(seed, str)
                         or not seed.lstrip("-").isdigit()):
                     raise SystemExit("FAIL: real room " + name + "; inspect client/server evidence")
                 text = ANSI.sub("", server_log.read_text())
