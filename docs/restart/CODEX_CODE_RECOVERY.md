@@ -176,9 +176,10 @@ Commandpacking PR706 mergedf734628 after all15 exact-head/currentbase checks.
 Native observer707 passed exact-head provisioning41648585340 and native checks plus
 aggregate gate41648585631. Its separate matched core passed actual no-media ABI/fence
 smoke; verified CI artifact transfer and two guarded local cache reuses retain the
-same binary hash. A guarded reference continuation reached frame1800; an observer run
-then executed600 original frames but retained an overflow failure at129 real CD word
-transfers before a complete root. Read the current checkpoint and COMMAND_TRACING.md:
+same binary hash. A guarded reference continuation reached frame1800; two identical
+observer runs then executed600 original frames but overflowed at129 real CD word
+transfers before a complete root. The retained128 events include46 reads of25890008
+returning0BC1 at060958EC. Read the current checkpoint and COMMAND_TRACING.md:
 load/compare/branch fusion requires observing actual transfer values without extra
 busreads or changing fusion. Continue reference/disabled/enabled
 original validation; preserve all owners,
