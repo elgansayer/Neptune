@@ -302,6 +302,6 @@ DSP/audio execution, hardware timing, Godot fidelity or whole-game recovery.
 `probe_kernel_rng.py` replays original USA kernel entry `0600A0EC` and nested
 index helper `0600A08C` against a hash-checked original checkpoint. It declares
 the constructed bound/stack registers and index54 pre-wrap state explicitly,
-limits each call to512 SH-2 instructions, and includes a changed-shift control.
+limits each call to 512 SH-2 instructions, and includes a changed-shift control.
 It does not establish the natural caller, RNG seed/recurrence, wrap branch or
 gameplay call ordering. See [the bounded RNG result](../../docs/restart/research/2026-11-03-rng-bounded-draw.md).

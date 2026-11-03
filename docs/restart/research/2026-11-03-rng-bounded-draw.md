@@ -23,7 +23,7 @@ at `0x060BF4F4` is 55 and the word at `0x060BF5D4` is `0x000074E8`.
 
 ## Actual original-byte replay
 
-With the captured index55, the first direct call entered the original table-wrap
+With the captured index 55, the first direct call entered the original table-wrap
 helper and did not return within the existing 512-instruction limit. The failed
 report remains private at
 `/home/dev/neptune-research-private/707/rng-entry-replay-001/report.json` (SHA-256
@@ -32,7 +32,7 @@ reported as a completed wrap.
 
 For the non-wrap path, six fresh CPU instances used constructed `r4` bounds
 `0, 1, 2, 10, 255, 256`, `r15=0x060FF000`, and a constructed predecessor index54
-so the original helper advanced it to55. Remaining high Work RAM, including the
+so the original helper advanced it to 55. Remaining high Work RAM, including the
 selected table word, came from the retained checkpoint. The pinned
 `saturn-recomp@f20de940e8013fc84103a5b39c4069ed8071b1f9` interpreter executed 33
 SH-2 instructions per case. Returns `0, 0, 1, 9, 231, 232` match the independent
@@ -40,7 +40,7 @@ calculation `((word & 0xff) * bound >> 8) & 0xff`. The index is the only lasting
 RAM write; stack saves are restored.
 
 A changed-shift control replaced original `shlr8` at `0x0600A102` with `shlr2`;
-for bound10 it returned68 and failed the independent formula as intended. The
+for bound 10 it returned 68 and failed the independent formula as intended. The
 formal private report is
 `/home/dev/neptune-research-private/707/rng-entry-replay-005/report.json` (SHA-256
 `61f5b45039076bd9afa06d489c6e7c51fbe3e2c8fb4e060efd84fe695c58a02a`). The
@@ -62,7 +62,7 @@ python3 -m unittest tools.saturn_lab.tests.test_probe_kernel_rng -v
 ```
 
 The probe verifies kernel, checkpoint, interpreter and resident-helper identities,
-limits each call to512 instructions, and guards writes to the declared index and
+limits each call to 512 instructions, and guards writes to the declared index and
 stack only. Three focused formula/input tests pass. The register ABI and index54
 pre-wrap state are constructed, and the emulator lineage is not an independent
 oracle. No natural RNG caller, call order, seed routine, complete recurrence,
