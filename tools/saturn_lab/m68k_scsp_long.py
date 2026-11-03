@@ -101,6 +101,7 @@ def generated_source():
     source=slots.generated_source()
     for old,new in (
         (b'uint32_t neptune_m68k_abi(void) { return 7; }',b'uint32_t neptune_m68k_abi(void) { return 8; }'),
+        (b'event(2,address,size,value&0xFFFF)',b'event(2,address,size,size==4?value:(value&0xFFFF))'),
         (b'    if(neptune_dsp_access(1,address,size,&bus))',b"""    if(size==4 && address>=0x100700 && address<=0x100DFF) {
         uint32_t pc=result->pcs[result->steps-1];
         uint16_t opcode=((uint16_t)request->code[pc]<<8)|request->code[pc+1];
