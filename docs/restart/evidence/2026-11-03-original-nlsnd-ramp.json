@@ -1,0 +1,127 @@
+{
+  "account_and_ci_spend": "unknown",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "fresh_processes": 2,
+  "isolation": {
+    "address_space_bytes": 536870912,
+    "all_guardians_terminal": true,
+    "broker_auth_signing_authority_hidden": true,
+    "configured_shared_limit": 3,
+    "cpu_seconds": 75,
+    "guard_timeout_seconds": 5,
+    "lease_seconds": 300,
+    "offline": true,
+    "outcomes": {
+      "isolation": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.579496112652123,
+        "timed_out": false,
+        "truncated": false
+      },
+      "run1": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 29.134135873056948,
+        "timed_out": false,
+        "truncated": false
+      },
+      "run2": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 30.669984818436205,
+        "timed_out": false,
+        "truncated": false
+      }
+    },
+    "per_case_steps": 96,
+    "source_inputs_native_readonly": true,
+    "wall_seconds": 90
+  },
+  "issue": 675,
+  "limitations": [
+    "Constructed byte/edge/status samples; natural parameter roles and domains remain unknown",
+    "No535E/51B2/command11/caller, native sound timing or production Godot acceptance",
+    "Pinned CPU interpreter and frozen SCSP; no complete game/code recovery claim"
+  ],
+  "model_calls_by_tests": 0,
+  "module": "NLSND",
+  "native_binary_sha256": "39a7c20f1af48974474f27bfc99e35a6642b393ab74340f869914ab0ea518c04",
+  "native_identity": {
+    "abi": 5,
+    "capacity_adapter_sha256": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "derived_backend_sha256": "27828ba253cc29264d7dee2f574c80bc7706268deeb353085dcb39bc4c1434fc",
+    "device_identity": {
+      "abi": 4,
+      "base_identity": {
+        "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+        "flags": [
+          "-std=c11",
+          "-O2",
+          "-shared",
+          "-fPIC",
+          "-DM68K_INSTRUCTION_HOOK=1",
+          "-DM68K_SEPARATE_READS=1",
+          "-Wl,-z,defs"
+        ],
+        "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+      },
+      "component_sha256": "bcca52cb908e85249ae492e1db50a504f55b7900a5ebba25c649228135c9608e",
+      "derived_backend_sha256": "f8df4faf406a780ad1171f5210de073baeec08f02f8bfc3ca260040f16adfb95",
+      "preparation_module_sha256": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+      "profile": "SCSP-DSP-even-word-registers-clock-frozen-no-gap-read",
+      "scsp_source_lock_sha256": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
+    },
+    "max_events": 1024,
+    "max_ranges": 16,
+    "max_regions": 16,
+    "max_steps": 2048,
+    "preparation_module_sha256": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "profile": "NLSND-state-call-disjoint-code-data-frozen-SCSP-word-effects"
+  },
+  "neptune_continuity_activated": false,
+  "original": {
+    "cases": 37424,
+    "instruction_counts": {
+      "40": 5568,
+      "41": 27184,
+      "43": 4672
+    },
+    "natural_field_meanings_and_domains_recovered": false,
+    "observations_sha256": "3250969ea5f729d760e3b6c71f09b82f70502c0d1cc5fc5001eb631525ebc9a7",
+    "original_end_exclusive": 21342,
+    "original_entry": 21136,
+    "original_game_bytes_executed": true,
+    "terminal_original_copy_controls": {
+      "direction_branch": {
+        "reasons": {
+          "Output or unaffected mapped byte differs": 4
+        },
+        "rejected": 4,
+        "terminal_comparisons": 4
+      },
+      "state_bit": {
+        "reasons": {
+          "Output or unaffected mapped byte differs": 4
+        },
+        "rejected": 4,
+        "terminal_comparisons": 4
+      },
+      "wrap_amount": {
+        "reasons": {
+          "Register/SR result differs from independent contract": 4
+        },
+        "rejected": 4,
+        "terminal_comparisons": 4
+      }
+    }
+  },
+  "parent": 671,
+  "private_evidence_root": "/home/dev/neptune-research-private/675/original-001",
+  "probe_sha256": "72aabf008193af4a41931a6503114e84919072074cda003d0abc99d724824dbb",
+  "release": "usa-mk81070-v1003",
+  "report_sha256": "886c65de2196cc509ea4c85b62d1ae8f0f00f545740a958635377c6d26a7c789",
+  "schema": "neptune.original-nlsnd-ramp-evidence.v1",
+  "source_head": "ceada79dd80b6905f03a9a4348cd8897faa5b20b"
+}

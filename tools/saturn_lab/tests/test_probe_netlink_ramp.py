@@ -1,6 +1,10 @@
 """Owned independent ramp boundary examples; no emulator or original media."""
 from pathlib import Path
+from contextlib import redirect_stdout
+import io
+import json
 import sys
+import tempfile
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import probe_netlink_ramp as p
@@ -46,6 +50,19 @@ class RampContractTests(unittest.TestCase):
         for index,value in ((0,0),(1,True),(2,256),(3,[1,2,3]),(4,(1,2)),(5,(1,True,3))):
             case=list(base);case[index]=value
             with self.assertRaises(ValueError):p.contract(*case)
+
+    def test_missing_inputs_fail_and_an_existing_report_is_never_overwritten(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);report=root/'report.json'
+            args=['--source-file',str(root/'missing-source'),'--prepared',str(root/'missing-native'),
+                  '--report',str(report)]
+            with redirect_stdout(io.StringIO()):self.assertEqual(p.main(args),1)
+            data=report.read_bytes();value=json.loads(data)
+            self.assertEqual(value['status'],'failure')
+            self.assertEqual(value['error']['phase'],'identity')
+            self.assertFalse(value.get('original_game_bytes_executed',False))
+            with self.assertRaises(FileExistsError):p.main(args)
+            self.assertEqual(report.read_bytes(),data)
 
 
 if __name__=='__main__':unittest.main()
