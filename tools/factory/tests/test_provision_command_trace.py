@@ -9,6 +9,7 @@ from unittest.mock import patch
 
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 import provision_command_trace as p
+import provision_command_trace_abi as abi
 
 
 OPS=(b'#if 1\r\n #define FUSE_DELAY_SLOT_NOP() \\\r\n   z->PC += 2;\r\n'
@@ -29,6 +30,83 @@ def fixture(root):
 
 
 class CommandObserverPatch(unittest.TestCase):
+    def test_command_abi_layout_and_bounds(self):
+        self.assertEqual(abi.WITNESS_WORDS,424)
+        self.assertEqual(CAPACITY:=abi.CAPACITY,128)
+        self.assertEqual(abi.ROOTS[1],(0x060AE698,0x060A4FAC))
+        self.assertEqual(abi.C.sizeof(abi.Record),216)
+        self.assertEqual(abi.C.sizeof(abi.Status),96)
+        self.assertEqual(len(abi.WITNESS_RANGES),5)
+
+    def test_header_compiles_exports_and_fails_closed_on_bad_arguments(self):
+        compiler=shutil.which('cc')
+        if not compiler:self.fail('Real C compiler required for command ABI fixture')
+        root=Path(__file__).resolve().parents[1]
+        header=(root/'provision_command_trace.h').read_text()
+        # Compile the production header as a shared object against an owned SH-2 shape.
+        prefix='''#include <stdint.h>\n#define INLINE inline\ntypedef struct {uint32_t R[16],PC,Pipe_ID,SR,GBR,VBR,MACH,MACL,PR;int32_t timestamp;} SH7095;\nstatic uint16_t work[0x80000];static uint16_t* WorkRAMH=work;static int setting_sh2_jit=0;\n'''
+        source=Path(__import__('tempfile').mkdtemp())/'fixture.c'
+        source.write_text(prefix+header+'\nvoid fixture_corrupt(void){WorkRAMH[(0x06095904-0x06000000)>>1]=1;}\n')
+        binary=source.with_suffix('.so')
+        subprocess.run([compiler,'-std=c11','-shared','-fPIC','-Werror','-x','c',str(source),'-o',str(binary)],check=True,capture_output=True,timeout=30)
+        dll=abi.C.CDLL(str(binary));trace=abi.Trace(dll)
+        self.assertEqual(dll.neptune_command_begin(0,None,abi.WITNESS_WORDS),0)
+        zeros=[0]*abi.WITNESS_WORDS
+        self.assertEqual(dll.neptune_command_begin(1,None,abi.WITNESS_WORDS),0)
+        self.assertEqual(dll.neptune_command_begin(1,(abi.C.c_uint16*abi.WITNESS_WORDS)(),abi.WITNESS_WORDS-1),0)
+        trace.start(1,zeros);trace.frame(1200)
+        self.assertEqual(trace.witness(),zeros);self.assertEqual(trace.witness('current'),zeros)
+        self.assertEqual(trace.witness(True),None)
+        with self.assertRaisesRegex(ValueError,'skipped'):
+            trace.frame(1202)
+        dll.fixture_corrupt()
+        with self.assertRaisesRegex(ValueError,'Final command source witness'):
+            trace.finish()
+
+    def test_header_accepts_only_a_complete_owned_call_service_transfer_root_trace(self):
+        compiler=shutil.which('cc')
+        if not compiler:self.fail('Real C compiler required for command semantic fixture')
+        header=(Path(__file__).resolve().parents[1]/'provision_command_trace.h').read_text()
+        harness=r'''
+static SH7095 cpu;
+static uint16_t expected[NEPTUNE_COMMAND_WITNESS];
+void fixture_run(void) {
+ neptune_command_begin(1,expected,NEPTUNE_COMMAND_WITNESS);neptune_command_frame(1200);
+ cpu.R[15]=0x06001000;cpu.R[14]=0x06001234;cpu.R[0]=0x060A4FAC;cpu.R[5]=0x06002000;cpu.R[6]=0x06002008;cpu.PR=0x060AE698;
+ cpu.PC=0x060AE698;cpu.Pipe_ID=0x0000400B;neptune_command_step(&cpu);
+ cpu.PC=0x060A4FAE;cpu.Pipe_ID=0x80006003;neptune_command_step(&cpu);
+ cpu.PC=0x060A4FB0;cpu.Pipe_ID=0x00004F22;neptune_command_step(&cpu);
+ cpu.PC=0x06095996;cpu.Pipe_ID=0x00006013;neptune_command_step(&cpu);
+ cpu.PC=0x060959CE;cpu.Pipe_ID=0x00006013;neptune_command_step(&cpu);
+ cpu.PC=0x060959E2;cpu.Pipe_ID=0x00006013;neptune_command_step(&cpu);
+ neptune_command_read(&cpu,0x25890008,0x1234);
+ cpu.PC=0x06095A86;cpu.Pipe_ID=0x00006013;neptune_command_step(&cpu);
+ cpu.PC=0x060959B2;cpu.Pipe_ID=0x00006013;neptune_command_step(&cpu);
+ cpu.PC=0x060959CC;cpu.Pipe_ID=0x00006013;neptune_command_step(&cpu);
+ cpu.PC=0x060A4FBE;cpu.Pipe_ID=0x0000000B;neptune_command_step(&cpu);
+ cpu.PC=0x060A4FBE;cpu.Pipe_ID=0xF5000009;neptune_command_fused_nop(&cpu);
+ cpu.PC=0x060AE69C;cpu.Pipe_ID=0x00006013;neptune_command_step(&cpu);
+}
+'''
+        with tempfile.TemporaryDirectory() as d:
+            source=Path(d)/'semantic.c';binary=Path(d)/'semantic.so'
+            prefix='''#include <stdint.h>\n#define INLINE inline\ntypedef struct {uint32_t R[16],PC,Pipe_ID,SR,GBR,VBR,MACH,MACL,PR;int32_t timestamp;} SH7095;\nstatic uint16_t work[0x80000];static uint16_t* WorkRAMH=work;static int setting_sh2_jit=0;\n'''
+            source.write_text(prefix+header+harness)
+            subprocess.run([compiler,'-std=c11','-shared','-fPIC','-Werror','-x','c',str(source),'-o',str(binary)],check=True,capture_output=True,timeout=30)
+            dll=abi.C.CDLL(str(binary));trace=abi.Trace(dll);dll.fixture_run()
+            rows,status=trace.snapshot()
+            self.assertEqual((status.errors,status.dropped,status.pending,status.completed),(0,0,0,1),[(r.kind,hex(r.pc),hex(r.pr)) for r in rows])
+            kinds=[row.kind for row in rows]
+            self.assertEqual(kinds[0:3],[8,9,1]);self.assertIn(2,kinds);self.assertEqual(kinds[-1],7)
+            self.assertEqual(rows[-1].pc,0x060AE698)
+            self.assertTrue(rows[2].command_valid);self.assertFalse(rows[2].response_valid)
+            self.assertTrue(any(row.kind==4 and row.response_valid for row in rows))
+            witness=(abi.C.c_uint16*abi.WITNESS_WORDS)()
+            for i in range(abi.WITNESS_WORDS): witness[i]=0
+            # The fixture invokes the production ABI's complete-result validator.
+            result=abi.validate(rows,status,list(witness))
+            self.assertEqual(result['schema'],'neptune.original-command-trace.v1')
+
     def test_patch_component_preserves_fusion_and_has_distinct_exports(self):
         with tempfile.TemporaryDirectory() as d:
             root=Path(d);contents=fixture(root);header=root/'owned.h';header.write_bytes(b'/* owned fixture only */\n')

@@ -1,8 +1,9 @@
 # Separate native command observation under707
 
-**Not an installed or ready native observer.** The source patch component and its
-owned fixtures are implemented. The observer header/ABI, trusted preparation,
-actual native build/smoke/reuse and original experiment remain required work.
+**Not an installed or ready native observer.** The source patch component, separate
+GPL header, ctypes ABI, and owned compiled fixtures are implemented. Trusted recipe
+integration, actual matched-core native build/smoke/reuse, and the original experiment
+remain required work.
 The all-original-code programme and655 remain active and incomplete.
 
 Original command-packing PR706 retains9,152 pending-boundary cases/run twice.
@@ -55,12 +56,17 @@ capacity/unfinished/unsupported errors retain diagnostics and fail acceptance.
 The ordinary job guard, shared3 admission/180-second leases and host/provider/
 storage reserves stay unchanged; no local core build below preparation reserve.
 
-Current component validation is separate from native readiness:
+Current patch/header/ABI validation is separate from native readiness:
 
-- Five owned tests include real compiled baseline/observed transfer fixtures:
+- Eight owned tests include a compiled exported-header ABI fence fixture and real
+  compiled baseline/observed transfer fixtures:
   one address evaluation, one actual mock bus operation, identical CPU/RAM/WB
   results, correct signed-load/truncated-store values and no slave callbacks.
-- 39 related observer tests and216 factory tests pass. No game instructions run.
+- 39 related observer tests and219 factory tests pass. No game instructions run.
+- The header requires the profile-specific source JSR and delay, A4FAC root, A4FBA
+  RTS/NOP delay and return, service boundaries, and actual transfers. An owned compiled semantic fixture drives that event order through the exported ABI and verifies that final source-witness mismatches fail. Transfer PC/opcode
+  comes from the master prehook; command/response words carry validity tags and are
+  read only from aligned canonical high Work RAM.
 - A retained corresponding GPL archive was used to reverse only exact accepted
   init-hook insertions; all six reconstructed source hashes match the inspected
   original reference pin before applying the new patch. This checks actual
@@ -68,8 +74,7 @@ Current component validation is separate from native readiness:
 - Private receipt:`/home/dev/neptune-research-private/707/patcher-pin-_bb68yfc/report.json`;
   SHA256`fb5da294b45597d0ac1e06479028d2613067400161df6a5802c36027645c3e23`.
 
-Next implement the strict C header/ctypes ABI and compiled nonmutation/semantic
-fixtures, then integrate a separate trusted recipe and exact-head CI preparation.
+Next integrate the separate trusted recipe and exact-head CI preparation.
 Require real no-media ABI/fence smoke, verified artifact transfer with matching
 binary/source/recipe receipts and real local reuse. CI receives no game/BIOS.
 Finally run two fresh reference/disabled/enabled600-frame windows per profile from

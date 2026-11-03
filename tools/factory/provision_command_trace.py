@@ -76,7 +76,7 @@ def prepare(source, header):
             'single_address_evaluation':True,'triplet_fusion_unchanged':True,
             'fused_nop_observation':'actual master handler, value-only normalization required by supplied header',
             'component_only':True,'native_tool_ready':False,'original_game_bytes_executed':False,
-            'remaining':'separate observer header/ABI/compiled nonmutation fixtures, trusted recipe/CI build/smoke/reuse, original reference-disabled-enabled validation'}
+            'remaining':'trusted separate recipe/CI native build/smoke/reuse, exact matched-core call and service-return validation, original reference-disabled-enabled experiment'}
 
 
 def main(argv=None):
