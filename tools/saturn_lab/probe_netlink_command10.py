@@ -193,7 +193,7 @@ class Contract:
 
     def slot_helper(self,mode):
         if mode=='release':
-            self.pcs += [0x3540,0x3546,0x354A];self.regs[13]=0x100000;self.regs[9]=self.regs[13]+11;self.regword(7,31)
+            self.pcs += [0x3540,0x3546,0x354A];self.regs[13]=0x100000;self.regs[9]=self.regs[13]+11;self.regs[7]=31
             for _ in range(32):
                 self.pcs += [0x354C,0x3550,0x3554];value=self.access(1,self.regs[9],1)|31;self.access(2,self.regs[9],1,value)
                 self.logic(value);self.regs[9]+=32;self.regword(7,self.regs[7]-1)
@@ -201,7 +201,7 @@ class Contract:
         else:
             prefix=(0x355A,0x355E,0x3560) if mode=='send' else (0x356E,0x3572,0x3574)
             loop=(0x3562,0x3564,0x3568) if mode=='send' else (0x3576,0x3578,0x357C)
-            self.pcs+=list(prefix);self.regs[9]=self.regs[13]+(21 if mode=='send' else 23);self.regword(7,15);self.regs[0]=0;self.logic(0)
+            self.pcs+=list(prefix);self.regs[9]=self.regs[13]+(21 if mode=='send' else 23);self.regs[7]=15;self.regs[0]=0;self.logic(0)
             for _ in range(16):
                 self.pcs+=list(loop);self.access(2,self.regs[9],1,0);self.regs[9]+=32;self.regword(7,self.regs[7]-1)
             if mode=='send':self.pcs.append(0x356C)
