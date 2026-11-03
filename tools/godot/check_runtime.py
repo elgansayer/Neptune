@@ -136,7 +136,7 @@ def main():
                 else:
                     code, text = bounded(name, command)
                 if (code or ERROR.search(text) or "NEPTUNE_RUNTIME_CONNECTED" not in text
-                        or "NEPTUNE_PROTOCOL_SELECTED=2" not in text
+                        or "NEPTUNE_PROTOCOL_SELECTED=3" not in text
                         or "=== Bomberman Server Starting ===" in text):
                     raise SystemExit("FAIL: " + name + "; inspect evidence")
                 print("PASS:", name, "connected through actual ClientMain")

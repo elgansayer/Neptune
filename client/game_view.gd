@@ -55,6 +55,15 @@ var local_map := [] # Client-side copy of map state (updated via delta compressi
 # Match state for win/lose animations
 var match_winner_id := "" # ID of the winner (empty during gameplay, set when match ends)
 var match_ended := false # True when match has ended
+var round_epoch := 0
+var round_phase := "waiting"
+var _last_round_tick := -1
+var map_epoch := 0
+var map_generation := 0
+var map_signature := ""
+var _map_background: Node = null
+var _smoke_diagnostics := false
+var _camera_impact_tween: Tween
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -79,6 +88,8 @@ var timescale_options = [3.0, 5.0, 0.1, 0.25, 0.5, 1.0, 2.0]
 var server_node: Node = null
 
 func _ready():
+	if OS.has_feature("web"):
+		_smoke_diagnostics = bool(JavaScriptBridge.eval("new URLSearchParams(window.location.search).get('smoke') === '1'"))
 	# Cache server node reference
 	server_node = get_node_or_null("/root/ServerMain")
 
@@ -117,7 +128,7 @@ func _ready():
 	add_child(bomb_safety_visualizer)
 	print("[GameView] BombSafetyVisualizer created")
 	# Start with bomb safety shown
-	bomb_safety_visualizer.visible = true
+	bomb_safety_visualizer.visible = false
 	
 	# Setup Godot CanvasLayers for proper rendering separation (after visualizers created)
 	_setup_canvas_layers()
@@ -165,11 +176,6 @@ func _setup_canvas_layers() -> void:
 	# Check for cached initial map data (might have arrived before we were ready)
 	call_deferred("_check_pending_initial_map")
 
-	# Start at normal speed
-	Engine.time_scale = 1.0
-	if server_node:
-		server_node.rpc_id(1, "set_debug_timescale", 1.0)
-	
 	# Initialize HUD (must be above map but below players)
 	hud = GameHUDScene.instantiate()
 	hud.layer = RenderingLayers.CANVAS_UI
@@ -189,7 +195,26 @@ func _setup_canvas_layers() -> void:
 
 
 func update_game_state(state: Dictionary):
-	print("[GameView] State keys: ", state.keys())
+	var diagnostic_state: Dictionary = state.duplicate(true) if _smoke_diagnostics else {}
+	var round_data: Dictionary = state.get("round", {})
+	var accept_phase := true
+	if not round_data.is_empty():
+		var incoming_epoch: int = round_data.get("epoch", 0)
+		if incoming_epoch < round_epoch: return
+		if incoming_epoch > round_epoch:
+			_reset_round_presentation(incoming_epoch)
+		var tick: int = state.get("simulation_tick", -1)
+		if tick >= 0 and tick < _last_round_tick:
+			# Reliable map delivery can follow an unreliable actor packet. Keep
+			# its arena while refusing to rewind the phase/timer or actors.
+			if not state.has("map_packed") and not state.has("map"): return
+			accept_phase = false
+			state = state.duplicate(true)
+			for key in state.keys():
+				if not key in ["map", "map_packed", "map_width", "map_height", "map_config", "round"]: state.erase(key)
+		else:
+			_last_round_tick = maxi(_last_round_tick, tick)
+		if accept_phase: round_phase = round_data.get("phase", "waiting")
 	# Observe clock headers even without an event batch. This guard applies only
 	# to presentation events; map/actor delta handling retains its existing flow.
 	var accept_effect_snapshot := _explosion_timeline.observe_snapshot(
@@ -379,6 +404,7 @@ func update_game_state(state: Dictionary):
 		render_map(local_map)
 		update_blocks(local_map) # Populate soft blocks from server map data
 		map_rendered = true
+		_record_fresh_map()
 		
 		print("[GameView] Map rendered from packed data, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
 		
@@ -395,6 +421,7 @@ func update_game_state(state: Dictionary):
 		render_map(state.map)
 		update_blocks(local_map) # Populate soft blocks from server map data
 		map_rendered = true
+		_record_fresh_map()
 		
 		print("[GameView] Map rendered, GameConfig.TILE_SIZE = ", GameConfig.TILE_SIZE)
 		
@@ -465,7 +492,7 @@ func update_game_state(state: Dictionary):
 	if state.has("hurry_blocks"):
 		_update_hurry_blocks(state.hurry_blocks)
 	
-	if state.has("countdown_time") and state.countdown_time > 0.0 and hud:
+	if round_data.is_empty() and state.has("countdown_time") and state.countdown_time > 0.0 and hud:
 		hud.show_countdown(state.countdown_time)
 
 	# Update player faces in HUD and count alive players
@@ -522,12 +549,16 @@ func update_game_state(state: Dictionary):
 		# Check if local player became a spectator (eliminated)
 		if my_data.get("is_spectator", false) and hud.has_method("show_spectator_mode"):
 			hud.show_spectator_mode()
+		elif not my_data.get("is_dead", false):
+			hud.hide_spectator_mode()
+	elif not round_data.is_empty() and state.has("players") and hud:
+		hud.show_spectator_mode("WAITING FOR A SEAT NEXT ROUND")
 
 	# Check for game over
 	# IMPORTANT: match_active=false during countdown AND after game ends
 	# Only show game over if countdown is complete (countdown_time <= 0)
 	var countdown_complete = not state.has("countdown_time") or state.countdown_time <= 0.0
-	var has_match_ended = state.has("match_active") and not state.match_active and countdown_complete
+	var has_match_ended = round_phase == "results" if not round_data.is_empty() else state.has("match_active") and not state.match_active and countdown_complete
 	
 	# Update class-level match state for animations
 	if has_match_ended:
@@ -537,10 +568,14 @@ func update_game_state(state: Dictionary):
 	
 	if has_match_ended and hud:
 		var winner_name = ""
-		if state.has("winner_id") and state.winner_id:
-			if state.has("players") and state.players.has(state.winner_id):
-				winner_name = state.players[state.winner_id].get("username", "Unknown")
+		var winner_id: String = str(round_data.get("result", {}).get("winner_id", state.get("winner_id", "")))
+		match_winner_id = winner_id
+		if not winner_id.is_empty():
+			winner_name = state.get("players", {}).get(winner_id, {}).get("username", "Player " + winner_id)
 		hud.show_game_over(winner_name)
+	if not round_data.is_empty() and accept_phase and hud:
+		var waiting_for_seat: bool = multiplayer.get_unique_id() in state.get("room", {}).get("spectators", [])
+		hud.update_round(round_data, preload("res://shared/build_identity.gd").compact(), waiting_for_seat)
 
 	# Remove players no longer in state
 	if state.has("players"):
@@ -604,6 +639,99 @@ func update_game_state(state: Dictionary):
 	# These are additive event batches, not a complete active-effect roster.
 	if accept_effect_snapshot:
 		update_explosions(explosion_events)
+	if _smoke_diagnostics and diagnostic_state.has("p") and diagnostic_state.has("b") and diagnostic_state.has("simulation_tick") and diagnostic_state.has("round"):
+		_emit_smoke_diagnostics(diagnostic_state)
+
+func _record_fresh_map() -> void:
+	map_epoch = round_epoch
+	map_generation += 1
+	map_signature = JSON.stringify(local_map).sha256_text()
+
+func _discard_visual(value: Variant, discarded: Dictionary) -> void:
+	if value is Dictionary:
+		for child in value.values(): _discard_visual(child, discarded)
+	elif value is Node and is_instance_valid(value):
+		var id: int = value.get_instance_id()
+		if discarded.has(id): return
+		discarded[id] = true
+		# Detach immediately so callbacks/visuals from the previous arena cannot
+		# affect the fresh roster before the deferred deletion boundary.
+		if value.get_parent(): value.get_parent().remove_child(value)
+		value.queue_free()
+
+func _reset_round_presentation(epoch: int) -> void:
+	if _camera_impact_tween and _camera_impact_tween.is_valid(): _camera_impact_tween.kill()
+	round_epoch = epoch
+	round_phase = "waiting"
+	_last_round_tick = -1
+	var discarded := {}
+	for collection in [player_nodes, bomb_nodes, powerup_nodes, egg_nodes, tirra_nodes,
+			explosion_nodes, block_nodes, wall_nodes, hurry_block_nodes,
+			hurry_pending_shadows, hurry_falling_blocks, debug_tiles, remote_player_interpolators]:
+		_discard_visual(collection, discarded)
+		collection.clear()
+	_discard_visual(map_scene_instance, discarded)
+	_discard_visual(_map_background, discarded)
+	map_scene_instance = null
+	_map_background = null
+	map_rendered = false
+	map_epoch = 0
+	map_signature = ""
+	local_map.clear()
+	arena_pixel_size = Vector2.ZERO
+	match_ended = false
+	match_winner_id = ""
+	removed_dead_players.clear()
+	my_player_id = ""
+	input_buffer.clear()
+	ai_debug_targets.clear()
+	_explosion_timeline.reset()
+	if is_instance_valid(local_player_controller):
+		local_player_controller.queue_free()
+		local_player_controller = ClientPlayerController.new()
+		add_child(local_player_controller)
+	if is_instance_valid(bomb_throw_predictor): bomb_throw_predictor.predicted_throws.clear()
+	if is_instance_valid(threat_visualizer):
+		threat_visualizer.update_target_tiles({})
+		threat_visualizer.update_threat_matrix({}, 0.0)
+	if is_instance_valid(bomb_safety_visualizer): bomb_safety_visualizer.update_safety_data({})
+	if is_instance_valid(camera): camera.offset = Vector2.ZERO
+	if is_instance_valid(hud): hud.reset_round()
+
+func _emit_smoke_diagnostics(state: Dictionary) -> void:
+	var roster := []
+	var winner_label: Label = hud.get_node_or_null("WinnerLabel") if hud else null
+	for id in state.get("room", {}).get("participants", {}):
+		var participant: Dictionary = state.room.participants[id]
+		var visible_label := ""
+		if hud and hud.player_face_mapping.has(id):
+			var slot = hud.player_face_slots[hud.player_face_mapping[id]]
+			for badge_name in ["BotBadge", "HumanBadge"]:
+				var badge = slot.get_node_or_null("FaceViewport/" + badge_name)
+				if badge and badge.visible and slot.visible: visible_label = badge.text
+		roster.append({"id": id, "type": participant.get("type", ""),
+			"label": visible_label})
+	for key in ["map", "map_packed", "map_config"]: state.erase(key)
+	print("NEPTUNE_STATE=", JSON.stringify({"peer_id": str(multiplayer.get_unique_id()),
+		"client_revision": preload("res://shared/build_identity.gd").revision(),
+		"server_revision": ClientMain.server_revision, "state": state,
+		"view": {"epoch": round_epoch, "map_epoch": map_epoch, "map_signature": map_signature,
+			"map_generation": map_generation, "game_over": hud.game_over_shown if hud else false,
+			"winner_id": match_winner_id, "removed_dead_players": removed_dead_players.size(),
+			"bombs": bomb_nodes.size(), "explosions": explosion_nodes.size(), "items": powerup_nodes.size(),
+			"eggs": egg_nodes.size(), "mounts": tirra_nodes.size(),
+			"hurry": hurry_block_nodes.size() + hurry_pending_shadows.size() + hurry_falling_blocks.size(),
+			"seen_explosions": _explosion_timeline.seen.size(), "controls_visible": hud.controls_visible() if hud else false,
+			"spectating": hud.is_spectating if hud else false,
+			"timer_text": hud.match_timer.text if hud else "",
+			"round_text": hud.round_status.text if hud else "",
+			"result_text": winner_label.text if winner_label else "",
+			"roster": roster}}))
+
+func _exit_tree() -> void:
+	# These canvases are children of the root so scene changes must release them.
+	if is_instance_valid(players_canvas): players_canvas.queue_free()
+	if is_instance_valid(debug_canvas): debug_canvas.queue_free()
 
 func _on_latency_updated(latency_ms: int):
 	if hud and hud.has_method("update_latency"):
@@ -856,7 +984,9 @@ func update_player(peer_id: String, data: Dictionary):
 					return
 				
 			if not player_node.get_meta("death_anim_cleanup_connected", false):
+				var death_epoch := round_epoch
 				var cleanup_callable := func(finished_anim: StringName = &""):
+					if death_epoch != round_epoch: return
 					if finished_anim != &"" and finished_anim != "state_defeat":
 						return
 					_remove_dead_player(peer_id)
@@ -1460,8 +1590,9 @@ func _physics_process(delta):
 		# Visual position comes from server via reconciliation in update_player
 	
 	# Send input to server (server remains authoritative)
-	if server_node:
+	if server_node and ClientMain.connected and ClientMain.authenticated and multiplayer.has_multiplayer_peer():
 		server_node.rpc_id(1, "send_player_input", {
+			"round_epoch": round_epoch,
 			"input_x": input_x,
 			"input_y": input_y,
 			"place_bomb": place_bomb,
@@ -1501,14 +1632,6 @@ func _input(event):
 			if bomb_safety_visualizer:
 				bomb_safety_visualizer.visible = not bomb_safety_visualizer.visible
 				print("[GameView] Bomb safety visualizer: ", "ON" if bomb_safety_visualizer.visible else "OFF")
-		elif event.keycode == Key.KEY_F5:
-			current_timescale_index = (current_timescale_index + 1) % timescale_options.size()
-			var new_timescale = timescale_options[current_timescale_index]
-			Engine.time_scale = new_timescale
-			if server_node:
-				server_node.rpc_id(1, "set_debug_timescale", new_timescale)
-			print("[GameView] Timescale set to: ", new_timescale)
-
 		elif event.keycode == Key.KEY_F7:
 			# Toggle timing display on threat visualizer
 			if threat_visualizer and threat_visualizer.has_method("toggle_timing"):
@@ -1599,6 +1722,7 @@ func render_map(map_data):
 		bg.position = Vector2.ZERO # Start from top-left
 		bg.z_index = -1
 		add_child(bg)
+		_map_background = bg
 		
 		# Render tiles based on map data
 		# 0 = empty, 1 = wall (indestructible), 2 = destructible block
@@ -1614,6 +1738,7 @@ func render_map(map_data):
 					wall.position = Vector2(col * GameConfig.TILE_SIZE, row * GameConfig.TILE_SIZE)
 					wall.z_index = 0
 					add_child(wall)
+					wall_nodes["%d,%d" % [col, row]] = wall
 					
 				elif tile_type == 2:
 					# Destructible block - lighter brown/tan
@@ -1638,7 +1763,7 @@ func _connect_arena_framing() -> void:
 func _update_arena_framing() -> void:
 	if arena_pixel_size == Vector2.ZERO or not is_instance_valid(camera): return
 	var top_inset: float = hud.get_node("TopBar").offset_bottom if is_instance_valid(hud) else 24.0
-	var layout: Dictionary = preload("res://client/arena_framing.gd").fit(arena_pixel_size, get_viewport().get_visible_rect().size, top_inset)
+	var layout: Dictionary = preload("res://client/arena_framing.gd").fit(arena_pixel_size, get_viewport().get_visible_rect().size, top_inset, 42.0)
 	if not layout.accepted: return # A minimized/zero-size viewport cannot be framed yet.
 	camera.position = layout.position
 	camera.zoom = layout.zoom
@@ -1670,7 +1795,7 @@ func show_debug_tile(tile_pos: Vector2i, color: Color):
 	await get_tree().create_timer(0.15).timeout
 	if is_instance_valid(debug_rect):
 		debug_rect.queue_free()
-	if debug_tiles.has(tile_key):
+	if debug_tiles.get(tile_key) == debug_rect:
 		debug_tiles.erase(tile_key)
 
 # Receive bomb safety evaluation data from server (called locally by ClientMain)
@@ -1825,7 +1950,9 @@ func _spawn_hurry_block_with_warning(tile_x: int, tile_y: int, tile_key: String)
 	hurry_pending_shadows[tile_key] = shadow
 	
 	# Step 2: When shadow warning completes, spawn the falling block
+	var warning_epoch := round_epoch
 	shadow.shadow_warning_complete.connect(func():
+		if warning_epoch != round_epoch or not is_instance_valid(shadow) or not shadow.is_inside_tree(): return
 		_spawn_falling_hurry_block(tile_x, tile_y, tile_key, shadow)
 	)
 
@@ -1835,12 +1962,15 @@ func _spawn_falling_hurry_block(tile_x: int, tile_y: int, tile_key: String, shad
 	
 	# Create the falling block from scene
 	var falling_block = FallingHurryBlockScene.instantiate()
-	falling_block.setup(target_tile, shadow)
+	# setup() uses @onready children and scaled fall dimensions from _ready().
 	add_child(falling_block)
+	falling_block.setup(target_tile, shadow)
 	hurry_falling_blocks[tile_key] = falling_block
 	
 	# Connect to landing signal
+	var falling_epoch := round_epoch
 	falling_block.block_landed.connect(func(tile: Vector2i):
+		if falling_epoch != round_epoch: return
 		_on_hurry_block_landed(tile_key, tile, falling_block, shadow)
 	)
 	
@@ -1869,11 +1999,13 @@ func _shake_camera_on_impact():
 	if not camera:
 		return
 	
-	var original_offset = camera.offset
+	if _camera_impact_tween and _camera_impact_tween.is_valid(): _camera_impact_tween.kill()
+	var original_offset := Vector2.ZERO
 	var shake_intensity = 1.0 * GameConfig.scale_factor # Subtle shake
 	var shake_duration = 0.15 # Quick shake
 	
 	var tween = create_tween()
+	_camera_impact_tween = tween
 	# Rapid oscillation
 	tween.tween_property(camera, "offset", original_offset + Vector2(shake_intensity, 0), 0.02)
 	tween.tween_property(camera, "offset", original_offset + Vector2(-shake_intensity, shake_intensity * 0.5), 0.02)

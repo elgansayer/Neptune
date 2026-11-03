@@ -10,10 +10,10 @@ func setup_test() -> void: pass
 func teardown_test() -> void: pass
 
 func _offer(versions: Variant, format: Variant = Protocol.FORMAT) -> PackedByteArray:
-	return JSON.stringify({"format": format, "versions": versions}).to_utf8_buffer()
+	return JSON.stringify({"format": format, "versions": versions, "revision": "development"}).to_utf8_buffer()
 
 func test_current_protocol_is_explicit() -> Variant:
-	return assert_eq(Protocol.evaluate_offer(_offer([2])), {"accepted": true, "reason": "compatible", "version": 2}, "Content-sharing gameplay protocol must be selected explicitly")
+	return assert_eq(Protocol.evaluate_offer(_offer([3])), {"accepted": true, "reason": "compatible", "version": 3, "revision": "development"}, "Round-epoch gameplay protocol must be selected explicitly")
 
 func test_highest_shared_version_is_symmetric_and_order_independent() -> Variant:
 	for pair in [[[1, 2, 3], [2, 1]], [[3, 1, 2], [1, 2]], [[2, 1], [3, 2, 1]]]:
@@ -22,7 +22,7 @@ func test_highest_shared_version_is_symmetric_and_order_independent() -> Variant
 	return true
 
 func test_no_common_protocol_has_no_fallback() -> Variant:
-	for versions in [[1], [3]]:
+	for versions in [[1], [2], [4]]:
 		var result: Dictionary = Protocol.evaluate_offer(_offer(versions))
 		if result.accepted or result.reason != "incompatible_protocol_versions" or result.has("version"):
 			return "Old RPC layouts and future-only peers cannot fall back silently"
@@ -34,13 +34,13 @@ func test_empty_missing_or_unknown_envelope_is_rejected() -> Variant:
 	return true
 
 func test_unknown_format_and_extra_fields_are_rejected() -> Variant:
-	for value in [null, 1, true, "neptune.protocol/0", "neptune.protocol/2", ""]:
+	for value in [null, 1, true, "neptune.protocol/0", "neptune.protocol/1", ""]:
 		if Protocol.evaluate_offer(_offer([1], value)).accepted: return "Unknown bootstrap format accepted"
 	var extra := {"format": Protocol.FORMAT, "versions": [1], "fallback": true}
 	return assert_true(not Protocol.evaluate_offer(JSON.stringify(extra).to_utf8_buffer()).accepted, "Unknown capabilities cannot be ignored in bootstrap")
 
 func test_trailing_documents_cannot_hide_behind_a_valid_offer() -> Variant:
-	var raw := _offer([2]).get_string_from_utf8()
+	var raw := _offer([3]).get_string_from_utf8()
 	for suffix in ["true", raw, "{}", " trailing text"]:
 		if Protocol.evaluate_offer((raw + suffix).to_utf8_buffer()).accepted:
 			return "A valid prefix hid trailing non-whitespace bytes"
@@ -64,7 +64,7 @@ func test_supported_version_count_and_numeric_boundaries() -> Variant:
 	return assert_true(result.accepted and result.version == 65535 and Protocol.validate_versions(versions), "Documented version/count boundaries must work")
 
 func test_offer_byte_budget_includes_whitespace() -> Variant:
-	var raw := _offer([2]).get_string_from_utf8()
+	var raw := _offer([3]).get_string_from_utf8()
 	var boundary := (raw + " ".repeat(Protocol.MAX_OFFER_BYTES - raw.length())).to_utf8_buffer()
 	var overflow := boundary.duplicate()
 	overflow.append(32)
@@ -127,3 +127,15 @@ func test_failed_connection_clears_previous_session_map_and_authentication() -> 
 	var correct: bool = client.pending_initial_map.is_empty() and not client.connected and not client.authenticated and client.negotiated_protocol == 0 and client.last_connection_error == "incompatible_protocol_versions"
 	for field in previous: client.set(field, previous[field])
 	return assert_true(correct, "A refused connection cannot leave a map/authentication from the previous session")
+
+func test_release_revision_is_validated_and_must_match() -> Variant:
+	var revision := "a".repeat(40)
+	var offer := {"format": Protocol.FORMAT, "versions": [3], "revision": revision}
+	var accepted: Dictionary = Protocol.evaluate_offer(JSON.stringify(offer).to_utf8_buffer(), [3], revision)
+	if not accepted.accepted or accepted.revision != revision: return "Matching immutable releases were rejected"
+	var refused: Dictionary = Protocol.evaluate_offer(JSON.stringify(offer).to_utf8_buffer(), [3], "b".repeat(40))
+	if refused.accepted or refused.reason != "release_revision_mismatch_reload_required": return "Stale release was admitted"
+	for bad in [null, true, "", "a".repeat(39), "A".repeat(40), "g".repeat(40), revision + "\n"]:
+		offer.revision = bad
+		if Protocol.evaluate_offer(JSON.stringify(offer).to_utf8_buffer(), [3], revision).accepted: return "Malformed release identity accepted"
+	return true

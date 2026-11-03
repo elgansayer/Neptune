@@ -28,15 +28,15 @@ func _ready() -> void:
 	var client = get_node("/root/ClientMain")
 	var incompatible := "--probe-incompatible" in OS.get_cmdline_user_args()
 	if incompatible:
-		# Isolated test process only; product configuration stays pinned to [1].
-		client.protocol_gate._versions = [3]
+		# Isolated test process only; product configuration stays pinned to [3].
+		client.protocol_gate._versions = [4]
 		client.pending_initial_map = {"previous_session": true}
 	client.connection_succeeded.connect(func():
-		if incompatible or client.negotiated_protocol != 2 or client.protocol_gate.selected_version(1) != 2:
+		if incompatible or client.negotiated_protocol != 3 or client.protocol_gate.selected_version(1) != 3:
 			push_error("Runtime probe connected without the supported protocol")
 			get_tree().quit(1)
 			return
-		print("NEPTUNE_PROTOCOL_SELECTED=2")
+		print("NEPTUNE_PROTOCOL_SELECTED=3")
 		client._send_ping()
 	)
 	client.latency_updated.connect(func(_latency):
@@ -73,8 +73,8 @@ func _start_content_probe() -> void:
 		_content_fail("invalid authored probe arguments")
 		return
 	_content_client.connection_succeeded.connect(func():
-		if _content_client.negotiated_protocol != 2:
-			_content_fail("content probe connected without protocol 2")
+		if _content_client.negotiated_protocol != 3:
+			_content_fail("content probe connected without protocol 3")
 			return
 		_content_client.login("Sharing_" + _content_case, "original-fixture-password")
 	)

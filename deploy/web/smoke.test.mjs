@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import {mkdtemp, rm} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
 import { consoleFailure, verifyErrorContract, runSmoke } from './smoke.mjs';
 
 test('the recorded mounted Tirra diagnostic fails on every console channel', () => {
@@ -39,16 +42,22 @@ test('the actual console event handler blocks smoke success and closes the brows
       listeners.get('console')({ type: () => 'error', text: () => "ERROR: Animation 'default' doesn't exist." });
     },
     waitForTimeout: async () => {},
+    isClosed: () => pageClosed,
     screenshot: async () => {},
     close: async () => { pageClosed = true; },
   };
   const browserType = { launch: async () => ({
-    newPage: async () => page,
+    newContext: async () => ({newPage: async () => page}),
     close: async () => { browserClosed = true; },
   }) };
   // Controlled adapter: exercises runSmoke's real registered callbacks and
   // failure path, without claiming an actual browser/server run.
-  await assert.rejects(runSmoke({ browserType }), /Animation 'default' doesn't exist/);
-  assert.equal(pageClosed, true);
-  assert.equal(browserClosed, true);
+  const evidenceDirectory = await mkdtemp(path.join(tmpdir(), 'neptune-smoke-error-'));
+  try {
+    await assert.rejects(runSmoke({ browserType, evidenceDirectory }), /Animation 'default' doesn't exist/);
+    assert.equal(pageClosed, true);
+    assert.equal(browserClosed, true);
+  } finally {
+    await rm(evidenceDirectory, {recursive: true, force: true});
+  }
 });

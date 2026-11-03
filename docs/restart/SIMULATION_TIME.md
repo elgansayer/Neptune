@@ -60,3 +60,9 @@ death attribution, held-out tournaments, dynamic/special hazard intervals and
 network prediction/reconciliation remain separate #30–#32/#45 work. A restored
 session will also need its clock/tick restored with the remaining replay/checkpoint
 state. No complete checkpoint/replay format is introduced here.
+
+Hosted repeat play replaces GameInstance at each round boundary. Its simulation
+clock/tick therefore restart with the fresh authority; the client-facing
+server-owned round epoch strictly increases and rejects stale previous-round
+updates and commands. See [ROOM_LIFECYCLE.md](ROOM_LIFECYCLE.md). No wall clock or
+browser interval determines the authoritative phase transitions.

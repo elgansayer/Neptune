@@ -101,7 +101,8 @@ def run_capacity_checks(base, env, evidence, bounded):
                            if line.startswith("NEPTUNE_ROOM_CAPACITY=")]
                 expected = {"seats": seats, "humans": humans, "bots": bots,
                             "preset_limit": preset, "protocol_limit": 12,
-                            "accepted": humans, "refused": 1, "snapshots": humans, "maps": humans, "active": True}
+                            "accepted": humans, "refused": 0 if bots else 1,
+                            "spectators": 1 if bots else 0, "snapshots": humans, "maps": humans, "active": True}
                 if auto_fill: expected["auto_fill"] = True
                 if expected_content:
                     expected.update(content=expected_content, selection=identities,
@@ -115,7 +116,7 @@ def run_capacity_checks(base, env, evidence, bounded):
                     raise SystemExit("FAIL: real room " + name + "; inspect client/server evidence")
                 text = ANSI.sub("", server_log.read_text())
                 if (ERROR.search(text) or text.count("[Server] Peer connected:") != humans + 1
-                        or text.count("[Server] Player admission refused: room_full") != 1
+                        or text.count("[Server] Player admission refused: room_full") != (0 if bots else 1)
                         or text.count("Match started! Countdown complete.") != 1):
                     raise SystemExit("FAIL: server capacity/admission evidence for " + name)
                 if auto_fill and "requested bot (" in text:
