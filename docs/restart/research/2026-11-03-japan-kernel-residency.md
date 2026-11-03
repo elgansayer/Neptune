@@ -145,6 +145,15 @@ SH-2 DMA registers; those hardware effects are not mapped or simulated here.
 The complete report and failed earlier bounded attempts remain private under
 `/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-*/`.
 
+Further disassembly of the adjacent initialization path at `0x0600A6D6` reads
+SH-2 on-chip `0xFFFFFE73`/`0xFFFFFE71` registers and accesses SCU PPAF/PPD at
+`0x25FE0080`, `0x25FE0084` and `0x25FE008C`. It is therefore outside the
+bounded WorkRAM-only helper replay. Original decode files are retained privately
+as `analysis/japan-a6d6-disassembly.txt` (SHA-256
+`57af4bbf7af088fd8131b7677c7acd167c45e49bf2e709727814a99e291443ed`) and
+`analysis/japan-a714-disassembly.txt` (SHA-256
+`054458fe84d8c22cb96bf1aec51ba0180aa504723f0c218f1f09435cdc29aa8e`).
+
 Next, add a bounded Japanese-specific observation of the startup path around
 `0x0600A312`, after verifying its DVCR, VDP2 and BIOS side effects, then map
 further Japan-only ranges and overlays. Keep the Japanese kernel distinct from
