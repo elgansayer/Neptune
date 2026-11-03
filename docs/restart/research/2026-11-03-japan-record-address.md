@@ -38,6 +38,38 @@ identical. Run 1 is
 SHA-256 `39a8cad60727d86a794aa6b9cadc970329a7939326feb810c03e3079638f3e85`.
 Run 2 has the same SHA-256. The focused four-test suite and full
 `python3 tools/saturn_lab/check.py` suite (510 tests) pass.
+
+## Original call-site continuation
+
+A wider static window then found an indirect callsite at
+`0x0600CC5C`: its literal at `0x0600CCA4` is `0x0600AEF2`, the delay slot at
+`0x0600CC60` moves the preceding `r0` value into the callee's `r4`, and the
+return path stores callback address `0x0600CB96` at the selected record's
+offset `+12` in the RTS delay slot at `0x0600CC6A`. The preceding producer at
+`0x0600A946` remains unvalidated.
+
+`tools/saturn_lab/probe_japan_record_caller.py` executes those original caller
+instructions together with the actual `AEF2` bytes. It maps the two exact code
+ranges, three original literals, a two-word stack, and one 88-byte record. For
+all 18 record indices, two executions in each of two byte-identical reports
+run 17 original instructions, transfer MACL through the callee spill/restore,
+return the record address, and perform only the original word store at
+record `+12`. Three mutations are rejected: changing the call delay-slot
+argument, changing callee stride 88, and changing the caller's store offset.
+
+Run 1 is
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-010/japan-record-caller-run1.json`,
+SHA-256 `e407ea8f80caebe4c9baae01b0e1501c16b82bb239b6a9c1a44ca7cbaa212ae4`;
+run 2 has the same hash. The caller window is retained as
+`analysis/japan-cc44-disassembly.txt`, SHA-256
+`fa33999a5853d6426e9df74fc547dd4a233995b3dd1ab56c8ed39542a7c10874`.
+The focused caller suite passes four tests; the current complete research suite
+passes 514 tests.
+
+This executes a real original callsite sequence under a constructed incoming
+`r0`, stack return word, and record buffer. It does not execute the preceding
+`A946` producer or demonstrate that the game naturally reached `CC5C`; BIOS,
+device, timing, gameplay, and other caller semantics remain open.
 The earlier failed attempts remain in `execution-006` through `execution-008`;
 they are retained and are not counted as successful execution.
 

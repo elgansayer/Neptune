@@ -152,7 +152,9 @@ denominator remain open.
 
 The subsequent [Japanese record-address helper result](../research/2026-11-03-japan-record-address.md)
 executes the original 18-byte helper at `0x0600AEF2` over 34 inputs twice per
-run, with paired reports identical and two instruction mutation controls. It
-validates the bounded signed-word multiply,
-record-base addition, and one MACL spill/restore slot. This is another isolated
-CPU contract, not proof of natural callers or the surrounding task/device code.
+run, with paired reports identical and two instruction mutation controls. A
+follow-up composes the helper with its original `0x0600CC5C` indirect callsite
+for all 18 record indices twice per run, checking the exact call argument,
+return path, and callback store at record `+12`, with three mutations. The
+constructed caller continuation does not prove natural runtime reachability or
+the preceding `0x0600A946` producer.
