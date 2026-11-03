@@ -44,6 +44,14 @@ Bomberman feature coverage in separate ruleset profiles. A continuously running
 AI factory should work through GitHub issues, with deterministic verification and
 tests-gated automatic merging. AI review is optional, following [MERGE_POLICY.md](MERGE_POLICY.md).
 
+**Competitive netplay is a core release requirement (owner direction, 3 November).**
+Continuously and aggressively eliminate avoidable input delay, movement jitter,
+late actions, stalls and disconnects. Target esports-level responsiveness,
+smoothness, reliability and fairness across native and browser play. Enforce the
+measured budgets and regression gates in [NETPLAY_BENCHMARKS.md](NETPLAY_BENCHMARKS.md)
+throughout development; current performance and competitive readiness remain to
+be demonstrated by runtime evidence.
+
 The work has three tracks: factory/build, Saturn research and Power Bomberman
 research. Keep one shared implementation with separate ruleset profiles. The
 research gate is repeatable control of the original, real graphics and one campaign

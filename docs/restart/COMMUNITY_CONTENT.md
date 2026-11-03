@@ -131,6 +131,30 @@ The engine, netplay, bots, tools and starter content need active maintenance.
 Community adoption is a product outcome, not something an AI factory can guarantee.
 Do not equate a large feature catalogue with polish or a healthy creator community.
 
+## Competitive network play
+
+Owner direction, 3 November 2026: network play feels laggy, particularly movement.
+Neptune must aim for esports-level competitive play. Exceptional responsiveness,
+smoothness, reliability and fairness are core release requirements and ongoing
+engineering priorities. Aggressively optimise every source of avoidable delay:
+input sampling, transport queues, simulation scheduling, state delivery, local
+response, remote presentation and action confirmation. Include bots, concurrent
+rooms and supported community content in the real load budget.
+
+Apply [NETPLAY_BENCHMARKS.md](NETPLAY_BENCHMARKS.md) to native and browser clients.
+Set explicit measured latency, jitter, correction, resource and recovery budgets
+for a declared connection/player/load envelope; retain comparable baselines and
+block applicable releases on regressions. Prediction and smoothing must preserve
+authoritative collisions, bombs, damage, items and results, and the faithful
+profile's simulation timing. Test movement starts, stops and turns alongside
+actions, loss bursts, reconnects and slow clients. A fast-looking animation alone
+does not establish fair or reliable play.
+
+The target is sustained competitive quality. Real propagation delay and failed
+connections still exist; record the supported operating envelope and actual
+limitations instead of promising zero latency. The requirement is binding now;
+achievement needs measured evidence under #34/#45/#112/#115.
+
 ## Public content contracts
 
 | Pack | Author supplies | Runtime responsibility |

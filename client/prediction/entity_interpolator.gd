@@ -7,18 +7,19 @@ class_name EntityInterpolator
 
 # State buffer for interpolation
 var state_buffer := []  # Array of {position: Vector2, velocity: Vector2, timestamp: float}
-const BUFFER_SIZE = 5  # Keep recent states (reduced to avoid over-smoothing)
+const BUFFER_SIZE = 12  # Covers the delay at 60 Hz while keeping history bounded
 const INTERPOLATION_DELAY = 0.08  # 80ms delay for smooth interpolation (reduced from 100ms)
+const MAX_EXTRAPOLATION = 0.12  # Hold this bound during packet gaps; never predict indefinitely
 
 # Current interpolated state
 var interpolated_position := Vector2.ZERO
 var interpolated_velocity := Vector2.ZERO
 var last_update_time := 0.0
 
-func add_server_state(position: Vector2, velocity: Vector2, timestamp: float = 0.0):
+func add_server_state(position: Vector2, velocity: Vector2, timestamp: float = -1.0):
 	"""Add a new server state to the buffer"""
-	if timestamp == 0.0:
-		timestamp = Time.get_ticks_msec() / 1000.0
+	if timestamp < 0.0:
+		timestamp = Time.get_ticks_usec() / 1000000.0
 	
 	# Avoid adding duplicate or out-of-order states
 	if state_buffer.size() > 0:
@@ -38,13 +39,13 @@ func add_server_state(position: Vector2, velocity: Vector2, timestamp: float = 0
 	while state_buffer.size() > BUFFER_SIZE:
 		state_buffer.pop_front()
 
-func get_interpolated_position(current_time: float = 0.0) -> Vector2:
+func get_interpolated_position(current_time: float = -1.0) -> Vector2:
 	"""
 	Get interpolated position based on buffered states
 	Renders entities slightly in the past for smooth movement
 	"""
-	if current_time == 0.0:
-		current_time = Time.get_ticks_msec() / 1000.0
+	if current_time < 0.0:
+		current_time = Time.get_ticks_usec() / 1000000.0
 	
 	if state_buffer.size() == 0:
 		return interpolated_position
@@ -56,6 +57,11 @@ func get_interpolated_position(current_time: float = 0.0) -> Vector2:
 	
 	# Render time is slightly in the past
 	var render_time = current_time - INTERPOLATION_DELAY
+	# Startup and a short history are not future extrapolation. Holding the first
+	# sample avoids projecting backwards from the newest position through a turn.
+	if render_time <= state_buffer[0].timestamp:
+		interpolated_position = state_buffer[0].position
+		return interpolated_position
 	
 	# Find the two states to interpolate between
 	var from_state = null
@@ -71,15 +77,11 @@ func get_interpolated_position(current_time: float = 0.0) -> Vector2:
 	if from_state == null or to_state == null:
 		var latest_state = state_buffer[state_buffer.size() - 1]
 		
-		# Check if we're too far ahead - extrapolate if needed
-		var time_since_last_update = current_time - last_update_time
-		if time_since_last_update < 0.2:  # Only extrapolate for short gaps
-			# Extrapolate using velocity
-			var extrapolated = latest_state.position + latest_state.velocity * (render_time - latest_state.timestamp)
-			interpolated_position = interpolated_position.lerp(extrapolated, 0.3)
-		else:
-			# Too old, just use latest position
-			interpolated_position = latest_state.position
+		# Compute from time, rather than a per-call lerp, so render cadence cannot
+		# change the trajectory. Hold the capped prediction during a longer outage
+		# instead of snapping backwards to the last packet after a timeout.
+		var ahead = clamp(render_time - latest_state.timestamp, 0.0, MAX_EXTRAPOLATION)
+		interpolated_position = latest_state.position + latest_state.velocity * ahead
 		
 		return interpolated_position
 	
@@ -114,3 +116,4 @@ func reset():
 	state_buffer.clear()
 	interpolated_position = Vector2.ZERO
 	interpolated_velocity = Vector2.ZERO
+	last_update_time = 0.0

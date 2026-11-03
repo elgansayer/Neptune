@@ -550,6 +550,7 @@ func update_game_state(state: Dictionary):
 			if not state.players.has(peer_id):
 				player_nodes[peer_id].queue_free()
 				player_nodes.erase(peer_id)
+				_remove_remote_interpolator(peer_id)
 
 	# Update bombs
 	if state.has("bombs"):
@@ -803,7 +804,8 @@ func update_player(peer_id: String, data: Dictionary):
 	# Don't update position if player is dead (handled in animation section below)
 	if data.has("is_dead") and data.is_dead:
 		# Still need to process animations for death, so continue
-		pass
+		if remote_player_interpolators.has(peer_id):
+			remote_player_interpolators[peer_id].reset()
 	else:
 		var target_pos = Vector2(data.position.x, data.position.y)
 		var target_vel = Vector2(data.velocity.x, data.velocity.y)
@@ -818,6 +820,10 @@ func update_player(peer_id: String, data: Dictionary):
 			# REMOTE PLAYER: Entity Interpolation
 			if remote_player_interpolators.has(peer_id):
 				var interpolator = remote_player_interpolators[peer_id]
+				# Authoritative stops already snap below. Discard older movement so
+				# the render loop cannot pull a stopped actor back into that history.
+				if target_vel.length() < 0.5:
+					interpolator.reset()
 				interpolator.add_server_state(target_pos, target_vel)
 				player_node.position = interpolator.get_interpolated_position()
 			else:
@@ -1425,6 +1431,25 @@ func _update_target_debug_line(player_node: Node2D, data: Dictionary) -> void:
 	target_line.add_point(Vector2.ZERO)
 	target_line.add_point(offset)
 
+func _process(_delta):
+	_render_remote_players()
+
+func _render_remote_players(current_time: float = -1.0) -> void:
+	# Snapshot reception only fills the history. Presentation must also advance
+	# on frames between packets, independently of the authoritative physics tick.
+	for peer_id in remote_player_interpolators.keys():
+		if not player_nodes.has(peer_id) or not is_instance_valid(player_nodes[peer_id]):
+			_remove_remote_interpolator(peer_id)
+			continue
+		var interpolator = remote_player_interpolators[peer_id]
+		if not interpolator.state_buffer.is_empty():
+			player_nodes[peer_id].position = interpolator.get_interpolated_position(current_time)
+
+func _remove_remote_interpolator(peer_id: String) -> void:
+	if remote_player_interpolators.has(peer_id):
+		remote_player_interpolators[peer_id].queue_free()
+		remote_player_interpolators.erase(peer_id)
+
 func _physics_process(delta):
 	# Update input buffer based on which keys are pressed
 	var directions = ["ui_up", "ui_down", "ui_left", "ui_right"]
@@ -1500,9 +1525,7 @@ func _remove_dead_player(peer_id: String):
 		if is_instance_valid(node):
 			node.queue_free()
 		player_nodes.erase(peer_id)
-	if remote_player_interpolators.has(peer_id):
-		remote_player_interpolators[peer_id].queue_free()
-		remote_player_interpolators.erase(peer_id)
+	_remove_remote_interpolator(peer_id)
 	if peer_id == my_player_id:
 		my_player_id = ""
 	removed_dead_players[peer_id] = true

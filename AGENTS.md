@@ -40,6 +40,15 @@ complete code recovery. Keep unknown executable/function denominators explicit.
 
 ## Product
 
+- The owner's 3 November direction makes esports-level competitive network play
+  a core product and release requirement. Continuously and aggressively optimise
+  all avoidable input delay, movement jitter, action delay, stalls and disconnects.
+  Play must be exceptionally responsive, smooth, reliable and fair on native and
+  browser clients. Follow `docs/restart/NETPLAY_BENCHMARKS.md`: freeze measurable
+  latency/resource/reliability budgets, exercise realistic impairment and load,
+  and block releases on applicable correctness or performance regressions.
+  Record the supported connection envelope; claims of improvement or competitive
+  readiness require runtime evidence. Preserve authoritative rules and timing.
 - The owner's 30 October ethos is binding: start with the look and behaviour of
   Sega Saturn Bomberman, then grow a fully extensible engine through additions.
   Read the default-experience, additions-only and sharing rules in

@@ -1,0 +1,296 @@
+{
+  "schema": 1,
+  "baseline_commit": "e6bc43980e197e1b14db6be3ff12b29c1b9a4438",
+  "kind": "synthetic-production-presentation-only",
+  "limitations": [
+    "No real transport or RTT/jitter/loss simulation",
+    "No input-to-visible latency measurement",
+    "No graphical or browser proof",
+    "No Saturn fidelity claim"
+  ],
+  "runs": {
+    "baseline-60": {
+      "log_path": "/workspace/work/netplay-motion-baseline-60.log",
+      "sha256": "9ebe1a403cba3f3f631aa3df3d92bec5080a42a0f4a6382b1e616e8dd29ca0cd",
+      "samples": [
+        {
+          "frame_presentation": false,
+          "frozen_frames": 7,
+          "max_error_px": 4.0,
+          "packet_hz": 20,
+          "render_hz": 30,
+          "samples": 24
+        },
+        {
+          "frame_presentation": false,
+          "frozen_frames": 30,
+          "max_error_px": 4.0,
+          "packet_hz": 20,
+          "render_hz": 60,
+          "samples": 46
+        },
+        {
+          "frame_presentation": false,
+          "frozen_frames": 93,
+          "max_error_px": 5.83334350585938,
+          "packet_hz": 20,
+          "render_hz": 144,
+          "samples": 109
+        }
+      ],
+      "summary": {
+        "failed": 8,
+        "files": 1,
+        "passed": 2,
+        "results": {
+          "res://tests/test_remote_motion.gd::test_authoritative_stationary_stop_cannot_rewind_on_the_next_frame": "FAIL: No render callback",
+          "res://tests/test_remote_motion.gd::test_death_freezes_presentation_and_fresh_live_state_can_resume": "FAIL: No render callback",
+          "res://tests/test_remote_motion.gd::test_empty_singleton_and_reset_do_not_invent_motion": "PASS",
+          "res://tests/test_remote_motion.gd::test_extrapolation_is_time_based_capped_and_holds_through_an_outage": "FAIL: false",
+          "res://tests/test_remote_motion.gd::test_game_view_process_callback_moves_without_another_packet": "FAIL: false",
+          "res://tests/test_remote_motion.gd::test_history_is_bounded_and_rejects_nonincreasing_timestamps": "PASS",
+          "res://tests/test_remote_motion.gd::test_render_time_before_oldest_holds_first_sample_even_after_a_turn": "FAIL: false",
+          "res://tests/test_remote_motion.gd::test_roster_removal_and_death_cleanup_release_interpolators": "FAIL: false",
+          "res://tests/test_remote_motion.gd::test_sixty_hz_history_still_brackets_the_presentation_delay": "FAIL: false",
+          "res://tests/test_remote_motion.gd::test_twenty_hz_packets_render_continuously_at_30_60_and_144_hz": "FAIL: false"
+        },
+        "schema": 1
+      }
+    },
+    "30": {
+      "log_path": "/workspace/work/netplay-motion-30.log",
+      "sha256": "50458ee5fb4aac3b6b254ed4fea288ded7d145324528e22fe585b8b6cd5ec5dc",
+      "samples": [
+        {
+          "frame_presentation": true,
+          "frozen_frames": 0,
+          "max_error_px": 0.0,
+          "packet_hz": 20,
+          "render_hz": 30,
+          "samples": 24
+        },
+        {
+          "frame_presentation": true,
+          "frozen_frames": 0,
+          "max_error_px": 0.0,
+          "packet_hz": 20,
+          "render_hz": 60,
+          "samples": 46
+        },
+        {
+          "frame_presentation": true,
+          "frozen_frames": 0,
+          "max_error_px": 7.62939453125e-06,
+          "packet_hz": 20,
+          "render_hz": 144,
+          "samples": 109
+        }
+      ],
+      "summary": {
+        "failed": 0,
+        "files": 1,
+        "passed": 10,
+        "results": {
+          "res://tests/test_remote_motion.gd::test_authoritative_stationary_stop_cannot_rewind_on_the_next_frame": "PASS",
+          "res://tests/test_remote_motion.gd::test_death_freezes_presentation_and_fresh_live_state_can_resume": "PASS",
+          "res://tests/test_remote_motion.gd::test_empty_singleton_and_reset_do_not_invent_motion": "PASS",
+          "res://tests/test_remote_motion.gd::test_extrapolation_is_time_based_capped_and_holds_through_an_outage": "PASS",
+          "res://tests/test_remote_motion.gd::test_game_view_process_callback_moves_without_another_packet": "PASS",
+          "res://tests/test_remote_motion.gd::test_history_is_bounded_and_rejects_nonincreasing_timestamps": "PASS",
+          "res://tests/test_remote_motion.gd::test_render_time_before_oldest_holds_first_sample_even_after_a_turn": "PASS",
+          "res://tests/test_remote_motion.gd::test_roster_removal_and_death_cleanup_release_interpolators": "PASS",
+          "res://tests/test_remote_motion.gd::test_sixty_hz_history_still_brackets_the_presentation_delay": "PASS",
+          "res://tests/test_remote_motion.gd::test_twenty_hz_packets_render_continuously_at_30_60_and_144_hz": "PASS"
+        },
+        "schema": 1
+      }
+    },
+    "144": {
+      "log_path": "/workspace/work/netplay-motion-144.log",
+      "sha256": "50458ee5fb4aac3b6b254ed4fea288ded7d145324528e22fe585b8b6cd5ec5dc",
+      "samples": [
+        {
+          "frame_presentation": true,
+          "frozen_frames": 0,
+          "max_error_px": 0.0,
+          "packet_hz": 20,
+          "render_hz": 30,
+          "samples": 24
+        },
+        {
+          "frame_presentation": true,
+          "frozen_frames": 0,
+          "max_error_px": 0.0,
+          "packet_hz": 20,
+          "render_hz": 60,
+          "samples": 46
+        },
+        {
+          "frame_presentation": true,
+          "frozen_frames": 0,
+          "max_error_px": 7.62939453125e-06,
+          "packet_hz": 20,
+          "render_hz": 144,
+          "samples": 109
+        }
+      ],
+      "summary": {
+        "failed": 0,
+        "files": 1,
+        "passed": 10,
+        "results": {
+          "res://tests/test_remote_motion.gd::test_authoritative_stationary_stop_cannot_rewind_on_the_next_frame": "PASS",
+          "res://tests/test_remote_motion.gd::test_death_freezes_presentation_and_fresh_live_state_can_resume": "PASS",
+          "res://tests/test_remote_motion.gd::test_empty_singleton_and_reset_do_not_invent_motion": "PASS",
+          "res://tests/test_remote_motion.gd::test_extrapolation_is_time_based_capped_and_holds_through_an_outage": "PASS",
+          "res://tests/test_remote_motion.gd::test_game_view_process_callback_moves_without_another_packet": "PASS",
+          "res://tests/test_remote_motion.gd::test_history_is_bounded_and_rejects_nonincreasing_timestamps": "PASS",
+          "res://tests/test_remote_motion.gd::test_render_time_before_oldest_holds_first_sample_even_after_a_turn": "PASS",
+          "res://tests/test_remote_motion.gd::test_roster_removal_and_death_cleanup_release_interpolators": "PASS",
+          "res://tests/test_remote_motion.gd::test_sixty_hz_history_still_brackets_the_presentation_delay": "PASS",
+          "res://tests/test_remote_motion.gd::test_twenty_hz_packets_render_continuously_at_30_60_and_144_hz": "PASS"
+        },
+        "schema": 1
+      }
+    }
+  },
+  "checked_at": "2026-11-03",
+  "godot": {
+    "version": "4.7.2.stable.official.ed1daf0bf",
+    "upstream_latest_checked": "https://api.github.com/repos/godotengine/godot/releases/latest",
+    "selected_release": "https://github.com/godotengine/godot/releases/tag/4.7.2-stable",
+    "binary_sha256": "8d106cbe6144c2dc7e881d61d2429c1a8a76e6b22ef48bd5e48dcf934953f71e"
+  },
+  "candidate_source_sha256": {
+    "client/game_view.gd": "f86f06708607fd59b922dde029cd6e19e646c893ed0b4a3e2ad554f6cfd75015",
+    "client/prediction/entity_interpolator.gd": "0172ef479402d38f68b20822d8089c6d769efc0a71c9deb3efb39563a04e1019",
+    "tests/test_remote_motion.gd": "1e91bfb012eec89896a7accaac8008c299cc08378cc167cee2ab8d3107bab6ca"
+  },
+  "candidate_branch": "fix/competitive-netplay-motion",
+  "commands": {
+    "focused": "python3 tools/godot/run_bot_tests.py --godot /workspace/.tools/godot-4.5/Godot_v4.7.2-stable_linux.x86_64 --run-specific test_remote_motion --max-fps CADENCE --timeout 60 --log LOG",
+    "baseline": "Run the same new test source in a detached worktree at baseline_commit; the expected exit is 1 with assertion failures, and no script errors.",
+    "native_runtime": "python3 tools/godot/check_runtime.py --godot /workspace/.tools/godot-4.5/Godot_v4.7.2-stable_linux.x86_64 --evidence work/netplay-runtime",
+    "full_suite": "python3 tools/godot/run_bot_tests.py --godot /workspace/.tools/godot-4.5/Godot_v4.7.2-stable_linux.x86_64 --timeout 360 --max-log-mib 16 --log work/netplay-full-suite.log"
+  },
+  "scenario": {
+    "velocity_px_per_sec": 120,
+    "packet_hz": 20,
+    "duration_sec": 1,
+    "measurement_start": "frame >= render_hz/4",
+    "interpolation_delay_sec": 0.08,
+    "max_extrapolation_sec": 0.12,
+    "timestamp_source": "synthetic monotonic client time; production uses packet arrival time",
+    "measurement_uncertainty": "Deterministic float/Vector2 calculation with 0.0001px assertion tolerance, not video or network timing."
+  },
+  "full_suite": {
+    "candidate_full_first": {
+      "exit": 1,
+      "log_path": "/workspace/work/neptune-netplay/work/netplay-full-suite.log",
+      "sha256": "516cf21d5da46547c8ed688fded53a76bc0006b7e2d104d14fd3a604b0bf0511",
+      "failed": 2,
+      "files": 63,
+      "passed": 563,
+      "schema": 1,
+      "failures": {
+        "res://tests/test_bot_attack_positioning.gd::test_native_attack_approaches_around_a_wall_and_places_a_real_threatening_bomb": "FAIL: Native movement abandoned the reachable attack approach",
+        "res://tests/test_bot_item_collection.gd::test_native_item_selection_and_movement_collect_through_real_physics": "FAIL: Native bot commands must move the authority around the wall and collect the item through its real collision trigger"
+      },
+      "remote_motion_passed": 10
+    },
+    "candidate_full_repeat": {
+      "exit": 1,
+      "log_path": "/workspace/work/neptune-netplay/work/netplay-full-suite-repeat.log",
+      "sha256": "b986bcfa6c567000fab671700a005681f7c9ea216cb02df36a656d5b6bb08d4e",
+      "failed": 2,
+      "files": 63,
+      "passed": 563,
+      "schema": 1,
+      "failures": {
+        "res://tests/test_bot_item_collection.gd::test_native_item_selection_and_movement_collect_through_real_physics": "FAIL: Native bot commands must move the authority around the wall and collect the item through its real collision trigger",
+        "res://tests/test_temporal_route_runtime.gd::test_only_burning_corridor_waits_and_then_crosses_with_real_physics": "FAIL: Native input must wait without false stuck recovery, then cross the expired flame through actual collision physics"
+      },
+      "remote_motion_passed": 10
+    },
+    "baseline_full_with_new_regression_tests": {
+      "exit": 1,
+      "log_path": "/workspace/work/netplay-baseline/work/netplay-full-baseline.log",
+      "sha256": "12779b78b5aafaa5eef45d70c3151b2dfd3837fe2c0fddab0fd17eeca1c201b6",
+      "failed": 8,
+      "files": 63,
+      "passed": 557,
+      "schema": 1,
+      "failures": {
+        "res://tests/test_remote_motion.gd::test_authoritative_stationary_stop_cannot_rewind_on_the_next_frame": "FAIL: No render callback",
+        "res://tests/test_remote_motion.gd::test_death_freezes_presentation_and_fresh_live_state_can_resume": "FAIL: No render callback",
+        "res://tests/test_remote_motion.gd::test_extrapolation_is_time_based_capped_and_holds_through_an_outage": "FAIL: false",
+        "res://tests/test_remote_motion.gd::test_game_view_process_callback_moves_without_another_packet": "FAIL: false",
+        "res://tests/test_remote_motion.gd::test_render_time_before_oldest_holds_first_sample_even_after_a_turn": "FAIL: false",
+        "res://tests/test_remote_motion.gd::test_roster_removal_and_death_cleanup_release_interpolators": "FAIL: false",
+        "res://tests/test_remote_motion.gd::test_sixty_hz_history_still_brackets_the_presentation_delay": "FAIL: false",
+        "res://tests/test_remote_motion.gd::test_twenty_hz_packets_render_continuously_at_30_60_and_144_hz": "FAIL: false"
+      },
+      "remote_motion_passed": 2
+    }
+  },
+  "merge_readiness": {
+    "ready": false,
+    "blocker": "Candidate full-suite runs each have two bot timing/real-physics assertion failures. Isolated attack/item suites pass on baseline and candidate; the single complete baseline run has only the eight expected new presentation assertion failures. Preexisting status of bot failures is not established.",
+    "suspected_followup": "Investigate scheduled-wait/stuck-clock bookkeeping and manual fixture clock versus physics scheduling in ai/tasks/actions/bt_move_to_cell.gd. Preserve assertions; reproduce before a separate repair.",
+    "external_publication": "No issue, branch or PR published. Automatic approval review rejected GitHub issue creation because external destination authorization was not explicit."
+  },
+  "native_runtime": {
+    "exit": 0,
+    "scope": [
+      "actual native ClientMain/ServerMain round trips",
+      "protocol refusals and bind/config failures",
+      "twelve human participants",
+      "mixed human/bot rooms and startup filling",
+      "clean-client content transfer, interruption/resume and cache reuse"
+    ],
+    "graphical": false,
+    "browser": false,
+    "server_log_sha256": "0e9a2c66dc3567f2c8216d725e8b4cba2fbe5f4839a20963b4da76f3ccc6a7c8",
+    "server_log_engine_errors_observed": false
+  },
+  "metadata_checks": {
+    "input_tooling": {
+      "exit": 0,
+      "tests": 421
+    },
+    "film_contracts": {
+      "exit": 0,
+      "tests": 14
+    },
+    "catalogue_contracts": {
+      "exit": 0,
+      "tests": 14
+    },
+    "catalogue_validation": {
+      "exit": 0
+    },
+    "factory_contracts": {
+      "exit": 0,
+      "tests": 211
+    },
+    "merge_gate_contracts": {
+      "exit": 0,
+      "tests": 20
+    },
+    "whitespace": {
+      "exit": 0
+    }
+  },
+  "isolated_bot_checks": {
+    "test_bot_attack_positioning": {
+      "candidate_exit": 0,
+      "baseline_exit": 0,
+      "tests": 9
+    },
+    "test_bot_item_collection": {
+      "candidate_exit": 0,
+      "baseline_exit": 0,
+      "tests": 6
+    }
+  }
+}

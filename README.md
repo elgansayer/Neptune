@@ -17,6 +17,13 @@ implementation goals; tooling tests alone do not certify the original game rebui
 
 A competitive multiplayer Bomberman game with server-authoritative physics and modern networking.
 
+**Esports-level network play is a core release goal.** Continuously optimise all
+avoidable input delay, movement jitter, late actions and connection stalls for
+exceptionally responsive, smooth, reliable and fair native/browser play. Require
+measured budgets and regression checks under realistic load and network impairment;
+see the [competitive netplay contract](docs/restart/NETPLAY_BENCHMARKS.md).
+Current competitive readiness still requires that evidence.
+
 ## 🏗️ Architecture
 
 - **Server**: Pure Godot headless server with native physics engine
