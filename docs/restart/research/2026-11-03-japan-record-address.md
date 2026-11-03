@@ -414,6 +414,37 @@ The probe tests the bounded clear helper only; the reset fields' natural owners
 and caller timing remain unresolved. Continuing B150 also exposes BIOS and
 cache-through dependent state transitions that require caller/runtime
 evidence, so those paths remain static pending further contract work.
+The B150 source decode itself is retained at
+`analysis/japan-b150-startup-continuation.txt`, SHA-256
+`b9c2835b1f3e6893b9aa51f6f2d45c6abdc9646b6e7ceccc410b2c2cf8d216ee`.
+
+The adjacent B272 selector is now exhaustively executed across the full
+16-bit status domain. For each status word, a bijective affine sequence visits
+all 65,536 possible output words; each pair runs twice per report. Original
+bytes return the signed halfword at `0x060BDDBA` only for unsigned status values
+12–16 inclusive and return zero otherwise. The probe checks exact literal/data
+accesses, absence of writes, preserved sampled registers, and an inverted
+lower-bound branch mutation. Paired reports in execution-072/073 match at
+SHA-256 `83cfe3a9b07f3cca93b77352a3e23ac3ca74655cf77055ba2b51fbca03058ec3`;
+the per-input result and trace rows hash to
+`63b13bcc43a7c002f3f8f336f9abe609ba022418dab1a66691c81c11c1777727`. This is
+an exhaustive helper input contract under constructed state; it does not name
+the status field or establish its natural writer or runtime timing.
+The 160-instruction continuation beginning at B270 has SHA-256
+`f12a8489ded914d04f6a5e4bfdfc2cd8bd0936ed81f9dc0f1dd335cb20089583` and
+exposes the B272 selector immediately before startup callbacks B2C8, B2FC, and
+B344.
+
+The same continuation reaches interrupt callback B3BC, which loads the
+cache-through pointer `0x2600A03C`, sets R3 to one, and stores that longword in
+the RTS delay slot. The original-byte probe executes 64 distinct initial-word
+patterns twice per report, checks the sole literal read and sole target write,
+samples register/SR/PR preservation, and detects removal of the delay-slot
+store. Paired reports in execution-074/075 match at SHA-256
+`43c946b70b95fb14c3d5c99a55d511bd3185048fa9327ca2af7b163385346f14`; result
+rows hash to `a0bdd66472c6d64c6121ca92af7bccc5d7bed83a9b05a22b27f0daae06bca484`.
+This proves only the callback's one-word leaf behavior; its real interrupt
+source, invocation order and lifetime remain unverified.
 
 The A1DA callback literal at `0x0600A2B4` resolves to original target
 `0x0600CCD2`. Its static entry zeroes four words at `0x060BEA3C`, initializes
