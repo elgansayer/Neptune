@@ -418,6 +418,14 @@ register. Their static decodes are retained as
 `analysis/japan-9e25c-vdp-helper.txt` (SHA-256
 `5d4d6e08c32d458872915a3614dfe4ff3795966604cc43d449b8d0d0b9180fd4`) and
 `analysis/japan-9e2ec-vdp-helper.txt` (`9babaa54b89146e80c84185eb3fb1332267f41dde25e8e6eb03450cbc1361a41`).
+The adjacent `0x0609E3C8`/`0x0609E484` slices use the same `0x06095C24`
+helper with selectors `0x0401` and `0x0501`, updating words at `0x060FC586`
+and `0x060FC58E`. The called helper `0x0609E988` separately zeroes several
+control words in `0x060BC678`–`0x060BC690` and `0x060FCBF8`, while initializing
+`0x060BC67C` to one. The E3C8, E484 and E988 static decode hashes are
+`7f3f8779f06627ead552ccb90aa40cd05b468cbf5778ceba804b5e3e65014ec7`,
+`d0b18fb7297174bb855be13a124d364b035de2d11c8ae37b191ea9ee26bc28e7`, and
+`3d58c1fa0dca976bcc919030aa26df24d739df9ea594f367d4e816158ecde834`.
 The shared helper at `0x06095C24` is now original-byte tested separately from
 VDP/MMIO behavior. Its packed R1 low byte supplies field width, the high byte
 supplies the gap below the high end of the word, R0 supplies inserted low bits,
