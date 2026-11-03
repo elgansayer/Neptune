@@ -33,6 +33,229 @@ jobs:
           path: ${{ runner.temp }}/provision-applicability.json
           if-no-files-found: error
           retention-days: 14
+  scsp-dsp:
+    needs: applicability
+    if: needs.applicability.outputs.required == 'true'
+    name: Real bounded SCSP DSP register preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: callumjenkins/saturn-recomp
+          ref: f20de940e8013fc84103a5b39c4069ed8071b1f9
+          path: .dsp-sources/cpu
+          sparse-checkout: runtime/third_party/musashi
+          persist-credentials: false
+          submodules: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: libretro/beetle-saturn-libretro
+          ref: 01bc063fdd0fb5fc208850c9ecc658834df762ab
+          path: .dsp-sources/scsp
+          sparse-checkout: |
+            /mednafen/ss/scsp.h
+            /mednafen/ss/scsp.inc
+            /mednafen/ss/sound.c
+            /mednafen/math_ops.h
+            /mednafen/hw_cpu/m68k/m68k_private.h
+            /mednafen/hw_cpu/m68k/m68k_ham_body.inc.h
+            /mednafen/hw_cpu/m68k/m68k_op_MOVE_body.inc.h
+            /COPYING
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+          submodules: false
+      - name: Compile, exercise actual DSP register bus effects and verify reuse without originals
+        run: |
+          python3 - <<'PY'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_scsp_dsp as dsp
+          cache=Path(os.environ['RUNNER_TEMP'])/'dsp-preparation'/'prepared'
+          first=dsp.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=dsp.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          assert again['owned_smoke']['reference_word_cases']==17280
+          assert again['owned_smoke']['cpu_word_cases']==640
+          assert again['owned_smoke']['identical_program_word_cases']==1024
+          assert again['owned_smoke']['original_game_bytes_executed'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Compiled ABI4, actual DSP register COEF/MADRS/MPROG/gap/dirty/lane effects, guards and reuse passed; no original inputs.')
+          PY
+      - name: Compile and exercise bounded disjoint SCSP state-call profile and reuse
+        run: |
+          python3 - <<'PY'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_scsp_state as state
+          cache=Path(os.environ['RUNNER_TEMP'])/'state-preparation'/'prepared'
+          first=state.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=state.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          smoke=again['owned_smoke']
+          assert smoke['reference_word_cases']==17280 and smoke['identical_program_word_cases']==1024
+          assert smoke['cpu_word_cases']==640 and smoke['disjoint_call_steps']==47
+          assert smoke['max_ranges_executed']==smoke['max_regions_read']==16
+          assert smoke['capacity']['full_instruction_limit_rejected']==2048
+          assert smoke['capacity']['full_event_limit_rejected']==1024
+          assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
+          assert smoke['missing_range_guarded'] and smoke['original_game_bytes_executed'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Actual ABI5 SCSP effects,16 ranges/region reads, native17th rejection, overflow/recovery and reuse passed; no originals.')
+          PY
+      - name: Compile and exercise command10 reset trace capacity and reuse
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_reset_capacity as reset
+          cache=Path(os.environ['RUNNER_TEMP'])/'reset-preparation'/'prepared'
+          first=reset.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=reset.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          smoke=again['owned_smoke']
+          assert smoke['reference_word_cases']==17280 and smoke['identical_program_word_cases']==1024
+          assert smoke['cpu_word_cases']==640 and smoke['disjoint_call_steps']==47
+          assert smoke['max_ranges_executed']==smoke['max_regions_read']==16
+          assert smoke['capacity']['full_instruction_limit_rejected']==8192
+          assert smoke['capacity']['full_event_limit_rejected']==4096
+          assert smoke['capacity']['fresh_after_full_overflow'] is True
+          assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
+          assert smoke['missing_range_guarded'] and smoke['original_game_bytes_executed'] is False
+          assert again['preparation_has_original_inputs'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Actual ABI6 unchanged SCSP effects/guards,8192-step/4096-event fences,recovery and reuse passed; no originals.')
+          PYTHON
+      - name: Compile and exercise frozen slot-byte effects and reuse
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_scsp_slots as slots
+          cache=Path(os.environ['RUNNER_TEMP'])/'slot-preparation'/'prepared'
+          first=slots.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=slots.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          smoke=again['owned_smoke']
+          assert smoke['reference_word_cases']==17280 and smoke['identical_program_word_cases']==1024
+          assert smoke['cpu_word_cases']==640 and smoke['disjoint_call_steps']==47
+          assert smoke['slot_reference_byte_cases']==98304
+          assert smoke['slot_cpu_cases']==1024 and smoke['slot_rmw_cases']==96
+          assert smoke['slot_raw_rejections']==18 and smoke['slot_width_cpu_guards']==6
+          assert smoke['slot_key_latch_sequence']==5 and smoke['native_fake_device_ram_rejections']==2
+          assert smoke['capacity']['full_instruction_limit_rejected']==8192
+          assert smoke['capacity']['full_event_limit_rejected']==4096
+          assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
+          assert smoke['missing_range_guarded'] and smoke['original_game_bytes_executed'] is False
+          assert again['preparation_has_original_inputs'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Actual ABI7 complete slot byte/decoded/latch/pan effects, CPU/RMW order, guards, inherited DSP words and reuse passed; no originals.')
+          PYTHON
+      - name: Compile and exercise DSP longword and TEMP reference effects with reuse
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_scsp_long as longword
+          cache=Path(os.environ['RUNNER_TEMP'])/'long-preparation'/'prepared'
+          first=longword.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=longword.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          smoke=again['owned_smoke']
+          assert smoke['reference_write_cases']==26880 and smoke['normal_longword_cpu_cases']==2688
+          assert smoke['identical_program_word_cases']==1536 and smoke['predecrement_guarded']
+          assert smoke['reference_word_bus_capacity_rejected']==8192 and smoke['reference_bus_recovered']
+          assert smoke['slot_reference_byte_cases']==98304 and smoke['slot_cpu_cases']==1024 and smoke['slot_rmw_cases']==96
+          assert smoke['capacity']['full_instruction_limit_rejected']==8192 and smoke['capacity']['full_event_limit_rejected']==4096
+          assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
+          assert smoke['original_game_bytes_executed'] is False and again['preparation_has_original_inputs'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Actual ABI8 frozen longword/TEMP packing, reference bus order, native CPU modes/guards, inherited slots/capacity and reuse passed; no originals.')
+          PYTHON
+      - name: Preserve longword preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-long-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/long-preparation/**/*.json
+            ${{ runner.temp }}/long-preparation/**/*.stdout
+            ${{ runner.temp }}/long-preparation/**/*.stderr
+            ${{ runner.temp }}/long-preparation/prepared/*.so
+            ${{ runner.temp }}/long-preparation/prepared/*.h
+            ${{ runner.temp }}/long-preparation/prepared/*.c
+            ${{ runner.temp }}/long-preparation/prepared/COPYING.SCSP
+      - name: Preserve slot-byte preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-slots-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/slot-preparation/**/*.json
+            ${{ runner.temp }}/slot-preparation/**/*.stdout
+            ${{ runner.temp }}/slot-preparation/**/*.stderr
+            ${{ runner.temp }}/slot-preparation/prepared/*.so
+            ${{ runner.temp }}/slot-preparation/prepared/*.h
+            ${{ runner.temp }}/slot-preparation/prepared/*.c
+            ${{ runner.temp }}/slot-preparation/prepared/COPYING.SCSP
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve reset-capacity preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-reset-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/reset-preparation/**/*.json
+            ${{ runner.temp }}/reset-preparation/**/*.stdout
+            ${{ runner.temp }}/reset-preparation/**/*.stderr
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve state-profile preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/state-preparation/**/*.json
+            ${{ runner.temp }}/state-preparation/**/*.stdout
+            ${{ runner.temp }}/state-preparation/**/*.stderr
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-dsp-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/dsp-preparation/**/*.json
+            ${{ runner.temp }}/dsp-preparation/**/*.stdout
+            ${{ runner.temp }}/dsp-preparation/**/*.stderr
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
   call-trace:
     needs: applicability
     if: needs.applicability.outputs.required == 'true'
@@ -285,7 +508,7 @@ jobs:
           retention-days: 14
   install:
     name: Pinned Godot and Saturn installation
-    needs: [applicability, xvfb, ocr, call-trace, context-trace, init-trace, ghidra]
+    needs: [applicability, xvfb, ocr, call-trace, context-trace, init-trace, ghidra, scsp-dsp]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 30

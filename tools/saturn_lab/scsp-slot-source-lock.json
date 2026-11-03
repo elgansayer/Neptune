@@ -1,0 +1,15 @@
+{
+  "component_sha256": "d7440fed56b2f9f444bc19d2a99ddc15cfb055ea623da1145b06321277be1484",
+  "files": {
+    "COPYING": "a6996dcf0c334281f734560926e079b2dbbd5b78e81c0ca00a413ec01e1cd2fb",
+    "mednafen/ss/scsp.h": "707bdbfecb158e996cc6c36acba68dc7a0002d648f9b7e958ec7e5277f8872df",
+    "mednafen/ss/scsp.inc": "0fa92f80c30bc1a6944d7cbda55f3ecad189408d5a8dc394887a4ec6b1f5e501"
+  },
+  "functions": [
+    "selected byte slot branches SS_SCSP_RW_u8_W0/1 case00/05/0A/0B",
+    "SDL_PAN_ToVolume"
+  ],
+  "repository": "libretro/beetle-saturn-libretro",
+  "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+  "schema": "neptune.scsp-slot-source-lock.v1"
+}

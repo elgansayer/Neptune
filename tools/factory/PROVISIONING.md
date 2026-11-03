@@ -313,3 +313,180 @@ VPS acceptance is separate: use a fresh disposable cache, record the real instal
 and reuse results, then use an authorised private game fixture with a new input
 lock. Prove the existing factory provisions and resumes after interruption and a
 provider/tool failure. #518 stays open until that integration and evidence exist.
+
+## Bounded SCSP DSP word-register preparation
+
+Issue666 uses the existing no-original-input native preparation boundary, without
+changing ABI1/2/3 or a reference core. `tools/saturn_lab/m68k_scsp_dsp.py` produces
+ABI4 from the accepted Musashi lock plus `scsp-dsp-source-lock.json`. The latter
+pins Beetle's licence, declarations and register source at the historical
+reference revision. It extracts the actual COEF/MADRS/MPROG word branches and
+endian helpers; reference implementation and original game bytes stay external.
+The generated component retains the upstream licence notice and COPYING.
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_dsp.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /path/to/new/private/preparation/prepared
+```
+
+Run in constrained preparation with sources read-only, private media and broker
+credentials hidden, no network, and bounded memory/CPU/output. Compilation is
+limited to60seconds and stages are retained on failure. A ready receipt requires
+17,280 actual reference word-effect cases,1,024 identical-program-word writes,
+640 owned CPU write/read/return cases,
+unsupported-width/address/alignment checks and recovery. Existing cache reuse
+rechecks source/component/binary/recipe identity and repeats the real smoke.
+The recipe identity includes the preparation module, so verifier changes require
+a fresh generation rather than silently retaining an older receipt.
+`Pinned Godot and Saturn installation` requires this native child whenever its
+module, lock, tests or shared backend/preparation dependencies change. Missing,
+failed or skipped applicable native preparation blocks the required aggregate.
+
+Supported writes are even words100700..100BFE. COEF drops low3bits, MADRS stores
+16bits, and MPROG updates the correct big-endian word lane and invalidates decoded
+state even for identical data. Gap7C0..7FF writes follow upstream's no-op
+fallthrough; gap reads remain unsupported. Other accesses fail closed. Odd
+accesses remain native guard diagnostics, not implemented68000 exceptions.
+Clocks, DSP execution, interrupt processing, audio and hardware independence are
+outside this profile. Original command12 testing is a separate experiment using
+verified private inputs, never a preparation smoke or complete sound-engine claim.
+
+## Disjoint original state-call preparation
+
+Issue672 unblocks the measured NLSND51B2 graph in671. The actual traversal has
+8 separated code spans and7 data gaps; a separate caller context needs11 data
+regions. ABI4 rejects that complete mapping, and real limited-prefix execution
+stops at5AA2. Keeping tables separate from executable bytes requires a larger
+bounded profile rather than joining spans or pretending device registers are RAM.
+
+`tools/saturn_lab/m68k_scsp_state.py` prepares ABI5 using the unchanged ABI4 SCSP
+component and accepted ABI2 trace layout. Its fixed maximum is2048 instructions,
+1024events,16code ranges and16data regions. Per-experiment budgets remain smaller.
+Identity includes the state verifier, underlying device recipe, trace-layout
+adapter, derived backend and source/component locks. Earlier profiles and caches
+remain valid for their original source; ABI5 has its own library and receipt.
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_state.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /private/new-state-generation/prepared
+```
+
+Use the same constrained offline preparation as ABI4, without original inputs.
+A ready receipt requires the full inherited SCSP word/identical-write/owned-CPU
+suite, actual2048-step and1024-event rejection/recovery, a nested16-range call
+that reads all16 mapped regions, a missing-range guard, and native rejection of
+17ranges or17regions before execution. The latter invokes the C boundary directly;
+Python's count checks alone cannot certify it. Fresh preparation and reuse both
+execute these checks. The required preparation child runs ABI4 and ABI5 together
+for applicable changes, and the existing protected aggregate waits for it.
+
+This expands bounded tracing capacity. It adds no SCSP clock, DSP execution,
+audio, hardware independence or original-function semantic acceptance. The
+original671 experiment is separate and retains unsupported/guarded outcomes.
+
+
+### Command10 record/reset trace capacity (ABI6, #678)
+
+The real 128-case #665 diagnostic reaches the ABI5 1024-event fence in32 active
+record scans at1917/1920 instructions. That is a trace-storage dependency, separate
+from the command's unsupported SCSP slot/byte/longword accesses. Preserve those
+guards rather than treating the device as RAM.
+
+`tools/saturn_lab/m68k_reset_capacity.py` derives only8192-step/4096-event storage
+and an ABI6 tag from the accepted ABI5 backend, retaining16 ranges/regions and
+the exact frozen SCSP word component. Its result layout, library, receipt and
+identity are separate. Ambiguous source transformations fail before compilation;
+ABIs1–5 and their original caches are unchanged.
+
+```sh
+python3 tools/saturn_lab/m68k_reset_capacity.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /private/new-reset-generation/prepared
+```
+
+Use the existing constrained offline preparation boundary, with no originals.
+Fresh build and reuse execute actual8192-instruction/4096-event fences, recovery,
+all inherited word effects/width guards,16 disjoint calls/region reads and direct
+native17-range/17-region rejection. The same required preparation child runs
+ABI4, ABI5 and ABI6; applicable missing/skipped/failed preparation cannot pass.
+Command10 continuation is a separate original-byte experiment: identical previous
+non-capacity outcomes and progression beyond the old fence do not establish
+complete device semantics, natural execution, clocks, audio or game fidelity.
+
+
+### Clock-frozen command10 slot bytes (ABI7, #680)
+
+The real ABI6 experiment stops at byte read10000B and byte writes100000,
+100015/100017/100217. `m68k_scsp_slots.py` adds a separate reference view for byte
+read lane0B and writes00/0B/15/17 across32 slots. It preserves the full source-pinned
+slot declaration and selected original case bodies, key-execute latch, sign-XOR
+table and volume helper. Masked slot words, decoded fields and all untouched view
+bytes are compared; slots are not flat RAM. The unchanged DSP word component is a
+separate retained static state. No clock, envelope/key processing or audio runs.
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_slots.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /private/new-slot-generation/prepared
+```
+
+Use the existing offline, credential-free preparation boundary and preserved CPU/
+SCSP historical reference sources. ABI7 retains8192steps/4096events/16ranges/16regions
+but checks its own98400-byte result class,3400-byte slot view,1057 snapshot values,
+component/backend/source hashes, identity and receipt. ABIs1–6 are unchanged.
+Fresh/reuse smoke requires98304 exhaustive slot byte cases,1024 owned CPU cases,
+96 read-modify-write cases, key-execute latch sequencing, raw and CPU width/address
+rejections, all inherited DSP word/trace/count guards and recovery. Full captured
+bytes are used in the exhaustive sweep; this avoids redundant scalar conversion
+without omitting state. A ready inner receipt does not override a failed parent.
+
+Applicable existing CI executes fresh/reuse and retains the prepared source,
+licence, binary, receipt and diagnostics in `bounded-scsp-slots-RUN-ATTEMPT`.
+A coordinator may reuse that tool only from its trusted preparation run at the
+exact coordinator-selected source head after required source/component/binary/recipe identity
+and actual smoke/reuse verification, compatible host architecture and guarded
+loading. An arbitrary issue/upload/PR artifact is not a trusted tool. Keep this
+artifact outside Git and read-only in original jobs. Preparation has no original
+inputs; it is separate from private original-helper and command10 comparisons.
+Missing/skipped/failed applicable preparation blocks the protected merge gate.
+Full command10, low0780 data/code classification, DSP longword/TEMP effects,
+natural callers/timing/audio and whole-game reconstruction remain open.
+
+### Frozen DSP longword and TEMP effects (ABI8, #683)
+
+`tools/saturn_lab/m68k_scsp_long.py` preserves ABIs1..7 and adds an independently
+identified library/receipt for normal aligned MOVE.L stores to the selected DSP
+register/work-buffer range. It exposes signed24-bit TEMP state and a separate
+bounded reference16-bit bus trace. The source lock pins the upstream sign helper,
+normal long-store function, addressing/MOVE dispatch and SoundCPU wrapper as well
+as complete affected DSP declarations/branches. Unsupported widths, alignment,
+long reads and CPU predecrement/non-MOVE long stores guard before device effects.
+The reference component is clock-frozen; no hardware bus/timing/audio claim follows.
+
+Use the existing offline preparation boundary without original inputs:
+
+```sh
+python3 tools/saturn_lab/m68k_scsp_long.py \
+  --sources "$NEPTUNE_PINNED_CPU_SOURCE" \
+  --scsp-sources "$NEPTUNE_PINNED_SCSP_SOURCE" \
+  --cache "$NEPTUNE_NEW_ABI8_PREPARED"
+```
+
+Cache identity includes the separate ABI, wrapper/backend/component/source-lock
+hashes,353 DSP snapshot values and8192 reference-bus words. Preserve the old
+caches; stale receipts/components/binaries fail. Actual fresh/reuse runs in the
+existing required `scsp-dsp` job, with exact applicability for the new module,
+lock and tests. Its sparse upstream checkout includes all five new wrapper/helper
+files; omission fails preparation. `bounded-scsp-long-RUN-ATTEMPT` retains the
+library, C/header sources, notices, receipt, smoke/reuse and failure diagnostics.
+No skipped/missing/failed applicable job is a pass. See the
+[real original reset result](../../docs/restart/research/2026-11-03-original-dsp-reset.md)
+for qualified counts, construction limits, private input/result identities and
+actual resource budgets. Metadata and native tool smokes do not finish natural
+sound/game parity or continuous-factory acceptance.

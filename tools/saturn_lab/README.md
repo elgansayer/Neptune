@@ -228,6 +228,16 @@ canonical observations and reports the first differing frame/field. See
 [Saturn execution plan](../../docs/restart/SATURN_RECONSTRUCTION.md).
 The comparator's synthetic tests do not establish reference-game fidelity.
 
+`probe_netlink_low_reset.py` checks the pinned NLSND3530 fixed-address clear
+against an independent complete register/memory/device contract, with terminal
+changed-value/count/destination controls. It reuses unchanged ABI7 and adds a
+narrow data region to the existing128-case command10 diagnostic, preserving prior
+outcomes/prefixes. See the [real private-host result](../../docs/restart/research/2026-11-03-original-low-reset.md)
+for repeated original runs and limitations. Natural callers/data lifetime, complete
+command10, audio and Godot parity remain unverified. Run with shared admission,
+offline/read-only source/input/native mounts and bounded resources; a new private
+report is mandatory.
+
 ## Bounded original kernel probe
 
 The [first real-original result](../../docs/restart/research/2026-10-30-saturn-original-kernel-result.md)
@@ -264,3 +274,16 @@ arrays; ordinary tests remain synthetic tooling checks.
 The [whole-sheet investigation](../../docs/restart/research/2026-10-30-whole-spritesheets.md)
 sets out archive-table and multi-frame paths, actual Yabause export capabilities,
 Normal Game coverage gaps, composite frame assembly and completeness criteria.
+
+## Original frozen DSP reset helpers
+
+`m68k_scsp_long.py` prepares separate ABI8 with explicit TEMP packing/sign and
+normal aligned longword reference-bus dispatch. `probe_netlink_dsp_reset.py`
+compares original3592/359C/35A4/35AC against complete independent contracts and
+runs the separately labelled128-case command10 diagnostic. See the
+[private-host result](../../docs/restart/research/2026-11-03-original-dsp-reset.md)
+for repeated originals,60 terminal mutation controls, strict access guards,
+source identities and the TEMP fixture difference from ABI7. All old ABIs remain.
+No natural/hardware/audio, independent full command10 or Godot fidelity claim is
+made. Original commands require the existing offline/read-only/credential-free
+runner, shared admission, resource bounds and a new private report path.

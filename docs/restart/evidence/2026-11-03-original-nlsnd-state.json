@@ -1,0 +1,913 @@
+{
+  "account_and_ci_spend": "unknown",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "fresh_processes": 2,
+  "isolation": {
+    "all_guardians_terminal": true,
+    "broker_auth_signing_authority_hidden": true,
+    "configured_shared_limit": 3,
+    "guard_timeout_seconds": 5,
+    "inputs_source_native_readonly": true,
+    "lease_seconds": 600,
+    "network_only_lo": true,
+    "original_address_space_bytes": 805306368,
+    "original_cpu_seconds": 180,
+    "original_file_bytes": 4194304,
+    "original_wall_seconds": 210,
+    "outcomes": {
+      "isolation": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.5667341817170382,
+        "timed_out": false,
+        "truncated": false
+      },
+      "run1": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 60.053932985290885,
+        "timed_out": false,
+        "truncated": false
+      },
+      "run2": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 58.035144918598235,
+        "timed_out": false,
+        "truncated": false
+      },
+      "tooling": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 30.802008789032698,
+        "timed_out": false,
+        "truncated": false
+      }
+    },
+    "per_case_steps": 512
+  },
+  "issue": 671,
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Constructed calls in a pinned CPU interpreter with frozen SCSP; no independent hardware proof",
+    "Natural state/command/function domains and sound roles remain unknown",
+    "No Godot campaign/battle, native pixel/audio/timing or full-game/code acceptance"
+  ],
+  "load_address": 0,
+  "model_calls_by_tests": 0,
+  "module": "NLSND",
+  "native_identity": {
+    "abi": 5,
+    "capacity_adapter_sha256": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "derived_backend_sha256": "27828ba253cc29264d7dee2f574c80bc7706268deeb353085dcb39bc4c1434fc",
+    "device_identity": {
+      "abi": 4,
+      "base_identity": {
+        "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+        "flags": [
+          "-std=c11",
+          "-O2",
+          "-shared",
+          "-fPIC",
+          "-DM68K_INSTRUCTION_HOOK=1",
+          "-DM68K_SEPARATE_READS=1",
+          "-Wl,-z,defs"
+        ],
+        "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+      },
+      "component_sha256": "bcca52cb908e85249ae492e1db50a504f55b7900a5ebba25c649228135c9608e",
+      "derived_backend_sha256": "f8df4faf406a780ad1171f5210de073baeec08f02f8bfc3ca260040f16adfb95",
+      "preparation_module_sha256": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+      "profile": "SCSP-DSP-even-word-registers-clock-frozen-no-gap-read",
+      "scsp_source_lock_sha256": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
+    },
+    "max_events": 1024,
+    "max_ranges": 16,
+    "max_regions": 16,
+    "max_steps": 2048,
+    "preparation_module_sha256": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "profile": "NLSND-state-call-disjoint-code-data-frozen-SCSP-word-effects"
+  },
+  "neptune_continuity_activated": false,
+  "original": {
+    "cases": 36127,
+    "incomplete_native_diagnostics": {
+      "odd-address-register": {
+        "completed_original_call": false,
+        "error_address": 1050499,
+        "last_pc": 21876,
+        "status": "instruction-access",
+        "steps": 87
+      },
+      "odd-coefficient-address": {
+        "completed_original_call": false,
+        "error_address": 1050459,
+        "last_pc": 21516,
+        "status": "instruction-access",
+        "steps": 47
+      }
+    },
+    "instruction_counts": [
+      {
+        "cases": 382,
+        "mode": "dispatcher",
+        "steps": 24
+      },
+      {
+        "cases": 12,
+        "mode": "dispatcher",
+        "steps": 213
+      },
+      {
+        "cases": 8,
+        "mode": "dispatcher",
+        "steps": 217
+      },
+      {
+        "cases": 12,
+        "mode": "dispatcher",
+        "steps": 219
+      },
+      {
+        "cases": 4,
+        "mode": "dispatcher",
+        "steps": 223
+      },
+      {
+        "cases": 32,
+        "mode": "dispatcher",
+        "steps": 229
+      },
+      {
+        "cases": 32,
+        "mode": "dispatcher",
+        "steps": 230
+      },
+      {
+        "cases": 32,
+        "mode": "dispatcher",
+        "steps": 231
+      },
+      {
+        "cases": 192,
+        "mode": "dispatcher",
+        "steps": 232
+      },
+      {
+        "cases": 32,
+        "mode": "dispatcher",
+        "steps": 233
+      },
+      {
+        "cases": 32,
+        "mode": "dispatcher",
+        "steps": 234
+      },
+      {
+        "cases": 32,
+        "mode": "dispatcher",
+        "steps": 235
+      },
+      {
+        "cases": 96,
+        "mode": "dispatcher",
+        "steps": 237
+      },
+      {
+        "cases": 1425,
+        "mode": "dispatcher",
+        "steps": 239
+      },
+      {
+        "cases": 454,
+        "mode": "dispatcher",
+        "steps": 240
+      },
+      {
+        "cases": 64,
+        "mode": "dispatcher",
+        "steps": 241
+      },
+      {
+        "cases": 253,
+        "mode": "dispatcher",
+        "steps": 242
+      },
+      {
+        "cases": 96,
+        "mode": "dispatcher",
+        "steps": 243
+      },
+      {
+        "cases": 32,
+        "mode": "dispatcher",
+        "steps": 247
+      },
+      {
+        "cases": 1083,
+        "mode": "dispatcher",
+        "steps": 285
+      },
+      {
+        "cases": 1036,
+        "mode": "effects",
+        "steps": 134
+      },
+      {
+        "cases": 3072,
+        "mode": "effects",
+        "steps": 136
+      },
+      {
+        "cases": 4104,
+        "mode": "effects",
+        "steps": 138
+      },
+      {
+        "cases": 4108,
+        "mode": "effects",
+        "steps": 140
+      },
+      {
+        "cases": 3072,
+        "mode": "effects",
+        "steps": 142
+      },
+      {
+        "cases": 1028,
+        "mode": "effects",
+        "steps": 144
+      },
+      {
+        "cases": 32,
+        "mode": "effects",
+        "steps": 150
+      },
+      {
+        "cases": 32,
+        "mode": "effects",
+        "steps": 151
+      },
+      {
+        "cases": 32,
+        "mode": "effects",
+        "steps": 152
+      },
+      {
+        "cases": 192,
+        "mode": "effects",
+        "steps": 153
+      },
+      {
+        "cases": 32,
+        "mode": "effects",
+        "steps": 154
+      },
+      {
+        "cases": 32,
+        "mode": "effects",
+        "steps": 155
+      },
+      {
+        "cases": 32,
+        "mode": "effects",
+        "steps": 156
+      },
+      {
+        "cases": 160,
+        "mode": "effects",
+        "steps": 158
+      },
+      {
+        "cases": 1871,
+        "mode": "effects",
+        "steps": 160
+      },
+      {
+        "cases": 454,
+        "mode": "effects",
+        "steps": 161
+      },
+      {
+        "cases": 128,
+        "mode": "effects",
+        "steps": 162
+      },
+      {
+        "cases": 253,
+        "mode": "effects",
+        "steps": 163
+      },
+      {
+        "cases": 96,
+        "mode": "effects",
+        "steps": 164
+      },
+      {
+        "cases": 32,
+        "mode": "effects",
+        "steps": 168
+      },
+      {
+        "cases": 382,
+        "mode": "handler",
+        "steps": 11
+      },
+      {
+        "cases": 12,
+        "mode": "handler",
+        "steps": 200
+      },
+      {
+        "cases": 8,
+        "mode": "handler",
+        "steps": 204
+      },
+      {
+        "cases": 12,
+        "mode": "handler",
+        "steps": 206
+      },
+      {
+        "cases": 4,
+        "mode": "handler",
+        "steps": 210
+      },
+      {
+        "cases": 32,
+        "mode": "handler",
+        "steps": 216
+      },
+      {
+        "cases": 32,
+        "mode": "handler",
+        "steps": 217
+      },
+      {
+        "cases": 32,
+        "mode": "handler",
+        "steps": 218
+      },
+      {
+        "cases": 192,
+        "mode": "handler",
+        "steps": 219
+      },
+      {
+        "cases": 32,
+        "mode": "handler",
+        "steps": 220
+      },
+      {
+        "cases": 32,
+        "mode": "handler",
+        "steps": 221
+      },
+      {
+        "cases": 32,
+        "mode": "handler",
+        "steps": 222
+      },
+      {
+        "cases": 96,
+        "mode": "handler",
+        "steps": 224
+      },
+      {
+        "cases": 1425,
+        "mode": "handler",
+        "steps": 226
+      },
+      {
+        "cases": 454,
+        "mode": "handler",
+        "steps": 227
+      },
+      {
+        "cases": 64,
+        "mode": "handler",
+        "steps": 228
+      },
+      {
+        "cases": 253,
+        "mode": "handler",
+        "steps": 229
+      },
+      {
+        "cases": 96,
+        "mode": "handler",
+        "steps": 230
+      },
+      {
+        "cases": 32,
+        "mode": "handler",
+        "steps": 234
+      },
+      {
+        "cases": 1083,
+        "mode": "handler",
+        "steps": 272
+      },
+      {
+        "cases": 382,
+        "mode": "helper",
+        "steps": 6
+      },
+      {
+        "cases": 12,
+        "mode": "helper",
+        "steps": 195
+      },
+      {
+        "cases": 8,
+        "mode": "helper",
+        "steps": 199
+      },
+      {
+        "cases": 12,
+        "mode": "helper",
+        "steps": 201
+      },
+      {
+        "cases": 4,
+        "mode": "helper",
+        "steps": 205
+      },
+      {
+        "cases": 32,
+        "mode": "helper",
+        "steps": 211
+      },
+      {
+        "cases": 32,
+        "mode": "helper",
+        "steps": 212
+      },
+      {
+        "cases": 32,
+        "mode": "helper",
+        "steps": 213
+      },
+      {
+        "cases": 192,
+        "mode": "helper",
+        "steps": 214
+      },
+      {
+        "cases": 32,
+        "mode": "helper",
+        "steps": 215
+      },
+      {
+        "cases": 32,
+        "mode": "helper",
+        "steps": 216
+      },
+      {
+        "cases": 32,
+        "mode": "helper",
+        "steps": 217
+      },
+      {
+        "cases": 96,
+        "mode": "helper",
+        "steps": 219
+      },
+      {
+        "cases": 1425,
+        "mode": "helper",
+        "steps": 221
+      },
+      {
+        "cases": 454,
+        "mode": "helper",
+        "steps": 222
+      },
+      {
+        "cases": 64,
+        "mode": "helper",
+        "steps": 223
+      },
+      {
+        "cases": 253,
+        "mode": "helper",
+        "steps": 224
+      },
+      {
+        "cases": 96,
+        "mode": "helper",
+        "steps": 225
+      },
+      {
+        "cases": 32,
+        "mode": "helper",
+        "steps": 229
+      },
+      {
+        "cases": 1083,
+        "mode": "helper",
+        "steps": 267
+      },
+      {
+        "cases": 47,
+        "mode": "state",
+        "steps": 31
+      },
+      {
+        "cases": 4,
+        "mode": "state",
+        "steps": 164
+      },
+      {
+        "cases": 4,
+        "mode": "state",
+        "steps": 168
+      },
+      {
+        "cases": 8,
+        "mode": "state",
+        "steps": 170
+      },
+      {
+        "cases": 2,
+        "mode": "state",
+        "steps": 179
+      },
+      {
+        "cases": 20,
+        "mode": "state",
+        "steps": 180
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 181
+      },
+      {
+        "cases": 18,
+        "mode": "state",
+        "steps": 182
+      },
+      {
+        "cases": 97,
+        "mode": "state",
+        "steps": 183
+      },
+      {
+        "cases": 18,
+        "mode": "state",
+        "steps": 184
+      },
+      {
+        "cases": 17,
+        "mode": "state",
+        "steps": 185
+      },
+      {
+        "cases": 19,
+        "mode": "state",
+        "steps": 186
+      },
+      {
+        "cases": 45,
+        "mode": "state",
+        "steps": 188
+      },
+      {
+        "cases": 1,
+        "mode": "state",
+        "steps": 189
+      },
+      {
+        "cases": 521,
+        "mode": "state",
+        "steps": 190
+      },
+      {
+        "cases": 229,
+        "mode": "state",
+        "steps": 191
+      },
+      {
+        "cases": 29,
+        "mode": "state",
+        "steps": 192
+      },
+      {
+        "cases": 125,
+        "mode": "state",
+        "steps": 193
+      },
+      {
+        "cases": 40,
+        "mode": "state",
+        "steps": 194
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 195
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 196
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 197
+      },
+      {
+        "cases": 112,
+        "mode": "state",
+        "steps": 198
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 199
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 200
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 201
+      },
+      {
+        "cases": 13,
+        "mode": "state",
+        "steps": 203
+      },
+      {
+        "cases": 26,
+        "mode": "state",
+        "steps": 204
+      },
+      {
+        "cases": 525,
+        "mode": "state",
+        "steps": 205
+      },
+      {
+        "cases": 238,
+        "mode": "state",
+        "steps": 206
+      },
+      {
+        "cases": 9,
+        "mode": "state",
+        "steps": 207
+      },
+      {
+        "cases": 146,
+        "mode": "state",
+        "steps": 208
+      },
+      {
+        "cases": 14,
+        "mode": "state",
+        "steps": 209
+      },
+      {
+        "cases": 37,
+        "mode": "state",
+        "steps": 210
+      },
+      {
+        "cases": 14,
+        "mode": "state",
+        "steps": 212
+      },
+      {
+        "cases": 4,
+        "mode": "state",
+        "steps": 213
+      },
+      {
+        "cases": 8,
+        "mode": "state",
+        "steps": 214
+      },
+      {
+        "cases": 4,
+        "mode": "state",
+        "steps": 216
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 231
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 233
+      },
+      {
+        "cases": 64,
+        "mode": "state",
+        "steps": 234
+      },
+      {
+        "cases": 32,
+        "mode": "state",
+        "steps": 235
+      },
+      {
+        "cases": 124,
+        "mode": "state",
+        "steps": 237
+      },
+      {
+        "cases": 161,
+        "mode": "state",
+        "steps": 238
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 239
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 246
+      },
+      {
+        "cases": 15,
+        "mode": "state",
+        "steps": 248
+      },
+      {
+        "cases": 65,
+        "mode": "state",
+        "steps": 249
+      },
+      {
+        "cases": 32,
+        "mode": "state",
+        "steps": 250
+      },
+      {
+        "cases": 175,
+        "mode": "state",
+        "steps": 252
+      },
+      {
+        "cases": 160,
+        "mode": "state",
+        "steps": 253
+      },
+      {
+        "cases": 16,
+        "mode": "state",
+        "steps": 254
+      }
+    ],
+    "natural_field_domains_or_audio_timing_recovered": false,
+    "observations_sha256": "005a5161ebf6f337d3a467322700b59d8e9e3e6a3253cf16800435939e971494",
+    "original_game_bytes_executed": true,
+    "table_address_coverage": [
+      {
+        "distinct_read_addresses": 128,
+        "end": 21652,
+        "lo": 21524,
+        "max_read": 21651,
+        "min_read": 21524
+      },
+      {
+        "distinct_read_addresses": 65,
+        "end": 21758,
+        "lo": 21686,
+        "max_read": 21750,
+        "min_read": 21686
+      },
+      {
+        "distinct_read_addresses": 1122,
+        "end": 23024,
+        "lo": 21894,
+        "max_read": 23016,
+        "min_read": 21894
+      },
+      {
+        "distinct_read_addresses": 128,
+        "end": 23202,
+        "lo": 23066,
+        "max_read": 23193,
+        "min_read": 23066
+      },
+      {
+        "distinct_read_addresses": 128,
+        "end": 23372,
+        "lo": 23236,
+        "max_read": 23363,
+        "min_read": 23236
+      },
+      {
+        "distinct_read_addresses": 128,
+        "end": 23542,
+        "lo": 23406,
+        "max_read": 23533,
+        "min_read": 23406
+      },
+      {
+        "distinct_read_addresses": 128,
+        "end": 23712,
+        "lo": 23576,
+        "max_read": 23703,
+        "min_read": 23576
+      },
+      {
+        "distinct_read_addresses": 129,
+        "end": 23920,
+        "lo": 23780,
+        "max_read": 23908,
+        "min_read": 23780
+      }
+    ],
+    "terminal_original_copy_controls": {
+      "active_state_bit": {
+        "reasons": {
+          "Output or unaffected mapped byte differs": 2,
+          "Register/SR result differs from independent contract": 8
+        },
+        "rejected": 10,
+        "terminal_comparisons": 10
+      },
+      "command_gate": {
+        "reasons": {
+          "Register/SR result differs from independent contract": 6
+        },
+        "rejected": 6,
+        "terminal_comparisons": 6
+      },
+      "countdown_comparison": {
+        "reasons": {
+          "Output or unaffected mapped byte differs": 8,
+          "Register/SR result differs from independent contract": 2
+        },
+        "rejected": 10,
+        "terminal_comparisons": 10
+      },
+      "final_coefficient_shift": {
+        "reasons": {
+          "Read/write sequence or widths differ": 8,
+          "Register/SR result differs from independent contract": 2
+        },
+        "rejected": 10,
+        "terminal_comparisons": 10
+      },
+      "restored_caller_result_mask": {
+        "reasons": {
+          "Register/SR result differs from independent contract": 8
+        },
+        "rejected": 8,
+        "terminal_comparisons": 8
+      }
+    }
+  },
+  "parent": 665,
+  "prepared_binary_sha256": "39a7c20f1af48974474f27bfc99e35a6642b393ab74340f869914ab0ea518c04",
+  "private_evidence_root": "/home/dev/neptune-research-private/671/original-contract-001",
+  "release": "usa-mk81070-v1003",
+  "report_sha256": "9420a4f3cac7ae35c002c8d2417457b6cf718cbf196eac56ed86677249e8b100",
+  "retained_failures": [
+    "continuation-static001/002 tooling limits conflicted with resource-limit fixtures; neither was accepted",
+    "baseline-tooling003 tried an unmounted static support path; no tooling was run;004 qualified baseline350",
+    "contract-diagnostic002:384calls pass, then dispatcher-disabled SRX mismatch at terminal186C; independent ADD.W carry explanation and red/green regression fix"
+  ],
+  "schema": "neptune.original-nlsnd-state-evidence.v1",
+  "semantic_sources": {
+    "analyze_sound_driver.py": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+    "m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
+    "m68k_consumer_native.py": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+    "m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "m68k_scsp_dsp.py": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+    "m68k_scsp_fifo.py": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
+    "m68k_scsp_state.py": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "probe_command_dispatch.py": "86bc16c51ce36cc5cb6637380ae0736ceed3a10934dfafce27951fe53d0f056c",
+    "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "probe_netlink_pointer.py": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+    "probe_netlink_ramp.py": "72aabf008193af4a41931a6503114e84919072074cda003d0abc99d724824dbb",
+    "probe_netlink_records.py": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+    "probe_netlink_state.py": "0088040e8c7c6f0e61368434b7aa48774a8f6d74cc9cf06a059aa2c0e2ad8910",
+    "scsp-dsp-source-lock.json": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4",
+    "scsp-fifo-source-lock.json": "f209fd0b2408dbe9b01570dcc02f8075bf6e433b065b6e63a45d16afd9811706"
+  },
+  "source_head": "3f52a62188ebec73826e27d69a4f9b0fbbac3d76",
+  "tooling": {
+    "address_space_bytes": 4294967296,
+    "cpu_seconds": 150,
+    "file_bytes": 2147483648,
+    "scope": "research tooling, not emulator/game/factory health",
+    "tests": 360,
+    "wall_seconds": 90
+  }
+}

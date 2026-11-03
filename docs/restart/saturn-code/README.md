@@ -89,3 +89,36 @@ remain useful accepted evidence. They do not increase this census into a verifie
 whole-program function total. Unknown denominators remain `null`.
 
 The [2 November original memory-helper/caller result](../research/2026-11-02-original-position-bounds.md) adds two isolated-tested USA kernel entries and their explicit controlled-memory limits. It does not establish natural gameplay validation or a whole-program function denominator.
+
+The [3 November NLSND state/command11 result](../research/2026-11-03-original-nlsnd-state.md)
+compares36,127 constructed complete calls across five entry modes, repeated in
+fresh pinned CPU/frozen-SCSP processes with44 terminal mutation rejections. Natural
+sound roles/traffic, command10, audio timing and the whole-code denominator remain
+open. These isolated calls do not establish campaign/battle Godot fidelity.
+
+The [command10 trace-capacity dependency](../research/2026-11-03-command10-trace-capacity.md)
+adds a separately qualified ABI6 profile. Two fresh paired128-case experiments
+preserve96 non-capacity results exactly and advance32 event-limited scans to the
+same explicit unsupported device read. This is tooling/diagnostic progress;
+parent665's complete device/command10 semantics remain open.
+
+The [original slot-reset result](../research/2026-11-03-original-slot-effects.md)
+adds639 complete constructed3540/355A/356E calls repeated in fresh processes,
+24 terminal mutation rejections and a qualified frozen slot-byte profile. The
+128-case command10 continuation now reaches32 diagnostic returns and precise
+low0780/longword-DSP guards; full command10, natural timing/audio and whole-code
+coverage remain open.
+
+The subsequent [fixed-data clear result](../research/2026-11-03-original-low-reset.md)
+qualifies294 complete constructed3530 calls in each of two fresh processes with12
+terminal mutation rejections. Direct original writers establish only the bounded
+NLSND0780..078F data profile. All prior680 observations are reproduced; the new
+command10 matrix has64 diagnostic returns and64 explicit DSP longword guards.
+Natural code/data lifetime, full command10 semantics and whole-code coverage remain open.
+
+The [DSP reset helper result](../research/2026-11-03-original-dsp-reset.md)
+adds414 complete original calls repeated in fresh processes and60 terminal
+mutation rejections, with a separate qualified frozen DSP longword/TEMP profile.
+All128 command10 scenarios now return diagnostically;64 prior CPU/RAM/common-device
+outcomes and64 prior guarded prefixes are preserved. This removes the measured
+width dependency, not the remaining independent command/natural/audio/Godot proof.
