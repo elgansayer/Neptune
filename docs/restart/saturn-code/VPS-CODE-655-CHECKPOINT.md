@@ -2,12 +2,43 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-cd-command-packing-655`, workspace
+`research/saturn-command-observer-707`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Native command observer707 in progress; not installed/ready
+
+Commandpacking PR706 mergedf734628 at tested7685ddb against9be7645; all15 exact-
+head/currentbase checks and mergeparent/tree verified. Retain the first validation
+HTTP503 before any merge request; freshprefixpr706-current2 completed validation.
+All originalpacking reports remain terminal. Do not restart them as new progress.
+
+Bounded [707](https://github.com/elgansayer/Neptune-Bomberman/issues/707) now owns
+a separate native command observer, claim through15:30UTC3November. Preserve
+NLSND703/PR705 and all other owners. The native observer is **not ready**: only
+its strict source patch component and owned tests are implemented. Read
+[the concrete protocol/remaining work](../../../tools/saturn_lab/COMMAND_TRACING.md).
+5 focused/39 related/216 factory tests pass, including compiled address/bus/CPU/
+RAM/WB nonmutation fixtures. A retained GPL source-archive proof restores all six
+original source-pin hashes before applying the component with an owned nonobserver
+header: `.../707/patcher-pin-_bb68yfc/report.json`. No core/native generation was
+built, installed or run, and no additional originalframes are claimed.
+
+The pinned core fuses load→compare→branch. Capturing only at the next dispatch
+could miss the immediate postload. The patcher observes the actualMemRead16 result
+afterWB_WRITE and actualMemWrite16 value after transfer, with one address evaluation,
+no secondbusaccess and byte-identical existing tripletfusion. Master prehook must
+retain actualPC/opcode; actual fusedNOP handling remains necessary. Next implement
+strict C header/ctypes ABI and compiled nonmutation/semantic fixtures, trusted
+recipe/actualCIbuild/smoke/reuse, then freshreference/disabled/enabled original
+windows. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
+corebuild below configured preparation reserve. Exact inspection command:
+`python3 /home/dev/neptune-evidence/code655-20261102/check-command-patcher-pin.py`.
+It creates fresh private matched-source component proof, not originalexecution.
+655 and the all-original-code programme remain active and incomplete.
 
 ## Current command packing: eight original jobs retained, device transfer pending
 

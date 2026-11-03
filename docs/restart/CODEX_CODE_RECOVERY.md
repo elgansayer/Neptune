@@ -172,6 +172,15 @@ and current655 checkpoint. These are unfinished services, not complete returns.
 The next actualdevice read is959DE using25890008. Continue trusted native
 observation/realdevice semantics, successful library services and further modules;
 no flatRAM, fabricatedresponse or callee success. Preserve NLSND703/PR705 ownership.
+Commandpacking PR706 mergedf734628 after all15 exact-head/currentbase checks.
+Native observer707 is now in progress through the trusted preparation boundary.
+Its patch component passes5 focused/39 related/216 factory tests and actual
+matched-source anchor verification, but no new native observer/core is ready or
+originalframes executed. Read the current checkpoint and COMMAND_TRACING.md:
+load/compare/branch fusion requires observing actual transfer values without
+extra busreads or changing fusion. Continue header/ABI, nativebuild/smoke/reuse
+and exactreference/disabled/enabled original validation; preserve all owners,
+oldgenerations and configured limits. Programme remains active and incomplete.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
