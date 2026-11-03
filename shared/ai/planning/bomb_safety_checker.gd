@@ -6,6 +6,7 @@ class_name BombSafetyChecker
 ## Based on Bomberman AI Doctrine - Godot-Specific suicide check
 
 const Constants = preload("res://shared/constants.gd")
+const BombForecast = preload("res://shared/ai/perception/bomb_threat_forecast.gd")
 
 var _ai_manager = null
 var _grid_sampler = null
@@ -19,6 +20,11 @@ func configure(ai_manager, grid_sampler) -> void:
 	_ai_manager = ai_manager
 	_grid_sampler = grid_sampler
 
+func _placement_capability(cell: Vector2i, current_time_msec: float) -> Dictionary:
+	if _ai_manager.has_method("get_placement_capability"):
+		return _ai_manager.get_placement_capability(cell, current_time_msec)
+	return BombForecast.placement_capability(_ai_manager._game_instance, _grid_sampler, cell)
+
 ## Core suicide check: Can bot safely plant bomb at position and escape?
 ## Returns true if safe escape route exists, false if bot would die
 func can_safely_plant_bomb(
@@ -27,11 +33,15 @@ func can_safely_plant_bomb(
 	bomb_range: int,
 	bot_speed_tiles_per_sec: float = 5.0,
 	current_time_msec: float = 0.0,
-	fuse_lower_bound: float = Constants.BOMB_TIMER
+	fuse_lower_bound: float = Constants.BOMB_TIMER,
+	actor: Node = null
 ) -> bool:
-	if _ai_manager == null or _grid_sampler == null:
+	if _ai_manager == null or _grid_sampler == null or not is_finite(bot_speed_tiles_per_sec) or bot_speed_tiles_per_sec <= 0.0:
 		if debug_logging:
 			print("  [BombSafetyChecker] Missing dependencies")
+		return false
+	var capability: Dictionary = _placement_capability(plant_pos, current_time_msec)
+	if not capability.supported:
 		return false
 	
 	# Get simulated threat matrix with hypothetical bomb
@@ -80,7 +90,7 @@ func can_safely_plant_bomb(
 			# CRITICAL FIX: Verify escape tile is NOT a dead end!
 			# A tile is a dead end if all neighbors are blocked (walls/bombs/threats)
 			# The bot would get trapped there and die to subsequent bombs
-			var has_further_exit = _tile_has_further_exit(current_pos, future_threat_matrix, plant_pos)
+			var has_further_exit = _tile_has_further_exit(current_pos, future_threat_matrix, plant_pos, actor)
 			
 			if has_further_exit:
 				# SUCCESS! Found a tile that never explodes AND we can reach it AND we can escape later
@@ -111,7 +121,7 @@ func can_safely_plant_bomb(
 					continue
 				
 				# Check for walls (using grid sampler)
-				if not _grid_sampler.is_tile_walkable(next_pos):
+				if not _can_enter(next_pos, actor):
 					continue
 				
 				# Is this a worse path than one already found?
@@ -124,7 +134,9 @@ func can_safely_plant_bomb(
 					var next_lethal: float = future_threat_matrix[next_key] - safety_buffer_msec
 					next_safe = next_arrival_time < next_lethal
 				# Also ensure we leave current before it explodes
-				var leave_current_safe := next_arrival_time <= tile_lethal_time
+				# Flames are lethal at their inclusive deadline. Finishing the
+				# departure exactly then cannot be counted as a successful escape.
+				var leave_current_safe := next_arrival_time < tile_lethal_time
 				if leave_current_safe and next_safe:
 					visited[next_key] = next_arrival_time
 					queue.append(next_pos)
@@ -143,12 +155,16 @@ func check_plant_safety_detailed(
 	bot_speed_tiles_per_sec: float = 5.0,
 	current_time_msec: float = 0.0,
 	allow_dead_end_escape: bool = false,
-	fuse_lower_bound: float = Constants.BOMB_TIMER
+	fuse_lower_bound: float = Constants.BOMB_TIMER,
+	actor: Node = null
 ) -> Dictionary:
 	"""Returns {safe: bool, escape_tile: Vector2i, margin_ms: float, explored_tiles: int}"""
 	
-	if _ai_manager == null or _grid_sampler == null:
+	if _ai_manager == null or _grid_sampler == null or not is_finite(bot_speed_tiles_per_sec) or bot_speed_tiles_per_sec <= 0.0:
 		return {"safe": false, "explored_tiles": 0}
+	var capability: Dictionary = _placement_capability(plant_pos, current_time_msec)
+	if not capability.supported:
+		return {"safe": false, "reason": capability.reason, "explored_tiles": 0}
 	
 	var future_threat_matrix: Dictionary = _ai_manager.simulate_threat_matrix(
 		plant_pos,
@@ -169,6 +185,7 @@ func check_plant_safety_detailed(
 	var head := 0
 	var best_escape: Vector2i = Vector2i(-1, -1)
 	var best_margin: float = - INF
+	var route_margins := {_tile_key(bot_pos): float(future_threat_matrix.get(_tile_key(bot_pos), INF)) - effective_start_time}
 	
 	# CRITICAL: The bomb position will be blocked after placement
 	var bomb_tile_key := _tile_key(plant_pos)
@@ -188,7 +205,7 @@ func check_plant_safety_detailed(
 		if not future_threat_matrix.has(current_key):
 			# CRITICAL FIX: Verify escape tile is NOT a dead end!
 			# (unless allow_dead_end_escape is true for breakout scenarios)
-			var has_further_exit = _tile_has_further_exit(current_pos, future_threat_matrix, plant_pos)
+			var has_further_exit = _tile_has_further_exit(current_pos, future_threat_matrix, plant_pos, actor)
 			
 			if has_further_exit or allow_dead_end_escape:
 				if not has_further_exit and debug_logging:
@@ -196,7 +213,10 @@ func check_plant_safety_detailed(
 				return {
 					"safe": true,
 					"escape_tile": current_pos,
-					"margin_ms": INF,
+					# Bound by every threatened transit cell and the time left
+					# before our hypothetical bomb. A safe destination alone does
+					# not imply infinite reaction/escape margin.
+					"margin_ms": minf(float(route_margins[current_key]), time_to_explode_msec - current_arrival_time),
 					"explored_tiles": visited.size()
 				}
 			else:
@@ -212,12 +232,13 @@ func check_plant_safety_detailed(
 					
 					if next_key == bomb_tile_key:
 						continue
-					if not _grid_sampler.is_tile_walkable(next_pos):
+					if not _can_enter(next_pos, actor):
 						continue
 					if visited.has(next_key) and visited[next_key] <= next_arrival_time:
 						continue
 					
 					visited[next_key] = next_arrival_time
+					route_margins[next_key] = _route_margin(route_margins[current_key], current_key, next_key, next_arrival_time, future_threat_matrix)
 					queue.append(next_pos)
 				continue  # Skip the rest of the loop for this tile
 		
@@ -239,7 +260,7 @@ func check_plant_safety_detailed(
 				if next_key == bomb_tile_key:
 					continue
 				
-				if not _grid_sampler.is_tile_walkable(next_pos):
+				if not _can_enter(next_pos, actor):
 					continue
 				
 				if visited.has(next_key) and visited[next_key] <= next_arrival_time:
@@ -249,9 +270,10 @@ func check_plant_safety_detailed(
 				if future_threat_matrix.has(next_key):
 					var next_lethal: float = future_threat_matrix[next_key] - safety_buffer_msec
 					next_safe = next_arrival_time < next_lethal
-				var leave_current_safe := next_arrival_time <= tile_lethal_time
+				var leave_current_safe := next_arrival_time < tile_lethal_time
 				if leave_current_safe and next_safe:
 					visited[next_key] = next_arrival_time
+					route_margins[next_key] = _route_margin(route_margins[current_key], current_key, next_key, next_arrival_time, future_threat_matrix)
 					queue.append(next_pos)
 	
 	# No perfect safe haven found - return best marginal option
@@ -268,7 +290,7 @@ func _tile_key(tile: Vector2i) -> String:
 
 ## Check if a tile has at least one further exit (not a dead end)
 ## A dead end is a tile where all neighbors are blocked by walls, bombs, or threats
-func _tile_has_further_exit(tile: Vector2i, threat_matrix: Dictionary, bomb_pos: Vector2i) -> bool:
+func _tile_has_further_exit(tile: Vector2i, threat_matrix: Dictionary, bomb_pos: Vector2i, actor: Node = null) -> bool:
 	var bomb_key := _tile_key(bomb_pos)
 	var safe_exits := 0
 	
@@ -281,7 +303,7 @@ func _tile_has_further_exit(tile: Vector2i, threat_matrix: Dictionary, bomb_pos:
 			continue
 		
 		# Skip if not walkable (wall/block)
-		if not _grid_sampler.is_tile_walkable(neighbor):
+		if not _can_enter(neighbor, actor):
 			continue
 		
 		# Skip if it's in the threat matrix (will explode)
@@ -295,3 +317,13 @@ func _tile_has_further_exit(tile: Vector2i, threat_matrix: Dictionary, bomb_pos:
 		print("  [BombSafetyChecker] Tile ", tile, " has NO further exits - dead end detected!")
 	
 	return safe_exits > 0
+
+func _can_enter(tile: Vector2i, actor: Node) -> bool:
+	# A current public obstruction is not a promised future opening. Treat
+	# players and live bombs conservatively until a later observation clears
+	# them. Ignore only this actor when evaluating its hypothetical position.
+	return _grid_sampler.is_tile_walkable(tile) and not _grid_sampler.is_tile_occupied(tile, actor)
+
+func _route_margin(previous: float, source: String, destination: String, arrival: float, threats: Dictionary) -> float:
+	return minf(previous, minf(float(threats.get(source, INF)) - arrival,
+		float(threats.get(destination, INF)) - arrival))

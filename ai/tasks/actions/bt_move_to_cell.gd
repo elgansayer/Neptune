@@ -3,6 +3,7 @@ extends BTAction
 class_name BTMoveToCell
 
 const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+const BombTimeline = preload("res://shared/ai/perception/bomb_threat_forecast.gd")
 
 ## Moves the entity toward a target cell using pathfinding
 ## Calculates path once and follows waypoints, recalculating if stuck or target changes
@@ -13,10 +14,12 @@ const SimulationTime = preload("res://shared/ai/simulation_time.gd")
 @export var recalc_distance: int = 3 ## Manhattan distance to trigger path recalculation
 @export var clear_on_success: bool = true ## Clear target_cell when reached
 @export var avoid_threats: bool = false ## Whether to avoid threatened tiles during pathfinding
-@export var debug_logging: bool = true
+@export var debug_logging: bool = false
 
 # State tracking between ticks
 var _cached_path: Array[Vector2i] = []
+var _cached_departures: Array = []
+var _waiting_until := 0.0
 var _cached_target: Vector2i = Vector2i(-999, -999)
 var _committed_target: Vector2i = Vector2i(-999, -999) # Target we are committed to reaching
 var _current_waypoint_index: int = 0
@@ -125,6 +128,14 @@ func _tick(_delta: float) -> int:
 	var abs_offset_y = abs(offset_from_center.y)
 	var tile_half_extent = GameConfig.TILE_SIZE * 0.5
 	var inside_target_tile = abs_offset_x <= tile_half_extent and abs_offset_y <= tile_half_extent
+	if _waiting_until > SimulationTime.milliseconds(blackboard) and target_cell == _cached_target:
+		if _remaining_route_safe(player, grid_sampler):
+			# A scheduled interval wait is intentional progress, not a stuck bot.
+			player.set_input(0.0, 0.0)
+			_stuck_start_time = 0.0
+			_last_position = player.position
+			return RUNNING
+		_waiting_until = 0.0
 	if player.has_method("set_debug_target_line"):
 		var target_line = PackedVector2Array()
 		target_line.append(player.position)
@@ -262,19 +273,8 @@ func _tick(_delta: float) -> int:
 				else:
 					stuck_targets.erase(t_key) # Expired
 	
-	# CRITICAL SAFETY CHECK: Is the target tile currently threatened by an explosion?
-	# This must be checked BEFORE the commitment logic to prevent walking into explosions!
-	if hazard_predictor and target_cell != null:
-		var is_target_threatened = hazard_predictor.is_tile_threatened(target_cell)
-		if is_target_threatened:
-			# Target is in a blast zone! Abort immediately unless we're escaping.
-			var is_escape = (cell_var == "escape_cell")
-			if not is_escape:
-				print("[BTMoveToCell] 🛑 ABORT: Target %s is THREATENED by explosion!" % target_cell)
-				blackboard.set_var(cell_var, null)
-				player.set_input(0.0, 0.0)
-				_reset_state()
-				return FAILURE
+	# The timed route validates arrival and occupancy. A blanket threatened-cell
+	# rejection would forbid valid routes that wait for temporary fire to clear.
 	
 	# CRITICAL SAFETY CHECK: Does the target tile have a bomb on it?
 	# Don't walk INTO bombs!
@@ -328,6 +328,10 @@ func _tick(_delta: float) -> int:
 			
 	if _cached_path.is_empty():
 		needs_recalc = true
+	elif not _remaining_route_safe(player, grid_sampler):
+		# A new bomb/wall invalidates commitment immediately; try another
+		# route to the same destination before abandoning the objective.
+		needs_recalc = true
 		
 	if needs_recalc:
 		_cached_target = target_cell
@@ -337,8 +341,13 @@ func _tick(_delta: float) -> int:
 		# Special case: If we are already inside the target tile bounds, just move to center
 		if inside_target_tile:
 			_cached_path = [target_cell]
+			_cached_departures = [SimulationTime.milliseconds(blackboard)]
 		else:
-			_cached_path = grid_sampler.find_path(current_tile, target_cell, 40, player, avoid_threats)
+			var route: Dictionary = grid_sampler.find_timed_route(current_tile, target_cell, 40, player, SimulationTime.milliseconds(blackboard), _msec_per_tile(player))
+			_cached_path.assign(route.cells)
+			_cached_departures = route.departures.duplicate()
+			blackboard.set_var("route_search_status", route.status)
+			blackboard.set_var("route_expanded", route.expanded)
 		
 		if _cached_path.is_empty():
 			print("[BTMoveToCell] FAILURE: No path found from ", current_tile, " to ", target_cell)
@@ -351,6 +360,8 @@ func _tick(_delta: float) -> int:
 			return FAILURE
 		
 		print("[BTMoveToCell] Calculated path with %d waypoints to %s: %s" % [_cached_path.size(), target_cell, _cached_path])
+		if not _remaining_route_safe(player, grid_sampler):
+			return _abort_unsafe_move(player)
 		_draw_debug_path(player, grid_sampler)
 	elif should_log:
 		print("[BTMoveToCell] Maintaining commitment to %s (path len %d)" % [_committed_target, _cached_path.size()])
@@ -371,11 +382,19 @@ func _tick(_delta: float) -> int:
 		return RUNNING
 	
 	var waypoint = _cached_path[_current_waypoint_index]
+	if _current_waypoint_index < _cached_departures.size():
+		_waiting_until = float(_cached_departures[_current_waypoint_index])
+		if _waiting_until > SimulationTime.milliseconds(blackboard):
+			player.set_input(0.0, 0.0)
+			_stuck_start_time = 0.0
+			_last_position = player.position
+			blackboard.set_var("route_wait_until_msec", _waiting_until)
+			return RUNNING
+	blackboard.set_var("route_wait_until_msec", 0.0)
 	
 	# SAFETY: Check if our current waypoint is threatened - if so, abort!
 	if hazard_predictor and hazard_predictor.is_tile_threatened(waypoint):
-		var is_escape = (cell_var == "escape_cell")
-		if not is_escape or _unsafe_arrival(waypoint, player, grid_sampler, hazard_predictor):
+		if _unsafe_arrival(waypoint, player, grid_sampler, hazard_predictor):
 			print("[BTMoveToCell] 🛑 ABORT: Waypoint %s (index %d) is THREATENED by explosion!" % [waypoint, _current_waypoint_index])
 			return _abort_unsafe_move(player)
 	
@@ -437,6 +456,8 @@ func _tick(_delta: float) -> int:
 
 func _reset_state() -> void:
 	_cached_path = []
+	_cached_departures = []
+	_waiting_until = 0.0
 	_cached_target = Vector2i(-999, -999)
 	_committed_target = Vector2i(-999, -999)
 	_current_waypoint_index = 0
@@ -473,6 +494,40 @@ func _draw_debug_path(player, grid_sampler) -> void:
 	if player.has_method("set_debug_path"):
 		# print("[DEBUG DRAW] Sending points: ", points)
 		player.set_debug_path(points)
+
+func _remaining_route_safe(player, sampler) -> bool:
+	var manager = blackboard.get_var("ai_manager", null)
+	var threats: Dictionary = manager.get_current_threat_matrix() if manager else {}
+	var intervals: Dictionary = manager.hazard_intervals if manager and "hazard_intervals" in manager else {}
+	var timed: bool = manager != null and "hazard_intervals" in manager
+	var arrival := SimulationTime.milliseconds(blackboard)
+	var previous: Vector2i = player.get_tile_position()
+	for index in range(_current_waypoint_index, _cached_path.size()):
+		var cell: Vector2i = _cached_path[index]
+		if not sampler.is_tile_safe_for_target(cell):
+			return false
+		if cell != player.get_tile_position() and sampler.is_tile_occupied(cell, player):
+			return false
+		var crossing_time := _msec_per_tile(player)
+		if index == _current_waypoint_index:
+			var offset: Vector2 = sampler.tile_to_world_center(cell) - player.position
+			crossing_time *= (absf(offset.x) + absf(offset.y)) / GameConfig.TILE_SIZE
+		var departure := maxf(arrival, float(_cached_departures[index]) if index < _cached_departures.size() else arrival)
+		var source_start := arrival
+		arrival = departure + crossing_time
+		var source_key := "%d,%d" % [previous.x, previous.y]
+		var key := "%d,%d" % [cell.x, cell.y]
+		if timed:
+			if not BombTimeline.is_window_safe(intervals, previous, source_start, arrival) or not BombTimeline.is_window_safe(intervals, cell, departure, arrival):
+				return false
+		elif arrival + 100.0 >= float(threats.get(source_key, INF)) or arrival + 100.0 >= float(threats.get(key, INF)):
+			return false
+		previous = cell
+	return true
+
+func _msec_per_tile(player) -> float:
+	var speed: float = GameConfig.BASE_SPEED * GameConfig.get_skate_speed_multiplier(player.skate_count) * player.get_virus_speed_modifier()
+	return 1000.0 * GameConfig.TILE_SIZE / maxf(speed, 1.0)
 
 func _unsafe_arrival(tile: Vector2i, player, sampler, predictor) -> bool:
 	var offset: Vector2 = sampler.tile_to_world_center(tile) - player.position

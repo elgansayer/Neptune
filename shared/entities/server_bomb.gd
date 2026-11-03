@@ -23,6 +23,7 @@ var explosion_range: int = 2
 var explosion_timer: float = Constants.BOMB_TIMER
 var fuse_time: float = Constants.BOMB_TIMER  # Can be modified by SHORT_FUSE curse
 var fuse_lower_bound: float = Constants.BOMB_TIMER # Public planning bound; random long-fuse sample remains private.
+var fuse_upper_bound: float = Constants.BOMB_TIMER # Public rule bound, not sampled fuse_time.
 var has_exploded := false
 var game_instance: Node = null # Reference to GameInstance for collision checking
 
@@ -286,7 +287,81 @@ func expand_explosion():
 
 func get_forecast_observation() -> Dictionary:
 	return {"cell": get_tile_position(), "range": explosion_range,
-		"fuse_lower_bound": fuse_lower_bound, "elapsed": explosion_timer}
+		"fuse_lower_bound": fuse_lower_bound, "fuse_upper_bound": fuse_upper_bound,
+		"elapsed": explosion_timer, "state": bomb_state, "bomb_type": bomb_type,
+		"kick_direction": kick_direction, "blast_cells": get_public_blast_cells(),
+		"flight": get_public_flight()}
+
+func get_public_flight() -> Dictionary:
+	if bomb_state != BombState.THROWN:
+		return {}
+	var remaining: Array = []
+	for index in range(current_waypoint_index, bounce_waypoints.size()):
+		remaining.append([bounce_waypoints[index].x, bounce_waypoints[index].y])
+	var frame_sec := maxf(Engine.time_scale, 1.0) / Engine.physics_ticks_per_second
+	var first_sec := maxf(0.0, 1.0 - throw_progress) * THROW_DURATION
+	var minimum_sec := first_sec
+	var maximum_sec := first_sec + maxi(remaining.size() - 1, 0) * THROW_DURATION + (remaining.size() + 1) * frame_sec
+	var diagonal := Vector2(GameConfig.map_width, GameConfig.map_height).length() * GameConfig.TILE_SIZE
+	var trajectory := {}
+	var previous := position
+	var complete := remaining.size() > 0 and remaining.size() <= 64
+	for index in range(remaining.size()):
+		var point := Vector2(float(remaining[index][0]), float(remaining[index][1]))
+		var wraps := previous.distance_to(point) > diagonal * 0.5
+		if index > 0 and not wraps:
+			minimum_sec += THROW_DURATION
+		if wraps:
+			for edge in [previous, point]:
+				trajectory[Vector2i(floori(edge.x / GameConfig.TILE_SIZE), floori(edge.y / GameConfig.TILE_SIZE))] = true
+		else:
+			var samples := maxi(1, ceili(maxf(absf(point.x - previous.x), absf(point.y - previous.y)) / GameConfig.TILE_SIZE * 2.0))
+			if trajectory.size() + samples > 1024:
+				complete = false
+				break
+			for sample in range(samples + 1):
+				var probe: Vector2 = previous.lerp(point, float(sample) / samples)
+				trajectory[Vector2i(floori(probe.x / GameConfig.TILE_SIZE), floori(probe.y / GameConfig.TILE_SIZE))] = true
+		previous = point
+	var landing := {}
+	var last_start: Vector2 = current_arc_start if bounce_waypoints.size() < 2 else bounce_waypoints[-2]
+	var last_target := throw_target_pos
+	# _land_bomb uses the previous interpolated ground position. Cover its
+	# complete last-physics-step range, including a final wrap segment.
+	var fraction := maxf(0.0, 1.0 - frame_sec / THROW_DURATION)
+	var near_end: Vector2 = last_start.lerp(last_target, fraction)
+	if last_start.distance_to(last_target) > diagonal * 0.5:
+		near_end = last_start
+	var landing_samples := maxi(1, ceili(maxf(absf(last_target.x - near_end.x), absf(last_target.y - near_end.y)) / GameConfig.TILE_SIZE * 2.0))
+	if last_start.distance_to(last_target) > diagonal * 0.5:
+		landing_samples = 1
+	if landing_samples > 1024:
+		complete = false
+		landing_samples = 1
+	for sample in range(landing_samples + 1):
+		var probe: Vector2 = near_end.lerp(last_target, float(sample) / landing_samples)
+		landing[Vector2i(floori(probe.x / GameConfig.TILE_SIZE), floori(probe.y / GameConfig.TILE_SIZE))] = true
+	var trajectory_cells: Array = []
+	var landing_cells: Array = []
+	for cell in trajectory:
+		trajectory_cells.append([cell.x, cell.y])
+	for cell in landing:
+		landing_cells.append([cell.x, cell.y])
+	return {"complete": complete, "throw_start": [throw_start_pos.x, throw_start_pos.y],
+		"throw_target": [throw_target_pos.x, throw_target_pos.y], "arc_target": [current_arc_target.x, current_arc_target.y],
+		"progress": throw_progress, "waypoint_index": current_waypoint_index,
+		"remaining_waypoints": remaining, "minimum_remaining_msec": minimum_sec * 1000.0,
+		"maximum_remaining_msec": maximum_sec * 1000.0,
+		"trajectory_cells": trajectory_cells, "landing_cells": landing_cells}
+
+func get_public_blast_cells() -> Array:
+	# This pattern is already sent to clients by the exploded event. It was
+	# fixed at detonation and must survive later terrain changes in observations.
+	var cells: Array = []
+	if has_exploded:
+		for segment in explosion_pattern:
+			cells.append([int(segment.grid_pos.x), int(segment.grid_pos.y)])
+	return cells
 
 func get_state_minimal() -> Dictionary:
 	# Minimal state for frequent updates - position, timer, state
@@ -311,6 +386,9 @@ func get_state() -> Dictionary:
 		"position": {"x": position.x, "y": position.y},
 		"timer": explosion_timer,
 		"fuse_lower_bound": fuse_lower_bound,
+		"fuse_upper_bound": fuse_upper_bound,
+		"blast_cells": get_public_blast_cells(),
+		"flight": get_public_flight(),
 		"range": explosion_range,
 		"state": bomb_state,
 		"carrier_id": carrier_id,

@@ -12,6 +12,7 @@ var _default_buffer := 0.1 # 0.1s doctrine standard
 var _danger_cache := {}
 var _threat_matrix := {} # Full ThreatMatrix: tile_key -> time_to_lethal
 var _safety_map := {} # SafetyMap: tile_key -> time_to_reach_safety
+var _safety_map_ready := false
 var _current_time := 0.0
 
 func configure(instance: Node, sampler, default_buffer: float = 0.1) -> void:
@@ -19,24 +20,33 @@ func configure(instance: Node, sampler, default_buffer: float = 0.1) -> void:
 	_grid_sampler = sampler
 	_default_buffer = default_buffer
 
-func refresh(current_time: float, force_observation: bool = true) -> void:
+func refresh(current_time: float, force_observation: bool = true,
+		shared_milliseconds: Variant = null, shared_time_msec: float = -INF) -> void:
 	if force_observation and is_instance_valid(_game_instance) and _game_instance.has_method("refresh"):
 		_game_instance.refresh(true)
 	_current_time = current_time
 	_danger_cache.clear()
 	_threat_matrix.clear()
 	_safety_map.clear()
+	_safety_map_ready = false
 	
 	if _game_instance == null:
 		return
 	
-	var milliseconds: Dictionary = BombForecast.build(_game_instance, _grid_sampler, current_time * 1000.0)
+	# A production manager already computed this public forecast for the same
+	# observation/clock phase. Reuse its values without aliasing or mutating it.
+	# Timestamp mismatch and standalone calls retain the independent build path.
+	var milliseconds: Dictionary
+	if not force_observation and shared_milliseconds is Dictionary and is_finite(shared_time_msec) and absf(shared_time_msec - current_time * 1000.0) <= 0.000001:
+		milliseconds = shared_milliseconds
+	else:
+		milliseconds = BombForecast.build(_game_instance, _grid_sampler, current_time * 1000.0)
 	for key in milliseconds:
 		_threat_matrix[key] = milliseconds[key] / 1000.0
 	_danger_cache = _threat_matrix.duplicate()
 
-	# Build SafetyMap for escape route analysis
-	_build_safety_map()
+	# The active policy uses its time-aware planner; legacy SafetyMap consumers
+	# construct this full-map BFS only when they actually ask for it.
 
 func get_time_to_safety(tile: Vector2i, current_time: float) -> float:
 	var danger_time = _danger_cache.get(_tile_key(tile), -INF)
@@ -111,6 +121,7 @@ func _tile_key(tile: Vector2i) -> String:
 
 ## Core Algorithm: SafetyMap (Doctrine Section 4.1)
 func _build_safety_map() -> void:
+	_safety_map_ready = true
 	if _grid_sampler == null:
 		return
 	
@@ -158,6 +169,8 @@ func _build_safety_map() -> void:
 
 ## Check if bot at tile is in mortal danger (Doctrine survival check)
 func is_in_mortal_danger(tile: Vector2i, current_time: float, buffer: float = 0.1) -> bool:
+	if not _safety_map_ready:
+		_build_safety_map()
 	var key = _tile_key(tile)
 	var threat_time = _threat_matrix.get(key, INF)
 	var safety_time = _safety_map.get(key, INF)
@@ -175,4 +188,6 @@ func is_in_mortal_danger(tile: Vector2i, current_time: float, buffer: float = 0.
 
 ## Get time to reach nearest safety from tile
 func get_safety_time(tile: Vector2i) -> float:
+	if not _safety_map_ready:
+		_build_safety_map()
 	return _safety_map.get(_tile_key(tile), INF)

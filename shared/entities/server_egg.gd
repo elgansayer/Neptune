@@ -77,9 +77,23 @@ func _can_be_collected_by(body: Node) -> bool:
 
 func _collect(body: Node):
 	"""Handle egg collection - spawn or level up Tirra"""
+	if collected or destroyed:
+		return
 	collected = true
+	set_deferred("monitoring", false)
+	# Schedule on the script's static callable, not this soon-to-be-freed egg.
+	# Only weak actor/world references cross the physics-query boundary.
+	var finish: Callable = ServerEgg._finish_collection
+	finish.call_deferred(weakref(body), weakref(get_parent()), TIRRA_SCENE, global_position)
 	egg_collected.emit(self)
-	
+	queue_free()
+
+static func _finish_collection(player_ref: WeakRef, world_ref: WeakRef, scene: PackedScene, spawn_position: Vector2) -> void:
+	var body = player_ref.get_ref()
+	var world = world_ref.get_ref()
+	if not is_instance_valid(body) or not is_instance_valid(world) or body.is_queued_for_deletion() \
+			or world.is_queued_for_deletion() or body.get_parent() != world or body.is_dead:
+		return
 	# If player already has a mounted Tirra, level it up instead
 	if body.is_mounted and body.mounted_tirra:
 		if body.mounted_tirra.has_method("level_up"):
@@ -92,42 +106,42 @@ func _collect(body: Node):
 			return
 	
 	# Spawn new Tirra
-	_spawn_tirra(body)
+	_spawn_tirra(body, world, scene, spawn_position)
 
-func _spawn_tirra(player: Node):
+static func _spawn_tirra(player: Node, world: Node, scene: PackedScene, spawn_position: Vector2):
 	"""Spawn a new Tirra at the egg's position"""
 	print("[ServerEgg] Hatching Tirra for player: ", player.username if "username" in player else "unknown")
 	
-	if not TIRRA_SCENE:
+	if not scene:
 		push_warning("[ServerEgg] Failed to load tirra.tscn from PCK - ensure blue-tirra.pck is mounted")
 		return
 	
 	# Instantiate the Tirra
-	var tirra = TIRRA_SCENE.instantiate()
+	var tirra = scene.instantiate()
 	tirra.name = "Tirra_" + str(randi())
-	tirra.global_position = global_position
+	tirra.position = spawn_position
 	
 	# Add to groups for detection
 	tirra.add_to_group("tirras")
 	tirra.add_to_group("mounts")
 	
 	# Add pickup area using scene
-	_add_tirra_pickup_area(tirra, player)
+	_add_tirra_pickup_area(tirra)
 	
 	# Add to game world
-	var parent = get_parent()
-	if parent:
-		parent.add_child(tirra)
+	if is_instance_valid(world):
+		world.add_child(tirra)
+		tirra.global_position = spawn_position
 		print("[ServerEgg] Tirra spawned at position: ", tirra.global_position)
 		
 		# Register with game_instance for network sync
-		if parent.has_method("register_tirra"):
-			parent.register_tirra(tirra)
+		if world.has_method("register_tirra"):
+			world.register_tirra(tirra)
 	else:
 		push_warning("[ServerEgg] No parent to add Tirra to")
 		tirra.queue_free()
 
-func _add_tirra_pickup_area(tirra: Node2D, player: Node):
+static func _add_tirra_pickup_area(tirra: Node2D):
 	"""Add pickup area to Tirra using scene instance"""
 	if tirra.get_node_or_null("PickupArea"):
 		return  # Already has one
@@ -140,14 +154,14 @@ func _add_tirra_pickup_area(tirra: Node2D, player: Node):
 		collision.shape.size = Vector2(GameConfig.TILE_SIZE * 0.8, GameConfig.TILE_SIZE * 0.8)
 	
 	# Connect signal for remounting
-	pickup_area.body_entered.connect(_on_tirra_pickup.bind(tirra))
+	pickup_area.body_entered.connect(ServerEgg._on_tirra_pickup.bind(tirra))
 	
 	tirra.add_child(pickup_area)
 	
 	# Enable monitoring after adding to scene tree (deferred)
 	pickup_area.set_deferred("monitoring", true)
 
-func _on_tirra_pickup(body: Node, tirra: Node2D):
+static func _on_tirra_pickup(body: Node, tirra: Node2D):
 	"""Handle player walking over a dropped Tirra"""
 	if not is_instance_valid(tirra):
 		return

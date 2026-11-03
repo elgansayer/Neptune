@@ -12,6 +12,10 @@ hazard infrastructure without sharing objectives or fairness assumptions. #55
 adds role-specific proof; #30–#32 remain the initial competitive priorities.
 Unknown mod effects must never be assumed safe from untrusted author hints.
 
+The [3 November production-quality research and implementation roadmap](BOT_QUALITY_RESEARCH.md)
+audits the active pipeline, cites primary research, separates current repairs
+from remaining work and proposes measurable policy-promotion gates.
+
 ## Two explicitly different policies
 
 1. Saturn CPU: behaviour reproduced from the selected original release, difficulty
@@ -61,6 +65,11 @@ decisions local and bounded; no external LLM requests inside the match tick.
 
 Per-participant policy seed/state and its limits are documented in
 [BOT_POLICY_RNG.md](BOT_POLICY_RNG.md).
+
+The enhanced policy's simulation-clock strategic reaction delay and explicitly
+immediate public-hazard reflex are documented in
+[BOT_DECISION_CADENCE.md](BOT_DECISION_CADENCE.md). Running movement continues at
+physics cadence; this is not yet a complete tuned difficulty/observation model.
 
 The implemented authority clock and its units/physics phases are documented in
 [SIMULATION_TIME.md](SIMULATION_TIME.md). Controlled clock experiments are separate
@@ -129,3 +138,8 @@ AI development agents can run tournaments, inspect replays, propose policy chang
 and tune parameters offline. Promote a candidate only if regression, fairness,
 held-out quality and performance gates all pass. Keep the prior policy available
 for rollback. Optional learned policies come after a reliable heuristic baseline.
+
+The enhanced policy also consumes remote-bomb inventory through validated
+detonation commands after retreat and the strategic reaction delay. It refuses
+optional detonation from any observed blast lane. This is covered by
+`tests/test_bot_remote_detonation.gd`; it does not predict future opponent inputs.

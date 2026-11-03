@@ -3,6 +3,7 @@ extends BTCondition
 class_name BTCanSafelyPlant
 
 const SimulationTime = preload("res://shared/ai/simulation_time.gd")
+const MovementTiming = preload("res://shared/ai/movement_timing.gd")
 
 ## Validates that the selected farming tile can be bombed safely and caches an escape cell
 
@@ -32,29 +33,21 @@ func _tick(_delta: float) -> int:
 	
 	var bomb_range = player.get_effective_bomb_range()
 	var current_time_msec = SimulationTime.milliseconds(blackboard)
-	var bot_speed = 5.0
+	var bot_speed := MovementTiming.tiles_per_second(player)
+	if bot_speed <= 0.0: return FAILURE
 	
-	if not bomb_safety_checker.can_safely_plant_bomb(
+	var safety = bomb_safety_checker.check_plant_safety_detailed(
 		target_tile,
 		target_tile,
 		bomb_range,
 		bot_speed,
 		current_time_msec,
-		player.get_bomb_fuse_lower_bound()
-	):
+		false, player.get_bomb_fuse_lower_bound(), player)
+	if not safety.get("safe", false) or float(safety.get("margin_ms", 0.0)) < min_safety_margin_ms:
 		blackboard.set_var(escape_target_var, null)
 		_debug("Safety checker rejected tile %s (range=%d)" % [target_tile, bomb_range])
 		return FAILURE
-	
-	var escape_tile = _find_escape_tile(
-		target_tile,
-		bomb_range,
-		ai_manager,
-		grid_sampler,
-		bot_speed,
-		current_time_msec,
-		player.get_bomb_fuse_lower_bound()
-	)
+	var escape_tile := _coerce_to_tile(safety.get("escape_tile", INVALID_TILE))
 	
 	if escape_tile == INVALID_TILE:
 		blackboard.set_var(escape_target_var, null)

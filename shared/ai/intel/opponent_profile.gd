@@ -11,6 +11,7 @@ var player_name: String = ""
 # Observation data
 var last_seen_pos: Vector2i = Vector2i.ZERO
 var last_seen_time: float = 0.0
+var has_observation: bool = false
 var current_path: PackedVector2Array = PackedVector2Array()
 
 # Behavioral scores (updated in real-time via heuristic analysis)

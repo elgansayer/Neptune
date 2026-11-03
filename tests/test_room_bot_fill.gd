@@ -1,5 +1,7 @@
 extends "res://tests/bot_test_suite.gd"
 
+const Runtime = preload("res://shared/runtime_config.gd")
+
 func make_game_instance() -> GameInstance:
 	return load("res://tests/support/fixture_bot_fill_game.gd").new()
 
@@ -46,6 +48,16 @@ func test_initial_boundary_creates_real_fair_bots_and_controllers() -> Variant:
 			if not is_instance_valid(controller) or actor.bot_personality != "DEFENSIVE" or bot_manager.get_bot_policy_snapshot(id).is_empty():
 				return "Fill lacks real bot/controller/policy lineage"
 	return assert_true(cells.size() == 4 and game_instance.last_bot_fill_result.added == 3, "Actual initial actors require distinct reserved starts")
+
+func test_runtime_defaults_fill_casual_rooms_and_explicit_zero_disables() -> Variant:
+	var defaults := Runtime.parse_arguments([], "res://main_server.tscn")
+	var disabled := Runtime.parse_arguments(["--room-fill-to=0"], "res://main_server.tscn")
+	var explicit := Runtime.parse_arguments(["--room-fill-to=4"], "res://main_server.tscn")
+	return assert_true(defaults.error.is_empty() and defaults.room_fill_to == 4 and defaults.room_fill_default
+		and defaults.room_bot_personality == "BALANCED" and disabled.error.is_empty()
+		and disabled.room_fill_to == 0 and not disabled.room_fill_default
+		and explicit.room_fill_to == 4 and not explicit.room_fill_default,
+		"Omitted targets use a bounded casual default; explicit targets preserve operator intent")
 
 func test_existing_humans_and_bots_count_without_replacement() -> Variant:
 	game_instance.configure_room_bot_fill(4, "DEFENSIVE")
@@ -123,4 +135,4 @@ func test_disabled_policy_adds_no_bots_and_capacity_cannot_undercut_target() -> 
 	game_instance.configure_room_bot_fill(0)
 	_human(701)
 	_start()
-	return assert_true(game_instance.match_active and game_instance.players.size() == 1 and game_instance.last_bot_fill_result.added == 0, "Default/explicit zero preserves no-fill behavior")
+	return assert_true(game_instance.match_active and game_instance.players.size() == 1 and game_instance.last_bot_fill_result.added == 0, "Explicit zero preserves no-fill behavior")

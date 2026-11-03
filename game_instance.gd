@@ -288,7 +288,7 @@ func _ready():
 		push_error("[GameInstance] Bot manager script missing; bots disabled")
 	else:
 		bot_manager = ServerBotManagerScript.new()
-		bot_manager.auto_spawn_count = 0 # Disabled for Tirra testing - eggs spawn at 100%
+		bot_manager.auto_spawn_count = 0 # Room filling owns admission at the countdown boundary.
 		if bot_policy_seed != null:
 			if not bot_policy_seed is int or not bot_manager.configure_policy_seed(bot_policy_seed):
 				push_error("[GameInstance] Invalid bot policy seed configuration")
@@ -297,7 +297,10 @@ func _ready():
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
 	if not room_bot_fill_request.is_empty():
-		var fill := configure_room_bot_fill(room_bot_fill_request.get("target"), room_bot_fill_request.get("personality"))
+		var target = room_bot_fill_request.get("target")
+		if room_bot_fill_request.get("default_target", false) and target is int:
+			target = mini(target, get_room_capacity().seats)
+		var fill := configure_room_bot_fill(target, room_bot_fill_request.get("personality"))
 		if not fill.accepted:
 			room_setup_result = fill
 			set_physics_process(false)
@@ -829,6 +832,7 @@ func remove_player(peer_id: int, retain_spawn: bool = false):
 			player.collision_mask = 0
 			player.queue_free()
 		players.erase(peer_id)
+		invalidate_public_observation()
 	# Idempotent cleanup also releases stale bookkeeping after an actor was
 	# removed by a trusted fixture/operator before this canonical leave call.
 	var identity: String = _spawn_bindings.get(peer_id, "")
@@ -1164,7 +1168,7 @@ func _detonate_oldest_remote_bomb(player: ServerPlayer) -> String:
 	
 	for bomb_id in bombs:
 		var bomb = bombs[bomb_id]
-		if not is_instance_valid(bomb):
+		if not is_instance_valid(bomb) or bomb.has_exploded:
 			continue
 		if bomb.owner_id != player.player_id:
 			continue
@@ -1312,6 +1316,7 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i) -> Str
 	bomb.explosion_timer = 0.0
 	bomb.fuse_time = player.get_bomb_fuse_time()
 	bomb.fuse_lower_bound = player.get_bomb_fuse_lower_bound()
+	bomb.fuse_upper_bound = player.get_bomb_fuse_upper_bound()
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)
@@ -1362,6 +1367,7 @@ func _place_single_bomb(player: ServerPlayer) -> String:
 	bomb.explosion_timer = 0.0
 	bomb.fuse_time = player.get_bomb_fuse_time() # 1s if cursed, 3s otherwise
 	bomb.fuse_lower_bound = player.get_bomb_fuse_lower_bound()
+	bomb.fuse_upper_bound = player.get_bomb_fuse_upper_bound()
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)

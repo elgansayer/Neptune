@@ -1,6 +1,7 @@
 extends RefCounted
 
 const Capture = preload("res://shared/observations/public_snapshot.gd")
+const ImmutableSnapshot = preload("res://shared/observations/immutable_snapshot.gd")
 var _authority: WeakRef
 var _frame: Dictionary = {}
 var version := 0
@@ -21,6 +22,7 @@ func ensure(force: bool = false) -> void:
 	if force or dirty or _frame.get("tick", -1) != game.simulation_tick or _frame.get("server_time", -1.0) != game.get_simulation_time_msec():
 		var start := Time.get_ticks_usec()
 		_frame = Capture.capture(game)
+		ImmutableSnapshot.freeze(_frame)
 		last_capture_usec = Time.get_ticks_usec() - start
 		max_capture_usec = maxi(max_capture_usec, last_capture_usec)
 		dirty = false

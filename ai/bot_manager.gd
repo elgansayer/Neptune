@@ -13,7 +13,7 @@ const HazardPredictorScript = preload("res://shared/ai/perception/hazard_predict
 const OpponentTrackerScript = preload("res://shared/ai/perception/opponent_tracker.gd")
 const BombPlannerScript = preload("res://shared/ai/perception/bomb_planner.gd")
 const BombSafetyCheckerScript = preload("res://shared/ai/planning/bomb_safety_checker.gd")
-const POLICY_VERSION := "neptune-heuristic-rng-v1"
+const POLICY_VERSION := "neptune-heuristic-v2"
 const POLICY_STATE_FORMAT := "neptune.bot-policy-rng/1"
 
 # Each participant owns its stream. Neither provisioning nor decisions consume
@@ -80,6 +80,16 @@ var perception_world: Node
 var observed_ai_manager: AIManager
 var _observation_views: Dictionary = {}
 var observation_error := ""
+## Diagnostic only: wall timings never enter policy decisions.
+var profile_updates := false
+var profile_stage_samples: Dictionary = {}
+
+func _record_profile_stage(stage: String, started_usec: int) -> int:
+	var now := Time.get_ticks_usec()
+	if not profile_stage_samples.has(stage): profile_stage_samples[stage] = []
+	var samples: Array = profile_stage_samples[stage]
+	if samples.size() < 4096: samples.append(now - started_usec)
+	return now
 
 func refresh_public_observations(force: bool = false) -> void:
 	if is_instance_valid(perception_world):
@@ -235,8 +245,8 @@ func configure(instance) -> void:
 func _configure_safety_checker() -> void:
 	if game_instance != null and game_instance.ai_manager != null:
 		bomb_safety_checker.configure(observed_ai_manager, grid_sampler)
-		bomb_safety_checker.debug_logging = true
-		print("[BotManager] BombSafetyChecker configured with AIManager (debug=ON)")
+		bomb_safety_checker.debug_logging = false
+		print("[BotManager] BombSafetyChecker configured with public AIManager")
 
 func _auto_spawn_bots() -> void:
 	if auto_spawned:
@@ -249,7 +259,10 @@ func _physics_process(delta: float) -> void:
 	if game_instance == null:
 		return
 	
+	var profile_active: bool = profile_updates and game_instance.match_active
+	var stage_started := Time.get_ticks_usec() if profile_active else 0
 	refresh_public_observations(true)
+	if profile_active: stage_started = _record_profile_stage("public_observations", stage_started)
 	observation_error = "" if perception_world.bot_supported else "unsupported_public_observation"
 	# Supported visibility is an admission/runtime requirement, never a safety hint.
 	var should_be_active = game_instance.match_active and observation_error.is_empty()
@@ -267,8 +280,11 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	game_instance.ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
+	if profile_active: stage_started = _record_profile_stage("authority_forecast", stage_started)
 	observed_ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
-	hazard_predictor.refresh(game_instance.get_simulation_time_sec(), false)
+	hazard_predictor.refresh(game_instance.get_simulation_time_sec(), false,
+		observed_ai_manager.threat_matrix, game_instance.get_simulation_time_msec())
+	if profile_active: stage_started = _record_profile_stage("public_forecast_and_predictor", stage_started)
 	opponent_tracker.update_from_players(perception_world.players.values())
 	
 	# Debug log every 120 frames (~2 seconds)
@@ -298,6 +314,7 @@ func _physics_process(delta: float) -> void:
 					# BTRepeatUntilFailure at the tree root already handles continuous re-evaluation.
 					# The previous restart() was causing escape sequences to abort mid-movement.
 					# bt_player.call("restart")  # REMOVED - caused suicide by interrupting escape
+	if profile_active: stage_started = _record_profile_stage("opponent_tracking_and_decisions", stage_started)
 	
 	# Update opponent intelligence profiles
 	if game_instance.ai_manager != null:
@@ -312,6 +329,7 @@ func _physics_process(delta: float) -> void:
 						bot_positions[peer_id] = player_ref.get_tile_position()
 		
 		observed_ai_manager.update_opponent_intel(bot_positions, perception_world.players, delta)
+	if profile_active: _record_profile_stage("opponent_intelligence", stage_started)
 
 func spawn_bots(count: int, personality: String = DEFAULT_PERSONALITY) -> void:
 	for i in range(count):
@@ -454,4 +472,5 @@ func refresh_perception() -> void:
 	if hazard_predictor:
 		refresh_public_observations(true)
 		observed_ai_manager.refresh_threat_matrix(game_instance.get_simulation_time_msec())
-		hazard_predictor.refresh(game_instance.get_simulation_time_sec(), false)
+		hazard_predictor.refresh(game_instance.get_simulation_time_sec(), false,
+			observed_ai_manager.threat_matrix, game_instance.get_simulation_time_msec())
