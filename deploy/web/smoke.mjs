@@ -74,7 +74,7 @@ function latest(visitor) { return visitor.snapshots.at(-1); }
 
 async function openVisitor(name, context) {
   const page = await context.newPage();
-  const visitor = {name, page, snapshots: [], logs: [], logBytes: 0, loaded: new Set(), authCount: 0, connectedCount: 0,
+  const visitor = {name, page, snapshots: [], logs: [], logBytes: 0, snapshotBytes: 0, loaded: new Set(), authCount: 0, connectedCount: 0,
     mapCount: 0, navigations: 0, sockets: [], context};
   visitors.push(visitor);
   page.on('pageerror', error => errors.push(`[${name}] ${error.stack || error}`));
@@ -87,18 +87,23 @@ async function openVisitor(name, context) {
   });
   page.on('console', message => {
     const line = message.text();
-    visitor.logBytes += Buffer.byteLength(line, 'utf8');
+    // State receipts are retained once in their bounded JSON artifact. Keeping
+    // another copy in the text log exhausted its budget in normal 180s rounds.
+    const isState = line.startsWith(STATE_MARKER);
+    visitor.logBytes += isState ? 0 : Buffer.byteLength(line, 'utf8');
     if (visitor.logBytes > 16 * 1024 * 1024) {
       if (!errors.some(value => value.includes(`${name}: bounded log`))) errors.push(`${name}: bounded log budget exceeded`);
       return;
     }
-    visitor.logs.push(`[${message.type()}] ${line}`);
+    if (!isState) visitor.logs.push(`[${message.type()}] ${line}`);
     if (line.includes('[Client] Connected to server!')) visitor.connectedCount++;
     if (line.includes('[Client] Authentication successful!')) visitor.authCount++;
     if (line.includes('[GameView] Map rendered')) visitor.mapCount++;
     if (consoleFailure(message.type(), line)) errors.push(`[${name}] ${line}`);
     if (line.startsWith(STATE_MARKER)) {
       try {
+        visitor.snapshotBytes += Buffer.byteLength(line, 'utf8');
+        assert.ok(visitor.snapshotBytes <= 64 * 1024 * 1024, 'Bounded state receipt byte budget exceeded');
         const diagnostic = parseDiagnostic(line);
         checkRelease(diagnostic, expectedRevision);
         if (mode === 'full') checkConfiguration(diagnostic, expectedDuration, expectedCountdown, expectedIntermission);
@@ -137,6 +142,8 @@ async function screenshot(visitor, label) {
 }
 
 async function exerciseHuman(visitor, epoch) {
+  await visitor.page.bringToFront();
+  await visitor.page.locator('canvas').click();
   const peerId = latest(visitor).peer_id;
   const atStart = await waitFor(visitor, () => {
     const value = latest(visitor);
@@ -189,12 +196,9 @@ try {
     const active1 = await waitFor(first, () => first.snapshots.find(value => value.state.round.epoch === epoch1 && value.state.round.phase === 'active'), 'first active round', 10000);
     checkRoster(active1, [peerId]);
     const lateContext = await browser.newContext();
-    let lateError;
-    const pendingLate = openVisitor('late', lateContext).catch(error => { lateError = error; return null; });
     const input1 = await exerciseHuman(first, epoch1);
     await screenshot(first, 'battle');
-    const late = await pendingLate;
-    if (lateError) throw lateError;
+    const late = await openVisitor('late', lateContext);
     const lateId = latest(late).peer_id;
     const spectating = await waitFor(late, () => late.snapshots.find(value => value.state.round.epoch === epoch1 && value.state.round.phase === 'active'), 'late visitor observes current active arena', 10000);
     assert.ok(!spectating.state.p[lateId], 'Late arrival was inserted into a live battle');
@@ -256,7 +260,8 @@ try {
     if (!visitor.page.isClosed()) await screenshot(visitor, 'final').catch(error => errors.push(String(error)));
     const summary = {name: visitor.name, connected: visitor.connectedCount, authenticated: visitor.authCount,
       maps: visitor.mapCount, navigations: visitor.navigations, loaded: [...visitor.loaded], sockets: visitor.sockets,
-      snapshots: visitor.snapshots.length, peer_ids: [...new Set(visitor.snapshots.map(value => value.peer_id))]};
+      snapshots: visitor.snapshots.length, state_bytes: visitor.snapshotBytes, log_bytes: visitor.logBytes,
+      peer_ids: [...new Set(visitor.snapshots.map(value => value.peer_id))]};
     report.visits.push(summary);
     await writeFile(path.join(evidenceDir, `${visitor.name}.log`), visitor.logs.join('\n') + '\n');
     await writeFile(path.join(evidenceDir, `${visitor.name}-states.json`), JSON.stringify(visitor.snapshots, null, 2) + '\n');
