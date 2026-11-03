@@ -255,3 +255,7 @@ Its adjacent B272 state selector has also been exhaustively exercised across
 all 65,536 status words and all 65,536 returned-word patterns in paired original
 execution reports. Natural state ownership remains unresolved; see the same
 research note.
+
+The adjacent B3BC interrupt callback has a paired original-byte result for its
+one-word cache-through flag store. Its interrupt source and invocation timing
+remain open in the [Japan kernel study](../research/2026-11-03-japan-record-address.md).

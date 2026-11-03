@@ -435,6 +435,17 @@ The 160-instruction continuation beginning at B270 has SHA-256
 exposes the B272 selector immediately before startup callbacks B2C8, B2FC, and
 B344.
 
+The same continuation reaches interrupt callback B3BC, which loads the
+cache-through pointer `0x2600A03C`, sets R3 to one, and stores that longword in
+the RTS delay slot. The original-byte probe executes 64 distinct initial-word
+patterns twice per report, checks the sole literal read and sole target write,
+samples register/SR/PR preservation, and detects removal of the delay-slot
+store. Paired reports in execution-074/075 match at SHA-256
+`43c946b70b95fb14c3d5c99a55d511bd3185048fa9327ca2af7b163385346f14`; result
+rows hash to `a0bdd66472c6d64c6121ca92af7bccc5d7bed83a9b05a22b27f0daae06bca484`.
+This proves only the callback's one-word leaf behavior; its real interrupt
+source, invocation order and lifetime remain unverified.
+
 The A1DA callback literal at `0x0600A2B4` resolves to original target
 `0x0600CCD2`. Its static entry zeroes four words at `0x060BEA3C`, initializes
 six short entries at `0x060BEA7C` and associated pointer records, then calls
