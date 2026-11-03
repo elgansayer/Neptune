@@ -34,14 +34,18 @@ fixed 128-slot storage capacity: 1,810 logical events, 128 stored records,
 was not increased; the overflow evidence is retained for future instrumentation
 work.
 
-The natural trace also captures the wrapper at `0x06095992`, which calls
-`0x060959CA` from `0x060959AA` and resumes at `0x060959AE`. Original bytes and
-the captured SR values support the bounded interpretation that it saves PR
-and the previous interrupt-priority nibble, raises the priority to `0xF` while
-the nested service runs (`SR 0x0101` to `0x01F1`), then restores the saved
-priority before returning. It is a static interpretation corroborated by
-natural execution events, not a standalone wrapper replay. The evidence is at
-`/home/dev/neptune-research-private/707/wrapper-recovery-001/report.json`.
+The natural trace captures the wrapper at `0x06095992`, its call to `0x060959CA`
+from `0x060959AA`, and continuation at `0x060959AE`. A guarded CPU-only replay
+then started from the captured wrapper registers, SR, PR and stack; it executed
+199 original SH-2 instructions across the wrapper and nested service and
+returned to the captured caller PC `0x060A4FD0`. The wrapper raised SR priority
+from `0x0101` to `0x01F1` around the nested service, then its restore sequence
+returned to the caller state. The replay reproduced the captured 13 device
+reads and five writes, returned `R0=0`, and changed global word `0x060FA8B8`
+from `0x0FD4` to `0x0F94`. Its four-word output buffer was reconstructed from
+the observed device writes, and no CD device timing was modeled. Evidence:
+`/home/dev/neptune-research-private/707/wrapper-recovery-002/replay-report.json`
+(SHA256 `0071681357d1fdccd90fcde0f8e29db1bd670780fa30e5bb8b8d144d10b97c4a`).
 
 A second CPU-only replay of original function `0x060959CA` used the captured
 natural registers and stack, status `0x0BC5`, seven `0x0B84` polls then `0x0B85`,
@@ -52,7 +56,7 @@ device reads and five writes, and changed the captured global word from
 observed device writes. The report is
 `/home/dev/neptune-research-private/707/wrapper-recovery-001/replay-report.json`.
 This remains one service path and does not establish timeout behavior, CD
-hardware timing, complete outer-root semantics or gameplay meaning.
+hardware timing or gameplay meaning.
 
 The observer validator now finds the root sequence by its observed source call
 and following delay/entry events, allowing unrelated bus events earlier in the
