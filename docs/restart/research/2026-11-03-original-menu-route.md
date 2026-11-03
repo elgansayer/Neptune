@@ -29,8 +29,13 @@ under `/home/dev/neptune-evidence/code712-20261103/original-a0ec-study-20261103/
 in `navigation-034` through `navigation-054`.
 
 The latest resumable state is
-`navigation-054/start-pulse-then-release-60/checkpoint.json`, frame 9451, state
-SHA-256 `0f2c9a8651bd23ff2195046802f4a9ca77a854894fbc35b7e25966390fd7857d`.
+`navigation-061/start-pulse-then-release-60/checkpoint.json`, frame 10711, state
+SHA-256 `6bfb06e81e7546a1744167b4c246c2c60280907bd97b22fbebe85fe2f6396f89`.
+The latest prompt screen has Quit outlined after a one-frame Up then Saturn A
+input; this has not produced a gameplay state. Further bounded runs 055–061
+retained transitions between the setup shell and Match/Series/Quit prompt, but
+did not establish a route into an arena. Their inputs, images, and receipts stay
+beside the earlier navigation runs.
 Its result and supervisor receipts preserve core/media identity, input schedule,
 screenshots, process status, and hashes. The private application checkpoint at
 `/home/dev/neptune-evidence/code-recovery-app-20261102.json` records the complete
