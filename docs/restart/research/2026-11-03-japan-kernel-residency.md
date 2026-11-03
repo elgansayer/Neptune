@@ -73,9 +73,23 @@ first stub at `0x0600A000`: it loads a literal target `0x0600A114`, jumps throug
 first instruction is a self-branch. At `0x0600A114`, the decoded prefix sets SP
 to `0x060BD91C`, clears the byte range beginning at `0x060B2404` up to the word
 at `0x060B2408`, writes `1` to `0xFFFFFF08` (SH-2 DVCR), calls `0x0600A312`, and
-then loops at `0x0600A13A`. This is static instruction evidence; a save-state
-byte match does not supply a PC trace through that path or a device-side-effect
-model.
+then loops at `0x0600A13A`.
+
+The disassembled `0x0600A312` entry saves `r9..r14` and PR, masks/writes SR,
+calls the BIOS `SYS_CHGSCUIM` and `SYS_SETUINT` vectors, writes cache-through
+address `0x2600A038`, and polls it before proceeding. Its nested `0x0600A472`
+routine reads VDP2 `TVSTAT`, writes its value-derived words to WorkRAM-H, then
+calls BIOS interrupt services and another helper. These references need real
+device and BIOS side-effect semantics before direct replay. Disassembled
+Japanese `0x0600A4B0` is an immediate inside `A472`, not the USA `A4B0` helper;
+absolute addresses cannot be transferred between regional kernels without
+matching source evidence.
+
+This is static instruction evidence; a save-state byte match does not supply a
+PC trace through that path or a device-side-effect model. Full private decode
+output is retained at
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/analysis/next-kernel-functions.txt`
+(SHA-256 `15b8f624d261a31e6ea5600ebfd442d02d6c1a39b3963be29ada660df3c035d2`).
 
 Next, identify the executed Japanese startup path around `0x0600A312`, verify
 its device interactions before direct replay, and map further Japan-only ranges
