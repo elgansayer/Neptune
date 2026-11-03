@@ -1,6 +1,6 @@
 # Separate native command observation under707
 
-**Not an installed or ready native observer.** The source patch component, separate GPL header, ctypes ABI, and owned compiled fixtures are implemented. The trusted recipe and exact-head CI workflow are integrated. The exact-head provisioning and native-check runs passed; their matched-core package was transferred with verified source/recipe/binary receipts and reused twice locally under the guarded worker. Original execution remains required.
+**Not an installed or ready native observer.** The source patch component, separate GPL header, ctypes ABI, and owned compiled fixtures are implemented. The trusted recipe and exact-head CI workflow are integrated. The exact-head provisioning and native-check runs passed; their matched-core package was transferred with verified source/recipe/binary receipts and reused twice locally under the guarded worker. A reference-only continuation from the accepted frame1200 seed reached frame1800 and saved a verified full-kernel-resident checkpoint. The prepared observer then executed600 original frames from that checkpoint, but its bounded128-record buffer overflowed at129 actual CD word transfers before a complete root could be accepted. This remains a failed natural capture; an accepted command trace is still required.
 The all-original-code programme and655 remain active and incomplete.
 
 Original command-packing PR706 retains9,152 pending-boundary cases/run twice.
@@ -76,8 +76,9 @@ aggregate gate) passed. Job125960585219 built the matched core, exercised the no
 ABI/fence smoke, and verified first-build/reuse identity. The artifact transfer receipt
 is `/home/dev/neptune-research-private/707/ci-preparation-001/command-trace-transfer-verification.json`; binary SHA256 is
 `3a95acef8cc6e20297d907a9658f6ae6c067f8ae1a72dbb84a594b742938184a`. Two guarded local cache-reuse attempts passed with that same binary. CI received no game/BIOS.
-Next run two fresh reference/disabled/enabled600-frame windows per profile from
-the accepted frame1200 seed. Compare exact canonical import/final state and every
+Next resolve the retained buffer overflow without discarding repeated polls or
+exceeding the configured128-record boundary. Then run two fresh reference/disabled/
+enabled600-frame windows per profile from the verified frame1800 seed. Compare exact canonical import/final state and every
 native video/audio/input observation, repeat enabled traces, verify independent
 source witnesses and reject semantic record-copy controls. Keep failures private.
 Tool preparation is not original evidence; native boundary/device traces alone do

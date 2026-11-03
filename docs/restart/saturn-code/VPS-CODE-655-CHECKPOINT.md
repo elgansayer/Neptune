@@ -28,7 +28,7 @@ compiled address/bus/CPU/RAM/WB nonmutation fixtures. Exact-head provisioning ru
 and`/home/dev/neptune-evidence/code655-20261102/command-observer-provision-factory-002.log`.
 A retained GPL source-archive proof restores all six
 original source-pin hashes before applying the component with an owned nonobserver
-header: `.../707/patcher-pin-_bb68yfc/report.json`. The separate generation was built in CI and reused locally; no original game frames are yet claimed.
+header: `.../707/patcher-pin-_bb68yfc/report.json`. The separate generation was built in CI and reused locally. A guarded reference-only continuation from the accepted frame1200 seed reached frame1800 and produced a verified full-kernel-resident checkpoint. The command observer then executed600 original frames from frame1800 but overflowed its retained128-record buffer at129 actual CD word transfers before any complete root was accepted. The failed capture and reference artifacts are under`/home/dev/neptune-research-private/707/`; no command function is yet accepted.
 
 The pinned core fuses load→compare→branch. Capturing only at the next dispatch
 could miss the immediate postload. The patcher observes the actualMemRead16 result
@@ -36,7 +36,7 @@ afterWB_WRITE and actualMemWrite16 value after transfer, with one address evalua
 no secondbusaccess and byte-identical existing tripletfusion. The header retains the
 master prehook PC/opcode, fusedNOP continuity, source-call/return boundaries, and
 actual command/response snapshots with validity tags and a final source-witness recheck. Compiled fixtures do not yet
-validate these hooks inside the matched core. Next run freshreference/disabled/enabled original windows from the accepted frame1200 seed, preserving all three modes and repeats. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
+validate these hooks inside the matched core. Next resolve the natural transfer overflow without dropping repeated polls or raising the configured128-record limit, then run freshreference/disabled/enabled original windows from the verified frame1800 seed, preserving all modes and repeats. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
 corebuild below configured preparation reserve. Exact inspection command:
 `python3 /home/dev/neptune-evidence/code655-20261102/check-command-patcher-pin.py`.
 It creates fresh private matched-source component proof, not originalexecution.

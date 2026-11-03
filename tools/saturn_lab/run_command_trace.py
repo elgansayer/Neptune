@@ -25,6 +25,9 @@ def boot_residency(state,kernel):
     except ValueError as e:
         if str(e)!='Original command source witness absent from High Work RAM': raise
         return []
+def record_json(r):
+    return {name:(list(getattr(r,name)) if isinstance(getattr(r,name),observer.C.Array) else int(getattr(r,name)))
+            for name,_ in observer.Record._fields_}
 def run(a):
     if a.profile not in (1,2) or a.mode not in ('reference','disabled','enabled') or not 1<=a.frames<=600 or not 0<=a.start_frames<=a.frames: raise ValueError('Invalid bounded command window')
     if a.output.exists(): raise ValueError('Fresh private output required')
@@ -76,7 +79,7 @@ def run(a):
                 tracer.dll.neptune_command_stop(); rows,status=tracer.snapshot()
                 result['failed_trace_status']={n:getattr(status,n) for n,_ in status._fields_}
                 diagnostic={'schema':'neptune.failed-command-trace-diagnostic.v1','accepted':False,
-                            'status':result['failed_trace_status'],'records':[observer.serialise(r) for r in rows],
+                            'status':result['failed_trace_status'],'records':[record_json(r) for r in rows],
                             'first_mismatched_source_witness':tracer.witness(True)}
                 (a.output/'failed-command-records.json').write_text(json.dumps(diagnostic,indent=2,sort_keys=True)+'\n')
             except Exception as e: result['diagnostic_error']={'type':type(e).__name__,'reason':str(e)}
