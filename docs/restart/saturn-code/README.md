@@ -149,3 +149,10 @@ pairs with two wrong-opcode controls. Residency is not a complete executable
 range map or proof that every matching instruction ran; the helpers are not
 natural-caller validation, and Japan startup/device semantics and the all-module
 denominator remain open.
+
+The subsequent [Japanese record-address helper result](../research/2026-11-03-japan-record-address.md)
+executes the original 18-byte helper at `0x0600AEF2` over 34 inputs twice per
+run, with paired reports identical and two instruction mutation controls. It
+validates the bounded signed-word multiply,
+record-base addition, and one MACL spill/restore slot. This is another isolated
+CPU contract, not proof of natural callers or the surrounding task/device code.
