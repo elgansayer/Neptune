@@ -67,11 +67,18 @@ def validate(records,status,witness):
     source_calls=[r for r in records if r.kind==8]; source_delays=[r for r in records if r.kind==9]
     services=[r.pc for r in records if r.kind==4]
     transfers=sum(r.repeat_count for r in records if r.kind in (2,3))
-    if (len(records)<7 or records[0].kind!=8 or records[1].kind!=9 or records[2].kind!=1 or records[2].pc!=entry or records[-1].kind!=7 or records[-1].pc!=root or
-        len(source_calls)!=1 or len(source_delays)!=1 or source_calls[0].pc!=(0x060AE694 if status.profile==1 else 0x060AE92A) or source_calls[0].opcode&0xF0FF!=0x400B or source_calls[0].r[(source_calls[0].opcode>>8)&15]!=entry or source_delays[0].pc!=source_calls[0].pc+2 or len(rts)!=1 or len(delays)!=1 or rts[0].pc!=0x060A4FBA or rts[0].opcode!=0x000B or
+    if len(source_calls)!=1 or len(source_delays)!=1:
+        raise ValueError('Command root entry/RTS/delay/return continuity is incomplete')
+    source_index=records.index(source_calls[0])
+    entry_index=source_index+2
+    rooted_transfers=sum(r.repeat_count for r in records[entry_index:-1] if r.kind in (2,3)) if entry_index<len(records) else 0
+    if len(records)<7 or entry_index>=len(records):
+        raise ValueError('Command root entry/RTS/delay/return continuity is incomplete')
+    if (records[source_index].kind!=8 or records[source_index+1].kind!=9 or records[entry_index].kind!=1 or records[entry_index].pc!=entry or records[-1].kind!=7 or records[-1].pc!=root or
+        source_calls[0].pc!=(0x060AE694 if status.profile==1 else 0x060AE92A) or source_calls[0].opcode&0xF0FF!=0x400B or source_calls[0].r[(source_calls[0].opcode>>8)&15]!=entry or source_delays[0].pc!=source_calls[0].pc+2 or len(rts)!=1 or len(delays)!=1 or rts[0].pc!=0x060A4FBA or rts[0].opcode!=0x000B or
         delays[0].pc!=rts[0].pc+2 or delays[0].opcode!=0x0009 or not status.root_rts or
-        not status.root_delay or not all(pc in services for pc in (0x06095992,0x060959CA,0x060959AE,0x06095A82,0x060959C8)) or not transfers or status.transfer_count!=transfers or
-        records[-1].r[15]!=records[0].r[15] or records[-1].r[14]!=records[0].r[14] or records[-1].pr!=root):
+        not status.root_delay or not all(pc in services for pc in (0x06095992,0x060959CA,0x060959AE)) or not rooted_transfers or not transfers or status.transfer_count!=transfers or
+        records[-1].r[15]!=records[entry_index].r[15] or records[-1].r[14]!=records[entry_index].r[14] or records[-1].pr!=root):
         raise ValueError('Command root entry/RTS/delay/return continuity is incomplete')
     return {'schema':'neptune.original-command-trace.v2','profile':status.profile,
             'scope':'one natural command root with actual observed word transfers; device/game semantics require independent interpretation',

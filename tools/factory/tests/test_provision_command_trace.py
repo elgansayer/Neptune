@@ -118,6 +118,19 @@ void fixture_run(void) {
             # The fixture invokes the production ABI's complete-result validator.
             result=abi.validate(rows,status,list(witness))
             self.assertEqual(result['schema'],'neptune.original-command-trace.v2')
+            # Natural execution can emit unrelated port transfers before the
+            # source call within the same observer frame. The root must be
+            # located by its call/entry/return evidence, not by buffer index 0.
+            leading=abi.Record.from_buffer_copy(bytes(next(row for row in rows if row.kind==2)))
+            leading.sequence=0;leading.steps=0;leading.frame=rows[0].frame
+            prefixed=[]
+            for row in rows:
+                clone=abi.Record.from_buffer_copy(bytes(row));clone.sequence+=1;prefixed.append(clone)
+            prefixed.insert(0,leading)
+            prefixed_status=abi.Status.from_buffer_copy(bytes(status))
+            prefixed_status.count+=1;prefixed_status.logical_records+=1;prefixed_status.transfer_count+=1
+            accepted=abi.validate(prefixed,prefixed_status,list(witness))
+            self.assertEqual(accepted['schema'],'neptune.original-command-trace.v2')
 
     def test_lossless_repeat_runs_preserve_each_transfer_and_keep_128_slot_guard(self):
         compiler=shutil.which('cc')
