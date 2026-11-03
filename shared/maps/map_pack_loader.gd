@@ -180,6 +180,21 @@ static func _parse_tilemaps(wall_floor: TileMapLayer, spawn_soft: TileMapLayer, 
 	
 	return result
 
+static func reserve_casual_spawn_clearance(active_slots: Array, spawn_points: Array, tile_size: float) -> Array:
+	# The development room samples optional destructibles. Keep a two-cell
+	# radius free at each declared start so ordinary range-one players and the
+	# existing safe-plant bot controller can turn out of their first blast lane.
+	# This filters optional soft slots only; authored hard geometry is untouched.
+	var reserved := {}
+	for position in spawn_points:
+		var cell := Vector2i(floori(position.x / tile_size), floori(position.y / tile_size))
+		for y in range(cell.y - 2, cell.y + 3):
+			for x in range(cell.x - 2, cell.x + 3): reserved[Vector2i(x, y)] = true
+	var result := []
+	for slot in active_slots:
+		if not reserved.has(slot): result.append(slot)
+	return result
+
 static func choose_soft_block_pattern(soft_slots: Array, pattern: String = "RANDOM_70", density: float = 0.7) -> Array:
 	"""
 	Choose which soft block slots to activate based on a pattern

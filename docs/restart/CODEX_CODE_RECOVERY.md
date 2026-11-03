@@ -120,8 +120,10 @@ handoffs, with23 non-budget controls. Read [the pool result](research/2026-11-03
 and current655 checkpoint; preserve all admission/storage deferrals. Separate
 composedA681A/96D74 source29d7bdb has7 owned/455 research tests, with its first
 guarded original batch pending acceptance. Do not count prepared models as new
-original execution. Arithmetic PR695 awaits the active web owner's required
-browser-liveness repair/current-base gates; never bypass that failure.
+original execution. Arithmetic PR695 is now accepted at a3b765e after all15
+current-base checks, including the web owner696 repair. Retain its original
+browser failure/stale-base receipts. Publish dependent pool698 and composed699
+through their own exact-head/current-base gates;655 stays open.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The

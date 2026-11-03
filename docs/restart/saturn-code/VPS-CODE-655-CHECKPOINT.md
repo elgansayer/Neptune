@@ -9,6 +9,30 @@ the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
 
+## Arithmetic695 accepted; dependent pool publication continues
+
+PR695 mergeda3b765e826f5855444c88d16c8918bac8f0c8df8 at11:19:27 UTC,
+tested88c4fb4 against15b7706. All15 exact-head checks completed: eight successes
+including real browser gameplay, seven preparation skips with exact non-
+applicability proof. Strict app15368 requirements/current base and zero mandatory
+reviews preserved. Merge parent/tree verified; receipt:
+`.../code655-20261102/pr695-acceptance-verified.json`.
+Retain the first actual browser failure and green-but-stale987 head; no merge
+request was made for either. Active web owner696 repaired playable casual starts/
+browser focus and mergedce89f92; newer NLSND697 merged15b7706. Their work is
+preserved. Pool draft698 can now target main and pass its own current-base gates;
+composed record/caller draft699 follows698. All originals remain retained.
+
+Composed original batchdb1wg3j_ subsequently completed all four jobs:1,672 cases
+per entry twice,3,344 complete returns/run,12 semantic controls, exact raw/archive
+pairs. Source29d7bdb/7 owned/455 research tests and79-file adaptereef51aac stay
+unchanged. Read [PR699](https://github.com/elgansayer/Neptune-Bomberman/pull/699)
+for that dependent evidence. It is not yet accepted on main. Current next code
+question is complete95E5A returning errors through selection/index/setup/status.
+The new static command is `python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-open.py`;
+source windows are not original execution. Earlier running/deferred prose below
+is retained history; both pool and composed manifests are terminal success.
+
 ## Current pool/context continuation: all twelve original jobs retained
 
 Source84c8499f27f6d95509ee19c881154f5e5a126abb now has all six byte-identical
