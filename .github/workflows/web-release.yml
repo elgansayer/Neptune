@@ -2,104 +2,144 @@ name: Web release
 on:
   push:
     branches: [main]
-  pull_request:
-    paths:
-      - deploy/web/**
-      - .github/workflows/web-release.yml
-      - export_presets.cfg
   workflow_dispatch:
 permissions:
   contents: read
   packages: write
+# Serialize publication, the existing Arcane trigger and public verification.
+# Each queued run also checks current main immediately before mutation.
 concurrency:
-  group: web-release-${{ github.ref }}
+  group: web-release-production
   cancel-in-progress: false
 jobs:
   build:
+    uses: ./.github/workflows/web-gameplay.yml
+    with:
+      retain_images: true
+    permissions:
+      contents: read
+  publish:
+    if: github.ref == 'refs/heads/main'
+    needs: build
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Verify browser smoke rejects recorded engine errors
-        run: node deploy/web/smoke.test.mjs
-      - name: Install pinned Godot and export templates
-        run: |
-          python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
-          python3 tools/godot/install_templates.py --directory "$HOME/.local/share/godot/export_templates"
-          python3 -c 'import json; print("GODOT_BINARY=" + json.load(open("tools/godot/toolchain.json"))["binary_name"])' >> "$GITHUB_ENV"
-      - name: Import and export current project
-        run: python3 deploy/web/export.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY"
-      - name: Verify transport configuration contracts
-        run: bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_web_transport
-      - name: Build serving image
-        run: |
-          docker build -f deploy/web/Dockerfile -t neptune-web-candidate .
-          docker build -f deploy/web/Dockerfile.server -t neptune-server-candidate .
-      - name: Exercise real browser startup
-        run: |
-          docker network create neptune-smoke
-          docker run -d --name server-candidate --network neptune-smoke --network-alias server neptune-server-candidate
-          docker run -d --name web-candidate --network neptune-smoke -p 127.0.0.1:8765:80 neptune-web-candidate
-          mkdir -p "$RUNNER_TEMP/web-smoke"
-          for attempt in $(seq 1 30); do
-            if curl --fail --silent http://127.0.0.1:8765/healthz; then break; fi
-            sleep 1
-          done
-          curl --fail --silent http://127.0.0.1:8765/healthz
-          cp deploy/web/smoke.mjs "$RUNNER_TEMP/web-smoke/"
-          cd "$RUNNER_TEMP/web-smoke"
-          npm install --no-save playwright@1.64.1
-          npx playwright install --with-deps chromium
-          node smoke.mjs
-      - name: Collect real server diagnostics
-        if: always()
-        run: |
-          mkdir -p "$RUNNER_TEMP/web-smoke"
-          docker logs server-candidate > "$RUNNER_TEMP/web-smoke/server.log" 2>&1 || true
-          docker logs web-candidate > "$RUNNER_TEMP/web-smoke/web.log" 2>&1 || true
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
-        if: always()
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: web-startup-evidence
-          path: |
-            ${{ runner.temp }}/web-smoke/browser-*.png
-            ${{ runner.temp }}/web-smoke/server.log
-            ${{ runner.temp }}/web-smoke/web.log
-          if-no-files-found: warn
-      - uses: docker/login-action@v3
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+          name: web-tested-pair-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tested-pair
+      - name: Reject stale queued releases and mismatched image pairs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)" = "$GITHUB_SHA"
+          python3 - "$RUNNER_TEMP/tested-pair/release.json" <<'PY'
+          import json, os, sys
+          release = json.load(open(sys.argv[1]))
+          assert release['revision'] == os.environ['GITHUB_SHA'], 'Artifact is not this tested source'
+          PY
+          docker load < "$RUNNER_TEMP/tested-pair/images.tar.gz"
+          for image in neptune-web-candidate neptune-server-candidate; do
+            test "$(docker image inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$image")" = "$GITHUB_SHA"
+          done
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Publish tested image
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-        run: |
-          image=ghcr.io/elgansayer/neptune-bomberman-web
-          docker tag neptune-web-candidate "$image:sha-$GITHUB_SHA"
-          docker tag neptune-web-candidate "$image:latest"
-          docker push "$image:sha-$GITHUB_SHA"
-          docker push "$image:latest"
-          image=ghcr.io/elgansayer/neptune-bomberman-server
-          docker tag neptune-server-candidate "$image:sha-$GITHUB_SHA"
-          docker tag neptune-server-candidate "$image:latest"
-          docker push "$image:sha-$GITHUB_SHA"
-          docker push "$image:latest"
-  deploy:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build
-    runs-on: ubuntu-24.04
-    timeout-minutes: 3
-    steps:
-      - name: Notify Arcane after image publication
+      - name: Publish both immutable images before advancing latest
         env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/release-receipt"
+          if ! curl --fail --silent --show-error --max-time 20 -H 'Cache-Control: no-cache' https://bomberman.elgansayer.com/release.json > "$RUNNER_TEMP/release-receipt/previous-release.json"; then
+            cp deploy/web/initial-rollback.json "$RUNNER_TEMP/release-receipt/previous-release.json"
+          fi
+          python3 - "$RUNNER_TEMP/release-receipt/previous-release.json" <<'PY'
+          import json, re, sys
+          sys.path.insert(0, 'deploy/web')
+          from wait_release import validate_release
+          previous = json.load(open(sys.argv[1]))
+          assert re.fullmatch('[0-9a-f]{40}', previous['revision']), 'Previous source must be immutable'
+          validate_release(previous, previous['revision'])
+          PY
+          for kind in web server; do
+            image="ghcr.io/elgansayer/neptune-bomberman-$kind"
+            # Resolve the known matching rollback pair before changing either tag.
+            rollback_ref=$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["images"][sys.argv[2]])' "$RUNNER_TEMP/release-receipt/previous-release.json" "$kind")
+            docker manifest inspect --verbose "$rollback_ref" > "$RUNNER_TEMP/release-receipt/previous-$kind-manifest.json"
+          done
+          for kind in web server; do
+            image="ghcr.io/elgansayer/neptune-bomberman-$kind"
+            docker tag "neptune-$kind-candidate" "$image:sha-$GITHUB_SHA"
+            docker push "$image:sha-$GITHUB_SHA"
+            docker image inspect --format '{{json .RepoDigests}}' "$image:sha-$GITHUB_SHA" > "$RUNNER_TEMP/release-receipt/$kind-digests.json"
+          done
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)" = "$GITHUB_SHA"
+          for kind in web server; do
+            image="ghcr.io/elgansayer/neptune-bomberman-$kind"
+            docker tag "$image:sha-$GITHUB_SHA" "$image:latest"
+            docker push "$image:latest"
+          done
+          cp "$RUNNER_TEMP/tested-pair/release.json" "$RUNNER_TEMP/release-receipt/release.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: paired-release-${{ github.sha }}
+          path: ${{ runner.temp }}/release-receipt
+          if-no-files-found: error
+          retention-days: 90
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: [build, publish]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Notify the existing Arcane deployment
+        env:
+          GH_TOKEN: ${{ github.token }}
           DEPLOY_WEBHOOK_URL: ${{ secrets.DEPLOY_WEBHOOK_URL }}
           DEPLOY_RESOLVE: ${{ vars.DEPLOY_RESOLVE }}
         run: |
           set -euo pipefail
-          test -n "$DEPLOY_WEBHOOK_URL" || { echo "DEPLOY_WEBHOOK_URL is missing" >&2; exit 1; }
-          status=$(curl --silent --show-error --output /tmp/deploy.json --write-out '%{http_code}' --max-time 90 --resolve "$DEPLOY_RESOLVE" --request POST "$DEPLOY_WEBHOOK_URL")
+          test "$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq .object.sha)" = "$GITHUB_SHA"
+          test -n "$DEPLOY_WEBHOOK_URL" || { echo 'DEPLOY_WEBHOOK_URL is missing' >&2; exit 1; }
+          mkdir -p "$RUNNER_TEMP/public-smoke"
+          status=$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' --max-time 90 --resolve "$DEPLOY_RESOLVE" --request POST "$DEPLOY_WEBHOOK_URL")
           test "$status" = 202 || { echo "Deployment trigger returned HTTP $status" >&2; exit 1; }
-          echo "Arcane accepted deployment. Check the project's Event Log for the rollout result."
+          python3 - "$RUNNER_TEMP/public-smoke/arcane-acceptance.json" <<'PY'
+          import json, os, sys
+          json.dump({'http_status': 202, 'revision': os.environ['GITHUB_SHA'], 'meaning': 'asynchronous-request-accepted-only'}, open(sys.argv[1], 'w'))
+          PY
+          echo 'Arcane accepted an asynchronous request. Waiting for public client/server identity and gameplay.'
+      - name: Wait for the intended public client
+        run: python3 deploy/web/wait_release.py --revision "$GITHUB_SHA" --timeout 120
+      - name: Verify public authoritative gameplay after rollout
+        env:
+          SMOKE_BASE_URL: https://bomberman.elgansayer.com
+          SMOKE_EXPECT_REVISION: ${{ needs.build.outputs.revision }}
+          SMOKE_EXPECT_DURATION: '180'
+          SMOKE_EXPECT_COUNTDOWN: '3'
+          SMOKE_EXPECT_INTERMISSION: '5'
+          SMOKE_TIMEOUT_MS: '900000'
+        run: |
+          cp deploy/web/*.mjs "$RUNNER_TEMP/public-smoke/"
+          cd "$RUNNER_TEMP/public-smoke"
+          npm install --no-save playwright@1.64.1
+          npx playwright install --with-deps chromium
+          node smoke.mjs
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        if: always()
+        with:
+          name: public-rollout-evidence-${{ github.sha }}
+          path: |
+            ${{ runner.temp }}/public-smoke/web-smoke-evidence
+            ${{ runner.temp }}/public-smoke/arcane-acceptance.json
+          if-no-files-found: error
+          retention-days: 14

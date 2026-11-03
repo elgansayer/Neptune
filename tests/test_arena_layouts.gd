@@ -34,7 +34,7 @@ func _fits(inset: float) -> bool:
 	view.camera.force_update_scroll()
 	var origin: Vector2 = viewport.canvas_transform * Vector2.ZERO
 	var end: Vector2 = viewport.canvas_transform * view.arena_pixel_size
-	return origin.x >= 3.9 and origin.y >= inset + 3.9 and end.x <= viewport.size.x - 3.9 and end.y <= viewport.size.y - 3.9
+	return origin.x >= 3.9 and origin.y >= inset + 3.9 and end.x <= viewport.size.x - 3.9 and end.y <= viewport.size.y - 42.0 - 3.9
 
 func test_standard_arena_renders_authoritative_geometry_and_fits_below_hud() -> Variant:
 	var data := _load_arena("standard")

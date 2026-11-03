@@ -32,7 +32,7 @@ var fall_speed_per_frame: float
 # Visual components - BlockVisual is defined in FallingHurryBlock.tscn
 @onready var block_visual: Node2D = $BlockVisual
 @onready var anim_player: AnimationPlayer = $AnimationPlayer
-var block_sprite: Node2D
+var block_sprite: CanvasItem
 var shadow_ref: Node2D  # Reference to the shadow (to hide on landing)
 
 func _ready():

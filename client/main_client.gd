@@ -18,6 +18,8 @@ var connected = false
 var authenticated = false
 var protocol_gate: Node
 var negotiated_protocol := 0
+var server_revision := ""
+var current_round_epoch := 0
 var last_connection_error := ""
 var username = ""
 var pending_initial_map: Dictionary = {} # Cache initial map until GameView is ready
@@ -98,6 +100,8 @@ func connect_to_server(address: String = "127.0.0.1"):
 	connected = false
 	authenticated = false
 	negotiated_protocol = 0
+	server_revision = ""
+	current_round_epoch = 0
 	pending_initial_map.clear()
 	last_connection_error = ""
 	var connection := preload("res://shared/network/transport.gd").client(_transport, address, _server_port)
@@ -122,6 +126,8 @@ func _on_connected_to_server():
 		return
 	print("[Client] Connected to server!")
 	print("[Client] Protocol selected: ", negotiated_protocol)
+	server_revision = protocol_gate.peer_revision(1)
+	print("[Client] Release client=", preload("res://shared/build_identity.gd").revision(), " server=", server_revision)
 	print("[Client] Multiplayer peer valid: ", multiplayer.multiplayer_peer != null)
 	print("[Client] Multiplayer unique ID: ", multiplayer.get_unique_id())
 	connected = true
@@ -136,6 +142,8 @@ func _on_connection_failed():
 	connected = false
 	authenticated = false
 	negotiated_protocol = 0
+	server_revision = ""
+	current_round_epoch = 0
 	pending_initial_map.clear()
 	_reset_content(true)
 	if last_connection_error.is_empty():
@@ -150,10 +158,17 @@ func _on_server_disconnected():
 	connected = false
 	authenticated = false
 	negotiated_protocol = 0
+	server_revision = ""
+	current_round_epoch = 0
 	pending_initial_map.clear()
 	_reset_content(true)
 	if _ping_timer:
 		_ping_timer.stop()
+	# A lost transport retires the current scene as well as its epoch filter.
+	# Re-enter the existing guest flow; a fresh view accepts the restarted server's
+	# epoch one instead of retaining the previous authority's terminal arena.
+	if _runtime_role == "client" and is_inside_tree() and _find_game_view() != null:
+		get_tree().call_deferred("change_scene_to_file", "res://client/ui/login_screen.tscn")
 
 # === Authentication ===
 
@@ -233,6 +248,7 @@ func receive_state(state: Dictionary):
 	if not connected or not authenticated: return
 	if _runtime_role == "client" and multiplayer.get_remote_sender_id() != 1: return
 	if content_download != null and content_download.receipt().state != "ready": return
+	if not _accept_round_epoch(state): return
 	game_state_received.emit(state.duplicate(true))
 	# Forward to active game view scene - find GameView node in tree
 	var game_view = _find_game_view()
@@ -241,6 +257,7 @@ func receive_state(state: Dictionary):
 
 func receive_initial_map(map_data: Dictionary):
 	if _runtime_role == "client" and (not connected or multiplayer.get_remote_sender_id() != 1): return
+	if not _accept_round_epoch(map_data): return
 	var config = map_data.get("map_config", {})
 	if content_download != null or (config is Dictionary and config.has("content")):
 		if content_download == null:
@@ -260,6 +277,22 @@ func receive_initial_map(map_data: Dictionary):
 		# Cache the map data until GameView is ready
 		pending_initial_map = map_data
 		print("[ClientMain] Cached initial map data (GameView not ready yet)")
+
+func _accept_round_epoch(state: Dictionary) -> bool:
+	# Compatibility is negotiated before RPC admission. Native fixtures using the
+	# autoload without a connection retain their independent parser tests.
+	if negotiated_protocol < 3: return true
+	var round_data: Variant = state.get("round")
+	if not round_data is Dictionary or not round_data.get("epoch") is int or round_data.epoch < 1:
+		return false
+	if not round_data.get("phase") in ["waiting", "countdown", "active", "results"]:
+		return false
+	var remaining: Variant = round_data.get("remaining")
+	if not (remaining is int or remaining is float) or not is_finite(float(remaining)) or remaining < 0 or not round_data.get("result") is Dictionary:
+		return false
+	if round_data.epoch < current_round_epoch: return false
+	current_round_epoch = round_data.epoch
+	return true
 
 func content_message(message: Dictionary) -> void:
 	# RPC routing is shared for identical checksums; only the authority may offer

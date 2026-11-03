@@ -2,9 +2,10 @@ extends Node
 
 ## Gameplay compatibility, not account authentication or a pack/content lock.
 ## SceneMultiplayer withholds RPCs and peer_connected until both sides complete.
-const FORMAT := "neptune.protocol/1"
-# v2 adds the reliable content-sharing RPC and pre-admission readiness contract.
-const SUPPORTED_VERSIONS := [2]
+const BuildIdentity = preload("res://shared/build_identity.gd")
+const FORMAT := "neptune.protocol/2"
+# v3 requires round epochs on state/input and a matching client/server release.
+const SUPPORTED_VERSIONS := [3]
 const MAX_OFFER_BYTES := 1024
 const MAX_VERSIONS := 8
 const MAX_VERSION := 65535
@@ -16,6 +17,15 @@ var _api: SceneMultiplayer
 var _versions: Array = []
 var _selected := {}
 var _failed := {}
+var _revisions := {}
+
+static func valid_revision(value: Variant) -> bool:
+	if not value is String: return false
+	if value == "development": return true
+	if value.length() != 40: return false
+	for character in value:
+		if not character in "0123456789abcdef": return false
+	return true
 
 static func validate_versions(value: Variant) -> bool:
 	if not value is Array or value.is_empty() or value.size() > MAX_VERSIONS:
@@ -28,7 +38,8 @@ static func validate_versions(value: Variant) -> bool:
 		seen[int(version)] = true
 	return true
 
-static func evaluate_offer(data: PackedByteArray, supported: Array = SUPPORTED_VERSIONS) -> Dictionary:
+static func evaluate_offer(data: PackedByteArray, supported: Array = SUPPORTED_VERSIONS, local_revision: String = "") -> Dictionary:
+	if local_revision.is_empty(): local_revision = BuildIdentity.revision()
 	if data.size() > MAX_OFFER_BYTES:
 		return {"accepted": false, "reason": "protocol_offer_too_large"}
 	if not validate_versions(supported):
@@ -42,17 +53,21 @@ static func evaluate_offer(data: PackedByteArray, supported: Array = SUPPORTED_V
 	if parser.parse(data.get_string_from_utf8()) != OK:
 		return {"accepted": false, "reason": "invalid_protocol_offer"}
 	var offer = parser.data
-	if not offer is Dictionary or offer.size() != 2 or not offer.get("format") is String:
+	if not offer is Dictionary or offer.size() != 3 or not offer.get("format") is String:
 		return {"accepted": false, "reason": "invalid_protocol_offer"}
 	if offer.format != FORMAT or not validate_versions(offer.get("versions")):
 		return {"accepted": false, "reason": "invalid_protocol_offer"}
+	if not valid_revision(offer.get("revision")) or not valid_revision(local_revision):
+		return {"accepted": false, "reason": "invalid_build_revision"}
 	var selected := 0
 	for version in offer.versions:
 		if int(version) in supported:
 			selected = maxi(selected, int(version))
 	if selected == 0:
 		return {"accepted": false, "reason": "incompatible_protocol_versions"}
-	return {"accepted": true, "reason": "compatible", "version": selected}
+	if offer.revision != local_revision:
+		return {"accepted": false, "reason": "release_revision_mismatch_reload_required"}
+	return {"accepted": true, "reason": "compatible", "version": selected, "revision": offer.revision}
 
 func configure(api: SceneMultiplayer, supported: Array = SUPPORTED_VERSIONS) -> Error:
 	if api == null or _api != null or api.auth_callback.is_valid() or not validate_versions(supported):
@@ -70,9 +85,12 @@ func configure(api: SceneMultiplayer, supported: Array = SUPPORTED_VERSIONS) -> 
 func selected_version(peer_id: int) -> int:
 	return _selected.get(peer_id, 0)
 
+func peer_revision(peer_id: int) -> String:
+	return _revisions.get(peer_id, "")
+
 func _begin(peer_id: int) -> void:
 	_forget(peer_id)
-	var data := JSON.stringify({"format": FORMAT, "versions": _versions}).to_utf8_buffer()
+	var data := JSON.stringify({"format": FORMAT, "versions": _versions, "revision": BuildIdentity.revision()}).to_utf8_buffer()
 	if _api.send_auth(peer_id, data) != OK:
 		_reject(peer_id, "protocol_offer_send_failed")
 
@@ -84,11 +102,13 @@ func _receive_offer(peer_id: int, data: PackedByteArray) -> void:
 		_reject(peer_id, result.reason)
 		return
 	_selected[peer_id] = result.version
+	_revisions[peer_id] = result.revision
 	if _api.complete_auth(peer_id) != OK:
 		_reject(peer_id, "protocol_completion_failed")
 
 func _reject(peer_id: int, reason: String) -> void:
 	_selected.erase(peer_id)
+	_revisions.erase(peer_id)
 	_failed[peer_id] = true
 	rejected.emit(peer_id, reason)
 	# Never complete this peer. Keep the already-sent reliable offer deliverable
@@ -104,3 +124,4 @@ func _authentication_failed(peer_id: int) -> void:
 func _forget(peer_id: int) -> void:
 	_selected.erase(peer_id)
 	_failed.erase(peer_id)
+	_revisions.erase(peer_id)

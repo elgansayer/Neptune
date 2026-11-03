@@ -48,6 +48,9 @@ func _ready():
 	register_button.visible = false
 
 func _on_login_pressed():
+	if client_main.last_connection_error in ["release_revision_mismatch_reload_required", "incompatible_protocol_versions", "invalid_protocol_offer"] and OS.has_feature("web"):
+		JavaScriptBridge.eval("window.location.reload()")
+		return
 	login_button.visible = false
 	if not client_main.connected:
 		status_label.text = "Connecting..."
@@ -92,10 +95,15 @@ func _on_connection_failed():
 	login_button.visible = true
 	var reason: String = client_main.last_connection_error
 	match reason:
+		"release_revision_mismatch_reload_required":
+			login_button.text = "Reload latest build"
+			status_label.text = "The server has updated. Reload to join the matching build."
 		"incompatible_protocol_versions":
-			status_label.text = "Game versions are incompatible. Update the client or choose a compatible server."
+			login_button.text = "Reload latest build" if OS.has_feature("web") else "Try again"
+			status_label.text = "Game versions are incompatible. Reload the browser or update the client."
 		"invalid_protocol_offer", "protocol_offer_too_large", "protocol_not_negotiated":
-			status_label.text = "Server protocol is unsupported. Choose a compatible Neptune server."
+			login_button.text = "Reload latest build" if OS.has_feature("web") and reason == "invalid_protocol_offer" else "Try again"
+			status_label.text = "Compatibility check failed. Reload the browser or choose a compatible Neptune server."
 		"protocol_handshake_timeout_or_disconnect":
 			status_label.text = "Compatibility check timed out or the server disconnected. Try again."
 		_:

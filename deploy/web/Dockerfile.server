@@ -1,4 +1,6 @@
 FROM debian:bookworm-slim
+ARG SOURCE_REVISION
+LABEL org.opencontainers.image.source="https://github.com/elgansayer/Neptune-Bomberman" org.opencontainers.image.revision=$SOURCE_REVISION
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates libstdc++6 libfontconfig1 && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY build/server/ /app/
