@@ -25,7 +25,7 @@ does not block this coordinator.
 
 **Further VPS execution, 2 November:** the existing Codex app continued through
 original SH-2 bounds/accumulator functions and original68000 sound code. Resume
-the [current code660 checkpoint](saturn-code/VPS-CODE-660-CHECKPOINT.md),
+the [current code655 checkpoint](saturn-code/VPS-CODE-655-CHECKPOINT.md),
 which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
@@ -80,7 +80,13 @@ and RTS/restore delays. Reference/disabled/enabled state/video/audio/input match
 exactly, both enabled trace pairs repeat and42 record-copy controls reject.
 Read the current checkpoint and [natural result](research/2026-11-02-first-task-natural-init.md):
 these boundaries do not complete internal library/device semantics. Continue
-broader96C60/9696C contracts and positive library/BIOS/callback dependencies.
+positive library/BIOS/callback dependencies. Broader96C60/9696C now has4,512
+constructed cases twice:3,364 complete returns and1,148 unfinished callback
+handoffs per run, with19 mutation-control combinations. Actual89C2 is a tail
+trampoline to293A4; its body is unresolved, not a substituted return. Retain the
+initial incorrect-callback-model failure. PR667 mergedb6a8e25 and bounded660
+closed;655 and the programme remain open. Next96B9C slot selection supports
+the measured95E5A path; continue its other positive library dependencies.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
