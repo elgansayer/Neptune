@@ -10,7 +10,7 @@
 #else
 #define NEPTUNE_COMMAND_EXPORT
 #endif
-enum { NEPTUNE_COMMAND_ABI=1, NEPTUNE_COMMAND_CAPACITY=128,
+enum { NEPTUNE_COMMAND_ABI=2, NEPTUNE_COMMAND_CAPACITY=128,
        NEPTUNE_COMMAND_STEPS=4194304, NEPTUNE_COMMAND_FRAMES=120,
        NEPTUNE_COMMAND_WITNESS=424 };
 enum { COMMAND_ROOT=1, COMMAND_DEVICE_READ=2, COMMAND_DEVICE_WRITE=3,
@@ -22,20 +22,26 @@ enum { COMMAND_BAD_FRAME=1, COMMAND_BAD_PIPELINE=2, COMMAND_BAD_ADDRESS=3,
 typedef struct {
  uint32_t sequence,kind,profile,frame,pc,opcode,pipe_op,steps,transfer_address,transfer_value;
  int32_t timestamp;
- uint32_t r[16],sr,gbr,vbr,mach,macl,pr,stack_address,stack[12];
+ uint32_t repeat_count;
+ int32_t timestamp_step;
+ uint32_t r[16],r_step[16],sr,gbr,vbr,mach,macl,pr,stack_address,stack[12];
  uint32_t command_address,response_address,command_valid,response_valid,command[2],response[2];
 } NeptuneCommandRecord;
+/* A repeated slot is a lossless arithmetic run of consecutive device transfers.
+ * Sequence/timestamp/register values are reconstructed from their exact steps;
+ * every other captured field must match before the native writer coalesces it.
+ */
 typedef struct {
  uint32_t abi,record_bytes,capacity,count,dropped,errors,active,pending,completed,
   profile,frame_known,frame,step_limit,steps,master_hooks,frame_limit,witness_words,
-  source_checks,last_error,last_pc,last_address,root_rts,root_delay,transfer_count;
+  source_checks,last_error,last_pc,last_address,root_rts,root_delay,transfer_count,logical_records;
 } NeptuneCommandStatus;
 static struct {
  NeptuneCommandRecord records[NEPTUNE_COMMAND_CAPACITY];
  uint16_t expected[NEPTUNE_COMMAND_WITNESS],mismatch[NEPTUNE_COMMAND_WITNESS];
  uint32_t count,dropped,errors,active,pending,completed,profile,frame_known,frame,
   steps,master_hooks,source_checks,last_error,last_pc,last_address,mismatch_known,
-  entry_frame,root_return,root_sp,root_r14,root_rts,root_delay,transfer_count,
+  entry_frame,root_return,root_sp,root_r14,root_rts,root_delay,transfer_count,logical_records,
   current_pc,current_opcode,command_address,response_address,source_call,source_delay,source_pc,source_target,source_return;
 } neptune_command_trace;
 static void neptune_command_error(uint32_t e,uint32_t pc,uint32_t a)
@@ -60,13 +66,23 @@ static uint32_t neptune_command_ram(uint32_t a,uint32_t n)
 { return WorkRAMH&&!(a&3)&&n&&a>=0x06000000&&n<=0x100000&&a<=0x06100000-n; }
 static uint32_t neptune_command_word(uint32_t a)
 { return ((uint32_t)WorkRAMH[(a-0x06000000)>>1]<<16)|WorkRAMH[((a-0x06000000)>>1)+1]; }
+static uint32_t neptune_command_same_run_payload(const NeptuneCommandRecord* a,const NeptuneCommandRecord* b)
+{
+ if(a->repeat_count<1||a->sequence>UINT32_MAX-a->repeat_count||a->sequence+a->repeat_count!=b->sequence)return 0;
+ NeptuneCommandRecord x=*a,y=*b;
+ x.sequence=y.sequence=0;x.timestamp=y.timestamp=0;
+ x.repeat_count=y.repeat_count=1;x.timestamp_step=y.timestamp_step=0;
+ memset(x.r,0,sizeof(x.r));memset(y.r,0,sizeof(y.r));
+ memset(x.r_step,0,sizeof(x.r_step));memset(y.r_step,0,sizeof(y.r_step));
+ return memcmp(&x,&y,sizeof(x))==0;
+}
 static uint32_t neptune_command_record(const SH7095* z,uint32_t kind,uint32_t pc,uint32_t a,uint32_t v)
 {
- if(neptune_command_trace.count>=NEPTUNE_COMMAND_CAPACITY){neptune_command_trace.dropped++;neptune_command_error(COMMAND_OVERFLOW,pc,0);return 0;}
  if(!neptune_command_source()){neptune_command_error(COMMAND_SOURCE_CHANGED,pc,0);return 0;}
  if((z->R[15]&3)||z->R[15]<0x06000000||z->R[15]>0x06100000){neptune_command_error(COMMAND_BAD_ADDRESS,pc,z->R[15]);return 0;}
- NeptuneCommandRecord* r=&neptune_command_trace.records[neptune_command_trace.count];memset(r,0,sizeof(*r));
- r->sequence=neptune_command_trace.count;r->kind=kind;r->profile=neptune_command_trace.profile;
+ if(neptune_command_trace.logical_records==UINT32_MAX){neptune_command_error(COMMAND_COUNTER,pc,0);return 0;}
+ NeptuneCommandRecord candidate;memset(&candidate,0,sizeof(candidate));NeptuneCommandRecord* r=&candidate;
+ r->sequence=neptune_command_trace.logical_records;r->repeat_count=1;r->kind=kind;r->profile=neptune_command_trace.profile;
  r->frame=neptune_command_trace.frame;r->pc=pc;r->opcode=z->Pipe_ID&0xFFFF;r->pipe_op=z->Pipe_ID>>24;
  if(kind==COMMAND_DEVICE_READ||kind==COMMAND_DEVICE_WRITE){r->pc=neptune_command_trace.current_pc;r->opcode=neptune_command_trace.current_opcode;}
  r->steps=neptune_command_trace.steps;r->timestamp=z->timestamp;r->transfer_address=a;r->transfer_value=v;
@@ -80,7 +96,18 @@ static uint32_t neptune_command_record(const SH7095* z,uint32_t kind,uint32_t pc
  r->command_valid=neptune_command_ram(r->command_address,8);r->response_valid=neptune_command_ram(r->response_address,8);
  if(r->command_valid){r->command[0]=neptune_command_word(r->command_address);r->command[1]=neptune_command_word(r->command_address+4);}
  if(r->response_valid){r->response[0]=neptune_command_word(r->response_address);r->response[1]=neptune_command_word(r->response_address+4);}
- neptune_command_trace.count++;return 1;
+ if((kind==COMMAND_DEVICE_READ||kind==COMMAND_DEVICE_WRITE)&&neptune_command_trace.count){
+  NeptuneCommandRecord* previous=&neptune_command_trace.records[neptune_command_trace.count-1];
+  if((previous->kind==COMMAND_DEVICE_READ||previous->kind==COMMAND_DEVICE_WRITE)&&neptune_command_same_run_payload(previous,r)){
+   int32_t delta=(int32_t)((uint32_t)r->timestamp-(uint32_t)previous->timestamp);
+   if(previous->repeat_count==1){previous->timestamp_step=delta;for(uint32_t i=0;i<16;i++)previous->r_step[i]=r->r[i]-previous->r[i];previous->repeat_count=2;neptune_command_trace.logical_records++;return 1;}
+   uint32_t next=(uint32_t)previous->timestamp+(uint32_t)previous->timestamp_step*previous->repeat_count;
+   uint32_t regs_match=1;for(uint32_t i=0;i<16;i++)if(r->r[i]!=previous->r[i]+previous->r_step[i]*previous->repeat_count)regs_match=0;
+   if((uint32_t)r->timestamp==next&&regs_match){previous->repeat_count++;neptune_command_trace.logical_records++;return 1;}
+  }
+ }
+ if(neptune_command_trace.count>=NEPTUNE_COMMAND_CAPACITY){neptune_command_trace.dropped++;neptune_command_error(COMMAND_OVERFLOW,pc,0);return 0;}
+ neptune_command_trace.records[neptune_command_trace.count++]=candidate;neptune_command_trace.logical_records++;return 1;
 }
 NEPTUNE_COMMAND_EXPORT uint32_t neptune_command_begin(uint32_t profile,const uint16_t* w,uint32_t n)
 { if(profile<1||profile>2||!w||n!=NEPTUNE_COMMAND_WITNESS||neptune_command_trace.active||setting_sh2_jit)return 0;
@@ -89,7 +116,7 @@ NEPTUNE_COMMAND_EXPORT uint32_t neptune_command_frame(uint32_t f)
 { if(!neptune_command_trace.active)return 1;if((neptune_command_trace.frame_known&&(neptune_command_trace.frame==UINT32_MAX||f!=neptune_command_trace.frame+1))||(neptune_command_trace.pending&&f-neptune_command_trace.entry_frame>=NEPTUNE_COMMAND_FRAMES)){neptune_command_error(COMMAND_BAD_FRAME,0,f);return 0;}neptune_command_trace.frame_known=1;neptune_command_trace.frame=f;return 1; }
 NEPTUNE_COMMAND_EXPORT void neptune_command_stop(void){neptune_command_trace.active=0;}
 NEPTUNE_COMMAND_EXPORT uint32_t neptune_command_status(NeptuneCommandStatus* o,uint32_t n)
-{ if(!o||n!=sizeof(*o))return 0;memset(o,0,sizeof(*o));o->abi=NEPTUNE_COMMAND_ABI;o->record_bytes=sizeof(NeptuneCommandRecord);o->capacity=NEPTUNE_COMMAND_CAPACITY;o->count=neptune_command_trace.count;o->dropped=neptune_command_trace.dropped;o->errors=neptune_command_trace.errors;o->active=neptune_command_trace.active;o->pending=neptune_command_trace.pending;o->completed=neptune_command_trace.completed;o->profile=neptune_command_trace.profile;o->frame_known=neptune_command_trace.frame_known;o->frame=neptune_command_trace.frame;o->step_limit=NEPTUNE_COMMAND_STEPS;o->steps=neptune_command_trace.steps;o->master_hooks=neptune_command_trace.master_hooks;o->frame_limit=NEPTUNE_COMMAND_FRAMES;o->witness_words=NEPTUNE_COMMAND_WITNESS;o->source_checks=neptune_command_trace.source_checks;o->last_error=neptune_command_trace.last_error;o->last_pc=neptune_command_trace.last_pc;o->last_address=neptune_command_trace.last_address;o->root_rts=neptune_command_trace.root_rts;o->root_delay=neptune_command_trace.root_delay;o->transfer_count=neptune_command_trace.transfer_count;return 1; }
+{ if(!o||n!=sizeof(*o))return 0;memset(o,0,sizeof(*o));o->abi=NEPTUNE_COMMAND_ABI;o->record_bytes=sizeof(NeptuneCommandRecord);o->capacity=NEPTUNE_COMMAND_CAPACITY;o->count=neptune_command_trace.count;o->dropped=neptune_command_trace.dropped;o->errors=neptune_command_trace.errors;o->active=neptune_command_trace.active;o->pending=neptune_command_trace.pending;o->completed=neptune_command_trace.completed;o->profile=neptune_command_trace.profile;o->frame_known=neptune_command_trace.frame_known;o->frame=neptune_command_trace.frame;o->step_limit=NEPTUNE_COMMAND_STEPS;o->steps=neptune_command_trace.steps;o->master_hooks=neptune_command_trace.master_hooks;o->frame_limit=NEPTUNE_COMMAND_FRAMES;o->witness_words=NEPTUNE_COMMAND_WITNESS;o->source_checks=neptune_command_trace.source_checks;o->last_error=neptune_command_trace.last_error;o->last_pc=neptune_command_trace.last_pc;o->last_address=neptune_command_trace.last_address;o->root_rts=neptune_command_trace.root_rts;o->root_delay=neptune_command_trace.root_delay;o->transfer_count=neptune_command_trace.transfer_count;o->logical_records=neptune_command_trace.logical_records;return 1; }
 NEPTUNE_COMMAND_EXPORT uint32_t neptune_command_records(NeptuneCommandRecord* o,uint32_t n)
 { if(!o||n<neptune_command_trace.count||n>NEPTUNE_COMMAND_CAPACITY)return UINT32_MAX;memcpy(o,neptune_command_trace.records,neptune_command_trace.count*sizeof(*o));return neptune_command_trace.count; }
 NEPTUNE_COMMAND_EXPORT uint32_t neptune_command_witness(uint16_t* o,uint32_t n,uint32_t m)

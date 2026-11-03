@@ -68,7 +68,7 @@ def run(a):
         (a.output/'observations.json').write_text(json.dumps({'av':av,'frames':frames},sort_keys=True)+'\n')
         result.update(frames=len(frames),final_state_sha256=sha(final),frame_observations_sha256=module.digest(frames),video_sha256=module.digest([f['video'] for f in frames]),audio_sha256=module.digest([(f['audio_sha256'],f['audio_frames']) for f in frames]),audio_frames=sum(f['audio_frames'] for f in frames),emulation_wall_seconds=elapsed,input_polls=driver.polls,delivered_masks=[sorted(v) for v in driver.delivered],resident_code_after=resident(final,kernel))
         if a.mode=='enabled':
-            phase='trace_validation'; trace=tracer.finish(); raw=(json.dumps(trace,indent=2,sort_keys=True)+'\n').encode(); (a.output/'command-trace.json').write_bytes(raw); result.update(trace_sha256=sha(raw),trace_records=len(trace['records']),completed_roots=1)
+            phase='trace_validation'; trace=tracer.finish(); raw=(json.dumps(trace,indent=2,sort_keys=True)+'\n').encode(); (a.output/'command-trace.json').write_bytes(raw); result.update(trace_sha256=sha(raw),trace_records=trace['storage']['stored_records'],trace_events=trace['storage']['expanded_events'],lossless_repeat_events=trace['storage']['lossless_repeat_events'],completed_roots=1)
         result['status']='success'
     except Exception as e:
         result['error']={'phase':phase,'type':type(e).__name__,'reason':str(e)}; raise
@@ -78,7 +78,7 @@ def run(a):
             try:
                 tracer.dll.neptune_command_stop(); rows,status=tracer.snapshot()
                 result['failed_trace_status']={n:getattr(status,n) for n,_ in status._fields_}
-                diagnostic={'schema':'neptune.failed-command-trace-diagnostic.v1','accepted':False,
+                diagnostic={'schema':'neptune.failed-command-trace-diagnostic.v2','accepted':False,
                             'status':result['failed_trace_status'],'records':[record_json(r) for r in rows],
                             'first_mismatched_source_witness':tracer.witness(True)}
                 (a.output/'failed-command-records.json').write_text(json.dumps(diagnostic,indent=2,sort_keys=True)+'\n')

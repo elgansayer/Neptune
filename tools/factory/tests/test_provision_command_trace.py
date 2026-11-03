@@ -44,8 +44,8 @@ class CommandObserverPatch(unittest.TestCase):
         self.assertEqual(abi.WITNESS_WORDS,424)
         self.assertEqual(CAPACITY:=abi.CAPACITY,128)
         self.assertEqual(abi.ROOTS[1],(0x060AE698,0x060A4FAC))
-        self.assertEqual(abi.C.sizeof(abi.Record),216)
-        self.assertEqual(abi.C.sizeof(abi.Status),96)
+        self.assertEqual(abi.C.sizeof(abi.Record),288)
+        self.assertEqual(abi.C.sizeof(abi.Status),100)
         self.assertEqual(len(abi.WITNESS_RANGES),5)
 
     def test_header_compiles_exports_and_fails_closed_on_bad_arguments(self):
@@ -60,7 +60,7 @@ class CommandObserverPatch(unittest.TestCase):
         binary=source.with_suffix('.so')
         subprocess.run([compiler,'-std=c11','-shared','-fPIC','-Werror','-x','c',str(source),'-o',str(binary)],check=True,capture_output=True,timeout=30)
         smoke=abi.probe_library(binary)
-        self.assertEqual((smoke['abi'],smoke['record_bytes'],smoke['capacity'],smoke['witness_words']),(1,216,128,424))
+        self.assertEqual((smoke['abi'],smoke['record_bytes'],smoke['capacity'],smoke['witness_words']),(2,288,128,424))
         dll=abi.C.CDLL(str(binary));trace=abi.Trace(dll)
         self.assertEqual(dll.neptune_command_begin(0,None,abi.WITNESS_WORDS),0)
         zeros=[0]*abi.WITNESS_WORDS
@@ -117,7 +117,46 @@ void fixture_run(void) {
             for i in range(abi.WITNESS_WORDS): witness[i]=0
             # The fixture invokes the production ABI's complete-result validator.
             result=abi.validate(rows,status,list(witness))
-            self.assertEqual(result['schema'],'neptune.original-command-trace.v1')
+            self.assertEqual(result['schema'],'neptune.original-command-trace.v2')
+
+    def test_lossless_repeat_runs_preserve_each_transfer_and_keep_128_slot_guard(self):
+        compiler=shutil.which('cc')
+        if not compiler:self.fail('Real C compiler required for repeat-run fixture')
+        header=(Path(__file__).resolve().parents[1]/'provision_command_trace.h').read_text()
+        prefix='''#include <stdint.h>\n#define INLINE inline\ntypedef struct {uint32_t R[16],PC,Pipe_ID,SR,GBR,VBR,MACH,MACL,PR;int32_t timestamp;} SH7095;\nstatic uint16_t work[0x80000];static uint16_t* WorkRAMH=work;static int setting_sh2_jit=0;\n'''
+        harness=r'''
+static SH7095 cpu;static uint16_t expected[NEPTUNE_COMMAND_WITNESS];
+void fixture_runs(NeptuneCommandStatus* status,NeptuneCommandRecord* rows) {
+ neptune_command_begin(2,expected,NEPTUNE_COMMAND_WITNESS);neptune_command_frame(1801);
+ cpu.R[15]=0x06001000;neptune_command_trace.current_pc=0x060958EC;neptune_command_trace.current_opcode=0x6031;
+ for(int i=0;i<40;i++){cpu.R[14]=i;cpu.timestamp=i*33;neptune_command_read(&cpu,0x25890008,0x0BC1);}
+ cpu.R[4]=2;cpu.R[14]=40;cpu.timestamp=1320;neptune_command_read(&cpu,0x25890008,0x0BC1);
+ cpu.R[14]=42;cpu.timestamp=1386;neptune_command_read(&cpu,0x25890008,0x0BC1);
+ cpu.R[14]=44;cpu.timestamp=1452;neptune_command_read(&cpu,0x25890008,0x0BC1);
+ neptune_command_stop();neptune_command_status(status,sizeof(*status));neptune_command_records(rows,NEPTUNE_COMMAND_CAPACITY);
+}
+void fixture_full_guard(NeptuneCommandStatus* status) {
+ neptune_command_begin(2,expected,NEPTUNE_COMMAND_WITNESS);neptune_command_frame(1801);
+ cpu.R[15]=0x06001000;neptune_command_trace.current_pc=0x060958EC;neptune_command_trace.current_opcode=0x6031;
+ for(uint32_t i=0;i<129;i++){cpu.R[0]=i;cpu.timestamp=(int32_t)i;neptune_command_read(&cpu,(i&1)?0x2589000C:0x25890008,0x0BC1);}
+ neptune_command_status(status,sizeof(*status));
+}
+'''
+        with tempfile.TemporaryDirectory() as d:
+            source=Path(d)/'runs.c';binary=Path(d)/'runs.so';source.write_text(prefix+header+harness)
+            subprocess.run([compiler,'-std=c11','-shared','-fPIC','-Werror','-x','c',str(source),'-o',str(binary)],check=True,capture_output=True,timeout=30)
+            dll=abi.C.CDLL(str(binary));status=abi.Status();rows=(abi.Record*abi.CAPACITY)();dll.fixture_runs(abi.C.byref(status),rows)
+            stored=list(rows)[:status.count]
+            self.assertEqual((status.abi,status.capacity,status.count,status.logical_records,status.transfer_count),(2,128,2,43,43))
+            self.assertEqual([(r.sequence,r.repeat_count,r.timestamp,r.timestamp_step) for r in stored],[(0,40,0,33),(40,3,1320,66)])
+            self.assertEqual((stored[0].r_step[14],stored[1].r_step[14]),(1,2))
+            expanded=abi.expand_records(stored,status)
+            self.assertEqual(len(expanded),43)
+            self.assertEqual([(expanded[i].sequence,expanded[i].timestamp) for i in (0,39,40,41,42)],[(0,0),(39,1287),(40,1320),(41,1386),(42,1452)])
+            self.assertEqual([expanded[i].r[14] for i in (0,39,40,41,42)],[0,39,40,42,44])
+            self.assertEqual(sum(r.repeat_count for r in stored),status.logical_records)
+            overflow=abi.Status();dll.fixture_full_guard(abi.C.byref(overflow))
+            self.assertEqual((overflow.count,overflow.capacity,overflow.logical_records,overflow.transfer_count,overflow.dropped,overflow.last_error),(128,128,128,129,1,5))
 
     def test_patch_component_preserves_fusion_and_has_distinct_exports(self):
         with tempfile.TemporaryDirectory() as d:

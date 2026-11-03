@@ -31,15 +31,34 @@ def read_json(path):
     return json.loads(probe_kernel.read_bounded(path,2*1024**2))
 def run(kernel_path,source_root,result_path,records_path,out):
     kernel=probe_kernel.kernel_bytes(kernel_path); result=read_json(result_path); capture=read_json(records_path)
-    status=capture.get('status'); rows=capture.get('records')
+    status=capture.get('status'); stored_rows=capture.get('records')
+    if capture.get('schema')=='neptune.failed-command-trace-diagnostic.v1': rows=stored_rows
+    elif capture.get('schema')=='neptune.failed-command-trace-diagnostic.v2' and isinstance(stored_rows,list) and isinstance(status,dict):
+        event_count=sum(r.get('repeat_count',0) for r in stored_rows if isinstance(r,dict))
+        if event_count>8192: raise ValueError('Compressed natural diagnostic exceeds this helper probe expansion bound')
+        rows=[]
+        for record in stored_rows:
+            repeats=record.get('repeat_count')
+            if type(repeats)is not int or repeats<1 or type(record.get('timestamp_step'))is not int:
+                raise ValueError('Malformed compressed natural diagnostic')
+            for offset in range(repeats):
+                expanded=dict(record);expanded['sequence']=record['sequence']+offset
+                expanded['timestamp']=((record.get('timestamp',0)+record['timestamp_step']*offset+2**31)%2**32)-2**31
+                if not isinstance(record.get('r_step'),list) or len(record['r_step'])!=16 or len(record.get('r',[]))!=16:
+                    raise ValueError('Malformed compressed register snapshot')
+                expanded['r']=[(value+record['r_step'][i]*offset)&0xffffffff for i,value in enumerate(record['r'])]
+                expanded['repeat_count']=1;expanded['timestamp_step']=0;rows.append(expanded)
+        if sum(r.get('repeat_count',0) for r in stored_rows)!=status.get('logical_records'):
+            raise ValueError('Compressed natural diagnostic does not account for retained logical records')
+    else: rows=None
     if (result.get('schema')!='neptune.explicit-command-trace-experiment.v1' or
         result.get('status')!='failure' or result.get('original_game_bytes_executed') is not True or
         result.get('selected_core_sha256')!='3a95acef8cc6e20297d907a9658f6ae6c067f8ae1a72dbb84a594b742938184a' or
         result.get('frames')!=600 or result.get('port_zero_start_frames')!=8 or
-        capture.get('schema')!='neptune.failed-command-trace-diagnostic.v1' or capture.get('accepted') is not False or
+        capture.get('schema') not in ('neptune.failed-command-trace-diagnostic.v1','neptune.failed-command-trace-diagnostic.v2') or capture.get('accepted') is not False or
         not isinstance(status,dict) or status.get('capacity')!=128 or status.get('count')!=128 or
-        status.get('dropped')!=1 or status.get('last_error')!=5 or status.get('transfer_count')!=129 or
-        not isinstance(rows,list) or len(rows)!=128):
+        status.get('dropped')!=1 or status.get('last_error')!=5 or not isinstance(status.get('transfer_count'),int) or status.get('transfer_count')<129 or
+        not isinstance(stored_rows,list) or len(stored_rows)!=128 or not isinstance(rows,list)):
         raise ValueError('Require the exact bounded natural overflow capture and its original-run provenance')
     sampled=sorted({r['transfer_value'] for r in rows if r['kind']==2 and r['pc']==ENTRY and r['transfer_address']==DEVICE})
     if not sampled or any(type(v)is not int or not 0<=v<=0xffff for v in sampled):
