@@ -164,6 +164,14 @@ controls. Sourcee42f90b had7 focused/491 research tests. Read
 and current655 checkpoint; pending service linkage is not successful execution.
 Continue A85E4/AE676/AE908/A4FAC, A8C10/9546E and real cleanup/device dependencies,
 then further functions/modules. Old128 guard and configured limits remain.
+Request-state PR704 merged9be7645 with15 exact-head/currentbase checks. Further
+AE676/AE908 command packing through realA4FAC/A4FBE now retains9,152 pending-boundary
+cases/run twice, four identical raw/archive pairs and24 controls at source620a4e8
+(7 focused/498 research tests). Read [the packing result](research/2026-11-03-cd-command-packing-contracts.md)
+and current655 checkpoint. These are unfinished services, not complete returns.
+The next actualdevice read is959DE using25890008. Continue trusted native
+observation/realdevice semantics, successful library services and further modules;
+no flatRAM, fabricatedresponse or callee success. Preserve NLSND703/PR705 ownership.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
