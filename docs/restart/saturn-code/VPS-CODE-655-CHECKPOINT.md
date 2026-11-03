@@ -33,6 +33,17 @@ The new static command is `python3 /home/dev/neptune-evidence/code655-20261102/i
 source windows are not original execution. Earlier running/deferred prose below
 is retained history; both pool and composed manifests are terminal success.
 
+Pool698 now targets protected main after695 acceptance. The first3cf4fb3
+workflow events straddled its old dependent base and retargeting; full39-check
+history and old-base failure log are retained in`.../code655-20261102/pr698-oldbase-*`.
+Current-base runs passed; this checkpoint reconciliation gets one final head
+against main for the exact-head validator. No earlier failure is hidden or counted
+as current success, and all original-tested source/test bytes remain unchanged.
+Next fresh source command is`python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-open.py`.
+Its owned95E5A model covers distinct12/24-stride records, invalid indices, empty/
+full slots and callback-null status mappings;8 focused owned tests pass, with
+zero original95E5A execution yet. Keep original versus owned counts separate.
+
 ## Current pool/context continuation: all twelve original jobs retained
 
 Source84c8499f27f6d95509ee19c881154f5e5a126abb now has all six byte-identical

@@ -116,10 +116,11 @@ Every admitted job acquired/released its own shared3/180-second lease and kept
 60-second/nice10/downward2GiB, offline/read-only and hidden-authority limits.
 No provider calls, native build, scheduler or allowance change occurred.
 
-Next execute composed nonnullA681A/96D74 exhaustion returns through the real
-division/remainder/format/context/copy/pool graph. Its separate prepared source
-29d7bdb has7 owned/455 research tests; preparation is distinct from original
-evidence. Null record/A7F4E, successfulA6FE0 services, positive95E5A/full89C8,
+The composed nonnullA681A/96D74 exhaustion batch subsequently completed3,344
+returns per run twice through real division/remainder/format/context/copy/pool
+calls, with12 controls and byte-identical raw/archive pairs. Its source29d7bdb
+has7 owned/455 research tests; dependent [PR699](https://github.com/elgansayer/Neptune-Bomberman/pull/699)
+retains that additional original evidence. Null record/A7F4E, successfulA6FE0 services, positive95E5A/full89C8,
 BIOS/callbacks, root/task cycles and further modules remain unresolved. Unknown
 executable/function/dynamic-target denominators stay unknown. These CPU contracts
 do not establish natural interior traffic, physical timing, gameplay or Godot parity.
