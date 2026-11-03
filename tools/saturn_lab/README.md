@@ -228,6 +228,16 @@ canonical observations and reports the first differing frame/field. See
 [Saturn execution plan](../../docs/restart/SATURN_RECONSTRUCTION.md).
 The comparator's synthetic tests do not establish reference-game fidelity.
 
+`probe_netlink_low_reset.py` checks the pinned NLSND3530 fixed-address clear
+against an independent complete register/memory/device contract, with terminal
+changed-value/count/destination controls. It reuses unchanged ABI7 and adds a
+narrow data region to the existing128-case command10 diagnostic, preserving prior
+outcomes/prefixes. See the [real private-host result](../../docs/restart/research/2026-11-03-original-low-reset.md)
+for repeated original runs and limitations. Natural callers/data lifetime, complete
+command10, audio and Godot parity remain unverified. Run with shared admission,
+offline/read-only source/input/native mounts and bounded resources; a new private
+report is mandatory.
+
 ## Bounded original kernel probe
 
 The [first real-original result](../../docs/restart/research/2026-10-30-saturn-original-kernel-result.md)

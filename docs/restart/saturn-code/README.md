@@ -108,3 +108,10 @@ adds639 complete constructed3540/355A/356E calls repeated in fresh processes,
 128-case command10 continuation now reaches32 diagnostic returns and precise
 low0780/longword-DSP guards; full command10, natural timing/audio and whole-code
 coverage remain open.
+
+The subsequent [fixed-data clear result](../research/2026-11-03-original-low-reset.md)
+qualifies294 complete constructed3530 calls in each of two fresh processes with12
+terminal mutation rejections. Direct original writers establish only the bounded
+NLSND0780..078F data profile. All prior680 observations are reproduced; the new
+command10 matrix has64 diagnostic returns and64 explicit DSP longword guards.
+Natural code/data lifetime, full command10 semantics and whole-code coverage remain open.

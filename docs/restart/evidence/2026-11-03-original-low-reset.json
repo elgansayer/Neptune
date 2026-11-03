@@ -1,0 +1,312 @@
+{
+  "account_ci_review_spend": "unknown",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "effective_scratch": {
+    "effective_temporary_directory": "/tmp",
+    "original_game_bytes_executed": false,
+    "requested_directory_visible": false,
+    "temporary_filesystem": "private tmpfs"
+  },
+  "focused_contract_tests": 8,
+  "issue": 682,
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Static direct writers and complete constructed clear establish only this pinned fixed-data profile, not global natural code/data exclusivity or lifetime",
+    "No original reset/boot/natural caller was executed; linear disassembly of data bytes is not code classification",
+    "64 diagnostic returns are not an independent complete command10 contract;64 DSP longword stops remain explicit",
+    "CPU/model cycles shared lineage; no hardware/sample clock, audio, Godot state/pixel/PCM, campaign/battle or full-code acceptance"
+  ],
+  "limits": {
+    "broker_credentials_signing_authority_hidden": true,
+    "command10_instruction_budget": 8192,
+    "disk_reserve_each_filesystem_bytes": 5368709120,
+    "guard_seconds": 5,
+    "helper_instruction_budget": 16,
+    "lease_seconds": 300,
+    "network_only_lo": true,
+    "original_address_space_bytes": 536870912,
+    "original_cpu_seconds": 40,
+    "original_file_bytes": 4194304,
+    "original_wall_seconds": 45,
+    "shared_host_limit": 3,
+    "source_inputs_native_readonly": true
+  },
+  "load_address": 0,
+  "model_calls_by_tests": 0,
+  "module": "NLSND",
+  "native_binary_sha256": "597e2c4a3a74ab6af4f06a1c9784dc24f1ed10e577edf5708baf7ff3dbc82364",
+  "native_generation_unchanged": true,
+  "native_identity": {
+    "abi": 7,
+    "capacity_identity": {
+      "abi": 6,
+      "accepted_state_identity": {
+        "abi": 5,
+        "capacity_adapter_sha256": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+        "derived_backend_sha256": "27828ba253cc29264d7dee2f574c80bc7706268deeb353085dcb39bc4c1434fc",
+        "device_identity": {
+          "abi": 4,
+          "base_identity": {
+            "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+            "flags": [
+              "-std=c11",
+              "-O2",
+              "-shared",
+              "-fPIC",
+              "-DM68K_INSTRUCTION_HOOK=1",
+              "-DM68K_SEPARATE_READS=1",
+              "-Wl,-z,defs"
+            ],
+            "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+          },
+          "component_sha256": "bcca52cb908e85249ae492e1db50a504f55b7900a5ebba25c649228135c9608e",
+          "derived_backend_sha256": "f8df4faf406a780ad1171f5210de073baeec08f02f8bfc3ca260040f16adfb95",
+          "preparation_module_sha256": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+          "profile": "SCSP-DSP-even-word-registers-clock-frozen-no-gap-read",
+          "scsp_source_lock_sha256": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
+        },
+        "max_events": 1024,
+        "max_ranges": 16,
+        "max_regions": 16,
+        "max_steps": 2048,
+        "preparation_module_sha256": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+        "profile": "NLSND-state-call-disjoint-code-data-frozen-SCSP-word-effects"
+      },
+      "derived_backend_sha256": "7a9fd4277d3f28da60b880e9562c06f3331b8a3d44c7303653e8a69a84ab68f9",
+      "max_events": 4096,
+      "max_ranges": 16,
+      "max_regions": 16,
+      "max_steps": 8192,
+      "preparation_module_sha256": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+      "profile": "NLSND-command10-reset-trace-capacity-unchanged-frozen-SCSP-word-effects"
+    },
+    "component_sha256": "d7440fed56b2f9f444bc19d2a99ddc15cfb055ea623da1145b06321277be1484",
+    "derived_backend_sha256": "da49b38f3ae2c1727b28e6fc63d903aee2852ba60bcef1f725fc685fede52e5f",
+    "max_events": 4096,
+    "max_ranges": 16,
+    "max_regions": 16,
+    "max_steps": 8192,
+    "preparation_module_sha256": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+    "profile": "NLSND-slot-byte00-0B-15-17-clock-frozen-with-unchanged-DSP-words",
+    "scsp_slot_source_lock_sha256": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+    "slot_fields": [
+      "StartAddr",
+      "KeyBit",
+      "WF8Bit",
+      "LoopMode",
+      "SourceControl",
+      "SBXOR",
+      "EnvRates[3]",
+      "DecayLevel",
+      "KRS",
+      "AttackLoopLink",
+      "EGBypass",
+      "ToDSPSelect",
+      "ToDSPLevel",
+      "DirectVolume[0]",
+      "DirectVolume[1]",
+      "EffectVolume[0]",
+      "EffectVolume[1]"
+    ],
+    "slot_snapshot_values": 1057,
+    "slot_state_bytes": 3400
+  },
+  "original": {
+    "command10": {
+      "cases": 128,
+      "diagnostic_returns": 64,
+      "full_semantic_contract_accepted": false,
+      "outcomes": {
+        "forbidden-write@0x100800": 64,
+        "stop-reached@0x0": 64
+      },
+      "previous_low_data_guards_extended": 64,
+      "previous_outcomes_identical": 64
+    },
+    "helper": {
+      "all_visible_registers_sr_pcs_events_ram_device_compared": true,
+      "cases": 294,
+      "instructions": [
+        7
+      ],
+      "model_cycles": [
+        76
+      ],
+      "natural_execution": false,
+      "observations_sha256": "1ef72af09440d5cd983e56fd9922f3a6e8719f945062c7236ad4ac8c67ffeb85",
+      "range_sha256": "ca06579e8d14d8a67d1cd5d998e9d29accc8f28c2fbed67962157988620a94ee",
+      "terminal_mutations": {
+        "changed_value": {
+          "changed_source_sha256": "acd3c70b82017bd359a95e07f92fcdcce81cf3f678c6f503d45ee85d6c6d6bc2",
+          "offset": "0x3531",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "01",
+          "terminal_tested": 4
+        },
+        "missing_write": {
+          "changed_source_sha256": "8e8d65550b627ea83e07dc425d6bf37b41de7ae0ab191a4ba92d893079d72f49",
+          "offset": "0x353c",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "4e71",
+          "terminal_tested": 4
+        },
+        "shifted_destination": {
+          "changed_source_sha256": "5433b33408445974ab032ac938bb9cb8295ad365eda3af049a8b940d6639bbb7",
+          "offset": "0x3535",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_hex": "84",
+          "terminal_tested": 4
+        }
+      }
+    },
+    "repeated_reports_equal": true,
+    "report_sha256": "24f1fd340cfa24478ff31bc4d0e352d30dca429df561d245b88f0427815135b1",
+    "supervisor": {
+      "accepted-baseline": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 4.996101932600141,
+        "timed_out": false,
+        "truncated": false
+      },
+      "admitted_at": 1793682764.8249788,
+      "all_guardians_terminal": true,
+      "comparison-001": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 2.5166504653170705,
+        "timed_out": false,
+        "truncated": false
+      },
+      "comparison-002": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 3.0152292186394334,
+        "timed_out": false,
+        "truncated": false
+      },
+      "configured_host_shared_limit": 3,
+      "finished_at": 1793682808.545152,
+      "guardians": [
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1514778,
+          "start_ticks": 585897298,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1514859,
+          "start_ticks": 585897360,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1514943,
+          "start_ticks": 585897429,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1515541,
+          "start_ticks": 585900612,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1515701,
+          "start_ticks": 585901113,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1515827,
+          "start_ticks": 585901365,
+          "uid": 1000
+        }
+      ],
+      "heartbeat_at": 1793682807.5436313,
+      "input_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+      "isolation": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.6194757083430886,
+        "timed_out": false,
+        "truncated": false
+      },
+      "issue": 682,
+      "lease_seconds": 300,
+      "model_calls": 0,
+      "native-load": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.6724964855238795,
+        "timed_out": false,
+        "truncated": false
+      },
+      "original_game_bytes_executed": true,
+      "owner": "code682:original:1514766",
+      "phase": "comparison-002",
+      "pid": 1514766,
+      "report_sha256": "24f1fd340cfa24478ff31bc4d0e352d30dca429df561d245b88f0427815135b1",
+      "schema": "neptune.original-code-supervised.v1",
+      "scratch": "/mnt/HC_Volume_106574422/repo-factory/c682-6hxsdys2",
+      "source_head": "1f574fe20562687447b764b03fdb6943c58b4f5f",
+      "started_at": 1793682764.8053071,
+      "state": "bounded-original-low-clear-comparison-complete",
+      "tooling": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 31.826676288619637,
+        "timed_out": false,
+        "truncated": false
+      }
+    }
+  },
+  "parent": 665,
+  "prior_680_report_equal_excluding_probe_sha256": true,
+  "private_evidence_root": "/home/dev/neptune-research-private/682",
+  "publication_only_changes": "Research/evidence and README documents only after original execution; every executable dependency and assertion retains the qualified source hash. Final exact-head CI revalidates tooling.",
+  "release": "USA MK81070 V1.003",
+  "research_tooling_tests": 384,
+  "retained_diagnostics": {
+    "focused_fixture": "Initial status-rejection fixture omitted status string; corrected fixture only, original assertion preserved.",
+    "original001": "Disk preflight failed on secondary before any child",
+    "original002": "Synthetic tooling fixture used130MiB on root and reserve guard cancelled125; no original comparison executed. Four generated fixture entries retired with hash receipt after guardians terminal.",
+    "original003": "All admitted phases passed; requested secondary TMPDIR is masked by sandbox, Python uses private tmpfs /tmp. Actual separate namespace probe verifies that fallback; external secondary scratch directory is unused."
+  },
+  "schema": "neptune.original-low-reset-evidence.v1",
+  "source_files_sha256": {
+    "tools/saturn_lab/analyze_sound_driver.py": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+    "tools/saturn_lab/m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
+    "tools/saturn_lab/m68k_consumer_native.py": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "tools/saturn_lab/m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+    "tools/saturn_lab/m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "tools/saturn_lab/m68k_reset_capacity.py": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+    "tools/saturn_lab/m68k_scsp_dsp.py": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+    "tools/saturn_lab/m68k_scsp_fifo.py": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
+    "tools/saturn_lab/m68k_scsp_slots.py": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+    "tools/saturn_lab/m68k_scsp_state.py": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "tools/saturn_lab/probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "tools/saturn_lab/probe_netlink_low_reset.py": "7b231c810cb64ae074009729abeb7c14ab52532098f342fd61ca0914aa12af50",
+    "tools/saturn_lab/probe_netlink_pointer.py": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+    "tools/saturn_lab/probe_netlink_records.py": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+    "tools/saturn_lab/probe_netlink_slot_effects.py": "1bf15aa3490dd865832b5afcfbf06c79bee4309c1ef4ccdc6f8e6e30315536eb",
+    "tools/saturn_lab/scsp-dsp-source-lock.json": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4",
+    "tools/saturn_lab/scsp-slot-source-lock.json": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+    "tools/saturn_lab/tests/test_probe_netlink_low_reset.py": "77a7fa727fc27029e8317d0b880fd19221c5fe732bea68249dbdc6b5205d68d0"
+  },
+  "source_qualified": "1f574fe20562687447b764b03fdb6943c58b4f5f",
+  "static_report_sha256": "bb22fdce64a2d47e8ee18dea0a44b07693dd82cc35d41c809730f8b51c0ea14a",
+  "static_source_qualified": "9f6baafd27c68db4067163cfa6f1d3ab14dc7261"
+}
