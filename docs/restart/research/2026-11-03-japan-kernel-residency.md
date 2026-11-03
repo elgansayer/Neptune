@@ -154,6 +154,13 @@ as `analysis/japan-a6d6-disassembly.txt` (SHA-256
 `analysis/japan-a714-disassembly.txt` (SHA-256
 `054458fe84d8c22cb96bf1aec51ba0180aa504723f0c218f1f09435cdc29aa8e`).
 
+Pinned literal-reference scans over the Japanese kernel report 48 SCSP/SMPC,
+138 VDP/SCU and 37 SH-2 internal-register candidate references. The three
+SCU PPAF/PPD candidates are the instructions in `A714` above. These counts are
+not instruction or function counts: this decoder scans every aligned word,
+including data, and these literal candidates need reachability and runtime
+validation. Full private candidate lists remain in `analysis/japan-*-literal-candidates.txt`.
+
 Next, add a bounded Japanese-specific observation of the startup path around
 `0x0600A312`, after verifying its DVCR, VDP2 and BIOS side effects, then map
 further Japan-only ranges and overlays. Keep the Japanese kernel distinct from
