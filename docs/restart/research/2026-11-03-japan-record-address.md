@@ -338,8 +338,16 @@ loads frame `0x060BDD7C` and target `0x0600A186`, then calls the context restore
 routine. Both paths derive the same VBR-selected cache-through index for the
 ready word at `0x2600A028`, clear it, and restore the caller stack/PR/R13/R14.
 `0x0600AD60` separately polls that ready word and tail-branches to ACE8 when
-nonzero. This is pinned-decoder static evidence only; the next bounded probe
-should compose AD38 with A186 and test both R0 branches using constructed state.
+nonzero. A bounded probe now composes AD38 with A186 and tests both R0 branches
+using constructed state. Since `tst r0,r0` sets T for zero and the following
+instruction is BF, A164's zero return takes the restore path; constructed
+nonzero R0 skips restore. Both paths clear only the VBR-selected ready word and
+return through the original stack/PR/R13/R14 epilogue. Sixteen seeds per branch
+run twice in each paired report, with two branch-opcode mutation controls.
+Reports in `execution-035` match at SHA-256
+`85ec5602db6ad65b4411c34c430979ad38e57b03aa7f2c0dea73e93d39755f1d`.
+The nonzero return is a constructed branch case, not evidence A164 produces it;
+no natural task lifetime, scheduler run, or device timing is established.
 
 ## Limits and continuation
 

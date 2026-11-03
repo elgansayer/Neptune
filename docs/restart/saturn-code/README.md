@@ -214,3 +214,10 @@ SHA-256 `573494700d714b29edbe46e31e19bd3ae54e3a5f9211a5fe7e2bb8e7feb16827`.
 The table contents, VBR values, task identity, and frame lifetime are
 constructed; natural task scheduling remains unproven. Failed harness attempts
 are retained in `execution-026` and `execution-027`.
+
+The AD38 continuation is now composed with the original A186 restore and
+epilogue. A164's zero result takes the restore branch; a constructed nonzero
+result skips it. Thirty-two branch/seed cases run twice per report, with two
+branch mutations. Paired reports match at SHA-256
+`85ec5602db6ad65b4411c34c430979ad38e57b03aa7f2c0dea73e93d39755f1d`.
+Natural scheduler reachability and context lifetime remain open.
