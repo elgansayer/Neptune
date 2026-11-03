@@ -286,6 +286,32 @@ naturally reaches A7D0 or that the frame remains live across a task switch. The
 full research suite passes 525 tests; tooling tests are separate from these
 original execution reports.
 
+## Japanese AB78 context-save callsite
+
+The second original A164 caller begins at `0x0600AB78`. Its prologue saves
+R14–R8, PR, and MACL on the stack, reserves four more bytes, loads frame base
+`0x060BDD7C` and target `0x0600A164` from literals, and calls A164. Unlike the
+A7D0 path, its delay slot does not advance R4. The saved R15 value is the
+post-prologue stack pointer, and A164 stores return address `0x0600AB94` in the
+frame.
+
+`tools/saturn_lab/probe_japan_ab78_context_save.py` executes the exact original
+AB78 prologue, literal loads, JSR/delay slot, and A164 callee for 31 constructed
+register patterns twice per case in each paired report. It verifies the
+40-byte caller stack traffic, context frame and write order, both original
+literal targets, exact return boundary, and special-register state. Two
+instruction mutations are rejected. Reports in `execution-025` match at
+SHA-256 `b57f2a64f2e9b5de7cb4e3429767ade763f6f123edca3ccc1db09e90a969094f`;
+probe SHA-256 is
+`269870291c39f4bcdf1dcca6e106435b1e8e83bd1e8a60e37c08aa07c8cdc352`.
+
+The first attempts are retained in `execution-022` through `execution-024`:
+they exposed the caller's R15-after-prologue value, the real return sentinel,
+and the need to treat a rejected mutated pointer access as a control rejection.
+These are constructed caller paths; natural task switching and context
+lifetime remain unresolved. The full research suite passes 526 tests, separate
+from original execution evidence.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed

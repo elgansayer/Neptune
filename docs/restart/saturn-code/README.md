@@ -200,3 +200,7 @@ The A7D0 literal/JSR/delay-slot caller is now composed with A164 across 31
 patterns and two original instruction controls; execution stops at its actual
 callee return boundary. Natural boot reachability and task-frame lifetime
 remain unresolved.
+The AB78 caller path now composes its exact stack prologue and A164 call across
+31 additional constructed patterns, checking the frame at `0x060BDD7C`, its
+40-byte saved stack, and the A164 return boundary. Neither caller establishes
+natural task-switch behavior.
