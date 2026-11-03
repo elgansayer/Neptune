@@ -104,6 +104,16 @@ This is an isolated helper contract with a constructed record table and flags.
 It does not establish the `AA34` caller's device contract, a natural caller,
 record lifetime, timing, or gameplay behavior.
 
+The next static window covers the tail of the neighboring `AAEC` routine at
+`0x0600A9E4` onward; its retained decode is
+`analysis/japan-aa34-tail-disassembly.txt`, SHA-256
+`a831d46a73a2feb40d1ac867e0f1fa86a41cc6b59cd5617330bc40d2dfa11f29`. The
+original-byte listing places `AAEC`'s end at `0x0600AB2A` and shows an 18-slot
+loop that compares each record's byte `+81` to a stack-saved input, updates
+matching slots to the current index, and calls `AACC`. This is a static
+control-flow interpretation only; caller inputs, full memory contract, and
+device-independent runtime behavior remain to be executed.
+
 The pinned decoder window at `0x0600B4EC` is retained privately at
 `analysis/japan-b4ec-disassembly.txt`, SHA-256
 `bdc400dad5a815dc45a5e32f2a57324278c1d211834054252cf94f23b5fff8e0`. It

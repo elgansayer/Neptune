@@ -166,3 +166,7 @@ mutations. It checks the `+80` flag read, conditional longword `1` write, exact
 stack MACL restore, and return delay slot. The `AA34` producer still has
 unresolved cache-through/VBR dependencies; no natural reachability or gameplay
 is claimed.
+
+Static tail decoding also identifies an unexecuted `0x0600AAEC` candidate: it
+scans 18 record tags at `+81`, updates matching slots, then calls `AACC`. Its
+caller/memory contract remains the next original-byte execution target.
