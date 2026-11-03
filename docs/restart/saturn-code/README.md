@@ -140,3 +140,19 @@ outcomes and64 prior guarded prefixes are preserved. This removes the measured
 width dependency, not the remaining independent command/natural/audio/Godot proof.
 
 The [NLSND reset-marker phase result](../research/2026-11-03-original-boot-gate.md) independently compares the bounded `0x1000..0x1080` handoff in two fresh original CPU processes. Each has eight complete phase transfers, 8,192 explicitly unfinished marker waits and 48 completed-handoff mutation rejections; the embedded data gap stays non-executable. Natural loading and the remaining reset body, header-global lifetimes and whole-code denominators remain open.
+
+The [Japan kernel result](../research/2026-11-03-japan-kernel-residency.md)
+verifies exact Japanese `0KRNL.BIN` residency at candidate mapping `0x0600A000`
+in original boot states through frame 2400 and isolates two Japanese startup
+buffer helpers (`0x0600A58E`/`0x0600A5A2`) across 48 repeated constructed case
+pairs with two wrong-opcode controls. Residency is not a complete executable
+range map or proof that every matching instruction ran; the helpers are not
+natural-caller validation, and Japan startup/device semantics and the all-module
+denominator remain open.
+
+The subsequent [Japanese record-address helper result](../research/2026-11-03-japan-record-address.md)
+executes the original 18-byte helper at `0x0600AEF2` over 34 inputs twice per
+run, with paired reports identical and two instruction mutation controls. It
+validates the bounded signed-word multiply,
+record-base addition, and one MACL spill/restore slot. This is another isolated
+CPU contract, not proof of natural callers or the surrounding task/device code.
