@@ -375,6 +375,31 @@ retained A410 decode SHA-256 is
 with original-byte static range/call-target reconciliation until an existing
 approved emulator capture can support a bounded natural probe.
 
+The latest static follow-through decodes A312 through A4D2 (SHA-256
+`668d6570080c03a7fbbee5f4e6c72e4270a0bdf3b2d44fc611fffc285fe39887`) and
+the A946 callback path through AA82 (SHA-256
+`ca5996b065a97b5b8717ddada38165bb2d5ec5d4560b33ccae818fe59dc02be2`), with
+an AA84 continuation through ABA2
+(`2b939eb1032479b58f52b52cb03759348c3d868ad87e55ba767aa52611e66105`).
+A946/A956 are small wrappers into AA34; A966 constructs 88-byte records at
+CEEEC using VBR-selected state; AA34 scans 18 such records, invokes A966 for
+indices 0–17 and then 17 down to 0, and calls A79C on its error path. The next
+AB30 routine compares the cache-through word at 2600A038 with the stored word
+at BDDAC and adjusts active record counters.
+
+AB30 has now been executed as original bytes through its RTS delay slot at
+AB76. The bounded probe maps the three original literal words, cache-through
+current counter, stored prior counter, exact 18×88-byte table, and the single
+R14 stack spill. It covers 320 distinct equal/changed-counter and record-state
+cases twice per report, checks the independent unsigned subtraction/floor-at-1
+oracle, exact table and prior-counter writes, stack restore, and two mutations.
+Paired reports in execution-064/065 match at SHA-256
+`0a3ff6c7ea735876373563ee548b4a94031d2143a42d42d3b14c982d0c983a7f`; result
+rows hash to `c98d2da2529bd73e1a5f54bf30792f110f1ddc8c45821059adaef94f82186042`.
+This demonstrates only the constructed 18-record counter-update contract; it
+does not establish the natural counter producer, timing, caller frequency, or
+gameplay meaning.
+
 The A1DA callback literal at `0x0600A2B4` resolves to original target
 `0x0600CCD2`. Its static entry zeroes four words at `0x060BEA3C`, initializes
 six short entries at `0x060BEA7C` and associated pointer records, then calls
