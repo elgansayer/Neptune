@@ -60,6 +60,11 @@ jobs:
           sparse-checkout: |
             /mednafen/ss/scsp.h
             /mednafen/ss/scsp.inc
+            /mednafen/ss/sound.c
+            /mednafen/math_ops.h
+            /mednafen/hw_cpu/m68k/m68k_private.h
+            /mednafen/hw_cpu/m68k/m68k_ham_body.inc.h
+            /mednafen/hw_cpu/m68k/m68k_op_MOVE_body.inc.h
             /COPYING
           sparse-checkout-cone-mode: false
           persist-credentials: false
