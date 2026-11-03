@@ -330,6 +330,17 @@ harness backing-buffer mistake and its diagnostic, not a game-code result.
 The VBR values, table entries, and frame/task identity are constructed. This
 does not prove natural scheduler reachability or context lifetime.
 
+## AD38 context restore continuation (static)
+
+The return boundary after AD34 is followed by a conditional restore path. At
+`0x0600AD38`, R0 is tested; a nonzero result loads saved R5 from the stack,
+loads frame `0x060BDD7C` and target `0x0600A186`, then calls the context restore
+routine. Both paths derive the same VBR-selected cache-through index for the
+ready word at `0x2600A028`, clear it, and restore the caller stack/PR/R13/R14.
+`0x0600AD60` separately polls that ready word and tail-branches to ACE8 when
+nonzero. This is pinned-decoder static evidence only; the next bounded probe
+should compose AD38 with A186 and test both R0 branches using constructed state.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed
