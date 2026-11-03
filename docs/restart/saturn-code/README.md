@@ -90,6 +90,16 @@ whole-program function total. Unknown denominators remain `null`.
 
 The [2 November original memory-helper/caller result](../research/2026-11-02-original-position-bounds.md) adds two isolated-tested USA kernel entries and their explicit controlled-memory limits. It does not establish natural gameplay validation or a whole-program function denominator.
 
+The [natural first-task/library result](../research/2026-11-02-first-task-natural-init.md)
+observes complete89C8/95B04 returns through twelve repeated original windows with
+exact state/video/audio/input equality. [Status/registration contracts](../research/2026-11-02-library-status-contracts.md)
+then distinguish3,364 complete returns from1,148 unfinished callback handoffs per
+run. The [slot selection/release result](../research/2026-11-03-library-slot-contracts.md)
+adds3,918 complete constructed calls twice with seven mutation-control
+combinations and the old128 refusal retained. Internal library/device semantics,
+full655 and whole-program coverage remain open; resume the
+[current checkpoint](VPS-CODE-655-CHECKPOINT.md).
+
 The [3 November NLSND state/command11 result](../research/2026-11-03-original-nlsnd-state.md)
 compares36,127 constructed complete calls across five entry modes, repeated in
 fresh pinned CPU/frozen-SCSP processes with44 terminal mutation rejections. Natural

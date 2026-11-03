@@ -1,0 +1,221 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-3e7e4952c0614649ee575d6865fdbd0c994b860d365498d9e72b8cd726cb7be9",
+    "files": 75,
+    "source_head": "6d1b20a9505345180110f85e9f2aef43920792ca",
+    "source_manifest_sha256": "3e7e4952c0614649ee575d6865fdbd0c994b860d365498d9e72b8cd726cb7be9"
+  },
+  "batch": "/home/dev/neptune-research-private/655/slot-batch-hfgeci8y/batch.json",
+  "batch_manifest_sha256": "21a6b35c1d6806e4077ad5e2a221dffd073c5ddfcd884dc2a8e74ac60bd2e2af",
+  "contract": {
+    "count": "signed32-bit word at library+0",
+    "full_or_zero_count": "return0 without marker write",
+    "library_cell": "060FA8BC",
+    "marker_start_offset": "C60",
+    "marker_stride": "A8",
+    "negative_count_behavior": "skips scan, writes1 at first marker and returns that address regardless of its previous value",
+    "release": "96BCE setsR3=0 and stores0 throughR4 in the real RTS delay; R0/SR/PR/SP/MAC preserved",
+    "selection": "first zero marker within positive count becomes1 and its address is returned",
+    "tested_negative_counts": [
+      -1,
+      -2,
+      -2147483648
+    ]
+  },
+  "cpu": "sh2",
+  "families": {
+    "release": {
+      "cases_per_run": 432,
+      "complete_returns_per_run": 432,
+      "controls": {
+        "changed-clear-value": {
+          "nonbudget_rejections": 72,
+          "pc": 101280718,
+          "tested": 72
+        },
+        "lost-clear-delay": {
+          "nonbudget_rejections": 72,
+          "pc": 101280722,
+          "tested": 72
+        }
+      },
+      "instruction_max": 3,
+      "instruction_min": 3,
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "1d6d4f9bf0ba377538a15846195056cce16497acfb0fe499e6527c42357f67af",
+      "runs": [
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/slot-contracts-release-5ku3eqff",
+          "isolation_sha256": "48829bde59e2f62b7992704ab4cb87d7c80f1203ca9e83990168bf5116db364d",
+          "report_sha256": "68e162ad965edff46f2237a9acd8cb94ad17c12028767eba015ce03cf388b913",
+          "supervisor_sha256": "8b2ba47bf2e75032d7b75b4ea50fd169044b4b97ca97ff0b59a78cd8b411db0e"
+        },
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/slot-contracts-release-b6kdjyfo",
+          "isolation_sha256": "48829bde59e2f62b7992704ab4cb87d7c80f1203ca9e83990168bf5116db364d",
+          "report_sha256": "68e162ad965edff46f2237a9acd8cb94ad17c12028767eba015ce03cf388b913",
+          "supervisor_sha256": "52897aa5c9f038c81a2b764f1566c98a809c3699a2ed4c4da3900d028dd46974"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_slots.py": "55712103259b98bd08d21052f43a65f564dded4ed14ac9b1464bcc17130e4e6c",
+        "probe_library_tables.py": "7d1cd0f3f7d15093348d6b53932b0537234d75cc5e391a2b838f6abe051a2a30",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    },
+    "select": {
+      "cases_per_run": 3486,
+      "complete_returns_per_run": 3486,
+      "controls": {
+        "changed-used-marker": {
+          "nonbudget_rejections": 60,
+          "pc": 101280710,
+          "tested": 65
+        },
+        "changed-used-slot-stride": {
+          "nonbudget_rejections": 50,
+          "pc": 101280692,
+          "tested": 65
+        },
+        "lost-full-null-delay": {
+          "nonbudget_rejections": 5,
+          "pc": 101280708,
+          "tested": 65
+        },
+        "lost-result-delay": {
+          "nonbudget_rejections": 65,
+          "pc": 101280716,
+          "tested": 65
+        },
+        "lost-zero-marker-write": {
+          "nonbudget_rejections": 60,
+          "pc": 101280712,
+          "tested": 65
+        }
+      },
+      "instruction_max": 233,
+      "instruction_min": 17,
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "4f4cc077d38408e9013298c92d86c7566366689b4155cde3b603b6aae0cb57f6",
+      "runs": [
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/slot-contracts-select-3xpb25ld",
+          "isolation_sha256": "287aea3f952ac207202fced348b157ab7e5186c763712ffe406d5483c342e736",
+          "report_sha256": "f7fbe8ee0e1c26c591f65520c0f83f1b46da7fa853bb14ddcb4db3abf705403a",
+          "supervisor_sha256": "0127b9ceadd3e4954cea5e4e1ab575e7b868db3e6ebead6c13105c04b462eaf2"
+        },
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/slot-contracts-select-_zfykczo",
+          "isolation_sha256": "287aea3f952ac207202fced348b157ab7e5186c763712ffe406d5483c342e736",
+          "report_sha256": "f7fbe8ee0e1c26c591f65520c0f83f1b46da7fa853bb14ddcb4db3abf705403a",
+          "supervisor_sha256": "97b5646843611508c1a2244766472c404a4d72d85ed5e013ecef7bc7df10ff00"
+        }
+      ],
+      "signed_negative_adversarial_cases_per_run": 54,
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_slots.py": "55712103259b98bd08d21052f43a65f564dded4ed14ac9b1464bcc17130e4e6c",
+        "probe_library_tables.py": "7d1cd0f3f7d15093348d6b53932b0537234d75cc5e391a2b838f6abe051a2a30",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    }
+  },
+  "family_control_combinations": 7,
+  "guards": {
+    "accepted128_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "accepted_short_guard_unchanged": true,
+    "actual_short_refusal": {
+      "CPU_step_attempts_field": 129,
+      "error": {
+        "reason": "Handoff instruction budget exceeded",
+        "type": "ValueError"
+      },
+      "last_recorded_pc": "06096BAA",
+      "pipeline_pc_after": "06096BAC",
+      "recorded_instruction_executions": 128,
+      "retained_in_both_reports": true
+    },
+    "explicit_aliases": [],
+    "release_chosen_budget": 128,
+    "selection_chosen_budget": 256,
+    "selection_profile_maximum": 1024
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "native_builds": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "shared_host_slots": 3,
+    "source_originals_dependencies_readonly": true
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "natural_projection": {
+    "active_marker_changes": [
+      {
+        "after": 1,
+        "before": 0,
+        "index": 0
+      }
+    ],
+    "count": 16,
+    "library_address": "060BD92C",
+    "other15_active_markers_preserved": true,
+    "private_trace": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-enabled-wmaopl8g/capture/init-trace.json",
+    "returned_pointer": "060BE58C",
+    "samples_beyond_count_not_labeled_active": true,
+    "scope": "matches derived slot-selection result; internal96B9C entry itself is not directly traced",
+    "source": "acceptedPR667 original95E5A entry/return snapshots",
+    "trace_sha256": "2719dde90a65dfe5020d4b93cd9ee9ce7774e820d5dfd1f5b489f36b8c050b3f"
+  },
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "retained_admission_deferral": {
+    "bounded_wait_receipt": "/home/dev/neptune-research-private/655/slot-admission-wait-vq4ps1uh/wait.json",
+    "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/slot-contracts-select-0kqyhzfc",
+    "foreign_claims_preserved": true,
+    "observed_at": "2026-11-03T08:10:14.956684+00:00",
+    "original_execution": false,
+    "reason": "all three foreign slots occupied"
+  },
+  "schema": "neptune.original-library-slot-contracts-derived.v1",
+  "scope_limits": [
+    "Constructed count/table/stack corpus; count0..24 plus three signed-negative adversarial values",
+    "Larger positive counts and the full32-bit negative count domain are not executed exhaustively",
+    "Original95E5A interior96B9C entry is not directly observed; natural sampled result agrees separately",
+    "Full95E5A/96D74/89C8 semantics, module/function/dynamic-target denominators and hardware/gameplay/Godot parity unresolved"
+  ],
+  "source_head": "6d1b20a9505345180110f85e9f2aef43920792ca",
+  "source_ranges_sha256": {
+    "06096B9C..06096BCE": "ad8b42dc84db49ce6f40434f32b593bd168932d1d03ec14e29821cd55913fc0b",
+    "06096BCE..06096BD4": "5b5436c6893ae3812dc3ac2f3b23fe853a56356a95e2f4b116fff9acd8ea4ee7"
+  },
+  "total_cases_per_run": 3918
+}

@@ -85,8 +85,13 @@ constructed cases twice:3,364 complete returns and1,148 unfinished callback
 handoffs per run, with19 mutation-control combinations. Actual89C2 is a tail
 trampoline to293A4; its body is unresolved, not a substituted return. Retain the
 initial incorrect-callback-model failure. PR667 mergedb6a8e25 and bounded660
-closed;655 and the programme remain open. Next96B9C slot selection supports
-the measured95E5A path; continue its other positive library dependencies.
+closed;655 and the programme remain open. Status/callback PR669 then merged
+b161880 on3 November with exact13-check/current-base acceptance.96B9C selection
+and96BCE release now complete3,918 cases twice, with seven mutation-control
+combinations, an actual old128 refusal and matching natural95E5A projection.
+Keep the initial admission deferral and signed-negative count behavior explicit.
+Resume the current655 checkpoint for slot-result publication and real96D74/
+A5EEC/A681A/A56CA/A56D8 dependencies toward composed95E5A semantics.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
