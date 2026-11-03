@@ -22,6 +22,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+      - name: Verify browser smoke rejects recorded engine errors
+        run: node deploy/web/smoke.test.mjs
       - name: Install pinned Godot and export templates
         run: |
           python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"

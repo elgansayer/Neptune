@@ -1122,37 +1122,14 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 					tirra_sprite = child
 					break
 	
-	# Debug: Check if sprite has frames
-	if tirra_sprite and tirra_sprite.sprite_frames:
-		if tirra_sprite.sprite_frames.get_frame_count("default") == 0 and tirra_sprite.sprite_frames.get_frame_count("idle") == 0:
-			print("[GameView] WARNING: Tirra sprite '", tirra_sprite.name, "' has no frames in 'default' or 'idle' animation!")
-		
-		if not tirra_sprite:
-			# Debug: check what children exist
-			print("[GameView] No visible Tirra sprite found. Growth level: ", growth_level)
-			print("[GameView] Tirra children: ", tirra_visual.get_children().map(func(c): return c.name + " (visible=" + str(c.visible) + ")" if c is AnimatedSprite2D else c.name))
-	
 	if tirra_sprite:
 		# Play animation if valid - with fallback for missing/empty animations
 		# Some Tirra directions (up, left, right) may have empty frame lists
-		var anim_to_play = tirra_anim
 		if tirra_sprite.sprite_frames:
-			# Check if requested animation exists and has frames
-			var has_valid_anim = tirra_sprite.sprite_frames.has_animation(tirra_anim) and \
-				tirra_sprite.sprite_frames.get_frame_count(tirra_anim) > 0
-			
-			if not has_valid_anim:
-				# Fallback to down direction (which always has frames)
-				if is_moving:
-					anim_to_play = "down_walk"
-				else:
-					anim_to_play = "down_stopped"
-				# Final check - make sure fallback exists
-				if not tirra_sprite.sprite_frames.has_animation(anim_to_play) or \
-					tirra_sprite.sprite_frames.get_frame_count(anim_to_play) == 0:
-					anim_to_play = "idle"  # Last resort fallback
-			
-			if tirra_sprite.animation != anim_to_play:
+			# The authored PCK uses directional animations, with no "default".
+			# Validate every candidate before querying frames or playing it.
+			var anim_to_play := _tirra_animation(tirra_sprite.sprite_frames, tirra_anim, is_moving)
+			if not anim_to_play.is_empty() and tirra_sprite.animation != anim_to_play:
 				tirra_sprite.play(anim_to_play)
 		
 		# Z-index changes based on direction for proper layering:
@@ -1203,6 +1180,12 @@ func _update_tirra_visual(player_node: Node2D, data: Dictionary, player_directio
 		player_sprite.z_index = player_z_table.get(tirra_direction, 2)
 		player_sprite.z_as_relative = true  # Use relative z-index
 
+
+func _tirra_animation(frames: SpriteFrames, requested: String, moving: bool) -> String:
+	for candidate in [requested, "down_walk" if moving else "down_stopped", "idle"]:
+		if frames.has_animation(candidate) and frames.get_frame_count(candidate) > 0:
+			return candidate
+	return ""
 
 func _player_dir_to_tirra_dir(player_dir: String) -> String:
 	"""Return Tirra direction name (up/down/left/right)."""
@@ -1788,7 +1771,7 @@ func update_egg(egg_id: String, data: Dictionary):
 		if sprite:
 			sprite.visible = true
 			print("[GameView] Egg sprite DETAIL: visible=", sprite.visible, " scale=", sprite.scale, " modulate=", sprite.modulate, " z_index=", sprite.z_index, " position=", sprite.position)
-			print("[GameView] Egg sprite animation=", sprite.animation, " frame=", sprite.frame, " playing=", sprite.playing)
+			print("[GameView] Egg sprite animation=", sprite.animation, " frame=", sprite.frame, " playing=", sprite.is_playing())
 		else:
 			print("[GameView] ERROR: AnimatedSprite2D not found in egg!")
 		
