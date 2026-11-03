@@ -92,6 +92,17 @@ combinations, an actual old128 refusal and matching natural95E5A projection.
 Keep the initial admission deferral and signed-negative count behavior explicit.
 Resume the current655 checkpoint for slot-result publication and real96D74/
 A5EEC/A681A/A56CA/A56D8 dependencies toward composed95E5A semantics.
+Slot PR689 is now accepted atf46ad9d. The context/index/caller probe at source
+a5a38d7 (10 owned/431 research tests) subsequently executed10,504 cases twice:
+10,294 complete returns and210 unfinished A681A handoffs per run, with23
+non-budget family/control rejections. All fourteen reports have identical
+per-family pairs. The initial index0 admission deferrals and live foreign
+exclusive reservation were preserved; normal admission resumed after legitimate
+release. The accepted128 guard remains unchanged, chosen budget64. Read the
+[setup result](research/2026-11-03-library-setup-contracts.md) and current655
+checkpoint. Continue full9410C/94268 arithmetic, A6DA6 format,A6FE0 context and
+A7F4E service dependencies toward A681A/96D74/95E5A. Do not count owned ISA/math
+development, prepared models or CI as additional original-game evidence.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
