@@ -138,3 +138,5 @@ mutation rejections, with a separate qualified frozen DSP longword/TEMP profile.
 All128 command10 scenarios now return diagnostically;64 prior CPU/RAM/common-device
 outcomes and64 prior guarded prefixes are preserved. This removes the measured
 width dependency, not the remaining independent command/natural/audio/Godot proof.
+
+The [NLSND reset-marker phase result](../research/2026-11-03-original-boot-gate.md) independently compares the bounded `0x1000..0x1080` handoff in two fresh original CPU processes. Each has eight complete phase transfers, 8,192 explicitly unfinished marker waits and 48 completed-handoff mutation rejections; the embedded data gap stays non-executable. Natural loading and the remaining reset body, header-global lifetimes and whole-code denominators remain open.

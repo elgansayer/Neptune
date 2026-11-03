@@ -1,0 +1,381 @@
+{
+  "account_CI_review_spend": "unknown",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "focused_contract_tests": 6,
+  "issue": 694,
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Only1000..1080 gate/register-transfer phase, not a returning function or complete reset",
+    "All8192 wrong-tag cases are63-instruction bounded waits, never successful completed boots",
+    "Declared constructed marker/SR/register/device union, not all states or natural loading/boot transitions",
+    "1020..105F is excluded embedded data; intentional wrong branch1022 is only a fetch-guard diagnostic",
+    "68000/frozen SCSP share emulator lineage;154/1134 model cycles are not hardware/sample-time evidence",
+    "Natural initialisation/lifetimes of header globals404/412/450, shared7000 layout and0780 copy alias remain open",
+    "No DSP execution/audio, production-Godot campaign/battle/native-pixel/PCM or whole-code denominator acceptance",
+    "Installed daemon private transport proof is separate; account-wide manual enrolment and real issue restart recovery remain open; continuity off"
+  ],
+  "limits": {
+    "broker_auth_authority_hidden": true,
+    "disk_reserve_each_filesystem_bytes": 5368709120,
+    "guard_seconds": 5,
+    "instruction_budget_per_case": 63,
+    "lease_seconds": 600,
+    "offline_only_lo": true,
+    "original_address_space_bytes": 536870912,
+    "original_cpu_seconds": 180,
+    "original_file_bytes": 4194304,
+    "original_wall_seconds": 210,
+    "shared_host_limit": 3,
+    "source_input_native_readonly": true
+  },
+  "load_address": 0,
+  "model_calls_by_tests": 0,
+  "module": "NLSND",
+  "native_binary_sha256": "82291cfcc35cbf6f24e326eb49f2fa01720e43bf62fc8c9a79ea89eb0e97e21f",
+  "native_generation_unchanged": true,
+  "native_identity": {
+    "abi": 8,
+    "accepted_slot_identity": {
+      "abi": 7,
+      "capacity_identity": {
+        "abi": 6,
+        "accepted_state_identity": {
+          "abi": 5,
+          "capacity_adapter_sha256": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+          "derived_backend_sha256": "27828ba253cc29264d7dee2f574c80bc7706268deeb353085dcb39bc4c1434fc",
+          "device_identity": {
+            "abi": 4,
+            "base_identity": {
+              "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+              "flags": [
+                "-std=c11",
+                "-O2",
+                "-shared",
+                "-fPIC",
+                "-DM68K_INSTRUCTION_HOOK=1",
+                "-DM68K_SEPARATE_READS=1",
+                "-Wl,-z,defs"
+              ],
+              "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+            },
+            "component_sha256": "bcca52cb908e85249ae492e1db50a504f55b7900a5ebba25c649228135c9608e",
+            "derived_backend_sha256": "f8df4faf406a780ad1171f5210de073baeec08f02f8bfc3ca260040f16adfb95",
+            "preparation_module_sha256": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+            "profile": "SCSP-DSP-even-word-registers-clock-frozen-no-gap-read",
+            "scsp_source_lock_sha256": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
+          },
+          "max_events": 1024,
+          "max_ranges": 16,
+          "max_regions": 16,
+          "max_steps": 2048,
+          "preparation_module_sha256": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+          "profile": "NLSND-state-call-disjoint-code-data-frozen-SCSP-word-effects"
+        },
+        "derived_backend_sha256": "7a9fd4277d3f28da60b880e9562c06f3331b8a3d44c7303653e8a69a84ab68f9",
+        "max_events": 4096,
+        "max_ranges": 16,
+        "max_regions": 16,
+        "max_steps": 8192,
+        "preparation_module_sha256": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+        "profile": "NLSND-command10-reset-trace-capacity-unchanged-frozen-SCSP-word-effects"
+      },
+      "component_sha256": "d7440fed56b2f9f444bc19d2a99ddc15cfb055ea623da1145b06321277be1484",
+      "derived_backend_sha256": "da49b38f3ae2c1727b28e6fc63d903aee2852ba60bcef1f725fc685fede52e5f",
+      "max_events": 4096,
+      "max_ranges": 16,
+      "max_regions": 16,
+      "max_steps": 8192,
+      "preparation_module_sha256": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+      "profile": "NLSND-slot-byte00-0B-15-17-clock-frozen-with-unchanged-DSP-words",
+      "scsp_slot_source_lock_sha256": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+      "slot_fields": [
+        "StartAddr",
+        "KeyBit",
+        "WF8Bit",
+        "LoopMode",
+        "SourceControl",
+        "SBXOR",
+        "EnvRates[3]",
+        "DecayLevel",
+        "KRS",
+        "AttackLoopLink",
+        "EGBypass",
+        "ToDSPSelect",
+        "ToDSPLevel",
+        "DirectVolume[0]",
+        "DirectVolume[1]",
+        "EffectVolume[0]",
+        "EffectVolume[1]"
+      ],
+      "slot_snapshot_values": 1057,
+      "slot_state_bytes": 3400
+    },
+    "bus_word_capacity": 8192,
+    "component_sha256": "1c6f90135b29d70f364b81eb72948ae34c759a5a890e5252582ec8e5b74fb3f5",
+    "derived_backend_sha256": "a96f60dce3566552f4ac92722031d6fca70341369b9f7b4f13e6d95fa2c206cd",
+    "dsp_snapshot_values": 353,
+    "preparation_module_sha256": "5ac3dd8041587a08908ed0e486bd96ccfde10d8da8f52cd11cc35a4589ea9dd6",
+    "profile": "NLSND-frozen-DSP-word-and-aligned-normal-MOVE-long-writes-TEMP-explicit",
+    "source_lock_sha256": "b7e3043a08074a166093d488a2e9f74f5184fef737f55e888539d4712582899b"
+  },
+  "original_game_bytes_executed": true,
+  "original_results": {
+    "cases": 8200,
+    "data_gap_guard": {
+      "error_address": "0x1022",
+      "instructions": 11,
+      "scope": "Intentional wrong branch into data is a fetch-guard diagnostic, not a completed gate or reset",
+      "semantic_mutation_qualified": false,
+      "status": "instruction-access"
+    },
+    "model_cycles": {
+      "bounded-wait-not-completed-boot": [
+        1134
+      ],
+      "gate-transfer": [
+        154
+      ]
+    },
+    "natural_execution": false,
+    "observations_sha256": "e7d7690cb951f9bbc7e543c66980d19ceb8a69dc3d81f8be2c8a487bce15ede1",
+    "outcomes": {
+      "bounded-wait-not-completed-boot": 8192,
+      "gate-transfer": 8
+    },
+    "range_sha256": {
+      "0x1000-0x1020": "f555e3f5f0a4d0e39afa8dde55ca035d55b0f35b46fb840c2eddc2d391df7aec",
+      "0x1060-0x1080": "61d89ea1426c7aed1d614ff08f317e801b32fde9dbb786f364c8b5fd9c00d685"
+    },
+    "terminal_controls": {
+      "RAM_base": {
+        "changed_source_sha256": "336cb3926b047d7472ab97317df055b6cf65e9ba670a9b489c9f0498d06a008b",
+        "offset": "0x1072",
+        "reasons": [
+          "Independent reset gate mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "7001",
+        "terminal_handoffs": 8
+      },
+      "SCSP_base": {
+        "changed_source_sha256": "69bea8b4e7ea130ee6aa447685a6e7da69303bf17de69585e8dac01ac465652d",
+        "offset": "0x107c",
+        "reasons": [
+          "Independent reset gate mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "00100020",
+        "terminal_handoffs": 8
+      },
+      "missing_D2_clear": {
+        "changed_source_sha256": "7550d2802608b14f44cffd59466f3bd0f14cd90b866f9b6c1bb6ba61fe732c86",
+        "offset": "0x1014",
+        "reasons": [
+          "Independent reset gate mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "4e71",
+        "terminal_handoffs": 8
+      },
+      "seed_one": {
+        "changed_source_sha256": "d2451c48abade7d472acb878ebb48a27ad348e112fb4b97fefbf20e9b3f2c343",
+        "offset": "0x1011",
+        "reasons": [
+          "Independent reset gate mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "01",
+        "terminal_handoffs": 8
+      },
+      "skip_D7_clear": {
+        "changed_source_sha256": "24380b352bc69d606b6aa726f883dcf364c6a9446354de46241cc273c8c28003",
+        "offset": "0x101f",
+        "reasons": [
+          "Independent reset gate mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "42",
+        "terminal_handoffs": 8
+      },
+      "stack_base": {
+        "changed_source_sha256": "eb8d0aa563505f7c14c1345e83e8302e2a5a59317fd48f01ccdc4a209a339fc2",
+        "offset": "0x1076",
+        "reasons": [
+          "Independent reset gate mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "0000a004",
+        "terminal_handoffs": 8
+      }
+    },
+    "whole_reset_complete": false
+  },
+  "parent": 665,
+  "positive_sample": {
+    "case": [
+      1397049153,
+      10015,
+      0
+    ],
+    "device_after_sha256": "576c37018d51b5538e577ee7e3f75638f86a525d3ec727914ea93e48ad00fe5b",
+    "events": [
+      [
+        1,
+        23916,
+        4,
+        1397049153
+      ]
+    ],
+    "model_cycles": 154,
+    "outcome": "gate-transfer",
+    "pcs": [
+      4096,
+      4100,
+      4110,
+      4112,
+      4114,
+      4116,
+      4118,
+      4120,
+      4122,
+      4124,
+      4126,
+      4192,
+      4194,
+      4196,
+      4198,
+      4200,
+      4202,
+      4204,
+      4206,
+      4208,
+      4212,
+      4218
+    ],
+    "regions_after_sha256": [
+      "0588d4fb05e345e77b56c7ad318b07bd88b597b2f1ff6c3d8af0eefb419d13fb",
+      "7969ec0fcb8b648dfde24b1d0ae24568d398dcc3a83b80a850f973238cdfd3d9",
+      "154548d8f6466d6cfd69794702078a9a36b628a08341b9d3c3cdfa1d81703097"
+    ],
+    "registers": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1048576,
+      28672,
+      40960,
+      4224,
+      9988
+    ]
+  },
+  "private_evidence_root": "/home/dev/neptune-research-private/694/original-003",
+  "probe_sha256": "2b469d06a7a86e19bbf7ac4830ea530fbab41d081154df622b890486efa7889a",
+  "publication_only_changes": "After qualified9b0e9f7, only derived evidence, research document and two README links; all28 executable/dependency/test source hashes must remain equal",
+  "release": "usa-mk81070-v1003",
+  "report_sha256": "b2f5c2a26755f3dfa6ff79142bcf308b469d03e0e35a7e2aaaa3036f172d2f69",
+  "reports_equal": true,
+  "research_tooling_tests": 437,
+  "retained_diagnostics": {
+    "original-001": "Disk reserve preflight failed before any child; no tooling/original instructions executed",
+    "original-002": "Cancelled only own unstarted/lease-free/guardian-free queue after required CI41620302650 proved stale base; integrated current main before fresh qualification",
+    "original-003": "All five guarded phases exit0, no timeout/cancellation/truncation; two fresh original reports equal and48 terminal semantic mutations rejected per process"
+  },
+  "schema": "neptune.original-nlsnd-boot-gate-derived.v1",
+  "source_files_sha256": {
+    "tools/saturn_lab/analyze_sound_driver.py": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+    "tools/saturn_lab/check.py": "b247a84acefd3a3c4804b0a2e03ea657472509c657e076544b408944904f39a7",
+    "tools/saturn_lab/m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
+    "tools/saturn_lab/m68k_consumer_native.py": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "tools/saturn_lab/m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+    "tools/saturn_lab/m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "tools/saturn_lab/m68k_reset_capacity.py": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+    "tools/saturn_lab/m68k_scsp_dsp.py": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+    "tools/saturn_lab/m68k_scsp_fifo.py": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
+    "tools/saturn_lab/m68k_scsp_long.py": "5ac3dd8041587a08908ed0e486bd96ccfde10d8da8f52cd11cc35a4589ea9dd6",
+    "tools/saturn_lab/m68k_scsp_slots.py": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+    "tools/saturn_lab/m68k_scsp_state.py": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "tools/saturn_lab/probe_command_dispatch.py": "86bc16c51ce36cc5cb6637380ae0736ceed3a10934dfafce27951fe53d0f056c",
+    "tools/saturn_lab/probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "tools/saturn_lab/probe_netlink_boot_gate.py": "2b469d06a7a86e19bbf7ac4830ea530fbab41d081154df622b890486efa7889a",
+    "tools/saturn_lab/probe_netlink_command10.py": "59bcf5e172b391a8fe6a537fb7b0414a8ee61af52a3185504769fdad83ff3259",
+    "tools/saturn_lab/probe_netlink_dsp_reset.py": "7e05bce49ca998891c547202b7bee042fa98e9c507b70d49aa21aa865f93b266",
+    "tools/saturn_lab/probe_netlink_low_reset.py": "7b231c810cb64ae074009729abeb7c14ab52532098f342fd61ca0914aa12af50",
+    "tools/saturn_lab/probe_netlink_pointer.py": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+    "tools/saturn_lab/probe_netlink_records.py": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+    "tools/saturn_lab/probe_netlink_slot_effects.py": "1bf15aa3490dd865832b5afcfbf06c79bee4309c1ef4ccdc6f8e6e30315536eb",
+    "tools/saturn_lab/scsp-dsp-source-lock.json": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4",
+    "tools/saturn_lab/scsp-long-source-lock.json": "b7e3043a08074a166093d488a2e9f74f5184fef737f55e888539d4712582899b",
+    "tools/saturn_lab/scsp-slot-source-lock.json": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+    "tools/saturn_lab/tests/test_m68k_scsp_long.py": "70fa6b24abb29e7b135e1e1ef97f16a2ee7bcbe3f642a9b61b41769037f39464",
+    "tools/saturn_lab/tests/test_probe_netlink_boot_gate.py": "f896844ddf0c68f15c0ae358d9d86590123b9e07397f1bd4a29fc25be9d45592",
+    "tools/saturn_lab/tests/test_probe_netlink_command10.py": "f0c345a8f5d28a7b2f6db96dc322f9e72fdb4efcf895496863731d88bf9d884a",
+    "tools/saturn_lab/tests/test_probe_netlink_dsp_reset.py": "8e63b7915fff42cdf7134fecda57d6286d81c92c8a3d36a073fd359487426af0"
+  },
+  "source_image_globals": {
+    "0x404": "0x700",
+    "0x412": "0x480",
+    "0x450": "0x7000"
+  },
+  "source_qualified": "9b0e9f7a4db6492d50042676b518943e745a18de",
+  "supervision": {
+    "all_guardians_terminal": true,
+    "comparison-001": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 24.9135209498927,
+      "timed_out": false,
+      "truncated": false
+    },
+    "comparison-002": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 26.91160608548671,
+      "timed_out": false,
+      "truncated": false
+    },
+    "configured_host_shared_limit": 3,
+    "isolation": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 0.5211457824334502,
+      "timed_out": false,
+      "truncated": false
+    },
+    "lease_seconds": 600,
+    "model_calls": 0,
+    "native-load": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 0.7193943578749895,
+      "timed_out": false,
+      "truncated": false
+    },
+    "resource_plan": {
+      "projected_root_scratch_bytes": 33554432,
+      "projected_secondary_scratch_bytes": 8388608,
+      "reason": "ABI8 is already prepared and mounted read-only; source is read-only; no compiler/preparation entrypoint runs. Outputs/logs stay in bounded root directory; tooling tmp is private tmpfs. The inherited192MiB build scratch estimate is inapplicable; the5GiB reserve is unchanged.",
+      "reserve_each_volume_bytes": 5368709120
+    },
+    "source_head": "9b0e9f7a4db6492d50042676b518943e745a18de",
+    "state": "bounded-original-boot-gate-comparison-complete",
+    "tooling": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 37.57871749158949,
+      "timed_out": false,
+      "truncated": false
+    }
+  },
+  "vector_sp": "0xa000"
+}
