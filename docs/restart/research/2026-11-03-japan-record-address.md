@@ -384,6 +384,13 @@ decode shows distinct early-return/error branches and a later cache/context
 path, but does not establish the callees' full contracts. Retained output
 `analysis/japan-ccd2-callback-target.txt` has SHA-256
 `beeccec0eb6f7268f05bac711667f22770afa4e4c60bcdb9f4a42e7ca78e8c90`.
+The CCD2 setup loop calls `0x0600F69A` ten times. Its decoded slice uses R4 and
+zero-extended R5 as 16-byte indices into a source table at `0x060B3F74`, copies
+eight words into a destination record table at `0x060C0748`, and mirrors those
+words to `0x060C0738`–`0x060C0744`. This is a static address/field-flow
+description, not a validated table meaning or runtime contract. The retained
+F69A decode SHA-256 is
+`9f56414197cf26776ea11b4fc28b831908185b3da0d8bfaece44cbff7635ce24`.
 
 ## Limits and continuation
 
