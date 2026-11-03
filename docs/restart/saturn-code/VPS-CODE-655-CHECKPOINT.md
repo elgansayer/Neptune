@@ -9,7 +9,7 @@ the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
 
-## Prepared context/caller probe: original admission still pending
+## Current context/caller contracts: original pairs retained
 
 Slot PR689 mergedf46ad9d2896619bec943969e59c5d973a6c61cd3 at08:26:05 UTC
 on3 November, tested689b8b9 against current main268afe8. All13 checks completed,
@@ -19,41 +19,45 @@ aggregates passed. Merge parent/tree match the tested base/head. Receipt:
 Its3,918 original calls twice remain accepted;655 and the programme remain open.
 
 Next sourcea5a38d7cd9bb94b9dadc610202f0e0427d5730b7 is tested and pushed.
-`probe_library_setup.py` models originalA5EEC through realA5F22/A5F2E setters,
+`probe_library_setup.py` now executes originalA5EEC through realA5F22/A5F2E setters,
 exact12/24-stride A56CA/A56D8 arithmetic including SR.T, and96D74's null return
 or actual initialization prefix ending at the non-executable A681A handoff.
 Ten owned tests and431 research tests pass. Failure handling retains earlier
 completed records if a later case/control fails. No A681A body or fake callee
 return is supplied. The old128 guard remains unchanged; chosen budget is64.
 
-The planned corpus is10,504 cases per selection:1,578 initializer,1,628 field56,
+The actual corpus is10,504 cases per run, twice identically:1,578 initializer,1,628 field56,
 1,578 field44,2,650 each index12/index24 and210 each null-caller/positive-prefix.
-These are **planned original cases, not executed results**. The frozen76-file
+There are10,294 complete returns and210 actual unfinished A681A handoffs per
+run, with23 family/control combinations rejected without budget failures. Read
+[the result](../research/2026-11-03-library-setup-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-setup-contracts.json). The frozen76-file
 adapter is
 `/home/dev/neptune-research-private/655/adapter-f1f824ec77452c13cf98a87dd6b53ae92d57532654be041a792986ad25a34542`.
-The resumable batch remains at index0 with no original execution:
+The completed batch retains all fourteen original jobs and paired comparisons:
 `/home/dev/neptune-research-private/655/setup-batch-y19gol2c/batch.json`.
-Two bounded55-second admission waits were deferred. A verified live foreign
+Two initial bounded55-second admission waits were deferred at index0. A verified live foreign
 factory daemon1590564 subsequently held exclusive reservation
 `exclusive:1590564:454bd478bf4648409acf3a933e3bf7cd`, observed expiry10:49:53 UTC.
-Recheck current state; neither an expiry nor a historical PID alone proves live
-status. Preserve that owner, shared3 and all configured limits. Do not bypass,
+That owner legitimately released exclusivity; the same manifest then completed
+while its two shared jobs remained present. All own leases released. Recheck
+current state; an expiry or historical PID alone does not prove live status.
+Preserve owners, shared3 and all configured limits. Do not bypass,
 clear/adopt leases, dispatch a provider or create another scheduler.
 
-The previous tools29557/47131 are terminal admission deferrals. Once no prior
-worker is live, resume this existing manifest rather than starting a new batch:
+Tools29557/47131 are retained terminal deferrals; resumed tools23264 completed
+all original pairs. Do not rerun the completed manifest as new evidence. The next
+executable source-inspection command emits a fresh private report automatically:
 
 ```sh
-unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
-  /home/dev/neptune-evidence/code655-20261102/run-setup-batch.py \
-  --manifest /home/dev/neptune-research-private/655/setup-batch-y19gol2c/batch.json
+python3 /home/dev/neptune-evidence/code655-20261102/inspect-library-arithmetic.py
 ```
 
-Every admitted job still has its own180-second lease,60-second/nice10/downward
+Every admitted job kept its own180-second lease,60-second/nice10/downward
 2GiB limits, offline/read-only guards and hidden authority. The batch stops on
 retained failures and compares both full report files per family. Raw outputs go
-to the private volume655 directory. Only actual successful pairs can promote
-these functions to original-tested status; tooling/CI alone cannot do so.
+to the private volume655 directory. Original evidence is now retained for the
+declared helpers/null path/prefix; full positive96D74 and A681A remain open.
 
 Independent source work continues through A681A's real9410C division,94268
 remainder,A6DA6 sector-format,A6FE0 context and A7F4E service dependencies.
@@ -61,8 +65,12 @@ Static private leads are`.../655/A681A-positive-source-20261103.json`,
 `library-arithmetic-flag-leads-20261103.json` and`library-division-boundaries-20261103.json`.
 DIV0S/DIV1 register effects are being checked against the primary
 [Renesas SH-1/SH-2/SH-DSP Software Manual](https://www.renesas.com/en/document/mah/sh-1sh-2sh-dsp-software-manual),
-REJ09B0171-0500O, sections6.1.17–19. This research has no new original execution
-claim. Keep full95E5A/89C8, device/callback behavior and all-code accounting open.
+REJ09B0171-0500O, sections6.1.17–19. A separate owned mathematical/bit-model
+check agrees on552 pairs and explicitly executes zero original instructions;
+it is not added to the original totals above. Classified arithmetic source is
+retained in`.../655/arithmetic-source-_b2h5tly/source.json`. Implement/test/push
+the full quotient/remainder/format probe before its own guarded original jobs.
+Keep full95E5A/89C8, device/callback behavior and all-code accounting open.
 
 ## Current continuation: status accepted; slot contracts executed twice
 

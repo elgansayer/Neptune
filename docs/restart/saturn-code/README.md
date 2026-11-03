@@ -100,6 +100,12 @@ combinations and the old128 refusal retained. Internal library/device semantics,
 full655 and whole-program coverage remain open; resume the
 [current checkpoint](VPS-CODE-655-CHECKPOINT.md).
 
+The [context/helper and caller-prefix result](../research/2026-11-03-library-setup-contracts.md)
+adds10,504 original cases twice:10,294 complete returns and210 explicit A681A
+handoffs per run, with23 mutation-control combinations. Initializer/field/index
+helpers and the actual96D74 null path/positive nested-call prefix are distinct
+from the still-unrecovered A681A body and full95E5A semantics.
+
 The [3 November NLSND state/command11 result](../research/2026-11-03-original-nlsnd-state.md)
 compares36,127 constructed complete calls across five entry modes, repeated in
 fresh pinned CPU/frozen-SCSP processes with44 terminal mutation rejections. Natural
