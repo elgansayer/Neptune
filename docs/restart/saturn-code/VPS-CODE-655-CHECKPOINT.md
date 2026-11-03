@@ -2,12 +2,40 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-open-errors-655`, workspace
+`research/saturn-library-name-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current name result: all eight corrected original jobs retained
+
+95E5A error PR700 merged9da6098 at testedd46e410 against7afac4c; all15
+checks and exact mergeparent/tree acceptance verified.95CBC/A5676/95158 source
+70b90ef1423cd5e634ae06c35444eeb194560351 now completes4,316 returns/run twice,
+four identical full raw/archive pairs and16 non-budget controls. Read
+[the result](../research/2026-11-03-library-name-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-name-contracts.json).
+8 focused/477 research tests passed before these jobs. Frozen81-file adapter:
+`.../655/adapter-597238043d2b5864a893b4a39cb6008cb8015023af2c9bc1f7ddf5bd0febf9de`.
+Terminal manifest:`/home/dev/neptune-research-private/655/name-batch-qt7qpih_/batch.json`.
+Do not resume completed batches. Initial source139c2f0 comparison-control failure
+is retained under`.../655/name-contracts-compare-wo17jt59`; its sample missed bound0,
+and it is not counted as completed evidence. Corrected source adds that control
+case and retains subsequent positive rows on control failure. Original CPU/source
+and guards were not weakened. Actual old128 refusals remain, existing1024 cap.
+
+Read-only projection of accepted PR667 captures verifies12 final states/two native
+lookup boundaries: frame1264 returns index25, header[1,32,060BF198,26], resource
+slots16. Final-state table has match/endflag25; those later bytes do not prove
+call-time table contents. Projection`.../655/natural-name-projection-79nb7dyv/projection.json`
+executes zero new original frames. Full source/raw/archive/isolation hashes retained.
+Next classify95D34/95D9C record access and actual949E0 overlap-aware copy. Static
+source`.../655/record-access-source-_nerbgup/source.json` is not execution evidence.
+Exact next command: `python3 /home/dev/neptune-evidence/code655-20261102/inspect-record-copy.py`.
+It creates a fresh private static report. Publish this name result through its own
+exact-head/current-base gates;655 and the all-code programme stay active.
 
 ## Current95E5A error result: all eight original jobs retained
 
