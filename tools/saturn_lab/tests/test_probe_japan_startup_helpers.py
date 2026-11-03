@@ -1,6 +1,9 @@
 import unittest
+from pathlib import Path
+import sys
 
-from tools.saturn_lab import probe_japan_startup_helpers as probe
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import probe_japan_startup_helpers as probe
 
 
 class JapaneseHelperContractTests(unittest.TestCase):
