@@ -2,12 +2,38 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-request-state-655`, workspace
+`research/saturn-cd-command-packing-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current command packing: eight original jobs retained, device transfer pending
+
+Request-state PR704 merged9be7645 at testedd62bd3b against0911981; all15 exact-
+head/currentbase checks and mergeparent/tree verified. Further source620a4e89c10f5ba5901638dbfdcf7450752d1815
+(7 focused/498 research tests) executes9,152 selected pending-boundary cases/run
+twice: AE676/AE908 command packing and realA4FAC/A4FBE linkage to95992. Four full
+raw/archive pairs match;24 semantic controls reject. **No complete service
+returns** are claimed. Read [the result](../research/2026-11-03-cd-command-packing-contracts.md)
+and [derived evidence](../evidence/2026-11-03-cd-command-packing-contracts.json).
+Frozen84-file adapter:`.../655/adapter-1111ca996102ea5681b0687531479ff891e0ab766ee74dd60042984629e0b1c8`.
+Terminal manifest:`/home/dev/neptune-research-private/655/cd-command-batch-6d9djnhh/batch.json`.
+All own leases released. Do not restart/recount completed batches. Original128
+guard unchanged, chosen64, maximum33. Every pending48-byte nestedframe and
+untouched response/local word remains explicit; no zeroedresponse/stub invented.
+
+Next source command: `python3 /home/dev/neptune-evidence/code655-20261102/inspect-command-transfer.py`.
+It creates a fresh private static report; latest`.../655/command-transfer-source-wifqwx2q/source.json`.
+The first devicewordread is959DE at25890008 after95992 interrupt-mask setup and
+959CA prologue. Assess a separate read-only native command/response/device observer
+through trusted preparation, with exactreference/disabled/enabled validation.
+Preserve accepted call/context/init ABIs and every native generation. No local
+native build below its configured reserve, no invented deviceRAM/returns, no new
+scheduler/provider/allowance changes. Preserve active NLSND703/PR705 and all other
+owners. Publish commandpacking through its own exact-head/currentbase checks;
+655 and the all-original-code programme remain active and incomplete.
 
 ## Current request state: six original jobs retained, service body pending
 
