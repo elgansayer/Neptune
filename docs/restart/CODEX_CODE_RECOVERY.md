@@ -140,6 +140,15 @@ constructed24-entry table/callbacknull/exhausted-context state does not recover
 success/null-table/services/callbacks. Continue95CBC source/natural header data,
 then those successful dependencies and further root/task/module code. Completed
 batch manifests must not be restarted or counted as new progress.
+Open-error PR700 merged9da6098 with15 exact-head/current-base checks. The next
+95158/A5676/95CBC batch now completes4,316 returns/run twice, four identical
+raw/archive pairs and16 controls at source70b90ef (8 focused/477 research tests).
+Read [the name result](research/2026-11-03-library-name-contracts.md) and checkpoint.
+Preserve the initial missing bound0-control failure; corrected coverage is explicit.
+The retained natural header separates16 slots/32 capacity/26 populated entries;
+its index25 lookup boundary and later-state table projection are distinct evidence.
+Continue95D34/95D9C/949E0 record access and successful context/service dependencies.
+Do not resume completed manifests or mark the all-code programme complete.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
