@@ -2,6 +2,11 @@
 
 Master issue: [#69](https://github.com/elgansayer/Neptune-Bomberman/issues/69).
 Start with the [issue index](INDEX.md) and machine-readable [catalogue](catalogue.json).
+The [3 November franchise survey](../franchise/README.md) adds sourced game-by-game
+research, release records and eventual feature candidates, including Power
+Bomberman. Its [achievement plan](../franchise/ACHIEVEMENT_PLAN.md) maps those
+findings onto this existing backlog; research candidates are not additional
+scheduled tasks or implementation completion claims.
 The existing restart epic [#23](https://github.com/elgansayer/Neptune-Bomberman/issues/23)
 and its implementation issues retain their scope and history.
 

@@ -1,0 +1,288 @@
+id	title	reference_examples	first_acceptance_experiment	existing_scope	detail_document
+CLASSIC-001	Per-release rule profiles	All	Same input fixture uses distinct pinned caps/persistence without cross-profile mutation.		classic.md
+CLASSIC-002	Variable arena dimensions and camera	C-03/05/22	Non-wide, wide and scrolling fields frame HUD/spawns correctly.		classic.md
+CLASSIC-003	Off-grid bombs and partial block damage	C-01	Offset blast leaves documented half-block geometry.		classic.md
+CLASSIC-004	Passable versus blocking bombs	C-01/03	Movement and trap fixture changes only with declared profile.		classic.md
+CLASSIC-005	Four-ray chain-reaction ordering	C-03 onward	Simultaneous chains match independently captured event order.		classic.md
+CLASSIC-006	Remote trigger sequencing	C-03/24/26	Manual detonation and chain ignition respect ownership/order.		classic.md
+CLASSIC-007	First-slot maximum-power bomb	C-16/20/22	Only the eligible placed bomb receives the special range.		classic.md
+CLASSIC-008	Soft-block piercing	C-12/21/22	Flame crosses eligible cells without adopting corner-turning rules.		classic.md
+CLASSIC-009	Splinter/corner-turning flame	C-10	Junction blast preserves captured remaining reach and branch order.		classic.md
+CLASSIC-010	Invisible contact mines	C-22/24	Arm, trigger, reveal and delayed blast reproduce separately.		classic.md
+CLASSIC-011	Target-seeking bombs	C-24	Acquisition, pursuit, target retention and friendly collision are explicit.		classic.md
+CLASSIC-012	Charged impact bombs	C-22	Charge threshold and impact detonation have captured boundary cases.		classic.md
+CLASSIC-013	Rubber/jelly bounce bombs	C-16/20/22/26	Kick and aerial bounce follow distinct reproducible trajectories.		classic.md
+CLASSIC-014	Kick with manual stop	C-11 onward	Correct owner/input stops moving bomb before/after hazard entry.		classic.md
+CLASSIC-015	Kick-contact damage	C-12	Enemy receives non-flame impact damage in this profile only.		classic.md
+CLASSIC-016	Bomb punch	C-12/21/24/26	Aerial arc, wrap, collision and landing are deterministic.		classic.md
+CLASSIC-017	Carry and throw with profile fuse policies	C-16/22/27	Suspend/reset/continue variants each reject wrong timer behaviour.		classic.md
+CLASSIC-018	Catch an airborne bomb	C-27	Catch-window boundaries and rethrow of giant bombs are measured.		classic.md
+CLASSIC-019	Throw another player	C-21/24	Co-op partner reaches otherwise inaccessible legal route.		classic.md
+CLASSIC-020	Line placement	C-11 onward	Capacity, blocked cells and placement order are explicit.		classic.md
+CLASSIC-021	Vertical stacked bombs	C-27	Stack interacts correctly with kick/height/catch.		classic.md
+CLASSIC-022	Giant circular blasts and charge meter	C-27	Meter threshold, impact and radial damage reproduce.		classic.md
+CLASSIC-023	Item exclusion/replacement/ejection	C-24/26	Conflicting pickup ejects the right prior effect/item.		classic.md
+CLASSIC-024	Multiple concurrent ailments	C-26	Independent duration/clear/transfer rules remain replayable.		classic.md
+CLASSIC-025	Contagious skull ailments	C-06 onward	Contact, re-contact, timeout and healthy-item cures are explicit.		classic.md
+CLASSIC-026	Global Devil ailment	C-22	One pickup targets the documented participant set.		classic.md
+CLASSIC-027	Bomb pass and block pass	C-03 onward	Actor movement permission leaves flame/hazard rules independent.		classic.md
+CLASSIC-028	Fire protection versus invincibility	C-03/09/11	Enemy collision, flame knockback and timeout remain distinct.		classic.md
+CLASSIC-029	Health/Heart/mount damage precedence	C-21/22/27	One hit consumes the intended layer with correct grace.		classic.md
+CLASSIC-030	Freeze clock	C-11 onward	Enemy/time freeze and contact damage follow profile.		classic.md
+CLASSIC-031	Timed cyclic/random item panels	C-21/26/27	Capture pickup instant and RNG state; replay selects same effect.		classic.md
+CLASSIC-032	Item scatter from aerial stun	C-24/25/27	Drops follow captured priority and position rules.		classic.md
+CLASSIC-033	Bombing item/exit spawns enemies	C-03/06/09/11/16	Spawn type/count/cap match selected release.		classic.md
+CLASSIC-034	Multiple campaign objective types	C-01/03/14/20/22	Enemy clear, exit, mechanisms and capsule pickup are composable.		classic.md
+CLASSIC-035	Mechanisms carried by enemies	C-14/20	Enemy death drops mechanism with captured collision behaviour.		classic.md
+CLASSIC-036	Automatic arcade advancement	C-08/10	Last enemy triggers transition without an exit hunt.		classic.md
+CLASSIC-037	Campaign route graph and revisits	C-14/20/24	Revisit suppresses cleared objectives while preserving topology.		classic.md
+CLASSIC-038	Multiple endings and second campaign pass	C-24	Route ending and 100%/200% state persist correctly.		classic.md
+CLASSIC-039	Password and ordinary save variants	C-03/09/24	Identity/version encoding restores only permitted state.		classic.md
+CLASSIC-040	Co-op shared lives and midgame join	C-24	Join/death/restart cannot duplicate lives or progress.		classic.md
+CLASSIC-041	Arcade credits and challenge takeover	C-08/10/25	Join/win/loss/continue reproduces credit accounting.		classic.md
+CLASSIC-042	Per-stage equipment persistence	C-08/22	Death, stage-clear and continue each apply their own retention table.		classic.md
+CLASSIC-043	Score chains and conditional collectibles	C-03/06/12	Multi-kill and secret condition track actual event sequence.		classic.md
+CLASSIC-044	Timed stage-clear coin sweep	C-14	Remaining blocks transform and expire under the correct clock.		classic.md
+CLASSIC-045	Boss forms, shielding and airborne immunity	C-12/16/22	Captured state boundary rejects damage from an invalid direction/state.		classic.md
+CLASSIC-046	Caged AI companions	C-21/25	Rescue, autonomous action, survival and reward are explicit.		classic.md
+CLASSIC-047	Organic/mechanical mounts with spare eggs	C-21/25	Type checks, egg destruction and automatic replacement reproduce.		classic.md
+CLASSIC-048	Louie skill families	C-14/20/24	Each skill has its own cooldown/movement/damage contract.		classic.md
+CLASSIC-049	Three-stage growing Tirras	C-22	Campaign meter and battle egg growth remain separate.		classic.md
+CLASSIC-050	Dismount and another rider's adoption	C-22	Unridden mount persists and transfers without duplicating ownership.		classic.md
+CLASSIC-051	Sacrificial/kamikaze mounts	C-21/25	Rider survives/detaches while mount attack resolves once.		classic.md
+CLASSIC-052	Stateful mount bomb erasure	C-27	Horse removes eligible bombs and expires at proper boundary.		classic.md
+CLASSIC-053	CPU archetypes versus character appearance	C-14	Cosmetic skin and AI preference are independently selectable.		classic.md
+CLASSIC-054	Character-specific competitive abilities	C-21/25	Capability negotiation and costs apply only in compatible rooms.		classic.md
+CLASSIC-055	Multi-team and asymmetric battle	C-13	Five pairs, three trios and 1v9 have valid seat/team outcomes.		classic.md
+CLASSIC-056	Wide-battle-specific item and option pools	C-22	Nine/ten seats reject incompatible items/settings explicitly.		classic.md
+CLASSIC-057	Standard revenge cart	C-21/22	Eliminated participant moves/throws until cutoff, never scores twice.		classic.md
+CLASSIC-058	Tiny in-arena revenge avatar	C-27	Limited avatar cannot collect/kick as a living full-size participant.		classic.md
+CLASSIC-059	Temporary absorption/merger	C-22	Death/expiry releases every captured actor exactly once.		classic.md
+CLASSIC-060	Bonus-introduced roaming hazard	C-22	Prior reward deterministically adds Bomura to next round.		classic.md
+CLASSIC-061	Winner reward mini-games	C-16/21/22/26	Roulette, driving and crane outcomes have correct reward scope.		classic.md
+CLASSIC-062	Falling-wall patterns and No Draw	C-11/12/22/26	Pattern, crush, bomb impact and exhaustion produce captured outcome.		classic.md
+CLASSIC-063	Rain-of-bombs sudden death	C-27	RNG/time-bound spawn sequence is pinned in replay.		classic.md
+CLASSIC-064	Reversible conveyors and redirect arrows	C-11/14/22	Actor/bomb motion and reversal inputs resolve consistently.		classic.md
+CLASSIC-065	Warps and looping arena edges	C-11/22/24	Actor, bomb and flame traversal declare distinct permissions.		classic.md
+CLASSIC-066	Trampolines and seesaws	C-12/21/22	Weight/order/destination determine measured launch.		classic.md
+CLASSIC-067	No-bomb floor and regenerating blocks	C-11	Placement restriction and regeneration occupancy are explicit.		classic.md
+CLASSIC-068	Sliding/slow/reverse-control terrain	C-21	Terrain state changes with bomb input and expires/persists correctly.		classic.md
+CLASSIC-069	Concealment and limited lighting	C-12/14/25	Visibility differs without deleting authoritative actor/bomb state.		classic.md
+CLASSIC-070	Periodic rain flame suppression	C-22	Blast reach changes at captured weather phase boundaries.		classic.md
+CLASSIC-071	3D heights, jumps, pits and slopes	C-27	Height alters collision/explosion exposure; pit death is deterministic.		classic.md
+CLASSIC-072	Configurable logical arena schemes	C-26	Layout/spawn/item schema loads independently of visual theme.		classic.md
+CLASSIC-073	Player ID and battle statistics	C-27	Named profile's win/loss/draw record survives declared save cycle.		classic.md
+CLASSIC-074	Distinct Master/survival gauntlets	C-22/27	Floor/round progress preserves the right health/items/meter.		classic.md
+CLASSIC-075	Reference-grade menus/audio/controls	All	Native input, text, cue, animation and sound traces match pinned edition.		classic.md
+HAND-001	Versioned release/alias metadata	GB1/GB2, Story/Story DS	Import aliases without merging two distinct games or paired versions.		handheld.md
+HAND-002	Inventory with active/stored/consumed lifetimes	Bomber Boy, DS, PSP	Die, finish a room and reload; each item transitions according to declared lifetime.		handheld.md
+HAND-003	Nonlinear campaign graph and gated finale	Boy, GB3, Max	Reach branches in either order; locked final node opens only after required nodes.		handheld.md
+HAND-004	Objective scripting from safe data	GB2/GB3, Max2, DS2	Enemy order, spare-target and block-count objectives all complete/fail correctly.		handheld.md
+HAND-005	Tutorial/lesson scenarios	GB2, Blitz	Demonstrate movement, kick and chain danger with restartable measurable lessons.		handheld.md
+HAND-006	Shop and campaign currencies	Boy, GB3, Land PSP	Buy/sell/reload without duplicating currency or losing acquired permanent effects.		handheld.md
+HAND-007	Companion-selected abilities	Tournament, Max2	Change companion while bombs exist; preserve or reset them only as preset specifies.		handheld.md
+HAND-008	Companion feeding/evolution/fusion	Max, Tournament, Jetters	Feed, evolve and fuse using immutable recipes; save all parent/offspring constraints.		handheld.md
+HAND-009	Elemental companion contest	Tournament, Max2	Attack/guard/special ordering and resistance produce reproducible outcomes.		handheld.md
+HAND-010	Equipment budget and set synergies	Quest, DS2	Reject over-budget loadout; enabling/removing a set grants/revokes only its skill.		handheld.md
+HAND-011	Stateful campaign-to-battle loadout import	Quest	Two clean clients agree on permitted loadouts and versions before starting.		handheld.md
+HAND-012	Platforming and bomb stepping stones	Pocket	Jump, short-hop and land on a floating bomb; explosion interrupts support correctly.		handheld.md
+HAND-013	Mounted extra-hit/terrain abilities	GB2/GB3, Jetters	Mount absorbs damage and returns by preset; crush/jump respects terrain/item rules.		handheld.md
+HAND-014	Directed/curving/steered bombs	Quest, Max2, DS2	Left/right curve, cursor destination and direct steering replay identically.		handheld.md
+HAND-015	Bomb-specific target layers	Quest	Aerial target ignores cross blast but takes configured circular damage.		handheld.md
+HAND-016	Weight and conveyor interaction	DS2	Heavy bomb remains where ordinary bomb moves, including kick attempts.		handheld.md
+HAND-017	Shield families and attack classes	Max2, DS2	Front/all-direction and normal/strong flame protections differ as configured.		handheld.md
+HAND-018	Status effects and expiration hazards	GB, DS	Spread a curse; expire block pass while embedded; preserve ordering across clients.		handheld.md
+HAND-019	Environmental puzzle tools	Quest, Tournament	Push, weigh switch, illuminate and reveal items via independently authored tool data.		handheld.md
+HAND-020	Dynamic multi-region arenas	DS, Blitz	Transfer player/bomb across linked regions with camera/HUD and authoritative collision.		handheld.md
+HAND-021	Revenge aim and comeback	DS, Tournament, Jetters	Eliminated user aims/fires; qualifying kill returns them once with declared loadout.		handheld.md
+HAND-022	Team contact rescue	Game Collection	Rescue before timeout; late contact cannot revive or duplicate a participant.		handheld.md
+HAND-023	Alternate battle objectives	Jetters GBA, DS Crown	Run deposit, paint, key escape and crown race with CPU and replay outcomes.		handheld.md
+HAND-024	Item budgets and per-seat handicap	Game Collection	Host selects valid item pool; joining clients validate limits and starting gear.		handheld.md
+HAND-025	Challenge, ranks and boss rush	GB3, Pocket, DS2	Record score/time and route; replay reaches same grade and unlock result.		handheld.md
+HAND-026	Attraction framework and park graph	Land handhelds	Author two minigames and a score/item gate through the public pack API.		handheld.md
+HAND-027	Optional touch/voice actions	DS	Rebind voice/touch to ordinary input; authoritative action and replay remain identical.		handheld.md
+HAND-028	Low-friction guest participation	DS/PSP single-copy play	Clean browser/native visitor downloads exact permitted content and joins host's room.		handheld.md
+HAND-029	Character-specific battle actions	Game Collection	Author throw-player/boomerang/wind abilities with explicit capability compatibility.		handheld.md
+HAND-030	Collection, gallery and cosmetic progression	Quest, Land, DS2	Unlock art/cosmetics without blocking freely installed compatible custom avatars.		handheld.md
+HAND-031	Save/checkpoint policy per campaign	GB3, Quest, Jetters	Restart at declared checkpoint with correct quest/inventory/world state.		handheld.md
+HAND-032	Regional protocol compatibility metadata	Story DS Battle Packs	Matching versions connect; incompatible rules are clearly rejected before play.		handheld.md
+MODERN-001	Spatial bomb geometry	N64/Generation/Kart DX	An authored obstacle scenario distinguishes spherical from cross blasts and replays identically.		console-modern.md
+MODERN-002	Bomb pumping and handling restrictions	N64/Jetters	Small/pumped bombs have measured carry/kick eligibility and blast geometry.		console-modern.md
+MODERN-003	Bomb stepping and bouncing traversal	N64	A player completes an authored multi-height route using bombs; forbidden jumps remain unavailable.		console-modern.md
+MODERN-004	Stun, carry and throw actors	N64	Human/bot interactions resolve simultaneous pickup, recovery and edge falls deterministically.		console-modern.md
+MODERN-005	Dropped recoverable protection	N64	Damage consumes/drops a heart under the selected difficulty without duplicating it.		console-modern.md
+MODERN-006	Gold-card challenge predicates	N64	Hidden-object, time and boss conditions unlock only the correct route.		console-modern.md
+MODERN-007	Platforming controller	Hero	Jump/land/fall and bomb combat pass an authored platform scenario in an explicit profile.		console-modern.md
+MODERN-008	Enemy freezing into platforms	Hero	Frozen targets become valid geometry and recover under measured rules.		console-modern.md
+MODERN-009	Enemy-specific bomb vulnerability	Hero	Salt/ordinary attacks discriminate a target without changing unrelated enemies.		console-modern.md
+MODERN-010	Transforming movement sections	Hero	Marine/jet/copter/slider content switches controller and saves its correct state.		console-modern.md
+MODERN-011	Stage scores and medal aggregation	Hero	A deterministic run awards the expected stage and planet reward.		console-modern.md
+MODERN-012	Elemental environmental interactions	Second Attack	One element changes a named obstacle while incompatible elements fail.		console-modern.md
+MODERN-013	Food-driven companion evolution	Second Attack	Saved food history produces the intended form across reloads and co-op joins.		console-modern.md
+MODERN-014	Asymmetric companion co-op	Second Attack	A second human takes a companion role without altering the main player's control.		console-modern.md
+MODERN-015	Permanent equipment capabilities	Second Attack	Armor grants only declared actions and survives the specified transitions.		console-modern.md
+MODERN-016	Branching exit graph	2001 N64/Super5	Two valid exits lead to distinct route/boss states and preserve replay identity.		console-modern.md
+MODERN-017	Tandem split controls	2001 N64	Separate players own move/place inputs with explicit disconnect and conflict rules.		console-modern.md
+MODERN-018	Puzzle/minigame hub	2001 N64/Land	A data-authored hub hosts two different rule modules and tracks independent scores.		console-modern.md
+MODERN-019	Isometric presentation	World	Cell highlights, landing markers and sprite layers agree with authoritative collision.		console-modern.md
+MODERN-020	Tiered arenas	World/N64/R	Bomb/player movement across a spring, teleporter and trapdoor has explicit layer transitions.		console-modern.md
+MODERN-021	Crystal-clear objectives	World	Exit eligibility depends on the selected item/enemy objectives, with correct timeout behavior.		console-modern.md
+MODERN-022	Challenge ranking	World	Time and score records remain tied to ruleset/content versions.		console-modern.md
+MODERN-023	Retro/enhanced rendering variants	Party Edition	Presentation switches retain identical declared simulation/replay semantics.		console-modern.md
+MODERN-024	Turn-based bomb scheduler	Wars	Turn fuses and chain reactions resolve in a reproducible tactical encounter.		console-modern.md
+MODERN-025	Class-specific placement/movement	Wars	At least three authored classes obey distinct legal ranges and actions.		console-modern.md
+MODERN-026	King/leader objective	Wars	Eliminating the designated leader ends the match regardless of surviving support units.		console-modern.md
+MODERN-027	Turn manipulation items	Wars	Delay/advance/extra-action effects do not skip or repeat unrelated scheduled events.		console-modern.md
+MODERN-028	Party recruitment and roster	Wars	A saved unlock changes available party composition without overwriting other campaigns.		console-modern.md
+MODERN-029	Racing with mount stats	Fantasy Race	Two data-authored mounts differ in documented speed/stamina/handling parameters.		console-modern.md
+MODERN-030	Stamina dash and bomb dash	Fantasy Race	Boost windows and recovery are reproducible and cannot bypass course collision.		console-modern.md
+MODERN-031	Ghost trials	Fantasy Race	A ghost replays its input/build/content identity and detects incompatible versions.		console-modern.md
+MODERN-032	Course mirrors and bonus laps	Fantasy Race	Mirror transforms preserve valid checkpoints and bonus scoring.		console-modern.md
+MODERN-033	Fake pickups/curses	Fantasy Race	Fake panels and temporary negative effects remain readable and restore state correctly.		console-modern.md
+MODERN-034	Cross-arena attacks	Dreamcast Online	Placed attacks transfer to the paired board with deterministic timing.		console-modern.md
+MODERN-035	Target collection and activation	Hyper Bomber	Death/reset and central activation have tested simultaneous-win precedence.		console-modern.md
+MODERN-036	Territory paint	Online/Generation/Battlefest	Ownership, overwrite, death reset and tie scoring are explicit per profile.		console-modern.md
+MODERN-037	Respawn score battles	Ring Match/GP	Kills, self-defeat, team hits, lives and timeout use declared scoring.		console-modern.md
+MODERN-038	Companion/bomb recipes	Generation	One recipe resolves from permitted ingredients; invalid inputs cannot consume/save partial results.		console-modern.md
+MODERN-039	Coin battles and scavenger NPCs	Generation	Coins drop/steal/return correctly without duplication and bots pursue objectives.		console-modern.md
+MODERN-040	Telegraphed bomb survival	Dodge Battle	A falling-bomb wave warns participants and resolves declared blast timing.		console-modern.md
+MODERN-041	Perimeter scoring minigame	Revenge Battle	Cursor-limited targeting distinguishes stun and defeat scores.		console-modern.md
+MODERN-042	Number-sequence race	Jetters	Ordered progress, regression and damage takeover are deterministic.		console-modern.md
+MODERN-043	Escort-chain objectives	Jetters/R	Followers slow the player; chain break and delivery scoring preserve ownership.		console-modern.md
+MODERN-044	Ring-out battles	Jetters	Blast knockback, resistance input and edge recovery have a measured contract.		console-modern.md
+MODERN-045	Character special abilities	Jetters/R	Two authored abilities declare timing/cost/capability and synchronize across clean clients.		console-modern.md
+MODERN-046	Item incompatibility families	Jetters	Replacement/stacking/removal follows the selected profile with replay tests.		console-modern.md
+MODERN-047	Disease system	Jetters/classic lineage	Duration, transfer/cure and simultaneous pickup interactions are explicit.		console-modern.md
+MODERN-048	Rideable arena transport	Go Go Lorry	Route choice, temporary protection, collection and collision resolve authoritatively.		console-modern.md
+MODERN-049	Seesaw launchers	Jetters	Mass/position/landing and raised-obstacle interactions are deterministic.		console-modern.md
+MODERN-050	Weather modifies bombs	Jetters	One weather transition affects declared fuses/motion without shifting unrelated clocks.		console-modern.md
+MODERN-051	Triggered rocket hazards	Jetters	Launch, warning, return and blast states are replayable and do not double-trigger.		console-modern.md
+MODERN-052	Temporary size change	Jetters	Size, speed, hitbox and restoration rules remain consistent across renderers.		console-modern.md
+MODERN-053	Rebounding boundaries	Jetters	Actors and bombs obey profile-specific rebound/stop rules.		console-modern.md
+MODERN-054	Between-round reward games	Jetters	Earned carryover items apply once to the next round and remain optional.		console-modern.md
+MODERN-055	Separate kart/driver data	Kart	Vehicle/character composition uses declared stats without conflating cosmetics.		console-modern.md
+MODERN-056	Mission-based racing	Kart DX	A non-position objective can end a race with correct saved progression.		console-modern.md
+MODERN-057	Equipment-based co-op adventure	Kart DX	Two players complete a short authored dungeon with gear, health and saved checkpoints.		console-modern.md
+MODERN-058	Theme-park quest graph	Land series	NPC state, purchases, revisits and piece collection unlock only declared areas.		console-modern.md
+MODERN-059	Minigame replay and records	Land	Replaying a completed attraction updates the correct score without resetting story state.		console-modern.md
+MODERN-060	Persistent cosmetic identity	Hardball/Live/R	Compatible cosmetics transfer through server/character sharing without mandatory grind.		console-modern.md
+MODERN-061	Match replay	Hardball	A saved match restores exact rules/content and rejects missing dependencies.		console-modern.md
+MODERN-062	AI demonstration mode	Hardball	Watchable bots complete a bounded match with pause/replay controls.		console-modern.md
+MODERN-063	Optional input automation	Hardball	Accessible assist settings preserve declared scoring/category identity.		console-modern.md
+MODERN-064	Health-based survival run	Act Zero	Multiple-hit rules, floor progression and restart conditions are independently selectable.		console-modern.md
+MODERN-065	Fixed-round tournament versus win target	Live	Ties and series winner selection differ correctly between the two structures.		console-modern.md
+MODERN-066	Capture the Flag/Crown/VIP	Battlefest	One objective fixture per rule includes carrying, dropping, scoring, death and timeout.		console-modern.md
+MODERN-067	Match economy	Bankroll	Currency and purchases are authoritative and reset at the declared boundary.		console-modern.md
+MODERN-068	Moving/tilting arena	Battlefest	Arena motion moves declared objects and remains deterministic across clients.		console-modern.md
+MODERN-069	Mixed local controllers	Blast	Supported controller types can join the same room with explicit platform capacity.		console-modern.md
+MODERN-070	Beginner tutorial	Blast	A new player can complete movement, placement, escape and item lessons with feedback.		console-modern.md
+MODERN-071	Emotes and speech bubbles	Blast/SBRO	Cosmetic messages are rate-limited and cannot change collision or hidden information.		console-modern.md
+MODERN-072	Two-round team competition	R GP	Aggregate score, perfect wins, lives and tie criteria reproduce the chosen profile.		console-modern.md
+MODERN-073	Checkpoint occupation	R GP	Capture, recapture, sustained scoring and all-point victory have explicit timers.		console-modern.md
+MODERN-074	Interconnected battle royale	SBRO/R2	Battle/movement phases, gates, area closure and stranded death replay deterministically.		console-modern.md
+MODERN-075	Character stat ceilings	SBRO	Pickups respect each selected character's declared caps and item eligibility.		console-modern.md
+MODERN-076	Private-room browser/lobby	SBRO/R2	A clean client discovers/joins a room, waits during a running battle and enters the next round.		console-modern.md
+MODERN-077	Stream/spectator join integration	SBRO	A supported invitation resolves session identity, seat availability and content lock.		console-modern.md
+MODERN-078	Optional challenges/progression	SBRO	Rewards do not gate compatible installed custom content or overwrite match rules.		console-modern.md
+MODERN-079	Seasonal rule presets	SBRO	Event rules pin their version and never silently modify existing replay/save profiles.		console-modern.md
+MODERN-080	Asymmetric castle defense	R2	Attack keys/chests, defensive survival, weapons and timeout produce correct results.		console-modern.md
+MODERN-081	Data-only stage construction	R2 inspiration	A creator builds a validated Castle-like arena through the documented public pack API.		console-modern.md
+MODERN-082	Publish after successful playtest	R2	Upload is blocked until the required local validator/playtest receipt matches current content.		console-modern.md
+MODERN-083	Tagged stage discovery/download	R2	Another clean client searches, downloads exact versions and plays without preinstalled assets.		console-modern.md
+MODERN-084	Practice save/rewind	Collection	Restore preserves complete declared state; competitive profiles explicitly disable incompatible assistance.		console-modern.md
+MODERN-085	Boss Rush playlists	Collection	A versioned boss sequence produces accurate times/difficulty and honors assistance restrictions.		console-modern.md
+MODERN-086	Gallery and sound browser	Collection	Only permitted assets appear with attribution and version identity.		console-modern.md
+MODERN-087	Regional/localized content variants	Collection	Saves/replays identify the selected release and text variant rather than silently converting.		console-modern.md
+MODERN-088	Session content sharing	Collection/Neptune	Guests receive only permitted exact-version content through supported runtime channels.		console-modern.md
+OBS-001	Versioned floor-paint objective	Online Bomberman	Paint intersecting blasts, death/revival and timeout; assert exact tile ownership and score.		mobile-arcade-spinoffs.md
+OBS-002	Carry-and-deliver collectible objective	Hyperbomb	Pick up/drop/steal three objectives and reach goal; simultaneous arrival has declared ordering.		mobile-arcade-spinoffs.md
+OBS-003	Falling-bomb survival without placement	Dropbomb	Reject placement, preserve item actions, reproduce seeded fall schedule and final-survivor tie.		mobile-arcade-spinoffs.md
+OBS-004	Cooperative boss battle ruleset	Online/Bombergirl/Medal	Multiple actors contribute damage, respawn and receive correctly attributed results.		mobile-arcade-spinoffs.md
+OBS-005	Earned charged special technique	Online Japan	Charge, spend, interrupted activation and death reset agree in replay.		mobile-arcade-spinoffs.md
+OBS-006	Short solo tower with end-run rank	Dojo	Complete/fail/restart seeded stages; rank derives from recorded metrics.		mobile-arcade-spinoffs.md
+OBS-007	Puzzle editor and playable downloads	Dojo/Puzzle Special	Independent creator saves puzzle, clean client downloads exact version and completes it.		mobile-arcade-spinoffs.md
+OBS-008	Touch-control alternatives	Dojo/VS!	Tap, flick/virtual-pad variants preserve the same supported simulation commands.		mobile-arcade-spinoffs.md
+OBS-009	Cooperative advancing-lava escape	Touch 2	Two actors, separated camera bounds, lava contact, checkpoint and boss entry are deterministic.		mobile-arcade-spinoffs.md
+OBS-010	Match-three bomb puzzle profile	Chains	Verify swaps, gravity, multi-chain, bomb award queue, blast and score in a fixed board fixture.		mobile-arcade-spinoffs.md
+OBS-011	Objective-constrained puzzle stages	Chains	Bomb-only and chain-depth goals reject visually similar invalid clears.		mobile-arcade-spinoffs.md
+OBS-012	Depleting firepower/combo gauge	Chains	Chain refill, inactivity drain and range thresholds have explicit tick units.		mobile-arcade-spinoffs.md
+OBS-013	No-legal-move detection and reset	Chains	Truly dead board resets; a board with a usable bomb or valid swap does not.		mobile-arcade-spinoffs.md
+OBS-014	Short 30-/60-second score attacks	Chains	End at authoritative deadline, preserve tie rules and separate scoreboards.		mobile-arcade-spinoffs.md
+OBS-015	CPU horde/coliseum mode	100-nin/2014	Distinguish concurrent capacity from total waves and verify bounded AI cost.		mobile-arcade-spinoffs.md
+OBS-016	Music-chart-driven battle profile	Amazing	Same chart produces same block/item events and song-length match across client frame rates.		mobile-arcade-spinoffs.md
+OBS-017	Unlimited timed respawns and leader bounty	Amazing	Revive safely, award bounty once, recompute tied leaders and final score consistently.		mobile-arcade-spinoffs.md
+OBS-018	Room-ID private invitations	Amazing/VS!	Invite compatible clients, reject wrong content lock and recover an interrupted join.		mobile-arcade-spinoffs.md
+OBS-019	Height-aware grid movement and bombs	Mobile 3D	Ramp/jump/ledge, drop stun, kick/throw and blast reach respect declared elevation.		mobile-arcade-spinoffs.md
+OBS-020	Alternate exits and route completion	Mobile 3D	Hidden objective opens correct exit; route/percentage survives save and pack version lock.		mobile-arcade-spinoffs.md
+OBS-021	Limited-charge and impact bomb variants	Mobile 3D/RPG	Charge, throw, impact, immunity and chain precedence are specified and replayable.		mobile-arcade-spinoffs.md
+OBS-022	Napalm/line/circular/freeze bomb shapes	RPG	Authored geometry, lingering damage and freeze/thaw apply consistently to actors and blocks.		mobile-arcade-spinoffs.md
+OBS-023	Dungeon shops/equipment/chests	RPG	Inventory transaction, purchase failure, save/reload and multiplayer ownership rules hold.		mobile-arcade-spinoffs.md
+OBS-024	Side-scrolling bomb platforming profile	Jetters/Planet	Movement, health, enemy/boss transitions and elemental-bomb puzzle remain deterministic.		mobile-arcade-spinoffs.md
+OBS-025	Racing profile with item panels	Kart Special	Lap/checkpoint validity, weapon collisions, shields, mines and final standings are reproducible.		mobile-arcade-spinoffs.md
+OBS-026	Recorded racing ghosts	Kart 3D	Ghost references exact course/rules version and replays without changing live collisions.		mobile-arcade-spinoffs.md
+OBS-027	Slipstream/nitro handling model	Kart 3D	Character/kart stats affect only declared acceleration, grip, gauge and collision properties.		mobile-arcade-spinoffs.md
+OBS-028	Large arenas with mode-specific capacity	Taisen 8/24	Validate spawn/visibility/bot bounds per arena; total supported seats are explicit.		mobile-arcade-spinoffs.md
+OBS-029	Four-team survival	Taisen 24+	Elimination and timeout resolve tied remaining-member counts and result attribution.		mobile-arcade-spinoffs.md
+OBS-030	Controllable spectator camera	Taisen +	Dead/spectator clients can pan within bounds without seeing hidden private state.		mobile-arcade-spinoffs.md
+OBS-031	Group rooms and host presets	Taisen 8	Resolve group permissions and immutable custom rules before every participant readies.		mobile-arcade-spinoffs.md
+OBS-032	Message suppression/preferences	Taisen Cross	Per-client chat setting cannot modify authoritative battle state or replay outcome.		mobile-arcade-spinoffs.md
+OBS-033	Stationary block-disguise status	Taisen GEEK	Movement ends disguise; collision/hazard cues and bot knowledge use declared visibility rules.		mobile-arcade-spinoffs.md
+OBS-034	Explicit beginner-assistance profile	Taisen GEEK	Eligibility expires at defined counts; ranked/unranked results cannot be farmed to alter eligibility.		mobile-arcade-spinoffs.md
+OBS-035	Optional achievements and titles	Taisen GEEK	Objectives distinguish human/CPU/private/test modes and never lock compatible custom characters.		mobile-arcade-spinoffs.md
+OBS-036	Regional/season event scoreboards	Taisen	Version event rules, participant mapping and aggregation; ties and late results are deterministic.		mobile-arcade-spinoffs.md
+OBS-037	Score-chain trail collectibles	Next	Trail grows, damage breaks it, bonus thresholds and save state match an authored fixture.		mobile-arcade-spinoffs.md
+OBS-038	Time-as-health score challenge	Next	Damage subtracts declared time, timer floor/expiry ordering is explicit and replayable.		mobile-arcade-spinoffs.md
+OBS-039	Mid-match ruleset transformation	Pac-Man × Bomberman	Transformation records both rule states and safely restores actor, inventory and map.		mobile-arcade-spinoffs.md
+OBS-040	Falling-piece Panic Bomber profile	Panic Bomber	Rotate/match, spawn bombs, trigger chains, queue garbage and verify top-out.		mobile-arcade-spinoffs.md
+OBS-041	Authored bomb-combination puzzles	Road to Boba Temple	Goal predicates validate simultaneous blast counts and independently saved records.		mobile-arcade-spinoffs.md
+OBS-042	Puzzle-specific boss/status attacks	Panic Bomber W	Screen effects, control inversion, range changes and rock/garbage conversion expire correctly.		mobile-arcade-spinoffs.md
+OBS-043	Monochrome/shape-readable puzzle graphics	Virtual Boy	Piece identities remain distinguishable without relying only on colour.		mobile-arcade-spinoffs.md
+OBS-044	Save/load and solo rewind	Collection	Restore complete solo state/RNG without altering trusted online results or replacing old pack versions.		mobile-arcade-spinoffs.md
+OBS-045	Capability-based class battle	Bombergirl	Bomber/attacker/shooter/blocker abilities are advertised in room requirements and bot objectives.		mobile-arcade-spinoffs.md
+OBS-046	Constructible/destructible defensive blocks	Bombergirl	Legal placement, occupied cells, route obstruction and blast destruction obey shared map APIs.		mobile-arcade-spinoffs.md
+OBS-047	Match-scoped character levelling/skills	Bombergirl	XP, cooldown, skill selection, immunity and death reset have versioned authoritative rules.		mobile-arcade-spinoffs.md
+OBS-048	Base assault objective	Bombergirl	Base damage, timeouts, shared team result and simultaneous destruction are defined.		mobile-arcade-spinoffs.md
+OBS-049	Single-player character trial/rental	Rainbow	Try unowned first-party abilities without granting persistent rank; custom selection stays free.		mobile-arcade-spinoffs.md
+OBS-050	Dynamic shared arcade field	The Medal	Join/leave during running encounter without duplicating resources, actors or rewards.		mobile-arcade-spinoffs.md
+OBS-051	Optional blast-range preview	The Medal	Preview is derived from same simulation forecast and updates when obstacles/bombs change.		mobile-arcade-spinoffs.md
+OBS-052	Finite bomb-resource profile	Bomber King/Medal	Placement charges once; failed placement and disconnect/retry cannot duplicate or lose resource.		mobile-arcade-spinoffs.md
+OBS-053	Distinct functional versus cosmetic roster	GREE/Bombergirl	Cosmetic identity cannot smuggle abilities; gameplay loadout requires common session lock.		mobile-arcade-spinoffs.md
+OBS-054	Item-component crafting	GREE	Component spend and crafted remote-piercing capability survive save/retry atomically.		mobile-arcade-spinoffs.md
+OBS-055	Mini-game collection progress	B-Daman/Gachapin	Different mini-games expose common input/scoring/save contracts through optional packs.		mobile-arcade-spinoffs.md
+OBS-056	Prototype-inspired lock-on/support mounts	Virtual Bomberman	Independently author bounded cursor targeting and fan/radial launch rules; label inspiration accurately.		mobile-arcade-spinoffs.md
+PWR-001	Pin Power client/server/manual releases.	Power Bomberman	Archive and extracted-file hashes distinguish 0.7.8c platform builds and same-version hotfixes.	#41, #498, RPWR input/recovery scope.	power-bomberman.md
+PWR-002	Repeatable desktop reference capture.	Power Bomberman	Known configuration navigates to a chosen match; timestamps, focus errors and capture uncertainty are retained.	#42 and Power lab.	power-bomberman.md
+PWR-003	Twelve-seat selected profiles.	Power Bomberman	Valid standard/wide layouts accept legal seats and reject incompatible capacity before starting.	#43; room-capacity contract.	power-bomberman.md
+PWR-004	Quick Battle route.	Power Bomberman	A saved valid preset enters play through a short route and produces the same locked settings as detailed setup.	Existing room/profile UI scope.	power-bomberman.md
+PWR-005	Local human/CPU setup.	Power Bomberman	Mixed keyboard/controllers bind distinct seats; CPU fill does not displace humans or duplicate input.	Room/bot fill; existing input scope.	power-bomberman.md
+PWR-006	Online room creation/join.	Power Bomberman	Clean clients discover/create/join, agree on content/profile locks and complete a match.	Multiplayer/community contract.	power-bomberman.md
+PWR-007	Player-hosted server.	Power Bomberman	A clean client joins an independently hosted room with permitted exact-version downloads.	Existing hosting/content-sharing scope.	power-bomberman.md
+PWR-008	Survival rule.	Power Bomberman	Elimination, final simultaneous deaths, timer and teams resolve according to a measured contract.	BATTLE-001 (#133); existing mode schema.	power-bomberman.md
+PWR-009	Reversi territory rule.	Power Bomberman	Overlapping blasts, tile eligibility and ties produce specified ownership and scores.	#44 and later bounded mode children.	power-bomberman.md
+PWR-010	Falling-bomb Dodge rule.	Power Bomberman	Controlled generator sequence reproduces warning, landing, damage and winner.	Existing extensible modes/hazards.	power-bomberman.md
+PWR-011	Hyper Bomber objective.	Power Bomberman	Key acquisition, losses, gate validation and simultaneous completion are deterministic.	Existing extensible objective API.	power-bomberman.md
+PWR-012	Crown possession rule.	Power Bomberman	Transfers, holder death and scoring boundaries preserve a replayable possession history.	Existing extensible objective API.	power-bomberman.md
+PWR-013	Frag-score Battle Royale.	Power Bomberman	Chain ownership, moved bombs, self-kills, hazards and ties award exactly the authored score.	Existing elimination/settlement contracts.	power-bomberman.md
+PWR-014	NES-inspired score campaign.	Power Bomberman	Authored rooms, enemies, exits, scoring and lives persist correctly across progression/death.	Campaign/creator scope; #53.	power-bomberman.md
+PWR-015	Turbo score profile.	Power Bomberman	Explicit parameter differences preserve the ordinary profile and replay identity.	#43 and campaign profiles.	power-bomberman.md
+PWR-016	Configurable item pools.	Power Bomberman	Pool/preset serialization, exclusions and match locks reproduce a seeded drop sequence.	Declarative power-ups; #52.	power-bomberman.md
+PWR-017	Detailed bomb fuse settings.	Power Bomberman	Measured fuse settings match placement/airborne/chain boundaries in source units.	Existing bomb/timing contracts.	power-bomberman.md
+PWR-018	Explosion models including Linger lead.	Power Bomberman	Growth/hold/damage/retract ordering is measured, then checked with deliberate timing mutations.	Existing explosion/simulation scope.	power-bomberman.md
+PWR-019	Pressure Block damage options.	Power Bomberman	Health, mounts, immunity, crush timing and simultaneous hazards resolve without duplicated deaths.	Existing hurry-block/damage scope.	power-bomberman.md
+PWR-020	Revenge Bomber.	Power Bomberman	Eliminated-player movement, throws, capacity and return rules match the selected measured profile.	Existing Saturn/Power battle scope.	power-bomberman.md
+PWR-021	Sudden Death patterns.	Power Bomberman	Authored pressure-block schedule, safe area and final outcomes reproduce across replay/network.	Existing stage/timing scope.	power-bomberman.md
+PWR-022	Louies/steeds.	Power Bomberman	Independently authored mount declares attachment, actions, damage and dismount behavior through public APIs.	Existing mount/pack scope.	power-bomberman.md
+PWR-023	Disease/item interactions.	Power Bomberman	Acquisition, contagion, pickup ejection, expiration and death cleanup have explicit event ordering.	REF interaction programme; #52.	power-bomberman.md
+PWR-024	Kick/throw/line/remote action composition.	Power Bomberman	Capability combinations resolve control precedence and capacity with boundary-case fixtures.	Existing bomb commands and REF interactions.	power-bomberman.md
+PWR-025	Conveyor/warp primitives.	Power Bomberman	Transport preserves occupancy, fuse time and legal exits under concurrent movement.	Stage-pack API.	power-bomberman.md
+PWR-026	Curve/wrap/booster composition.	Power Bomberman	A known trajectory crosses redirection and arena links with deterministic timing and collision.	Arena layouts and stage-pack API.	power-bomberman.md
+PWR-027	Trampolines/seesaws and vehicles.	Power Bomberman	Public data-driven objects define launch, landing, occupancy and interruption without arbitrary scripts.	Declarative content/runtime scope.	power-bomberman.md
+PWR-028	Double-hit blocks and enemy generators.	Power Bomberman	Damage state and spawn schedules survive snapshot/replay with correct drops.	Destructibles/campaign-enemy APIs.	power-bomberman.md
+PWR-029	Robo Bomber style moving hazard.	Power Bomberman	Authored path, obstruction, damage and visibility cues work across layouts and seat counts.	Stage objects; historical lead needs measurement.	power-bomberman.md
+PWR-030	Large character library selection.	Power Bomberman	Compatible installed custom characters remain freely selectable and readable in twelve-seat rooms.	Character/community contract.	power-bomberman.md
+PWR-031	Optional progression/save migration.	Power Bomberman	New build migrates a copied test save, retains prior version and recovers from malformed data.	Profiles/stats/save scope.	power-bomberman.md
+PWR-032	Mixed-controller local play.	Power Bomberman	Ten and twelve supported mixed devices bind deterministically through hotplug and disconnect.	Existing input/local-seat scope.	power-bomberman.md
+PWR-033	Additive visual/audio styles.	Power Bomberman	Two packs coexist without replacing base IDs; selected style locks into replay/session metadata.	Additions-only public pack API.	power-bomberman.md
+PWR-034	Current full item/stage manual census.	Power Bomberman	Every discovered menu/manual ID has a source/build, limitations and linked interaction tasks.	#498, REF-001–014 and RPWR inventories.	power-bomberman.md
+PWR-035	Comparable owned-server netplay experiment.	Power Bomberman	Equivalent local/online conditions retain latency, correction, load and outcome samples.	#45; netplay benchmark contract.	power-bomberman.md
+PWR-036	Accessibility/device options audit.	Power Bomberman	Presence is directly checked; Neptune presentation assists identify differences while preserving simulation.	Community/accessibility scope.	power-bomberman.md

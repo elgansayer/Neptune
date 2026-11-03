@@ -54,6 +54,7 @@ contract is [COMMUNITY_CONTENT.md](COMMUNITY_CONTENT.md).
 
 ## Documents
 
+- [Franchise-wide game/feature survey and eventual achievement plan](franchise/README.md)
 - [Current factory/Saturn-first goal and dispatch priority](FACTORY_FIRST_GOAL.md)
 - [Exact Saturn fidelity, tools and agent handoffs](SATURN_FIDELITY.md)
 
