@@ -88,6 +88,9 @@ class Contract:
         stack=bytes([0xCD])*512+leaf.STOP.to_bytes(4,'big')+bytes([0xAD])*32
         self.regions=[(0x450,POOL.to_bytes(4,'big'),False),(RAM,bytes(ram),True),(POOL,bytes(pool),True),
                       (0x770,low,True),(leaf.SP-512,stack,True)]
+        table_base=0x30000 if variant else POOL
+        self.regions.append((0x404,table_base.to_bytes(4,'big'),False))
+        if variant:self.regions.append((table_base,bytes((i*19+profile)&255 for i in range(0x300)),True))
         if location==0:self.regions.append((INPUTS[location],bytes(controls),False))
         self.buffers=[bytearray(b) for _,b,_ in self.regions]
         if location:
@@ -176,7 +179,7 @@ class Contract:
         base=self.access(1,0x450,4);self.regs[12:15]=[base+0x2000,base+0x2400,base+0x2100];self.ret()
 
     def copy_record(self):
-        self.pcs += records.COPY_PCS;self.save((0,1,2,8));base=self.access(1,0x450,4);self.regs[8]=base+0x80
+        self.pcs += records.COPY_PCS;self.save((0,1,2,8));base=self.access(1,0x404,4);self.regs[8]=base+0x80
         first=self.access(1,self.regs[14]+2,1);second=self.access(1,self.regs[14]+3,1);tag=self.access(1,self.regs[14]+1,1)
         self.regbyte(0,first);self.regbyte(1,second);self.regs[2]=2*tag;self.extend(False)
         self.access(2,self.regs[8]+self.regs[2],1,first);self.access(2,self.regs[8]+self.regs[2]+1,1,second);self.logic(second)
@@ -338,6 +341,7 @@ def mutations():
             ('missing_queue_increment',0x4C82,bytes.fromhex('4e71'),1,(2,)),
             ('duplicate_clear_lane',0x1EAF,b'\x37',4,(0,2)),
             ('missing_tag_double',0x4BD0,bytes.fromhex('4e71'),1,(2,)),
+            ('copy_uses_setup_global',0x4BBC,bytes.fromhex('0450'),1,(1,2)),
             ('restore_ccr_only',0x1EEA,bytes.fromhex('44df'),0,(0,2))):
         selected=[(mode,tuple((mask>>i)&1 for i in range(5)),profile,0x200A,0,0)
                   for mode,profile in itertools.product(('handler','dispatcher'),profiles)]

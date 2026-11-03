@@ -29,7 +29,8 @@ class Command10Contracts(unittest.TestCase):
             self.assertEqual(result['registers'][13:15],[0x100000,0x7000])
             self.assertEqual(result['registers'][15:18],[p.leaf.SP+4,p.leaf.STOP,0x271F])
             self.assertEqual(result['device_after'],self.device())
-            for index in (0,1,2,3,5):self.assertEqual(result['regions_after'][index],contract.regions[index][1])
+            for index in range(len(contract.regions)):
+                if index!=4:self.assertEqual(result['regions_after'][index],contract.regions[index][1])
             self.assertEqual(result['regions_after'][4][:510],contract.regions[4][1][:510])
             self.assertEqual(result['regions_after'][4][512:],contract.regions[4][1][512:])
             self.assertEqual(result['pcs'][-2:],[0x1EEA,0x1EEC])
@@ -74,6 +75,15 @@ class Command10Contracts(unittest.TestCase):
         contract,_=self.model((1,0,0,0,0),profile=4)
         self.assertEqual(contract.emitted,0)
         for i in range(32):self.assertEqual(contract.peek(p.POOL+0x2400+i*12,1),128|(i&1))
+
+    def test_setup_and_copy_use_distinct_globals_with_shared_or_separate_buffers(self):
+        for profile,table in ((0,p.POOL),(1,0x30000)):
+            contract,result=self.model((1,0,0,0,0),profile=profile)
+            self.assertIn([1,0x450,4,p.POOL],result['events'])
+            self.assertIn([1,0x404,4,table],result['events'])
+            self.assertEqual(contract.peek(table+0x80,2),0)
+            if profile==1:
+                self.assertEqual(result['regions_after'][2][0x80:0x280],contract.regions[2][1][0x80:0x280])
 
     def test_paired_channel_flags_and_dispatcher_outer_state_are_explicit(self):
         contract,result=self.model((0,1,0,0,0),profile=2,mode='dispatcher')
