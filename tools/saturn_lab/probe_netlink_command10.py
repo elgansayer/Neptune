@@ -362,7 +362,9 @@ def controls(code,library):
 
 
 def execute(code,library):
-    selected=selection();digest=hashlib.sha256();counts=Counter();bounds={};examples=[]
+    selected=selection()
+    if len(selected)!=9476:raise ValueError('Declared command10 selection changed')
+    digest=hashlib.sha256();counts=Counter();bounds={};examples=[]
     for case in selected:
         actual,emitted=run_case(code,library,case);mode=case[0];counts[mode]+=1
         bounds.setdefault(mode,{'steps':[8192,0],'model_cycles':[2**63,0],'records':[32,0],'events':[4096,0]})

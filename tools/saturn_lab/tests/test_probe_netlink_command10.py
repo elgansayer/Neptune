@@ -106,7 +106,7 @@ class Command10Contracts(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'terminal command10 semantics'):p.controls(bytes(23920),Guard())
 
     def test_declared_selection_covers_masks_byte_values_aliases_and_four_byte_payload(self):
-        rows=p.selection();self.assertEqual(len(rows),len(set(rows)))
+        rows=p.selection();self.assertEqual(len(rows),9476);self.assertEqual(len(rows),len(set(rows)))
         for mode in ('handler','dispatcher'):
             self.assertEqual({tuple((mask>>i)&1 for i in range(5)) for mask in range(32)},
                              {c for m,c,profile,sr,location,word in rows if m==mode and profile==0 and sr==0x271F and location==0 and word==0 and len(c)==5 and set(c)<={0,1}})
