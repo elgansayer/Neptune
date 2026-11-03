@@ -453,6 +453,18 @@ These are control/dataflow observations only. Retained hashes: EBEC
 `1218d4c40246ca0bc15e42129c5d5515a954f98dc72933c3bf739c1be33ebe67`, EC72
 `a9c9f9f9cefeb35b96f94f69c7a9dbf03f7c3b4e4c8a265b5ba62ac18af77671`, and ECD0
 `0f9afff089fd314078bf4d06b2429d6ff389a248ca9138a53bbd8a06c69e88b4`.
+The ED78 branch handles additional entries in the `0x060FB724` record: for
+`0x060BC65A > 0x0160` it copies halfwords from the source and otherwise doubles
+the selected halfwords before storing them. It then calls back through
+`0x060AB1B4`; the 9ED78 decode SHA-256 is
+`a1a396fab55c046118e98f414ee83c9c46918ddf952e55f5216edd1c68fec452`.
+The AB1B4 slice reads an argument byte from the caller stack, evaluates R4/R5
+flag masks, and updates selected bytes at R6 offsets 0–5. A second decode shows
+the same field-update sequence continuing through AB28C. Its retained hashes
+are AB1B4 `f3edb4b9c0411b4b53392d828f3a4ca7f413f82c9709ded2fc2928c3733b1347`
+and AB1EE `5d113622b5284045fb593723a92380f173b9c8bdff48092079d428e229255cdb`.
+The complete helper boundary and field meanings remain unresolved; no runtime
+semantics are inferred from these decodes.
 The shared helper at `0x06095C24` is now original-byte tested separately from
 VDP/MMIO behavior. Its packed R1 low byte supplies field width, the high byte
 supplies the gap below the high end of the word, R0 supplies inserted low bits,
