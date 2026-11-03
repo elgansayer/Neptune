@@ -1,8 +1,6 @@
 # Separate native command observation under707
 
-**Not an installed or ready native observer.** The source patch component, separate
-GPL header, ctypes ABI, and owned compiled fixtures are implemented. The trusted recipe and exact-head CI workflow are now integrated; an actual CI run,
-verified artifact transfer/local reuse, and the original experiment remain required.
+**Not an installed or ready native observer.** The source patch component, separate GPL header, ctypes ABI, and owned compiled fixtures are implemented. The trusted recipe and exact-head CI workflow are integrated. The exact-head provisioning and native-check runs passed; their matched-core package was transferred with verified source/recipe/binary receipts and reused twice locally under the guarded worker. Original execution remains required.
 The all-original-code programme and655 remain active and incomplete.
 
 Original command-packing PR706 retains9,152 pending-boundary cases/run twice.
@@ -57,7 +55,7 @@ storage reserves stay unchanged; no local core build below preparation reserve.
 
 Current patch/header/ABI validation is separate from native readiness:
 
-- Eight owned tests include a compiled exported-header ABI fence fixture and real
+- Nine focused owned tests include a compiled exported-header ABI fence fixture and real
   compiled baseline/observed transfer fixtures:
   one address evaluation, one actual mock bus operation, identical CPU/RAM/WB
   results, correct signed-load/truncated-store values and no slave callbacks.
@@ -73,10 +71,12 @@ Current patch/header/ABI validation is separate from native readiness:
 - Private receipt:`/home/dev/neptune-research-private/707/patcher-pin-_bb68yfc/report.json`;
   SHA256`fb5da294b45597d0ac1e06479028d2613067400161df6a5802c36027645c3e23`.
 
-Next require the exact-head CI run to prove real no-media ABI/fence smoke and
-first-build/reuse identity. Then transfer the artifact with matching binary/source/
-recipe receipts and perform guarded local reuse. CI receives no game/BIOS.
-Finally run two fresh reference/disabled/enabled600-frame windows per profile from
+Exact-head runs41648585340 (provisioning) and41648585631 (native checks plus
+aggregate gate) passed. Job125960585219 built the matched core, exercised the no-media
+ABI/fence smoke, and verified first-build/reuse identity. The artifact transfer receipt
+is `/home/dev/neptune-research-private/707/ci-preparation-001/command-trace-transfer-verification.json`; binary SHA256 is
+`3a95acef8cc6e20297d907a9658f6ae6c067f8ae1a72dbb84a594b742938184a`. Two guarded local cache-reuse attempts passed with that same binary. CI received no game/BIOS.
+Next run two fresh reference/disabled/enabled600-frame windows per profile from
 the accepted frame1200 seed. Compare exact canonical import/final state and every
 native video/audio/input observation, repeat enabled traces, verify independent
 source witnesses and reject semantic record-copy controls. Keep failures private.

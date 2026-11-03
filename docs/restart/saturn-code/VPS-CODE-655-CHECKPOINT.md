@@ -23,13 +23,12 @@ source patch component, separate GPL header, ctypes ABI, and compiled fixtures a
 implemented. Read
 [the concrete protocol/remaining work](../../../tools/saturn_lab/COMMAND_TRACING.md).
 9 focused/39 related/221 factory tests pass, including compiled header ABI fences and
-compiled address/bus/CPU/RAM/WB nonmutation fixtures. Logs are
+compiled address/bus/CPU/RAM/WB nonmutation fixtures. Exact-head provisioning run41648585340 and native checks/aggregate run41648585631 passed; job125960585219 built the matched core, passed no-media ABI/fence smoke and first-build/reuse identity. Verified transfer receipt is`/home/dev/neptune-research-private/707/ci-preparation-001/command-trace-transfer-verification.json`; binary SHA256`3a95acef8cc6e20297d907a9658f6ae6c067f8ae1a72dbb84a594b742938184a`. Two guarded local cache reuses passed with that hash. CI received no original media/BIOS. Logs are
 `/home/dev/neptune-evidence/code655-20261102/command-observer-provision-focused-001.log`
 and`/home/dev/neptune-evidence/code655-20261102/command-observer-provision-factory-002.log`.
 A retained GPL source-archive proof restores all six
 original source-pin hashes before applying the component with an owned nonobserver
-header: `.../707/patcher-pin-_bb68yfc/report.json`. No core/native generation was
-built, installed or run, and no additional originalframes are claimed.
+header: `.../707/patcher-pin-_bb68yfc/report.json`. The separate generation was built in CI and reused locally; no original game frames are yet claimed.
 
 The pinned core fuses load→compare→branch. Capturing only at the next dispatch
 could miss the immediate postload. The patcher observes the actualMemRead16 result
@@ -37,9 +36,7 @@ afterWB_WRITE and actualMemWrite16 value after transfer, with one address evalua
 no secondbusaccess and byte-identical existing tripletfusion. The header retains the
 master prehook PC/opcode, fusedNOP continuity, source-call/return boundaries, and
 actual command/response snapshots with validity tags and a final source-witness recheck. Compiled fixtures do not yet
-validate these hooks inside the matched core. Next obtain exact-head CI native
-build/smoke/reuse evidence, transfer and verify that artifact, perform guarded local
-reuse, then run freshreference/disabled/enabled original windows. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
+validate these hooks inside the matched core. Next run freshreference/disabled/enabled original windows from the accepted frame1200 seed, preserving all three modes and repeats. Preserve all existing ABIs/caches/licences, limits and reserves. No VPS
 corebuild below configured preparation reserve. Exact inspection command:
 `python3 /home/dev/neptune-evidence/code655-20261102/check-command-patcher-pin.py`.
 It creates fresh private matched-source component proof, not originalexecution.
