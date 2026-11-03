@@ -122,6 +122,12 @@ composedA681A/96D74 source29d7bdb has7 owned/455 research tests, with its first
 guarded original batch pending acceptance. Do not count prepared models as new
 original execution. Arithmetic PR695 awaits the active web owner's required
 browser-liveness repair/current-base gates; never bypass that failure.
+The composed batch then completed all four original jobs:3,344 complete A681A/
+96D74 nonnull-record/first-pool-exhaustion returns per run twice, with identical
+raw/archive pairs and12 non-budget controls. Read [the composed result](research/2026-11-03-library-record-setup-contracts.md)
+and current655 checkpoint; do not rerun the completed batch as new progress.
+Continue real95E5A selection/indexing/status composition, successful context and
+null-record services, then further root/task/module code. Parents remain active.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
