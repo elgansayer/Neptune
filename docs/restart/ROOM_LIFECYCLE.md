@@ -8,6 +8,13 @@ existing `BALANCED` policy. Trusted startup flags `--room-duration` (1..3600),
 `--room-countdown` (1..30) and `--room-intermission` (1..60) accept integer
 simulation seconds. `--room-fill-to=0` still disables filling.
 
+For the default legacy PCK's sampled destructibles, casual rooms reserve a
+two-cell radius around each declared start. This prevents the random pattern
+from trapping real safe-plant bots in two-cell pockets. Hard geometry, spawn
+positions and explicit authored map/pack selections remain intact. The sampled
+arena is then retained exactly for every rematch. This is a demo configuration,
+not a measured Saturn starting-layout claim.
+
 The public snapshot includes `round: {epoch, phase, remaining, result, config}`.
 Phase is `waiting`, `countdown`, `active` or `results`. `remaining` is the
 corresponding simulation duration; `config` announces the configured `duration`,
