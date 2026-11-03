@@ -141,10 +141,11 @@ width dependency, not the remaining independent command/natural/audio/Godot proo
 
 The [NLSND reset-marker phase result](../research/2026-11-03-original-boot-gate.md) independently compares the bounded `0x1000..0x1080` handoff in two fresh original CPU processes. Each has eight complete phase transfers, 8,192 explicitly unfinished marker waits and 48 completed-handoff mutation rejections; the embedded data gap stays non-executable. Natural loading and the remaining reset body, header-global lifetimes and whole-code denominators remain open.
 
-The [Japan kernel residency result](../research/2026-11-03-japan-kernel-residency.md)
-verifies exact Japanese `0KRNL.BIN` bytes at candidate mapping `0x0600A000` in
-two successive original boot states. Exact mapped source coverage grows from
-573,440 bytes at frame 600 to 729,974 bytes at frame 1200. This is residency
-evidence, not a complete executable-range map or proof that every matching
-instruction ran; Japan startup/device semantics and the all-module denominator
-remain open.
+The [Japan kernel result](../research/2026-11-03-japan-kernel-residency.md)
+verifies exact Japanese `0KRNL.BIN` residency at candidate mapping `0x0600A000`
+in original boot states through frame 2400 and isolates two Japanese startup
+buffer helpers (`0x0600A58E`/`0x0600A5A2`) across 48 repeated constructed case
+pairs with two wrong-opcode controls. Residency is not a complete executable
+range map or proof that every matching instruction ran; the helpers are not
+natural-caller validation, and Japan startup/device semantics and the all-module
+denominator remain open.

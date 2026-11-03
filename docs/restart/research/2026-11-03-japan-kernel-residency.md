@@ -111,6 +111,40 @@ output is retained at
 `/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/analysis/next-kernel-functions.txt`
 (SHA-256 `15b8f624d261a31e6ea5600ebfd442d02d6c1a39b3963be29ada660df3c035d2`).
 
+## Isolated Japanese startup buffer helpers
+
+Continuing the original-byte disassembly found two bounded helper entries in
+the `0x0600A638` startup area: `0x0600A58E` is called and stores a word value to
+a destination buffer; `0x0600A5A2` is reached by a tail branch and copies words
+from a source buffer to a destination.
+`tools/saturn_lab/probe_japan_startup_helpers.py` executes the original Japan
+kernel bytes under the pinned SH-2 interpreter. It maps only the exact original
+code range plus explicit source/destination WorkRAM buffers; reads outside code
+and the copy source, writes outside the destination, or instruction fetches
+outside the two helper ranges fail.
+
+For signed lengths `R6` in `{-2,-1,0,1,2,3,4,5,6,7,8,15,16,17,30,31,32,63,64,65,126,127,128,129}`,
+both helpers were executed twice per length. Nonpositive lengths perform no
+buffer transfer. Positive lengths transfer `ceil(R6/2)` 16-bit words, so odd
+byte lengths round up by one word. The fill helper writes the low 16 bits of
+`R5`; the copy helper reads through `R5`, writes through `R4`, and advances both
+pointers by two bytes per word. The probe checks the full destination buffer,
+source preservation, pointer changes, untouched GPRs, SR T result, SP/PR,
+instruction-PC fences, and exact write addresses and widths. Two wrong-opcode
+controls (word fill changed to long fill; word load changed to byte load) are
+rejected. The report retains 48 repeated case pairs and both control results.
+The successful private report is
+`execution-005/japan-startup-helpers.json` (SHA-256
+`d430f7e3e3e81b88bfae23d376b48eb94cb14d9768a72ef0911bc6a90cf99838`); it binds
+the probe source hash, original range hash, and pinned interpreter source hashes.
+The focused 20-test suite passes, including three tests for this probe tool.
+
+This is isolated original-CPU execution, not a natural caller or a complete
+`A638` execution. In particular, `A638` also accesses VDP1, SMPC, SCSP, SCU and
+SH-2 DMA registers; those hardware effects are not mapped or simulated here.
+The complete report and failed earlier bounded attempts remain private under
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-*/`.
+
 Next, add a bounded Japanese-specific observation of the startup path around
 `0x0600A312`, after verifying its DVCR, VDP2 and BIOS side effects, then map
 further Japan-only ranges and overlays. Keep the Japanese kernel distinct from
