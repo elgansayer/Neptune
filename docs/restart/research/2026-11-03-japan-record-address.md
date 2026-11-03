@@ -108,11 +108,56 @@ The next static window covers the tail of the neighboring `AAEC` routine at
 `0x0600A9E4` onward; its retained decode is
 `analysis/japan-aa34-tail-disassembly.txt`, SHA-256
 `a831d46a73a2feb40d1ac867e0f1fa86a41cc6b59cd5617330bc40d2dfa11f29`. The
-original-byte listing places `AAEC`'s end at `0x0600AB2A` and shows an 18-slot
-loop that compares each record's byte `+81` to a stack-saved input, updates
-matching slots to the current index, and calls `AACC`. This is a static
-control-flow interpretation only; caller inputs, full memory contract, and
-device-independent runtime behavior remain to be executed.
+original-byte listing places the real entry at `0x0600AAEA` (the decode starts
+two bytes later) and its end at `0x0600AB2A`. It shows an 18-slot loop that
+compares each record's byte `+81` to a stack-saved input, clears the matching
+tag to zero, and calls `AACC` with the current slot index. The nested `AACC`
+reads byte `+80` and sets the first longword to one only for an active record.
+
+`tools/saturn_lab/probe_japan_record_tag_scan.py` executes the composed original
+`AAEA` scan and `AACC` latch code with exact source ranges, one literal, an
+18-record buffer, and a bounded stack. Its 39 scenarios cover every slot with
+active and inactive flags, no match, three matches, and all 18 matches. Each
+scenario executes twice in each report. The scan reads all 18 tag bytes in
+order, changes only matching tag bytes and conditionally the matching first
+longwords, and restores callee-saved registers, non-T SR bits, MACL, PR, and SP.
+The full-match path executes 522 instructions, below the per-call 1,024-step
+limit. Two original-instruction mutations are rejected: inverting the tag
+branch and skipping the last slot.
+
+Reports
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-012/japan-record-tag-scan-run1-v11.json`
+and `japan-record-tag-scan-run2-v11.json` match at SHA-256
+`0675cf60088e81723b16e90ae737edf28e0f8690a6495a119dc5e9c0b9b1a0e0`. These
+are constructed CPU-only experiments; they do not establish natural caller
+reachability, record lifetime, BIOS/device behavior, timing, or gameplay.
+Probe source SHA-256 is
+`8253afcd545e73dc93d3f913240ad626bfd6143a84cd56ec92636d62402b6a8f`. The full
+research tooling suite passes 518 tests; this is separate from the original
+execution evidence.
+
+## Original Japanese context restore
+
+Following the `AB78` static tail jump led to original code at `0x0600A186`.
+The inspected range `[0x0600A186,0x0600A1AA)` contains 18 instructions
+including the RTS delay slot. It reads exactly 12 longwords from a 48-byte
+context, restores `r8`–`r15`, MACL, MACH, PR and `r4`, then the delay slot
+overwrites `r0` with incoming `r5`. It performs no memory writes.
+
+`tools/saturn_lab/probe_japan_context_restore.py` tests 31 distinct constructed
+contexts twice in each of two identical reports. Each context contains distinct
+patterns in the saved fields and uses the interpreter return sentinel as PR.
+Two original-byte controls reject an altered `r8` offset and removal of the
+return delay-slot move.
+
+Reports
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-013/japan-context-restore-run1.json`
+and `japan-context-restore-run2.json` match at SHA-256
+`a1d0baa9373310749a7fc67705cba37ea2c86455c9b134e6f697861f908c676a`.
+Probe source SHA-256 is
+`579bfad6f0eb2e32c225f0d9b8369e5fd7f8fba38e56bb9daf5433d7aa40ba24`.
+This confirms only the constructed leaf contract; it does not prove natural
+task-switch reachability or live task-context lifetime.
 
 The pinned decoder window at `0x0600B4EC` is retained privately at
 `analysis/japan-b4ec-disassembly.txt`, SHA-256
@@ -123,10 +168,11 @@ range, and bound definitions; they do not execute or validate game behavior.
 
 ## Limits and continuation
 
-This establishes one bounded original SH-2 CPU contract under the pinned
-`saturn-recomp` interpreter. It does not establish natural call frequency,
-record meaning, device or BIOS semantics, hardware timing, a complete kernel
-map, other Japanese modules, or gameplay. Continue with the original caller
-graph and the separate Japanese startup path at `0x0600A312`, retaining the
-VDP2, DVCR, BIOS, and SCU side-effect requirements. The all-code and all-assets
-programme remains active and incomplete.
+These results establish bounded original SH-2 helper and constructed
+caller/callee contracts under the pinned `saturn-recomp` interpreter. They do
+not establish natural call frequency, record lifetime, device or BIOS
+semantics, hardware timing, a complete kernel map, other Japanese modules, or
+gameplay. Continue with the original caller graph and the separate Japanese
+startup path at `0x0600A312`, retaining the VDP2, DVCR, BIOS, and SCU
+side-effect requirements. The all-code and all-assets programme remains active
+and incomplete.

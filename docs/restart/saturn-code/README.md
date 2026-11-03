@@ -167,6 +167,14 @@ stack MACL restore, and return delay slot. The `AA34` producer still has
 unresolved cache-through/VBR dependencies; no natural reachability or gameplay
 is claimed.
 
-Static tail decoding also identifies an unexecuted `0x0600AAEC` candidate: it
-scans 18 record tags at `+81`, updates matching slots, then calls `AACC`. Its
-caller/memory contract remains the next original-byte execution target.
+The same [Japanese record result](../research/2026-11-03-japan-record-address.md)
+also executes the `0x0600AAEA` 18-slot tag scan composed with `AACC`: matching
+tags at `+81` are cleared, and active records are latched. Thirty-nine cases
+run twice in each of two identical reports, with two instruction mutations.
+Natural callers and record lifetime remain open.
+
+Static follow-through from `AB78` found original `0x0600A186`, a 48-byte
+context restore. Its 31-pattern constructed probe executes all 18 original
+instructions twice per case in paired reports, checks R8–R15/MACH/MACL/PR/R4
+restoration and the R5-to-R0 return delay slot, and detects two mutations.
+Natural task-switch reachability remains unresolved.
