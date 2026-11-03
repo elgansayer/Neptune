@@ -30,7 +30,7 @@ const chromium = browserType || (await import('playwright')).chromium;
 const origin = new URL(process.env.SMOKE_BASE_URL || 'http://127.0.0.1:8765').origin;
 const evidenceDir = path.resolve(evidenceDirectory || process.env.SMOKE_EVIDENCE_DIR || 'web-smoke-evidence');
 const timeout = Number(process.env.SMOKE_TIMEOUT_MS || '240000');
-const expectedDuration = Number(process.env.SMOKE_EXPECT_DURATION || '20');
+const expectedDuration = Number(process.env.SMOKE_EXPECT_DURATION || '60');
 const expectedCountdown = Number(process.env.SMOKE_EXPECT_COUNTDOWN || '3');
 const expectedIntermission = Number(process.env.SMOKE_EXPECT_INTERMISSION || '1');
 const expectedRevision = process.env.SMOKE_EXPECT_REVISION || '';
@@ -72,9 +72,9 @@ async function waitFor(visitor, predicate, description, localTimeout = timeout) 
 
 function latest(visitor) { return visitor.snapshots.at(-1); }
 
-async function openVisitor(name, context) {
-  const page = await context.newPage();
-  const visitor = {name, page, snapshots: [], logs: [], logBytes: 0, loaded: new Set(), authCount: 0, connectedCount: 0,
+async function openVisitor(name, context, {page: suppliedPage, focus = true} = {}) {
+  const page = suppliedPage || await context.newPage();
+  const visitor = {name, page, snapshots: [], logs: [], logBytes: 0, snapshotBytes: 0, loaded: new Set(), authCount: 0, connectedCount: 0,
     mapCount: 0, navigations: 0, sockets: [], context};
   visitors.push(visitor);
   page.on('pageerror', error => errors.push(`[${name}] ${error.stack || error}`));
@@ -87,18 +87,23 @@ async function openVisitor(name, context) {
   });
   page.on('console', message => {
     const line = message.text();
-    visitor.logBytes += Buffer.byteLength(line, 'utf8');
+    // State receipts are retained once in their bounded JSON artifact. Keeping
+    // another copy in the text log exhausted its budget in normal 180s rounds.
+    const isState = line.startsWith(STATE_MARKER);
+    visitor.logBytes += isState ? 0 : Buffer.byteLength(line, 'utf8');
     if (visitor.logBytes > 16 * 1024 * 1024) {
       if (!errors.some(value => value.includes(`${name}: bounded log`))) errors.push(`${name}: bounded log budget exceeded`);
       return;
     }
-    visitor.logs.push(`[${message.type()}] ${line}`);
+    if (!isState) visitor.logs.push(`[${message.type()}] ${line}`);
     if (line.includes('[Client] Connected to server!')) visitor.connectedCount++;
     if (line.includes('[Client] Authentication successful!')) visitor.authCount++;
     if (line.includes('[GameView] Map rendered')) visitor.mapCount++;
     if (consoleFailure(message.type(), line)) errors.push(`[${name}] ${line}`);
     if (line.startsWith(STATE_MARKER)) {
       try {
+        visitor.snapshotBytes += Buffer.byteLength(line, 'utf8');
+        assert.ok(visitor.snapshotBytes <= 64 * 1024 * 1024, 'Bounded state receipt byte budget exceeded');
         const diagnostic = parseDiagnostic(line);
         checkRelease(diagnostic, expectedRevision);
         if (mode === 'full') checkConfiguration(diagnostic, expectedDuration, expectedCountdown, expectedIntermission);
@@ -128,7 +133,7 @@ async function openVisitor(name, context) {
   assert.equal(headers.headers()['cross-origin-opener-policy'], 'same-origin', 'Missing cross-origin opener isolation');
   assert.equal(headers.headers()['cross-origin-embedder-policy'], 'require-corp', 'Missing cross-origin embedder isolation');
   assert.ok(await page.evaluate(() => crossOriginIsolated), 'Browser is not cross-origin isolated');
-  await page.locator('canvas').click();
+  if (focus) await page.locator('canvas').click();
   return visitor;
 }
 
@@ -137,6 +142,8 @@ async function screenshot(visitor, label) {
 }
 
 async function exerciseHuman(visitor, epoch) {
+  await visitor.page.bringToFront();
+  await visitor.page.locator('canvas').click();
   const peerId = latest(visitor).peer_id;
   const atStart = await waitFor(visitor, () => {
     const value = latest(visitor);
@@ -144,17 +151,25 @@ async function exerciseHuman(visitor, epoch) {
   }, `round ${epoch} living authoritative human`, 10000);
   let moved = 0;
   let movementKey = '';
+  let movementReceipt;
+  let startTick;
   let afterMove = atStart;
   for (const key of ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp']) {
     const before = latest(visitor);
+    const direction = {ArrowRight: [1, 0], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowUp: [0, -1]}[key];
+    startTick = before.state.simulation_tick;
     await visitor.page.keyboard.down(key);
     try { await visitor.page.waitForTimeout(550); }
     finally { await visitor.page.keyboard.up(key); }
     afterMove = latest(visitor);
-    moved = distance(position(before), position(afterMove));
-    if (moved >= 2) { movementKey = key; break; }
+    const from = position(before), to = position(afterMove);
+    moved = from && to ? (to[0] - from[0]) * direction[0] + (to[1] - from[1]) * direction[1] : 0;
+    movementReceipt = visitor.snapshots.find(value => value.state.round.epoch === epoch &&
+      value.state.simulation_tick >= startTick && value.state.simulation_tick <= afterMove.state.simulation_tick &&
+      value.state.p[peerId]?.v && value.state.p[peerId].v[0] * direction[0] + value.state.p[peerId].v[1] * direction[1] > 0);
+    if (moved >= 2 && movementReceipt) { movementKey = key; break; }
   }
-  assert.ok(moved >= 2, `Round ${epoch} real arrow input never moved the human`);
+  assert.ok(moved >= 2 && movementReceipt, `Round ${epoch} real arrow input never moved the human in its commanded direction`);
   const beforeBombIds = new Set(Object.keys(afterMove.state.b));
   await visitor.page.keyboard.press('Space', {delay: 80});
   const bombSnapshot = await waitFor(visitor, () => visitor.snapshots.find(value =>
@@ -167,6 +182,7 @@ async function exerciseHuman(visitor, epoch) {
   try { await visitor.page.waitForTimeout(750); }
   finally { await visitor.page.keyboard.up(movementKey); }
   const action = {epoch, peer_id: peerId, key: movementKey, distance: moved, bomb_id: bombId,
+    start_tick: startTick, movement_receipt_tick: movementReceipt.state.simulation_tick,
     move_tick: afterMove.state.simulation_tick, bomb_tick: bombSnapshot.state.simulation_tick};
   report.actions.push(action);
   return action;
@@ -186,11 +202,12 @@ try {
     checkFreshCountdown(firstCountdown);
     const epoch1 = firstCountdown.state.round.epoch;
     const peerId = firstCountdown.peer_id;
+    const lateContext = await browser.newContext();
+    const latePage = await lateContext.newPage();
     const active1 = await waitFor(first, () => first.snapshots.find(value => value.state.round.epoch === epoch1 && value.state.round.phase === 'active'), 'first active round', 10000);
     checkRoster(active1, [peerId]);
-    const lateContext = await browser.newContext();
     let lateError;
-    const pendingLate = openVisitor('late', lateContext).catch(error => { lateError = error; return null; });
+    const pendingLate = openVisitor('late', lateContext, {page: latePage, focus: false}).catch(error => { lateError = error; return null; });
     const input1 = await exerciseHuman(first, epoch1);
     await screenshot(first, 'battle');
     const late = await pendingLate;
@@ -256,7 +273,8 @@ try {
     if (!visitor.page.isClosed()) await screenshot(visitor, 'final').catch(error => errors.push(String(error)));
     const summary = {name: visitor.name, connected: visitor.connectedCount, authenticated: visitor.authCount,
       maps: visitor.mapCount, navigations: visitor.navigations, loaded: [...visitor.loaded], sockets: visitor.sockets,
-      snapshots: visitor.snapshots.length, peer_ids: [...new Set(visitor.snapshots.map(value => value.peer_id))]};
+      snapshots: visitor.snapshots.length, state_bytes: visitor.snapshotBytes, log_bytes: visitor.logBytes,
+      peer_ids: [...new Set(visitor.snapshots.map(value => value.peer_id))]};
     report.visits.push(summary);
     await writeFile(path.join(evidenceDir, `${visitor.name}.log`), visitor.logs.join('\n') + '\n');
     await writeFile(path.join(evidenceDir, `${visitor.name}-states.json`), JSON.stringify(visitor.snapshots, null, 2) + '\n');
