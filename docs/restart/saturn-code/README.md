@@ -221,3 +221,9 @@ result skips it. Thirty-two branch/seed cases run twice per report, with two
 branch mutations. Paired reports match at SHA-256
 `85ec5602db6ad65b4411c34c430979ad38e57b03aa7f2c0dea73e93d39755f1d`.
 Natural scheduler reachability and context lifetime remain open.
+
+Static continuation into Japanese startup entry A312 and nested A472/A638 now
+shows SR masking, VDP2 TVSTAT selection, BIOS interrupt calls, and later VDP1,
+SMPC and SCSP dependencies. Retained disassemblies and limits are recorded in
+the [Japanese kernel study](../research/2026-11-03-japan-record-address.md);
+this path needs an explicit device/runtime model before original execution.

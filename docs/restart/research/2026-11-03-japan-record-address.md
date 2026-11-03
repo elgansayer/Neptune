@@ -349,6 +349,26 @@ Reports in `execution-035` match at SHA-256
 The nonzero return is a constructed branch case, not evidence A164 produces it;
 no natural task lifetime, scheduler run, or device timing is established.
 
+## Japanese startup and SR/VDP helper leads (static)
+
+The subsequent original startup entry at `0x0600A312` saves SR and six caller
+registers, masks interrupts, then calls `0x0600A472`. The latter reads VDP2
+`TVSTAT` at `0x25F80004`, selects one of two original timing words, updates the
+kernel timing words, and calls BIOS `SYS_SETUINT` / `SYS_CHGSCUIM` entries before
+calling `0x0600A638`. The latter's decoded prefix writes a record at
+`0x060BCE8C`, refers to VDP1 VRAM at `0x25C00000`, and continues into SMPC/SCSP
+paths. These are source-byte disassembly findings only.
+
+Retained pinned-decoder outputs are `analysis/japan-a312-startup-tail.txt`
+(SHA-256 `4a68724e3e89616a0cad60c19716eca7279a0d1c686b8da6dca333412d2a289e`),
+`analysis/japan-a472-sr-helper.txt` (`ad5d92b780af3b50996940debc41cb7aff17c1262f75fa8dd27f5bed9d5c8f2f`),
+and `analysis/japan-a638-sr-continuation.txt`
+(`5f59a6db9b28cbe7741ed10bf385b1ed197f2f6905866b8e347c9a10b45f822b`).
+The dynamic A312 path requires explicit SR, VDP2, BIOS, SCU, cache-through,
+VDP1, SMPC and SCSP behavior; no flat-RAM execution or guessed device model is
+claimed. Continue with original-byte static range/call-target reconciliation
+until an existing approved emulator capture can support a bounded natural probe.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed
