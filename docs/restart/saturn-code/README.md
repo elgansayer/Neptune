@@ -101,3 +101,10 @@ adds a separately qualified ABI6 profile. Two fresh paired128-case experiments
 preserve96 non-capacity results exactly and advance32 event-limited scans to the
 same explicit unsupported device read. This is tooling/diagnostic progress;
 parent665's complete device/command10 semantics remain open.
+
+The [original slot-reset result](../research/2026-11-03-original-slot-effects.md)
+adds639 complete constructed3540/355A/356E calls repeated in fresh processes,
+24 terminal mutation rejections and a qualified frozen slot-byte profile. The
+128-case command10 continuation now reaches32 diagnostic returns and precise
+low0780/longword-DSP guards; full command10, natural timing/audio and whole-code
+coverage remain open.
