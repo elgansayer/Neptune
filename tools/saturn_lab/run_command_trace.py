@@ -71,6 +71,15 @@ def run(a):
         result['error']={'phase':phase,'type':type(e).__name__,'reason':str(e)}; raise
     finally:
         result.update(completed_original_frames=len(frames),original_execution_attempted=bool(frames),original_game_bytes_executed=bool(frames))
+        if tracer is not None and tracer.started and result['status']!='success':
+            try:
+                tracer.dll.neptune_command_stop(); rows,status=tracer.snapshot()
+                result['failed_trace_status']={n:getattr(status,n) for n,_ in status._fields_}
+                diagnostic={'schema':'neptune.failed-command-trace-diagnostic.v1','accepted':False,
+                            'status':result['failed_trace_status'],'records':[observer.serialise(r) for r in rows],
+                            'first_mismatched_source_witness':tracer.witness(True)}
+                (a.output/'failed-command-records.json').write_text(json.dumps(diagnostic,indent=2,sort_keys=True)+'\n')
+            except Exception as e: result['diagnostic_error']={'type':type(e).__name__,'reason':str(e)}
         if driver is not None: driver.close()
         (a.output/'result.json').write_text(json.dumps(result,indent=2,sort_keys=True)+'\n')
     return result
