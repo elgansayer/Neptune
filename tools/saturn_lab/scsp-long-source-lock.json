@@ -1,0 +1,16 @@
+{
+  "component_sha256": "1c6f90135b29d70f364b81eb72948ae34c759a5a890e5252582ec8e5b74fb3f5",
+  "files": {
+    "COPYING": "a6996dcf0c334281f734560926e079b2dbbd5b78e81c0ca00a413ec01e1cd2fb",
+    "mednafen/hw_cpu/m68k/m68k_ham_body.inc.h": "5eab8bc2fd2b057506c86f57414fe8256327815ca62d2043df174fc37f2371d9",
+    "mednafen/hw_cpu/m68k/m68k_op_MOVE_body.inc.h": "0d1ca18f36daeb72d6d7b2f6d67c9122c32127a38a4f3d075976a28a3c62e0cb",
+    "mednafen/hw_cpu/m68k/m68k_private.h": "8b72afefc37f1f619ccae81abce7732440a116e49beacc37dc9a749ac5444811",
+    "mednafen/math_ops.h": "ecca65f8d6059dafcf02c3ba8cc6d11ec0bda80cdbe15a4bcd759be142c82146",
+    "mednafen/ss/scsp.h": "707bdbfecb158e996cc6c36acba68dc7a0002d648f9b7e958ec7e5277f8872df",
+    "mednafen/ss/scsp.inc": "0fa92f80c30bc1a6944d7cbda55f3ecad189408d5a8dc394887a4ec6b1f5e501",
+    "mednafen/ss/sound.c": "b716773ae39a0c8cedd2d1f26a04d68631857805d1d2b407e22a7b3895ac0c59"
+  },
+  "repository": "libretro/beetle-saturn-libretro",
+  "revision": "01bc063fdd0fb5fc208850c9ecc658834df762ab",
+  "schema": "neptune.scsp-long-source-lock.v1"
+}
