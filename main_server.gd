@@ -412,6 +412,7 @@ func quick_start_game(peer_id: int, username: String) -> Dictionary:
 			game.remove_player(peer_id)
 			return started
 	player_to_game[peer_id] = "shared_game"
+	print("[Server] Player ", peer_id, " joined shared game.")
 	return admission
 
 func _prepare_content_offers(game: Node) -> Dictionary:

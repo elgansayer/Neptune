@@ -119,3 +119,25 @@ func test_directional_mount_frames_do_not_query_missing_default_animation() -> V
 	mount.add_child(sprite)
 	view._update_tirra_visual(actor, {"tirra_growth_level": 0}, "up", false)
 	return assert_true(sprite.animation == "down_stopped", "Mounted directional resources do not require a default/idle animation")
+
+func test_real_hurry_warning_initializes_falling_visual_before_setup() -> Variant:
+	view.update_game_state(_snapshot(1, "active", 1, true))
+	view._spawn_hurry_block_with_warning(1, 1, "1,1")
+	var shadow = view.hurry_pending_shadows["1,1"]
+	shadow.shadow_warning_complete.emit()
+	var falling = view.hurry_falling_blocks.get("1,1")
+	return assert_true(falling != null and falling.is_node_ready() and falling.is_falling
+		and falling.block_visual.get_child_count() == 1 and falling.position.y < falling.target_y,
+		"Hurry visuals must initialize children and drop dimensions before setup on native and Web")
+
+func test_previous_round_hurry_callbacks_and_camera_tween_are_cancelled() -> Variant:
+	view.update_game_state(_snapshot(1, "active", 1, true))
+	view._spawn_hurry_block_with_warning(1, 1, "1,1")
+	var shadow = view.hurry_pending_shadows["1,1"]
+	view._shake_camera_on_impact()
+	var old_tween: Tween = view._camera_impact_tween
+	view.update_game_state(_snapshot(2, "countdown", 1, true))
+	shadow.shadow_warning_complete.emit()
+	return assert_true(not old_tween.is_running() and view.camera.offset == Vector2.ZERO
+		and view.hurry_falling_blocks.is_empty() and view.hurry_pending_shadows.is_empty(),
+		"Retired warning callbacks and shake tweens cannot populate the fresh round")

@@ -63,6 +63,7 @@ var map_generation := 0
 var map_signature := ""
 var _map_background: Node = null
 var _smoke_diagnostics := false
+var _camera_impact_tween: Tween
 
 # Lag mitigation systems
 var local_player_controller: ClientPlayerController # Prediction for local player
@@ -659,6 +660,7 @@ func _discard_visual(value: Variant, discarded: Dictionary) -> void:
 		value.queue_free()
 
 func _reset_round_presentation(epoch: int) -> void:
+	if _camera_impact_tween and _camera_impact_tween.is_valid(): _camera_impact_tween.kill()
 	round_epoch = epoch
 	round_phase = "waiting"
 	_last_round_tick = -1
@@ -1948,7 +1950,9 @@ func _spawn_hurry_block_with_warning(tile_x: int, tile_y: int, tile_key: String)
 	hurry_pending_shadows[tile_key] = shadow
 	
 	# Step 2: When shadow warning completes, spawn the falling block
+	var warning_epoch := round_epoch
 	shadow.shadow_warning_complete.connect(func():
+		if warning_epoch != round_epoch or not is_instance_valid(shadow) or not shadow.is_inside_tree(): return
 		_spawn_falling_hurry_block(tile_x, tile_y, tile_key, shadow)
 	)
 
@@ -1958,12 +1962,15 @@ func _spawn_falling_hurry_block(tile_x: int, tile_y: int, tile_key: String, shad
 	
 	# Create the falling block from scene
 	var falling_block = FallingHurryBlockScene.instantiate()
-	falling_block.setup(target_tile, shadow)
+	# setup() uses @onready children and scaled fall dimensions from _ready().
 	add_child(falling_block)
+	falling_block.setup(target_tile, shadow)
 	hurry_falling_blocks[tile_key] = falling_block
 	
 	# Connect to landing signal
+	var falling_epoch := round_epoch
 	falling_block.block_landed.connect(func(tile: Vector2i):
+		if falling_epoch != round_epoch: return
 		_on_hurry_block_landed(tile_key, tile, falling_block, shadow)
 	)
 	
@@ -1992,11 +1999,13 @@ func _shake_camera_on_impact():
 	if not camera:
 		return
 	
-	var original_offset = camera.offset
+	if _camera_impact_tween and _camera_impact_tween.is_valid(): _camera_impact_tween.kill()
+	var original_offset := Vector2.ZERO
 	var shake_intensity = 1.0 * GameConfig.scale_factor # Subtle shake
 	var shake_duration = 0.15 # Quick shake
 	
 	var tween = create_tween()
+	_camera_impact_tween = tween
 	# Rapid oscillation
 	tween.tween_property(camera, "offset", original_offset + Vector2(shake_intensity, 0), 0.02)
 	tween.tween_property(camera, "offset", original_offset + Vector2(-shake_intensity, shake_intensity * 0.5), 0.02)
