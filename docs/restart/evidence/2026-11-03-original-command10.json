@@ -1,0 +1,799 @@
+{
+  "account_CI_review_spend": "unknown",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "focused_contract_tests": 10,
+  "issue": 686,
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Declared constructed sample union, not all machine states or natural command traffic/roles/boot",
+    "1640 is observed in command10 after volume source zeroing; general standalone nonzero-volume semantics not established",
+    "Reference CPU and frozen SCSP share emulator lineage; model cycles/bus order are not Saturn hardware/sample timing",
+    "No DSP execution/PCM, production-Godot campaign/battle/pixel/audio comparison, whole-code denominator or full-game acceptance",
+    "Neptune continuity remains off;536 shared manual-account enrolment and actual in-flight restart/provider-failure proof remain open"
+  ],
+  "limits": {
+    "broker_credentials_signing_authority_hidden": true,
+    "disk_reserve_each_filesystem_bytes": 5368709120,
+    "guard_seconds": 5,
+    "instruction_budget": 8192,
+    "lease_seconds": 600,
+    "max_events": 4096,
+    "network_only_lo": true,
+    "original_address_space_bytes": 536870912,
+    "original_cpu_seconds": 180,
+    "original_file_bytes": 4194304,
+    "original_wall_seconds": 210,
+    "shared_host_limit": 3,
+    "source_inputs_native_readonly": true
+  },
+  "load_address": 0,
+  "model_calls_by_tests": 0,
+  "module": "NLSND",
+  "native_binary_sha256": "82291cfcc35cbf6f24e326eb49f2fa01720e43bf62fc8c9a79ea89eb0e97e21f",
+  "native_generation_unchanged": true,
+  "native_identity": {
+    "abi": 8,
+    "accepted_slot_identity": {
+      "abi": 7,
+      "capacity_identity": {
+        "abi": 6,
+        "accepted_state_identity": {
+          "abi": 5,
+          "capacity_adapter_sha256": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+          "derived_backend_sha256": "27828ba253cc29264d7dee2f574c80bc7706268deeb353085dcb39bc4c1434fc",
+          "device_identity": {
+            "abi": 4,
+            "base_identity": {
+              "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+              "flags": [
+                "-std=c11",
+                "-O2",
+                "-shared",
+                "-fPIC",
+                "-DM68K_INSTRUCTION_HOOK=1",
+                "-DM68K_SEPARATE_READS=1",
+                "-Wl,-z,defs"
+              ],
+              "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+            },
+            "component_sha256": "bcca52cb908e85249ae492e1db50a504f55b7900a5ebba25c649228135c9608e",
+            "derived_backend_sha256": "f8df4faf406a780ad1171f5210de073baeec08f02f8bfc3ca260040f16adfb95",
+            "preparation_module_sha256": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+            "profile": "SCSP-DSP-even-word-registers-clock-frozen-no-gap-read",
+            "scsp_source_lock_sha256": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
+          },
+          "max_events": 1024,
+          "max_ranges": 16,
+          "max_regions": 16,
+          "max_steps": 2048,
+          "preparation_module_sha256": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+          "profile": "NLSND-state-call-disjoint-code-data-frozen-SCSP-word-effects"
+        },
+        "derived_backend_sha256": "7a9fd4277d3f28da60b880e9562c06f3331b8a3d44c7303653e8a69a84ab68f9",
+        "max_events": 4096,
+        "max_ranges": 16,
+        "max_regions": 16,
+        "max_steps": 8192,
+        "preparation_module_sha256": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+        "profile": "NLSND-command10-reset-trace-capacity-unchanged-frozen-SCSP-word-effects"
+      },
+      "component_sha256": "d7440fed56b2f9f444bc19d2a99ddc15cfb055ea623da1145b06321277be1484",
+      "derived_backend_sha256": "da49b38f3ae2c1727b28e6fc63d903aee2852ba60bcef1f725fc685fede52e5f",
+      "max_events": 4096,
+      "max_ranges": 16,
+      "max_regions": 16,
+      "max_steps": 8192,
+      "preparation_module_sha256": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+      "profile": "NLSND-slot-byte00-0B-15-17-clock-frozen-with-unchanged-DSP-words",
+      "scsp_slot_source_lock_sha256": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+      "slot_fields": [
+        "StartAddr",
+        "KeyBit",
+        "WF8Bit",
+        "LoopMode",
+        "SourceControl",
+        "SBXOR",
+        "EnvRates[3]",
+        "DecayLevel",
+        "KRS",
+        "AttackLoopLink",
+        "EGBypass",
+        "ToDSPSelect",
+        "ToDSPLevel",
+        "DirectVolume[0]",
+        "DirectVolume[1]",
+        "EffectVolume[0]",
+        "EffectVolume[1]"
+      ],
+      "slot_snapshot_values": 1057,
+      "slot_state_bytes": 3400
+    },
+    "bus_word_capacity": 8192,
+    "component_sha256": "1c6f90135b29d70f364b81eb72948ae34c759a5a890e5252582ec8e5b74fb3f5",
+    "derived_backend_sha256": "a96f60dce3566552f4ac92722031d6fca70341369b9f7b4f13e6d95fa2c206cd",
+    "dsp_snapshot_values": 353,
+    "preparation_module_sha256": "5ac3dd8041587a08908ed0e486bd96ccfde10d8da8f52cd11cc35a4589ea9dd6",
+    "profile": "NLSND-frozen-DSP-word-and-aligned-normal-MOVE-long-writes-TEMP-explicit",
+    "source_lock_sha256": "b7e3043a08074a166093d488a2e9f74f5184fef737f55e888539d4712582899b"
+  },
+  "original": {
+    "all_registers_sr_pcs_operands_reference_bus_ram_device_compared": true,
+    "bounds": {
+      "dispatcher": {
+        "events": [
+          16,
+          2311
+        ],
+        "model_cycles": [
+          342,
+          52000
+        ],
+        "records": [
+          0,
+          32
+        ],
+        "steps": [
+          34,
+          4427
+        ]
+      },
+      "handler": {
+        "events": [
+          8,
+          2303
+        ],
+        "model_cycles": [
+          192,
+          51850
+        ],
+        "records": [
+          0,
+          32
+        ],
+        "steps": [
+          21,
+          4414
+        ]
+      }
+    },
+    "cases": 9476,
+    "cases_by_mode": {
+      "dispatcher": 4738,
+      "handler": 4738
+    },
+    "code_ranges_sha256": {
+      "0x1640-0x167a": "536c78978bbdbd4bb70a221de3973e7a390254f068adcd3dd03b41a50aec776d",
+      "0x17f2-0x18f2": "70f17a4a4f0059ed9d16a52cf29fdbd2ec56b0afb87ddec4681517b30bb13e62",
+      "0x1dea-0x1e2e": "c67551f1f045a2b6e930b692fe97d61378840ccb09424e1a72c6c48a2978786c",
+      "0x1e68-0x1eee": "c4388d3632816ac6a2402129f90d123981a37f61ff270e8e5e0877e6ccc9300c",
+      "0x3530-0x35bc": "4f6cdb477ce0bed63b669683d52b277c1c596dad265cf99ec57e604810b05bd2",
+      "0x4412-0x4442": "c5ba5f4a6b52bf18d03516c3b2a36c7aea230879ba278a8f2a0e72f9a398793e",
+      "0x4b00-0x4b6e": "2f7b60a7923056635459bbcc0fc1ebe6406b85bcf0848d8dca7ffb5931f86834",
+      "0x4bb6-0x4be0": "723f98a4d114c6ab7a19a9664ffc48d84778965ba54f2da7b31a5a5400f5695b",
+      "0x4c2a-0x4c9a": "f4d7fb140444f9a36cf75d14dce9a8140f32fdafd9151f0a2eb0abf7299e4ea7"
+    },
+    "natural_execution": false,
+    "observations_sha256": "7bf76d124a51e117ac6fc65b3a6941f751c80786a6a103f314be86c9181e8f97",
+    "sample_results": [
+      {
+        "case": [
+          "dispatcher",
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 16,
+        "records": 0,
+        "reference_bus_events": 0,
+        "registers": [
+          2779054335,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779055108,
+          2779055365,
+          2779055622,
+          2779054144,
+          262149,
+          2779056393,
+          2779056650,
+          2779056907,
+          147456,
+          1048576,
+          147456,
+          458756,
+          16773120,
+          9984
+        ],
+        "steps": 34
+      },
+      {
+        "case": [
+          "dispatcher",
+          [
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 38,
+        "records": 0,
+        "reference_bus_events": 0,
+        "registers": [
+          0,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779055108,
+          2779055365,
+          2779055622,
+          65535,
+          262149,
+          1049111,
+          2779056650,
+          2779056907,
+          147456,
+          1048576,
+          147456,
+          458756,
+          16773120,
+          9984
+        ],
+        "steps": 91
+      },
+      {
+        "case": [
+          "dispatcher",
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 548,
+        "records": 0,
+        "reference_bus_events": 896,
+        "registers": [
+          255,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779054592,
+          2779055365,
+          2779055622,
+          65535,
+          34959,
+          1052160,
+          2779056650,
+          2779056907,
+          147456,
+          1048576,
+          147456,
+          458756,
+          16773120,
+          9984
+        ],
+        "steps": 1120
+      },
+      {
+        "case": [
+          "dispatcher",
+          [
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 548,
+        "records": 0,
+        "reference_bus_events": 896,
+        "registers": [
+          255,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779054592,
+          2779055365,
+          2779055622,
+          65535,
+          34959,
+          1052160,
+          2779056650,
+          2779056907,
+          147456,
+          1048576,
+          147456,
+          458756,
+          16773120,
+          9984
+        ],
+        "steps": 1120
+      },
+      {
+        "case": [
+          "dispatcher",
+          [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 1169,
+        "records": 0,
+        "reference_bus_events": 896,
+        "registers": [
+          255,
+          65535,
+          2779054594,
+          2779054851,
+          2779054592,
+          2779055365,
+          2779119615,
+          65535,
+          34959,
+          1052160,
+          32768,
+          34960,
+          139264,
+          1048576,
+          147456,
+          458756,
+          16773120,
+          9984
+        ],
+        "steps": 2561
+      },
+      {
+        "case": [
+          "handler",
+          [
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 8,
+        "records": 0,
+        "reference_bus_events": 0,
+        "registers": [
+          2779054335,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779055108,
+          2779055365,
+          2779055622,
+          2779055879,
+          262149,
+          2779056393,
+          2779056650,
+          2779056907,
+          2779057164,
+          1048576,
+          28672,
+          458756,
+          16773120,
+          10015
+        ],
+        "steps": 21
+      },
+      {
+        "case": [
+          "handler",
+          [
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 30,
+        "records": 0,
+        "reference_bus_events": 0,
+        "registers": [
+          0,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779055108,
+          2779055365,
+          2779055622,
+          65535,
+          262149,
+          1049111,
+          2779056650,
+          2779056907,
+          2779057164,
+          1048576,
+          28672,
+          458756,
+          16773120,
+          10015
+        ],
+        "steps": 78
+      },
+      {
+        "case": [
+          "handler",
+          [
+            0,
+            0,
+            0,
+            1
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 540,
+        "records": 0,
+        "reference_bus_events": 896,
+        "registers": [
+          255,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779054592,
+          2779055365,
+          2779055622,
+          65535,
+          34959,
+          1052160,
+          2779056650,
+          2779056907,
+          2779057164,
+          1048576,
+          28672,
+          458756,
+          16773120,
+          10015
+        ],
+        "steps": 1107
+      },
+      {
+        "case": [
+          "handler",
+          [
+            0,
+            0,
+            0,
+            1,
+            0
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 540,
+        "records": 0,
+        "reference_bus_events": 896,
+        "registers": [
+          255,
+          2779054337,
+          2779054594,
+          2779054851,
+          2779054592,
+          2779055365,
+          2779055622,
+          65535,
+          34959,
+          1052160,
+          2779056650,
+          2779056907,
+          2779057164,
+          1048576,
+          28672,
+          458756,
+          16773120,
+          10015
+        ],
+        "steps": 1107
+      },
+      {
+        "case": [
+          "handler",
+          [
+            1,
+            1,
+            1,
+            1,
+            1
+          ],
+          0,
+          10015,
+          0,
+          0
+        ],
+        "events": 1161,
+        "records": 0,
+        "reference_bus_events": 896,
+        "registers": [
+          255,
+          65535,
+          2779054594,
+          2779054851,
+          2779054592,
+          2779055365,
+          2779119615,
+          65535,
+          34959,
+          1052160,
+          32768,
+          34960,
+          139264,
+          1048576,
+          28672,
+          458756,
+          16773120,
+          10015
+        ],
+        "steps": 2548
+      }
+    ],
+    "terminal_mutations": {
+      "control0_equals2": {
+        "changed_source_sha256": "76ab9b88d77ff3955e43d78b680ba2cfb15a59420bd95fa3f899d5ef34295901",
+        "offset": "0x1e70",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "55",
+        "terminal_tested": 8
+      },
+      "control1_equals2": {
+        "changed_source_sha256": "c876bdf8c5bca6f21bfb1b33f990012e697a856d7491a7f23d6e4aba3a8786a9",
+        "offset": "0x1e92",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "55",
+        "terminal_tested": 8
+      },
+      "control2_equals2": {
+        "changed_source_sha256": "e4280a6bd11f0fdd2c70598488457557929176a81a9867206c88ef610dd8d7f1",
+        "offset": "0x1ea6",
+        "reasons": [
+          "Independent original helper mismatch: device_after",
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "55",
+        "terminal_tested": 8
+      },
+      "control3_equals2": {
+        "changed_source_sha256": "f3af83268cdd5b8b9fca34dffbc4f6c355b890aa895b72ae0a45041bebc0b69e",
+        "offset": "0x1ec0",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "55",
+        "terminal_tested": 8
+      },
+      "control4_equals2": {
+        "changed_source_sha256": "f5fa45877fc522bd38c3cdfaa40165ae00856d65ee1bb4d35c83574c73064452",
+        "offset": "0x1ee2",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 8,
+        "replacement_hex": "55",
+        "terminal_tested": 8
+      },
+      "copy_uses_setup_global": {
+        "changed_source_sha256": "9042b697681d878c1bc62013c54b08fdcbae8c11ffd47d553ffc7eb715cfcb29",
+        "offset": "0x4bbc",
+        "reasons": [
+          "Independent original helper mismatch: events",
+          "Independent original helper mismatch: regions_after"
+        ],
+        "rejected": 4,
+        "replacement_hex": "0450",
+        "terminal_tested": 4
+      },
+      "descriptor_count_seven": {
+        "changed_source_sha256": "d278e1f5e78de53c48cd821984f738fd6293b727406d25481dbc22483f09c50c",
+        "offset": "0x4419",
+        "reasons": [
+          "Independent original helper mismatch: regions_after",
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 4,
+        "replacement_hex": "06",
+        "terminal_tested": 4
+      },
+      "duplicate_clear_lane": {
+        "changed_source_sha256": "1741f4fa205db31add7c33104bfd61a5a52eaab5c9a313bc0750effca6bfd2c4",
+        "offset": "0x1eaf",
+        "reasons": [
+          "Independent original helper mismatch: device_after"
+        ],
+        "rejected": 4,
+        "replacement_hex": "37",
+        "terminal_tested": 4
+      },
+      "missing_last_pointer_increment": {
+        "changed_source_sha256": "c3df741a27377c7518a48830bb3119cd85a4ad8ffc1a12cf3b0b155fc9059bfd",
+        "offset": "0x1ee0",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 4,
+        "replacement_hex": "1010",
+        "terminal_tested": 4
+      },
+      "missing_queue_increment": {
+        "changed_source_sha256": "6e53f513cf00bce4cfce73bcba8fffec76e0a5b90509fc76bc28804c629aed49",
+        "offset": "0x4c82",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 2,
+        "replacement_hex": "4e71",
+        "terminal_tested": 2
+      },
+      "missing_tag_double": {
+        "changed_source_sha256": "06bb59e346757bfb118b28d509d88ee712422cad5e39ae66228e501d51316b59",
+        "offset": "0x4bd0",
+        "reasons": [
+          "Independent original helper mismatch: regions_after"
+        ],
+        "rejected": 2,
+        "replacement_hex": "4e71",
+        "terminal_tested": 2
+      },
+      "missing_volume_restore": {
+        "changed_source_sha256": "efc66b1f933ad95917fe06ef91fb7d4dc39f7f51c74f8e05aefd2e0f35ff1f2a",
+        "offset": "0x1edc",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 4,
+        "replacement_hex": "4e714e71",
+        "terminal_tested": 4
+      },
+      "restore_ccr_only": {
+        "changed_source_sha256": "67ea9361f8dcbc078cb61ed34b265019341ffde06970a419c3a82468dbc068da",
+        "offset": "0x1eea",
+        "reasons": [
+          "Independent original helper mismatch: registers"
+        ],
+        "rejected": 4,
+        "replacement_hex": "44df",
+        "terminal_tested": 4
+      }
+    }
+  },
+  "parent": 665,
+  "private_evidence_root": "/home/dev/neptune-research-private/686/original-004",
+  "publication_only_changes": "After qualified head, only this derived JSON, research document, README and provisioning links; executable hashes must remain equal at acceptance",
+  "release": "usa-mk81070-v1003",
+  "report_sha256": "ff200e74cb12059db4760091039a42aa59838bef4784fb99dbf9541ef5ceb505",
+  "reports_equal": true,
+  "research_tooling_tests": 409,
+  "retained_diagnostics": {
+    "original-001": "Actual complete original call disagreed with model D7 upper bits; corrected MOVEQ width with retained regression test",
+    "original-002": "Not-started: one600s admission expired behind independently live foreign work; no clearing or bypass",
+    "original-003": "Actual original unmapped-data-read404 revealed copy-global distinct from setup450; explicitly mapped global and shared/separate RAM targets, added wrong-global terminal mutation"
+  },
+  "schema": "neptune.original-command10-derived.v1",
+  "source_files_sha256": {
+    "tools/saturn_lab/analyze_sound_driver.py": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+    "tools/saturn_lab/check.py": "b247a84acefd3a3c4804b0a2e03ea657472509c657e076544b408944904f39a7",
+    "tools/saturn_lab/m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
+    "tools/saturn_lab/m68k_consumer_native.py": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "tools/saturn_lab/m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+    "tools/saturn_lab/m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "tools/saturn_lab/m68k_reset_capacity.py": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+    "tools/saturn_lab/m68k_scsp_dsp.py": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+    "tools/saturn_lab/m68k_scsp_fifo.py": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
+    "tools/saturn_lab/m68k_scsp_long.py": "5ac3dd8041587a08908ed0e486bd96ccfde10d8da8f52cd11cc35a4589ea9dd6",
+    "tools/saturn_lab/m68k_scsp_slots.py": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+    "tools/saturn_lab/m68k_scsp_state.py": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "tools/saturn_lab/probe_command_dispatch.py": "86bc16c51ce36cc5cb6637380ae0736ceed3a10934dfafce27951fe53d0f056c",
+    "tools/saturn_lab/probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "tools/saturn_lab/probe_netlink_command10.py": "59bcf5e172b391a8fe6a537fb7b0414a8ee61af52a3185504769fdad83ff3259",
+    "tools/saturn_lab/probe_netlink_dsp_reset.py": "7e05bce49ca998891c547202b7bee042fa98e9c507b70d49aa21aa865f93b266",
+    "tools/saturn_lab/probe_netlink_low_reset.py": "7b231c810cb64ae074009729abeb7c14ab52532098f342fd61ca0914aa12af50",
+    "tools/saturn_lab/probe_netlink_pointer.py": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+    "tools/saturn_lab/probe_netlink_records.py": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+    "tools/saturn_lab/probe_netlink_slot_effects.py": "1bf15aa3490dd865832b5afcfbf06c79bee4309c1ef4ccdc6f8e6e30315536eb",
+    "tools/saturn_lab/scsp-dsp-source-lock.json": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4",
+    "tools/saturn_lab/scsp-long-source-lock.json": "b7e3043a08074a166093d488a2e9f74f5184fef737f55e888539d4712582899b",
+    "tools/saturn_lab/scsp-slot-source-lock.json": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+    "tools/saturn_lab/tests/test_m68k_scsp_long.py": "70fa6b24abb29e7b135e1e1ef97f16a2ee7bcbe3f642a9b61b41769037f39464",
+    "tools/saturn_lab/tests/test_probe_netlink_command10.py": "f0c345a8f5d28a7b2f6db96dc322f9e72fdb4efcf895496863731d88bf9d884a",
+    "tools/saturn_lab/tests/test_probe_netlink_dsp_reset.py": "8e63b7915fff42cdf7134fecda57d6286d81c92c8a3d36a073fd359487426af0"
+  },
+  "source_qualified": "521501eaffb1fcaa184056d293e51250c8bda1f7",
+  "supervision": {
+    "all_guardians_terminal": true,
+    "comparison-001": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 124.52103431988508,
+      "timed_out": false,
+      "truncated": false
+    },
+    "comparison-002": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 128.89382473006845,
+      "timed_out": false,
+      "truncated": false
+    },
+    "configured_host_shared_limit": 3,
+    "isolation": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 0.4686718499287963,
+      "timed_out": false,
+      "truncated": false
+    },
+    "lease_seconds": 600,
+    "model_calls": 0,
+    "native-load": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 0.6165344398468733,
+      "timed_out": false,
+      "truncated": false
+    },
+    "source_head": "521501eaffb1fcaa184056d293e51250c8bda1f7",
+    "state": "bounded-original-command10-comparison-complete",
+    "tooling": {
+      "cancelled": false,
+      "exit": 0,
+      "seconds": 31.115611443296075,
+      "timed_out": false,
+      "truncated": false
+    }
+  }
+}
