@@ -73,6 +73,37 @@ device, timing, gameplay, and other caller semantics remain open.
 The earlier failed attempts remain in `execution-006` through `execution-008`;
 they are retained and are not counted as successful execution.
 
+## Original record latch helper
+
+Static decoding of the `A946` producer shows that it calls `AA34`, which scans
+the 18-record table and reaches cache-through/VBR-backed services and an
+original self-loop error path. The adjacent leaf at `0x0600AACC` is independently
+bounded: code `[0x0600AACC,0x0600AAEA)` includes the `RTS` delay slot, and the
+only literal is `[0x0600AB2C,0x0600AB30)` containing `0x060BCEEC`.
+
+`tools/saturn_lab/probe_japan_record_latch.py` executes the original leaf over
+all 18 valid indices with the record activity byte at `+80` both clear and set.
+Each of 36 cases runs twice in each of two identical reports. Reads are limited
+to the selected byte, literal, code and exact stack slot. Inactive records stay
+unchanged; active records get longword `1` at the record base. MACL is restored
+from `[SP-4]` in the return delay slot; the helper clobbers the T condition bit.
+Two instruction mutations, inverted activity branch and changed latched value,
+alter the resulting record state.
+
+The successful reports are
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-011/japan-record-latch-run1-v2.json`
+and `japan-record-latch-run2-v2.json`; both have SHA-256
+`3366d8ca157abe4ca46e0112c8a907601b7169c56e986c2574cf109d02325f7a`. Each
+contains 36 result rows and accounts for 72 original calls, with every
+index/state pair run twice. The
+first failed runs are retained in the same private directory: they exposed the
+required return delay-slot mapping and T-bit clobber, and are not counted as
+successes. The full research suite passes 516 tests.
+
+This is an isolated helper contract with a constructed record table and flags.
+It does not establish the `AA34` caller's device contract, a natural caller,
+record lifetime, timing, or gameplay behavior.
+
 The pinned decoder window at `0x0600B4EC` is retained privately at
 `analysis/japan-b4ec-disassembly.txt`, SHA-256
 `bdc400dad5a815dc45a5e32f2a57324278c1d211834054252cf94f23b5fff8e0`. It

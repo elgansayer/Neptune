@@ -158,3 +158,11 @@ for all 18 record indices twice per run, checking the exact call argument,
 return path, and callback store at record `+12`, with three mutations. The
 constructed caller continuation does not prove natural runtime reachability or
 the preceding `0x0600A946` producer.
+
+The same [Japanese record result](../research/2026-11-03-japan-record-address.md)
+also executes original `0x0600AACC` over all 18 record indices with both
+activity states, twice in each of two identical reports, and two instruction
+mutations. It checks the `+80` flag read, conditional longword `1` write, exact
+stack MACL restore, and return delay slot. The `AA34` producer still has
+unresolved cache-through/VBR dependencies; no natural reachability or gameplay
+is claimed.
