@@ -1,0 +1,589 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-5823f81ce329a8f17cd42c1b6461d1c12405492ff8b445afbc2e8b2ab3c5a5b4",
+    "files": 78,
+    "source_head": "84c8499f27f6d95509ee19c881154f5e5a126abb",
+    "source_manifest_sha256": "5823f81ce329a8f17cd42c1b6461d1c12405492ff8b445afbc2e8b2ab3c5a5b4"
+  },
+  "admission_history": {
+    "action": "preserved reservation; same manifest resumed after legitimate release; each job acquired its own shared lease",
+    "foreign_exclusive_owner": "exclusive:1885613:0656de75e5a942f0a0d9c1487a9379cd",
+    "initial_index": 0,
+    "initial_original_execution": false,
+    "initial_status": "admission_deferred",
+    "initial_terminal_tool": 78541,
+    "process_live_verified": true
+  },
+  "batch": "/home/dev/neptune-research-private/655/pools-batch-continue-2fdcc4ck/batch.json",
+  "batch_manifest_sha256": "7fbdd8a937cdcd825011e7c41d5264b6b28c43dd1125387daaa8355f3f9faa83",
+  "contracts": {
+    "alloc0": "A77E0 first zero of24 bytes at(*FC084)+0 becomes1; store index through R4,return0; full writesFFFFFFFF throughR4 and returns-4",
+    "alloc24": "A777E same at(*FC084)+24; full writesFFFFFFFF and returns-3; nonzero bytes of any tested marker sign remain used",
+    "context_failure": "A6FE0 executes actual945B4 six-byte copy and scans full firstpool via realA77E0; returns0 with original saved linkage restored and partial object fields retained",
+    "context_prefix": "A6FE0 executes actual945B4 and successful realA77E0; stores allocated index atobject+32,then real JSR/NOP toA777E,PR7054,SPbefore-28,R4=SPbefore-28,R14=object+28; unfinished",
+    "copy": "945B4 ABI R0=count,R1=dest,R2=src; forward byte copy with overlap propagation; R1 advances four per completed four-byte group; R0=sign-extended final byte (0 for zero count); R2/R3/R4/PR/SP restored; SR.T=1 for zero else0",
+    "copy_adversarial": "negative small count words FFFFFFFF/FFFFFFFE/FFFFFFE0 form an end pointer below the canonical source, so exactly one byte is copied; not a general negative-count contract",
+    "release24": "A77B0 signed index outside0..23 returns-6; in-range byte must equal exactly1 else-7; success clears onlythatbyte and returns0"
+  },
+  "cpu": "sh2",
+  "families": {
+    "alloc0": {
+      "cases_per_run": 5076,
+      "complete_returns_per_run": 5076,
+      "controls": {
+        "lost-marker-store": {
+          "mutated_kernel_sha256": "78794b025346c6e94ba59f30b428132c67b060e39ea26724c55d4bc1cbbe2f69",
+          "nonbudget_rejections": 127,
+          "pc": 101349362,
+          "tested": 127
+        },
+        "lost-output-store": {
+          "mutated_kernel_sha256": "01b4134e80b2ba44936662737aa934e0ffb5ab13861d79db9c29fffab80e4510",
+          "nonbudget_rejections": 127,
+          "pc": 101349364,
+          "tested": 127
+        },
+        "lost-zero-delay": {
+          "mutated_kernel_sha256": "ec9ed12652cb4100ea689fa16d3817f7bfc026f00ba910e9ed2efe11d71306f2",
+          "nonbudget_rejections": 127,
+          "pc": 101349368,
+          "tested": 127
+        },
+        "wrong-limit": {
+          "mutated_kernel_sha256": "01bfcc178ea6e1279662dabb411f1a6ab2d8d9443c8e11654f33d91fa7891292",
+          "nonbudget_rejections": 127,
+          "pc": 101349350,
+          "tested": 127
+        }
+      },
+      "instruction_counts": {
+        "13": 2340,
+        "20": 1188,
+        "27": 594,
+        "34": 306,
+        "41": 162,
+        "48": 90,
+        "55": 54,
+        "62": 36,
+        "69": 18,
+        "76": 18,
+        "83": 18,
+        "90": 18,
+        "97": 18,
+        "104": 18,
+        "111": 18,
+        "118": 18,
+        "125": 18,
+        "132": 18,
+        "139": 18,
+        "146": 18,
+        "153": 18,
+        "160": 18,
+        "167": 18,
+        "174": 18,
+        "177": 18
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "9f4a87ea8f1e5c27927c67d1cf290274d00ab2fdbe9a0964ffa1c8ff33c13e9e",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-alloc0-ns2ismy_",
+          "isolation_sha256": "d6189d64978358c802b16995ea6dda3c93a59ee1079bbb7399f8d0ba234b5e89",
+          "report_sha256": "61baef7b7595092d08efe71cfe6675f4c68910ccb8762b1859504080507f6cda",
+          "supervisor_sha256": "799e95faf4b91627597d6840c77ee307dc6548de3f194053193d5e43a39bff69"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-alloc0-enuwy3kp",
+          "isolation_sha256": "d6189d64978358c802b16995ea6dda3c93a59ee1079bbb7399f8d0ba234b5e89",
+          "report_sha256": "61baef7b7595092d08efe71cfe6675f4c68910ccb8762b1859504080507f6cda",
+          "supervisor_sha256": "6eb9b733fb5e08b38f530f7be29d4128f6968a57048dcecb8e10cad5b2963867"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "060A77FC",
+        "last_trace_pc": "060A77FA",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      },
+      "unfinished_handoffs_per_run": 0
+    },
+    "alloc24": {
+      "cases_per_run": 5076,
+      "complete_returns_per_run": 5076,
+      "controls": {
+        "lost-marker-store": {
+          "mutated_kernel_sha256": "e25aebd78089deda8d31cd188d7ebaa1de14a3cfe211fdd4546156ba555e905f",
+          "nonbudget_rejections": 127,
+          "pc": 101349272,
+          "tested": 127
+        },
+        "lost-output-store": {
+          "mutated_kernel_sha256": "a34bd45c303944f9f3569207a15e6b6b2b2a12b002a6a03e46ce60a1c66d4d24",
+          "nonbudget_rejections": 127,
+          "pc": 101349274,
+          "tested": 127
+        },
+        "wrong-limit": {
+          "mutated_kernel_sha256": "2f3ae33b508ef3afdb65cf8a53c6fc8570decef7fe8c89545d2af10a3996b8cd",
+          "nonbudget_rejections": 127,
+          "pc": 101349252,
+          "tested": 127
+        },
+        "wrong-table-offset": {
+          "mutated_kernel_sha256": "6d25a45154c80ddb1d674d3a8c2dd4da01eb1933392f09c980d26b0185334d4c",
+          "nonbudget_rejections": 127,
+          "pc": 101349256,
+          "tested": 127
+        }
+      },
+      "instruction_counts": {
+        "17": 2340,
+        "26": 1188,
+        "35": 594,
+        "44": 306,
+        "53": 162,
+        "62": 90,
+        "71": 54,
+        "80": 36,
+        "89": 18,
+        "98": 18,
+        "107": 18,
+        "116": 18,
+        "125": 18,
+        "134": 18,
+        "143": 18,
+        "152": 18,
+        "161": 18,
+        "170": 18,
+        "179": 18,
+        "188": 18,
+        "197": 18,
+        "206": 18,
+        "215": 18,
+        "224": 18,
+        "225": 18
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "67c878f3da876ff44be1ca5d8ba06cc7e9d3cc2bf2c659fa3bb66c526e5e52b5",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-alloc24-sisj8dzw",
+          "isolation_sha256": "bee698c9da0a22d73f24879e040311f4a85624309a63eb6125c8e2245d2b1e43",
+          "report_sha256": "b019cd962fe357d604e0a981815a82fced9a7c94f4c0d594423146dc287ad13d",
+          "supervisor_sha256": "0c80597487e2b172da96fb193628577ed937285be10d5d0f922faaed032a1636"
+        },
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/pools-contracts-alloc24-fu0r9yg1",
+          "isolation_sha256": "bee698c9da0a22d73f24879e040311f4a85624309a63eb6125c8e2245d2b1e43",
+          "report_sha256": "b019cd962fe357d604e0a981815a82fced9a7c94f4c0d594423146dc287ad13d",
+          "supervisor_sha256": "cfcfbb54ffb9da451a91077badfaf36a4dccebddcd619c92d1572ddb83c6c03d"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "060A77A2",
+        "last_trace_pc": "060A77A0",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      },
+      "unfinished_handoffs_per_run": 0
+    },
+    "context-failure": {
+      "cases_per_run": 1536,
+      "complete_returns_per_run": 1536,
+      "controls": {
+        "lost-R14-delay": {
+          "mutated_kernel_sha256": "2e46fea5e9c7d95c083c535717bf056986b88c914454e4d38392269eba467d44",
+          "nonbudget_rejections": 125,
+          "pc": 101347514,
+          "tested": 125
+        },
+        "lost-copy": {
+          "mutated_kernel_sha256": "a4e4c11ed0219fdb208aa8b6ef2268faa298a9b7589661579781e1e7f2edbcac",
+          "nonbudget_rejections": 125,
+          "pc": 101270980,
+          "tested": 125
+        },
+        "lost-state52": {
+          "mutated_kernel_sha256": "d53420e626e586990e68001c35b7b2323eae9ce877b22f63d6ba94fc2edb8069",
+          "nonbudget_rejections": 125,
+          "pc": 101347316,
+          "tested": 125
+        },
+        "lost-state68-delay": {
+          "mutated_kernel_sha256": "c69f69df8c22bbe463c8a93ba5542927b7f4055cc7e357af7030d9f31e189243",
+          "nonbudget_rejections": 125,
+          "pc": 101347390,
+          "tested": 125
+        },
+        "lost-zero-result-delay": {
+          "mutated_kernel_sha256": "8b398eccae11b28fe36c3bfe62395782b217e25ebcdd611a3b633ac30482ef26",
+          "nonbudget_rejections": 125,
+          "pc": 101347398,
+          "tested": 125
+        }
+      },
+      "instruction_counts": {
+        "270": 1536
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "2c56be172e9c0854d42d0aaaaae67357acef428e80f1013b790c45e6e196746d",
+      "runs": [
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/pools-contracts-context-failure-w4uj462v",
+          "isolation_sha256": "b07aa5257a1f58ec05067e855b1501358ae35d44b6b0eb47e75b1c61edf2a8aa",
+          "report_sha256": "cfafcc688ac5fa1c1d364c6d59a9dc148adc70cbe723454da98749d722ea5f6b",
+          "supervisor_sha256": "ecbadb873f2fcbceaff73a98db866bc7f139096b7196a346f7fd53445a5ae03f"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-context-failure-fws6b5d6",
+          "isolation_sha256": "b07aa5257a1f58ec05067e855b1501358ae35d44b6b0eb47e75b1c61edf2a8aa",
+          "report_sha256": "cfafcc688ac5fa1c1d364c6d59a9dc148adc70cbe723454da98749d722ea5f6b",
+          "supervisor_sha256": "ff288c13612552fd9a5cbc3a93018a9be05b413f784f1b27f24e88a553907ad3"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "060A77FC",
+        "last_trace_pc": "060A77FA",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      },
+      "unfinished_handoffs_per_run": 0
+    },
+    "context-prefix": {
+      "cases_per_run": 1296,
+      "complete_returns_per_run": 0,
+      "controls": {
+        "lost-allocated-index": {
+          "mutated_kernel_sha256": "6f376e1e865b00ceaa9ce39445f5598c67c4a57c5968cbdce53f70993de73491",
+          "nonbudget_rejections": 126,
+          "pc": 101347404,
+          "tested": 126
+        },
+        "lost-copy": {
+          "mutated_kernel_sha256": "a4e4c11ed0219fdb208aa8b6ef2268faa298a9b7589661579781e1e7f2edbcac",
+          "nonbudget_rejections": 126,
+          "pc": 101270980,
+          "tested": 126
+        },
+        "lost-first-pool-marker": {
+          "mutated_kernel_sha256": "78794b025346c6e94ba59f30b428132c67b060e39ea26724c55d4bc1cbbe2f69",
+          "nonbudget_rejections": 126,
+          "pc": 101349362,
+          "tested": 126
+        },
+        "lost-state52": {
+          "mutated_kernel_sha256": "d53420e626e586990e68001c35b7b2323eae9ce877b22f63d6ba94fc2edb8069",
+          "nonbudget_rejections": 126,
+          "pc": 101347316,
+          "tested": 126
+        }
+      },
+      "instruction_counts": {
+        "105": 54,
+        "112": 54,
+        "119": 54,
+        "126": 54,
+        "133": 54,
+        "140": 54,
+        "147": 54,
+        "154": 54,
+        "161": 54,
+        "168": 54,
+        "175": 54,
+        "182": 54,
+        "189": 54,
+        "196": 54,
+        "203": 54,
+        "210": 54,
+        "217": 54,
+        "224": 54,
+        "231": 54,
+        "238": 54,
+        "245": 54,
+        "252": 54,
+        "259": 54,
+        "266": 54
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "e9e2dfd6a7a38aab2eb23a2909ae2c0fe20566ac89ffa8053965a454ea540a32",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-context-prefix-kymceqwp",
+          "isolation_sha256": "6fd86243684ba2707e73c3edb0b0a3f29817ca161b451735f72d26b222777657",
+          "report_sha256": "a38c83940d6f04eafbc57e2f5c83da59f917fbe0642d646b18a029e0ca627862",
+          "supervisor_sha256": "bce604a42373bb48bb3539e0568471d1b4fb0483ebb8bb64174a7f35ba08b72f"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-context-prefix-zu6ji4az",
+          "isolation_sha256": "6fd86243684ba2707e73c3edb0b0a3f29817ca161b451735f72d26b222777657",
+          "report_sha256": "a38c83940d6f04eafbc57e2f5c83da59f917fbe0642d646b18a029e0ca627862",
+          "supervisor_sha256": "f942a4777a978f4747927c26240c54f603b980b7d444137cf2b9290ddb2d30cf"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      },
+      "unfinished_handoffs_per_run": 1296
+    },
+    "copy": {
+      "cases_per_run": 3752,
+      "complete_returns_per_run": 3752,
+      "controls": {
+        "lost-R2-delay": {
+          "mutated_kernel_sha256": "4af6bcb33b9e225ec833c0960f4d468e3c62baf9a3c7f9d51fe77983633a43e2",
+          "nonbudget_rejections": 128,
+          "pc": 101271018,
+          "tested": 128
+        },
+        "lost-first-store": {
+          "mutated_kernel_sha256": "a4e4c11ed0219fdb208aa8b6ef2268faa298a9b7589661579781e1e7f2edbcac",
+          "nonbudget_rejections": 117,
+          "pc": 101270980,
+          "tested": 128
+        },
+        "lost-four-byte-advance": {
+          "mutated_kernel_sha256": "2ebc24e6750564966f946f352d772bc53fb5c06120d50db5ab14748ae1174bbb",
+          "nonbudget_rejections": 65,
+          "pc": 101271008,
+          "tested": 128
+        }
+      },
+      "instruction_counts": {
+        "9": 48,
+        "15": 698,
+        "19": 48,
+        "23": 48,
+        "28": 554,
+        "32": 48,
+        "36": 554,
+        "40": 48,
+        "45": 554,
+        "49": 48,
+        "53": 48,
+        "57": 48,
+        "62": 48,
+        "66": 48,
+        "70": 48,
+        "74": 48,
+        "79": 48,
+        "83": 48,
+        "87": 48,
+        "91": 48,
+        "96": 48,
+        "100": 48,
+        "104": 48,
+        "108": 48,
+        "113": 48,
+        "117": 48,
+        "121": 48,
+        "125": 48,
+        "130": 48,
+        "134": 48,
+        "138": 48,
+        "142": 48,
+        "147": 48
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "508ed39e1fe9aed9cd1827f4cc62e98e318974db62db68e8e666eadf67cd0f39",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-copy-r813n5xs",
+          "isolation_sha256": "513264c68abb94ee5c141553b70bfc36968a321539a69ed7af5cdbaa9ae5cf2b",
+          "report_sha256": "3fbd7214cff158761c94b2a371606b55ed0099a23de800b1957068f4e094ff17",
+          "supervisor_sha256": "63d836bf1a009588fc9d67aaafdd29af1b3f6d5269c074b92060dc057db4782d"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/pools-contracts-copy-4bsmsr0z",
+          "isolation_sha256": "513264c68abb94ee5c141553b70bfc36968a321539a69ed7af5cdbaa9ae5cf2b",
+          "report_sha256": "3fbd7214cff158761c94b2a371606b55ed0099a23de800b1957068f4e094ff17",
+          "supervisor_sha256": "45b773cb4e2778d64a1923f3536c114d925adf44510c448e8702b55d5b6672b9"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      },
+      "unfinished_handoffs_per_run": 0
+    },
+    "release24": {
+      "cases_per_run": 12324,
+      "complete_returns_per_run": 12324,
+      "controls": {
+        "lost-marker-clear": {
+          "mutated_kernel_sha256": "3c7232434d128b1b48edee5f850f11c018d630b572b2a49d3b3beab238c965c1",
+          "nonbudget_rejections": 1,
+          "pc": 101349336,
+          "tested": 128
+        },
+        "wrong-index-limit": {
+          "mutated_kernel_sha256": "6cc8b03a16efc86b31555efc6d6d672aa3d2118b1ea69cb59f0717405609679b",
+          "nonbudget_rejections": 19,
+          "pc": 101349300,
+          "tested": 128
+        },
+        "wrong-valid-marker": {
+          "mutated_kernel_sha256": "b0c9da7626c72d296364108cb59319314d7eaa33d45e0555580c1a36f9d03ed7",
+          "nonbudget_rejections": 2,
+          "pc": 101349320,
+          "tested": 128
+        }
+      },
+      "instruction_counts": {
+        "4": 18,
+        "7": 18,
+        "14": 12240,
+        "20": 48
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "3adbc31fd5ba9b59ee9f8588b354eb2cbd48b05f7c0b0710dc7b293e30bf7109",
+      "runs": [
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/pools-contracts-release24-pc5ns69a",
+          "isolation_sha256": "9934b91b638225e22cfcfd97e2c2095808287ac12e7d5481f90724016a6ec1b0",
+          "report_sha256": "0f51e0e55680e7ee3087df969d1163acb0add367f3351c00dd8af0250bb7ec25",
+          "supervisor_sha256": "a766cd184a2ccf609a9c716b49f7b193ae93b10eb51d1f49d6e13b23d0418a6a"
+        },
+        {
+          "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/655/pools-contracts-release24-ytyyrgog",
+          "isolation_sha256": "9934b91b638225e22cfcfd97e2c2095808287ac12e7d5481f90724016a6ec1b0",
+          "report_sha256": "0f51e0e55680e7ee3087df969d1163acb0add367f3351c00dd8af0250bb7ec25",
+          "supervisor_sha256": "c48b57206cb14731807018ea1919c756b1957cde3c8320a97bac6decdfc1f09e"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_pools.py": "dd0d6826c0491bebcc9fff41f2899593b26412df2fbfe03cc963ad03e3d12ee6",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      },
+      "unfinished_handoffs_per_run": 0
+    }
+  },
+  "family_control_combinations": 23,
+  "guard": {
+    "accepted128_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "aliases": [],
+    "chosen_budgets": {
+      "alloc0": 256,
+      "alloc24": 256,
+      "context-failure": 512,
+      "context-prefix": 512,
+      "copy": 256,
+      "release24": 128
+    },
+    "context_prefix_terminal": "A777E nonexecutable handoff; pending frame/link preserved; no target instruction or substituted return",
+    "derived_guard_sha256": "d744a4235e5df6709adaf66a272abdc56b8ee2bd0413f2980aac5ae5fba11c21",
+    "maximum_unchanged": 128,
+    "separate_accepted_selection_cap": 1024
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "native_builds": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "shared_host_limit": 3,
+    "source_originals_dependencies_readonly": true,
+    "storage_reserve_bytes": 5435817984
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "schema": "neptune.original-library-pools-derived.v1",
+  "scope_limits": [
+    "Constructed copy/pool/object/global/stack corpus, no natural interior runtime traffic",
+    "A6FE0 complete return covers first-pool exhaustion; success is an unfinished A777E handoff",
+    "Later services/devices, A7F4E/null record, fullA681A/95E5A/89C8, other modules and all-code denominators remain open",
+    "No physical timing, gameplay or Godot parity claim"
+  ],
+  "source_head": "84c8499f27f6d95509ee19c881154f5e5a126abb",
+  "source_ranges_sha256": {
+    "060945B4..060945EC": "b001c5c96a4f3f179cad64688c1a241ead0f0fada80365b8611e0b3478bcc307",
+    "060A6FE0..060A7054": "c74ea6351d7107f0ca31c9ce316fd14d8914901f6d261a3379d91b31ec615845",
+    "060A70B2..060A70BC": "2f126a6f8f727ce04baef8300c10f99ec333ca9523eee5fa09c073c59a0bcbfd",
+    "060A777E..060A77B0": "b9ee42f6218748f7f450620d847e924843fa6b1cf187a3518ca17f30eedfe2f5",
+    "060A77B0..060A77E0": "c6aba855a9f2d72c7adf4f7a37e2f480a71f423070201dd3597f4f4eff0eaae0",
+    "060A77E0..060A780A": "6a709e232cf22326cc3ca40d16afc10df733bc469de3120a6f6de6f348fcd285"
+  },
+  "totals_per_run": {
+    "cases": 29060,
+    "handoffs": 1296,
+    "returns": 27764
+  }
+}

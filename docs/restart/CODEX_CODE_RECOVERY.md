@@ -114,6 +114,14 @@ every capture path/hash and restored capacity without touching foreign data.
 Read [the arithmetic result](research/2026-11-03-library-arithmetic-contracts.md)
 and current655 checkpoint. Continue A6FE0/A7F4E through realA681A/96D74/95E5A;
 model-only development and static windows are not additional original executions.
+Original945B4/A77E0/A777E/A77B0 plusA6FE0 exhaustion/prefix now retain
+29,060 cases per run twice:27,764 complete returns and1,296 unfinished next-call
+handoffs, with23 non-budget controls. Read [the pool result](research/2026-11-03-library-pool-contracts.md)
+and current655 checkpoint; preserve all admission/storage deferrals. Separate
+composedA681A/96D74 source29d7bdb has7 owned/455 research tests, with its first
+guarded original batch pending acceptance. Do not count prepared models as new
+original execution. Arithmetic PR695 awaits the active web owner's required
+browser-liveness repair/current-base gates; never bypass that failure.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The

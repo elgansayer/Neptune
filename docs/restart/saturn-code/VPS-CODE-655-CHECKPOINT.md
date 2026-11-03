@@ -2,12 +2,66 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-arithmetic-655`, workspace
+`research/saturn-library-context-pools-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
 identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current pool/context continuation: all twelve original jobs retained
+
+Source84c8499f27f6d95509ee19c881154f5e5a126abb now has all six byte-identical
+original report pairs:29,060 cases/run,27,764 complete returns and1,296 unfinished
+A777E handoffs, with23 non-budget control combinations. Read
+[the result](../research/2026-11-03-library-pool-contracts.md) and
+[derived evidence](../evidence/2026-11-03-library-pool-contracts.json).
+8 owned/448 research tests pass; later documentation preserves those source/test
+bytes. Frozen78-file adapter:
+`.../655/adapter-5823f81ce329a8f17cd42c1b6461d1c12405492ff8b445afbc2e8b2ab3c5a5b4`.
+Completed manifest:`.../655/pools-batch-continue-2fdcc4ck/batch.json`. Do not rerun
+it as new work. Parent2fuwvuxq terminal storage failure and all later deferrals
+remain retained. The earlier partial9-job audit is historical, not final scope.
+
+945B4 copy, A77E0/A777E byte-pool allocation and A77B0 indexed release complete.
+A6FE0 executes real945B4/A77E0: exhaustion returns0 in270 instructions; success
+stops at the real next A777E call withPR7054/SPbefore-28. Full success/services
+remain open. Old128 guard unchanged; separate accepted1024 profile with local
+256/512 budgets, release128. All own leases released after completion. Preserve
+shared3/180-second/60-second/nice10/2GiB/offline/read-only/hidden-authority limits,
+5GiB+64MiB output reserve and live owners. No provider or native build.
+
+Composed source29d7bdb474f459d415eb84c4e6baab42233feae7 is separately tested/
+pushed at`research/saturn-library-record-setup-655`:7 owned/455 research tests.
+It models complete nonnullA681A/96D74 failure through all real arithmetic,
+format/context/copy/first-pool-exhaustion calls. Frozen79-file adapter:
+`.../655/adapter-eef51aac2f7d8e50d3a736a2aaf8761961d08a292d49cfd7c2b3c172e14aaa8f`.
+Its first original batch is **running, not an accepted result**:
+`/home/dev/neptune-research-private/655/record-batch-db1wg3j_/batch.json`.
+Inspect tool71551/current process and manifest before any restart. If terminal
+resource/admission-deferred, resume with:
+
+```sh
+unshare --user --map-root-user --net /opt/hellotalk-factory/venv/bin/python3 \
+  /home/dev/neptune-evidence/code655-20261102/run-record-batch.py \
+  --manifest /home/dev/neptune-research-private/655/record-batch-db1wg3j_/batch.json
+```
+
+Chosen composed768 budget is below the accepted1024 cap; source/data islands
+remain non-executable. Future composed reports are archived losslessly after
+worker completion, with exact raw/archive hashes, roundtrip verification and
+`gzip -dk report.json.gz` restore command. This storage step changes no original
+input/execution/guard; owned archive checks are separate from game evidence.
+
+Arithmetic PR695 remains open atde5bac9: research/preparation/font checks pass,
+but the newly required browser bot-bomb liveness check and merge aggregate failed.
+No bypass/auto-merge request. Retain`.../code655-20261102/pr695-web-failure-001/`
+and`pr695-failed-checks.json`. Active web owner has the failure and is extending
+PR696 with playable starts/browser focus; preserve that and newerNLSND694/PR697.
+Integrate accepted main normally, then recheck every exact-head/current-base
+applicable gate before merging695 and these dependent slices. No product files
+were changed by this continuation.655 and the programme remain active; null
+record/A7F4E, successful services, full95E5A/89C8 and all-code denominators stay open.
 
 ## Current arithmetic contracts: all original pairs retained
 
