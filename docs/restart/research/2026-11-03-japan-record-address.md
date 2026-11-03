@@ -426,6 +426,16 @@ control words in `0x060BC678`–`0x060BC690` and `0x060FCBF8`, while initializin
 `7f3f8779f06627ead552ccb90aa40cd05b468cbf5778ceba804b5e3e65014ec7`,
 `d0b18fb7297174bb855be13a124d364b035de2d11c8ae37b191ea9ee26bc28e7`, and
 `3d58c1fa0dca976bcc919030aa26df24d739df9ea594f367d4e816158ecde834`.
+The following `0x0609E9D0` state routine tests control word `0x060BC678` for
+states 2 and 3, checks `0x060BC688`, modifies VDP1 `FBCR`/`TVMR` fields on
+selected paths, and updates the cache-through state word `0x060FCBF8`. The
+common epilogue restores PR/R11-R14; its adjacent EAB4 path reads VDP2 TVSTAT
+and conditionally updates VDP1 `FBCR` before clearing the same state and
+`0x060BC688`. Static output hashes: E9D0
+`09053f4c771d60c890b125c39f127353b0812415b9069176077750a19be926af`; EAA8
+`fa14cc6ae4d855ad67f9c79f4de094d5c383b210050c810e069f99ed87c25f93`. These
+paths remain unexecuted because their branches depend on device state and
+callback lifetimes not modeled by the isolated helper probe.
 The shared helper at `0x06095C24` is now original-byte tested separately from
 VDP/MMIO behavior. Its packed R1 low byte supplies field width, the high byte
 supplies the gap below the high end of the word, R0 supplies inserted low bits,
