@@ -23,8 +23,8 @@ Observed screens included the Battle/Rules/Bombers setup tabs, Character Select,
 and the Match/Series/Quit prompt. A left input moved the character cursor from
 W-Bomberman to KONU. Start returned from Character Select to the setup menu.
 Further inputs reached the Match prompt and setup shell. The saved frame-9451
-checkpoint is still a menu state; no match arena or active battle has been
-verified. The exploratory inputs and every checkpoint are retained outside Git
+checkpoint is the setup shell after Match mode selection; no match arena or
+active battle has been verified. The exploratory inputs and every checkpoint are retained outside Git
 under `/home/dev/neptune-evidence/code712-20261103/original-a0ec-study-20261103/`
 in `navigation-034` through `navigation-054`.
 
@@ -38,14 +38,18 @@ evidence map, active owners, configured limits, and next step.
 
 ## B934 result and A0EC status
 
-The prepared observer ran for 600 frames from the retained Match-prompt menu
+The prepared observer ran for 600 frames from the retained setup-shell menu
 checkpoint. The core completed 149,548,301 master SH-2 dispatches. It recorded
 zero `0x0600B934` entries, so the run correctly ended with an empty-trace
 rejection. The complete failure receipt, native observations, final state,
 rejected trace diagnostic, and supervisor log remain at
 `/home/dev/neptune-evidence/code712-20261103/original-a0ec-study-20261103/attempt-004/`.
-This is evidence that the observer ran through the declared window, not evidence
-of a B934 call.
+The supervisor receipt inherited a stale `checkpoint_frame: 4411` and an
+A0EC-flavoured owner label from the previous script. The actual input checkpoint
+is frame 9451, established by its checkpoint JSON and the executed result's
+`reference_frame: 9451`. The original receipt remains unchanged; this metadata
+discrepancy is recorded rather than silently repaired. This is evidence that the
+observer ran through the declared window, not evidence of a B934 call.
 
 Three earlier 600-frame original windows targeted `0x0600A0EC`: title input,
 the post-Battle-Game transition, and Character Select idle. Each completed its
