@@ -149,6 +149,13 @@ The retained natural header separates16 slots/32 capacity/26 populated entries;
 its index25 lookup boundary and later-state table projection are distinct evidence.
 Continue95D34/95D9C/949E0 record access and successful context/service dependencies.
 Do not resume completed manifests or mark the all-code programme complete.
+Name PR701 mergedd6cf5b3 with all15 exact-head/current-base checks. Further
+949E0/95D34/95D9C record access now completes13,936 returns/run twice, three
+identical raw/archive pairs and11 controls, with7 focused/484 research tests.
+Read [the record-access result](research/2026-11-03-library-record-access-contracts.md)
+and current655 checkpoint.95D9C's mode1/other-mode rule differs from95E5A;
+retain those distinct contracts. Continue actualA780A/A7BB0/A85E4/A805C service
+and cleanup dependencies; prepared static windows are not additional execution.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
