@@ -69,7 +69,7 @@ and regions. The interpreter is not an independent hardware oracle. A separate 6
 frame 1800 and delivered an eight-frame Start pulse on port 0. It left the
 captured RNG index at 55 and did not produce a natural call. Its retained result
 is `/home/dev/neptune-research-private/707/rng-natural-navigation-008/start-pulse-600/result.json`
-(SHA-256 `7248c98a2d28f6a993cee349ad527daf3817c3831e3200f31e4d87a1187ef76f`);
+(SHA-256 `7248c98a2d28f6a993ece349ad527daf3817c3831e3200f31e4d87a1187ef76f`);
 that input window is not counted as RNG recovery.
 
 Next, use the native source-call observer to capture a natural `0x0600A0EC`
