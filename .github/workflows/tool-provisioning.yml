@@ -162,6 +162,43 @@ jobs:
           (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
           print('Actual ABI7 complete slot byte/decoded/latch/pan effects, CPU/RMW order, guards, inherited DSP words and reuse passed; no originals.')
           PYTHON
+      - name: Compile and exercise DSP longword and TEMP reference effects with reuse
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_scsp_long as longword
+          cache=Path(os.environ['RUNNER_TEMP'])/'long-preparation'/'prepared'
+          first=longword.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=longword.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          smoke=again['owned_smoke']
+          assert smoke['reference_write_cases']==26880 and smoke['normal_longword_cpu_cases']==2688
+          assert smoke['identical_program_word_cases']==1536 and smoke['predecrement_guarded']
+          assert smoke['reference_word_bus_capacity_rejected']==8192 and smoke['reference_bus_recovered']
+          assert smoke['slot_reference_byte_cases']==98304 and smoke['slot_cpu_cases']==1024 and smoke['slot_rmw_cases']==96
+          assert smoke['capacity']['full_instruction_limit_rejected']==8192 and smoke['capacity']['full_event_limit_rejected']==4096
+          assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
+          assert smoke['original_game_bytes_executed'] is False and again['preparation_has_original_inputs'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Actual ABI8 frozen longword/TEMP packing, reference bus order, native CPU modes/guards, inherited slots/capacity and reuse passed; no originals.')
+          PYTHON
+      - name: Preserve longword preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-long-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/long-preparation/**/*.json
+            ${{ runner.temp }}/long-preparation/**/*.stdout
+            ${{ runner.temp }}/long-preparation/**/*.stderr
+            ${{ runner.temp }}/long-preparation/prepared/*.so
+            ${{ runner.temp }}/long-preparation/prepared/*.h
+            ${{ runner.temp }}/long-preparation/prepared/*.c
+            ${{ runner.temp }}/long-preparation/prepared/COPYING.SCSP
       - name: Preserve slot-byte preparation evidence including failed stages
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

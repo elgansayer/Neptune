@@ -18,6 +18,8 @@ EXACT = {"tools/godot/install.py", "tools/godot/toolchain.json", ".github/workfl
          "tools/saturn_lab/m68k_reset_capacity.py", "tools/saturn_lab/tests/test_m68k_reset_capacity.py",
          "tools/saturn_lab/m68k_scsp_slots.py", "tools/saturn_lab/tests/test_m68k_scsp_slots.py",
          "tools/saturn_lab/scsp-slot-source-lock.json",
+         "tools/saturn_lab/m68k_scsp_long.py", "tools/saturn_lab/tests/test_m68k_scsp_long.py",
+         "tools/saturn_lab/scsp-long-source-lock.json",
          "tools/saturn_lab/m68k_consumer_native.py", "tools/saturn_lab/tests/test_m68k_scsp_state.py", "tools/saturn_lab/scsp-dsp-source-lock.json",
          "tools/saturn_lab/tests/test_m68k_scsp_dsp.py", "tools/saturn_lab/m68k_scsp_fifo.py",
          "tools/saturn_lab/m68k_probe.py", "tools/saturn_lab/m68k_probe_backend.c",
