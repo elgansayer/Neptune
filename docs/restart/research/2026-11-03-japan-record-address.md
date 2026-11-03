@@ -442,6 +442,17 @@ and builds one of two buffer layouts under `0x060FB724`; it tests status word
 static decode has digest
 `d3a4913018fa77163c1800b16d683e3b9cabdc2da578988f6139bdaab5f993cb`.
 Its mode semantics, buffer lifetime, and device interactions remain unknown.
+The follow-on EBEC block compares `0x060BC65A` with `0x0160`, then copies or
+left-shifts four short values from its local frame into the selected
+`0x060FB724` buffer record. It conditionally calls `0x060AB1B4`, writes
+`0x060FB714` from a VDP1 state field or the constant 3, and normalizes
+`0x060BC658` to 1 when zero. The adjacent ECD0 routine has a different
+multi-argument stack contract and constructs two words from `0xDA200000 + R11`
+for offsets 24 and 28 of `0x060FB724`, then continues into further helpers.
+These are control/dataflow observations only. Retained hashes: EBEC
+`1218d4c40246ca0bc15e42129c5d5515a954f98dc72933c3bf739c1be33ebe67`, EC72
+`a9c9f9f9cefeb35b96f94f69c7a9dbf03f7c3b4e4c8a265b5ba62ac18af77671`, and ECD0
+`0f9afff089fd314078bf4d06b2429d6ff389a248ca9138a53bbd8a06c69e88b4`.
 The shared helper at `0x06095C24` is now original-byte tested separately from
 VDP/MMIO behavior. Its packed R1 low byte supplies field width, the high byte
 supplies the gap below the high end of the word, R0 supplies inserted low bits,
