@@ -1,0 +1,280 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-4e70144aae913108299c69616b9be096b4655f2e206ff5f93a17c5f66c6f83fe",
+    "files": 74,
+    "source_head": "fd70b1a91c2b78521455b6e9fb8e6073d3e39858",
+    "source_manifest_sha256": "4e70144aae913108299c69616b9be096b4655f2e206ff5f93a17c5f66c6f83fe"
+  },
+  "batch": "/home/dev/neptune-research-private/655/status-batch-60tks8xc/batch.json",
+  "batch_sha256": "b894d6bb022e7260efec332f18e5b6f93c44f6f7560a99e5ca382fa857977b00",
+  "cpu": "sh2",
+  "families": {
+    "setter": {
+      "cases_per_run": 256,
+      "complete_returns_per_run": 208,
+      "controls": {
+        "changed-original-callback-tail-delay": {
+          "mutated_kernel_sha256": "ba8f12e9ffb3af5ba65a87bba6ce5be0882edb77c95cff6f097d96d1f1dfb4c4",
+          "nonbudget_rejections": 24,
+          "pc": 100698566,
+          "tested": 96
+        },
+        "changed-tail-zero-delay": {
+          "mutated_kernel_sha256": "21bdce31e3d8822095ab69fa8c4bb0678214fb7acf6ca57ca5ae20c3d657d092",
+          "nonbudget_rejections": 64,
+          "pc": 101280124,
+          "tested": 96
+        },
+        "lost-callback-store": {
+          "mutated_kernel_sha256": "d3ebaeebf87d7b78d510657335cdb25ca1390ee04b4b4976b314c6954aa3d6d8",
+          "nonbudget_rejections": 96,
+          "pc": 101280114,
+          "tested": 96
+        },
+        "lost-callback-userdata-delay": {
+          "mutated_kernel_sha256": "f560f51906b445c19421e832b1025be27dece39db89f69f3eeb44d568a65de9b",
+          "nonbudget_rejections": 32,
+          "pc": 101280932,
+          "tested": 96
+        },
+        "lost-error-store-delay": {
+          "mutated_kernel_sha256": "73b5d5bb986c04bf564db18d95e0417009c1c1af70f3229786dc6dbfd04e50d4",
+          "nonbudget_rejections": 96,
+          "pc": 101280918,
+          "tested": 96
+        },
+        "lost-input-delay": {
+          "mutated_kernel_sha256": "0ee57339238c15430a3ef2bb2f31ef05cd9da02c9ea09ee37dd7f2934833a3db",
+          "nonbudget_rejections": 20,
+          "pc": 101280878,
+          "tested": 96
+        },
+        "lost-root-R14-restore": {
+          "mutated_kernel_sha256": "fc9fd8e41726b2122b0baeb5355c02afd01512b644436c3d278ee3efe3426632",
+          "nonbudget_rejections": 64,
+          "pc": 101280942,
+          "tested": 96
+        },
+        "lost-userdata-store": {
+          "mutated_kernel_sha256": "b1b669f4fb18f9987b85b93b840c58cfd88d9de0e3f08eff95c8d3d21279d39a",
+          "nonbudget_rejections": 96,
+          "pc": 101280120,
+          "tested": 96
+        },
+        "mapping-2": {
+          "mutated_kernel_sha256": "61b7743069db632d5b1931d791aeaa2f73a4b7ea8b321917c441629a4bff6f19",
+          "nonbudget_rejections": 28,
+          "pc": 101280902,
+          "tested": 96
+        },
+        "mapping-23": {
+          "mutated_kernel_sha256": "39031607493f3e75d2ce5fd2c3c99a665cff28a237ebaf48ef4831bedcf5c4f9",
+          "nonbudget_rejections": 20,
+          "pc": 101280898,
+          "tested": 96
+        },
+        "mapping-25": {
+          "mutated_kernel_sha256": "1a6a6e35a2d17abea6ff2aa59dc08afd2b3fde167d26e52db9a11e6f1650016f",
+          "nonbudget_rejections": 28,
+          "pc": 101280904,
+          "tested": 96
+        }
+      },
+      "instruction_counts": [
+        33,
+        35,
+        36,
+        37,
+        38,
+        40
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "0a5663060c1ab5d32d8fc914deb9e06a82dc69aa5b00cbae25639792dc7e79f7",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/status-contracts-setter-sivndtkn",
+          "isolation_sha256": "e42946c31e88a220721a3de6d88fb05763f18bb65dee6dae0fd053c2d8cee861",
+          "report_sha256": "d1e4822ea1a4358339a83b3b16f5141b22aa0a96573d64f9991fbee199837ef7",
+          "supervisor_sha256": "bb49533ac4d0fc394b25b225aeb758bb7cedec866761d53563c7cae549004d69"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/status-contracts-setter-1klg1hs5",
+          "isolation_sha256": "e42946c31e88a220721a3de6d88fb05763f18bb65dee6dae0fd053c2d8cee861",
+          "report_sha256": "d1e4822ea1a4358339a83b3b16f5141b22aa0a96573d64f9991fbee199837ef7",
+          "supervisor_sha256": "80b641ba542e0417aeb83a5801467585df02b57791914b1611c2728bb71c4524"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_status.py": "5fd31a97380bd24ea036e9e507495d29522ef7335b4110efeb5500cb83db92fe",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_callback_handoffs_per_run": 48
+    },
+    "status": {
+      "cases_per_run": 4256,
+      "complete_returns_per_run": 3156,
+      "controls": {
+        "changed-original-callback-tail-delay": {
+          "mutated_kernel_sha256": "ba8f12e9ffb3af5ba65a87bba6ce5be0882edb77c95cff6f097d96d1f1dfb4c4",
+          "nonbudget_rejections": 38,
+          "pc": 100698566,
+          "tested": 96
+        },
+        "lost-callback-userdata-delay": {
+          "mutated_kernel_sha256": "f560f51906b445c19421e832b1025be27dece39db89f69f3eeb44d568a65de9b",
+          "nonbudget_rejections": 38,
+          "pc": 101280932,
+          "tested": 96
+        },
+        "lost-error-store-delay": {
+          "mutated_kernel_sha256": "73b5d5bb986c04bf564db18d95e0417009c1c1af70f3229786dc6dbfd04e50d4",
+          "nonbudget_rejections": 96,
+          "pc": 101280918,
+          "tested": 96
+        },
+        "lost-input-delay": {
+          "mutated_kernel_sha256": "0ee57339238c15430a3ef2bb2f31ef05cd9da02c9ea09ee37dd7f2934833a3db",
+          "nonbudget_rejections": 32,
+          "pc": 101280878,
+          "tested": 96
+        },
+        "lost-root-R14-restore": {
+          "mutated_kernel_sha256": "fc9fd8e41726b2122b0baeb5355c02afd01512b644436c3d278ee3efe3426632",
+          "nonbudget_rejections": 58,
+          "pc": 101280942,
+          "tested": 96
+        },
+        "mapping-2": {
+          "mutated_kernel_sha256": "61b7743069db632d5b1931d791aeaa2f73a4b7ea8b321917c441629a4bff6f19",
+          "nonbudget_rejections": 16,
+          "pc": 101280902,
+          "tested": 96
+        },
+        "mapping-23": {
+          "mutated_kernel_sha256": "39031607493f3e75d2ce5fd2c3c99a665cff28a237ebaf48ef4831bedcf5c4f9",
+          "nonbudget_rejections": 16,
+          "pc": 101280898,
+          "tested": 96
+        },
+        "mapping-25": {
+          "mutated_kernel_sha256": "1a6a6e35a2d17abea6ff2aa59dc08afd2b3fde167d26e52db9a11e6f1650016f",
+          "nonbudget_rejections": 32,
+          "pc": 101280904,
+          "tested": 96
+        }
+      },
+      "instruction_counts": [
+        24,
+        26,
+        27,
+        28,
+        29,
+        31,
+        33
+      ],
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "reports_byte_identical": true,
+      "results_sha256": "7f54a54587734d590a55fde9c54a34e7db9152f031abfd9e6ba4ab68da40e626",
+      "runs": [
+        {
+          "directory": "/home/dev/neptune-research-private/655/status-contracts-status-9cfby14l",
+          "isolation_sha256": "6dd452b27f6fa642fa945b1e3540d49e8fe5035e31dc3e93c9b73b32da6ae9c4",
+          "report_sha256": "cc260d0d79e5ab3516db42a48755437bcac1cdd2f984bdb89d3006a5236fd3ad",
+          "supervisor_sha256": "2145f89faa5e862d286373a969fef3f2217bd79299deddd8bb02c7a4b5ac5cac"
+        },
+        {
+          "directory": "/home/dev/neptune-research-private/655/status-contracts-status-lmvk1osn",
+          "isolation_sha256": "6dd452b27f6fa642fa945b1e3540d49e8fe5035e31dc3e93c9b73b32da6ae9c4",
+          "report_sha256": "cc260d0d79e5ab3516db42a48755437bcac1cdd2f984bdb89d3006a5236fd3ad",
+          "supervisor_sha256": "388abe65e68db6949c0fb33eeb26f56b587f20e2870d923dd0ccf0da889995ae"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_status.py": "5fd31a97380bd24ea036e9e507495d29522ef7335b4110efeb5500cb83db92fe",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_callback_handoffs_per_run": 1100
+    }
+  },
+  "family_control_combinations": 19,
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "nice": 10,
+    "offline": true,
+    "original_guard_maximum_unchanged": 128,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "shared_host_slots": 3,
+    "source_originals_dependencies_readonly": true
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "retained_failure": {
+    "adapter": "/home/dev/neptune-research-private/655/adapter-defa010197b051d00d239773144afadeb3452ff378b8ccdb2f8710e45f7e593a",
+    "correction": "Actual89C2 loads original8BF4 literal and JMP/NOP to293A4; explicit nonexecutable handoff, no substituted return or device model",
+    "directory": "/home/dev/neptune-research-private/655/status-contracts-status-ut54_sdh",
+    "error": "Read outside literals and controlled inputs at89C2: incorrect return-only callback assumption",
+    "report_sha256": "e8eb01ef2e93e17f120b37e6578564a078ae5b82bae2fe926924231a8d5f90e3",
+    "source_head": "5472a4f98becdcb3a4bb6fc9bbc2370ec1817fee"
+  },
+  "schema": "neptune.original-library-status-contracts-derived.v1",
+  "scope_limits": [
+    "Null/suppressed paths return completely; nonzero original callback path is an explicit unfinished handoff",
+    "293A4 body and arbitrary callbacks/device behavior remain unresolved; no fake callback return",
+    "Constructed RAM/stack corpus; natural success evidence is separately accepted inPR667",
+    "Full95B04/89C8 semantic reconstruction, whole-module denominators and hardware/gameplay/Godot parity remain open"
+  ],
+  "semantic_contract": {
+    "callback_offset": "B8",
+    "callback_terminal": "060293A4; target not executed; root PR remains saved and call link is06096CA6",
+    "library_pointer_cell": "060FA8BC",
+    "notification": "only when effective error is nonzero and callback is non-null; R4=userdata,R5=error",
+    "original_callback": "89C2 loads293A4 from8BF4, JMP at89C4 and actual NOP delay89C6",
+    "other_statuses": "preserve input R4 modulo2^32, including status0",
+    "overrides": {
+      "-13": -23,
+      "-14": -2,
+      "-16": -25
+    },
+    "setter": "9696C stores callback/userdata atB8/BC and tail-enters real96C60 with R4=0",
+    "status_word": "060FC080",
+    "stored_error_offset": "C0",
+    "userdata_offset": "BC"
+  },
+  "source_head": "fd70b1a91c2b78521455b6e9fb8e6073d3e39858",
+  "source_ranges_sha256": {
+    "060089C2..060089C8": "6ead8676472f33a4bd491a6b09c08ea2542514006b2dc52e791037a94a5a27a1",
+    "0609696C..0609697E": "d9ca5862b2e6f7d2b05bc83b7c50fc6b72c3c0892f0bb34aa7627868706c573f",
+    "06096C60..06096CB0": "f42884e9781a82c4c43e20c8fa4d0fa9b221f460580b4dfe2a87813ebb489a9e"
+  },
+  "totals_per_run": {
+    "cases": 4512,
+    "complete_returns": 3364,
+    "unfinished_handoffs": 1148
+  }
+}

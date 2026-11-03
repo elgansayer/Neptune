@@ -287,3 +287,12 @@ source identities and the TEMP fixture difference from ABI7. All old ABIs remain
 No natural/hardware/audio, independent full command10 or Godot fidelity claim is
 made. Original commands require the existing offline/read-only/credential-free
 runner, shared admission, resource bounds and a new private report path.
+
+
+`probe_netlink_command10.py` independently checks complete constructed1E68 and
+17F2 command10 calls using qualified ABI8, including exact-one controls, mutable
+input aliases, distinct450/404 globals, pointer redirection and full ordered
+memory/device/stack/register comparisons. The [actual original result](../../docs/restart/research/2026-11-03-original-command10.md)
+records9,476 cases twice and68 terminal regressions per process. Earlier command10
+diagnostics remain historical evidence; this does not establish natural traffic,
+DSP/audio execution, hardware timing, Godot fidelity or whole-game recovery.

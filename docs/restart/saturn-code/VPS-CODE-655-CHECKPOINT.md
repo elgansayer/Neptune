@@ -2,12 +2,59 @@
 
 **All-original-code programme active, incomplete.** Existing Codex app owns
 [655](https://github.com/elgansayer/Neptune-Bomberman/issues/655), branch
-`research/saturn-library-status-655`, workspace
+`research/saturn-library-status-contracts-655`, workspace
 `/home/dev/neptune-code-recovery-20261102`. Preserve coordinator634/636/642/
 645/647 and new Ghidra/JDK652/PR653, Gemini487 and all newer claims. Preserve
 the original restart worktree/untracked files, manual sessions, native tools and
 every original/failure artifact. Preserve new coordinator657 intake/candidate
-identity integration. No provider dispatch or policy/continuity changes.
+identity integration and newer661 ownership. No provider dispatch or policy/continuity changes.
+
+## Current continuation: natural returns accepted; broader status contracts tested
+
+PR663's separate native observer mergedfed7932, followed by driver/evidence
+PR667 mergedb6a8e253b558b925439acb3225937a91d782f124 at22:13:18 UTC. All12
+exact-head checks completed, six native children had explicit current-base/head
+non-applicability proof, and required aggregates passed. Accepted receipt:
+`/home/dev/neptune-evidence/code660-20261102/pr667-acceptance-verified.json`.
+Issue660 is closed for its bounded observation scope. Twelve fresh600-frame
+original windows prove natural89C8/95B04 returning boundaries1247→1264, R0=1A,
+exact state/video/audio/input equality across reference/disabled/enabled modes,
+repeated enabled traces and42 rejected record-copy controls. Read the
+[natural report](../research/2026-11-02-first-task-natural-init.md) and
+[660 checkpoint](VPS-CODE-660-CHECKPOINT.md). Full library/device semantics and655
+remain open; observed root return alone does not close them.
+
+Corrected sourcefd70b1a was tested/pushed before new original jobs; six owned
+tests and328 research tests pass. New96C60/9696C results have4,512 cases per
+run, twice identically:3,364 complete returns and1,148 explicit unfinished
+callback handoffs. All19 family/control combinations reject semantically without
+budgets. Read [the result](../research/2026-11-02-library-status-contracts.md) and
+[derived evidence](../evidence/2026-11-02-library-status-contracts.json).
+96C60's three status overrides, error store, notification arguments and9696C's
+callback/userdata stores plus real96C60 tail are checked. The actual89C2 callback
+loads8BF4 and JMP/NOP's to293A4; target293A4 is a non-executable handoff, with
+no fabricated callback return. Its body and other callbacks remain unresolved.
+
+The first incorrect return-only callback model failed an actual guarded literal
+read at89C2; immutable failed report/source5472a4f/defa0101 adapter are retained
+in`.../655/status-contracts-status-ut54_sdh/`. The corrected frozen74-file adapter
+is`/home/dev/neptune-research-private/655/adapter-4e70144aae913108299c69616b9be096b4655f2e206ff5f93a17c5f66c6f83fe`.
+Actual completed batch:`.../655/status-batch-60tks8xc/batch.json`.
+Scripts/test/provenance receipts:`/home/dev/neptune-evidence/code655-20261102/`.
+All four own jobs released their leases, preserving shared3, own180seconds,
+60-second/nice10/downward2GiB, offline/read-only mounts and hidden authority.
+Accepted128/1024 guards, native generations and historical locks are unchanged.
+
+Next publish/merge these tested contracts with exact-head/current-base gates,
+then implement original96B9C slot selection supporting the natural95E5A path.
+Static leads already retained in`.../655/library-dependency-source-leads.json`
+and`.../655/positive-library-source-leads.json` execute no instructions. Follow
+actual signed count and full/no-free behavior,0xA8 stride and marker writes;
+never assume count<=0 or map devices as RAM. Then continue96D74,
+A56CA/A56D8,95CBC,A6790,969E0/BIOS and293A4 dependencies, full89C8 semantics,
+623A/root cycles and further original modules. Denominators and exact hardware/
+gameplay/Godot parity remain unknown. The older sections below record historical
+stages and commands; do not repeat them as new progress.
 
 ## Accepted fresh boot, then first-task initialization
 
