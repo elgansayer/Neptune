@@ -29,7 +29,7 @@ class SlotContracts(unittest.TestCase):
         self.assertEqual(after['slot_values'][5],0xD5BF)
         self.assertEqual(after['slot_values'][22:27],[31,13,5,1,1])
 
-    def test_send_masks_upper_word_and_reserved_bit_without_touching_other_slot(self):
+    def test_send_masks_upper_word_and_ignores_reserved_select_bit_without_touching_other_slot(self):
         before=self.fixture();after=s.transition(before,0x100015,0xFF)
         self.assertEqual(after['slot_values'][10],255)
         self.assertEqual(after['slot_values'][27:29],[15,7])

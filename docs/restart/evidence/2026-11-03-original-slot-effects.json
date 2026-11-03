@@ -1,0 +1,1401 @@
+{
+  "account_review_and_ci_spend": "unknown",
+  "coordinator_evidence_root": "/home/dev/neptune-evidence/scsp-slot-byte-20261103",
+  "cpu": "m68000",
+  "driver_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+  "issue": 680,
+  "lifetime": "netlink-sound-driver",
+  "limitations": [
+    "Constructed original calls in a pinned shared-lineage CPU/reference component, not natural emulator/hardware corroboration",
+    "Model cycles retained for repeatability; not a measured hardware/audio clock contract",
+    "32diagnostic command10 returns are not independent full command10 semantics",
+    "No DSP execution, clock/envelope/key execution, PCM, Godot campaign/battle/pixel/audio or full-game/code acceptance"
+  ],
+  "limits": {
+    "broker_credentials_signing_authority_hidden": true,
+    "command10_instruction_budget": 8192,
+    "disk_reserve_per_filesystem_bytes": 5368709120,
+    "guard_seconds": 5,
+    "helper_instruction_budget": 128,
+    "input_source_native_readonly": true,
+    "lease_seconds": 300,
+    "network_only_lo": true,
+    "original_address_space_bytes": 536870912,
+    "original_cpu_seconds": 40,
+    "original_file_bytes": 4194304,
+    "original_wall_seconds": 45,
+    "shared_host_limit": 3
+  },
+  "load_address": 0,
+  "model_calls_by_tests": 0,
+  "module": "NLSND",
+  "native_preparation": {
+    "artifact": 13202174375,
+    "elf_class": "ELF64-little-endian-x86-64",
+    "host_arch": "x86_64",
+    "job": 125712779130,
+    "native_binary_sha256": "597e2c4a3a74ab6af4f06a1c9784dc24f1ed10e577edf5708baf7ff3dbc82364",
+    "native_identity": {
+      "abi": 7,
+      "capacity_identity": {
+        "abi": 6,
+        "accepted_state_identity": {
+          "abi": 5,
+          "capacity_adapter_sha256": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+          "derived_backend_sha256": "27828ba253cc29264d7dee2f574c80bc7706268deeb353085dcb39bc4c1434fc",
+          "device_identity": {
+            "abi": 4,
+            "base_identity": {
+              "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+              "flags": [
+                "-std=c11",
+                "-O2",
+                "-shared",
+                "-fPIC",
+                "-DM68K_INSTRUCTION_HOOK=1",
+                "-DM68K_SEPARATE_READS=1",
+                "-Wl,-z,defs"
+              ],
+              "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+            },
+            "component_sha256": "bcca52cb908e85249ae492e1db50a504f55b7900a5ebba25c649228135c9608e",
+            "derived_backend_sha256": "f8df4faf406a780ad1171f5210de073baeec08f02f8bfc3ca260040f16adfb95",
+            "preparation_module_sha256": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+            "profile": "SCSP-DSP-even-word-registers-clock-frozen-no-gap-read",
+            "scsp_source_lock_sha256": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4"
+          },
+          "max_events": 1024,
+          "max_ranges": 16,
+          "max_regions": 16,
+          "max_steps": 2048,
+          "preparation_module_sha256": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+          "profile": "NLSND-state-call-disjoint-code-data-frozen-SCSP-word-effects"
+        },
+        "derived_backend_sha256": "7a9fd4277d3f28da60b880e9562c06f3331b8a3d44c7303653e8a69a84ab68f9",
+        "max_events": 4096,
+        "max_ranges": 16,
+        "max_regions": 16,
+        "max_steps": 8192,
+        "preparation_module_sha256": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+        "profile": "NLSND-command10-reset-trace-capacity-unchanged-frozen-SCSP-word-effects"
+      },
+      "component_sha256": "d7440fed56b2f9f444bc19d2a99ddc15cfb055ea623da1145b06321277be1484",
+      "derived_backend_sha256": "da49b38f3ae2c1727b28e6fc63d903aee2852ba60bcef1f725fc685fede52e5f",
+      "max_events": 4096,
+      "max_ranges": 16,
+      "max_regions": 16,
+      "max_steps": 8192,
+      "preparation_module_sha256": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+      "profile": "NLSND-slot-byte00-0B-15-17-clock-frozen-with-unchanged-DSP-words",
+      "scsp_slot_source_lock_sha256": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272",
+      "slot_fields": [
+        "StartAddr",
+        "KeyBit",
+        "WF8Bit",
+        "LoopMode",
+        "SourceControl",
+        "SBXOR",
+        "EnvRates[3]",
+        "DecayLevel",
+        "KRS",
+        "AttackLoopLink",
+        "EGBypass",
+        "ToDSPSelect",
+        "ToDSPLevel",
+        "DirectVolume[0]",
+        "DirectVolume[1]",
+        "EffectVolume[0]",
+        "EffectVolume[1]"
+      ],
+      "slot_snapshot_values": 1057,
+      "slot_state_bytes": 3400
+    },
+    "original_inputs_in_preparation": false,
+    "owned_smoke": {
+      "capacity": {
+        "failure_controls": {
+          "execution_escape": "instruction-access",
+          "forbidden_write": "forbidden-write",
+          "nonreturning": "instruction-budget",
+          "unmapped_read": "unmapped-data-read"
+        },
+        "fresh_after_failure": true,
+        "fresh_after_full_overflow": true,
+        "full_event_limit_rejected": 4096,
+        "full_instruction_limit_rejected": 8192,
+        "original_game_bytes_executed": false,
+        "positive_steps": 2
+      },
+      "cpu_word_cases": 640,
+      "device_clocks_advanced": false,
+      "disjoint_call_steps": 47,
+      "failure_controls": {
+        "execution_escape": "instruction-access",
+        "forbidden_write": "forbidden-write",
+        "nonreturning": "instruction-budget",
+        "unmapped_read": "unmapped-data-read"
+      },
+      "fresh_after_failure": true,
+      "identical_program_word_cases": 1024,
+      "interrupt_processing_called": false,
+      "max_ranges_executed": 16,
+      "max_regions_read": 16,
+      "missing_range_guarded": true,
+      "mmio_guards": {
+        "after_range": "forbidden-write",
+        "before_range": "forbidden-write",
+        "byte_read": "unmapped-data-read",
+        "byte_write": "forbidden-write",
+        "gap_read": "unmapped-data-read",
+        "long_read": "unmapped-data-read",
+        "long_write": "forbidden-write",
+        "odd_word_read": "instruction-access",
+        "odd_word_write": "instruction-access"
+      },
+      "native_excess_rejections": {
+        "17_ranges": true,
+        "17_regions": true
+      },
+      "native_fake_device_ram_rejections": 2,
+      "original_game_bytes_executed": false,
+      "positive_steps": 2,
+      "reference_word_cases": 17280,
+      "slot_cpu_cases": 1024,
+      "slot_key_latch_sequence": 5,
+      "slot_raw_rejections": 18,
+      "slot_reference_byte_cases": 98304,
+      "slot_rmw_cases": 96,
+      "slot_width_cpu_guards": 6
+    },
+    "reuse": {
+      "binary_sha256": "597e2c4a3a74ab6af4f06a1c9784dc24f1ed10e577edf5708baf7ff3dbc82364",
+      "reused": true,
+      "status": "success"
+    },
+    "run": 41573836139,
+    "schema": "neptune.trusted-preparation-adoption.v1",
+    "source_head": "08346f60794b28b6b5590b5b762ded454be36a31",
+    "status": "source-component-binary-CI-smoke-reuse-verified-not-yet-loaded-locally",
+    "zip_sha256": "3b143b8203cc7484e91d2bc989a5f5cba249f4c900ce4e278e278e1045652028"
+  },
+  "neptune_continuity_activated": false,
+  "original": {
+    "byte_identical_reports": true,
+    "command10_summary": {
+      "cases": 128,
+      "diagnostic_returns": 32,
+      "extended_previous_device_guards": 122,
+      "full_semantic_contract_accepted": false,
+      "outcomes": {
+        "forbidden-write@0x100800": 32,
+        "forbidden-write@0x780": 64,
+        "stop-reached@0x0": 32
+      },
+      "previous_complete_identical": 6
+    },
+    "fresh_processes": 2,
+    "helpers": {
+      "all_visible_registers_sr_events_pcs_ram_device_compared": true,
+      "cases": 639,
+      "cases_by_mode": {
+        "release": 327,
+        "send": 156,
+        "volume": 156
+      },
+      "instruction_bounds": {
+        "release": [
+          100,
+          100
+        ],
+        "send": [
+          52,
+          52
+        ],
+        "volume": [
+          56,
+          56
+        ]
+      },
+      "model_cycle_bounds": {
+        "release": [
+          1132,
+          1132
+        ],
+        "send": [
+          452,
+          452
+        ],
+        "volume": [
+          516,
+          516
+        ]
+      },
+      "natural_execution": false,
+      "observations_sha256": "9c916c39c2ee80a330d4d3d9e6c4e03ef3b6357f3365f0f8d477ffa1e81c0940",
+      "range_sha256": {
+        "release": "ac5c2cd21284916682995f8993e9cca38a22be80b2df9cba8d8f04f055e8e8b5",
+        "send": "3709b63a98ee6f241ca66bcb5708a241d549592d0e4da722cf071fc1dfc2e093",
+        "volume": "975bee8a75b097cd04827ba092b3bdc405261e40b08643b9499c42da1d3eec4f"
+      },
+      "ranges": {
+        "release": [
+          13632,
+          13658
+        ],
+        "send": [
+          13658,
+          13678
+        ],
+        "volume": [
+          13678,
+          13714
+        ]
+      },
+      "samples": [
+        {
+          "case": [
+            "release",
+            0,
+            10015,
+            0,
+            0
+          ],
+          "device_after_sha256": "3ec3037915ee4c27e9fe28b8a0632c34c124d5d5a52dc23bd85eba540d3b7e4e",
+          "events": [
+            [
+              1,
+              1048587,
+              1,
+              85
+            ],
+            [
+              2,
+              1048587,
+              1,
+              95
+            ],
+            [
+              1,
+              1048619,
+              1,
+              84
+            ],
+            [
+              2,
+              1048619,
+              1,
+              95
+            ],
+            [
+              1,
+              1048651,
+              1,
+              87
+            ],
+            [
+              2,
+              1048651,
+              1,
+              95
+            ],
+            [
+              1,
+              1048683,
+              1,
+              86
+            ],
+            [
+              2,
+              1048683,
+              1,
+              95
+            ],
+            [
+              1,
+              1048715,
+              1,
+              81
+            ],
+            [
+              2,
+              1048715,
+              1,
+              95
+            ],
+            [
+              1,
+              1048747,
+              1,
+              80
+            ],
+            [
+              2,
+              1048747,
+              1,
+              95
+            ],
+            [
+              1,
+              1048779,
+              1,
+              83
+            ],
+            [
+              2,
+              1048779,
+              1,
+              95
+            ],
+            [
+              1,
+              1048811,
+              1,
+              82
+            ],
+            [
+              2,
+              1048811,
+              1,
+              95
+            ],
+            [
+              1,
+              1048843,
+              1,
+              93
+            ],
+            [
+              2,
+              1048843,
+              1,
+              95
+            ],
+            [
+              1,
+              1048875,
+              1,
+              92
+            ],
+            [
+              2,
+              1048875,
+              1,
+              95
+            ],
+            [
+              1,
+              1048907,
+              1,
+              95
+            ],
+            [
+              2,
+              1048907,
+              1,
+              95
+            ],
+            [
+              1,
+              1048939,
+              1,
+              94
+            ],
+            [
+              2,
+              1048939,
+              1,
+              95
+            ],
+            [
+              1,
+              1048971,
+              1,
+              89
+            ],
+            [
+              2,
+              1048971,
+              1,
+              95
+            ],
+            [
+              1,
+              1049003,
+              1,
+              88
+            ],
+            [
+              2,
+              1049003,
+              1,
+              95
+            ],
+            [
+              1,
+              1049035,
+              1,
+              91
+            ],
+            [
+              2,
+              1049035,
+              1,
+              95
+            ],
+            [
+              1,
+              1049067,
+              1,
+              90
+            ],
+            [
+              2,
+              1049067,
+              1,
+              95
+            ],
+            [
+              1,
+              1049099,
+              1,
+              69
+            ],
+            [
+              2,
+              1049099,
+              1,
+              95
+            ],
+            [
+              1,
+              1049131,
+              1,
+              68
+            ],
+            [
+              2,
+              1049131,
+              1,
+              95
+            ],
+            [
+              1,
+              1049163,
+              1,
+              71
+            ],
+            [
+              2,
+              1049163,
+              1,
+              95
+            ],
+            [
+              1,
+              1049195,
+              1,
+              70
+            ],
+            [
+              2,
+              1049195,
+              1,
+              95
+            ],
+            [
+              1,
+              1049227,
+              1,
+              65
+            ],
+            [
+              2,
+              1049227,
+              1,
+              95
+            ],
+            [
+              1,
+              1049259,
+              1,
+              64
+            ],
+            [
+              2,
+              1049259,
+              1,
+              95
+            ],
+            [
+              1,
+              1049291,
+              1,
+              67
+            ],
+            [
+              2,
+              1049291,
+              1,
+              95
+            ],
+            [
+              1,
+              1049323,
+              1,
+              66
+            ],
+            [
+              2,
+              1049323,
+              1,
+              95
+            ],
+            [
+              1,
+              1049355,
+              1,
+              77
+            ],
+            [
+              2,
+              1049355,
+              1,
+              95
+            ],
+            [
+              1,
+              1049387,
+              1,
+              76
+            ],
+            [
+              2,
+              1049387,
+              1,
+              95
+            ],
+            [
+              1,
+              1049419,
+              1,
+              79
+            ],
+            [
+              2,
+              1049419,
+              1,
+              95
+            ],
+            [
+              1,
+              1049451,
+              1,
+              78
+            ],
+            [
+              2,
+              1049451,
+              1,
+              95
+            ],
+            [
+              1,
+              1049483,
+              1,
+              73
+            ],
+            [
+              2,
+              1049483,
+              1,
+              95
+            ],
+            [
+              1,
+              1049515,
+              1,
+              72
+            ],
+            [
+              2,
+              1049515,
+              1,
+              95
+            ],
+            [
+              1,
+              1049547,
+              1,
+              75
+            ],
+            [
+              2,
+              1049547,
+              1,
+              95
+            ],
+            [
+              1,
+              1049579,
+              1,
+              74
+            ],
+            [
+              2,
+              1049579,
+              1,
+              95
+            ],
+            [
+              1,
+              458752,
+              4,
+              16773120
+            ]
+          ],
+          "model_cycles": 1132,
+          "pcs": [
+            13632,
+            13638,
+            13642,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13644,
+            13648,
+            13652,
+            13656
+          ],
+          "regions_after_sha256": [
+            "32b772fb46ad237546d030bfd880d48220c57c555912f24873debfe8d0505ba2",
+            "f82a17d7c9188b4ca0a28c2b73f5662b7f43ecc8bea48166c640a2530173f716"
+          ],
+          "registers": [
+            2779054080,
+            2779054337,
+            2779054594,
+            2779054851,
+            2779055108,
+            2779055365,
+            2779055622,
+            65535,
+            2779056136,
+            1049611,
+            2779056650,
+            2779056907,
+            2779057164,
+            1048576,
+            28672,
+            458756,
+            16773120,
+            10000
+          ]
+        },
+        {
+          "case": [
+            "send",
+            0,
+            10015,
+            0,
+            0
+          ],
+          "device_after_sha256": "6e91cd4f4af83f9e125845312a5b273be071abe01159c51157a8401eae71291e",
+          "events": [
+            [
+              2,
+              1048597,
+              1,
+              0
+            ],
+            [
+              2,
+              1048629,
+              1,
+              0
+            ],
+            [
+              2,
+              1048661,
+              1,
+              0
+            ],
+            [
+              2,
+              1048693,
+              1,
+              0
+            ],
+            [
+              2,
+              1048725,
+              1,
+              0
+            ],
+            [
+              2,
+              1048757,
+              1,
+              0
+            ],
+            [
+              2,
+              1048789,
+              1,
+              0
+            ],
+            [
+              2,
+              1048821,
+              1,
+              0
+            ],
+            [
+              2,
+              1048853,
+              1,
+              0
+            ],
+            [
+              2,
+              1048885,
+              1,
+              0
+            ],
+            [
+              2,
+              1048917,
+              1,
+              0
+            ],
+            [
+              2,
+              1048949,
+              1,
+              0
+            ],
+            [
+              2,
+              1048981,
+              1,
+              0
+            ],
+            [
+              2,
+              1049013,
+              1,
+              0
+            ],
+            [
+              2,
+              1049045,
+              1,
+              0
+            ],
+            [
+              2,
+              1049077,
+              1,
+              0
+            ],
+            [
+              1,
+              458752,
+              4,
+              16773120
+            ]
+          ],
+          "model_cycles": 452,
+          "pcs": [
+            13658,
+            13662,
+            13664,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13666,
+            13668,
+            13672,
+            13676
+          ],
+          "regions_after_sha256": [
+            "32b772fb46ad237546d030bfd880d48220c57c555912f24873debfe8d0505ba2",
+            "f82a17d7c9188b4ca0a28c2b73f5662b7f43ecc8bea48166c640a2530173f716"
+          ],
+          "registers": [
+            0,
+            2779054337,
+            2779054594,
+            2779054851,
+            2779055108,
+            2779055365,
+            2779055622,
+            65535,
+            2779056136,
+            1049109,
+            2779056650,
+            2779056907,
+            2779057164,
+            1048576,
+            28672,
+            458756,
+            16773120,
+            10004
+          ]
+        },
+        {
+          "case": [
+            "volume",
+            0,
+            10015,
+            0,
+            0
+          ],
+          "device_after_sha256": "84854ed66241282d9771a0de8081692eb095fda0ba3f7a9f67a9004b9cda672a",
+          "events": [
+            [
+              2,
+              1048599,
+              1,
+              0
+            ],
+            [
+              2,
+              1048631,
+              1,
+              0
+            ],
+            [
+              2,
+              1048663,
+              1,
+              0
+            ],
+            [
+              2,
+              1048695,
+              1,
+              0
+            ],
+            [
+              2,
+              1048727,
+              1,
+              0
+            ],
+            [
+              2,
+              1048759,
+              1,
+              0
+            ],
+            [
+              2,
+              1048791,
+              1,
+              0
+            ],
+            [
+              2,
+              1048823,
+              1,
+              0
+            ],
+            [
+              2,
+              1048855,
+              1,
+              0
+            ],
+            [
+              2,
+              1048887,
+              1,
+              0
+            ],
+            [
+              2,
+              1048919,
+              1,
+              0
+            ],
+            [
+              2,
+              1048951,
+              1,
+              0
+            ],
+            [
+              2,
+              1048983,
+              1,
+              0
+            ],
+            [
+              2,
+              1049015,
+              1,
+              0
+            ],
+            [
+              2,
+              1049047,
+              1,
+              0
+            ],
+            [
+              2,
+              1049079,
+              1,
+              0
+            ],
+            [
+              2,
+              34942,
+              4,
+              0
+            ],
+            [
+              2,
+              34946,
+              4,
+              0
+            ],
+            [
+              2,
+              34950,
+              4,
+              0
+            ],
+            [
+              2,
+              34954,
+              4,
+              0
+            ],
+            [
+              1,
+              458752,
+              4,
+              16773120
+            ]
+          ],
+          "model_cycles": 516,
+          "pcs": [
+            13678,
+            13682,
+            13684,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13686,
+            13688,
+            13692,
+            13696,
+            13700,
+            13704,
+            13708,
+            13712
+          ],
+          "regions_after_sha256": [
+            "efd479386dfb8fd1acdb5c10fee9af64afc7328ff52d859df452dac73453d04c",
+            "f82a17d7c9188b4ca0a28c2b73f5662b7f43ecc8bea48166c640a2530173f716"
+          ],
+          "registers": [
+            0,
+            2779054337,
+            2779054594,
+            2779054851,
+            2779055108,
+            2779055365,
+            2779055622,
+            65535,
+            2779056136,
+            1049111,
+            2779056650,
+            2779056907,
+            2779057164,
+            1048576,
+            28672,
+            458756,
+            16773120,
+            10004
+          ]
+        }
+      ],
+      "terminal_mutations": {
+        "release_count": {
+          "changed_driver_sha256": "f81ea8fb457e137609671da7a118ec762e10bcb47d964123c66f0a06cfe9db45",
+          "offset": "0x354b",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_byte": 30,
+          "tested_terminal": 4
+        },
+        "release_mask": {
+          "changed_driver_sha256": "afccf91da3f43994abbb67a6bd77cc17555455d37ca4361527071f16b71a4a0b",
+          "offset": "0x354f",
+          "reasons": [
+            "Independent original helper mismatch: events"
+          ],
+          "rejected": 4,
+          "replacement_byte": 30,
+          "tested_terminal": 4
+        },
+        "send_count": {
+          "changed_driver_sha256": "38b6cb456a73c32230d488ede222c461600556bdddf35c8caf5274cbb66e2023",
+          "offset": "0x355f",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_byte": 14,
+          "tested_terminal": 4
+        },
+        "send_lane": {
+          "changed_driver_sha256": "d9dccbd3a31e2790d132959b5ec2904a19bf95ade925b9ae2053228a86793e48",
+          "offset": "0x355d",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_byte": 23,
+          "tested_terminal": 4
+        },
+        "volume_lane": {
+          "changed_driver_sha256": "a9c20513eb44cbb627b6dc7521c43ec06da910d48ff6136de91b08659bbcc44a",
+          "offset": "0x3571",
+          "reasons": [
+            "Independent original helper mismatch: registers"
+          ],
+          "rejected": 4,
+          "replacement_byte": 21,
+          "tested_terminal": 4
+        },
+        "volume_ram_destination": {
+          "changed_driver_sha256": "9dae8f0147b0c8e92da1936a2ec3703b829d6890a44257ab97434d325047a0df",
+          "offset": "0x358f",
+          "reasons": [
+            "Independent original helper mismatch: events"
+          ],
+          "rejected": 4,
+          "replacement_byte": 142,
+          "tested_terminal": 4
+        }
+      }
+    },
+    "report_sha256": "9c1bd9f9bb60b2a2996145f546358c6599112715eb3f10566f9e7e14109f5063",
+    "supervisor": {
+      "admitted_at": 1793677703.9800942,
+      "all_guardians_terminal": true,
+      "comparison-001": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 4.702381260693073,
+        "timed_out": false,
+        "truncated": false
+      },
+      "comparison-002": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 4.586197930388153,
+        "timed_out": false,
+        "truncated": false
+      },
+      "configured_host_shared_limit": 3,
+      "finished_at": 1793677746.8480265,
+      "guardians": [
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1395953,
+          "start_ticks": 585391213,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1396044,
+          "start_ticks": 585391265,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1396104,
+          "start_ticks": 585391327,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1396796,
+          "start_ticks": 585394567,
+          "uid": 1000
+        },
+        {
+          "boot_id": "11e0d26b-10e6-4de1-8da9-455fda46ce5e",
+          "pid": 1397080,
+          "start_ticks": 585395040,
+          "uid": 1000
+        }
+      ],
+      "heartbeat_at": 1793677746.3153555,
+      "input_sha256": "f37289395dcf2f37f14157f6333ac9f6269d71888f5c08978411e0e034ab2296",
+      "isolation": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.5173425879329443,
+        "timed_out": false,
+        "truncated": false
+      },
+      "issue": 680,
+      "lease_seconds": 300,
+      "model_calls": 0,
+      "native-load": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 0.6169560486450791,
+        "timed_out": false,
+        "truncated": false
+      },
+      "original_game_bytes_executed": true,
+      "owner": "code680:original:1395298",
+      "phase": "comparison-002",
+      "pid": 1395298,
+      "report_sha256": "9c1bd9f9bb60b2a2996145f546358c6599112715eb3f10566f9e7e14109f5063",
+      "schema": "neptune.original-code-supervised.v1",
+      "source_head": "08346f60794b28b6b5590b5b762ded454be36a31",
+      "started_at": 1793677651.7777693,
+      "state": "bounded-original-slot-helper-comparison-complete",
+      "tooling": {
+        "cancelled": false,
+        "exit": 0,
+        "seconds": 32.39119531214237,
+        "timed_out": false,
+        "truncated": false
+      }
+    }
+  },
+  "parent_issue": 665,
+  "private_evidence_root": "/home/dev/neptune-research-private/680",
+  "publication_only_changes": "Research/evidence documents and one descriptive test-name correction; semantic dependencies and executable assertions unchanged. Final exact-head CI revalidates tooling.",
+  "pure_focused_contract_tests": 11,
+  "release": "USA MK81070 V1.003",
+  "remaining_diagnostics": [
+    {
+      "address": "0x780",
+      "cases": 64,
+      "pc": "0x3536",
+      "scope": "Low guest RAM write not mapped speculatively"
+    },
+    {
+      "address": "0x100800",
+      "cases": 32,
+      "pc": "0x35b4",
+      "scope": "DSP longword write remains forbidden"
+    }
+  ],
+  "research_tooling_tests": 376,
+  "retained_diagnostics": {
+    "focused_fixture": "Malformed negative fixture omitted native status string; fixed fixture, expected rejection unchanged",
+    "native001": "Failed wrong inherited lower bound4000; independent pinned layout3400 corrected",
+    "native002": "Fresh preparation assertions passed; combined reuse CPU120limit exit137. Failed parent, inner ready receipt not accepted.",
+    "native003": "Not started after bounded600s admission; existing factory exclusive owner preserved"
+  },
+  "schema": "neptune.original-slot-effects-evidence.v1",
+  "source_files_sha256": {
+    "tools/saturn_lab/analyze_sound_driver.py": "e9122bd0ea6da8fa14c305b3536223d1694e5daa0c46b1db21515ae883182914",
+    "tools/saturn_lab/m68k-probe-source-lock.json": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c",
+    "tools/saturn_lab/m68k_consumer_native.py": "5c8cad28beed984ef008c1a6dba4e20d54ceec609ff3e49bbdca7c7045fe9d06",
+    "tools/saturn_lab/m68k_probe.py": "aa44f11ba2d83d231229f35032b807b311579bf878120e8e697dcfc1214f7cf8",
+    "tools/saturn_lab/m68k_probe_backend.c": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+    "tools/saturn_lab/m68k_reset_capacity.py": "9495cdf9ff0a79b3f10b090d0b1fc219526b4e92b38a3e18bb7f64878d572197",
+    "tools/saturn_lab/m68k_scsp_dsp.py": "d1efa72c43ed9175679ea37f99d5b5e4a8ed1d5cc90bdb8f095ad5bf27aec361",
+    "tools/saturn_lab/m68k_scsp_fifo.py": "93a2754a22b16254a97987723d037cfc7ad62b6de1ea9afd6e293004dbb1c79e",
+    "tools/saturn_lab/m68k_scsp_slots.py": "0477d78e60fcf932b41de5e1c2d34c76d757b32649dd7e34c0603522531f92cf",
+    "tools/saturn_lab/m68k_scsp_state.py": "e54cd3c89aea71361f3e6d86a403853effd862c7b57860e6876557855ec0b9c6",
+    "tools/saturn_lab/probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+    "tools/saturn_lab/probe_netlink_pointer.py": "555039621875766be8c125b27108b58d8d91c089dee2c2ded5424b7c44b30755",
+    "tools/saturn_lab/probe_netlink_records.py": "0f4cfaa199e1bd23f0d3c5bd9ead6f565c96578ea89c06bda52fd5f2a42da3c5",
+    "tools/saturn_lab/probe_netlink_slot_effects.py": "4a173f3f64f6b111203cbbcb2f1b4b286cdeabc013161ab80dcd548e07eb4f51",
+    "tools/saturn_lab/scsp-dsp-source-lock.json": "107edb374b8434a7b9ca809933cccb61f1c8b04db875a931b7666b31869d60a4",
+    "tools/saturn_lab/scsp-slot-source-lock.json": "b81efea604ac279eb877809c3fc4bc2b6102b14e842e81a0696cf8ac201a9272"
+  },
+  "source_qualified": "08346f60794b28b6b5590b5b762ded454be36a31",
+  "tooling_test_files_at_qualified_head": {
+    "tools/saturn_lab/tests/test_m68k_scsp_slots.py": "ed9c1792c63826dde9373b45bdf944d020c2670c6c8b1c82fc8164cc0a625bf2",
+    "tools/saturn_lab/tests/test_probe_netlink_slot_effects.py": "dcaa2bdc8edac003b839a55f14a5b7e583d870e4ce11a4c7f7531f89a4428550"
+  }
+}
