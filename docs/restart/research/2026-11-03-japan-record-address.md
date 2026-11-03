@@ -375,6 +375,16 @@ retained A410 decode SHA-256 is
 with original-byte static range/call-target reconciliation until an existing
 approved emulator capture can support a bounded natural probe.
 
+The A1DA callback literal at `0x0600A2B4` resolves to original target
+`0x0600CCD2`. Its static entry zeroes four words at `0x060BEA3C`, initializes
+six short entries at `0x060BEA7C` and associated pointer records, then calls
+`0x06096A38` and `0x060978A0` before proceeding through further original
+`0x06096BF0`, `0x06096D8E`, and `0x06096A38` dependencies. The current 80-step
+decode shows distinct early-return/error branches and a later cache/context
+path, but does not establish the callees' full contracts. Retained output
+`analysis/japan-ccd2-callback-target.txt` has SHA-256
+`beeccec0eb6f7268f05bac711667f22770afa4e4c60bcdb9f4a42e7ca78e8c90`.
+
 ## Limits and continuation
 
 These results establish bounded original SH-2 helper and constructed
