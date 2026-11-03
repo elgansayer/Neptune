@@ -265,7 +265,7 @@ def smoke(library):
                         or actual['regions_after']!=[v for _,v,_ in regions]
                         or actual['device_after']!=transition(actual['device_before'],address,value,4)
                         or actual['reference_bus_events']!=[[2,address,2,value>>16],[2,address+2,2,value&65535]]):
-                    raise ValueError('Native normal MOVE longword/CPU operand/reference bus contract differs')
+                    raise ValueError('Native normal MOVE contract differs: '+json.dumps({'address':hex(address),'value':hex(value),'mode':mode,'status':actual['status'],'registers':actual['registers'],'expected_registers':expected,'events':actual['events'],'pcs':actual['pcs'],'reference_bus':actual['reference_bus_events'],'changed_device_fields':[key for key in actual['device_after'] if actual['device_after'][key]!=transition(actual['device_before'],address,value,4)[key]]}))
                 cpu_cases+=1
     # Raw invalid requests must not partially affect a register or trace.
     for write in (0,1,2):
