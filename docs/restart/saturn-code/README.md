@@ -222,6 +222,13 @@ branch mutations. Paired reports match at SHA-256
 `85ec5602db6ad65b4411c34c430979ad38e57b03aa7f2c0dea73e93d39755f1d`.
 Natural scheduler reachability and context lifetime remain open.
 
+The original Japanese `0x06095C24` bounded word-insert helper is now tested
+across its five selector values found in the VDP setup callers. It covers 640
+constructed input/old-word combinations twice in paired original-byte reports,
+with two original-instruction mutations. It proves only the helper's bounded
+memory/register contract; VDP selector meaning and natural startup behavior
+remain unresolved. See the [Japanese kernel study](../research/2026-11-03-japan-record-address.md).
+
 Static continuation into Japanese startup entry A312 and nested A472/A638 now
 shows SR masking, VDP2 TVSTAT selection, BIOS interrupt calls, and later VDP1,
 SMPC and SCSP dependencies. Retained disassemblies and limits are recorded in

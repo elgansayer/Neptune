@@ -418,6 +418,20 @@ register. Their static decodes are retained as
 `analysis/japan-9e25c-vdp-helper.txt` (SHA-256
 `5d4d6e08c32d458872915a3614dfe4ff3795966604cc43d449b8d0d0b9180fd4`) and
 `analysis/japan-9e2ec-vdp-helper.txt` (`9babaa54b89146e80c84185eb3fb1332267f41dde25e8e6eb03450cbc1361a41`).
+The shared helper at `0x06095C24` is now original-byte tested separately from
+VDP/MMIO behavior. Its packed R1 low byte supplies field width, the high byte
+supplies the gap below the high end of the word, R0 supplies inserted low bits,
+and R2 points to the single updated longword. The five caller-observed selectors
+`0x0101`–`0x0501` were tested over 16 R0 values and eight old-word patterns:
+640 distinct cases twice per report, with two original-instruction mutations.
+The helper writes exactly one bounded target longword, spills/restores R1 and
+R3–R6 on the bounded stack, returns the width-masked R0, and preserves the
+sampled remaining GPRs/MACH/MACL/PR. SR test-bit preservation is not claimed.
+Paired execution-041 reports match at SHA-256
+`7abb46f337199ab0ad94cbf97edd99f5a22e48dcbf081f69881c4ac6ffbf49c7`; initial
+harness/oracle failures in execution-036–040 are retained. This isolated helper
+contract does not validate the selector meaning, VDP device state, or natural
+startup call order.
 
 ## Limits and continuation
 
