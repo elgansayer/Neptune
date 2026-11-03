@@ -13,6 +13,9 @@ import probe_kernel
 ENTRY=0x060958EC
 DEVICE=0x25890008
 BACKING=0x05890008 # pinned SH-2 test memory folds the cache-through 0x2 alias
+STORE_ENTRY=0x06095904
+STORE_SITE=0x06095906
+STORE_LITERAL=0x06095A08
 
 def sha(data): return hashlib.sha256(data).hexdigest()
 def read_json(path):
@@ -45,7 +48,26 @@ def run(kernel_path,source_root,result_path,records_path,out):
         actual=cpu.call(ENTRY,max_steps=8,r3=DEVICE)
         if actual!=value or cpu.steps!=3: raise ValueError('Original helper did not return its observed word exactly')
         outputs.append({'observed_device_word':value,'helper_result':actual,'steps':cpu.steps})
-    report={'schema':'neptune.original-cd-word-helper-contract.v1','status':'success',
+    store_off=STORE_ENTRY-probe_kernel.BASE
+    store_words=[int.from_bytes(kernel[store_off+i:store_off+i+2],'big') for i in (0,2,4)]
+    literal_off=STORE_LITERAL-probe_kernel.BASE
+    store_target=int.from_bytes(kernel[literal_off:literal_off+4],'big')
+    if store_words!=[0xD340,0x000b,0x2341] or store_target!=DEVICE:
+        raise ValueError('Original three-instruction word-store helper/literal changed')
+    observed_stores=sorted({r['transfer_value'] for r in rows if r['kind']==3 and r['pc']==STORE_SITE and r['transfer_address']==DEVICE})
+    if not observed_stores: raise ValueError('No actual word-store values at selected helper delay slot')
+    class LoggedMemory(emu.Memory): pass
+    store_outputs=[]
+    for value in observed_stores:
+        memory=LoggedMemory(); memory.add(probe_kernel.BASE,len(kernel),kernel)
+        memory.add(BACKING,2,b'\xa5\x5a'); memory.log=[]; cpu=emu.CPU(memory)
+        cpu.call(STORE_ENTRY,max_steps=8,r4=value)
+        writes=[item for item in memory.log if item[0]=='w']
+        if cpu.steps!=3 or writes!=[('w',DEVICE,2,value)]:
+            raise ValueError('Original word-store helper did not issue its one observed transfer')
+        store_outputs.append({'observed_store_word':value,'actual_helper_write':writes[0][3],'steps':cpu.steps})
+    report={'schema':'neptune.original-cd-word-helpers-contract.v2','status':'success',
+            'probe_sha256':sha(Path(__file__).read_bytes()),
             'entry':f'0x{ENTRY:08x}','source_instructions':[f'0x{x:04x}' for x in words],
             'source':'read-only USA original kernel bytes; exact kernel hash verified',
             'interpreter_source_hashes':probe_kernel.SOURCE_HASHES,
@@ -55,6 +77,10 @@ def run(kernel_path,source_root,result_path,records_path,out):
               'actual_read_site':f'0x{ENTRY:08x}','capacity':128,'observed_records':128,'dropped':1,
               'selected_observed_values':[f'0x{x:04x}' for x in sampled]},
             'isolated_cpu_results':outputs,
+            'word_store_helper':{'entry':f'0x{STORE_ENTRY:08x}','source_instructions':[f'0x{x:04x}' for x in store_words],
+              'original_literal_address':f'0x{STORE_LITERAL:08x}','literal_value':f'0x{store_target:08x}',
+              'delay_slot':f'0x{STORE_SITE:08x}','observed_store_values':[f'0x{x:04x}' for x in observed_stores],
+              'isolated_cpu_results':store_outputs},
             'scope':'one complete three-instruction word-read helper on original SH-2 bytes using only values captured from the natural run; CPU-only isolated memory; no hardware semantics, CD protocol meaning, caller equivalence or complete command root claimed',
             'whole_program_status':'active; incomplete'}
     fd=os.open(out,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)

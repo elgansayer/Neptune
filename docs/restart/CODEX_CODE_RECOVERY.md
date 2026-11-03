@@ -179,7 +179,7 @@ smoke; verified CI artifact transfer and two guarded local cache reuses retain t
 same binary hash. A guarded reference continuation reached frame1800; two identical
 observer runs then executed600 original frames but overflowed at129 real CD word
 transfers before a complete root. The retained128 events include46 reads of25890008
-returning0BC1 at060958EC. Two reference and two observer-disabled600-frame controls matched the enabled run hashes. The adjacent060958EC leaf now has a three-instruction isolated CPU contract over original source and three actually observed words; it returns each unsigned word unchanged. Caller/CD semantics remain open. Read the current checkpoint and COMMAND_TRACING.md:
+returning0BC1 at060958EC. Two reference and two observer-disabled600-frame controls matched the enabled run hashes. Adjacent060958EC read and06095904 write leaves now have three-instruction isolated CPU contracts over original source and actually observed words. Caller/CD semantics remain open. Read the current checkpoint and COMMAND_TRACING.md:
 load/compare/branch fusion requires observing actual transfer values without extra
 busreads or changing fusion. Continue reference/disabled/enabled
 original validation; preserve all owners,
