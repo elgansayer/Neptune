@@ -89,3 +89,9 @@ remain useful accepted evidence. They do not increase this census into a verifie
 whole-program function total. Unknown denominators remain `null`.
 
 The [2 November original memory-helper/caller result](../research/2026-11-02-original-position-bounds.md) adds two isolated-tested USA kernel entries and their explicit controlled-memory limits. It does not establish natural gameplay validation or a whole-program function denominator.
+
+The [3 November NLSND state/command11 result](../research/2026-11-03-original-nlsnd-state.md)
+compares36,127 constructed complete calls across five entry modes, repeated in
+fresh pinned CPU/frozen-SCSP processes with44 terminal mutation rejections. Natural
+sound roles/traffic, command10, audio timing and the whole-code denominator remain
+open. These isolated calls do not establish campaign/battle Godot fidelity.
