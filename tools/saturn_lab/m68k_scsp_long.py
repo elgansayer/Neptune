@@ -102,10 +102,12 @@ def generated_source():
     for old,new in (
         (b'uint32_t neptune_m68k_abi(void) { return 7; }',b'uint32_t neptune_m68k_abi(void) { return 8; }'),
         (b'event(2,address,size,value&0xFFFF)',b'event(2,address,size,size==4?value:(value&0xFFFF))'),
-        (b'    if(neptune_dsp_access(1,address,size,&bus))',b"""    if(size==4 && address>=0x100700 && address<=0x100DFF) {
+        (b'    if(neptune_dsp_access(1,address,size,&bus))',b"""    if(address>=0x100700 && address<=0x100DFF) {
         uint32_t pc=result->pcs[result->steps-1];
         uint16_t opcode=((uint16_t)request->code[pc]<<8)|request->code[pc+1];
-        if((opcode&0xF000)!=0x2000 || ((opcode>>6)&7)==4) fail(5,address,size);
+        /* Musashi can split a predecrement long into word callbacks. */
+        if((opcode&0xF000)==0x2000 && ((opcode>>6)&7)==4) fail(5,address,size);
+        if(size==4 && (opcode&0xF000)!=0x2000) fail(5,address,size);
     }
     if(neptune_dsp_access(1,address,size,&bus))""")):
         if source.count(old)!=1:raise ValueError('Ambiguous ABI8 substitution')
