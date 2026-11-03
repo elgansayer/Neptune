@@ -61,7 +61,7 @@ Current patch/header/ABI validation is separate from native readiness:
   compiled baseline/observed transfer fixtures:
   one address evaluation, one actual mock bus operation, identical CPU/RAM/WB
   results, correct signed-load/truncated-store values and no slave callbacks.
-- The focused10-test suite passes after ABI v2 lossless-run changes. The earlier39 related/221 factory checks cover ABI v1 and have not been rerun for v2; no ABI v2 matched core has been built yet.
+- The focused10-test suite passes after ABI v2 lossless-run changes. The earlier39 related/221 factory checks cover ABI v1 and have not been rerun for v2. Exact-head run`41658156944` passed, and provisioning run`41658156759` built and loaded the ABI v2 core, but its post-build check failed because`provision.py` still expected ABI1. That validator now expects ABI2 with the unchanged216-byte record/128-slot/424-word layout; its regression test passes. A fresh exact-head build/smoke is required before native-game windows.
 - The header requires the profile-specific source JSR and delay, A4FAC root, A4FBA
   RTS/NOP delay and return, service boundaries, and actual transfers. An owned compiled semantic fixture drives that event order through the exported ABI and verifies that final source-witness mismatches fail. Transfer PC/opcode
   comes from the master prehook; command/response words carry validity tags and are
@@ -74,10 +74,20 @@ Current patch/header/ABI validation is separate from native readiness:
   SHA256`fb5da294b45597d0ac1e06479028d2613067400161df6a5802c36027645c3e23`.
 
 Earlier ABI v1 exact-head runs41648585340 (provisioning) and41648585631 (native checks plus
-aggregate gate) passed; ABI v2 needs fresh exact-head runs. Job125960585219 built the matched core, exercised the no-media
+aggregate gate) passed. Job125960585219 built the matched core, exercised the no-media
 ABI/fence smoke, and verified first-build/reuse identity. The artifact transfer receipt
 is `/home/dev/neptune-research-private/707/ci-preparation-001/command-trace-transfer-verification.json`; binary SHA256 is
 `3a95acef8cc6e20297d907a9658f6ae6c067f8ae1a72dbb84a594b742938184a`. Two guarded local cache-reuse attempts passed with that same binary. CI received no game/BIOS.
-Next rebuild ABI v2 through exact-head CI without compiling a local core, then run fresh guarded reference/disabled/enabled600-frame windows per profile from the verified frame1800 seed. Compare exact canonical import/final state and every native video/audio/input observation, retain each event through lossless run decoding, verify independent source witnesses and reject semantic record-copy controls. If the root still does not return, continue tracing around060958EC and the outer service timeout/return; keep failures private.
+The bounded CPU-only service replay at`060959CA` used one retained natural call,
+returned to captured caller`060959AE` after171 original instructions, and
+reproduced its actual status/poll/register reads and five writes. Report and
+limitations are in [the service replay result](../restart/research/2026-11-03-cd-command-service-replay.md).
+Next rebuild ABI v2 through exact-head CI without compiling a local core, then
+run fresh guarded reference/disabled/enabled600-frame windows per profile from
+the verified frame1800 seed. Compare exact canonical import/final state and
+every native video/audio/input observation, retain each event through lossless
+run decoding, verify independent source witnesses and reject semantic record-copy
+controls. If the root still does not return, continue tracing around060958EC
+and the outer service timeout/return; keep failures private.
 Tool preparation is not original evidence; native boundary/device traces alone do
 not prove physical timing, full game behavior, Godot parity or all-code completion.

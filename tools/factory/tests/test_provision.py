@@ -183,6 +183,28 @@ class ProvisionTests(unittest.TestCase):
         self.assertNotEqual(key, p.identity(tool, self.root)[2])
         self.assertEqual(recipe["commit"], p.identity(tool, self.root)[0]["commit"])
 
+    def test_command_observer_smoke_requires_actual_lossless_abi_v2_fences(self):
+        class Runner:
+            def __init__(self, observer):
+                self.outputs = [
+                    {"scope": "no-media ABI smoke only", "api": 1},
+                    observer,
+                ]
+            def run(self, command, cwd, timeout):
+                return json.dumps(self.outputs.pop(0))
+
+        observer = {"abi": 2, "record_bytes": 216, "capacity": 128,
+                    "witness_words": 424,
+                    "rejected_invalid_profile_witness_and_frame": True}
+        result = p.smoke("beetle-saturn-command-trace", self.home / "matched-core.so",
+                         Runner(observer), self.root)
+        self.assertEqual(result["observer"], observer)
+
+        stale = dict(observer, abi=1)
+        with self.assertRaisesRegex(p.ProvisionError, "bounded command observer ABI/fence"):
+            p.smoke("beetle-saturn-command-trace", self.home / "matched-core.so",
+                    Runner(stale), self.root)
+
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()
         Path(first["binary"]).write_bytes(b"tampered")

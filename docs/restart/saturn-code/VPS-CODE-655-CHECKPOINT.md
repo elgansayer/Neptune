@@ -762,6 +762,40 @@ Retain any real mismatch; broaden the closed-path contract and callback handoff
 without substituting callees, then recover95B04's actual BIOS/A6790/969E0 graph
 and89C8 through its real return. Do not rerun completed658 reports as new work.
 
+## 3 November command-service CPU replay and ABI v2 provisioning correction
+
+ABI v2 commit`74999fd` passed exact-head tests (run`41658156944`). Provisioning
+run`41658156759` built and loaded its matched-core ABI, then failed the post-build
+smoke because`provision.py` still expected ABI1. This was a stale validator
+expectation, not a compiler or ABI-fence failure. This source update requires
+ABI2 and adds an owned regression check. Focused provisioning
+plus command-trace tests pass48 tests; fresh exact-head build/smoke is required
+before any ABI v2 game window. The failed job's retained artifact confirms the
+build and ABI probe completed, but does not contain a reusable native core.
+
+Using the existing ABI v1 actual transfer capture, a separate guarded CPU-only
+replay executed171 original SH-2 instructions from`060959CA` and returned to
+the captured caller PC`060959AE` withR0=0. It used the actual frame-1800
+checkpoint's`060FA8B8` word`0FD4`, original kernel hash
+`20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7`, and
+the captured call's status read, eight poll words, four register reads and five
+device writes. It reproduced the captured transfer order; this path left the
+shared word at`0F94`. The RTS-delay-slot stores execute at`06095908` and
+`06095ACC`; the transfer trace records the preceding RTS addresses`06095906`
+and`06095ACA`. The four packet source words were reconstructed from actual
+device writes, and two saved caller registers were preservation canaries. This
+does not independently validate natural caller-buffer construction, the timeout
+path, the complete outer root, device timing or gameplay meaning.
+
+Private report`/home/dev/neptune-research-private/707/cd-service-replay-001/report.json`
+(SHA256`b6c09a61b08cb59887e4c91d9e9f2a23565d719adc3d60ef29524851e12c0979`),
+worker`.../worker.py` (SHA256`eb0219fa3a4671d3a07b0857691a35b7039843661be485348ec3fd81661b0678`)
+and supervisor receipt`.../supervisor.json` preserve inputs, actual execution
+path, transfer comparison and limits. The host lease was released; no provider
+calls or local core builds were made. Continue the distinct service timeout,
+error and outer-return branches, then adjacent kernel and module code. The
+all-code programme stays active and incomplete.
+
 Then continue623A's complete body/roles, other libraries, slave/loader/overlays,
 remaining68000/DSP and regional network/menu/save code. Native caches/history
 stay immutable; VPS native compilation is not admitted below retained6GiB
