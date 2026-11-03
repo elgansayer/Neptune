@@ -387,3 +387,33 @@ for applicable changes, and the existing protected aggregate waits for it.
 This expands bounded tracing capacity. It adds no SCSP clock, DSP execution,
 audio, hardware independence or original-function semantic acceptance. The
 original671 experiment is separate and retains unsupported/guarded outcomes.
+
+
+### Command10 record/reset trace capacity (ABI6, #678)
+
+The real 128-case #665 diagnostic reaches the ABI5 1024-event fence in32 active
+record scans at1917/1920 instructions. That is a trace-storage dependency, separate
+from the command's unsupported SCSP slot/byte/longword accesses. Preserve those
+guards rather than treating the device as RAM.
+
+`tools/saturn_lab/m68k_reset_capacity.py` derives only8192-step/4096-event storage
+and an ABI6 tag from the accepted ABI5 backend, retaining16 ranges/regions and
+the exact frozen SCSP word component. Its result layout, library, receipt and
+identity are separate. Ambiguous source transformations fail before compilation;
+ABIs1–5 and their original caches are unchanged.
+
+```sh
+python3 tools/saturn_lab/m68k_reset_capacity.py \
+  --sources /path/to/pinned/saturn-recomp \
+  --scsp-sources /path/to/pinned/beetle-saturn \
+  --cache /private/new-reset-generation/prepared
+```
+
+Use the existing constrained offline preparation boundary, with no originals.
+Fresh build and reuse execute actual8192-instruction/4096-event fences, recovery,
+all inherited word effects/width guards,16 disjoint calls/region reads and direct
+native17-range/17-region rejection. The same required preparation child runs
+ABI4, ABI5 and ABI6; applicable missing/skipped/failed preparation cannot pass.
+Command10 continuation is a separate original-byte experiment: identical previous
+non-capacity outcomes and progression beyond the old fence do not establish
+complete device semantics, natural execution, clocks, audio or game fidelity.

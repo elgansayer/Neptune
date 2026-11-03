@@ -108,6 +108,44 @@ jobs:
           (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
           print('Actual ABI5 SCSP effects,16 ranges/region reads, native17th rejection, overflow/recovery and reuse passed; no originals.')
           PY
+      - name: Compile and exercise command10 reset trace capacity and reuse
+        run: |
+          python3 - <<'PYTHON'
+          import json, os, resource, sys
+          from pathlib import Path
+          resource.setrlimit(resource.RLIMIT_AS,(2*1024**3,2*1024**3))
+          sys.path.insert(0,'tools/saturn_lab')
+          import m68k_reset_capacity as reset
+          cache=Path(os.environ['RUNNER_TEMP'])/'reset-preparation'/'prepared'
+          first=reset.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          before=(cache/'receipt.json').read_bytes()
+          again=reset.prepare('.dsp-sources/cpu','.dsp-sources/scsp',cache)
+          assert first==again and (cache/'receipt.json').read_bytes()==before
+          smoke=again['owned_smoke']
+          assert smoke['reference_word_cases']==17280 and smoke['identical_program_word_cases']==1024
+          assert smoke['cpu_word_cases']==640 and smoke['disjoint_call_steps']==47
+          assert smoke['max_ranges_executed']==smoke['max_regions_read']==16
+          assert smoke['capacity']['full_instruction_limit_rejected']==8192
+          assert smoke['capacity']['full_event_limit_rejected']==4096
+          assert smoke['capacity']['fresh_after_full_overflow'] is True
+          assert smoke['native_excess_rejections']=={'17_ranges':True,'17_regions':True}
+          assert smoke['missing_range_guarded'] and smoke['original_game_bytes_executed'] is False
+          assert again['preparation_has_original_inputs'] is False
+          (cache.parent/'reuse.json').write_text(json.dumps({'status':'success','reused':True,'binary_sha256':again['binary_sha256']})+'\n')
+          print('Actual ABI6 unchanged SCSP effects/guards,8192-step/4096-event fences,recovery and reuse passed; no originals.')
+          PYTHON
+      - name: Preserve reset-capacity preparation evidence including failed stages
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-scsp-reset-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/reset-preparation/**/*.json
+            ${{ runner.temp }}/reset-preparation/**/*.stdout
+            ${{ runner.temp }}/reset-preparation/**/*.stderr
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
       - name: Preserve state-profile preparation evidence including failed stages
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
