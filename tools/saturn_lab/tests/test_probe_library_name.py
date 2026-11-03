@@ -30,6 +30,12 @@ class NameContracts(unittest.TestCase):
         for a,b in ((128,127),(255,0),(0,255),(1,128),(127,128)):
             m,_=p.contract(('compare',0,37,12,0,a,b,-1));self.assertEqual(m.reg['r0'],(a-b)&p.MASK)
 
+    def test_zero_length_return_control_has_executed_case_coverage(self):
+        chosen=p.control_cases(p.cases('compare'))
+        self.assertTrue(any(0x06095160 in [pc for pc,_ in p.contract(c)[0].trace] for c in chosen))
+        failure=p.EvidenceFailure('owned retained failure',{'cases':1,'results':[{'status':'returned'}]})
+        self.assertEqual(failure.partial['results'][0]['status'],'returned')
+
     def test_flag_stops_after_mismatch_but_matching_end_record_wins(self):
         for hit,stop,want in ((2,1,p.MASK),(2,2,2),(2,-1,2),(-1,0,p.MASK)):
             m,_=p.contract(('search',0,255,4,hit,stop,5,0,1));self.assertEqual(m.reg['r0'],want)

@@ -21,6 +21,11 @@ LITERALS = {0x060A5824:COMPARE, 0x06095CE4:status.CELL,
 HALFWORDS = {0x06095CE0:0x98, **status.HALFWORDS}
 
 
+class EvidenceFailure(ValueError):
+    def __init__(self,reason,partial):
+        super().__init__(reason);self.partial=partial
+
+
 def compare_bytes(left, right, count):
     for a,b in zip(left[:count],right[:count]):
         if a != b or a == 0:return a-b
@@ -281,6 +286,12 @@ def run_case(data,emu,case):
             'all_visible_state_checked':True}
 
 
+def control_cases(selected):
+    chosen=selected[:16]+selected[::max(1,len(selected)//48)]+selected[-16:]
+    if selected[0][0]=='compare':chosen += [c for c in selected if c[3]==0][:4]
+    return list(dict.fromkeys(chosen))
+
+
 def execute(data,emu,family):
     selected=cases(family);rows=[]
     for case in selected:
@@ -290,7 +301,9 @@ def execute(data,emu,family):
         ('name-offset-delay',0x060A569E,0x750B),('record-stride-delay',0x060A56B6,0x7D0C),('end-flag-mask',0x060A5694,0xEC02),('root-restore-delay',0x060A56C8,9)]
     if family.startswith('lookup'):mutations += [('error-store-delay',0x06096C96,9),('lookup-restore-delay',0x06095D12,9)]
     if family=='lookup-invalid':mutations=[('invalid-error-delay',0x06095CDA,0xE4F7),('lookup-restore-delay',0x06095D12,9),('error-store-delay',0x06096C96,9)]
-    chosen=list(dict.fromkeys(selected[:16]+selected[::max(1,len(selected)//48)]+selected[-16:]));controls={}
+    positive={'cases':len(rows),'complete_returns':len(rows),'results':rows,
+              'results_sha256':pinned.digest(json.dumps(rows,sort_keys=True).encode()),'original_game_bytes_executed':True}
+    chosen=control_cases(selected);controls={}
     for name,pc,value in mutations:
         changed=bytearray(data);changed[pc-pinned.BASE:pc-pinned.BASE+2]=value.to_bytes(2,'big');count=0;first=None
         for case in chosen:
@@ -300,14 +313,14 @@ def execute(data,emu,family):
                 if fault and 'budget exceeded' in fault['reason']:continue
                 count+=1
                 if first is None:first=e.evidence
-        if not count:raise ValueError('No nonbudget name mutation rejection: '+name)
+        if not count:raise EvidenceFailure('No nonbudget name mutation rejection: '+name,
+            {**positive,'instruction_controls':controls,'failed_control':{'name':name,'pc':pc,'tested':len(chosen)}})
         controls[name]={'pc':pc,'tested':len(chosen),'nonbudget_rejections':count,'first_rejection':first,'mutated_kernel_sha256':pinned.digest(changed)}
-    result={'cases':len(rows),'complete_returns':len(rows),'results':rows,'results_sha256':pinned.digest(json.dumps(rows,sort_keys=True).encode()),
-            'instruction_controls':controls,'original_game_bytes_executed':True}
+    result={**positive,'instruction_controls':controls}
     largest=max(selected,key=lambda c:len(contract(c)[0].trace));m,regions=contract(largest)
     if len(m.trace)>128:
         a=observe(data,emu,m.before,regions,budget=128,short=True)
-        if a['status']!='failed' or 'budget exceeded' not in str(a['error']):raise ValueError('Old128 refusal differs')
+        if a['status']!='failed' or 'budget exceeded' not in str(a['error']):raise EvidenceFailure('Old128 refusal differs',result)
         result['short128_refusal']={k:v for k,v in a.items() if k!='regions_after'}
         result['short128_refusal']['regions_after_sha256']=[pinned.digest(b) for b in a['regions_after']]
     return result
@@ -335,6 +348,7 @@ def main(argv=None):
             report['original_file_unchanged']=True
         except Exception as e:
             report.update(status='failure',error={'type':type(e).__name__,'reason':str(e)})
+            if isinstance(e,EvidenceFailure):report.update(e.partial)
             if isinstance(e,task.CaseFailure):report.update(failure_evidence=e.evidence,original_game_bytes_executed=True,completed_before_failure=getattr(e,'completed_results',[]))
         out.write(json.dumps(report,sort_keys=True,separators=(',',':'))+'\n')
     print(json.dumps({'status':report['status'],'family':args.family,'cases':report.get('cases',0)}))
