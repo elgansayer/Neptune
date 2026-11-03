@@ -30,7 +30,7 @@ const chromium = browserType || (await import('playwright')).chromium;
 const origin = new URL(process.env.SMOKE_BASE_URL || 'http://127.0.0.1:8765').origin;
 const evidenceDir = path.resolve(evidenceDirectory || process.env.SMOKE_EVIDENCE_DIR || 'web-smoke-evidence');
 const timeout = Number(process.env.SMOKE_TIMEOUT_MS || '240000');
-const expectedDuration = Number(process.env.SMOKE_EXPECT_DURATION || '20');
+const expectedDuration = Number(process.env.SMOKE_EXPECT_DURATION || '60');
 const expectedCountdown = Number(process.env.SMOKE_EXPECT_COUNTDOWN || '3');
 const expectedIntermission = Number(process.env.SMOKE_EXPECT_INTERMISSION || '1');
 const expectedRevision = process.env.SMOKE_EXPECT_REVISION || '';
@@ -72,8 +72,8 @@ async function waitFor(visitor, predicate, description, localTimeout = timeout) 
 
 function latest(visitor) { return visitor.snapshots.at(-1); }
 
-async function openVisitor(name, context) {
-  const page = await context.newPage();
+async function openVisitor(name, context, {page: suppliedPage, focus = true} = {}) {
+  const page = suppliedPage || await context.newPage();
   const visitor = {name, page, snapshots: [], logs: [], logBytes: 0, snapshotBytes: 0, loaded: new Set(), authCount: 0, connectedCount: 0,
     mapCount: 0, navigations: 0, sockets: [], context};
   visitors.push(visitor);
@@ -133,7 +133,7 @@ async function openVisitor(name, context) {
   assert.equal(headers.headers()['cross-origin-opener-policy'], 'same-origin', 'Missing cross-origin opener isolation');
   assert.equal(headers.headers()['cross-origin-embedder-policy'], 'require-corp', 'Missing cross-origin embedder isolation');
   assert.ok(await page.evaluate(() => crossOriginIsolated), 'Browser is not cross-origin isolated');
-  await page.locator('canvas').click();
+  if (focus) await page.locator('canvas').click();
   return visitor;
 }
 
@@ -151,17 +151,25 @@ async function exerciseHuman(visitor, epoch) {
   }, `round ${epoch} living authoritative human`, 10000);
   let moved = 0;
   let movementKey = '';
+  let movementReceipt;
+  let startTick;
   let afterMove = atStart;
   for (const key of ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp']) {
     const before = latest(visitor);
+    const direction = {ArrowRight: [1, 0], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowUp: [0, -1]}[key];
+    startTick = before.state.simulation_tick;
     await visitor.page.keyboard.down(key);
     try { await visitor.page.waitForTimeout(550); }
     finally { await visitor.page.keyboard.up(key); }
     afterMove = latest(visitor);
-    moved = distance(position(before), position(afterMove));
-    if (moved >= 2) { movementKey = key; break; }
+    const from = position(before), to = position(afterMove);
+    moved = from && to ? (to[0] - from[0]) * direction[0] + (to[1] - from[1]) * direction[1] : 0;
+    movementReceipt = visitor.snapshots.find(value => value.state.round.epoch === epoch &&
+      value.state.simulation_tick >= startTick && value.state.simulation_tick <= afterMove.state.simulation_tick &&
+      value.state.p[peerId]?.v && value.state.p[peerId].v[0] * direction[0] + value.state.p[peerId].v[1] * direction[1] > 0);
+    if (moved >= 2 && movementReceipt) { movementKey = key; break; }
   }
-  assert.ok(moved >= 2, `Round ${epoch} real arrow input never moved the human`);
+  assert.ok(moved >= 2 && movementReceipt, `Round ${epoch} real arrow input never moved the human in its commanded direction`);
   const beforeBombIds = new Set(Object.keys(afterMove.state.b));
   await visitor.page.keyboard.press('Space', {delay: 80});
   const bombSnapshot = await waitFor(visitor, () => visitor.snapshots.find(value =>
@@ -174,6 +182,7 @@ async function exerciseHuman(visitor, epoch) {
   try { await visitor.page.waitForTimeout(750); }
   finally { await visitor.page.keyboard.up(movementKey); }
   const action = {epoch, peer_id: peerId, key: movementKey, distance: moved, bomb_id: bombId,
+    start_tick: startTick, movement_receipt_tick: movementReceipt.state.simulation_tick,
     move_tick: afterMove.state.simulation_tick, bomb_tick: bombSnapshot.state.simulation_tick};
   report.actions.push(action);
   return action;
@@ -193,12 +202,16 @@ try {
     checkFreshCountdown(firstCountdown);
     const epoch1 = firstCountdown.state.round.epoch;
     const peerId = firstCountdown.peer_id;
+    const lateContext = await browser.newContext();
+    const latePage = await lateContext.newPage();
     const active1 = await waitFor(first, () => first.snapshots.find(value => value.state.round.epoch === epoch1 && value.state.round.phase === 'active'), 'first active round', 10000);
     checkRoster(active1, [peerId]);
-    const lateContext = await browser.newContext();
+    let lateError;
+    const pendingLate = openVisitor('late', lateContext, {page: latePage, focus: false}).catch(error => { lateError = error; return null; });
     const input1 = await exerciseHuman(first, epoch1);
     await screenshot(first, 'battle');
-    const late = await openVisitor('late', lateContext);
+    const late = await pendingLate;
+    if (lateError) throw lateError;
     const lateId = latest(late).peer_id;
     const spectating = await waitFor(late, () => late.snapshots.find(value => value.state.round.epoch === epoch1 && value.state.round.phase === 'active'), 'late visitor observes current active arena', 10000);
     assert.ok(!spectating.state.p[lateId], 'Late arrival was inserted into a live battle');
