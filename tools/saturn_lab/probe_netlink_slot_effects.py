@@ -115,10 +115,9 @@ def helpers(code,library):
             'all_visible_registers_sr_events_pcs_ram_device_compared':True,'natural_execution':False}
 
 
-def command10(code,oldlib,library):
+def command10_inputs():
     ranges=[(0x1640,0x167A),(0x1DEA,0x1E2E),(0x1E68,0x1EEE),(0x3530,0x35BC),
             (0x4412,0x4442),(0x4B00,0x4B6E),(0x4BB6,0x4BE0),(0x4C2A,0x4C9A),(0x17F2,0x18F2)]
-    rows=[]
     for mode,variant,mask in itertools.product(('handler','dispatcher'),(0,1),range(32)):
         entry=0x1E68 if mode=='handler' else 0x17F2;regs=records.base_regs(entry,0x271F if variant==0 else 0x2015)
         if variant:regs[:15]=[r^MASK for r in regs[:15]]
@@ -136,6 +135,12 @@ def command10(code,oldlib,library):
                  (0x7000,bytes(ram),True),(0x20000,bytes(pool),True),(0x30000,bytes([0xAD])*768,True),
                  (0x40000,payload,False),(leaf.SP-256,bytes([0xCD])*256+leaf.STOP.to_bytes(4,'big'),True)]
         if any(lo+len(data)>0x100000 for lo,data,w in regions):raise ValueError('No fake device RAM')
+        yield mode,variant,mask,ranges,entry,regs,regions
+
+
+def command10(code,oldlib,library):
+    rows=[]
+    for mode,variant,mask,ranges,entry,regs,regions in command10_inputs():
         before=oldlib.run(code,entry,leaf.STOP,ranges,regions,regs,budget=8192)
         actual=library.run(code,entry,leaf.STOP,ranges,regions,regs,budget=8192)
         remove_slots=lambda d:{k:v for k,v in d.items() if not k.startswith('slot_')}
