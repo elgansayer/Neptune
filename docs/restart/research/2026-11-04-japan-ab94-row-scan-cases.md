@@ -25,10 +25,10 @@ reads all 18 task row first words and +80 bytes; none passes the first-word
 comparison with 1. Inverting ABCC from `88FF` to `8800` changes the baseline stop
 to AC48 and is rejected as a path/effect mutation.
 
-Two independent six-case original-byte reports (execution 303) are identical,
-SHA-256 `02527656a15980446517a47b7773783892e0c8ce197fd868c0b8dd2f20ef6beb`,
+Two independent six-case original-byte reports (execution 304) are identical,
+SHA-256 `7c34c7041782f9a8b863e200e1b722ba4e50d30e8230d03392fd469d9fb565d0`,
 mode 0600. Probe SHA-256 is
-`f00df3b2e41a87b3925c7104d4f1a79e7b2bd28826e34185c7a534f91253449b`.
+`0be8e9eebbc6819c6ae3c587fa9c3b436387cfc4e446482390cb5b9fa69bd9b2`.
 The earlier strict stack-fence failure is preserved in execution 301; the
 additional bounded prefix stack window enabled execution 302, which was repeated
 as execution 303.
@@ -36,5 +36,7 @@ as execution 303.
 Rows and ready states here are constructed. The results establish selected
 original branch behavior and resident continuation bytes, not natural scheduling,
 all row/context combinations, device timing, gameplay, or complete code recovery.
-Next execute the A8E8 continuation from its caller-derived state, then broaden
-row indices/states and continue the remaining functions, modules, and assets.
+The state2 case was continued into A8E8 in a separate CPU using the AB94
+register/special-state report and replayed A208/AB94 writes; see the
+[A8E8 continuation result](2026-11-04-japan-ab94-a8e8-continuation.md). Broaden
+row indices/states and continue remaining functions, modules, and assets.
