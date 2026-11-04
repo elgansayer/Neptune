@@ -330,3 +330,9 @@ updates B3D44 to 0x25EA0000. This inclusive loop bound was derived from the
 original compare and delay-slot increment after retaining the initial off-by-one
 failure. The intents do not establish hardware effects or A546 reachability.
 See the [A66C memory-clear result](../research/2026-11-04-japan-a66c-memory-clear.md).
+
+The A4C4/A638/A546 continuation now has paired bounded original-byte execution
+through four loop iterations and A714, stopping before A6D6. The captured
+B3D44/B3D48 pointers advance to 0x25F00000/0x25F01000; A610 input changes are
+explicit constructed samples. A638, A66C, A680, A694 and A714 device stores
+remain intents. See the [A546 loop-prefix result](../research/2026-11-04-japan-a546-loop-prefix.md).
