@@ -9,6 +9,12 @@ class ACE8TaskSaveTests(unittest.TestCase):
                          (0x0600A164, 0x0600A186, 0x0600A186))
         self.assertNotIn(probe.RESTORE_EDGE, probe.CODE)
 
+    def test_captured_restore_target_is_outside_executed_range(self):
+        self.assertEqual(probe.RESTORE_CONTEXT, 0x060BDD7C)
+        self.assertEqual(probe.RESTORE_CONTEXT_BYTES, 48)
+        self.assertEqual(probe.RESUME_PC, 0x0600AB94)
+        self.assertEqual(probe.RESTORE_END, 0x0600A1AA)
+
     def test_vbr_slots_select_distinct_rows(self):
         self.assertEqual(probe.CASES, ((0, 3), (1, 12)))
         self.assertEqual(probe.ALIASES[0x2600A020], 0x0600A020)
