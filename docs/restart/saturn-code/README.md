@@ -259,3 +259,12 @@ research note.
 The adjacent B3BC interrupt callback has a paired original-byte result for its
 one-word cache-through flag store. Its interrupt source and invocation timing
 remain open in the [Japan kernel study](../research/2026-11-03-japan-record-address.md).
+
+The A717C dispatch/DMA continuation now composes the original A6112 CHCR and
+A5FC4 DMAOR helpers, serializes their exact return state, and resumes through
+A600C/A595B6/A6100 to the A5F98 call boundary. The paired boundary runs cover
+23,328 cases and the resumed tail covers 1,728 cases, with call-site mutation
+controls. Constructed MMIO and caller state do not establish natural callers,
+active DMA timing, cache-purge effects, or gameplay behavior. See the [A717C
+tail composition result](../research/2026-11-04-japan-a717c-a600c-tail-composition.md);
+the purge and outer return remain open.
