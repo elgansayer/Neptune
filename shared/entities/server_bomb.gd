@@ -1,6 +1,8 @@
 extends CharacterBody2D
 class_name ServerBomb
 
+const ThrowTrajectory = preload("res://shared/throw_trajectory.gd")
+
 # Server-authoritative bomb with progressive explosion system
 # Supports both Power Glove throwing and kick abilities
 # Uses Godot's built-in collision system with exceptions
@@ -23,6 +25,7 @@ var explosion_range: int = 2
 var explosion_timer: float = Constants.BOMB_TIMER
 var fuse_time: float = Constants.BOMB_TIMER  # Can be modified by SHORT_FUSE curse
 var fuse_lower_bound: float = Constants.BOMB_TIMER # Public planning bound; random long-fuse sample remains private.
+var fuse_upper_bound: float = Constants.BOMB_TIMER # Public rule bound, not sampled fuse_time.
 var has_exploded := false
 var game_instance: Node = null # Reference to GameInstance for collision checking
 
@@ -286,7 +289,28 @@ func expand_explosion():
 
 func get_forecast_observation() -> Dictionary:
 	return {"cell": get_tile_position(), "range": explosion_range,
-		"fuse_lower_bound": fuse_lower_bound, "elapsed": explosion_timer}
+		"fuse_lower_bound": fuse_lower_bound, "fuse_upper_bound": fuse_upper_bound,
+		"elapsed": explosion_timer, "state": bomb_state, "bomb_type": bomb_type,
+		"kick_direction": kick_direction, "blast_cells": get_public_blast_cells(),
+		"flight": get_public_flight()}
+
+func get_public_flight() -> Dictionary:
+	if bomb_state != BombState.THROWN:
+		return {}
+	return ThrowTrajectory.describe_flight(position, current_arc_start, throw_start_pos,
+		throw_target_pos, current_arc_target, throw_progress, current_waypoint_index,
+		bounce_waypoints, Vector2i(GameConfig.map_width, GameConfig.map_height),
+		GameConfig.TILE_SIZE, THROW_DURATION,
+		maxf(Engine.time_scale, 1.0) / Engine.physics_ticks_per_second)
+
+func get_public_blast_cells() -> Array:
+	# This pattern is already sent to clients by the exploded event. It was
+	# fixed at detonation and must survive later terrain changes in observations.
+	var cells: Array = []
+	if has_exploded:
+		for segment in explosion_pattern:
+			cells.append([int(segment.grid_pos.x), int(segment.grid_pos.y)])
+	return cells
 
 func get_state_minimal() -> Dictionary:
 	# Minimal state for frequent updates - position, timer, state
@@ -311,6 +335,9 @@ func get_state() -> Dictionary:
 		"position": {"x": position.x, "y": position.y},
 		"timer": explosion_timer,
 		"fuse_lower_bound": fuse_lower_bound,
+		"fuse_upper_bound": fuse_upper_bound,
+		"blast_cells": get_public_blast_cells(),
+		"flight": get_public_flight(),
 		"range": explosion_range,
 		"state": bomb_state,
 		"carrier_id": carrier_id,
@@ -589,71 +616,12 @@ func stop_kick():
 # ============ THROW PHYSICS HELPER METHODS ============
 
 func _calculate_bounce_waypoints(start_tile: Vector2i) -> Array[Vector2]:
-	"""Calculate all bounce positions from throw start to final landing.
-	
-	Returns array of world positions for each bounce point (including final landing).
-	Waypoints are calculated from the player's tile position (not bomb's offset position).
-	Bounces on any collision (including out-of-bounds) and wraps around map edges.
-	Adds intermediate waypoints at map boundaries for smooth visual transitions.
-	"""
-	# Cardinalize throw direction
-	var dir_i: Vector2i = Vector2i(0, 0)
-	if abs(throw_direction.x) > abs(throw_direction.y):
-		dir_i.x = int(sign(throw_direction.x))
-	else:
-		dir_i.y = int(sign(throw_direction.y))
-	if dir_i == Vector2i.ZERO:
-		dir_i = Vector2i(0, 1)
-	
-	var waypoints: Array[Vector2] = []
-	var landing_tile: Vector2i = start_tile + dir_i * 2
-	var _previous_tile: Vector2i = start_tile
-	
-	# Build waypoints by checking each potential landing spot
-	var safety: int = 20
-	while safety > 0:
-		# Handle map wrap-around when going out of bounds
-		var wrapped_tile = _wrap_tile_position(landing_tile)
-		
-		# Calculate tile center position (use wrapped coordinates)
-		var tile_world_pos := Vector2(
-			wrapped_tile.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-			wrapped_tile.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-		)
-		
-		# Check if tile is free or has collision
-		var has_collision = _check_tile_has_collision(wrapped_tile)
-		
-		if has_collision:
-			# Collision detected - check if continuing forward will cross boundary
-			var next_tile = landing_tile + dir_i
-			if _crosses_map_boundary(landing_tile, next_tile):
-				# Don't add this tile as bounce - instead add edge transition waypoints
-				_add_edge_transition_waypoints(waypoints, landing_tile, next_tile, dir_i)
-				_previous_tile = next_tile
-				landing_tile = next_tile + dir_i
-			else:
-				# Normal bounce - add waypoint and continue
-				waypoints.append(tile_world_pos)
-				_previous_tile = landing_tile
-				landing_tile += dir_i
-		else:
-			# Found free tile - this is final landing
-			waypoints.append(tile_world_pos)
-			break
-		
-		safety -= 1
-	
-	if waypoints.size() == 0:
-		# Fallback - calculate position relative to throw start
-		var fallback_tile := start_tile + dir_i * 2
-		var wrapped_fallback = _wrap_tile_position(fallback_tile)
-		waypoints.append(Vector2(
-			wrapped_fallback.x * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0,
-			wrapped_fallback.y * GameConfig.TILE_SIZE + GameConfig.TILE_SIZE / 2.0
-		))
-	
-	return waypoints
+	var plan: Dictionary = ThrowTrajectory.plan(start_tile, throw_direction,
+		Vector2i(GameConfig.map_width, GameConfig.map_height), GameConfig.TILE_SIZE,
+		_check_tile_has_collision)
+	var points: Array[Vector2] = []
+	points.assign(plan.waypoints)
+	return points
 
 func _wrap_tile_position(grid_pos: Vector2i) -> Vector2i:
 	"""Wrap tile position around map edges (toroidal topology).

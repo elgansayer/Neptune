@@ -1,0 +1,717 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-597238043d2b5864a893b4a39cb6008cb8015023af2c9bc1f7ddf5bd0febf9de",
+    "files": 81,
+    "source_head": "70b90ef1423cd5e634ae06c35444eeb194560351",
+    "source_manifest_sha256": "597238043d2b5864a893b4a39cb6008cb8015023af2c9bc1f7ddf5bd0febf9de"
+  },
+  "batch": "/home/dev/neptune-research-private/655/name-batch-qt7qpih_/batch.json",
+  "batch_manifest_sha256": "5636373d37a9547fb8c135d02bb7161e8006b973c4b4739d011c04059c7d0a39",
+  "complete_returns_per_run": 4316,
+  "contracts": {
+    "capacity_vs_count": "95CBC passes header+4 capacity, whereas95E5A validates against header+12 populated count; resource-slot word library+0 is separate",
+    "compare": "95158 R4/R5 byte strings,R6 unsigned bound; zero bound returns0 without reads; stops on first unequal byte, common NUL or bound; unsigned byte difference returned modulo32",
+    "lookup": "95CBC R4 query; library via060FA8BC/header+98; table nonnull and mode exactly1; otherwise real96C60(-8) tail return; realA5676 uses header+4 capacity; notfound real96C60(-9) tail return; found real96C60(0), returning mappednegative status or index",
+    "search": "A5676 R4 table,R5 query,R6 signed capacity; 24-byte records; real95158 compares atrecord+12 for12bytes; equality returns index before endflag test; after mismatch recordbyte11 bit0 ends search; nonpositive capacity or no match returnsFFFFFFFF",
+    "status": "global060FC080 -16/-14/-13 map to-25/-2/-23; effective code stored library+C0; callback explicitlynull; all calls/restores/delays original"
+  },
+  "cpu": "sh2",
+  "families": {
+    "compare": {
+      "archives_byte_identical": true,
+      "cases_per_run": 1452,
+      "complete_returns_per_run": 1452,
+      "controls": {
+        "difference": {
+          "mutated_kernel_sha256": "9b041e185cdb79c3ade9ad6d102dac56e14812ad4c44a95d0f3665b0a1fa3a7e",
+          "nonbudget_rejections": 62,
+          "pc": 101274000,
+          "tested": 83
+        },
+        "unsigned-left": {
+          "mutated_kernel_sha256": "f24c995d7d6ac7c7b0366d1b96945081b70e08f85b4cb60a4b23785f5c7c996c",
+          "nonbudget_rejections": 24,
+          "pc": 101273994,
+          "tested": 83
+        },
+        "zero-result-delay": {
+          "mutated_kernel_sha256": "6af323f941f52b172c0b1dcb40b2d6d99e9cc655b22f2f0d612db01414e5af03",
+          "nonbudget_rejections": 4,
+          "pc": 101273952,
+          "tested": 83
+        }
+      },
+      "instruction_counts": {
+        "5": 8,
+        "21": 1094,
+        "26": 142,
+        "29": 4,
+        "33": 2,
+        "38": 6,
+        "41": 4,
+        "45": 2,
+        "50": 6,
+        "53": 4,
+        "57": 2,
+        "62": 6,
+        "65": 4,
+        "69": 2,
+        "74": 6,
+        "77": 4,
+        "81": 2,
+        "86": 6,
+        "89": 4,
+        "93": 2,
+        "98": 6,
+        "101": 4,
+        "105": 2,
+        "110": 6,
+        "113": 4,
+        "117": 2,
+        "122": 6,
+        "125": 4,
+        "129": 2,
+        "134": 6,
+        "137": 4,
+        "141": 2,
+        "146": 6,
+        "149": 4,
+        "153": 2,
+        "158": 6,
+        "161": 4,
+        "165": 2,
+        "170": 6,
+        "173": 4,
+        "177": 2,
+        "182": 6,
+        "185": 4,
+        "189": 2,
+        "194": 6,
+        "197": 4,
+        "201": 2,
+        "206": 6,
+        "209": 4,
+        "393": 2,
+        "398": 6,
+        "401": 4,
+        "585": 2,
+        "590": 6,
+        "593": 4
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "91be8315ba3c8068effa4d4552a6b58e9a6fde652de5cd4c3ec8869fd72cb418",
+      "runs": [
+        {
+          "archive_bytes": 168980,
+          "archive_index_sha256": "a587cb77d80850178df3baea0f4c9921464bde0bd25d636e5f2338d6478c2888",
+          "archive_sha256": "c1f6c2b87f27de2e71d7f3d43cb619fde931ae663a4456d3b9ac601b53817e12",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-compare-lu2y16ab",
+          "isolation_sha256": "ec7e5bc34cb72b721e22494333830628d42fe14288c0d4d1bb0b6769514a7a50",
+          "raw_bytes": 4049703,
+          "raw_report_sha256": "4731ed77930c950f188cb86da756f89af0ac98552dea12a12121973b8a79cb81",
+          "supervisor_sha256": "e240e17a03c7252379aa782cd9739f331fdb50b5df67d322e0050fa2139e1e8a"
+        },
+        {
+          "archive_bytes": 168980,
+          "archive_index_sha256": "a587cb77d80850178df3baea0f4c9921464bde0bd25d636e5f2338d6478c2888",
+          "archive_sha256": "c1f6c2b87f27de2e71d7f3d43cb619fde931ae663a4456d3b9ac601b53817e12",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-compare-i2i5phqy",
+          "isolation_sha256": "ec7e5bc34cb72b721e22494333830628d42fe14288c0d4d1bb0b6769514a7a50",
+          "raw_bytes": 4049703,
+          "raw_report_sha256": "4731ed77930c950f188cb86da756f89af0ac98552dea12a12121973b8a79cb81",
+          "supervisor_sha256": "a28cb7b447361003e3f5f2e4a885abc652ac829a371f460cc1c3a38b9fd54a52"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "0609516C",
+        "last_trace_pc": "0609516A",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_name.py": "bb24bf86fc8fd3d045103691908abfdd7fdc1d64ac2679ceb0e36e0955615d6d",
+        "probe_library_status.py": "5fd31a97380bd24ea036e9e507495d29522ef7335b4110efeb5500cb83db92fe",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    },
+    "lookup": {
+      "archives_byte_identical": true,
+      "cases_per_run": 2320,
+      "complete_returns_per_run": 2320,
+      "controls": {
+        "end-flag-mask": {
+          "mutated_kernel_sha256": "cd573ff2d01a3e2fd2b049a105804d1d76a3e22f43d6b96fd7069f9e23a8b340",
+          "nonbudget_rejections": 18,
+          "pc": 101340820,
+          "tested": 79
+        },
+        "error-store-delay": {
+          "mutated_kernel_sha256": "73b5d5bb986c04bf564db18d95e0417009c1c1af70f3229786dc6dbfd04e50d4",
+          "nonbudget_rejections": 79,
+          "pc": 101280918,
+          "tested": 79
+        },
+        "lookup-restore-delay": {
+          "mutated_kernel_sha256": "eb425eb6e717f93ba052a32c6b1c2e24109a26c6b621e0c36df5825c3fd352cb",
+          "nonbudget_rejections": 52,
+          "pc": 101276946,
+          "tested": 79
+        },
+        "name-offset-delay": {
+          "mutated_kernel_sha256": "8c33596d719c7a0fa1d4bc1a584f9a04c242734f6f8b1803e74adf5489fde093",
+          "nonbudget_rejections": 46,
+          "pc": 101340830,
+          "tested": 79
+        },
+        "record-stride-delay": {
+          "mutated_kernel_sha256": "6cbba6e5b956e209b5c0742045ccc11921e4e4ba77b740f89def3b56779b3c57",
+          "nonbudget_rejections": 20,
+          "pc": 101340854,
+          "tested": 79
+        },
+        "root-restore-delay": {
+          "mutated_kernel_sha256": "d38eb8e7128f5ed7c0e44b8bd98aafac534dbe55800b4c38c8a4a32f81481093",
+          "nonbudget_rejections": 79,
+          "pc": 101340872,
+          "tested": 79
+        }
+      },
+      "instruction_counts": {
+        "77": 20,
+        "80": 20,
+        "82": 40,
+        "84": 20,
+        "109": 60,
+        "112": 60,
+        "113": 4,
+        "114": 120,
+        "116": 64,
+        "118": 8,
+        "120": 4,
+        "145": 4,
+        "148": 4,
+        "149": 4,
+        "150": 8,
+        "152": 8,
+        "154": 8,
+        "156": 4,
+        "169": 28,
+        "172": 28,
+        "173": 4,
+        "174": 56,
+        "176": 32,
+        "178": 8,
+        "180": 4,
+        "217": 4,
+        "220": 4,
+        "221": 4,
+        "222": 8,
+        "224": 8,
+        "226": 8,
+        "228": 4,
+        "241": 28,
+        "244": 28,
+        "245": 4,
+        "246": 56,
+        "248": 32,
+        "250": 8,
+        "251": 108,
+        "252": 4,
+        "253": 108,
+        "254": 108,
+        "255": 108,
+        "256": 108,
+        "265": 4,
+        "268": 4,
+        "269": 4,
+        "270": 8,
+        "272": 8,
+        "274": 8,
+        "276": 4,
+        "287": 24,
+        "289": 24,
+        "290": 24,
+        "291": 24,
+        "292": 24,
+        "323": 16,
+        "325": 16,
+        "326": 16,
+        "327": 16,
+        "328": 16,
+        "347": 16,
+        "349": 16,
+        "350": 16,
+        "351": 16,
+        "352": 16,
+        "359": 16,
+        "361": 20,
+        "362": 16,
+        "363": 16,
+        "364": 20,
+        "365": 4,
+        "366": 8,
+        "368": 8,
+        "370": 8,
+        "372": 4,
+        "395": 8,
+        "397": 8,
+        "398": 8,
+        "399": 8,
+        "400": 8,
+        "409": 4,
+        "412": 4,
+        "413": 4,
+        "414": 8,
+        "416": 8,
+        "418": 8,
+        "419": 16,
+        "420": 4,
+        "421": 16,
+        "422": 16,
+        "423": 16,
+        "424": 16,
+        "431": 8,
+        "433": 8,
+        "434": 8,
+        "435": 8,
+        "436": 8,
+        "443": 8,
+        "445": 8,
+        "446": 8,
+        "447": 8,
+        "448": 8,
+        "457": 4,
+        "460": 4,
+        "461": 4,
+        "462": 8,
+        "464": 8,
+        "466": 8,
+        "467": 8,
+        "468": 4,
+        "469": 8,
+        "470": 8,
+        "471": 8,
+        "472": 8,
+        "503": 8,
+        "505": 8,
+        "506": 8,
+        "507": 8,
+        "508": 8,
+        "539": 8,
+        "541": 8,
+        "542": 8,
+        "543": 8,
+        "544": 8,
+        "587": 8,
+        "589": 8,
+        "590": 8,
+        "591": 8,
+        "592": 8,
+        "745": 4,
+        "748": 4,
+        "749": 4,
+        "750": 8,
+        "752": 8,
+        "754": 8,
+        "755": 8,
+        "756": 4,
+        "757": 8,
+        "758": 8,
+        "759": 8,
+        "760": 8
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "abe7d900ed4735a54739ef41542bee4e48807954050e5ba440721e1e9af40e37",
+      "runs": [
+        {
+          "archive_bytes": 505361,
+          "archive_index_sha256": "aa77440a717c37f42906e573158b5ca0ed24d94765d06d242336a60d693f7b58",
+          "archive_sha256": "3f7d7d028f23760e3ef84e22199fc671c3bba4de389dc1e51e6a1bcc4c52b712",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-lookup-vqtc6qpe",
+          "isolation_sha256": "917b5cfef8cace93aac6dbc3ef59678f42e0f7baf1ed598a21a61dcc446b19f8",
+          "raw_bytes": 21034160,
+          "raw_report_sha256": "c641787b2331b6f77ebdc728fbfe7c6df27891659ad991431596b6ccc5fbfad5",
+          "supervisor_sha256": "1785f539ee86f172b0bee5c6bd83bf9c934b5c265c1fb022ff8bf1fc408a1f14"
+        },
+        {
+          "archive_bytes": 505361,
+          "archive_index_sha256": "aa77440a717c37f42906e573158b5ca0ed24d94765d06d242336a60d693f7b58",
+          "archive_sha256": "3f7d7d028f23760e3ef84e22199fc671c3bba4de389dc1e51e6a1bcc4c52b712",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-lookup-kses9nua",
+          "isolation_sha256": "917b5cfef8cace93aac6dbc3ef59678f42e0f7baf1ed598a21a61dcc446b19f8",
+          "raw_bytes": 21034160,
+          "raw_report_sha256": "c641787b2331b6f77ebdc728fbfe7c6df27891659ad991431596b6ccc5fbfad5",
+          "supervisor_sha256": "33b879731b76b64822afa5fe8d3ec702487f1ea7d2b2ab906055ae64d7750896"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "0609517C",
+        "last_trace_pc": "0609517A",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_name.py": "bb24bf86fc8fd3d045103691908abfdd7fdc1d64ac2679ceb0e36e0955615d6d",
+        "probe_library_status.py": "5fd31a97380bd24ea036e9e507495d29522ef7335b4110efeb5500cb83db92fe",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    },
+    "lookup-invalid": {
+      "archives_byte_identical": true,
+      "cases_per_run": 80,
+      "complete_returns_per_run": 80,
+      "controls": {
+        "error-store-delay": {
+          "mutated_kernel_sha256": "73b5d5bb986c04bf564db18d95e0417009c1c1af70f3229786dc6dbfd04e50d4",
+          "nonbudget_rejections": 80,
+          "pc": 101280918,
+          "tested": 80
+        },
+        "invalid-error-delay": {
+          "mutated_kernel_sha256": "2bcdede3234b023dcb14ec7d3f3828472ee64ac4695a993a20f9547fa94185be",
+          "nonbudget_rejections": 80,
+          "pc": 101276890,
+          "tested": 80
+        },
+        "lookup-restore-delay": {
+          "mutated_kernel_sha256": "eb425eb6e717f93ba052a32c6b1c2e24109a26c6b621e0c36df5825c3fd352cb",
+          "nonbudget_rejections": 80,
+          "pc": 101276946,
+          "tested": 80
+        }
+      },
+      "instruction_counts": {
+        "42": 4,
+        "45": 16,
+        "47": 8,
+        "48": 12,
+        "49": 4,
+        "50": 24,
+        "52": 12
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "d3dd3b4df3b48aef94f6cce518e53d16028216874d70d82d4d94d9001548196a",
+      "runs": [
+        {
+          "archive_bytes": 10635,
+          "archive_index_sha256": "e7161d412624c4457e7562229ff1341cdf708c5b75fbff33a8e2eeefac92d2e0",
+          "archive_sha256": "c102fe93974c5163a0cd231a513809809531f6e54e8db23e6db2550da56038b4",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-lookup-invalid-d882brkt",
+          "isolation_sha256": "836678f311ec3600f0b0babbc57b3fc288c7e7a3077b3e8c143c149bd2eef296",
+          "raw_bytes": 285906,
+          "raw_report_sha256": "df42fd6fa545393b2a202f7778e7fb67878e5b3f3033ed26100ef36994789c8a",
+          "supervisor_sha256": "a56d76f3592e73f982505259313c25593c70548950ca16174590f69fdc276b06"
+        },
+        {
+          "archive_bytes": 10635,
+          "archive_index_sha256": "e7161d412624c4457e7562229ff1341cdf708c5b75fbff33a8e2eeefac92d2e0",
+          "archive_sha256": "c102fe93974c5163a0cd231a513809809531f6e54e8db23e6db2550da56038b4",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-lookup-invalid-2fuse2d9",
+          "isolation_sha256": "836678f311ec3600f0b0babbc57b3fc288c7e7a3077b3e8c143c149bd2eef296",
+          "raw_bytes": 285906,
+          "raw_report_sha256": "df42fd6fa545393b2a202f7778e7fb67878e5b3f3033ed26100ef36994789c8a",
+          "supervisor_sha256": "33fc1a020c08abaf34e89aeabf3aa408c76519f52f661f622b6dfca3a1a45c51"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_name.py": "bb24bf86fc8fd3d045103691908abfdd7fdc1d64ac2679ceb0e36e0955615d6d",
+        "probe_library_status.py": "5fd31a97380bd24ea036e9e507495d29522ef7335b4110efeb5500cb83db92fe",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    },
+    "search": {
+      "archives_byte_identical": true,
+      "cases_per_run": 464,
+      "complete_returns_per_run": 464,
+      "controls": {
+        "end-flag-mask": {
+          "mutated_kernel_sha256": "cd573ff2d01a3e2fd2b049a105804d1d76a3e22f43d6b96fd7069f9e23a8b340",
+          "nonbudget_rejections": 21,
+          "pc": 101340820,
+          "tested": 80
+        },
+        "name-offset-delay": {
+          "mutated_kernel_sha256": "8c33596d719c7a0fa1d4bc1a584f9a04c242734f6f8b1803e74adf5489fde093",
+          "nonbudget_rejections": 60,
+          "pc": 101340830,
+          "tested": 80
+        },
+        "record-stride-delay": {
+          "mutated_kernel_sha256": "6cbba6e5b956e209b5c0742045ccc11921e4e4ba77b740f89def3b56779b3c57",
+          "nonbudget_rejections": 12,
+          "pc": 101340854,
+          "tested": 80
+        },
+        "root-restore-delay": {
+          "mutated_kernel_sha256": "d38eb8e7128f5ed7c0e44b8bd98aafac534dbe55800b4c38c8a4a32f81481093",
+          "nonbudget_rejections": 80,
+          "pc": 101340872,
+          "tested": 80
+        }
+      },
+      "instruction_counts": {
+        "25": 20,
+        "57": 60,
+        "61": 4,
+        "93": 4,
+        "97": 4,
+        "117": 28,
+        "121": 4,
+        "165": 4,
+        "169": 4,
+        "189": 28,
+        "193": 4,
+        "194": 108,
+        "213": 4,
+        "217": 4,
+        "230": 24,
+        "266": 16,
+        "290": 16,
+        "302": 16,
+        "309": 4,
+        "313": 4,
+        "338": 8,
+        "357": 4,
+        "361": 4,
+        "362": 16,
+        "374": 8,
+        "386": 8,
+        "405": 4,
+        "409": 4,
+        "410": 8,
+        "446": 8,
+        "482": 8,
+        "530": 8,
+        "693": 4,
+        "697": 4,
+        "698": 8
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "943d663fec07149ce807aa3beb309dced3523464311b21cd37a23ff75096337c",
+      "runs": [
+        {
+          "archive_bytes": 73449,
+          "archive_index_sha256": "713fbc58f83d46d4ab10405c3103bdae45555ff0c028dca69b1d3555216d1f4c",
+          "archive_sha256": "340f2b566f9b45c9014c7a5051ffafb34ded099933b189ec8f59b6ca34f19506",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-search-t8_8kcku",
+          "isolation_sha256": "58436f3db465e017e92b373ee206fbe5e45ae995631ccfba4ae63316e09a0e2e",
+          "raw_bytes": 3420700,
+          "raw_report_sha256": "ba425a6ae0a9ce0b0c4734cd01e6842c18f48ce1037d01a70dc058a7eb500395",
+          "supervisor_sha256": "0da04bb4e008c83cad8a8b076bef85bbb42c45c40d8ee8782fb121a2b116e521"
+        },
+        {
+          "archive_bytes": 73449,
+          "archive_index_sha256": "713fbc58f83d46d4ab10405c3103bdae45555ff0c028dca69b1d3555216d1f4c",
+          "archive_sha256": "340f2b566f9b45c9014c7a5051ffafb34ded099933b189ec8f59b6ca34f19506",
+          "directory": "/home/dev/neptune-research-private/655/name-contracts-search-3grrfo_w",
+          "isolation_sha256": "58436f3db465e017e92b373ee206fbe5e45ae995631ccfba4ae63316e09a0e2e",
+          "raw_bytes": 3420700,
+          "raw_report_sha256": "ba425a6ae0a9ce0b0c4734cd01e6842c18f48ce1037d01a70dc058a7eb500395",
+          "supervisor_sha256": "6f4f4b93a9c7a240a9a1b787aeb03776813aaadf8cc89d1d730fcca35363986b"
+        }
+      ],
+      "short128_refusal": {
+        "CPU_step_attempts": 129,
+        "interrupted_pc": "06095172",
+        "last_trace_pc": "06095170",
+        "reason": "Handoff instruction budget exceeded",
+        "recorded_executions": 128
+      },
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_name.py": "bb24bf86fc8fd3d045103691908abfdd7fdc1d64ac2679ceb0e36e0955615d6d",
+        "probe_library_status.py": "5fd31a97380bd24ea036e9e507495d29522ef7335b4110efeb5500cb83db92fe",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+        "sh2_selection_profile.py": "27bd6ffcbb33d0c57c735a7b374b84de02d0fe3fd69b0b82335a55bcece6bf54"
+      }
+    }
+  },
+  "family_control_combinations": 16,
+  "guard": {
+    "aliases": [],
+    "chosen_budget": 1024,
+    "derived_sha256": "d744a4235e5df6709adaf66a272abdc56b8ee2bd0413f2980aac5ae5fba11c21",
+    "nonexecutable_data_islands": [
+      "06095196..06095198",
+      "06095CDC..06095CF8",
+      "06095DF0..06095E0C",
+      "060A5824..060A5828"
+    ],
+    "old128_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "old128_unchanged": true,
+    "separate_accepted_cap": 1024
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "native_builds": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "report_file_limit_bytes": 67108864,
+    "shared_host_limit": 3,
+    "sources_originals_dependencies_readonly": true,
+    "storage_reserve_bytes": 5435817984
+  },
+  "literal_sha256": {
+    "06008BF4:4": "f3e28b1dc726a3bd50b148a06e285e5dedd893fa388f240e8e8c39c2d3bd34f5",
+    "06095CE0:2": "672d13cb5d3858e576016b27050dfcd5b379ef4f1ce063ad9d2cbc86b172d4d2",
+    "06095CE4:4": "b8eadb596bc8e4a687d2c19744ef2dd535ae6cbf53d6651b0b2484727dc37b87",
+    "06095DF4:4": "4e54f63df85214f529a8e3a00f49259ad8b09f7c39d5ada4a4ad5bb0277752b5",
+    "06095DF8:4": "0ecbf6de654f712c074136e90916c1f755e5ea3000b6fa40bc4e6b09a2368764",
+    "060969B4:2": "366cf04d2c1c031f0c073d87a1effd6d2e2c0868720a7cf41b1261c57e8d37ff",
+    "060969D0:4": "b8eadb596bc8e4a687d2c19744ef2dd535ae6cbf53d6651b0b2484727dc37b87",
+    "06096CE4:2": "366cf04d2c1c031f0c073d87a1effd6d2e2c0868720a7cf41b1261c57e8d37ff",
+    "06096CE8:4": "b8eadb596bc8e4a687d2c19744ef2dd535ae6cbf53d6651b0b2484727dc37b87",
+    "06096CF0:4": "0751cce499a7b5a7000fb0a8ea7f63844343f20cbbd3bb5caaf68f72245b556a",
+    "060A5824:4": "92ccca2fff4bcb79a541b9620043bb748279c47f0f28c46915ee50461685b5ca"
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "retained_initial_failure": {
+    "archive_index_sha256": "db7861341c3d497687e14b08b7491e8d73cf3c7dcc038a3df97e877b050937eb",
+    "cause": "negative-control sample missed length0; original report did not retain completed rows; corrected source adds explicit coverage and partial-row retention",
+    "counted_as_completed_evidence": false,
+    "directory": "/home/dev/neptune-research-private/655/name-contracts-compare-wo17jt59",
+    "error": {
+      "reason": "No nonbudget name mutation rejection: zero-result-delay",
+      "type": "ValueError"
+    },
+    "raw_report_sha256": "1dd4871d4935177eafe88c0fa671920217c52b5895c011c54406d2f4f21cf6a6"
+  },
+  "retained_native_projection": {
+    "accepted_natural_source_pr": 667,
+    "boundaries": [
+      {
+        "clock_unit": "native observer hooks; not SH-2 instructions/cycles",
+        "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-enabled-wmaopl8g/capture",
+        "entry_pc": 101276860,
+        "entry_r4": 101391032,
+        "entry_step": 4007679,
+        "frame": 1264,
+        "header": [
+          1,
+          32,
+          101446040,
+          26
+        ],
+        "return_pc": 100698680,
+        "return_r0": 25,
+        "return_step": 4008739,
+        "root_pr": 100698680,
+        "trace_sha256": "2719dde90a65dfe5020d4b93cd9ee9ce7774e820d5dfd1f5b489f36b8c050b3f"
+      },
+      {
+        "clock_unit": "native observer hooks; not SH-2 instructions/cycles",
+        "directory": "/mnt/HC_Volume_106574422/repo-factory/neptune-integration/neptune-research-private/660/init-profile1-enabled-pkwjrr60/capture",
+        "entry_pc": 101276860,
+        "entry_r4": 101391032,
+        "entry_step": 4007679,
+        "frame": 1264,
+        "header": [
+          1,
+          32,
+          101446040,
+          26
+        ],
+        "return_pc": 100698680,
+        "return_r0": 25,
+        "return_step": 4008739,
+        "root_pr": 100698680,
+        "trace_sha256": "2719dde90a65dfe5020d4b93cd9ee9ce7774e820d5dfd1f5b489f36b8c050b3f"
+      }
+    ],
+    "bounded_name_match_indices": [
+      25
+    ],
+    "end_flag_indices": [
+      25
+    ],
+    "final_state_sha256": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+    "header": [
+      1,
+      32,
+      101446040,
+      26
+    ],
+    "limitation": "Table/query bytes come from frame1800 final states, not an interior call-time memory observer; consistency with the retained frame1264 boundary does not establish unchanged table bytes throughout the call or intervening frames.",
+    "new_emulator_dispatches": 0,
+    "new_original_frames": 0,
+    "query_sha256": "7a7fc2b895edbf3543cda6a852cbcf11d3aaf0e1b25948ecf16d5d9b67d11b78",
+    "report": "/home/dev/neptune-research-private/655/natural-name-projection-79nb7dyv/projection.json",
+    "report_sha256": "e0897b47e9720a6791d2e00e993fddc94edd8051c28f24b8c6b3b48b4238164d",
+    "resource_slot_count": 16,
+    "states_checked": 12,
+    "table_sha256": "fbf22e560b0422c6fae67cfdedcba967559de31b325acfa2e39992aac1abea0a"
+  },
+  "schema": "neptune.original-library-name-derived.v1",
+  "scope_limits": [
+    "Constructed0..48-byte comparisons and0..8record searches with selected signed-negative capacities; not exhaustive32-bit domains",
+    "Natural26-entry lookup boundary was previously captured; final-state table projection is derived analysis, not new frames or call-time interior observation",
+    "Callbacks293A4, successful context/device services, complete89C8/rootcycles/othermodules and denominators remainopen",
+    "No physicalSaturn timing, gameplay orGodot parity claim"
+  ],
+  "source_head": "70b90ef1423cd5e634ae06c35444eeb194560351",
+  "source_range_sha256": {
+    "06095158..06095196": "825fa8023e211933a668eba9e639871e93da28a1d7fbad38d8725a3a7955732a",
+    "06095CBC..06095CDC": "a8d19d03cb4f549be2a597a179d6f34d49e9aec834f880ad4b69a6719ace990b",
+    "06095CF8..06095D34": "293800e2f429dfa4f5b74151e47f90a3e756482aa2c28f3d8d83efbf5a084146",
+    "06096C60..06096CB0": "f42884e9781a82c4c43e20c8fa4d0fa9b221f460580b4dfe2a87813ebb489a9e",
+    "060A5676..060A56CA": "a40fcfa550d464336293a990eb020dfa945a395bc691980781974a2fdac41990"
+  },
+  "storage": {
+    "archive_helper_sha256": "3762b603363c7d94cc09ee760cb3341921ba6e054e36112ce0e9198bc6f033f4",
+    "mode": "verified lossless gzip; restore gzip -dk report.json.gz",
+    "original_jobs": 8,
+    "owned_bounds": "/home/dev/neptune-research-private/655/owned-name-report-bounds-20261103.json",
+    "owned_bounds_original_execution": false
+  }
+}

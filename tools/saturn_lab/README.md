@@ -254,6 +254,13 @@ Run it under the existing unprivileged research environment with private inputs
 and a fresh private report path. A pass is CPU-only evidence for this bounded
 hypothesis, not hardware/timing, whole-game or graphics parity.
 
+`probe_kernel_rng.py` replays original USA kernel entry `0600A0EC` and nested
+index helper `0600A08C` against a hash-checked original checkpoint. It declares
+the constructed bound/stack registers and index54 pre-wrap state explicitly,
+limits each call to512 SH-2 instructions, and includes a changed-shift control.
+It does not establish the natural caller, RNG seed/recurrence, wrap branch or
+gameplay call ordering. See the [bounded RNG result](../../docs/restart/research/2026-11-03-command-root-abi2-windows.md).
+
 ## Native VDP1 texture decoder
 
 `export_vdp1.py` unpacks one explicitly selected command from an existing private
@@ -287,3 +294,21 @@ source identities and the TEMP fixture difference from ABI7. All old ABIs remain
 No natural/hardware/audio, independent full command10 or Godot fidelity claim is
 made. Original commands require the existing offline/read-only/credential-free
 runner, shared admission, resource bounds and a new private report path.
+
+
+`probe_netlink_command10.py` independently checks complete constructed1E68 and
+17F2 command10 calls using qualified ABI8, including exact-one controls, mutable
+input aliases, distinct450/404 globals, pointer redirection and full ordered
+memory/device/stack/register comparisons. The [actual original result](../../docs/restart/research/2026-11-03-original-command10.md)
+records9,476 cases twice and68 terminal regressions per process. Earlier command10
+diagnostics remain historical evidence; this does not establish natural traffic,
+DSP/audio execution, hardware timing, Godot fidelity or whole-game recovery.
+
+## Original kernel bounded RNG draw
+
+`probe_kernel_rng.py` replays original USA kernel entry `0600A0EC` and nested
+index helper `0600A08C` against a hash-checked original checkpoint. It declares
+the constructed bound/stack registers and index54 pre-wrap state explicitly,
+limits each call to 512 SH-2 instructions, and includes a changed-shift control.
+It does not establish the natural caller, RNG seed/recurrence, wrap branch or
+gameplay call ordering. See [the bounded RNG result](../../docs/restart/research/2026-11-03-rng-bounded-draw.md).

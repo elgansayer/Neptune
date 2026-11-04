@@ -490,3 +490,16 @@ No skipped/missing/failed applicable job is a pass. See the
 for qualified counts, construction limits, private input/result identities and
 actual resource budgets. Metadata and native tool smokes do not finish natural
 sound/game parity or continuous-factory acceptance.
+
+
+The [complete constructed command10 probe](../../docs/restart/research/2026-11-03-original-command10.md)
+reuses this qualified ABI8 generation and private inputs; it introduces no tool
+preparation recipe or fresh-native requirement. Its original comparisons still
+require shared admission, bounded offline/read-only execution, hidden broker/auth
+and reserve checks. Preparation non-applicability is not original-call acceptance.
+`--tool beetle-saturn-command-trace` prepares a distinct ABI1 command/device
+observer against the same pinned historical Beetle source. It keys the patcher,
+GPL header, ctypes ABI and probe in its own exact recipe identity, preserves the
+complete patched corresponding source and COPYING notice, and performs a real
+no-media libretro plus observer-fence smoke. It does not include game or BIOS
+media. Original execution still requires the separate guarded research harness.

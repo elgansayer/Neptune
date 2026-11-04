@@ -88,7 +88,29 @@ and [resident decompression comparisons](../evidence/2026-10-30-gemini-program-b
 remain useful accepted evidence. They do not increase this census into a verified
 whole-program function total. Unknown denominators remain `null`.
 
+The current Japan kernel continuation includes paired original-byte execution of
+the eight-byte record update helper AB1B4; see the
+[2026-11-03 Japan record and VDP investigation](../research/2026-11-03-japan-record-address.md).
+This bounded helper result does not close its caller semantics, the Japan kernel,
+or any other module in this census.
+
 The [2 November original memory-helper/caller result](../research/2026-11-02-original-position-bounds.md) adds two isolated-tested USA kernel entries and their explicit controlled-memory limits. It does not establish natural gameplay validation or a whole-program function denominator.
+
+The [natural first-task/library result](../research/2026-11-02-first-task-natural-init.md)
+observes complete89C8/95B04 returns through twelve repeated original windows with
+exact state/video/audio/input equality. [Status/registration contracts](../research/2026-11-02-library-status-contracts.md)
+then distinguish3,364 complete returns from1,148 unfinished callback handoffs per
+run. The [slot selection/release result](../research/2026-11-03-library-slot-contracts.md)
+adds3,918 complete constructed calls twice with seven mutation-control
+combinations and the old128 refusal retained. Internal library/device semantics,
+full655 and whole-program coverage remain open; resume the
+[current checkpoint](VPS-CODE-655-CHECKPOINT.md).
+
+The [context/helper and caller-prefix result](../research/2026-11-03-library-setup-contracts.md)
+adds10,504 original cases twice:10,294 complete returns and210 explicit A681A
+handoffs per run, with23 mutation-control combinations. Initializer/field/index
+helpers and the actual96D74 null path/positive nested-call prefix are distinct
+from the still-unrecovered A681A body and full95E5A semantics.
 
 The [3 November NLSND state/command11 result](../research/2026-11-03-original-nlsnd-state.md)
 compares36,127 constructed complete calls across five entry modes, repeated in
@@ -122,3 +144,276 @@ mutation rejections, with a separate qualified frozen DSP longword/TEMP profile.
 All128 command10 scenarios now return diagnostically;64 prior CPU/RAM/common-device
 outcomes and64 prior guarded prefixes are preserved. This removes the measured
 width dependency, not the remaining independent command/natural/audio/Godot proof.
+
+The [NLSND reset-marker phase result](../research/2026-11-03-original-boot-gate.md) independently compares the bounded `0x1000..0x1080` handoff in two fresh original CPU processes. Each has eight complete phase transfers, 8,192 explicitly unfinished marker waits and 48 completed-handoff mutation rejections; the embedded data gap stays non-executable. Natural loading and the remaining reset body, header-global lifetimes and whole-code denominators remain open.
+
+The [Japan kernel result](../research/2026-11-03-japan-kernel-residency.md)
+verifies exact Japanese `0KRNL.BIN` residency at candidate mapping `0x0600A000`
+in original boot states through frame 2400 and isolates two Japanese startup
+buffer helpers (`0x0600A58E`/`0x0600A5A2`) across 48 repeated constructed case
+pairs with two wrong-opcode controls. Residency is not a complete executable
+range map or proof that every matching instruction ran; the helpers are not
+natural-caller validation, and Japan startup/device semantics and the all-module
+denominator remain open.
+
+The subsequent [Japanese record-address helper result](../research/2026-11-03-japan-record-address.md)
+executes the original 18-byte helper at `0x0600AEF2` over 34 inputs twice per
+run, with paired reports identical and two instruction mutation controls. A
+follow-up composes the helper with its original `0x0600CC5C` indirect callsite
+for all 18 record indices twice per run, checking the exact call argument,
+return path, and callback store at record `+12`, with three mutations. The
+constructed caller continuation does not prove natural runtime reachability or
+the preceding `0x0600A946` producer.
+
+The same [Japanese record result](../research/2026-11-03-japan-record-address.md)
+also executes original `0x0600AACC` over all 18 record indices with both
+activity states, twice in each of two identical reports, and two instruction
+mutations. It checks the `+80` flag read, conditional longword `1` write, exact
+stack MACL restore, and return delay slot. The `AA34` producer still has
+unresolved cache-through/VBR dependencies; no natural reachability or gameplay
+is claimed.
+
+The same [Japanese record result](../research/2026-11-03-japan-record-address.md)
+also executes the `0x0600AAEA` 18-slot tag scan composed with `AACC`: matching
+tags at `+81` are cleared, and active records are latched. Thirty-nine cases
+run twice in each of two identical reports, with two instruction mutations.
+Natural callers and record lifetime remain open.
+
+Static follow-through from `AB78` found original `0x0600A186`, a 48-byte
+context restore. Its 31-pattern constructed probe executes all 18 original
+instructions twice per case in paired reports, checks R8–R15/MACH/MACL/PR/R4
+restoration and the R5-to-R0 return delay slot, and detects two mutations.
+Natural task-switch reachability remains unresolved.
+
+The [Japanese record result](../research/2026-11-03-japan-record-address.md)
+now also covers original `0x0600ADB0`: 360 constructed valid-record cases in
+two byte-identical reports, with exact memory transaction/stack checks and
+three original-instruction mutation controls. It is a Japan-mapped helper
+contract; signed-negative index memory behavior and natural callers remain
+open. The original all-code programme remains active and incomplete.
+
+The same Japanese startup study adds 520 original calls to the `0x0600A5E4`
+16-bit counter helper, including wrap boundaries and three mutation controls.
+The larger `A312` startup path crosses SR, BIOS, VDP2, SCU and cache-through
+polling state; its static decode does not count as execution or establish those
+device contracts.
+
+It also adds original `0x0600A164` context save over 31 constructed register
+patterns twice per case in paired reports. The exact 48-byte write order
+preserves the source's duplicate R8 at offsets 0 and 4. The existing A186
+restore slice remains separate; natural task-switch reachability is unresolved.
+The A7D0 literal/JSR/delay-slot caller is now composed with A164 across 31
+patterns and two original instruction controls; execution stops at its actual
+callee return boundary. Natural boot reachability and task-frame lifetime
+remain unresolved.
+The AB78 caller path now composes its exact stack prologue and A164 call across
+31 additional constructed patterns, checking the frame at `0x060BDD7C`, its
+40-byte saved stack, and the A164 return boundary. Neither caller establishes
+natural task-switch behavior.
+
+Static follow-through also found a third caller at `0x0600AD26`: it derives a
+two-entry cache-through slot index from VBR, loads that frame pointer, and calls
+A164 with a 32-byte delay-slot advance. The bounded composed probe covers 31
+register patterns for each of two constructed VBR values, twice per case in
+paired reports, with two instruction mutation controls. The reports match at
+SHA-256 `573494700d714b29edbe46e31e19bd3ae54e3a5f9211a5fe7e2bb8e7feb16827`.
+The table contents, VBR values, task identity, and frame lifetime are
+constructed; natural task scheduling remains unproven. Failed harness attempts
+are retained in `execution-026` and `execution-027`.
+
+The AD38 continuation is now composed with the original A186 restore and
+epilogue. A164's zero result takes the restore branch; a constructed nonzero
+result skips it. Thirty-two branch/seed cases run twice per report, with two
+branch mutations. Paired reports match at SHA-256
+`85ec5602db6ad65b4411c34c430979ad38e57b03aa7f2c0dea73e93d39755f1d`.
+Natural scheduler reachability and context lifetime remain open.
+
+The original Japanese `0x06095C24` bounded word-insert helper is now tested
+across its five selector values found in the VDP setup callers. It covers 640
+constructed input/old-word combinations twice in paired original-byte reports,
+with two original-instruction mutations. It proves only the helper's bounded
+memory/register contract; VDP selector meaning and natural startup behavior
+remain unresolved. See the [Japanese kernel study](../research/2026-11-03-japan-record-address.md).
+
+Static continuation into Japanese startup entry A312 and nested A472/A638 now
+shows SR masking, VDP2 TVSTAT selection, BIOS interrupt calls, and later VDP1,
+SMPC and SCSP dependencies. Retained disassemblies and limits are recorded in
+the [Japanese kernel study](../research/2026-11-03-japan-record-address.md);
+this path needs an explicit device/runtime model before original execution.
+
+A bounded original-byte prefix now executes from A324 through the A472 TVSTAT
+branch and its two WorkRAM timing stores using explicit PAL/NTSC MMIO samples.
+Both status branches and the SR.T side effect repeat across paired reports, with
+TVSTAT semantics cross-checked against Yabause source. The constructed samples
+are not a natural device trace; the prefix stops before A472's BIOS services and
+A638 dependencies. See [the A472 timing result](../research/2026-11-04-japan-a472-tvstat-timing.md).
+
+Follow-through in the same Japan record path now also covers original AB30's
+18-record counter adjustment: 320 constructed cases twice per report with
+paired execution evidence. See the research note for its write contract and
+limits; the natural counter producer and timing remain open.
+
+The B150 main-loop continuation also includes a bounded B256 state clear helper,
+tested over 64 initial patterns in paired original-byte reports. Its six state
+fields' natural ownership and the surrounding BIOS/cache-through transitions
+remain open in the [Japan kernel study](../research/2026-11-03-japan-record-address.md).
+
+Its adjacent B272 state selector has also been exhaustively exercised across
+all 65,536 status words and all 65,536 returned-word patterns in paired original
+execution reports. Natural state ownership remains unresolved; see the same
+research note.
+
+The adjacent B3BC interrupt callback has a paired original-byte result for its
+one-word cache-through flag store. Its interrupt source and invocation timing
+remain open in the [Japan kernel study](../research/2026-11-03-japan-record-address.md).
+
+The A717C dispatch/DMA continuation composes original A6112, A5FC4, A600C,
+A595B6, A6100, A5F98, and the outer A717C return. It serializes and restores
+the exact intermediate CPU/stack state; the 23,328-case boundary pair and
+1,728-case full-return pair include call-site mutation controls. The A5F98
+longword is recorded as an associative-purge request, without claiming cache
+invalidation. Constructed MMIO/caller state does not establish natural callers,
+active DMA timing, hardware parity, or gameplay behavior. See the [A717C tail
+composition result](../research/2026-11-04-japan-a717c-a600c-tail-composition.md)
+and [full return result](../research/2026-11-04-japan-a717c-full-return.md).
+
+The adjacent A61B0 path now executes its first SYS_GETUINT call using the actual
+frame-1200 vector and table. Eight paired cases return `0x0600083C` through the
+captured runtime stub to `0x060A6224`; the following result store and SYS_GETSINT
+call remain open. The stub is identified as captured runtime bytes, not proven
+to be copied directly from BIOS ROM. See the [A61B0 runtime continuation
+result](../research/2026-11-04-japan-a61b0-getuint-runtime.md).
+
+The A472 continuation now executes both captured SYS_SETUINT calls and
+SYS_CHGSCUIM through original A4C2, immediately before the A638 call. Sixteen
+constructed TVSTAT/SR/register cases run twice in paired reports; service 64/65
+table stores, the retained SCU mask, and two MMIO write intents are checked.
+The final T flag is cleared by the setter stub and A4C2 removes the temporary
+interrupt mask. Captured runtime bytes and MMIO intents do not establish BIOS
+provenance or hardware behavior. See the [A472 service-call result](../research/2026-11-04-japan-a472-services.md).
+
+The adjacent A638 descriptor initializer and A5A2 halfword-copy helper now
+execute to the original RTS boundary. Two constructed R14/register cases each repeat
+the 96-byte descriptor setup and 48 VDP1 VRAM halfword write intents, with
+literal and VRAM-base mutation controls. VDP1 writes are recorded intents;
+the entry is direct and constructed, so natural A472 reachability and actual
+device effects remain open. See the [A638 VDP1 prefix result](../research/2026-11-04-japan-a638-vdp-init.md).
+
+The original A610 WorkRAM change poll now completes eight constructed sample
+sequences twice in paired reports, including repeated equal values and the
+signed halfword boundary. It reads the initial word once, spins until a
+different halfword appears, and performs no writes. Poll timing is an explicit
+input stream, not a natural trace; the composed A546 loop and its device helpers
+remain open. See the [A610 poll result](../research/2026-11-04-japan-a610-change-poll.md).
+
+The A78C tail-call path also executes the original A58E helper to clear 0x400
+bytes of SCSP RAM, producing 512 sequential halfword write intents in paired
+reports. Destination and size mutations are rejected. The stores are not SCSP
+device effects, and A546 reachability and audio output remain unverified. See
+the [A78C SCSP clear result](../research/2026-11-04-japan-a78c-scsp-clear.md).
+
+The A694 switch has paired original-byte evidence for all four selected R4
+modes and two register seeds. It covers SMPC commands 7 and 6, the mode-1 SCSP
+1 KiB fill and DSP setup stores, and the no-device-store default. Device
+operations remain write intents, with no protocol or audio claim. See the
+[A694 SMPC/SCSP result](../research/2026-11-04-japan-a694-smpc-scsp.md).
+
+The A680/A5B8 path executes 256 zero halfword stores to the captured
+0x25F00800 destination and updates the source pointer to 0x25F00A00. A Sega
+VDP2 manual address-map cross-check places that range in the Color RAM window;
+stores remain write intents, not device effects. Pointer and size mutations
+are rejected. See the [A680 VDP2 clear result](../research/2026-11-04-japan-a680-vdp2-clear.md).
+
+The A66C/A5CE path executes 32,768 zero longword write intents from the captured
+0x25E80000 pointer through 0x25E9FFFC for the original 0x1FFFC threshold, then
+updates B3D44 to 0x25EA0000. This inclusive loop bound was derived from the
+original compare and delay-slot increment after retaining the initial off-by-one
+failure. The intents do not establish hardware effects or A546 reachability.
+See the [A66C memory-clear result](../research/2026-11-04-japan-a66c-memory-clear.md).
+
+The A4C4/A638/A546 continuation now has paired bounded original-byte execution
+through four loop iterations and A714, stopping before A6D6. The captured
+B3D44/B3D48 pointers advance to 0x25F00000/0x25F01000; A610 input changes are
+explicit constructed samples. A638, A66C, A680, A694 and A714 device stores
+remain intents. See the [A546 loop-prefix result](../research/2026-11-04-japan-a546-loop-prefix.md).
+
+The Japan scheduler work now has paired original-byte evidence from AD60 through
+ACE8/A164/A186 to the captured AB94 resume target, plus a separate AE98
+VBR-selected row-store contract. The A208 caller and AE3A task-row loop have
+been executed through the first ACE8 edge for both VBR slots, then slot 0 has
+been composed in one CPU/memory run through ACE8/A164/A186 to the captured AB94
+resume target. The latter uses captured task cursor/table/context state and
+seeded remaining registers; AB94 itself is not executed in that prefix and this does not
+establish a complete natural scheduler cycle. A separate captured AB94-entry
+continuation executes AB30/A186, resumes at AD38, and reaches PC BCC80 after 461 instructions in each of four seeded/slot runs.
+R0-R7/VBR were constructed, and the captured WorkRAM word at BCC80 is zero
+while the kernel file has different bytes there; this is an unvalidated escape,
+not a confirmed dispatch. A caller-state follow-up records all registers at the
+A208→AB94 edge, replays its bounded writes/registers in a separate instance, then
+runs AB94/AB30 for 8191 instructions. Both seeded cases repeat through AC26–AC70
+and stop at budget PC AC46 before A186; all 18 row first words/+80 bytes are
+read, and none has first word 1. The R6/R7 seeds do not change this bounded
+path, and the ABCC mutation changes the boundary. A four-value row0 +80 matrix confirms states 1/3 restore the selected context
+to AD38/AE76, while state 2 reaches resident A8E8 bytes after 465 instructions;
+state 0 remains in the scan. These inputs are constructed. The state2 path was
+continued through original A8E8/A80E for 221 instructions, decremented the
+captured count 5→4, and reached ACE8; AACC was not entered. That follow-up also
+replays reports in a separate CPU. Same-instance composition and full scan
+completion remain open. See the [A8E8 continuation](../research/2026-11-04-japan-ab94-a8e8-continuation.md), [row eligibility cases](../research/2026-11-04-japan-ab94-row-scan-cases.md) and [caller-state AB94 result](../research/2026-11-04-japan-ab94-caller-context.md), [AD60/ACE8
+composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98
+store](../research/2026-11-04-japan-ae98-vbr-record-store.md), [A208/AE3A
+edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md), [same-instance AB94 resume](../research/2026-11-04-japan-a208-ae3a-ab94-resume.md), and
+[AB94 constructed-state escape](../research/2026-11-04-japan-ab94-ad38-return.md) results.
+
+The AB94 state2 A8E8 continuation now has a paired follow-up receipt with
+MACH/MACL/SR at ACE8. A separate paired ACE8 task-save probe executes 12
+original-byte runs per report across the ACE8/A164 prefix, A186 restore, and
+AD60→ACE8→A164→A186 composition, reaching the captured AB94 PR but stopping
+before AB94. Inputs remain constructed and natural task scheduling is
+unresolved. See the [A8E8/ACE8 continuation result](../research/2026-11-04-japan-ab94-a8e8-continuation.md).
+
+Static triage has also started on the Japan system-area bootstrap, a distinct
+original-code candidate from the resident KRNL. The first 16 track sectors
+reproduce the release system-area and header hashes; the receipt's boot-code
+extent hash is reproduced from file offset `0x100`. A 6,144-byte candidate IP
+view begins with an SH-2 prologue and exposes BIOS/VDP2/WorkRAM references;
+several static BSR targets and nine unresolved indirect JSR sites from the
+entry path are recorded. A later branch-delay audit corrected an unreachable
+BSRF false positive in the `0x06002594` linear listing. The load mapping and
+code/data boundaries are not runtime-validated, and no bootstrap instruction
+was executed. See the [Japan system-area triage](../research/2026-11-04-japan-system-area-static-triage.md).
+
+The existing Japan frame-1200 state also retains a resident copy at candidate
+`0x06002000`: 32,755/32,768 bytes match the original system area, including an
+exact 256-byte program window at candidate PC `0x06002100`. Thirteen differing
+bytes remain unclassified. Captured `SYS_SETUINT`/`SYS_CHGSCUIM` vector slots
+hold targets `0x06000794`/`0x060007C0`; their behavior and boot-time calls have
+not been traced. This supports residency, not instruction-execution coverage.
+
+The next bounded probe executes the captured original `SYS_SETUINT` bytes at
+`0x06000794` four times under constructed R4/R5 inputs. R5 zero selects the
+embedded default `0x0600083C`; nonzero R5 is stored directly. These runs include
+the RTS delay slot and stop after one exact vector-slot write. The captured
+caller and full BIOS contract remain open; see the
+[Japan BIOS SYS_SETUINT result](../research/2026-11-04-japan-bios-setuint-execution.md).
+The adjacent captured `SYS_CHGSCUIM` target at `0x060007C0` has now also been
+executed in four bounded constructed cases, covering both its signed and
+nonnegative low-word paths and its guarded SCU IMS writes. This remains an
+isolated helper result without a natural startup caller or device-timing proof;
+see the [Japan BIOS SYS_CHGSCUIM result](../research/2026-11-04-japan-bios-chgscuim-execution.md).
+
+The Japan scheduler path has now been continued in the same CPU and memory
+instance from A208 through AB94, AB30, the later A186 restore and AD38. Under
+constructed VBR slot 0, two seeded runs reach the repeated AC26–AC70 scan and
+stop at the 8,192-instruction bound. Their PC/read traces and write locations
+match; values in stack and task-table writes reflect the differing seed
+registers. The separate VBR slot 1 attempt remains guarded at an unapproved
+write to address 0x4. See the [same-instance AB94 result](../research/2026-11-04-japan-a208-ab94-same-instance.md).
+
+A direct-entry Japan F040 diagnostic now executes 1,024 original instructions
+per seed from the captured frame-1200 WorkRAM image, then stops in a repeated
+path at `0x0609DC7C`. Paired reports are byte-identical; no natural A20E caller
+or complete F040/F134/A946 contract is established. The prepared USA kernel
+probe was also rerun with its accepted 256-case output and mutation controls.
+See the [F040 diagnostic](../research/2026-11-04-japan-f040-entry-diagnostic.md).
+Full code and asset recovery remains open.

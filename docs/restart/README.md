@@ -135,3 +135,5 @@ These are implementation targets, not completed features; read live issue eviden
 
 Do not equate committed files, green tooling CI, a PNG count, or lack of newly
 observed frames with completion of a milestone.
+
+The [NLSND reset-marker phase result](research/2026-11-03-original-boot-gate.md) adds two fresh 8,200-case original CPU comparisons, eight successful register handoffs and 8,192 explicitly unfinished marker waits per run, plus 48 completed-handoff semantic mutation rejections. It does not establish natural loading, complete boot, audio or Godot parity.

@@ -25,7 +25,7 @@ does not block this coordinator.
 
 **Further VPS execution, 2 November:** the existing Codex app continued through
 original SH-2 bounds/accumulator functions and original68000 sound code. Resume
-the [current code660 checkpoint](saturn-code/VPS-CODE-660-CHECKPOINT.md),
+the [current code655 checkpoint](saturn-code/VPS-CODE-655-CHECKPOINT.md),
 which links source identities, actual execution evidence, retained private paths
 and the next command. Parser#609/PR611, reference-FIFO prefix#614/PR615,
 command-capture#617/PR618 and complete SND/XBSND setters#619/PR620 are merged.
@@ -80,7 +80,111 @@ and RTS/restore delays. Reference/disabled/enabled state/video/audio/input match
 exactly, both enabled trace pairs repeat and42 record-copy controls reject.
 Read the current checkpoint and [natural result](research/2026-11-02-first-task-natural-init.md):
 these boundaries do not complete internal library/device semantics. Continue
-broader96C60/9696C contracts and positive library/BIOS/callback dependencies.
+positive library/BIOS/callback dependencies. Broader96C60/9696C now has4,512
+constructed cases twice:3,364 complete returns and1,148 unfinished callback
+handoffs per run, with19 mutation-control combinations. Actual89C2 is a tail
+trampoline to293A4; its body is unresolved, not a substituted return. Retain the
+initial incorrect-callback-model failure. PR667 mergedb6a8e25 and bounded660
+closed;655 and the programme remain open. Status/callback PR669 then merged
+b161880 on3 November with exact13-check/current-base acceptance.96B9C selection
+and96BCE release now complete3,918 cases twice, with seven mutation-control
+combinations, an actual old128 refusal and matching natural95E5A projection.
+Keep the initial admission deferral and signed-negative count behavior explicit.
+Resume the current655 checkpoint for slot-result publication and real96D74/
+A5EEC/A681A/A56CA/A56D8 dependencies toward composed95E5A semantics.
+Slot PR689 is now accepted atf46ad9d. The context/index/caller probe at source
+a5a38d7 (10 owned/431 research tests) subsequently executed10,504 cases twice:
+10,294 complete returns and210 unfinished A681A handoffs per run, with23
+non-budget family/control rejections. All fourteen reports have identical
+per-family pairs. The initial index0 admission deferrals and live foreign
+exclusive reservation were preserved; normal admission resumed after legitimate
+release. The accepted128 guard remains unchanged, chosen budget64. Read the
+[setup result](research/2026-11-03-library-setup-contracts.md) and current655
+checkpoint. Continue full9410C/94268 arithmetic, A6DA6 format,A6FE0 context and
+A7F4E service dependencies toward A681A/96D74/95E5A. Do not count owned ISA/math
+development, prepared models or CI as additional original-game evidence.
+Setup PR691 subsequently merged72af05d with exact13-check/current-base
+acceptance. Original9410C quotient/94268 remainder/A6DA6 format now complete
+17,136 constructed cases per run twice, with identical paired reports and13
+non-budget mutation-control combinations. Source6705403 has9 owned/440 research
+tests. The unchanged128 guard, configured limits and private originals remain.
+The first storage preflight refusal executed zero original instructions; lossless
+own capture deduplication and clean research-worktree binary exclusions retained
+every capture path/hash and restored capacity without touching foreign data.
+Read [the arithmetic result](research/2026-11-03-library-arithmetic-contracts.md)
+and current655 checkpoint. Continue A6FE0/A7F4E through realA681A/96D74/95E5A;
+model-only development and static windows are not additional original executions.
+Original945B4/A77E0/A777E/A77B0 plusA6FE0 exhaustion/prefix now retain
+29,060 cases per run twice:27,764 complete returns and1,296 unfinished next-call
+handoffs, with23 non-budget controls. Read [the pool result](research/2026-11-03-library-pool-contracts.md)
+and current655 checkpoint; preserve all admission/storage deferrals. Separate
+composedA681A/96D74 source29d7bdb has7 owned/455 research tests, with its first
+guarded original batch pending acceptance. Do not count prepared models as new
+original execution. Arithmetic PR695 is now accepted at a3b765e after all15
+current-base checks, including the web owner696 repair. Retain its original
+browser failure/stale-base receipts. Publish dependent pool698 and composed699
+through their own exact-head/current-base gates;655 stays open.
+Pool PR698 is now accepted atbc0b8e2 with all15 current-base checks. Composed
+A681A/96D74 original results retain3,344 complete returns/run twice and12
+semantic controls; [PR699](https://github.com/elgansayer/Neptune-Bomberman/pull/699)
+carries that separate tested evidence and now targets main. Next95E5A source
+c31655e has8 owned/469 research tests and a guarded original batch in progress;
+inspect the current655 checkpoint and manifest before resuming. Do not count
+prepared models or partial runs as completed whole-function/programme recovery.
+Record PR699 subsequently merged7afac4c with15 exact-head/current-base checks
+and verified mergeparent/tree.95E5A then completed all eight original jobs:5,882 selected complete error
+returns/run twice, four identical raw/archive pairs and20 non-budget controls.
+Read [the result](research/2026-11-03-library-open-error-contracts.md) and current655
+checkpoint. Sourcec31655e had8 owned/469 research tests before originals. The
+constructed24-entry table/callbacknull/exhausted-context state does not recover
+success/null-table/services/callbacks. Continue95CBC source/natural header data,
+then those successful dependencies and further root/task/module code. Completed
+batch manifests must not be restarted or counted as new progress.
+Open-error PR700 merged9da6098 with15 exact-head/current-base checks. The next
+95158/A5676/95CBC batch now completes4,316 returns/run twice, four identical
+raw/archive pairs and16 controls at source70b90ef (8 focused/477 research tests).
+Read [the name result](research/2026-11-03-library-name-contracts.md) and checkpoint.
+Preserve the initial missing bound0-control failure; corrected coverage is explicit.
+The retained natural header separates16 slots/32 capacity/26 populated entries;
+its index25 lookup boundary and later-state table projection are distinct evidence.
+Continue95D34/95D9C/949E0 record access and successful context/service dependencies.
+Do not resume completed manifests or mark the all-code programme complete.
+Name PR701 mergedd6cf5b3 with all15 exact-head/current-base checks. Further
+949E0/95D34/95D9C record access now completes13,936 returns/run twice, three
+identical raw/archive pairs and11 controls, with7 focused/484 research tests.
+Read [the record-access result](research/2026-11-03-library-record-access-contracts.md)
+and current655 checkpoint.95D9C's mode1/other-mode rule differs from95E5A;
+retain those distinct contracts. Continue actualA780A/A7BB0/A85E4/A805C service
+and cleanup dependencies; prepared static windows are not additional execution.
+Record-access PR702 merged0911981 with all15 exact-head/currentbase checks.
+FurtherA81FE/A7C20/A7BB0 original results retain3,288 complete returns and144
+unfinished A85E4 handoffs/run twice, three identical raw/archive pairs and10
+controls. Sourcee42f90b had7 focused/491 research tests. Read
+[the request-state result](research/2026-11-03-library-request-state-contracts.md)
+and current655 checkpoint; pending service linkage is not successful execution.
+Continue A85E4/AE676/AE908/A4FAC, A8C10/9546E and real cleanup/device dependencies,
+then further functions/modules. Old128 guard and configured limits remain.
+Request-state PR704 merged9be7645 with15 exact-head/currentbase checks. Further
+AE676/AE908 command packing through realA4FAC/A4FBE now retains9,152 pending-boundary
+cases/run twice, four identical raw/archive pairs and24 controls at source620a4e8
+(7 focused/498 research tests). Read [the packing result](research/2026-11-03-cd-command-packing-contracts.md)
+and current655 checkpoint. These are unfinished services, not complete returns.
+The next actualdevice read is959DE using25890008. Continue trusted native
+observation/realdevice semantics, successful library services and further modules;
+no flatRAM, fabricatedresponse or callee success. Preserve NLSND703/PR705 ownership.
+Commandpacking PR706 mergedf734628 after all15 exact-head/currentbase checks.
+Native observer707 passed exact-head provisioning41648585340 and native checks plus
+aggregate gate41648585631. Its separate matched core passed actual no-media ABI/fence
+smoke; verified CI artifact transfer and two guarded local cache reuses retain the
+same binary hash. A guarded reference continuation reached frame1800; two identical
+observer runs then executed600 original frames but overflowed at129 real CD word
+transfers before a complete root. The retained128 events include46 reads of25890008
+returning0BC1 at060958EC. Two reference and two observer-disabled600-frame controls matched the enabled run hashes. Adjacent060958EC read and06095904 write leaves now have three-instruction isolated CPU contracts over original source and actually observed words. The original06095A84 poll helper reproduces three natural eight-read success paths (bit0 clear seven times, then set), returning0 and storing the final word in77 CPU steps. Its BSR/delay-slot caller at06095A3E is linked by the retained PR, and natural records link service entry06095992 through060959CA to the poll helper. The outer return and timeout path remain open. The adjacent packet writer06095AB4 also replays three retained four-word transfer sequences through13 original SH-2 instructions; its BSR at06095A36 matches recordedPR06095A3A. Source words are reconstructed from captured output transfers, so this does not independently validate the caller buffer. A neighboring06095ACE snapshot helper also reproduces three natural four-register reads/stores and returns the fourth word in12 steps. The fixed profile2 path now has two reference controls, two observer-disabled controls and two enabled original runs, all from frame1800 with the same eight-frame Start pulse and each executing600 original frames. Reference/disabled controls succeeded; all six runs have identical frame (`56f7f663f4c9efad393cee9edaad972cd04bd6c792aa4a3d9434db284730a5cc`), video (`0939dcfcc86c6faae671b242573817477a7015acf574a5d829e5d1153fbe5e6e`), audio (`eafc18cc2ff4305e000446326d97be2a3b884cf8b114ec1ecf794d626a3b393d`) and final-state (`207d3e58bbb24ad85791c131a91b3903ee0419242ff2988e446715fd0e252802`) hashes. Both enabled profile2 traces overflow at transfer129 with128 records and no root; their complete record arrays and status are identical. The normalized profile1/profile2 comparison also matches all128 records and these four outputs, so changing profiles does not avoid this polling overflow. Guarded profile2 receipt `/home/dev/neptune-research-private/707/profile2-validation/supervisor.json` (SHA256`c67e34cfd5f8cfc8703db34dcf958e629a1c77d4f1054932241a61cd31fb046b`); original captures and the pairwise profile1/profile2 receipt remain under `/home/dev/neptune-research-private/707/`. No command root was accepted. ABI v2 now keeps the native cap at128 storage slots while losslessly encoding consecutive transfer records when sequence, timestamp and register values follow exact integer steps and every other captured field is identical; otherwise a new slot is required. The exported trace carries the repeat count, timestamp step and per-register steps, so each original event is reconstructible and counted. A check of the retained original capture found40 consecutive reads (sequences88–127) at060958EC/25890008, all0BC1, with timestamp step33 and only R14 changing by+1; this group can occupy one slot and preserve all40 observations. Private evidence:`/home/dev/neptune-research-private/707/lossless-repeat-candidate.json` (SHA256`3222b7f495d1273e1dc47db10ac2bf666ec8b02aa8a51cd30c10725012fc7be9`). A compiled owned C fixture covers the same timestamp/R14 progression, decoder reconstruction and unchanged128-slot overflow fence; the focused10-test suite passed. ABI v2 has not yet been rebuilt into a matched core or run against the game; exact-head CI and fresh original windows remain necessary.
+Read the current checkpoint and COMMAND_TRACING.md:
+load/compare/branch fusion requires observing actual transfer values without extra
+busreads or changing fusion. Continue reference/disabled/enabled
+original validation; preserve all owners,
+oldgenerations and configured limits. Programme remains active and incomplete.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The

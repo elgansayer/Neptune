@@ -12,6 +12,9 @@ def run_capacity_checks(base, env, evidence, bounded):
     for name, humans, bots, preset, auto_fill in [("twelve", 12, 0, 12, False),
                                        ("mixed", 6, 6, 12, False),
                                        ("preset-four", 4, 0, 4, False),
+                                       ("default-fill-four", 1, 3, 4, True),
+                                       ("default-fill-two", 1, 1, 2, True),
+                                       ("explicit-no-fill", 2, 0, 2, False),
                                        ("auto-fill-four", 1, 3, 4, True),
                                        ("auto-fill-twelve", 2, 10, 12, True),
                                        ("standard-arena", 2, 2, 4, True),
@@ -60,8 +63,12 @@ def run_capacity_checks(base, env, evidence, bounded):
             options.append("--room-arena=" + entry["id"])
         else:
             options.append("--room-map=res://maps/" + map_name + ".json")
-        if auto_fill:
+        default_fill = name.startswith("default-fill-")
+        personality = "BALANCED" if default_fill else "DEFENSIVE"
+        if auto_fill and not default_fill:
             options += ["--room-fill-to=" + str(seats), "--room-bot-personality=DEFENSIVE"]
+        elif not auto_fill:
+            options.append("--room-fill-to=0")
         command = base + ["res://main_server.tscn", "--", *options]
         server_log = evidence / ("room-" + name + "-server.log")
         with server_log.open("w") as output:
@@ -82,7 +89,8 @@ def run_capacity_checks(base, env, evidence, bounded):
                                   "--probe-humans=" + str(humans), "--probe-bots=" + str(bots),
                                   "--probe-preset=" + str(preset),
                                   "--probe-map-width=" + str(width), "--probe-map-height=" + str(height)]
-                if auto_fill: command.append("--probe-auto-fill")
+                if auto_fill:
+                    command += ["--probe-auto-fill", "--probe-personality=" + personality]
                 if expected_content:
                     command.append("--probe-content-json=" + json.dumps(expected_content, separators=(",", ":")))
                     command.append("--probe-lock-json=" + lock_json)
@@ -93,7 +101,8 @@ def run_capacity_checks(base, env, evidence, bounded):
                            if line.startswith("NEPTUNE_ROOM_CAPACITY=")]
                 expected = {"seats": seats, "humans": humans, "bots": bots,
                             "preset_limit": preset, "protocol_limit": 12,
-                            "accepted": humans, "refused": 1, "snapshots": humans, "maps": humans, "active": True}
+                            "accepted": humans, "refused": 0 if bots else 1,
+                            "spectators": 1 if bots else 0, "snapshots": humans, "maps": humans, "active": True}
                 if auto_fill: expected["auto_fill"] = True
                 if expected_content:
                     expected.update(content=expected_content, selection=identities,
@@ -102,12 +111,12 @@ def run_capacity_checks(base, env, evidence, bounded):
                 policy = receipt.pop("bot_policy", "")
                 seed = receipt.pop("bot_policy_seed", "")
                 if (code or ERROR.search(text) or len(markers) != 1 or receipt != expected
-                        or policy != "neptune-heuristic-rng-v1" or not isinstance(seed, str)
+                        or policy != "neptune-heuristic-v3" or not isinstance(seed, str)
                         or not seed.lstrip("-").isdigit()):
                     raise SystemExit("FAIL: real room " + name + "; inspect client/server evidence")
                 text = ANSI.sub("", server_log.read_text())
                 if (ERROR.search(text) or text.count("[Server] Peer connected:") != humans + 1
-                        or text.count("[Server] Player admission refused: room_full") != 1
+                        or text.count("[Server] Player admission refused: room_full") != (0 if bots else 1)
                         or text.count("Match started! Countdown complete.") != 1):
                     raise SystemExit("FAIL: server capacity/admission evidence for " + name)
                 if auto_fill and "requested bot (" in text:

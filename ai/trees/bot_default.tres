@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=55 format=3 uid="uid://chqxceh757yg0"]
+[gd_resource type="BehaviorTree" load_steps=69 format=3 uid="uid://chqxceh757yg0"]
 
 [ext_resource type="Script" uid="uid://brcc1oikd2nui" path="res://ai/tasks/conditions/bt_is_in_danger.gd" id="1_danger"]
 [ext_resource type="Script" uid="uid://3btukveudf74" path="res://ai/tasks/actions/bt_find_escape_route.gd" id="2_escape"]
@@ -16,6 +16,14 @@
 [ext_resource type="Script" path="res://ai/tasks/conditions/bt_can_place_bomb.gd" id="16_can_bomb"]
 [ext_resource type="Script" path="res://ai/tasks/actions/bt_defensive_kick.gd" id="17_def_kick"]
 [ext_resource type="Script" path="res://ai/tasks/actions/bt_throw_bomb.gd" id="18_throw_bomb"]
+[ext_resource type="Script" path="res://ai/tasks/actions/bt_wait_for_decision.gd" id="19_decision_wait"]
+[ext_resource type="Script" path="res://ai/tasks/actions/bt_kick_bomb.gd" id="20_kick_bomb"]
+
+[ext_resource type="Script" path="res://ai/tasks/actions/bt_detonate_remote.gd" id="21_remote"]
+
+[sub_resource type="BTAction" id="BTAction_remote"]
+custom_name = "Detonate Own Remote From Refuge"
+script = ExtResource("21_remote")
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_bot"]
 var/target_cell/name = &"target_cell"
@@ -71,6 +79,16 @@ min_kick_distance = 2
 custom_name = "Defensive Kick Escape"
 children = [SubResource("BTCondition_danger_for_kick"), SubResource("BTAction_defensive_kick")]
 
+[sub_resource type="BTAction" id="BTAction_aimed_kick"]
+custom_name = "Kick Threat Toward Opponent"
+script = ExtResource("20_kick_bomb")
+confirm_contact = true
+require_direct_threat = true
+
+[sub_resource type="BTSequence" id="BTSequence_aimed_kick"]
+custom_name = "Aimed Kick Escape"
+children = [SubResource("BTCondition_danger_for_kick"), SubResource("BTAction_aimed_kick")]
+
 [sub_resource type="BTCondition" id="BTCondition_escape_check"]
 custom_name = "Check Danger"
 script = ExtResource("1_danger")
@@ -93,7 +111,7 @@ children = [SubResource("BTCondition_escape_check"), SubResource("BTAction_escap
 
 [sub_resource type="BTSelector" id="BTSelector_escape"]
 custom_name = "Escape Strategy Selector"
-children = [SubResource("BTSequence_rubber_escape"), SubResource("BTSequence_defensive_kick"), SubResource("BTSequence_normal_escape")]
+children = [SubResource("BTSequence_rubber_escape"), SubResource("BTSequence_aimed_kick"), SubResource("BTSequence_defensive_kick"), SubResource("BTSequence_normal_escape")]
 
 [sub_resource type="BTCondition" id="BTCondition_has_opponent"]
 custom_name = "Has Opponent?"
@@ -127,9 +145,16 @@ target_cell_var = &"tactic_target_cell"
 custom_name = "Throw Bomb At Opponent"
 script = ExtResource("18_throw_bomb")
 
+[sub_resource type="BTAction" id="BTAction_kick_bomb"]
+custom_name = "Kick Bomb At Opponent"
+script = ExtResource("20_kick_bomb")
+confirm_contact = true
+require_tactic = true
+require_direct_threat = true
+
 [sub_resource type="BTSelector" id="BTSelector_tactic_action"]
 custom_name = "Execute Tactic Action"
-children = [SubResource("BTAction_throw_bomb"), SubResource("BTAction_place_tactical_bomb")]
+children = [SubResource("BTAction_kick_bomb"), SubResource("BTAction_throw_bomb"), SubResource("BTAction_place_tactical_bomb")]
 
 [sub_resource type="BTSequence" id="BTSequence_tactical_execution"]
 custom_name = "Tactical Execution Sequence"
@@ -221,8 +246,25 @@ script = ExtResource("9_ambush")
 wait_time = 2.0
 prefer_center = false
 
-[sub_resource type="BTSelector" id="BTSelector_root"]
-children = [SubResource("BTSelector_escape"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_farming"), SubResource("BTAction_ambush")]
+[sub_resource type="BTAction" id="BTAction_decision_wait"]
+custom_name = "React Before Selecting A New Goal"
+script = ExtResource("19_decision_wait")
+
+[sub_resource type="BTSelector" id="BTSelector_objectives"]
+children = [SubResource("BTAction_remote"), SubResource("BTSequence_attack"), SubResource("BTSequence_collect"), SubResource("BTSequence_farming"), SubResource("BTAction_ambush")]
+
+[sub_resource type="BTSequence" id="BTSequence_intentional"]
+custom_name = "Strategic Decision And Execution"
+children = [SubResource("BTAction_decision_wait"), SubResource("BTSelector_objectives")]
+
+[sub_resource type="BTAction" id="BTAction_throw_recovery"]
+custom_name = "Safely Complete An Already Carried Throw"
+script = ExtResource("18_throw_bomb")
+recovery_only = true
+
+[sub_resource type="BTDynamicSelector" id="BTSelector_root"]
+custom_name = "Immediate Hazard Reflex Before Strategic Goals"
+children = [SubResource("BTAction_throw_recovery"), SubResource("BTSelector_escape"), SubResource("BTSequence_intentional")]
 
 [sub_resource type="BTRepeatUntilFailure" id="BTRepeatUntilFailure_loop"]
 custom_name = "Continuous Loop"

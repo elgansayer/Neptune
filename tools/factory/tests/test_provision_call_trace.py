@@ -96,6 +96,46 @@ class ObserverTests(unittest.TestCase):
         self.assertEqual(after["macl"], 0x12345678)
         self.assertEqual(result["status"]["master_dispatches"], 15)
 
+    def test_rng_entry_uses_its_inspected_rts_nop_delay_and_restored_context(self):
+        self.binding.start(1, entry=trace.RNG_ENTRY)
+        self.binding.frame(30360)
+        self.step(trace.RNG_ENTRY + 4, 0x4F22)
+        for _ in range(20):
+            self.step(trace.RNG_ENTRY + 6)
+        self.step(0x0600A10E, 0x000B)
+        self.step(self.state.pr + 2, 0x0009, delay=True)
+        self.step(self.state.pr + 4)
+        result = self.binding.finish()
+        self.assertEqual(result["entry"], "0x0600a0ec")
+        before, after = result["records"]
+        self.assertEqual((before["pc"], before["opcode"]), (trace.RNG_ENTRY, 0x4F22))
+        self.assertEqual(after["pc"], before["pr"])
+        self.assertEqual(after["r"][15], before["r"][15])
+        self.assertEqual(after["mach"], before["mach"])
+
+    def test_rng_entry_rejects_wrong_rts_delay_or_unrestored_stack(self):
+        self.binding.start(1, entry=trace.RNG_ENTRY)
+        self.binding.frame(0)
+        self.step(trace.RNG_ENTRY + 4, 0x4F22)
+        self.step(0x0600A10E, 0x000B)
+        self.step(self.state.pr + 2, 0x4F16, delay=True)
+        self.step(self.state.pr + 4)
+        with self.assertRaises(ValueError):
+            self.binding.finish()
+        self.setUp()
+        self.binding.start(1, entry=trace.RNG_ENTRY)
+        self.binding.frame(0)
+        self.step(trace.RNG_ENTRY + 4, 0x4F22)
+        self.step(0x0600A10E, 0x000B)
+        self.step(self.state.pr + 2, 0x0009, delay=True)
+        self.step(self.state.pr + 4)
+        status = self.binding.status()
+        records = (trace.Record * trace.CAPACITY)()
+        self.dll.neptune_call_records(records, trace.CAPACITY)
+        records[1].r[15] -= 4
+        with self.assertRaises(ValueError):
+            trace.validate(list(records)[:2], status, trace.RNG_ENTRY)
+
     def test_dispatch_coverage_distinguishes_empty_execution_and_counter_overflow(self):
         self.binding.start(1)
         self.binding.frame(0)
@@ -117,6 +157,7 @@ class ObserverTests(unittest.TestCase):
         result = trace.probe_library(Path(self.temp.name) / "observer.so")
         self.assertEqual(result["record_bytes"], 120)
         self.assertTrue(result["rejected_invalid_entry_budget_and_frame"])
+        self.assertEqual(result["accepted_inspected_entries"], ["0x0600b934", "0x0600a0ec"])
         self.assertIn("no media", result["scope"])
 
     def test_delay_and_exception_pseudo_ops_cannot_create_false_entries(self):
@@ -232,5 +273,6 @@ class PatchTests(unittest.TestCase):
                 self.assertEqual((root / "mednafen/ss/sh7095.inc").read_bytes().count(b"neptune_call_step(z);"), 2)
                 self.assertIn(b"neptune_call_records;", (root / "link.T").read_bytes())
                 self.assertEqual(result["maximum_pairs"], 64)
+                self.assertEqual(result["supported_entries"], ["0x0600b934", "0x0600a0ec"])
                 with self.assertRaises(ValueError):
                     preparation.prepare(root)

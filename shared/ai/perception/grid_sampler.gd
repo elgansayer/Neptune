@@ -3,12 +3,16 @@ class_name GridSampler
 
 ## Provides tile/world conversions plus walkability + occupancy info from the live GameInstance.
 
+var debug_logging := false
 var navigation_region: NavigationRegion2D
 var tile_size := 16.0  # Saturn Bomberman native
 
 var _game_instance: Node
 var _map_size := Vector2i.ZERO
-var _astar: AStarGrid2D
+const TimedPathfinder = preload("res://shared/ai/pathfinding/danger_aware_astar.gd")
+
+var _astar: DangerAwareAStar
+var _last_timed_route: Dictionary = {}
 
 func configure(instance: Node, region: NavigationRegion2D = null, new_tile_size: float = GameConfig.TILE_SIZE) -> void:
 	_game_instance = instance
@@ -24,7 +28,7 @@ func _update_map_size() -> void:
 			_init_astar()
 
 func _init_astar() -> void:
-	_astar = AStarGrid2D.new()
+	_astar = TimedPathfinder.new()
 	_astar.region = Rect2i(0, 0, _map_size.x, _map_size.y)
 	_astar.cell_size = Vector2(tile_size, tile_size)
 	_astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
@@ -103,8 +107,9 @@ func get_cardinal_neighbors(tile_position: Vector2i) -> Array[Vector2i]:
 	return neighbors
 
 
-func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, ignore_player: Node = null, avoid_threats: bool = false) -> Array[Vector2i]:
-	if start_tile == goal_tile:
+func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, ignore_player: Node = null, avoid_threats: bool = false, current_time_msec: float = -INF, msec_per_tile: float = 200.0, safe_goals: Dictionary = {}) -> Array[Vector2i]:
+	_last_timed_route = {"status": "unreachable", "cells": [], "arrivals": [], "departures": [], "expanded": 0}
+	if start_tile == goal_tile and safe_goals.is_empty():
 		return []
 		
 	if _astar == null or _map_size == Vector2i.ZERO:
@@ -141,7 +146,7 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 			# Players may overlap during movement. Occupancy cannot prevent
 			# departure from the current tile: Godot 4.7 rejects solid starts.
 			# Static terrain remains solid from the map pass above.
-			if is_in_bounds(p_pos) and p_pos != start_tile and p_pos != goal_tile:
+			if is_in_bounds(p_pos) and p_pos != start_tile and (p_pos != goal_tile or current_time_msec != -INF):
 				_astar.set_point_solid(p_pos, true)
 	
 	
@@ -153,12 +158,12 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 			if is_instance_valid(bomb) and not bomb.has_exploded:
 				var bomb_tile = bomb.get_tile_position()
 				# Allow walking through start tile (might be own bomb) and goal tile
-				if bomb_tile != start_tile and bomb_tile != goal_tile:
+				if bomb_tile != start_tile and (bomb_tile != goal_tile or current_time_msec != -INF):
 					if is_in_bounds(bomb_tile):
 						_astar.set_point_solid(bomb_tile, true)
 	
 	# 4. Mark threats if requested
-	if avoid_threats and _game_instance.ai_manager:
+	if avoid_threats and current_time_msec == -INF and _game_instance.ai_manager:
 		var threat_matrix = _game_instance.ai_manager.get_current_threat_matrix()
 		for tile_key in threat_matrix:
 			var parts = tile_key.split(",")
@@ -171,23 +176,58 @@ func find_path(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int = 30, i
 						_astar.set_point_solid(tile, true)
 	
 	# 4. Get the path
-	var path = _astar.get_id_path(start_tile, goal_tile)
+	var path: Array[Vector2i]
+	if current_time_msec != -INF:
+		_astar.threat_matrix_ref = _game_instance.ai_manager.get_current_threat_matrix() if _game_instance.ai_manager else {}
+		_astar.use_hazard_intervals = _game_instance.ai_manager != null and "hazard_intervals" in _game_instance.ai_manager
+		_astar.hazard_intervals_ref = _game_instance.ai_manager.hazard_intervals if _astar.use_hazard_intervals else {}
+		_astar.allow_wait = not is_instance_valid(ignore_player) or ignore_player.active_virus != ServerPlayer.VirusType.UNSTOPPABLE
+		_astar.use_start_world_position = is_instance_valid(ignore_player) and ignore_player.get_tile_position() == start_tile
+		if _astar.use_start_world_position:
+			_astar.start_world_position = ignore_player.position
+		_astar.path_start_time_msec = current_time_msec
+		_astar.bot_speed_msec_per_tile = msec_per_tile
+		_last_timed_route = _astar.get_timed_route(start_tile, goal_tile, max_depth, safe_goals, not safe_goals.is_empty())
+		path.assign(_last_timed_route.cells)
+	else:
+		path = _astar.get_id_path(start_tile, goal_tile)
 	
 	# DEBUG: If path is empty, check why
-	if path.is_empty() and start_tile != goal_tile:
+	if debug_logging and path.is_empty() and start_tile != goal_tile:
 		var start_solid = _astar.is_point_solid(start_tile)
 		var goal_solid = _astar.is_point_solid(goal_tile)
 		if start_solid or goal_solid:
 			print("[GridSampler] Path FAILED: start_solid=", start_solid, " goal_solid=", goal_solid, " start=", start_tile, " goal=", goal_tile)
 	
-	print("[GridSampler] Path from ", start_tile, " to ", goal_tile, ": ", path)
+	if debug_logging:
+		print("[GridSampler] Path from ", start_tile, " to ", goal_tile, ": ", path)
 	
 	# AStarGrid2D returns path including start point.
 	# Remove the start point since we're already there
 	if path.size() > 0 and path[0] == start_tile:
 		path.remove_at(0)
+		if not _last_timed_route.cells.is_empty():
+			_last_timed_route.cells.remove_at(0)
+			_last_timed_route.arrivals.remove_at(0)
+			_last_timed_route.departures.remove_at(0)
 	
 	return path
+
+func find_timed_route(start_tile: Vector2i, goal_tile: Vector2i, max_depth: int, ignore_player: Node, current_time_msec: float, msec_per_tile: float) -> Dictionary:
+	find_path(start_tile, goal_tile, max_depth, ignore_player, false, current_time_msec, msec_per_tile)
+	return _last_timed_route.duplicate(true)
+
+func find_timed_escape_route(start_tile: Vector2i, max_depth: int, ignore_player: Node, current_time_msec: float, msec_per_tile: float) -> Dictionary:
+	var goals := {}
+	for x in range(_map_size.x):
+		for y in range(_map_size.y):
+			var cell := Vector2i(x, y)
+			if cell != start_tile and get_manhattan_distance(start_tile, cell) <= max_depth and is_tile_safe_for_target(cell):
+				goals[cell] = true
+	if goals.is_empty():
+		return {"status": "unreachable", "cells": [], "arrivals": [], "departures": [], "expanded": 0}
+	find_path(start_tile, start_tile, max_depth, ignore_player, false, current_time_msec, msec_per_tile, goals)
+	return _last_timed_route.duplicate(true)
 
 func get_manhattan_distance(a: Vector2i, b: Vector2i) -> int:
 	return abs(a.x - b.x) + abs(a.y - b.y)

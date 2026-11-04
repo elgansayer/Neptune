@@ -27,8 +27,14 @@ static func parse_arguments(arguments: Array, scene: String = "", default_transp
 	var room_map := ""
 	var room_pack_paths: Array = []
 	var room_arena := ""
-	var fill_to := 0
+	# Casual quick-start rooms have opponents without a debug spawn command.
+	# Resolve the omitted target against the selected map's capacity on authority.
+	var fill_to := 4
 	var bot_personality := "BALANCED"
+	# Trusted casual demo configuration; these are Neptune development timings.
+	var room_duration := 180
+	var room_countdown := 3
+	var room_intermission := 5
 	var room_options := {}
 	for arg in arguments:
 		if not arg is String:
@@ -46,12 +52,20 @@ static func parse_arguments(arguments: Array, scene: String = "", default_transp
 				return {"error": "Too many --room-pack manifests; maximum is 32"}
 			room_pack_paths.append(path)
 			continue
-		if option in ["--room-seats", "--room-preset-limit", "--room-map", "--room-fill-to", "--room-bot-personality", "--room-arena"]:
+		if option in ["--room-seats", "--room-preset-limit", "--room-map", "--room-fill-to", "--room-bot-personality", "--room-arena", "--room-duration", "--room-countdown", "--room-intermission"]:
 			if not "=" in arg or room_options.has(option):
 				return {"error": "Duplicate or missing value for " + option}
 			room_options[option] = true
 			var value: String = arg.substr(option.length() + 1)
-			if option == "--room-arena":
+			if option in ["--room-duration", "--room-countdown", "--room-intermission"]:
+				var maximum := 3600 if option == "--room-duration" else (30 if option == "--room-countdown" else 60)
+				# Bound text before conversion: Godot logs an engine error on integer overflow.
+				if value.length() > 8 or not value.is_valid_int() or value.to_int() < 1 or value.to_int() > maximum:
+					return {"error": "Invalid " + option + "; use whole simulation seconds 1.." + str(maximum)}
+				if option == "--room-duration": room_duration = value.to_int()
+				elif option == "--room-countdown": room_countdown = value.to_int()
+				else: room_intermission = value.to_int()
+			elif option == "--room-arena":
 				if not _valid_content_id(value):
 					return {"error": "Invalid --room-arena; use a namespaced namespace:name identifier"}
 				room_arena = value
@@ -105,7 +119,7 @@ static func parse_arguments(arguments: Array, scene: String = "", default_transp
 		return {"error": "--room-pack and --room-arena must be supplied together"}
 	if not room_pack_paths.is_empty() and not room_map.is_empty():
 		return {"error": "Choose --room-map or --room-pack/--room-arena, not both"}
-	return {"role": role, "port": port, "transport": transport, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack_paths": room_pack_paths, "room_arena": room_arena, "room_fill_to": fill_to, "room_bot_personality": bot_personality, "error": ""}
+	return {"role": role, "port": port, "transport": transport, "room_seats": room_seats, "room_preset_limit": preset_limit, "room_map": room_map, "room_pack_paths": room_pack_paths, "room_arena": room_arena, "room_fill_to": fill_to, "room_fill_default": not room_options.has("--room-fill-to"), "room_bot_personality": bot_personality, "room_duration": room_duration, "room_countdown": room_countdown, "room_intermission": room_intermission, "error": ""}
 
 static func _valid_pack_manifest_path(path: String) -> bool:
 	return preload("res://shared/content/pack_manifest.gd").valid_manifest_path(path)

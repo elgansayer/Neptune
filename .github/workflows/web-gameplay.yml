@@ -1,0 +1,103 @@
+name: Exported web gameplay
+
+on:
+  workflow_call:
+    inputs:
+      retain_images:
+        type: boolean
+        default: false
+    outputs:
+      revision:
+        value: ${{ jobs.gameplay.outputs.revision }}
+
+permissions:
+  contents: read
+
+jobs:
+  gameplay:
+    name: Exported Godot browser and authority
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    outputs:
+      revision: ${{ steps.source.outputs.revision }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - name: Bind the actual checked source
+        id: source
+        run: echo "revision=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Install pinned Godot and matching export templates
+        run: |
+          python3 tools/godot/install.py --directory "$RUNNER_TEMP/godot"
+          python3 tools/godot/install_templates.py --directory "$HOME/.local/share/godot/export_templates"
+          python3 -c 'import json; print("GODOT_BINARY=" + json.load(open("tools/godot/toolchain.json"))["binary_name"])' >> "$GITHUB_ENV"
+      - name: Verify transport and release provenance contracts
+        run: |
+          node deploy/web/smoke.test.mjs
+          python3 deploy/web/test_release.py
+          "$RUNNER_TEMP/godot/$GODOT_BINARY" --headless --path . --editor --import --quit
+          bash run_bot_tests.sh --godot "$RUNNER_TEMP/godot/$GODOT_BINARY" --run-specific test_web_transport
+      - name: Export the same real client and dedicated server
+        run: python3 deploy/web/export.py --godot "$RUNNER_TEMP/godot/$GODOT_BINARY"
+      - name: Build the candidate image pair
+        run: |
+          docker build --build-arg SOURCE_REVISION="$GITHUB_SHA" -f deploy/web/Dockerfile -t neptune-web-candidate .
+          docker build --build-arg SOURCE_REVISION="$GITHUB_SHA" -f deploy/web/Dockerfile.server -t neptune-server-candidate .
+      - name: Exercise real repeated-round browser gameplay
+        env:
+          SMOKE_EXPECT_REVISION: ${{ steps.source.outputs.revision }}
+          SMOKE_EXPECT_DURATION: '60'
+          SMOKE_EXPECT_COUNTDOWN: '3'
+          SMOKE_EXPECT_INTERMISSION: '1'
+        run: |
+          docker network create neptune-smoke
+          docker run -d --name server-candidate --network neptune-smoke --network-alias server neptune-server-candidate --room-duration=60 --room-countdown=3 --room-intermission=1
+          docker run -d --name web-candidate --network neptune-smoke -p 127.0.0.1:8765:80 neptune-web-candidate
+          mkdir -p "$RUNNER_TEMP/web-smoke"
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8765/healthz; then break; fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:8765/healthz
+          cp deploy/web/*.mjs "$RUNNER_TEMP/web-smoke/"
+          cd "$RUNNER_TEMP/web-smoke"
+          npm install --no-save playwright@1.64.1
+          npx playwright install --with-deps chromium
+          node smoke_evidence.test.mjs
+          node smoke.mjs
+      - name: Collect and reject engine or script failures
+        if: always()
+        run: |
+          mkdir -p "$RUNNER_TEMP/web-smoke"
+          docker logs server-candidate > "$RUNNER_TEMP/web-smoke/server.log" 2>&1 || true
+          docker logs web-candidate > "$RUNNER_TEMP/web-smoke/web.log" 2>&1 || true
+          python3 - "$RUNNER_TEMP/web-smoke/server.log" <<'PY'
+          import pathlib, re, sys
+          log = pathlib.Path(sys.argv[1]).read_text()
+          if not log.strip() or re.search(r'SCRIPT ERROR:|Parse Error:|Failed to load script|ERROR:|query.*flush', log, re.I):
+              raise SystemExit('Authoritative engine log is empty or contains errors; inspect retained diagnostics')
+          PY
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: always()
+        with:
+          name: web-gameplay-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/web-smoke/web-smoke-evidence
+            ${{ runner.temp }}/web-smoke/server.log
+            ${{ runner.temp }}/web-smoke/web.log
+          if-no-files-found: error
+          retention-days: 14
+      - name: Preserve only the tested pair for publication
+        if: inputs.retain_images
+        run: |
+          mkdir -p "$RUNNER_TEMP/tested-pair"
+          docker save neptune-web-candidate neptune-server-candidate | gzip > "$RUNNER_TEMP/tested-pair/images.tar.gz"
+          cp build/web/release.json "$RUNNER_TEMP/tested-pair/release.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        if: inputs.retain_images
+        with:
+          name: web-tested-pair-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/tested-pair
+          if-no-files-found: error
+          retention-days: 3

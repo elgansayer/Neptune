@@ -120,14 +120,16 @@ CI/source/test receipts:`/home/dev/neptune-evidence/code660-20261102/`.
 
 ## Next: publish and recover remaining semantics
 
-Commit/push the driver/report/evidence PR against current main, inspect exact-head
-checks and strict current-base applicability, merge when eligible, then reconcile
-660's observational scope. All six preparation children can skip only with explicit
-non-applicability proof for this driver/docs-only diff; both required aggregates
-and all other applicable checks must pass. Keep655 open for complete semantics.
-Next bounded source work: broaden96C60 status/error and9696C callback-setting
-contracts using the measured natural arguments, then BIOS06000344, A6790,969E0,
-95CBC/95E5A dependencies and full89C8 semantics. Continue623A,
+PR667 mergedb6a8e253b558b925439acb3225937a91d782f124 at22:13:18 UTC after
+all12 checks completed. Six preparation skips have exact non-applicability proof;
+the two required aggregates and all other applicable checks passed. Main's parent
+and merge tree match the tested base/head. Receipt:`.../code660-20261102/pr667-acceptance-verified.json`.
+Issue660 is closed for its observation scope;655 remains open. The next status/
+callback contract slice has4,512 cases twice,3,364 complete returns/1,148
+unfinished original89C2→293A4 handoffs per run and19 mutation-control combinations.
+Resume the [current655 checkpoint](VPS-CODE-655-CHECKPOINT.md) for its publication,
+retained incorrect-callback failure and next96B9C slot-selection probe, followed
+by BIOS06000344,A6790,969E0,95CBC/95E5A and full89C8 semantics. Continue623A,
 root/task cycles, slave/loader/overlays, sound/DSP and regional network/menu/save
 paths. Whole module/function/dynamic-target denominators and timing/gameplay/
 Godot parity remain unknown; do not mark the programme complete after this tool.

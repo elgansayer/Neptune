@@ -1,0 +1,434 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-1111ca996102ea5681b0687531479ff891e0ab766ee74dd60042984629e0b1c8",
+    "files": 84,
+    "source_head": "620a4e89c10f5ba5901638dbfdcf7450752d1815",
+    "source_manifest_sha256": "1111ca996102ea5681b0687531479ff891e0ab766ee74dd60042984629e0b1c8"
+  },
+  "batch": "/home/dev/neptune-research-private/655/cd-command-batch-6d9djnhh/batch.json",
+  "batch_manifest_sha256": "bd88ecd08148e2e89b73e2f61f95dcff84695040dcef8a53831b601a4ab8d52a",
+  "cases_per_run": 9152,
+  "complete_returns_per_run": 0,
+  "contracts": {
+    "deep_pending_ABI": "95992 notexecuted;R4=64/128,R5=beforeSP-16 command,R6=R13=beforeSP-28 response,R7=1,R14=command,R15=beforeSP-48,PR=A4FD0; savedwrapper/rootlinks and untouchedresponse/localbytes retained",
+    "packet48": "AE676 R4byte/R5byte packed as48,a8,00,00,b8,00,00,00 on8B stackcommand; actualA4FAC entryR4=64,R5=command; PR=AE698,SP=before-16",
+    "packet62": "AE908 packs62,00,b15..8,b7..0,a7..0,00,c15..8,c7..0 fromR4/R5/R6; actualA4FAC entryR4=128,R5=command; PR=AE92E,SP=before-16",
+    "preserved_state": "all23registers/fullSR/PR/MAC/event/PC/delay/byte effects checked; originalSR/MAC/GBR/VBR unchanged along these prefixes; no callee return substituted",
+    "service_prefix": "realA4FAC saves commandcallerlink, allocates8 untouchedresponsebytes inR6, BSR/NOPargument toA4FBE withR7=1; A4FBE savesR14/R13/PR,allocates8locals,storesmode1 and realJSR/MOVdelay enters95992"
+  },
+  "cpu": "sh2",
+  "families": {
+    "pack48": {
+      "archives_byte_identical": true,
+      "cases_per_run": 1968,
+      "complete_returns_per_run": 0,
+      "controls": {
+        "wrong-byte-field": {
+          "mutated_kernel_sha256": "2059738bc398f9ad7fcf2d383053b2850f40379f5e8d0e473a46435fd4a49f61",
+          "nonbudget_rejections": 79,
+          "pc": 101377674,
+          "tested": 79
+        },
+        "wrong-command-byte": {
+          "mutated_kernel_sha256": "9ec37e1a2cae8ba319557e9c0566e8e8ac0f94d07ae4804b7bce5c28bda1767a",
+          "nonbudget_rejections": 79,
+          "pc": 101377658,
+          "tested": 79
+        },
+        "wrong-index-field": {
+          "mutated_kernel_sha256": "f9ca781366bf409d16ec30efd9251035c9016d7c2b870073250c74b9c63c1116",
+          "nonbudget_rejections": 79,
+          "pc": 101377680,
+          "tested": 79
+        },
+        "wrong-service-argument-delay": {
+          "mutated_kernel_sha256": "23b28885b6872dfc001cb17b26253c5478a660bc2f0474aa337354c24b84210f",
+          "nonbudget_rejections": 79,
+          "pc": 101377686,
+          "tested": 79
+        }
+      },
+      "instruction_counts": {
+        "17": 1968
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "077f03492ee88fa6d09db870ce5eaeb30071a3db4b301dc658db0adeaa74e13e",
+      "runs": [
+        {
+          "archive_bytes": 119259,
+          "archive_index_sha256": "c4e87e46c99a13420d1f48fe403628a53d9029443ee3bd4fe96d44c51c8bf89c",
+          "archive_sha256": "6119baa5b7baff63bd8ef5e10b111363c89cdd2738c1d1f614351f66f1d96624",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-pack48-6v1kaios",
+          "isolation_sha256": "e1fb54d99b034ac61bd69323ba6b91acc23a3ec6215bf5793731d76be973f744",
+          "raw_bytes": 2529269,
+          "raw_report_sha256": "28a2b3c8cfeb2c54423a12ebf05e24c30024c488ef951292492ab4ae57e0877f",
+          "supervisor_sha256": "dccacd56a653e4839def606f64987e6c2f3a246fe82d2eee23447d9b215cf444"
+        },
+        {
+          "archive_bytes": 119259,
+          "archive_index_sha256": "c4e87e46c99a13420d1f48fe403628a53d9029443ee3bd4fe96d44c51c8bf89c",
+          "archive_sha256": "6119baa5b7baff63bd8ef5e10b111363c89cdd2738c1d1f614351f66f1d96624",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-pack48-2q43f1nh",
+          "isolation_sha256": "e1fb54d99b034ac61bd69323ba6b91acc23a3ec6215bf5793731d76be973f744",
+          "raw_bytes": 2529269,
+          "raw_report_sha256": "28a2b3c8cfeb2c54423a12ebf05e24c30024c488ef951292492ab4ae57e0877f",
+          "supervisor_sha256": "283afd2c78c329c2d3085ec18465bf397e2f6b1453394c22b9c85b94defe1734"
+        }
+      ],
+      "source_sha256": {
+        "probe_cd_command_packing.py": "fc471d4038e6b415986c6f8dc7a237441531c50151761a1e350663f0fe21d4e9",
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_request_state.py": "b097857e93adce44b9bb0285db1627cf9c8d4d2c36eeb1c7658562c95385ddd7",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_handoffs_per_run": 1968
+    },
+    "pack62": {
+      "archives_byte_identical": true,
+      "cases_per_run": 2608,
+      "complete_returns_per_run": 0,
+      "controls": {
+        "wrong-command-byte": {
+          "mutated_kernel_sha256": "db7e3f7c8fff265ef7170a3f8c161dcbda7e833b11108ca558de226b7ac0cf07",
+          "nonbudget_rejections": 79,
+          "pc": 101378318,
+          "tested": 79
+        },
+        "wrong-command-pointer-delay": {
+          "mutated_kernel_sha256": "ab8ee437d06b08f1a222f2df591cc2b59056cc0ae6b767f257b6ccf5a68e54ff",
+          "nonbudget_rejections": 79,
+          "pc": 101378348,
+          "tested": 79
+        },
+        "wrong-index-field": {
+          "mutated_kernel_sha256": "64d96d70e993357436128d82860fccb2f50406aaf002226ae941b708bef30b37",
+          "nonbudget_rejections": 79,
+          "pc": 101378338,
+          "tested": 79
+        },
+        "wrong-last-word-field": {
+          "mutated_kernel_sha256": "08e07c2094f8f9791c08f1a7848c92fdbcef0ef3daf56476f6932d6b1912fbcc",
+          "nonbudget_rejections": 79,
+          "pc": 101378344,
+          "tested": 79
+        },
+        "wrong-word-field": {
+          "mutated_kernel_sha256": "a9b4fc875c2787aef7bf7181eb70e4c2c3e56c2245938671c1141ed3c1595c5b",
+          "nonbudget_rejections": 79,
+          "pc": 101378332,
+          "tested": 79
+        }
+      },
+      "instruction_counts": {
+        "19": 2608
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "e5cb738bf026738fd354d9cac130c425fe4f6eb28dd9eab522d31b5b6d241e9c",
+      "runs": [
+        {
+          "archive_bytes": 160140,
+          "archive_index_sha256": "367e1325c4e8275fdbdd3bbc54f5080098514a976fd21af74d30f17aa63def3b",
+          "archive_sha256": "7eac2052243409668fd20acbaa95e9b333d75ee01233e8e16de5857967e20bd8",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-pack62-rqhistgx",
+          "isolation_sha256": "7a5f89756cf78f557caefdf20da81e10cb644a5e5787174124a97513d9a90684",
+          "raw_bytes": 3543122,
+          "raw_report_sha256": "38a06d62924a7e25f43cd8382ebff5c6053c6b97307f7e7ee8da8c42caa01a6e",
+          "supervisor_sha256": "84039ef3a0aadfd07b5ce93fc4c11244b32e63155d4b7120dbb368a9d2e06d7b"
+        },
+        {
+          "archive_bytes": 160140,
+          "archive_index_sha256": "367e1325c4e8275fdbdd3bbc54f5080098514a976fd21af74d30f17aa63def3b",
+          "archive_sha256": "7eac2052243409668fd20acbaa95e9b333d75ee01233e8e16de5857967e20bd8",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-pack62-s2ydhfph",
+          "isolation_sha256": "7a5f89756cf78f557caefdf20da81e10cb644a5e5787174124a97513d9a90684",
+          "raw_bytes": 3543122,
+          "raw_report_sha256": "38a06d62924a7e25f43cd8382ebff5c6053c6b97307f7e7ee8da8c42caa01a6e",
+          "supervisor_sha256": "f32d1513a3a361ee6210e632d63dc9bc7c1fb2b40e6564d1a78124d7be305b2c"
+        }
+      ],
+      "source_sha256": {
+        "probe_cd_command_packing.py": "fc471d4038e6b415986c6f8dc7a237441531c50151761a1e350663f0fe21d4e9",
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_request_state.py": "b097857e93adce44b9bb0285db1627cf9c8d4d2c36eeb1c7658562c95385ddd7",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_handoffs_per_run": 2608
+    },
+    "service48": {
+      "archives_byte_identical": true,
+      "cases_per_run": 1968,
+      "complete_returns_per_run": 0,
+      "controls": {
+        "lost-inner-saved-PR": {
+          "mutated_kernel_sha256": "aec33634976828a190f81d6b90232dab54ad7f0f4f57773821f462d46bfafd9d",
+          "nonbudget_rejections": 79,
+          "pc": 101339078,
+          "tested": 79
+        },
+        "wrong-byte-field": {
+          "mutated_kernel_sha256": "2059738bc398f9ad7fcf2d383053b2850f40379f5e8d0e473a46435fd4a49f61",
+          "nonbudget_rejections": 79,
+          "pc": 101377674,
+          "tested": 79
+        },
+        "wrong-command-byte": {
+          "mutated_kernel_sha256": "9ec37e1a2cae8ba319557e9c0566e8e8ac0f94d07ae4804b7bce5c28bda1767a",
+          "nonbudget_rejections": 79,
+          "pc": 101377658,
+          "tested": 79
+        },
+        "wrong-index-field": {
+          "mutated_kernel_sha256": "f9ca781366bf409d16ec30efd9251035c9016d7c2b870073250c74b9c63c1116",
+          "nonbudget_rejections": 79,
+          "pc": 101377680,
+          "tested": 79
+        },
+        "wrong-response-pointer-delay": {
+          "mutated_kernel_sha256": "0babf3cf2ce933abdc5fe4f725d44997d6db6123529303f5a0a79455a94ff77e",
+          "nonbudget_rejections": 79,
+          "pc": 101339086,
+          "tested": 79
+        },
+        "wrong-service-argument-delay": {
+          "mutated_kernel_sha256": "23b28885b6872dfc001cb17b26253c5478a660bc2f0474aa337354c24b84210f",
+          "nonbudget_rejections": 79,
+          "pc": 101377686,
+          "tested": 79
+        },
+        "wrong-wrapper-mode-delay": {
+          "mutated_kernel_sha256": "fa28664f3c0771a7b7e4736ab47cab1e7c5793fd77cd9ad37bffe558c21308c2",
+          "nonbudget_rejections": 79,
+          "pc": 101339060,
+          "tested": 79
+        }
+      },
+      "instruction_counts": {
+        "31": 1968
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "bd4d7551faa95c9119da5ba632461d9e0025f59a8e772f65fea1950588522883",
+      "runs": [
+        {
+          "archive_bytes": 128199,
+          "archive_index_sha256": "4441acfcac9f61e534cd629f2e75380dae598ab3d4a4f2425d6623e34b997f4d",
+          "archive_sha256": "8d6b64e4acd689d4ff561d098d88223ef68538991d3c59229f79e23b3cd7e9f4",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-service48-l7gr1pa3",
+          "isolation_sha256": "1617bf5a1ef01dc471b694c86373803b187c0fd91ccd387083f0ab240eed1d98",
+          "raw_bytes": 3323694,
+          "raw_report_sha256": "2b928c6cbbeee0e3b1ec0a70511d4ec3e80be963bf2bce08dfd1ae35f1c8a115",
+          "supervisor_sha256": "edf77b06bcb38ceb7ced189e80e1a1d5c9733b090f04bbc8e2aa8a75b1c25920"
+        },
+        {
+          "archive_bytes": 128199,
+          "archive_index_sha256": "4441acfcac9f61e534cd629f2e75380dae598ab3d4a4f2425d6623e34b997f4d",
+          "archive_sha256": "8d6b64e4acd689d4ff561d098d88223ef68538991d3c59229f79e23b3cd7e9f4",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-service48-p9yq9gq2",
+          "isolation_sha256": "1617bf5a1ef01dc471b694c86373803b187c0fd91ccd387083f0ab240eed1d98",
+          "raw_bytes": 3323694,
+          "raw_report_sha256": "2b928c6cbbeee0e3b1ec0a70511d4ec3e80be963bf2bce08dfd1ae35f1c8a115",
+          "supervisor_sha256": "4bd579fb554e75617e4a66b9d3ff740ea9da82696db3aab58788a54f6d20e104"
+        }
+      ],
+      "source_sha256": {
+        "probe_cd_command_packing.py": "fc471d4038e6b415986c6f8dc7a237441531c50151761a1e350663f0fe21d4e9",
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_request_state.py": "b097857e93adce44b9bb0285db1627cf9c8d4d2c36eeb1c7658562c95385ddd7",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_handoffs_per_run": 1968
+    },
+    "service62": {
+      "archives_byte_identical": true,
+      "cases_per_run": 2608,
+      "complete_returns_per_run": 0,
+      "controls": {
+        "lost-inner-saved-PR": {
+          "mutated_kernel_sha256": "aec33634976828a190f81d6b90232dab54ad7f0f4f57773821f462d46bfafd9d",
+          "nonbudget_rejections": 79,
+          "pc": 101339078,
+          "tested": 79
+        },
+        "wrong-command-byte": {
+          "mutated_kernel_sha256": "db7e3f7c8fff265ef7170a3f8c161dcbda7e833b11108ca558de226b7ac0cf07",
+          "nonbudget_rejections": 79,
+          "pc": 101378318,
+          "tested": 79
+        },
+        "wrong-command-pointer-delay": {
+          "mutated_kernel_sha256": "ab8ee437d06b08f1a222f2df591cc2b59056cc0ae6b767f257b6ccf5a68e54ff",
+          "nonbudget_rejections": 79,
+          "pc": 101378348,
+          "tested": 79
+        },
+        "wrong-index-field": {
+          "mutated_kernel_sha256": "64d96d70e993357436128d82860fccb2f50406aaf002226ae941b708bef30b37",
+          "nonbudget_rejections": 79,
+          "pc": 101378338,
+          "tested": 79
+        },
+        "wrong-last-word-field": {
+          "mutated_kernel_sha256": "08e07c2094f8f9791c08f1a7848c92fdbcef0ef3daf56476f6932d6b1912fbcc",
+          "nonbudget_rejections": 79,
+          "pc": 101378344,
+          "tested": 79
+        },
+        "wrong-response-pointer-delay": {
+          "mutated_kernel_sha256": "0babf3cf2ce933abdc5fe4f725d44997d6db6123529303f5a0a79455a94ff77e",
+          "nonbudget_rejections": 79,
+          "pc": 101339086,
+          "tested": 79
+        },
+        "wrong-word-field": {
+          "mutated_kernel_sha256": "a9b4fc875c2787aef7bf7181eb70e4c2c3e56c2245938671c1141ed3c1595c5b",
+          "nonbudget_rejections": 79,
+          "pc": 101378332,
+          "tested": 79
+        },
+        "wrong-wrapper-mode-delay": {
+          "mutated_kernel_sha256": "fa28664f3c0771a7b7e4736ab47cab1e7c5793fd77cd9ad37bffe558c21308c2",
+          "nonbudget_rejections": 79,
+          "pc": 101339060,
+          "tested": 79
+        }
+      },
+      "instruction_counts": {
+        "33": 2608
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "27e6826242a40713fdda94b26aaea3d46915e1eeadfcf56237601411c9ad9dff",
+      "runs": [
+        {
+          "archive_bytes": 167411,
+          "archive_index_sha256": "b140e911042d253ca5c37dcce84e5ddcb728f0e0f1e5e1d382958203fa313528",
+          "archive_sha256": "f118ade54b587e0f2d146d612cbb4d0e5510d9722b9897b2e1f5a1d03d1b4dc3",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-service62-4xkhezcw",
+          "isolation_sha256": "b745be949e28f15f3e31a1d26f06d4f55a58935c61deaa32dc3a0600feb5e5ac",
+          "raw_bytes": 4599572,
+          "raw_report_sha256": "428e33d1f417b6e1c79e01b4217ebd7696184d1b8bcc6cd060fac97c3c236fa0",
+          "supervisor_sha256": "3fef56c3084b71626ef2d63caa3c2ced660c717fb799444505835484a2d1ad7a"
+        },
+        {
+          "archive_bytes": 167411,
+          "archive_index_sha256": "b140e911042d253ca5c37dcce84e5ddcb728f0e0f1e5e1d382958203fa313528",
+          "archive_sha256": "f118ade54b587e0f2d146d612cbb4d0e5510d9722b9897b2e1f5a1d03d1b4dc3",
+          "directory": "/home/dev/neptune-research-private/655/cd-command-contracts-service62-n39m3r3r",
+          "isolation_sha256": "b745be949e28f15f3e31a1d26f06d4f55a58935c61deaa32dc3a0600feb5e5ac",
+          "raw_bytes": 4599572,
+          "raw_report_sha256": "428e33d1f417b6e1c79e01b4217ebd7696184d1b8bcc6cd060fac97c3c236fa0",
+          "supervisor_sha256": "4dff8b5816453c7a46e47fe64dfe4350ca41b0e51fbb88a93d56dd70f189c665"
+        }
+      ],
+      "source_sha256": {
+        "probe_cd_command_packing.py": "fc471d4038e6b415986c6f8dc7a237441531c50151761a1e350663f0fe21d4e9",
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_request_state.py": "b097857e93adce44b9bb0285db1627cf9c8d4d2c36eeb1c7658562c95385ddd7",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_handoffs_per_run": 2608
+    }
+  },
+  "family_control_combinations": 24,
+  "guard": {
+    "aliases": [],
+    "chosen_budget": 64,
+    "nonexecutable_pending_entries": [
+      "060A4FAC",
+      "06095992"
+    ],
+    "old128_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "old128_unchanged": true,
+    "readable_literal_ranges": [
+      "060AE6A0..060AE6A4",
+      "060AEA30..060AEA32",
+      "060AEA34..060AEA38",
+      "060A5090..060A5094"
+    ],
+    "unexecuted_return_epilogues": [
+      "060AE698..060AE6A0",
+      "060AE92E..060AE936",
+      "060A4FB6..060A4FBE"
+    ]
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "native_builds": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "report_file_limit_bytes": 67108864,
+    "shared_host_limit": 3,
+    "sources_originals_dependencies_readonly": true,
+    "storage_reserve_bytes": 5435817984
+  },
+  "literal_sha256": {
+    "060A5090:4": "2d0aa5f1cda386b1d142ceafb67b1fe981391c69d53a18bb81f7afe2a603cf63",
+    "060AE6A0:4": "66447d1e91e5768eb691b2fb65edeb9db25a57cb12e838bb2ff75fab012f975d",
+    "060AEA30:2": "085edad400785fca7e7e90b1fac4beb776fc2beee5aa24352d5f39b5d57efcad",
+    "060AEA34:4": "66447d1e91e5768eb691b2fb65edeb9db25a57cb12e838bb2ff75fab012f975d"
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "schema": "neptune.original-cd-command-packing-derived.v1",
+  "scope_limits": [
+    "9152 selected prefixcases across4selections, not complete returning wrappers or9152 unique functions",
+    "No actual95992/device transfer, response contents, restoredreturn semantics, nativeframes or hardwaretiming established",
+    "First laterdevicewordread is static959DE at literal25890008; no deviceRAM mapping/stubs/injectedticks",
+    "A85E4/A780A/A6FE0/95E5A successfulservices, callbacks,complete89C8/rootcycles,othermodules/denominators and Godot/gameplayparity remainopen"
+  ],
+  "source_head": "620a4e89c10f5ba5901638dbfdcf7450752d1815",
+  "source_range_sha256": {
+    "060A4FAC..060A4FB6": "d0bf394e4e9c2dbad989e7ea499b0fa1bb2446b5b12c133394248d0e2f15ff46",
+    "060A4FBE..060A4FD0": "f812906a0911c88850fbc4c531d74532927e3b8187e71ea32fda12b860aa1f96",
+    "060AE676..060AE698": "6b25ab510c830b529b3190ade14b6cf7f0085f4ecbeabbcbfd6f34c6f4ed088a",
+    "060AE908..060AE92E": "0b975ca754e6220a5eca0c4b9028526a5018bc1e8c27167d65003eb8cd41b97b"
+  },
+  "storage": {
+    "archive_helper_sha256": "3762b603363c7d94cc09ee760cb3341921ba6e054e36112ce0e9198bc6f033f4",
+    "mode": "verified losslessgzip; restore gzip -dk report.json.gz",
+    "original_jobs": 8,
+    "owned_bounds": "/home/dev/neptune-research-private/655/owned-cd-command-report-bounds-20261103.json",
+    "owned_bounds_original_execution": false
+  },
+  "unfinished_handoffs_per_run": 9152
+}

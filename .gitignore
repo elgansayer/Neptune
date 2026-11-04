@@ -6,6 +6,7 @@ server/.godot/*
 /android/
 SBomberman-main/
 *.log
+/build/
 
 # Private research inputs and local credentials
 /research-private/

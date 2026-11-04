@@ -1,6 +1,9 @@
 extends CharacterBody2D
 class_name ServerPlayer
 
+## Explicit developer diagnostics; normal rooms do not log every bot motor tick.
+var debug_bot_movement := false
+
 const ServerBombScript = preload("res://shared/entities/server_bomb.gd")
 const PlayerStatsScript = preload("res://shared/resources/player_stats.gd")
 const Constants = preload("res://shared/constants.gd")
@@ -173,7 +176,7 @@ func _check_direction_clear(direction: Vector2) -> bool:
 	var motion = direction.normalized() * GameConfig.COLLISION_CHECK_DISTANCE
 	
 	# DEBUG: Log direction checking
-	if is_bot and Engine.get_physics_frames() % 60 == 0:
+	if is_bot and debug_bot_movement and Engine.get_physics_frames() % 60 == 0:
 		print("[_check_direction_clear] Bot at ", position, " checking direction ", direction, " motion=", motion)
 
 	# Add collision exceptions (bombs)
@@ -502,14 +505,14 @@ func _physics_process(_delta):
 	var pre_vel = velocity
 	
 	# DEBUG: Log velocity for bots
-	if is_bot and Engine.get_physics_frames() % 60 == 0:
+	if is_bot and debug_bot_movement and Engine.get_physics_frames() % 60 == 0:
 		print("[ServerPlayer DEBUG] ", username, " velocity=", velocity, " speed=", velocity.length(), " expected=", GameConfig.BASE_SPEED)
 	
 	move_and_slide()
 	var _pos_after = position
 	
 	# DEBUG: Log bot position after move_and_slide
-	if is_bot and input_direction.length() > 0.1:
+	if is_bot and debug_bot_movement and input_direction.length() > 0.1:
 		var delta_pos = _pos_after - _pos_before
 		if pre_vel.length() > 1.0 and delta_pos.length() < 0.01:
 			print("[POS DEBUG] frame=", Engine.get_physics_frames(), " ", username, " BLOCKED! pre_vel=", pre_vel, " delta=", delta_pos, " pos=", position, " input=", input_direction)
@@ -764,6 +767,10 @@ func get_bomb_fuse_lower_bound() -> float:
 			return 5.0
 		_:
 			return Constants.BOMB_TIMER
+
+func get_bomb_fuse_upper_bound() -> float:
+	# Public rule bound, never the private LEISURELY_FUSE random sample.
+	return 6.0 if active_virus == VirusType.LEISURELY_FUSE else get_bomb_fuse_lower_bound()
 
 func get_bomb_fuse_time() -> float:
 	"""Get bomb timer based on virus status"""
@@ -1255,7 +1262,7 @@ func _readd_tirra_pickup_area(tirra: Node2D) -> void:
 func _on_dropped_tirra_touched(body: Node, tirra: Node2D) -> void:
 	"""Handle player touching a dropped Tirra to remount"""
 	if body == self and not is_mounted:
-		mount_tirra(tirra)
+		call_deferred("mount_tirra", tirra)
 
 func get_tirra_rider_offset() -> Vector2:
 	"""Get the current rider offset from the Tirra controller."""

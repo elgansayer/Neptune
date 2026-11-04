@@ -31,6 +31,19 @@ var ServerBotManagerScript: Script = _load_script_variant(_BOT_MANAGER_PATHS)
 # const AIPersonality = preload("res://shared/ai/ai_personalities.gd")
 
 var game_id: String = ""
+# Hosted casual rooms replace the entire authority at round boundaries. Epochs
+# belong to ServerMain and never restart with a newly instantiated simulation.
+var round_epoch := 0
+var continuous_room := false
+var countdown_duration := 1.0 # Legacy isolated authorities; hosted default is 3.
+var results_duration := 5.0
+var results_time_remaining := 0.0
+var _restart_requested := false
+var spectators: Dictionary = {} # Authenticated waiting peer -> username.
+var room_initial_map_data: Dictionary = {}
+var room_map_snapshot: Dictionary = {}
+signal next_round_requested(authority: Node)
+
 var players := {} # peer_id -> ServerPlayer
 # AI System removed - preparing for rebuild
 # var ai_bot_counter := 1000  # Start AI bot IDs from 1000
@@ -219,6 +232,8 @@ func _ready():
 				pattern,
 				density
 			)
+			if continuous_room:
+				active_soft_blocks = MapPackLoader.reserve_casual_spawn_clearance(active_soft_blocks, map_data.spawn_points, map_data.tile_size)
 			
 			# Apply soft blocks to grid
 			# First clear all soft slots
@@ -241,6 +256,11 @@ func _ready():
 		push_error("[GameInstance] Failed to load any map!")
 		return
 	
+	# A rematch restores the exact original sampled arena, including destructibles.
+	# Content resolution above still checks the selected immutable pack identities.
+	if not room_map_snapshot.is_empty():
+		map_data = room_map_snapshot.duplicate(true)
+	room_initial_map_data = map_data.duplicate(true)
 	# Apply map data
 	game_map = map_data.grid
 	spawn_points = map_data.spawn_points
@@ -288,7 +308,7 @@ func _ready():
 		push_error("[GameInstance] Bot manager script missing; bots disabled")
 	else:
 		bot_manager = ServerBotManagerScript.new()
-		bot_manager.auto_spawn_count = 0 # Disabled for Tirra testing - eggs spawn at 100%
+		bot_manager.auto_spawn_count = 0 # Room filling owns admission at the countdown boundary.
 		if bot_policy_seed != null:
 			if not bot_policy_seed is int or not bot_manager.configure_policy_seed(bot_policy_seed):
 				push_error("[GameInstance] Invalid bot policy seed configuration")
@@ -297,7 +317,10 @@ func _ready():
 		print("[GameInstance] BotManager configured to spawn ", bot_manager.auto_spawn_count, " bot(s)")
 		add_child(bot_manager)
 	if not room_bot_fill_request.is_empty():
-		var fill := configure_room_bot_fill(room_bot_fill_request.get("target"), room_bot_fill_request.get("personality"))
+		var target = room_bot_fill_request.get("target")
+		if room_bot_fill_request.get("default_target", false) and target is int:
+			target = mini(target, get_room_capacity().seats)
+		var fill := configure_room_bot_fill(target, room_bot_fill_request.get("personality"))
 		if not fill.accepted:
 			room_setup_result = fill
 			set_physics_process(false)
@@ -379,6 +402,12 @@ func _physics_process(delta):
 	# Check if any player is walking into an active explosion tile
 	_check_explosion_damage()
 	
+	if continuous_room and not _round_result.is_empty():
+		results_time_remaining = maxf(0.0, results_time_remaining - delta)
+		if results_time_remaining <= 0.0 and not _restart_requested:
+			_restart_requested = true
+			next_round_requested.emit(self)
+
 	# Handle countdown before match starts
 	if not match_active and countdown_time > 0.0 and _content_waiters.is_empty():
 		countdown_time -= delta
@@ -604,7 +633,7 @@ func get_room_capacity() -> Dictionary:
 	return {"protocol_limit": Constants.MAX_MATCH_SEATS, "transport_limit": Constants.MAX_CONNECTED_PEERS,
 		"seats": _room_capacity.get("seats", Constants.MAX_MATCH_SEATS), "preset_limit": _room_capacity.get("preset_limit", Constants.MAX_MATCH_SEATS),
 		"configured": not _room_capacity.is_empty(), "occupied": players.size(), "reserved": reserved, "humans": players.size() - bots, "bots": bots,
-		"bot_fill": _room_bot_fill.duplicate(true), "participants": participants,
+		"bot_fill": _room_bot_fill.duplicate(true), "participants": participants, "spectators": spectators.keys(),
 		"bot_policy_seed": str(bot_manager.get_policy_seed()) if bot_manager != null else "", "bot_policy": bot_manager.POLICY_VERSION if bot_manager != null else ""}
 
 func _validate_room_start() -> Dictionary:
@@ -619,7 +648,7 @@ func start_room_countdown() -> Dictionary:
 	if _room_round_started: return SpawnReservations.failure("round_finished")
 	last_room_start_result = _validate_room_start()
 	if not last_room_start_result.accepted: return last_room_start_result
-	if countdown_time <= 0.0: countdown_time = 1.0
+	if countdown_time <= 0.0: countdown_time = countdown_duration
 	return {"accepted": true, "reason": "countdown_started"}
 
 ## Pending clients cannot consume a spawn or start the initial round. A late
@@ -819,6 +848,9 @@ func add_player(peer_id: int, username: String, spawn_position: Vector2 = Vector
 	return {"accepted": true, "reason": "admitted", "peer_id": peer_id, "participant_id": identity, "cell": allocation.cell.duplicate(), "position": [spawn_position.x, spawn_position.y], "reused": allocation.reused}
 
 func remove_player(peer_id: int, retain_spawn: bool = false):
+	spectators.erase(peer_id)
+	clients_received_full_map.erase(peer_id)
+	last_sent_hurry_block_count.erase(peer_id)
 	var was_present := players.has(peer_id)
 	if players.has(peer_id):
 		var player = players[peer_id]
@@ -829,6 +861,7 @@ func remove_player(peer_id: int, retain_spawn: bool = false):
 			player.collision_mask = 0
 			player.queue_free()
 		players.erase(peer_id)
+		invalidate_public_observation()
 	# Idempotent cleanup also releases stale bookkeeping after an actor was
 	# removed by a trusted fixture/operator before this canonical leave call.
 	var identity: String = _spawn_bindings.get(peer_id, "")
@@ -871,17 +904,43 @@ func end_match(reason: String = "stopped"):
 	winner_id = survivors[0] if survivors.size() == 1 else ""
 	_round_result = {"schema": 1, "game_id": game_id, "simulation_tick": simulation_tick,
 		"server_time_msec": current_time_msec, "reason": reason,
-		"winner_id": winner_id, "survivors": survivors}
+		"winner_id": winner_id, "survivors": survivors, "epoch": round_epoch}
 	_round_end_check_pending = false
 	_round_timeout_pending = false
 	match_active = false
-	
+	results_time_remaining = results_duration
+	if continuous_room:
+		# Keep the clock/publisher alive for results. Every old actor, bomb and bot
+		# task stays frozen until its entire authority is detached and destroyed.
+		for child in get_children():
+			if child.name != "SimulationStatePublisher":
+				child.process_mode = Node.PROCESS_MODE_DISABLED
+
 	print("[GameInstance] Match ended. Winner: ", winner_id if winner_id else "Draw")
+	if continuous_room: print("ROUND_RESULT=", JSON.stringify(get_round_result()))
 	game_ended.emit(winner_id)
 	
-	# TODO: Add delay before returning to lobby
-	# await get_tree().create_timer(5.0).timeout
-	# Return players to lobby
+
+func get_round_state() -> Dictionary:
+	var phase := "active" if match_active else ("results" if not _round_result.is_empty() else ("countdown" if countdown_time > 0.0 else "waiting"))
+	var remaining := match_time_remaining if match_active else (results_time_remaining if phase == "results" else countdown_time)
+	return {"epoch": round_epoch, "phase": phase, "remaining": maxf(0.0, remaining), "result": get_round_result(),
+		"config": {"duration": match_duration, "countdown": countdown_duration, "intermission": results_duration}}
+
+func add_spectator(peer_id: int, username: String) -> Dictionary:
+	if players.has(peer_id) or spectators.has(peer_id): return SpawnReservations.failure("peer_in_use")
+	var humans := spectators.size()
+	for actor in players.values():
+		if is_instance_valid(actor) and not actor.is_bot: humans += 1
+	if humans >= get_room_capacity().seats: return SpawnReservations.failure("room_full")
+	spectators[peer_id] = username
+	return {"accepted": true, "reason": "spectating_until_next_round", "peer_id": peer_id, "spectator": true}
+
+func get_human_count() -> int:
+	var count := spectators.size()
+	for actor in players.values():
+		if is_instance_valid(actor) and not actor.is_bot: count += 1
+	return count
 
 func find_winner() -> String:
 	"""Find the winner (last player alive)"""
@@ -1164,7 +1223,7 @@ func _detonate_oldest_remote_bomb(player: ServerPlayer) -> String:
 	
 	for bomb_id in bombs:
 		var bomb = bombs[bomb_id]
-		if not is_instance_valid(bomb):
+		if not is_instance_valid(bomb) or bomb.has_exploded:
 			continue
 		if bomb.owner_id != player.player_id:
 			continue
@@ -1312,6 +1371,7 @@ func _place_single_bomb_at_tile(player: ServerPlayer, tile_pos: Vector2i) -> Str
 	bomb.explosion_timer = 0.0
 	bomb.fuse_time = player.get_bomb_fuse_time()
 	bomb.fuse_lower_bound = player.get_bomb_fuse_lower_bound()
+	bomb.fuse_upper_bound = player.get_bomb_fuse_upper_bound()
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)
@@ -1362,6 +1422,7 @@ func _place_single_bomb(player: ServerPlayer) -> String:
 	bomb.explosion_timer = 0.0
 	bomb.fuse_time = player.get_bomb_fuse_time() # 1s if cursed, 3s otherwise
 	bomb.fuse_lower_bound = player.get_bomb_fuse_lower_bound()
+	bomb.fuse_upper_bound = player.get_bomb_fuse_upper_bound()
 	
 	bombs[bomb.bomb_id] = bomb
 	add_child(bomb)
@@ -1624,15 +1685,13 @@ func sync_state_to_clients():
 	var state = {
 		"p": {}, # players (minimal movement state)
 		"b": {}, # bombs (minimal state)
-		"t": int(match_time_remaining), # match timer (seconds as int)
+		"t": ceili(match_time_remaining), # match timer (seconds as int)
 	}
 	state.merge(get_clock_state())
 	state["room"] = get_room_capacity()
-	# Only add optional fields if they have values (avoid sending nulls)
-	if match_active:
-		state["a"] = true
-	if countdown_time > 0:
-		state["c"] = int(countdown_time)
+	state["round"] = get_round_state()
+	state["a"] = match_active
+	state["c"] = ceili(maxf(0.0, countdown_time))
 	if winner_id != "":
 		state["w"] = winner_id
 	if hurry_mode_active:
@@ -1662,6 +1721,7 @@ func sync_state_to_clients():
 	# Use minimal bomb state (id, position, timer, state)
 	for bomb_id in bombs:
 		state.b[bomb_id] = bombs[bomb_id].get_state_minimal()
+		state.b[bomb_id]["o"] = str(bombs[bomb_id].owner_id)
 	
 	# Powerups - compact format: [x, y, type] as array
 	if powerups.size() > 0:
@@ -1734,11 +1794,10 @@ func sync_state_to_clients():
 		changes_to_send = map_changes.slice(0, max_changes_per_packet)
 		map_changes = map_changes.slice(max_changes_per_packet)  # Keep remaining for next sync
 	
+	var recipients: Array = spectators.keys()
 	for peer_id in players:
-		var player = players[peer_id]
-		if player.has_method("is_ai_bot") and player.is_ai_bot():
-			continue
-		
+		if not players[peer_id].is_bot: recipients.append(peer_id)
+	for peer_id in recipients:
 		# Create per-client state copy for delta compression
 		var client_state = state.duplicate()
 		
@@ -1763,6 +1822,9 @@ func sync_state_to_clients():
 				for cell in row:
 					packed_map.append(cell)
 			var map_data = {
+				"simulation_tick": simulation_tick,
+				"server_time": current_time_msec,
+				"round": get_round_state(),
 				"room": get_room_capacity(),
 				"map_packed": packed_map,
 				"map_width": game_map[0].size() if game_map.size() > 0 else 0,
@@ -2079,6 +2141,7 @@ func _register_console_commands() -> void:
 
 func _do_register_console_commands() -> void:
 	"""Actually register console commands (deferred)"""
+	if not is_inside_tree(): return # A previous round may have been detached.
 	if not has_node("/root/LimboConsole"):
 		print("[GameInstance] ⚠️ LimboConsole not found, skipping command registration")
 		print("[GameInstance] Make sure LimboConsole addon is enabled in project settings")
