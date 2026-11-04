@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resume original A717C boundary state through A600C/A6100 to A5F98."""
+"""Resume original A717C boundary state through purge and outer return."""
 from __future__ import annotations
 
 import argparse
@@ -13,14 +13,18 @@ import probe_japan_a717c_zero_divisor as source
 import probe_japan_a717c_a600c_caller as caller
 import probe_japan_a600c_dmac as a600c
 import probe_japan_a717c_a5fc4_composed as boundary_probe
+import probe_japan_a717c_a5f98_purge as purge
+import probe_japan_a717c_post_a5f98_continuation as epilogue
 
-ENTRY, STOP = 0x060A71C0, 0x060A723C
+ENTRY, A5F98_CALL = 0x060A71C0, 0x060A723C
 LOCAL_SP = 0x06007FA4
 STACK_TOP = 0x06008000
 CALL_A600C = 0x060A7232
 CALL_A6100 = 0x060A6100
 POST_CALL_PCS = (0x060A7236, 0x060A7238, 0x060A723A)
 A6100_PCS = tuple(range(CALL_A6100, 0x060A6112, 2))
+CALL_A5F98_PCS = purge.CALLER_PCS
+EPILOGUE_PCS = epilogue.PCS
 FLAGS = caller.FLAGS
 R6_VALUES = boundary_probe.R6_VALUES
 CHCR_VALUES = (0, 3)
@@ -44,6 +48,11 @@ def input_key(row):
     i = row["inputs"]
     return (i["mode"], i["chcr_before"], i["dmaor_before"], i["base"],
         i["r7"], i["stack_top"], i["priority"], i["seed"], i["r6"])
+
+
+def expected_path(r8: int, stack_top: int):
+    return (caller.caller_pcs(r8, stack_top) + a600c.expected_pcs(FLAGS)
+        + POST_CALL_PCS + A6100_PCS + CALL_A5F98_PCS + purge.HELPER_PCS + EPILOGUE_PCS)
 
 
 def execute_tail(kernel: bytes, ram: bytes, emu, boundary, mutation=None):
@@ -78,16 +87,16 @@ def execute_tail(kernel: bytes, ram: bytes, emu, boundary, mutation=None):
 
     descriptor = LOCAL_SP + 8
     reads, writes, pcs = [], [], []
-    tail_pcs = caller.caller_pcs(r8, top)
-    expected = tail_pcs + a600c.expected_pcs(FLAGS) + POST_CALL_PCS + A6100_PCS
+    expected = expected_path(r8, top)
     allowed = set(expected)
     registers = {chcr_address: chcr_value}
     dmac_addresses = {a600c.BASES[channel], a600c.BASES[channel] + 4, a600c.BASES[channel] + 8}
     drcr_address = 0xFFFFFE71 + channel
     work_literals = {0x060A7350, 0x060A7352, 0x060A7354,
-        0x060A7358, 0x060A735C}
+        0x060A7358, 0x060A735C, 0x060A7360, source.GLOBAL_LITERAL}
     descriptor_reads = {descriptor + off for off in range(0, 40, 4)}
-    stack_reads = {STACK_TOP, LOCAL_SP, LOCAL_SP + 4, LOCAL_SP - 4}
+    stack_reads = {STACK_TOP, LOCAL_SP, LOCAL_SP + 4, LOCAL_SP - 4,
+        *range(LOCAL_SP + 60, LOCAL_SP + 92, 4)}
     stack_writes = {LOCAL_SP - 4, *range(LOCAL_SP + 4, LOCAL_SP + 48, 4)}
 
     class Memory(emu.Memory):
@@ -119,6 +128,17 @@ def execute_tail(kernel: bytes, ram: bytes, emu, boundary, mutation=None):
                     raise ValueError("original A600C tail-call literal differs")
                 if address == 0x060A735C and value != CALL_A6100:
                     raise ValueError("original A6100 tail-call literal differs")
+                if address == 0x060A7360 and value != purge.ENTRY:
+                    raise ValueError("original A5F98 tail-call literal differs")
+                if address == source.GLOBAL_LITERAL and value != epilogue.GLOBAL:
+                    raise ValueError("original A717C global-base literal differs")
+                return value
+            if address in (purge.LITERAL_START, purge.LITERAL_START + 4) and size == 4:
+                value = super().read(address, size)
+                expected_value = 0x1FFFFFFF if address == purge.LITERAL_START else 0x40000000
+                if value != expected_value:
+                    raise ValueError(f"original A5F98 literal differs at {address:08x}")
+                reads.append(["purge-literal", address, size, value])
                 return value
             if address in a600c.LITERALS and size in (2, 4):
                 value = super().read(address, size)
@@ -143,6 +163,14 @@ def execute_tail(kernel: bytes, ram: bytes, emu, boundary, mutation=None):
             if address == drcr_address and size == 1:
                 writes.append(["DRCR", address, size, value & 0xFF])
                 return
+            if 0x40000000 <= address < 0x48000000 and size == 4 and value == 0:
+                if address & 0xF:
+                    raise ValueError("A5F98 purge request is not 16-byte aligned")
+                writes.append(["CACHE_PURGE_REQUEST", address, size, value])
+                return
+            if address in (epilogue.GLOBAL, epilogue.GLOBAL + 4, epilogue.GLOBAL + 8) and size == 4:
+                writes.append(["GLOBAL", address, size, value])
+                return super().write(address, size, value)
             if address in stack_writes and size == 4:
                 writes.append(["stack", address, size, value])
                 return super().write(address, size, value)
@@ -160,8 +188,10 @@ def execute_tail(kernel: bytes, ram: bytes, emu, boundary, mutation=None):
                 mem.fetching = False
 
         def exec(self, ins, pc, in_slot=False):
-            if self.steps >= 192 or pc not in allowed:
+            if self.steps >= 256 or pc not in allowed:
                 raise ValueError(f"A717C tail instruction fence at {pc:08x}")
+            if pc == purge.ENTRY:
+                self.purge_arguments = (self.r[4], self.r[5])
             pcs.append(pc)
             return super().exec(ins, pc, in_slot=in_slot)
 
@@ -169,27 +199,51 @@ def execute_tail(kernel: bytes, ram: bytes, emu, boundary, mutation=None):
     cpu.r = [boundary["boundary_registers"][f"r{i}"] for i in range(16)]
     cpu.sr = boundary["boundary_sr"]
     cpu.pc, cpu.pr = ENTRY, ENTRY
-    while cpu.pc != STOP:
+    while cpu.pc != emu.RETURN_SENTINEL:
         cpu.step()
-        if cpu.steps > 192:
-            raise ValueError("A717C tail instruction budget exceeded")
+        if cpu.steps > 256:
+            raise ValueError("A717C full-return instruction budget exceeded")
     if tuple(pcs) != expected:
         raise ValueError(f"A717C tail path differs ({len(pcs)}/{len(expected)} PCs)")
-    if cpu.r[15] != LOCAL_SP or cpu.pr != STOP:
-        raise ValueError("A6100 return does not restore the A717C A5F98 call boundary")
+    if cpu.r[15] != STACK_TOP or cpu.pr != emu.RETURN_SENTINEL:
+        raise ValueError("A717C epilogue does not restore the entry SP/PR")
     descriptor_inputs = tuple(int.from_bytes(work_mem[descriptor + off - source.WORKRAM_BASE:
         descriptor + off - source.WORKRAM_BASE + 4], "big") for off in range(0, 36, 4))
     flags = int.from_bytes(work_mem[descriptor + 36 - source.WORKRAM_BASE:
         descriptor + 40 - source.WORKRAM_BASE], "big")
     if flags != FLAGS:
         raise ValueError(f"A717C produced unexpected A600C flags {flags:#x}")
+    purge_base, purge_size = cpu.purge_arguments
+    if purge_base != inputs["base"] or purge_size != 4:
+        raise ValueError(f"A717C A5F98 arguments differ: {purge_base:08x}/{purge_size}")
+    purge_target = purge.purge_line(purge_base)
+    purge_end = ((purge_base & 0x1FFFFFFF) | 0x40000000) + purge_size
+    expected_purge = [["CACHE_PURGE_REQUEST", address, 4, 0]
+        for address in range(purge_target, purge_end, 16)]
+    actual_purge = [row for row in writes if row[0] == "CACHE_PURGE_REQUEST"]
+    if actual_purge != expected_purge:
+        raise ValueError(f"A5F98 purge request sequence differs: {actual_purge!r}/{expected_purge!r}")
+
+    r8 = inputs["r6"]
+    expected_globals = (0, (inputs["r7"] + 4 * inputs["stack_top"]) & 0xFFFFFFFF,
+        (inputs["base"] + 4 * r8) & 0xFFFFFFFF)
+    actual_globals = tuple(int.from_bytes(work_mem[epilogue.GLOBAL - source.WORKRAM_BASE + off:
+        epilogue.GLOBAL - source.WORKRAM_BASE + off + 4], "big") for off in (0, 4, 8))
+    if actual_globals != expected_globals:
+        raise ValueError(f"A717C global publication differs: {actual_globals!r}/{expected_globals!r}")
+    expected_global_writes = [["GLOBAL", epilogue.GLOBAL, 4, expected_globals[0]],
+        ["GLOBAL", epilogue.GLOBAL + 8, 4, expected_globals[2]],
+        ["GLOBAL", epilogue.GLOBAL + 4, 4, expected_globals[1]]]
+    if [row for row in writes if row[0] == "GLOBAL"] != expected_global_writes:
+        raise ValueError("A717C global publication order differs")
+
     _, expected_chcr, expected_regs = a600c.scalar(flags, descriptor_inputs, channel, boundary["chcr_after"])
     expected_mmio = []
     for address, size, value in expected_regs:
         kind = "CHCR" if address == chcr_address else "DRCR" if address == drcr_address else "DMAC"
         expected_mmio.append([kind, address, size, value])
     expected_mmio.append(["CHCR", chcr_address, 4, expected_chcr | 1])
-    actual_mmio = [row[:4] for row in writes if row[0] != "stack"]
+    actual_mmio = [row[:4] for row in writes if row[0] in ("CHCR", "DMAC", "DRCR")]
     if actual_mmio != expected_mmio:
         raise ValueError(f"A600C/A6100 MMIO sequence differs: {actual_mmio!r}/{expected_mmio!r}")
     expected_after = ((expected_chcr | 1) & ~a600c.CHCR_TE) | (expected_chcr & (expected_chcr | 1) & a600c.CHCR_TE)
@@ -200,7 +254,10 @@ def execute_tail(kernel: bytes, ram: bytes, emu, boundary, mutation=None):
         "steps": cpu.steps, "tail_instruction_count": len(pcs),
         "pc_path_sha256": sha(b"".join(pc.to_bytes(4, "big") for pc in pcs)),
         "mmio_writes": actual_mmio, "chcr_after_a600c_a6100": chcr_value,
-        "stop_pc": hex(cpu.pc), "stop_pr": hex(cpu.pr), "sp": hex(cpu.r[15]),
+        "purge_arguments": {"r4_base": purge_base, "r5_size": purge_size},
+        "purge_requests": actual_purge, "global_words": list(actual_globals),
+        "return_pc": hex(cpu.pc), "return_pr": hex(cpu.pr), "sp": hex(cpu.r[15]),
+        "r0_return": cpu.r[0],
         "selected_workram_sha256": sha(bytes(work_mem[LOCAL_SP + 4 - source.WORKRAM_BASE:
             LOCAL_SP + 48 - source.WORKRAM_BASE]))}
 
@@ -210,10 +267,10 @@ def main(argv=None):
     for name in ("kernel", "state", "checkpoint", "saturn-recomp", "boundary-report", "report"):
         parser.add_argument("--" + name, type=Path, required=True)
     args = parser.parse_args(argv)
-    report = {"schema": "neptune.original-japan-a717c-a600c-a6100-tail.v1",
-        "status": "failure", "entry": hex(ENTRY), "stop": hex(STOP),
-        "limits": ["Continues exact serialized A5FC4 return state through original A600C/A6100 to the A5F98 call boundary",
-            "Caller state and CHCR/DMAC/DRCR fixtures are constructed; active DMA, purge, natural caller and timing remain unproved"]}
+    report = {"schema": "neptune.original-japan-a717c-full-return.v1",
+        "status": "failure", "entry": hex(ENTRY), "stop": "pinned SH-2 return sentinel",
+        "limits": ["Continues serialized A5FC4 state through original A600C/A6100/A5F98 and A717C epilogue",
+            "Caller/register/MMIO state is constructed; cache-purge stores are request events only; no active DMA, cache invalidation, natural caller, or timing"]}
     try:
         with args.report.open("x", encoding="utf-8") as output:
             try:
@@ -231,8 +288,12 @@ def main(argv=None):
                 ram = sg.cpu_words(raw, "little")
                 if sha(ram) != source.RAM_SHA:
                     raise ValueError("normalized frame-1200 WorkRAM-H identity differs")
-                ranges = ((ENTRY, STOP), (a600c.ENTRY, a600c.END),
-                    (CALL_A6100, 0x060A6112), (a600c.SHIFT_LEAF, a600c.SHIFT_END))
+                ranges = ((ENTRY, 0x060A727E), (a600c.ENTRY, a600c.END),
+                    (CALL_A6100, 0x060A6112), (a600c.SHIFT_LEAF, a600c.SHIFT_END),
+                    (purge.ENTRY, purge.CODE_END),
+                    (purge.LITERAL_START, purge.LITERAL_END),
+                    (purge.CALLER_ENTRY, purge.STOP),
+                    (source.GLOBAL_LITERAL, source.GLOBAL_LITERAL + 4))
                 for start, end in ranges:
                     if ram[start-source.WORKRAM_BASE:end-source.WORKRAM_BASE] != kernel[start-source.BASE:end-source.BASE]:
                         raise ValueError(f"captured/original tail source differs at {start:08x}")
@@ -272,14 +333,18 @@ def main(argv=None):
                     results=rows, results_sha256=sha(result_bytes), probe_sha256=sha(Path(__file__).read_bytes()),
                     kernel_sha256=source.KERNEL_SHA, state_sha256=source.STATE_SHA,
                     normalized_workram_sha256=source.RAM_SHA,
-                    source_range_sha256={"A717C_tail":sha(kernel[ENTRY-source.BASE:STOP-source.BASE]),
+                    source_range_sha256={"A717C_tail":sha(kernel[ENTRY-source.BASE:0x060A727E-source.BASE]),
                         "A600C":sha(kernel[a600c.ENTRY-source.BASE:a600c.END-source.BASE]),
                         "A6100":sha(kernel[CALL_A6100-source.BASE:0x060A6112-source.BASE]),
-                        "A595B6":sha(kernel[a600c.SHIFT_LEAF-source.BASE:a600c.SHIFT_END-source.BASE])},
+                        "A595B6":sha(kernel[a600c.SHIFT_LEAF-source.BASE:a600c.SHIFT_END-source.BASE]),
+                        "A5F98":sha(kernel[purge.ENTRY-source.BASE:purge.CODE_END-source.BASE]),
+                        "A5F98_literals":sha(kernel[purge.LITERAL_START-source.BASE:purge.LITERAL_END-source.BASE]),
+                        "A5F98_callsite":sha(kernel[purge.CALLER_ENTRY-source.BASE:purge.STOP-source.BASE]),
+                        "A717C_global_literal":sha(kernel[source.GLOBAL_LITERAL-source.BASE:source.GLOBAL_LITERAL+4-source.BASE])},
                     mutation_control={"address":hex(CALL_A600C),"original":"0x430B","replacement":"0x0009",
                         "rejected":True,"reason":mutation_reason},
                     interpreter_revision=pinned.INTERPRETER_REVISION,
-                    contract="The exact serialized A717C state returned from A5FC4 continues through A600C and A6100 to PC 060A723C, immediately before A717C calls A5F98. Original A600C descriptor reads and DMAC/DRCR/CHCR writes, followed by A6100's CHCR.DE write, match the bounded register fixture.")
+                    contract="The exact serialized A717C state returned from A5FC4 continues through A600C/A595B6/A6100, the A5F98 call and recorded associative-purge request, and the A717C outer epilogue to the original entry return sentinel. The epilogue publishes its three globals; purge writes remain request events and are not applied to a cache model.")
             except Exception as error:
                 report["error"] = {"type":type(error).__name__,"reason":str(error)}
             output.write(json.dumps(report,sort_keys=True,separators=(",",":"))+"\n")
