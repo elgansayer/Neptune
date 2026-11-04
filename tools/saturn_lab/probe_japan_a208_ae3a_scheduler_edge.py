@@ -202,6 +202,8 @@ def execute(kernel, ram, emu, slot, seed, mutate=False):
             "row_state": row_state, "matching_vbr_row": matching,
             "matching_branch_taken": branch_match, "task_word_after": expected_task_word,
             "pc_stop": hex(cpu.pc), "pr_after_restore": hex(cpu.pr), "sp_after_restore": hex(cpu.r[15]),
+            "registers_at_ab94": [hex(value) for value in cpu.r],
+            "special_at_ab94": {"pr": hex(cpu.pr), "mach": hex(cpu.mach), "macl": hex(cpu.macl), "vbr": hex(cpu.vbr)},
             "steps": cpu.steps, "pc_visits": pcs, "reads": reads, "writes": writes,
             "original_bytes_executed": not mutate, "mutation": mutate,
             "captured_resume": hex(captured_resume), "saved_context_sha256": sha(saved_context)}

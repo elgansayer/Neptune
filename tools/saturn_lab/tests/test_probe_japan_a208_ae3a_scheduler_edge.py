@@ -17,6 +17,7 @@ class A208AE3ASchedulerEdgeTests(unittest.TestCase):
         self.assertEqual(probe.SELECTOR_ALIAS, 0x2600A020)
         self.assertEqual(probe.TABLE, 0x060BCEEC)
         self.assertEqual(probe.ROW_SIZE, 88)
+        self.assertEqual(probe.RESUME_PC, 0x0600AB94)
 
 
 if __name__ == "__main__":
