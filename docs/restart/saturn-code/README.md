@@ -401,3 +401,11 @@ executed in four bounded constructed cases, covering both its signed and
 nonnegative low-word paths and its guarded SCU IMS writes. This remains an
 isolated helper result without a natural startup caller or device-timing proof;
 see the [Japan BIOS SYS_CHGSCUIM result](../research/2026-11-04-japan-bios-chgscuim-execution.md).
+
+The Japan scheduler path has now been continued in the same CPU and memory
+instance from A208 through AB94, AB30, the later A186 restore and AD38. Under
+constructed VBR slot 0, two seeded runs reach the repeated AC26–AC70 scan and
+stop at the 8,192-instruction bound. Their PC/read traces and write locations
+match; values in stack and task-table writes reflect the differing seed
+registers. The separate VBR slot 1 attempt remains guarded at an unapproved
+write to address 0x4. See the [same-instance AB94 result](../research/2026-11-04-japan-a208-ab94-same-instance.md).
