@@ -311,3 +311,9 @@ bytes of SCSP RAM, producing 512 sequential halfword write intents in paired
 reports. Destination and size mutations are rejected. The stores are not SCSP
 device effects, and A546 reachability and audio output remain unverified. See
 the [A78C SCSP clear result](../research/2026-11-04-japan-a78c-scsp-clear.md).
+
+The A694 switch has paired original-byte evidence for all four selected R4
+modes and two register seeds. It covers SMPC commands 7 and 6, the mode-1 SCSP
+1 KiB fill and DSP setup stores, and the no-device-store default. Device
+operations remain write intents, with no protocol or audio claim. See the
+[A694 SMPC/SCSP result](../research/2026-11-04-japan-a694-smpc-scsp.md).
