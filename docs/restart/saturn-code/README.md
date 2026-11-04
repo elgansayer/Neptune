@@ -382,3 +382,10 @@ entry path are recorded. A later branch-delay audit corrected an unreachable
 BSRF false positive in the `0x06002594` linear listing. The load mapping and
 code/data boundaries are not runtime-validated, and no bootstrap instruction
 was executed. See the [Japan system-area triage](../research/2026-11-04-japan-system-area-static-triage.md).
+
+The existing Japan frame-1200 state also retains a resident copy at candidate
+`0x06002000`: 32,755/32,768 bytes match the original system area, including an
+exact 256-byte program window at candidate PC `0x06002100`. Thirteen differing
+bytes remain unclassified. Captured `SYS_SETUINT`/`SYS_CHGSCUIM` vector slots
+hold targets `0x06000794`/`0x060007C0`; their behavior and boot-time calls have
+not been traced. This supports residency, not instruction-execution coverage.

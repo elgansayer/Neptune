@@ -62,3 +62,29 @@ reproducible analyzer is `analyze_ip_cfg.py`. The corrected walk has 9
 unresolved indirect JSR sites from the candidate entry through R2/R3. Direct
 candidate blocks reach RTS along the walked paths, but unknown BIOS call targets,
 other indirect edges and full executable/data coverage remain unresolved.
+
+## Frame-1200 resident-byte comparison (execution 310)
+
+A read-only comparison against the existing natural frame-1200 Japan emulator
+checkpoint supports the candidate load base. At guest `0x06002000`, 32,755 of
+the 32,768 system-area bytes match the privately extracted original. The first
+256 program bytes at guest `0x06002100` match source file offsets `0x100–0x1FF`
+exactly, including first halfword `0x4F22`. The 13 differing bytes are at file
+offsets `0xD7C–0xD86` and `0xE9A–0xE9B`; they are retained as observed changes,
+not assigned to a patch or runtime writer. This is natural memory-residency
+evidence from the saved state, not a trace proving which bootstrap instructions
+executed.
+
+In the same captured WorkRAM-H image, vector slots `0x06000300` and
+`0x06000344` contain `0x06000794` and `0x060007C0`. The static decoder labels
+the slots `SYS_SETUINT` and `SYS_CHGSCUIM`; the function targets, ABI and
+behavior remain unvalidated. A static decode of 48 halfwords at each captured
+target is retained privately. The full checkpoint and normalized WorkRAM hashes
+are the same as the scheduler evidence already cited; the first frame-1200 read
+attempt used absolute guest addresses as buffer offsets and is retained but
+excluded.
+
+This narrows the bootstrap mapping hypothesis and provides concrete runtime
+resident targets to follow. Next validate the IP-to-first-read transfer and
+capture these early call targets in a boot-time trace; continue code/data and
+indirect-target recovery across the bootstrap and loaded modules.
