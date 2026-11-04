@@ -17,7 +17,8 @@ RAM_SIZE = 0x100000
 ENTRY = 0x0600F040
 TASK_CURSOR = 0x060BCC80
 STACK = 0x06002000
-INSTRUCTION_LIMIT = 1024
+DEFAULT_INSTRUCTION_LIMIT = 1024
+ALLOWED_INSTRUCTION_LIMITS = (1024, 2048, 4096, 8192)
 SNAPSHOT_PCS = {0x06095C24, 0x06095C3A, 0x06095C60, 0x06095C78,
                 0x06095C88, 0x0609DC10, 0x0609DC2E, 0x0609DC7C}
 KERNEL_SHA256 = "23685e15fb4f0c49d16859b4e5bbb6ded619611f99ac830e8c93a00590ca44fb"
@@ -30,7 +31,7 @@ def sha(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-def execute(kernel: bytes, ram: bytes, emu, seed: int) -> dict:
+def execute(kernel: bytes, ram: bytes, emu, seed: int, instruction_limit: int) -> dict:
     work = bytearray(ram)
     reads: list[list[int]] = []
     writes: list[list[int]] = []
@@ -70,7 +71,7 @@ def execute(kernel: bytes, ram: bytes, emu, seed: int) -> dict:
                 memory.fetching = False
 
         def exec(self, instruction, pc, in_slot=False):
-            if self.steps >= INSTRUCTION_LIMIT:
+            if self.steps >= instruction_limit:
                 raise ValueError("instruction budget")
             pcs.append(pc)
             if pc in SNAPSHOT_PCS:
@@ -110,6 +111,8 @@ def main(argv=None) -> int:
     parser.add_argument("--checkpoint", type=Path, required=True)
     parser.add_argument("--saturn-recomp", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--instruction-limit", type=int, choices=ALLOWED_INSTRUCTION_LIMITS,
+                        default=DEFAULT_INSTRUCTION_LIMIT)
     args = parser.parse_args(argv)
 
     report = {"schema": "neptune.japan-f040-entry-diagnostic.v1", "status": "failure"}
@@ -134,21 +137,21 @@ def main(argv=None) -> int:
             if sha(ram) != WORKRAM_SHA256:
                 raise ValueError("normalized captured WorkRAM-H identity differs")
             emu = pinned.interpreter(args.saturn_recomp)
-            results = [execute(kernel, ram, emu, seed) for seed in (0, 1)]
+            results = [execute(kernel, ram, emu, seed, args.instruction_limit) for seed in (0, 1)]
             report.update(
                 status="diagnostic_complete", release="Japan T-14302G V1.000", module="KRNL",
                 cpu="SH-2", entry=hex(ENTRY), kernel_sha256=KERNEL_SHA256,
                 state_sha256=STATE_SHA256, normalized_workram_sha256=WORKRAM_SHA256,
                 interpreter_revision=pinned.INTERPRETER_REVISION,
                 interpreter_sources=pinned.SOURCE_HASHES,
-                instruction_limit=INSTRUCTION_LIMIT,
+                instruction_limit=args.instruction_limit,
                 probe_sha256=sha(Path(__file__).read_bytes()),
                 initial_conditions=("Captured frame-1200 WorkRAM-H; constructed GPR seeds, "
                     "SP=0x06002000 and VBR=0x06000000; R4 seeded from captured task cursor word; "
                     "direct F040 entry, not a natural A20E return."),
                 contract=("Executes original resident instructions from direct F040 entry while "
                     "allowing only captured WorkRAM reads/writes and source-matching kernel fetches. "
-                    "A return, guard failure, or 1024-instruction bound is recorded."),
+                    "A return, guard failure, or declared instruction bound is recorded."),
                 limitations=["Constructed entry registers and stack; natural A20E caller is unresolved",
                     "No independent emulator, hardware timing, BIOS contract, gameplay, or full-program claim",
                     "Bounded diagnostic does not establish complete F040/F134/A946 behavior"],
