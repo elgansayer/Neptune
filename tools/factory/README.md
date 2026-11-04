@@ -450,3 +450,28 @@ file is deleted when `release` ends the lease, or when `request` moves the job t
 Back up the database with SQLite's backup API (or a correctly quiesced snapshot),
 not by copying only the main file while WAL writes continue. Test restoration and
 reconcile remote state before permitting publication after a restore.
+
+## Manual sessions and the supervised canary
+
+An outside-protocol manual Codex, Claude, Gemini or OpenCode session is counted
+in shared provider capacity once it is enrolled with
+`repo-factory sessions enrol --provider <codex|claude|google|opencode> --pid <PID> --label <name>`
+(Elgl #9827). It runs as a guardian: it holds one renewable slot under the
+router's own provider limit while that exact process (PID plus start time) lives,
+and releases the slot when the process exits or on a signal. It never signals or
+adopts the participant.
+
+`repo-factory sessions audit` reports enrolled sessions as
+`live_recorded_guardian_and_lease`. An unenrolled session remains unaccounted,
+and an audit never proves account-wide coverage.
+
+One supervised Neptune canary step is
+`repo-factory task run --issue <N> --supervised-session`, run as the service
+user with the Neptune instance environment. Each call advances one durable
+checkpoint and never enables continuity. Continuity stays disabled until #33
+accepts it.
+
+A coordinator can request bounded experiments between jobs with
+`tools/factory/cli.py request` and `tools/factory/cli.py deliver` (#781/#782).
+Only a result bound to the task digest, the source binding and the checkpointed
+head unblocks the dependent, exactly once.
