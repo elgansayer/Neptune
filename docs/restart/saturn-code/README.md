@@ -409,3 +409,11 @@ stop at the 8,192-instruction bound. Their PC/read traces and write locations
 match; values in stack and task-table writes reflect the differing seed
 registers. The separate VBR slot 1 attempt remains guarded at an unapproved
 write to address 0x4. See the [same-instance AB94 result](../research/2026-11-04-japan-a208-ab94-same-instance.md).
+
+A direct-entry Japan F040 diagnostic now executes 1,024 original instructions
+per seed from the captured frame-1200 WorkRAM image, then stops in a repeated
+path at `0x0609DC7C`. Paired reports are byte-identical; no natural A20E caller
+or complete F040/F134/A946 contract is established. The prepared USA kernel
+probe was also rerun with its accepted 256-case output and mutation controls.
+See the [F040 diagnostic](../research/2026-11-04-japan-f040-entry-diagnostic.md).
+Full code and asset recovery remains open.
