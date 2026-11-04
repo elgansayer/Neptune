@@ -364,3 +364,10 @@ composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98
 store](../research/2026-11-04-japan-ae98-vbr-record-store.md), [A208/AE3A
 edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md), [same-instance AB94 resume](../research/2026-11-04-japan-a208-ae3a-ab94-resume.md), and
 [AB94 constructed-state escape](../research/2026-11-04-japan-ab94-ad38-return.md) results.
+
+The AB94 state2 A8E8 continuation now has a paired follow-up receipt with
+MACH/MACL/SR at ACE8. A separate paired ACE8 task-save probe executes 12
+original-byte runs per report across the ACE8/A164 prefix, A186 restore, and
+AD60→ACE8→A164→A186 composition, reaching the captured AB94 PR but stopping
+before AB94. Inputs remain constructed and natural task scheduling is
+unresolved. See the [A8E8/ACE8 continuation result](../research/2026-11-04-japan-ab94-a8e8-continuation.md).

@@ -166,7 +166,9 @@ def execute(kernel, ram, emu, case_name, seed, mutate=False, caller=None, prefix
             "a80e_calls": pcs.count(a80e.ENTRY), "aacc_calls": pcs.count(a80e.CALLBACK),
             "reads": reads, "writes": writes, "pc_visits": len(pcs),
             "pcs_sha256": sha(b"".join(pc.to_bytes(4, "big") for pc in pcs)),
-            "registers_at_exit": [hex(v) for v in cpu.r], "sp_restored": cpu.r[15] == initial_sp,
+            "registers_at_exit": [hex(v) for v in cpu.r], "pr_at_exit": hex(cpu.pr),
+            "mach_at_exit": hex(cpu.mach), "macl_at_exit": hex(cpu.macl), "sr_at_exit": hex(cpu.sr),
+            "sp_restored": cpu.r[15] == initial_sp,
             "pr_restored": cpu.pr == initial_pr, "original_bytes_execution": not mutate,
             "mutated": mutate, "inherited_prefix_writes": len(prefix_writes),
             "inherited_ab94_writes": len(caller["writes"])}

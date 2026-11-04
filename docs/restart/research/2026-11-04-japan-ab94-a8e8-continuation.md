@@ -23,3 +23,39 @@ constructed row state. ACE8's scheduler body, natural row selection, same-instan
 continuity, hardware effects/timing, gameplay, remaining modules and assets stay
 open. Next continue from ACE8 using validated caller state, then proceed across
 further functions and modules.
+
+## Follow-up execution 307: special-register boundary receipt
+
+A follow-up pair reran the same bounded A8E8 continuation with MACH, MACL and
+SR added to the exit receipt. Both private reports are byte-identical at
+SHA-256 `0f249715d694ac5fdb34873439a81f7b72eb0beb449e3a8b53f70d597de01bc6`.
+The updated probe SHA-256 is
+`03a157dbb0ef657b227e0c765aa3dccc7c0c4326e68cf94f72daddd5c17f5ecf`.
+At ACE8 the saved exit state is MACH `0x10203040`, MACL `0`, SR `0xF0`,
+PR `0x0600A8E8`; the previous instruction, call-count, table and SP/PR results
+remain the same. This receipt improves the reproducibility of a later separate
+ACE8 continuation; it does not turn the replayed entry into a same-instance
+handoff.
+
+## Follow-up execution 308: ACE8 task-save and restore edge
+
+The existing ACE8 task-save probe was run against the original Japan kernel
+and verified frame-1200 state checkpoint. It performs 12 original-byte
+executions in each report: four ACE8/A164 task-save prefixes, four A186 restore
+handoffs, and four composed AD60→ACE8→A164→A186 handoffs across both VBR slots
+and two seeds. The first group stops at A186; composed cases restore the
+captured frame and stop at PR `0x0600AB94`, before executing AB94. The paired
+private reports are byte-identical, SHA-256
+`e56b691ced85e77c8128c220e3f87a22a57ae3024959b68cf0de7c19b9380d1b`; probe
+SHA-256 `254423d67be359452b1efe62c893682f5846390b04585673d091c7989b3ad181`.
+The original kernel, emulator checkpoint and normalized WorkRAM hashes are
+recorded in the report. Mutation controls reject altered A164 and A186
+instructions. These are constructed ready words, rows, VBR-selected pointers
+and registers; natural ready-word provenance and scheduling are not established.
+
+The initial invocation used the broad research index in place of the
+frame-1200 emulator checkpoint and correctly rejected the identity. That
+failure is retained as execution-308's first report. The corrected invocation
+used `continuation-002/boot-002-next-600frames/checkpoint.json`; no checkpoint
+identity check was weakened. ACE8's caller-state integration, same-instance
+continuity from AB94, and remaining kernel/module code stay open.
