@@ -16,7 +16,7 @@ def main():
     sub = parser.add_subparsers(dest="command", required=True)
     ready = sub.add_parser("readiness")
     ready.add_argument("snapshot", type=Path)
-    for name in ("enqueue", "show", "recover"):
+    for name in ("enqueue", "show", "recover", "status"):
         command = sub.add_parser(name)
         command.add_argument("--database", type=Path, required=True)
         if name == "enqueue":
@@ -33,6 +33,8 @@ def main():
         try:
             if args.command == "enqueue":
                 result = {"job": store.enqueue(json.loads(args.snapshot.read_text()))}
+            elif args.command == "status":
+                result = store.status()
             elif args.command == "show":
                 result = store.get(args.job)
                 result.pop("token", None)
