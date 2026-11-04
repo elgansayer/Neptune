@@ -336,3 +336,14 @@ through four loop iterations and A714, stopping before A6D6. The captured
 B3D44/B3D48 pointers advance to 0x25F00000/0x25F01000; A610 input changes are
 explicit constructed samples. A638, A66C, A680, A694 and A714 device stores
 remain intents. See the [A546 loop-prefix result](../research/2026-11-04-japan-a546-loop-prefix.md).
+
+The Japan scheduler work now has paired original-byte evidence from AD60 through
+ACE8/A164/A186 to the captured AB94 resume target, plus a separate AE98
+VBR-selected row-store contract. The A208 caller and AE3A task-row loop have
+also been executed from the captured task cursor through the first ACE8 transfer
+edge for both VBR slots; this stops before ACE8 executes and does not establish a
+complete natural task cycle. Continue nested ACE8/A164/A186 composition, the
+A208 caller's F040 continuation, and remaining modules. See the [AD60/ACE8
+composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98
+store](../research/2026-11-04-japan-ae98-vbr-record-store.md), and [A208/AE3A
+edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md) results.
