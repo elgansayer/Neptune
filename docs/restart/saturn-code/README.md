@@ -371,3 +371,12 @@ original-byte runs per report across the ACE8/A164 prefix, A186 restore, and
 AD60→ACE8→A164→A186 composition, reaching the captured AB94 PR but stopping
 before AB94. Inputs remain constructed and natural task scheduling is
 unresolved. See the [A8E8/ACE8 continuation result](../research/2026-11-04-japan-ab94-a8e8-continuation.md).
+
+Static triage has also started on the Japan system-area bootstrap, a distinct
+original-code candidate from the resident KRNL. The first 16 track sectors
+reproduce the release system-area and header hashes; the receipt's boot-code
+extent hash is reproduced from file offset `0x100`. A 6,144-byte candidate IP
+view begins with an SH-2 prologue and exposes BIOS/VDP2/WorkRAM references;
+several static BSR targets and an unresolved indirect call are recorded. The
+load mapping and code/data boundaries are not runtime-validated, and no
+bootstrap instruction was executed. See the [Japan system-area triage](../research/2026-11-04-japan-system-area-static-triage.md).
