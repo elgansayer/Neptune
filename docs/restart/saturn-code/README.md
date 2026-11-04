@@ -348,8 +348,12 @@ establish a complete natural scheduler cycle. A separate captured AB94-entry
 continuation executes AB30/A186, resumes at AD38, and reaches PC BCC80 after 461 instructions in each of four seeded/slot runs.
 R0-R7/VBR were constructed, and the captured WorkRAM word at BCC80 is zero
 while the kernel file has different bytes there; this is an unvalidated escape,
-not a confirmed dispatch. Compose with caller-derived registers from A208 before
-extending the path, then follow F040 and remaining modules. See the [AD60/ACE8
+not a confirmed dispatch. A caller-state follow-up records all registers at the
+A208→AB94 edge, replays its bounded writes/registers in a separate instance, then
+runs AB94/AB30 for 8191 instructions. Both seeded cases repeat through AC26–AC70
+and stop at budget PC AC46 before A186; the R6/R7 seeds do not change this bounded
+path, and the ABCC mutation changes the boundary. Same-instance composition and
+scan completion remain open. See the [caller-state AB94 result](../research/2026-11-04-japan-ab94-caller-context.md), [AD60/ACE8
 composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98
 store](../research/2026-11-04-japan-ae98-vbr-record-store.md), [A208/AE3A
 edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md), [same-instance AB94 resume](../research/2026-11-04-japan-a208-ae3a-ab94-resume.md), and
