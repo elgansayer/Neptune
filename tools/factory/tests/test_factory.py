@@ -488,6 +488,52 @@ class Handoff(unittest.TestCase):
         self.store.cancel(self.dependent, "superseded")
         self.assertEqual(self.store.claim(self.producer, "codex")["requests"], [])
 
+    def test_cli_drives_handoff_with_private_receipts(self):
+        cli = Path(__file__).resolve().parents[1] / "cli.py"
+        self.store.close()
+        refreshed = []
+        for issue, feature, path in ((660, "CODE-001", "tools/saturn_lab"), (779, "FACTORY-020", "tools/factory")):
+            data = snapshot(issue, feature, path)
+            data["captured_at"] = __import__("time").time()
+            refreshed.append(data)
+        self.store = JobStore(self.path)
+        for data in refreshed:
+            self.store.enqueue(data)
+        self.store.close()
+        directory = Path(self.temp.name)
+
+        def run(*arguments, payload=None, code=0):
+            extra = []
+            if payload is not None:
+                (directory / "payload.json").write_text(json.dumps(payload))
+                extra = [str(directory / "payload.json")]
+            done = subprocess.run([sys.executable, str(cli), *arguments, "--database", str(self.path), *extra], capture_output=True, text=True)
+            self.assertEqual(done.returncode, code, done.stderr)
+            return json.loads(done.stdout) if code == 0 else done.stderr
+
+        dependent, producer = directory / "dependent.receipt", directory / "producer.receipt"
+        claimed = run("claim", "--owner", "claude", "--receipt", str(dependent), self.dependent)
+        self.assertNotIn("token", claimed)
+        self.assertEqual(dependent.stat().st_mode & 0o777, 0o600)
+        self.assertIn("exists", run("claim", "--owner", "claude", "--receipt", str(dependent), self.producer, code=1))
+        self.assertIn("not ready", run("claim", "--owner", "x", "--receipt", str(directory / "lost.receipt"), self.dependent, code=1))
+        self.assertFalse((directory / "lost.receipt").exists())
+        run("checkpoint", "--receipt", str(dependent), payload={"base_sha": "a" * 40, "head_sha": "c" * 40, "next_step": "use result"})
+        request = run("request", "--receipt", str(dependent), payload=[self.spec()])["requests"][0]
+        self.assertFalse(dependent.exists())
+        self.assertEqual([r["request"] for r in run("claim", "--owner", "codex", "--receipt", str(producer), self.producer)["requests"]], [request])
+        run("checkpoint", "--receipt", str(producer), payload={"base_sha": "a" * 40, "head_sha": "b" * 40, "next_step": "deliver"})
+        self.store = JobStore(self.path)
+        value = result(self.store, self.producer)
+        self.store.close()
+        self.assertIn("binding", run("deliver", "--receipt", str(producer), "--request", request, payload={**value, "binding": {**BINDING, "cpu": "slave-sh2"}}, code=1))
+        self.assertTrue(run("deliver", "--receipt", str(producer), "--request", request, payload=value)["satisfied"])
+        run("release", "--receipt", str(producer), "--state", "ready", "--reason", "probe done")
+        self.assertFalse(producer.exists())
+        resumed = run("claim", "--owner", "claude-resumed", "--receipt", str(dependent), self.dependent)
+        self.assertEqual(resumed["results"][0]["result"]["report_sha256"], "9" * 64)
+        self.store = JobStore(self.path)
+
     def test_duplicate_request_from_two_dependents_is_independent(self):
         _, first = self.waiting()
         other = self.store.enqueue(snapshot(780, "FACTORY-021", "docs/factory"))

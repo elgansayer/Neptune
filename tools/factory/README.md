@@ -414,6 +414,24 @@ These are local consistency checks, not source authentication. The trusted
 coordinator must bind the reported hashes to retained private evidence before
 calling `deliver`.
 
+The coordinator can drive the same API without custom code. Receipts live only
+in coordinator-held files, never in stdout or worker workspaces:
+
+```sh
+F="python3 tools/factory/cli.py"; D="--database /private/coordinator/jobs.sqlite"
+$F claim $D --owner claude --receipt /private/leases/779.json owner/repo:FACTORY-020
+$F checkpoint $D --receipt /private/leases/779.json checkpoint.json
+$F request $D --receipt /private/leases/779.json requests.json   # JSON list of specs
+$F claim $D --owner codex --receipt /private/leases/707.json owner/repo:CODE-001
+$F deliver $D --receipt /private/leases/707.json --request <id> result.json
+$F release $D --receipt /private/leases/707.json --state ready --reason "probe done"
+```
+
+`claim` creates its receipt file exclusively with mode 0600 before it takes the
+lease. It refuses an existing path and removes the file if the claim fails. The
+file is deleted when `release` ends the lease, or when `request` moves the job to
+`waiting`. A copy kept elsewhere is refused as stale.
+
 ## Next integration on the VPS
 
 1. Inspect active jobs and use an isolated Neptune state/workspace directory.
