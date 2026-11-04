@@ -298,3 +298,10 @@ the 96-byte descriptor setup and 48 VDP1 VRAM halfword write intents, with
 literal and VRAM-base mutation controls. VDP1 writes are recorded intents;
 the entry is direct and constructed, so natural A472 reachability and actual
 device effects remain open. See the [A638 VDP1 prefix result](../research/2026-11-04-japan-a638-vdp-init.md).
+
+The original A610 WorkRAM change poll now completes eight constructed sample
+sequences twice in paired reports, including repeated equal values and the
+signed halfword boundary. It reads the initial word once, spins until a
+different halfword appears, and performs no writes. Poll timing is an explicit
+input stream, not a natural trace; the composed A546 loop and its device helpers
+remain open. See the [A610 poll result](../research/2026-11-04-japan-a610-change-poll.md).
