@@ -77,9 +77,17 @@ executed.
 
 In the same captured WorkRAM-H image, vector slots `0x06000300` and
 `0x06000344` contain `0x06000794` and `0x060007C0`. The static decoder labels
-the slots `SYS_SETUINT` and `SYS_CHGSCUIM`; the function targets, ABI and
-behavior remain unvalidated. A static decode of 48 halfwords at each captured
-target is retained privately. The full checkpoint and normalized WorkRAM hashes
+the slots `SYS_SETUINT` and `SYS_CHGSCUIM`. Each 64-byte window at the captured
+target matches the Japan BIOS ROM exactly: `0x06000794` matches file offset
+`0xD94`, and `0x060007C0` matches file offset `0xDC0`. This identifies the
+bytes behind these captured vector values; call behavior, ABI and boot-time
+execution remain unvalidated. A static decode of 48 halfwords at each captured
+target is retained privately.
+
+The BIOS-window match report is private, SHA-256
+`419985174f5a26316568758cf4f35b2502faf5e8dd4f93cdea790d48689febc7`. Only
+these target windows are matched; a broad WorkRAM-to-BIOS comparison does not
+establish a whole-ROM relocation mapping. The full checkpoint and normalized WorkRAM hashes
 are the same as the scheduler evidence already cited; the first frame-1200 read
 attempt used absolute guest addresses as buffer offsets and is retained but
 excluded.
