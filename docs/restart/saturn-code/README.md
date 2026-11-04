@@ -355,8 +355,11 @@ and stop at budget PC AC46 before A186; all 18 row first words/+80 bytes are
 read, and none has first word 1. The R6/R7 seeds do not change this bounded
 path, and the ABCC mutation changes the boundary. A four-value row0 +80 matrix confirms states 1/3 restore the selected context
 to AD38/AE76, while state 2 reaches resident A8E8 bytes after 465 instructions;
-state 0 remains in the scan. These inputs are constructed. Same-instance composition
-and full scan completion remain open. See the [row eligibility cases](../research/2026-11-04-japan-ab94-row-scan-cases.md) and [caller-state AB94 result](../research/2026-11-04-japan-ab94-caller-context.md), [AD60/ACE8
+state 0 remains in the scan. These inputs are constructed. The state2 path was
+continued through original A8E8/A80E for 221 instructions, decremented the
+captured count 5→4, and reached ACE8; AACC was not entered. That follow-up also
+replays reports in a separate CPU. Same-instance composition and full scan
+completion remain open. See the [A8E8 continuation](../research/2026-11-04-japan-ab94-a8e8-continuation.md), [row eligibility cases](../research/2026-11-04-japan-ab94-row-scan-cases.md) and [caller-state AB94 result](../research/2026-11-04-japan-ab94-caller-context.md), [AD60/ACE8
 composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98
 store](../research/2026-11-04-japan-ae98-vbr-record-store.md), [A208/AE3A
 edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md), [same-instance AB94 resume](../research/2026-11-04-japan-a208-ae3a-ab94-resume.md), and
