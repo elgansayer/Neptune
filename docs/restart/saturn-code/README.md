@@ -389,3 +389,10 @@ exact 256-byte program window at candidate PC `0x06002100`. Thirteen differing
 bytes remain unclassified. Captured `SYS_SETUINT`/`SYS_CHGSCUIM` vector slots
 hold targets `0x06000794`/`0x060007C0`; their behavior and boot-time calls have
 not been traced. This supports residency, not instruction-execution coverage.
+
+The next bounded probe executes the captured original `SYS_SETUINT` bytes at
+`0x06000794` four times under constructed R4/R5 inputs. R5 zero selects the
+embedded default `0x0600083C`; nonzero R5 is stored directly. These runs include
+the RTS delay slot and stop after one exact vector-slot write. The captured
+caller and full BIOS contract remain open; see the
+[Japan BIOS SYS_SETUINT result](../research/2026-11-04-japan-bios-setuint-execution.md).
