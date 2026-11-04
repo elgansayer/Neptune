@@ -422,4 +422,12 @@ does not assign a helper name. See the [F040 loop snapshots](../research/2026-11
 The selectable 8,192-instruction continuation completes 35 helper calls and
 stops during the 36th at `0x06095C6A`; the full return remains unresolved. See
 the [F040 extended continuation](../research/2026-11-04-japan-f040-8192-continuation.md).
+
+The original Japanese `0x06095C24` helper now has a caller-derived isolated
+probe: eight cases across two F040-captured register sets, a four-value
+longword matrix, and an instruction mutation control. Paired reports match;
+the bounded evidence shows one longword updated with bit 31 set and preserved
+registers/stack. The F040 path remains a direct-entry diagnostic, and this
+does not establish a natural gameplay caller or exhaustive input behavior.
+See the [caller-derived helper probe](../research/2026-11-04-japan-095c24-caller-derived.md).
 Full code and asset recovery remains open.
