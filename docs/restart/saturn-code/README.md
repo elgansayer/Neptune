@@ -416,4 +416,7 @@ path at `0x0609DC7C`. Paired reports are byte-identical; no natural A20E caller
 or complete F040/F134/A946 contract is established. The prepared USA kernel
 probe was also rerun with its accepted 256-case output and mutation controls.
 See the [F040 diagnostic](../research/2026-11-04-japan-f040-entry-diagnostic.md).
+The follow-up captures register state through four calls to the original
+`0x06095C24` helper, but stops before the caller resumes past `0x0609DC7C` and
+does not assign a helper name. See the [F040 loop snapshots](../research/2026-11-04-japan-f040-loop-register-snapshots.md).
 Full code and asset recovery remains open.

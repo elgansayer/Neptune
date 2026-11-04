@@ -18,6 +18,8 @@ ENTRY = 0x0600F040
 TASK_CURSOR = 0x060BCC80
 STACK = 0x06002000
 INSTRUCTION_LIMIT = 1024
+SNAPSHOT_PCS = {0x06095C24, 0x06095C3A, 0x06095C60, 0x06095C78,
+                0x06095C88, 0x0609DC10, 0x0609DC2E, 0x0609DC7C}
 KERNEL_SHA256 = "23685e15fb4f0c49d16859b4e5bbb6ded619611f99ac830e8c93a00590ca44fb"
 STATE_SHA256 = "c115d4b4da8a24f62834235456263465d9bc2c1b8d4ab0deecb7784c1afe8f2f"
 WORKRAM_SHA256 = "3cdda8bc44460237fd86948ef5dabb548c95c8fe1149b15e647178339c81efff"
@@ -33,6 +35,7 @@ def execute(kernel: bytes, ram: bytes, emu, seed: int) -> dict:
     reads: list[list[int]] = []
     writes: list[list[int]] = []
     pcs: list[int] = []
+    snapshots: list[dict] = []
 
     class Memory(emu.Memory):
         fetching = False
@@ -70,6 +73,10 @@ def execute(kernel: bytes, ram: bytes, emu, seed: int) -> dict:
             if self.steps >= INSTRUCTION_LIMIT:
                 raise ValueError("instruction budget")
             pcs.append(pc)
+            if pc in SNAPSHOT_PCS:
+                snapshots.append({"pc": hex(pc), "steps": self.steps,
+                    "registers": [hex(value) for value in self.r],
+                    "pr": hex(self.pr), "mach": hex(self.mach), "macl": hex(self.macl)})
             return super().exec(instruction, pc, in_slot=in_slot)
 
     cpu = CPU(memory)
@@ -90,7 +97,8 @@ def execute(kernel: bytes, ram: bytes, emu, seed: int) -> dict:
                 "detail": str(error), "pc": hex(cpu.pc), "steps": cpu.steps}
 
     return {"seed": seed, "stop": stop, "steps": cpu.steps,
-            "pcs": [hex(pc) for pc in pcs], "reads": reads, "writes": writes,
+            "pcs": [hex(pc) for pc in pcs], "snapshots": snapshots,
+            "reads": reads, "writes": writes,
             "final_registers": [hex(value) for value in cpu.r],
             "pr": hex(cpu.pr), "sr": hex(cpu.sr), "vbr": hex(cpu.vbr)}
 
