@@ -291,3 +291,10 @@ table stores, the retained SCU mask, and two MMIO write intents are checked.
 The final T flag is cleared by the setter stub and A4C2 removes the temporary
 interrupt mask. Captured runtime bytes and MMIO intents do not establish BIOS
 provenance or hardware behavior. See the [A472 service-call result](../research/2026-11-04-japan-a472-services.md).
+
+The adjacent A638 descriptor initializer and A5A2 halfword-copy helper now
+execute to the original RTS boundary. Two constructed R14/register cases each repeat
+the 96-byte descriptor setup and 48 VDP1 VRAM halfword write intents, with
+literal and VRAM-base mutation controls. VDP1 writes are recorded intents;
+the entry is direct and constructed, so natural A472 reachability and actual
+device effects remain open. See the [A638 VDP1 prefix result](../research/2026-11-04-japan-a638-vdp-init.md).
