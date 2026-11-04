@@ -99,7 +99,9 @@ def assert_pass(report: dict, expected: dict) -> None:
 def commands(mode: str, evidence: Path, toolchain: Path) -> list[tuple[str, list[str], int]]:
     python = sys.executable
     checks = [
-        ("input-tooling", [python, "tools/saturn_lab/check.py"], 60),
+        # 709+ original-code probe tests took 84 s on the 4-vCPU VPS (2026-11-04) and
+        # grow with each recovered function; 60 s timed out in the factory verifier.
+        ("input-tooling", [python, "tools/saturn_lab/check.py"], 300),
         ("film-contracts", [python, "tools/saturn_film/check.py"], 60),
         ("catalogue-tests", [python, "tools/research_catalog/check.py"], 60),
         ("catalogue-validation", [python, "tools/research_catalog/cli.py", "validate"], 30),
