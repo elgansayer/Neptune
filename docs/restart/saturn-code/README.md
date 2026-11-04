@@ -283,3 +283,11 @@ captured runtime stub to `0x060A6224`; the following result store and SYS_GETSIN
 call remain open. The stub is identified as captured runtime bytes, not proven
 to be copied directly from BIOS ROM. See the [A61B0 runtime continuation
 result](../research/2026-11-04-japan-a61b0-getuint-runtime.md).
+
+The A472 continuation now executes both captured SYS_SETUINT calls and
+SYS_CHGSCUIM through original A4C2, immediately before the A638 call. Sixteen
+constructed TVSTAT/SR/register cases run twice in paired reports; service 64/65
+table stores, the retained SCU mask, and two MMIO write intents are checked.
+The final T flag is cleared by the setter stub and A4C2 removes the temporary
+interrupt mask. Captured runtime bytes and MMIO intents do not establish BIOS
+provenance or hardware behavior. See the [A472 service-call result](../research/2026-11-04-japan-a472-services.md).
