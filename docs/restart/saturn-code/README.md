@@ -269,3 +269,10 @@ invalidation. Constructed MMIO/caller state does not establish natural callers,
 active DMA timing, hardware parity, or gameplay behavior. See the [A717C tail
 composition result](../research/2026-11-04-japan-a717c-a600c-tail-composition.md)
 and [full return result](../research/2026-11-04-japan-a717c-full-return.md).
+
+The adjacent A61B0 path now executes its first SYS_GETUINT call using the actual
+frame-1200 vector and table. Eight paired cases return `0x0600083C` through the
+captured runtime stub to `0x060A6224`; the following result store and SYS_GETSINT
+call remain open. The stub is identified as captured runtime bytes, not proven
+to be copied directly from BIOS ROM. See the [A61B0 runtime continuation
+result](../research/2026-11-04-japan-a61b0-getuint-runtime.md).
