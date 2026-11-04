@@ -241,6 +241,13 @@ SMPC and SCSP dependencies. Retained disassemblies and limits are recorded in
 the [Japanese kernel study](../research/2026-11-03-japan-record-address.md);
 this path needs an explicit device/runtime model before original execution.
 
+A bounded original-byte prefix now executes from A324 through the A472 TVSTAT
+branch and its two WorkRAM timing stores using explicit PAL/NTSC MMIO samples.
+Both status branches and the SR.T side effect repeat across paired reports, with
+TVSTAT semantics cross-checked against Yabause source. The constructed samples
+are not a natural device trace; the prefix stops before A472's BIOS services and
+A638 dependencies. See [the A472 timing result](../research/2026-11-04-japan-a472-tvstat-timing.md).
+
 Follow-through in the same Japan record path now also covers original AB30's
 18-record counter adjustment: 320 constructed cases twice per report with
 paired execution evidence. See the research note for its write contract and
