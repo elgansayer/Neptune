@@ -1,0 +1,292 @@
+{
+  "adapter": {
+    "directory": "/home/dev/neptune-research-private/655/adapter-8c9e29c824380464542a10ca8dfabf64c8ebadf4a3c7ab16c40e30b21c229a23",
+    "files": 83,
+    "source_head": "e42f90b21f89b499c5b5882f133d76190c9f03bb",
+    "source_manifest_sha256": "8c9e29c824380464542a10ca8dfabf64c8ebadf4a3c7ab16c40e30b21c229a23"
+  },
+  "batch": "/home/dev/neptune-research-private/655/request-state-batch-teu5qfdp/batch.json",
+  "batch_manifest_sha256": "9874ee975bb45474c70c84718530323272ea391d1cf49e4fc1b958a27bea34ce",
+  "cases_per_run": 3432,
+  "complete_returns_per_run": 3288,
+  "contracts": {
+    "poll": "A7C20 R4index; returns0 if poolword+338 is nonzero and poolword+33C equalsinput; otherwise returns1; no writes; nonzero flag need not equal1",
+    "request_busy": "A7BB0 checks word+338 first; anynonzero returnsFFFFFFFF with actualPR/SP restore before checking active index",
+    "request_pending": "when+338zero andword+52 differs, writes[1,R4,R5,R6] to+338/+33C/+340/+344, then realBSR/NOP entersA85E4; PR=A7C16,SP=before-8,R4=SP localword; target notexecuted; no substitutedreturn",
+    "request_same_index": "when+338zero, word+52 equalR4 returnsFFFFFFFB without queuing",
+    "store": "A81FE R4word stored at(*060FC084)+60 in actualRTSdelay; R0/SR/PR/SP/MAC unchanged"
+  },
+  "cpu": "sh2",
+  "families": {
+    "poll": {
+      "archives_byte_identical": true,
+      "cases_per_run": 432,
+      "complete_returns_per_run": 432,
+      "controls": {
+        "wrong-query-field": {
+          "mutated_kernel_sha256": "1f10b474beea851b75dfdf97593141ee2b7da002fd58451abff45a87b349f49a",
+          "nonbudget_rejections": 55,
+          "pc": 101350444,
+          "tested": 77
+        },
+        "wrong-result-delay": {
+          "mutated_kernel_sha256": "0d6d5cd12e8f59212ae92490af223f5ad782be19f6bdb3e62d883f6a4dcb835d",
+          "nonbudget_rejections": 27,
+          "pc": 101350454,
+          "tested": 77
+        }
+      },
+      "instruction_counts": {
+        "9": 72,
+        "12": 180,
+        "13": 180
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "f3cf4befab5ce36e320c8a6463360a8dbe7504d753cd9207a1b148e2af6686f7",
+      "runs": [
+        {
+          "archive_bytes": 27182,
+          "archive_index_sha256": "3495e56402871ce59bc3c1ed4dd4ccd322aeb0f44b46d2248a12e5e40f9388ff",
+          "archive_sha256": "4e9197f74b37f062dd8933bbfaf9699861a8e6d9456c5bb4d572bad6d1a55af4",
+          "directory": "/home/dev/neptune-research-private/655/request-state-contracts-poll-66u5xic9",
+          "isolation_sha256": "72c54fd8d3c813295b21737f845eba274b485a11e415ec7db549bc630f1d7b90",
+          "raw_bytes": 698497,
+          "raw_report_sha256": "3ed50eb6dc2cde8549789417b92c0beb13f9597d19076fc6b687895f0dfd5b7c",
+          "supervisor_sha256": "5d2fbcc73878b112b2c14901cfb598b5dfb57d103ef8a0c63cfc3ef604ab20e0"
+        },
+        {
+          "archive_bytes": 27182,
+          "archive_index_sha256": "3495e56402871ce59bc3c1ed4dd4ccd322aeb0f44b46d2248a12e5e40f9388ff",
+          "archive_sha256": "4e9197f74b37f062dd8933bbfaf9699861a8e6d9456c5bb4d572bad6d1a55af4",
+          "directory": "/home/dev/neptune-research-private/655/request-state-contracts-poll-n3jyzu4z",
+          "isolation_sha256": "72c54fd8d3c813295b21737f845eba274b485a11e415ec7db549bc630f1d7b90",
+          "raw_bytes": 698497,
+          "raw_report_sha256": "3ed50eb6dc2cde8549789417b92c0beb13f9597d19076fc6b687895f0dfd5b7c",
+          "supervisor_sha256": "a25fd85d0c3e0c9fc637c4f85a1db699bda7773db7d822b838e69794b4620e6c"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_request_state.py": "b097857e93adce44b9bb0285db1627cf9c8d4d2c36eeb1c7658562c95385ddd7",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_handoffs_per_run": 0
+    },
+    "request": {
+      "archives_byte_identical": true,
+      "cases_per_run": 1440,
+      "complete_returns_per_run": 1296,
+      "controls": {
+        "lost-first-argument": {
+          "mutated_kernel_sha256": "1fa948049c62c09f14679c7332c01582ee07adfedb035a185b6c891ebc94f8fb",
+          "nonbudget_rejections": 15,
+          "pc": 101350408,
+          "tested": 79
+        },
+        "lost-index-field": {
+          "mutated_kernel_sha256": "a8b4a59df59771173a6bdc370b5fc25c17978aaa0674c932dcd8275ef1376df3",
+          "nonbudget_rejections": 15,
+          "pc": 101350402,
+          "tested": 79
+        },
+        "lost-last-argument": {
+          "mutated_kernel_sha256": "d069ba0bd708a3623a175a539d078e799d8d0e75d7ea248bab9cff94c669e8a6",
+          "nonbudget_rejections": 15,
+          "pc": 101350416,
+          "tested": 79
+        },
+        "lost-request-flag": {
+          "mutated_kernel_sha256": "33ad12e2954e3a961188a6d174437523cf240fdabba9d56420da84b363bcf89f",
+          "nonbudget_rejections": 15,
+          "pc": 101350396,
+          "tested": 79
+        },
+        "wrong-busy-result-delay": {
+          "mutated_kernel_sha256": "c516efcc1336b3a36edf6010c9e988095fbc8c894f269fa6113a482482ea14e2",
+          "nonbudget_rejections": 52,
+          "pc": 101350342,
+          "tested": 79
+        },
+        "wrong-same-result-delay": {
+          "mutated_kernel_sha256": "5892d682cb5f4570d828e090bb5747bb8a15709ed9116df07b212baeda7a44db",
+          "nonbudget_rejections": 12,
+          "pc": 101350356,
+          "tested": 79
+        }
+      },
+      "instruction_counts": {
+        "12": 1152,
+        "15": 144,
+        "26": 144
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "e92f15c9400fe01ad179ea7131826dc417f4c4463dd73c30d9977c5fee9ea3c2",
+      "runs": [
+        {
+          "archive_bytes": 45813,
+          "archive_index_sha256": "72bc4fd486a511f98ae5af158616f4ceb42e2b315b32fde2852eae82e6e9d76b",
+          "archive_sha256": "ce1ae148f4e83406d0541e3ec70384b8cac548807ad3628ed1b123115fae867f",
+          "directory": "/home/dev/neptune-research-private/655/request-state-contracts-request-6j2fwrkf",
+          "isolation_sha256": "a196e3c3d29837ac8d5a7a864d817e9a1d9cfac1f5181b3a7682e92cc615de62",
+          "raw_bytes": 2549204,
+          "raw_report_sha256": "bb9046483b1064ef4db05eb17ecfa11b5ac1806c1f61ed7e75b1a63771a6813d",
+          "supervisor_sha256": "040653236eadbe75b985294ee515fb1f81c2bb625770f36ffe75ae20ce34d2fe"
+        },
+        {
+          "archive_bytes": 45813,
+          "archive_index_sha256": "72bc4fd486a511f98ae5af158616f4ceb42e2b315b32fde2852eae82e6e9d76b",
+          "archive_sha256": "ce1ae148f4e83406d0541e3ec70384b8cac548807ad3628ed1b123115fae867f",
+          "directory": "/home/dev/neptune-research-private/655/request-state-contracts-request-e0q2jm4x",
+          "isolation_sha256": "a196e3c3d29837ac8d5a7a864d817e9a1d9cfac1f5181b3a7682e92cc615de62",
+          "raw_bytes": 2549204,
+          "raw_report_sha256": "bb9046483b1064ef4db05eb17ecfa11b5ac1806c1f61ed7e75b1a63771a6813d",
+          "supervisor_sha256": "aa115b5b914a65d4bfd8035ead383b217dac79dc4bd0a372149839e04c4b00c5"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_request_state.py": "b097857e93adce44b9bb0285db1627cf9c8d4d2c36eeb1c7658562c95385ddd7",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_handoffs_per_run": 144
+    },
+    "store": {
+      "archives_byte_identical": true,
+      "cases_per_run": 1560,
+      "complete_returns_per_run": 1560,
+      "controls": {
+        "lost-field-store-delay": {
+          "mutated_kernel_sha256": "6eb21a2e40278b4a3829a89b2430725d3339cd7098ae97129dafac8c8b91e122",
+          "nonbudget_rejections": 80,
+          "pc": 101351940,
+          "tested": 80
+        },
+        "wrong-field-offset": {
+          "mutated_kernel_sha256": "2fdd03c306f7383cf3bbdb4c22c1c1955f2aaae0382f30d58663f3e3805a53e5",
+          "nonbudget_rejections": 80,
+          "pc": 101351940,
+          "tested": 80
+        }
+      },
+      "instruction_counts": {
+        "4": 1560
+      },
+      "interpreter_revision": "f20de940e8013fc84103a5b39c4069ed8071b1f9",
+      "interpreter_sources": {
+        "hw": "a0a1e036358474b41fd594a1dd2fae9024e3e63059682367aca57eac257d231d",
+        "sh2": "0add78272f1ee398881fbca2850d8d89b4cbd5a7767448299b39498f60d703dd",
+        "sh2emu": "c43458498cde2f4b727aab6298cfba84487b03fcecd544161ab0c7007e13c253"
+      },
+      "raw_reports_byte_identical": true,
+      "results_sha256": "fcf003b44b131b60b6bd4e43114ff20be93b262d9526c262191351f389e77b9b",
+      "runs": [
+        {
+          "archive_bytes": 91220,
+          "archive_index_sha256": "1b959b7e89a74bb32512c6539cbb68889d00a20738dc22fd31ccd976d26bcafc",
+          "archive_sha256": "bb1cbacae7b4acc63d1ee65a97a60f135f32a5cd0519d52408fb5dc13d58e457",
+          "directory": "/home/dev/neptune-research-private/655/request-state-contracts-store-07tradm0",
+          "isolation_sha256": "7e4ce9a05cb88c71affd8493fbff2f7c131c5d068d178bcd37a406f17e3f003f",
+          "raw_bytes": 2181804,
+          "raw_report_sha256": "63c70916dc51c1cb7fc6ccb795774f5855c317d2338cfd415685460711f37d65",
+          "supervisor_sha256": "8f8a88058c99630633b051f2ebfba88f34016aab8edb7a85ed70d0f88b542dde"
+        },
+        {
+          "archive_bytes": 91220,
+          "archive_index_sha256": "1b959b7e89a74bb32512c6539cbb68889d00a20738dc22fd31ccd976d26bcafc",
+          "archive_sha256": "bb1cbacae7b4acc63d1ee65a97a60f135f32a5cd0519d52408fb5dc13d58e457",
+          "directory": "/home/dev/neptune-research-private/655/request-state-contracts-store-dqwhh819",
+          "isolation_sha256": "7e4ce9a05cb88c71affd8493fbff2f7c131c5d068d178bcd37a406f17e3f003f",
+          "raw_bytes": 2181804,
+          "raw_report_sha256": "63c70916dc51c1cb7fc6ccb795774f5855c317d2338cfd415685460711f37d65",
+          "supervisor_sha256": "af8e89d0069a2bbdfd916efd0fa11f9202ccb5cffcade9eda8a7c45dfb5de188"
+        }
+      ],
+      "source_sha256": {
+        "probe_kernel.py": "049f46b987489440b3d925fc6ca1b413b8021a9a917bd246bae14011b43e8f38",
+        "probe_kernel_records.py": "33f929226175dc00195ea0609c3e2658f70b27c659922d6b9f802e61d78034d3",
+        "probe_library_request_state.py": "b097857e93adce44b9bb0285db1627cf9c8d4d2c36eeb1c7658562c95385ddd7",
+        "probe_task_init.py": "bf336d59a0b4de5f2865a921843d0749cc00638288830f02d7f3165a3e1debf2",
+        "sh2_handoff_profile.py": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169"
+      },
+      "unfinished_handoffs_per_run": 0
+    }
+  },
+  "family_control_combinations": 10,
+  "guard": {
+    "aliases": [],
+    "chosen_budget": 64,
+    "nonexecutable_data_islands": [
+      "060A7BD6..060A7BF8"
+    ],
+    "nonexecutable_pending_entry": "060A85E4",
+    "old128_sha256": "9d73ab349e27bc476700e111cf454f70b3ee2305ff354c82040ff0d39c5f4169",
+    "old128_unchanged": true
+  },
+  "issue": 655,
+  "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+  "lifetime": "resident-kernel",
+  "limits": {
+    "as_bytes": 2147483648,
+    "broker_credentials_authority_hidden": true,
+    "command_seconds": 60,
+    "native_builds": 0,
+    "nice": 10,
+    "offline": true,
+    "own_lease_seconds": 180,
+    "provider_calls": 0,
+    "report_file_limit_bytes": 67108864,
+    "shared_host_limit": 3,
+    "sources_originals_dependencies_readonly": true,
+    "storage_reserve_bytes": 5435817984
+  },
+  "literal_sha256": {
+    "060A7BDC:2": "256a2d446617520b51321ac42d6424769ca347e49dbbce4d3cab76df21c03b8d",
+    "060A7BEC:4": "ad4092b4c5351401902d22d92fff1c6a9b60195f9955751a10c65af4e7dde853",
+    "060A7CF6:2": "256a2d446617520b51321ac42d6424769ca347e49dbbce4d3cab76df21c03b8d",
+    "060A7CF8:2": "b9fa213ca9ef4332665ddd706b1e59953cdad12f2991d25d1989d7e886785384",
+    "060A7CFC:4": "ad4092b4c5351401902d22d92fff1c6a9b60195f9955751a10c65af4e7dde853",
+    "060A8388:4": "ad4092b4c5351401902d22d92fff1c6a9b60195f9955751a10c65af4e7dde853"
+  },
+  "load_address": "06006000",
+  "module": "KRNL",
+  "original_game_bytes_executed": true,
+  "programme_status": "active; incomplete",
+  "release": "usa-mk81070-v1003",
+  "schema": "neptune.original-library-request-state-derived.v1",
+  "scope_limits": [
+    "Constructed requestobject/stack and selected unsigned32words, two register variants/three canaryseeds; not everyinput domain",
+    "A85E4 and its nested service bodies remainunexecuted; A7BB0 positive requests are unfinished pendinghandoffs",
+    "No new nativeframes, fullcleanup/contextservices/callbacks, naturalinterior/hardware/gameplay/Godot/whole-program parity claim"
+  ],
+  "source_head": "e42f90b21f89b499c5b5882f133d76190c9f03bb",
+  "source_range_sha256": {
+    "060A7BB0..060A7BD6": "6dba970ed7a3c599bf3f17b2457be7a57eba96614a24d3c9cf89436619a6d175",
+    "060A7BF8..060A7C16": "0c5faee7f9406d1e2874cf7de6b3fc1b34662e4dca0e647430e1198b58c326bc",
+    "060A7C20..060A7C3E": "114c61bd0e6009c2fc60486b416bc4fad18503140ee6984c003d18d7b6ae7047",
+    "060A81FE..060A8206": "be3265818c90b1c0ab025f6802ca0d052299df0d801c56d63f9ccdefbd604109"
+  },
+  "storage": {
+    "archive_helper_sha256": "3762b603363c7d94cc09ee760cb3341921ba6e054e36112ce0e9198bc6f033f4",
+    "mode": "verified losslessgzip; restore gzip -dk report.json.gz",
+    "original_jobs": 6,
+    "owned_bounds": "/home/dev/neptune-research-private/655/owned-request-state-report-bounds-20261103.json",
+    "owned_bounds_original_execution": false
+  },
+  "unfinished_handoffs_per_run": 144
+}

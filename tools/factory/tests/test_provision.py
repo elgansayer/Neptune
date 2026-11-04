@@ -44,7 +44,9 @@ class ProvisionTests(unittest.TestCase):
                          "tools/factory/provision_context_trace.py", "tools/factory/provision_context_trace.h",
                          "tools/factory/provision_context_trace_abi.py", "tools/factory/provision_ghidra.py",
                          "tools/factory/provision_ghidra_smoke.java", "tools/factory/provision_init_trace.py",
-                         "tools/factory/provision_init_trace.h", "tools/factory/provision_init_trace_abi.py"):
+                         "tools/factory/provision_init_trace.h", "tools/factory/provision_init_trace_abi.py",
+                         "tools/factory/provision_command_trace.py", "tools/factory/provision_command_trace.h",
+                         "tools/factory/provision_command_trace_abi.py"):
             target = self.root / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(p.ROOT / relative, target)
@@ -113,6 +115,27 @@ class ProvisionTests(unittest.TestCase):
         self.assertTrue(again["reused"])
         self.assertEqual((self.installs, self.probes), (1, 2))
 
+    def test_call_trace_preparation_keeps_matching_patched_source_and_license(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source, payload = root / "source", root / "payload"
+            source.mkdir(); payload.mkdir()
+            (source / "COPYING").write_text("pinned upstream license")
+            (source / "mednafen").mkdir()
+            (source / "mednafen" / "observer.c").write_text("patched upstream source")
+            (source / ".git").mkdir()
+            (source / ".git" / "private").write_text("not archived")
+            patched = {"reference_revision": "0123456789012345678901234567890123456789"}
+            p.archive_call_trace_source(source, payload, patched)
+            archive_path = payload / "corresponding-source.tar.gz"
+            with tarfile.open(archive_path, "r:gz") as archive:
+                names = archive.getnames()
+                self.assertIn("beetle-saturn/mednafen/observer.c", names)
+                self.assertNotIn("beetle-saturn/.git/private", names)
+            self.assertEqual(patched["corresponding_source_sha256"], p.digest(archive_path))
+            self.assertEqual(patched["licence_sha256"], p.digest(payload / "COPYING"))
+            self.assertEqual(json.loads((payload / "call-trace-build.json").read_text()), patched)
+
     def test_context_core_is_separate_and_all_patch_dependencies_are_keyed(self):
         tool = "beetle-saturn-context-trace"
         recipe, inputs, key = p.identity(tool, self.root)
@@ -160,6 +183,52 @@ class ProvisionTests(unittest.TestCase):
         header.write_bytes(header.read_bytes()+b"\n/* owned identity mutation */\n")
         self.assertNotEqual(key, p.identity(tool, self.root)[2])
         self.assertEqual(old_context, p.identity("beetle-saturn-context-trace", self.root)[2])
+
+    def test_command_core_is_separate_and_reuses_with_pinned_header_abi_and_patch(self):
+        tool = "beetle-saturn-command-trace"
+        recipe, inputs, key = p.identity(tool, self.root)
+        self.assertEqual(recipe["kind"], "beetle-command-trace")
+        self.assertIn("tools/factory/provision_command_trace.py", inputs["installer_sources"])
+        self.assertIn("tools/factory/provision_command_trace.h", inputs["installer_sources"])
+        self.assertIn("tools/factory/provision_command_trace_abi.py", inputs["installer_sources"])
+        self.assertNotEqual(key, p.identity("beetle-saturn-init-trace", self.root)[2])
+        first = p.ensure(tool, self.cache, self.home / "first", root=self.root,
+                         installer=self.install, prober=self.probe)
+        again = p.ensure(tool, self.cache, self.home / "again", root=self.root,
+                         installer=self.install, prober=self.probe)
+        self.assertFalse(first["reused"])
+        self.assertTrue(again["reused"])
+        self.assertEqual((self.installs, self.probes), (1, 2))
+        header = self.root / "tools/factory/provision_command_trace.h"
+        header.write_bytes(header.read_bytes() + b"\n/* owned identity mutation */\n")
+        self.assertNotEqual(key, p.identity(tool, self.root)[2])
+        self.assertEqual(recipe["commit"], p.identity(tool, self.root)[0]["commit"])
+
+    def test_command_observer_smoke_requires_actual_lossless_abi_v2_fences(self):
+        class Runner:
+            def __init__(self, observer):
+                self.outputs = [
+                    {"scope": "no-media ABI smoke only", "api": 1},
+                    observer,
+                ]
+            def run(self, command, cwd, timeout):
+                return json.dumps(self.outputs.pop(0))
+
+        observer = {"abi": 2, "record_bytes": 288, "capacity": 128,
+                    "witness_words": 424,
+                    "rejected_invalid_profile_witness_and_frame": True}
+        result = p.smoke("beetle-saturn-command-trace", self.home / "matched-core.so",
+                         Runner(observer), self.root)
+        self.assertEqual(result["observer"], observer)
+
+        stale = dict(observer, abi=1)
+        with self.assertRaisesRegex(p.ProvisionError, "bounded command observer ABI/fence"):
+            p.smoke("beetle-saturn-command-trace", self.home / "matched-core.so",
+                    Runner(stale), self.root)
+        stale_size = dict(observer, record_bytes=216)
+        with self.assertRaisesRegex(p.ProvisionError, "bounded command observer ABI/fence"):
+            p.smoke("beetle-saturn-command-trace", self.home / "matched-core.so",
+                    Runner(stale_size), self.root)
 
     def test_corrupt_binary_is_preserved_and_rebuilt_once(self):
         first = self.ensure()

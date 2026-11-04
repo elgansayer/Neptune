@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Constructed original NLSND35DE RAM initialisation, not natural boot or audio."""
+"""Unvalidated NLSND35DE RAM contract/probe; not natural boot or audio evidence."""
 from __future__ import annotations
 
 import argparse
@@ -149,7 +149,6 @@ def main(argv=None):
     report = {'schema': 'neptune.original-boot-ram.v1', 'status': 'failure',
               'original_game_bytes_executed': False,
               'probe_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-              'native_identity': native.identity(),
               'scope': 'Constructed isolated35DE RAM/return contract only; natural boot, device clocks, audio and Godot parity open'}
     try:
         fd = os.open(args.report, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
@@ -160,6 +159,8 @@ def main(argv=None):
         phase = 'source_identity'
         try:
             code = sound.source_bytes(args.source_file, 'NLSND')
+            phase = 'native_identity'
+            report['native_identity'] = native.identity()
             phase = 'native_load'
             library = native.Library(args.prepared)
             report.update(driver_sha256=hashlib.sha256(code).hexdigest(),

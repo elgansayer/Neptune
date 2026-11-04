@@ -272,7 +272,7 @@ jobs:
           python3 tools/factory/provision.py --tool beetle-saturn-call-trace --cache "$RUNNER_TEMP/call-trace-tools" --evidence "$RUNNER_TEMP/call-trace-evidence/first" --timeout 1500
           python3 tools/factory/provision.py --tool beetle-saturn-call-trace --cache "$RUNNER_TEMP/call-trace-tools" --evidence "$RUNNER_TEMP/call-trace-evidence/reuse" --timeout 60
           python3 - <<'PY'
-          import json, os
+          import hashlib, json, os, shutil
           from pathlib import Path
           first, again = [json.loads((Path(os.environ['RUNNER_TEMP']) / 'call-trace-evidence' / name / 'report.json').read_text()) for name in ('first', 'reuse')]
           assert first['conclusion'] == again['conclusion'] == 'success'
@@ -281,7 +281,24 @@ jobs:
           assert first['recipe_sha256'] == again['recipe_sha256']
           assert first['smoke'] == again['smoke']
           assert again['smoke']['observer']['rejected_invalid_entry_budget_and_frame'] is True
+          assert again['smoke']['observer']['accepted_inspected_entries'] == ['0x0600b934', '0x0600a0ec']
           assert len(again['commands']) == 2
+          cache = Path(os.environ['RUNNER_TEMP']) / 'call-trace-tools'
+          target = cache / ('beetle-saturn-call-trace-' + first['recipe_sha256'])
+          prepared = Path(os.environ['RUNNER_TEMP']) / 'call-trace-evidence' / 'prepared'
+          prepared.mkdir()
+          binary = target / 'mednafen_saturn_libretro.so'
+          assert Path(first['binary']).resolve() == binary.resolve()
+          receipt = json.loads((target / 'receipt.json').read_text())
+          assert receipt['binary_sha256'] == first['binary_sha256']
+          shutil.copy2(binary, prepared / binary.name)
+          shutil.copy2(target / 'receipt.json', prepared / 'receipt.json')
+          for name in ('COPYING', 'corresponding-source.tar.gz', 'call-trace-build.json'):
+              shutil.copy2(target / name, prepared / name)
+          assert hashlib.sha256((prepared / binary.name).read_bytes()).hexdigest() == first['binary_sha256']
+          build = json.loads((prepared / 'call-trace-build.json').read_text())
+          assert hashlib.sha256((prepared / 'corresponding-source.tar.gz').read_bytes()).hexdigest() == build['corresponding_source_sha256']
+          assert hashlib.sha256((prepared / 'COPYING').read_bytes()).hexdigest() == build['licence_sha256']
           PY
       - name: Preserve matched-core preparation evidence, including failures
         if: always()
@@ -363,6 +380,43 @@ jobs:
           path: |
             ${{ runner.temp }}/init-trace-evidence
             ${{ runner.temp }}/init-trace-tools/beetle-saturn-init-trace-*/
+          if-no-files-found: error
+          retention-days: 14
+  command-trace:
+    needs: applicability
+    if: needs.applicability.outputs.required == 'true'
+    name: Real matched-core command observer preparation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Build the separate matched core and probe its actual ABI fences
+        run: |
+          python3 tools/factory/provision.py --tool beetle-saturn-command-trace --cache "$RUNNER_TEMP/command-trace-tools" --evidence "$RUNNER_TEMP/command-trace-evidence/first" --timeout 1500
+          python3 tools/factory/provision.py --tool beetle-saturn-command-trace --cache "$RUNNER_TEMP/command-trace-tools" --evidence "$RUNNER_TEMP/command-trace-evidence/reuse" --timeout 60
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          first, again = [json.loads((Path(os.environ['RUNNER_TEMP']) / 'command-trace-evidence' / name / 'report.json').read_text()) for name in ('first', 'reuse')]
+          assert first['conclusion'] == again['conclusion'] == 'success'
+          assert first['reused'] is False and again['reused'] is True
+          assert first['binary_sha256'] == again['binary_sha256']
+          assert first['recipe_sha256'] == again['recipe_sha256']
+          assert first['smoke'] == again['smoke']
+          assert again['smoke']['observer']['rejected_invalid_profile_witness_and_frame'] is True
+          assert len(again['commands']) == 2
+          PY
+      - name: Preserve matched-core preparation evidence, including failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: command-trace-provisioning-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/command-trace-evidence
+            ${{ runner.temp }}/command-trace-tools/beetle-saturn-command-trace-*/
           if-no-files-found: error
           retention-days: 14
   ocr:
@@ -508,7 +562,7 @@ jobs:
           retention-days: 14
   install:
     name: Pinned Godot and Saturn installation
-    needs: [applicability, xvfb, ocr, call-trace, context-trace, init-trace, ghidra, scsp-dsp]
+    needs: [applicability, xvfb, ocr, call-trace, context-trace, init-trace, command-trace, ghidra, scsp-dsp]
     if: always()
     runs-on: ubuntu-24.04
     timeout-minutes: 30

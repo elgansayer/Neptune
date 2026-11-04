@@ -129,6 +129,41 @@ class BootRamTests(unittest.TestCase):
                 self.assertEqual(p.main(args), 1)
             self.assertEqual(report.read_bytes(), data)
 
+    def test_native_identity_failure_is_recorded_without_loading_or_executing(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            report = root / 'identity-failure.json'
+            args = ['--source-file', str(root / 'source'), '--prepared', str(root),
+                    '--report', str(report)]
+            with patch.object(p.sound, 'source_bytes', return_value=bytes(23920)), \
+                    patch.object(p.native, 'identity', side_effect=FileNotFoundError('missing source lock')), \
+                    patch.object(p.native, 'Library') as library, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(p.main(args), 1)
+                library.assert_not_called()
+            data = json.loads(report.read_text())
+            self.assertEqual(data['status'], 'failure')
+            self.assertEqual(data['error']['phase'], 'native_identity')
+            self.assertFalse(data['original_game_bytes_executed'])
+            self.assertEqual(report.stat().st_mode & 0o777, 0o600)
+
+    def test_native_load_failure_records_identity_without_claiming_execution(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            report = root / 'load-failure.json'
+            args = ['--source-file', str(root / 'source'), '--prepared', str(root),
+                    '--report', str(report)]
+            with patch.object(p.sound, 'source_bytes', return_value=bytes(23920)), \
+                    patch.object(p.native, 'identity', return_value={'abi': 8}), \
+                    patch.object(p.native, 'Library', side_effect=ValueError('invalid prepared receipt')), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(p.main(args), 1)
+            data = json.loads(report.read_text())
+            self.assertEqual(data['status'], 'failure')
+            self.assertEqual(data['error']['phase'], 'native_load')
+            self.assertEqual(data['native_identity'], {'abi': 8})
+            self.assertFalse(data['original_game_bytes_executed'])
+
 
 if __name__ == '__main__':
     unittest.main()

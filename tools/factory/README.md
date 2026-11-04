@@ -327,7 +327,7 @@ reflect fresh external claims, dependencies and capabilities.
 
 ## Coordinator API
 
-`JobStore(database_path)` exposes `enqueue`, `claim`, `heartbeat`, `checkpoint`,
+`JobStore(database_path)` exposes `enqueue`, `claim`, `heartbeat`, `checkpoint`, `request`, `deliver`, `status`,
 `begin_publication`, `release`, `cancel`, `recover`, `reconcile` and `get`.
 Close connections explicitly. Use an existing private coordinator-owned directory
 on local disk; SQLite on a shared network filesystem is not supported here.
@@ -357,6 +357,80 @@ receipt. A token cannot prevent an independently credentialled stale process fro
 calling GitHub directly. `reconcile(..., 'accepted', ...)` trusts its caller's
 external verification; it does not inspect checks/ancestry itself. Keep worker
 processes away from the coordinator database and these privileged operations.
+
+### Ownership status
+
+```sh
+python3 tools/factory/cli.py status --database /private/coordinator/jobs.sqlite
+```
+
+`status()` (schema `neptune.factory-status.v1`) lists every job's state, owner,
+epoch, reason, declared scope, checkpoint presence/head/next step, open requests
+and, for ready jobs, the current admission reasons, such as a stale snapshot, a
+reserved overlapping scope or the running cap. It never returns tokens and writes
+nothing. `lease.recorded` describes the store's own lease only.
+`process_liveness` is always `unknown`, because the store cannot observe processes.
+A session outside this store and the shared broker remains unaccounted. Pass
+`JobStore(path, max_running=N)` to queue claims beyond a configured cap.
+
+### Bounded experiment requests and results (#779)
+
+A worker holding a lease on a dependent job asks another job's owner for at most
+eight bounded experiments:
+
+```python
+store.request(receipt, [{"producer": "owner/repo:CODE-001",
+    "question": "Which caller reaches the resume path?",
+    "binding": {"release": ..., "module_sha256": ..., "cpu": ...,
+                "address_space": ..., "load_lifetime": ...},
+    "verified": ["original-bytes"]}])
+```
+
+The request records the producer's current task digest. The dependent's lease
+is released at a new epoch and the job enters `waiting`, keeping its checkpoint.
+Repeating an identical request is idempotent. Repeating an already fulfilled
+request returns its result instead of dispatching it again. The producer's claim
+receipt lists only open requests from dependents that are not cancelled.
+
+`deliver(receipt, request, result)` requires the producer's live receipt. The
+result names `task_digest`, `base_sha`, `head_sha`, `report_sha256`, `evidence_ref`,
+`status`, `binding`, `verified` and `hypotheses`, and must match all of these:
+
+- the task digest recorded at request time;
+- the exact requested source binding;
+- the producer's current checkpoint head and base.
+
+Otherwise the call fails. A failed or truncated result, or one missing a
+requested verification kind, is recorded as `result_rejected`, and the request
+stays open. Hypotheses are retained beside the result but never count as
+`original-bytes` or `natural-runtime` verification.
+
+The first matching verified result fulfils the request. When a dependent's last
+open request is fulfilled, the dependent returns to `ready` exactly once. Its
+next claim receipt carries the saved checkpoint and the selected result metadata.
+Re-delivering the identical result is harmless; a different result is rejected.
+
+These are local consistency checks, not source authentication. The trusted
+coordinator must bind the reported hashes to retained private evidence before
+calling `deliver`.
+
+The coordinator can drive the same API without custom code. Receipts live only
+in coordinator-held files, never in stdout or worker workspaces:
+
+```sh
+F="python3 tools/factory/cli.py"; D="--database /private/coordinator/jobs.sqlite"
+$F claim $D --owner claude --receipt /private/leases/779.json owner/repo:FACTORY-020
+$F checkpoint $D --receipt /private/leases/779.json checkpoint.json
+$F request $D --receipt /private/leases/779.json requests.json   # JSON list of specs
+$F claim $D --owner codex --receipt /private/leases/707.json owner/repo:CODE-001
+$F deliver $D --receipt /private/leases/707.json --request <id> result.json
+$F release $D --receipt /private/leases/707.json --state ready --reason "probe done"
+```
+
+`claim` creates its receipt file exclusively with mode 0600 before it takes the
+lease. It refuses an existing path and removes the file if the claim fails. The
+file is deleted when `release` ends the lease, or when `request` moves the job to
+`waiting`. A copy kept elsewhere is refused as stale.
 
 ## Next integration on the VPS
 

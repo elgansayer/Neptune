@@ -149,6 +149,42 @@ The retained natural header separates16 slots/32 capacity/26 populated entries;
 its index25 lookup boundary and later-state table projection are distinct evidence.
 Continue95D34/95D9C/949E0 record access and successful context/service dependencies.
 Do not resume completed manifests or mark the all-code programme complete.
+Name PR701 mergedd6cf5b3 with all15 exact-head/current-base checks. Further
+949E0/95D34/95D9C record access now completes13,936 returns/run twice, three
+identical raw/archive pairs and11 controls, with7 focused/484 research tests.
+Read [the record-access result](research/2026-11-03-library-record-access-contracts.md)
+and current655 checkpoint.95D9C's mode1/other-mode rule differs from95E5A;
+retain those distinct contracts. Continue actualA780A/A7BB0/A85E4/A805C service
+and cleanup dependencies; prepared static windows are not additional execution.
+Record-access PR702 merged0911981 with all15 exact-head/currentbase checks.
+FurtherA81FE/A7C20/A7BB0 original results retain3,288 complete returns and144
+unfinished A85E4 handoffs/run twice, three identical raw/archive pairs and10
+controls. Sourcee42f90b had7 focused/491 research tests. Read
+[the request-state result](research/2026-11-03-library-request-state-contracts.md)
+and current655 checkpoint; pending service linkage is not successful execution.
+Continue A85E4/AE676/AE908/A4FAC, A8C10/9546E and real cleanup/device dependencies,
+then further functions/modules. Old128 guard and configured limits remain.
+Request-state PR704 merged9be7645 with15 exact-head/currentbase checks. Further
+AE676/AE908 command packing through realA4FAC/A4FBE now retains9,152 pending-boundary
+cases/run twice, four identical raw/archive pairs and24 controls at source620a4e8
+(7 focused/498 research tests). Read [the packing result](research/2026-11-03-cd-command-packing-contracts.md)
+and current655 checkpoint. These are unfinished services, not complete returns.
+The next actualdevice read is959DE using25890008. Continue trusted native
+observation/realdevice semantics, successful library services and further modules;
+no flatRAM, fabricatedresponse or callee success. Preserve NLSND703/PR705 ownership.
+Commandpacking PR706 mergedf734628 after all15 exact-head/currentbase checks.
+Native observer707 passed exact-head provisioning41648585340 and native checks plus
+aggregate gate41648585631. Its separate matched core passed actual no-media ABI/fence
+smoke; verified CI artifact transfer and two guarded local cache reuses retain the
+same binary hash. A guarded reference continuation reached frame1800; two identical
+observer runs then executed600 original frames but overflowed at129 real CD word
+transfers before a complete root. The retained128 events include46 reads of25890008
+returning0BC1 at060958EC. Two reference and two observer-disabled600-frame controls matched the enabled run hashes. Adjacent060958EC read and06095904 write leaves now have three-instruction isolated CPU contracts over original source and actually observed words. The original06095A84 poll helper reproduces three natural eight-read success paths (bit0 clear seven times, then set), returning0 and storing the final word in77 CPU steps. Its BSR/delay-slot caller at06095A3E is linked by the retained PR, and natural records link service entry06095992 through060959CA to the poll helper. The outer return and timeout path remain open. The adjacent packet writer06095AB4 also replays three retained four-word transfer sequences through13 original SH-2 instructions; its BSR at06095A36 matches recordedPR06095A3A. Source words are reconstructed from captured output transfers, so this does not independently validate the caller buffer. A neighboring06095ACE snapshot helper also reproduces three natural four-register reads/stores and returns the fourth word in12 steps. The fixed profile2 path now has two reference controls, two observer-disabled controls and two enabled original runs, all from frame1800 with the same eight-frame Start pulse and each executing600 original frames. Reference/disabled controls succeeded; all six runs have identical frame (`56f7f663f4c9efad393cee9edaad972cd04bd6c792aa4a3d9434db284730a5cc`), video (`0939dcfcc86c6faae671b242573817477a7015acf574a5d829e5d1153fbe5e6e`), audio (`eafc18cc2ff4305e000446326d97be2a3b884cf8b114ec1ecf794d626a3b393d`) and final-state (`207d3e58bbb24ad85791c131a91b3903ee0419242ff2988e446715fd0e252802`) hashes. Both enabled profile2 traces overflow at transfer129 with128 records and no root; their complete record arrays and status are identical. The normalized profile1/profile2 comparison also matches all128 records and these four outputs, so changing profiles does not avoid this polling overflow. Guarded profile2 receipt `/home/dev/neptune-research-private/707/profile2-validation/supervisor.json` (SHA256`c67e34cfd5f8cfc8703db34dcf958e629a1c77d4f1054932241a61cd31fb046b`); original captures and the pairwise profile1/profile2 receipt remain under `/home/dev/neptune-research-private/707/`. No command root was accepted. ABI v2 now keeps the native cap at128 storage slots while losslessly encoding consecutive transfer records when sequence, timestamp and register values follow exact integer steps and every other captured field is identical; otherwise a new slot is required. The exported trace carries the repeat count, timestamp step and per-register steps, so each original event is reconstructible and counted. A check of the retained original capture found40 consecutive reads (sequences88–127) at060958EC/25890008, all0BC1, with timestamp step33 and only R14 changing by+1; this group can occupy one slot and preserve all40 observations. Private evidence:`/home/dev/neptune-research-private/707/lossless-repeat-candidate.json` (SHA256`3222b7f495d1273e1dc47db10ac2bf666ec8b02aa8a51cd30c10725012fc7be9`). A compiled owned C fixture covers the same timestamp/R14 progression, decoder reconstruction and unchanged128-slot overflow fence; the focused10-test suite passed. ABI v2 has not yet been rebuilt into a matched core or run against the game; exact-head CI and fresh original windows remain necessary.
+Read the current checkpoint and COMMAND_TRACING.md:
+load/compare/branch fusion requires observing actual transfer values without extra
+busreads or changing fusion. Continue reference/disabled/enabled
+original validation; preserve all owners,
+oldgenerations and configured limits. Programme remains active and incomplete.
 Preserve live factory reservations and newer coordinator657/661
 ownership. Then continue the larger root/task cycle, unresolved17F2
 and further original modules. The
