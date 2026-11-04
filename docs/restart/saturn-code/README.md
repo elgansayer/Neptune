@@ -323,3 +323,10 @@ The A680/A5B8 path executes 256 zero halfword stores to the captured
 VDP2 manual address-map cross-check places that range in the Color RAM window;
 stores remain write intents, not device effects. Pointer and size mutations
 are rejected. See the [A680 VDP2 clear result](../research/2026-11-04-japan-a680-vdp2-clear.md).
+
+The A66C/A5CE path executes 32,768 zero longword write intents from the captured
+0x25E80000 pointer through 0x25E9FFFC for the original 0x1FFFC threshold, then
+updates B3D44 to 0x25EA0000. This inclusive loop bound was derived from the
+original compare and delay-slot increment after retaining the initial off-by-one
+failure. The intents do not establish hardware effects or A546 reachability.
+See the [A66C memory-clear result](../research/2026-11-04-japan-a66c-memory-clear.md).
