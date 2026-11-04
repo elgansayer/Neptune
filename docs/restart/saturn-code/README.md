@@ -377,6 +377,8 @@ original-code candidate from the resident KRNL. The first 16 track sectors
 reproduce the release system-area and header hashes; the receipt's boot-code
 extent hash is reproduced from file offset `0x100`. A 6,144-byte candidate IP
 view begins with an SH-2 prologue and exposes BIOS/VDP2/WorkRAM references;
-several static BSR targets and an unresolved indirect call are recorded. The
-load mapping and code/data boundaries are not runtime-validated, and no
-bootstrap instruction was executed. See the [Japan system-area triage](../research/2026-11-04-japan-system-area-static-triage.md).
+several static BSR targets and nine unresolved indirect JSR sites from the
+entry path are recorded. A later branch-delay audit corrected an unreachable
+BSRF false positive in the `0x06002594` linear listing. The load mapping and
+code/data boundaries are not runtime-validated, and no bootstrap instruction
+was executed. See the [Japan system-area triage](../research/2026-11-04-japan-system-area-static-triage.md).
