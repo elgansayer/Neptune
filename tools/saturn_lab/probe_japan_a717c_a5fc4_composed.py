@@ -23,6 +23,7 @@ R7_VALUES = (0x11223344, 0x55667788)
 STACK_TOPS = (0, 0x01020304, 0xF1234567)
 PRIORITIES = (0, 7, 15)
 SEEDS = (0, 1)
+R6_VALUES = (0, 1, 0xFFFFFFFF)
 CALLER_PREFIX = tuple(range(ENTRY, 0x060A71A4, 2)) + (0x060A71A4, 0x060A71A6, 0x060A71A8)
 CALLER_RESUME = tuple(range(0x060A71AA, STOP, 2))
 DMAOR = a5fc4.DMAOR
@@ -37,10 +38,10 @@ def sha(data: bytes) -> str:
 
 
 def corpus():
-    return [(mode, chcr, dmaor, base, r7, top, priority, seed)
+    return [(mode, chcr, dmaor, base, r7, top, priority, seed, r6)
         for mode in MODES for chcr in CHCR_VALUES for dmaor in DMAOR_VALUES
         for base in BASES for r7 in R7_VALUES for top in STACK_TOPS
-        for priority in PRIORITIES for seed in SEEDS]
+        for priority in PRIORITIES for seed in SEEDS for r6 in R6_VALUES]
 
 
 def expected_pcs():
@@ -48,13 +49,15 @@ def expected_pcs():
 
 
 def execute(kernel: bytes, ram: bytes, emu, values, mutation=None):
-    mode, chcr_initial, dmaor_initial, base, r7, stack_top, priority, seed = values
+    mode, chcr_initial, dmaor_initial, base, r7, stack_top, priority, seed, r6 = values
     if mode not in MODES or chcr_initial not in CHCR_VALUES or dmaor_initial not in DMAOR_VALUES:
         raise ValueError("composed A717C input outside declared domain")
     if base not in BASES or r7 not in R7_VALUES or stack_top not in STACK_TOPS:
         raise ValueError("composed A717C caller state outside declared domain")
     if priority not in PRIORITIES or seed not in SEEDS:
         raise ValueError("composed A717C CPU state outside declared domain")
+    if r6 not in R6_VALUES:
+        raise ValueError("composed A717C R6 input outside declared domain")
 
     work = bytearray(ram)
     if mutation is not None:
@@ -147,7 +150,7 @@ def execute(kernel: bytes, ram: bytes, emu, values, mutation=None):
     cpu = CPU(mem)
     cpu.r = [(0x12340000 + reg * 0x00010203 + seed * 0x00010001) & 0xFFFFFFFF for reg in range(16)]
     cpu.r[0], cpu.r[1] = 0xDEADBEEF, 0x2468ACE0 + seed
-    cpu.r[4], cpu.r[5], cpu.r[6], cpu.r[7] = mode, base, 0x10102020 + seed, r7
+    cpu.r[4], cpu.r[5], cpu.r[6], cpu.r[7] = mode, base, r6, r7
     cpu.r[15], cpu.sr, cpu.pc, cpu.pr = stack, 0x30 | (priority << 4), ENTRY, emu.RETURN_SENTINEL
 
     path = expected_pcs()
@@ -173,11 +176,13 @@ def execute(kernel: bytes, ram: bytes, emu, values, mutation=None):
         raise ValueError("composed A717C/A5FC4 stack or return boundary differs")
     return {"inputs": {"mode": mode, "chcr_before": chcr_initial,
             "dmaor_before": dmaor_initial, "base": base, "r7": r7,
-            "stack_top": stack_top, "priority": priority, "seed": seed},
+            "stack_top": stack_top, "priority": priority, "seed": seed, "r6": r6},
         "chcr_after": chcr_value, "descriptor_at_a5fc4": list(descriptor),
         "dmaor_after": dmaor_value, "reads": reads, "writes": writes,
         "steps": cpu.steps, "pc_path_sha256": sha(b"".join(pc.to_bytes(4, "big") for pc in pcs)),
-        "return_pc": hex(cpu.pc), "return_pr": hex(cpu.pr), "sp": hex(cpu.r[15])}
+        "return_pc": hex(cpu.pc), "return_pr": hex(cpu.pr), "sp": hex(cpu.r[15]),
+        "boundary_registers": {f"r{index}": cpu.r[index] for index in range(16)},
+        "boundary_sr": cpu.sr}
 
 
 def paired(kernel, ram, emu, values):
