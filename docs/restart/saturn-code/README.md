@@ -351,7 +351,8 @@ while the kernel file has different bytes there; this is an unvalidated escape,
 not a confirmed dispatch. A caller-state follow-up records all registers at the
 A208→AB94 edge, replays its bounded writes/registers in a separate instance, then
 runs AB94/AB30 for 8191 instructions. Both seeded cases repeat through AC26–AC70
-and stop at budget PC AC46 before A186; the R6/R7 seeds do not change this bounded
+and stop at budget PC AC46 before A186; all 18 row first words/+80 bytes are
+read, and none has first word 1. The R6/R7 seeds do not change this bounded
 path, and the ABCC mutation changes the boundary. Same-instance composition and
 scan completion remain open. See the [caller-state AB94 result](../research/2026-11-04-japan-ab94-caller-context.md), [AD60/ACE8
 composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98

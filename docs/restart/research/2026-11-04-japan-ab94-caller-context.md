@@ -13,7 +13,12 @@ single CPU/memory composition. R6/R7 remain seeded, and the run retains the
 instruction budget of 8192. Both seeds execute 8191 instructions, take the same
 loop through AC26–AC70, and stop at PC `0x0600AC46` when the budget is reached;
 neither reaches A186's task-row restore in this continuation. Each run records
-1177 reads and 33 writes. The final PCs are
+1177 reads and 33 writes. Across the trace every row's first longword and +80
+byte is read: first words for rows 0–17 are `0,2,2,2,0,0,0,0,0,0,0,0,0,0,0,0,0,2`;
++80 bytes are `1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1`. Original AC26 compares
+the first longword against 1 before testing +80, so the caller-replayed table has
+no row passing that first filter. This accounts for the observed scan under this
+input; it does not establish the natural scheduler's selection policy. The final PCs are
 `AC44, AC46, AC48, AC60, AC62, AC64, AC66, AC68, AC6E, AC70, AC26, AC28,
 AC2A, AC40, AC42, AC44`, confirming the bounded scan loop at the stop.
 
