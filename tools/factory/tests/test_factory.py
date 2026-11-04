@@ -297,5 +297,207 @@ class Leases(unittest.TestCase):
             self.store.reconcile(self.job, 0, "accepted", "stale reconciliation")
 
 
+BINDING = {"release": "saturn-jp-1.003", "module_sha256": "f" * 64, "cpu": "master-sh2",
+           "address_space": "high-work-ram", "load_lifetime": "0KRNL.BIN resident after boot"}
+
+
+def result(store, job, **changes):
+    checkpoint = json.loads(store.get(job)["checkpoint"])
+    value = {"task_digest": store.get(job)["task_digest"], "base_sha": checkpoint["base_sha"], "head_sha": checkpoint["head_sha"],
+             "report_sha256": "9" * 64, "evidence_ref": "private:evidence/experiment-001.json", "status": "verified",
+             "binding": dict(BINDING), "verified": ["original-bytes"], "hypotheses": ["callsite is the scheduler resume"]}
+    value.update(changes)
+    return value
+
+
+class Handoff(unittest.TestCase):
+    """A dependent worker requests one bounded experiment and resumes exactly once."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.path = Path(self.temp.name) / "jobs.sqlite"
+        self.now = 1000
+        self.store = JobStore(self.path, lambda: self.now)
+        self.addCleanup(lambda: self.store.close())
+        self.producer = self.store.enqueue(snapshot(660, "CODE-001", "tools/saturn_lab"))
+        self.dependent = self.store.enqueue(snapshot(779, "FACTORY-020", "tools/factory"))
+
+    def spec(self, **changes):
+        return {"producer": self.producer, "question": "Which caller reaches the resume path?", "binding": dict(BINDING), "verified": ["original-bytes"], **changes}
+
+    def checkpointed_producer(self, head="b"):
+        receipt = self.store.claim(self.producer, "codex", 60)
+        self.store.checkpoint(receipt, {"base_sha": "a" * 40, "head_sha": head * 40, "next_step": "run probe"})
+        return receipt
+
+    def waiting(self):
+        receipt = self.store.claim(self.dependent, "claude", 60)
+        self.store.checkpoint(receipt, {"base_sha": "a" * 40, "head_sha": "c" * 40, "next_step": "use the caller result"})
+        request = self.store.request(receipt, [self.spec()])["requests"][0]
+        return receipt, request
+
+    def events(self, job, name):
+        return self.store.db.execute("SELECT count(*) FROM events WHERE job=? AND event=?", (job, name)).fetchone()[0]
+
+    def test_status_shows_owner_scope_checkpoint_and_unknown_liveness(self):
+        receipt = self.store.claim(self.dependent, "claude", 60)
+        self.store.checkpoint(receipt, {"base_sha": "a" * 40, "head_sha": "c" * 40, "next_step": "audit"})
+        jobs = {j["job"]: j for j in self.store.status()["jobs"]}
+        mine = jobs[self.dependent]
+        self.assertEqual((mine["owner"], mine["state"], mine["lease"]["recorded"]), ("claude", "running", True))
+        self.assertEqual(mine["scope"]["paths"], ["tools/factory"])
+        self.assertEqual(mine["checkpoint"], {"present": True, "head_sha": "c" * 40, "next_step": "audit"})
+        self.assertTrue(mine["process_liveness"].startswith("unknown"))
+        self.assertNotIn(receipt["token"], json.dumps(self.store.status()))
+        self.now = 1061
+        self.assertTrue({j["job"]: j for j in self.store.status()["jobs"]}[self.dependent]["lease"]["expired"])
+        self.now = 2000
+        self.assertIn("snapshot stale or from the future", {j["job"]: j for j in self.store.status()["jobs"]}[self.producer]["admission"])
+
+    def test_cli_status_is_read_only_and_tokenless(self):
+        receipt = self.store.claim(self.dependent, "claude", 60)
+        cli = Path(__file__).resolve().parents[1] / "cli.py"
+        before = self.store.db.execute("SELECT count(*) FROM events").fetchone()[0]
+        output = subprocess.run([sys.executable, str(cli), "status", "--database", str(self.path)], capture_output=True, text=True, check=True).stdout
+        self.assertEqual(json.loads(output)["schema"], "neptune.factory-status.v1")
+        self.assertNotIn(receipt["token"], output)
+        self.assertEqual(self.store.db.execute("SELECT count(*) FROM events").fetchone()[0], before)
+
+    def test_running_cap_queues_independent_scope(self):
+        self.store.close()
+        self.store = JobStore(self.path, lambda: self.now, max_running=1)
+        self.store.claim(self.producer, "codex")
+        with self.assertRaisesRegex(ContractError, "running cap reached: 1 of 1"):
+            self.store.claim(self.dependent, "claude")
+        self.assertIn("running cap reached: 1 of 1", {j["job"]: j for j in self.store.status()["jobs"]}[self.dependent]["admission"])
+
+    def test_request_waits_then_matching_result_unblocks_once(self):
+        old, request = self.waiting()
+        self.assertEqual(self.store.get(self.dependent)["state"], "waiting")
+        with self.assertRaisesRegex(ContractError, "not ready: awaiting experiments"):
+            self.store.claim(self.dependent, "other")
+        with self.assertRaises(ContractError):
+            self.store.heartbeat(old)
+        producer = self.checkpointed_producer()
+        self.assertEqual([r["request"] for r in producer["requests"]], [request])
+        value = result(self.store, self.producer)
+        self.assertEqual(self.store.deliver(producer, request, value), {"request": request, "satisfied": True, "duplicate": False})
+        self.assertEqual(self.store.deliver(producer, request, value)["duplicate"], True)
+        self.assertEqual(self.events(self.dependent, "unblocked"), 1)
+        resumed = self.store.claim(self.dependent, "claude-resumed")
+        self.assertEqual(resumed["checkpoint"]["next_step"], "use the caller result")
+        self.assertEqual(resumed["results"][0]["result"]["report_sha256"], "9" * 64)
+        self.assertEqual(resumed["results"][0]["result"]["hypotheses"], ["callsite is the scheduler resume"])
+        with self.assertRaisesRegex(ContractError, "different result"):
+            self.store.deliver(producer, request, {**value, "report_sha256": "8" * 64})
+
+    def test_request_is_listed_to_producer_at_claim(self):
+        _, request = self.waiting()
+        self.assertEqual([r["request"] for r in self.store.claim(self.producer, "codex")["requests"]], [request])
+
+    def test_mismatched_stale_or_missing_results_do_not_satisfy(self):
+        _, request = self.waiting()
+        producer = self.checkpointed_producer()
+        cases = [({"task_digest": "0" * 64}, "different producer task"),
+                 ({"binding": {**BINDING, "module_sha256": "e" * 64}}, "binding"),
+                 ({"binding": {**BINDING, "load_lifetime": "overlay"}}, "binding"),
+                 ({"head_sha": "d" * 40}, "checkpoint"),
+                 ({"report_sha256": ""}, "report hash"),
+                 ({"evidence_ref": ""}, "evidence"),
+                 ({"status": "passed"}, "status")]
+        for change, message in cases:
+            with self.subTest(change=change), self.assertRaisesRegex(ContractError, message):
+                self.store.deliver(producer, request, result(self.store, self.producer, **change))
+        with self.assertRaisesRegex(ContractError, "fields"):
+            self.store.deliver(producer, request, {k: v for k, v in result(self.store, self.producer).items() if k != "hypotheses"})
+        for change in ({"status": "failed"}, {"status": "truncated"}, {"verified": []}):
+            self.assertFalse(self.store.deliver(producer, request, result(self.store, self.producer, **change))["satisfied"])
+        self.assertEqual(self.store.get(self.dependent)["state"], "waiting")
+        self.assertEqual(self.events(self.producer, "result_rejected"), 3)
+        with self.assertRaisesRegex(ContractError, "producer"):
+            self.store.deliver(producer, "unknown", result(self.store, self.producer))
+
+    def test_hypothesis_without_original_byte_verification_keeps_waiting(self):
+        _, request = self.waiting()
+        producer = self.checkpointed_producer()
+        reply = self.store.deliver(producer, request, result(self.store, self.producer, verified=["natural-runtime"]))
+        self.assertEqual(reply["reason"], "result verified; missing verification: original-bytes")
+        self.assertEqual(self.store.get(self.dependent)["state"], "waiting")
+
+    def test_stale_or_foreign_producer_cannot_deliver(self):
+        _, request = self.waiting()
+        old = self.checkpointed_producer()
+        value = result(self.store, self.producer)
+        with self.assertRaises(ContractError):
+            self.store.deliver({**old, "token": "forged"}, request, value)
+        self.now = 1061
+        replacement = self.store.claim(self.producer, "codex-restarted")
+        with self.assertRaisesRegex(ContractError, "stale|expired"):
+            self.store.deliver(old, request, value)
+        intruder = self.store.enqueue(snapshot(99, "OTHER-001", "docs"))
+        foreign = self.store.claim(intruder, "intruder")
+        self.store.checkpoint(foreign, {"base_sha": "a" * 40, "head_sha": "b" * 40, "next_step": "x"})
+        with self.assertRaisesRegex(ContractError, "unknown request for this producer"):
+            self.store.deliver(foreign, request, result(self.store, intruder))
+        self.assertTrue(self.store.deliver(replacement, request, value)["satisfied"])
+
+    def test_changed_producer_task_cannot_answer_old_request(self):
+        _, request = self.waiting()
+        self.store.db.execute("UPDATE jobs SET task_digest=? WHERE id=?", ("1" * 64, self.producer))
+        producer = self.checkpointed_producer()
+        with self.assertRaisesRegex(ContractError, "different producer task"):
+            self.store.deliver(producer, request, result(self.store, self.producer))
+
+    def test_request_validation(self):
+        receipt = self.store.claim(self.dependent, "claude", 60)
+        for specs in ([], [self.spec()] * 9, [self.spec(question="")], [self.spec(binding={})], [self.spec(verified=[])],
+                      [self.spec(verified=["vibes"])], [self.spec(producer=self.dependent)], [self.spec(producer="example/game:NONE-001")],
+                      [{**self.spec(), "extra": 1}]):
+            with self.subTest(specs=specs), self.assertRaises(ContractError):
+                self.store.request(receipt, specs)
+        self.assertEqual(self.store.get(self.dependent)["state"], "running")
+
+    def test_restart_preserves_result_and_never_redispatches(self):
+        _, request = self.waiting()
+        producer = self.checkpointed_producer()
+        self.store.deliver(producer, request, result(self.store, self.producer))
+        self.store.release(producer, "ready", "probe done")
+        self.store.close()
+        self.store = JobStore(self.path, lambda: self.now)
+        self.assertEqual(self.store.claim(self.producer, "codex-restarted")["requests"], [])
+        resumed = self.store.claim(self.dependent, "claude-restarted")
+        repeated = self.store.request(resumed, [self.spec()])
+        self.assertEqual((repeated["waiting"], repeated["results"][0]["request"]), ([], request))
+        self.assertEqual(self.store.get(self.dependent)["state"], "running")
+        self.assertEqual(self.store.db.execute("SELECT count(*) FROM requests").fetchone()[0], 1)
+        self.assertEqual(self.events(self.dependent, "unblocked"), 1)
+
+    def test_dependent_waits_for_every_requested_experiment(self):
+        receipt = self.store.claim(self.dependent, "claude", 60)
+        first, second = self.store.request(receipt, [self.spec(), self.spec(question="Which table does it index?")])["requests"]
+        producer = self.checkpointed_producer()
+        self.store.deliver(producer, first, result(self.store, self.producer))
+        self.assertEqual(self.store.get(self.dependent)["state"], "waiting")
+        self.assertEqual({j["job"]: j for j in self.store.status()["jobs"]}[self.dependent]["waiting_on"], [second])
+        self.store.deliver(producer, second, result(self.store, self.producer))
+        self.assertEqual(self.store.get(self.dependent)["state"], "ready")
+
+    def test_cancelled_dependent_request_is_not_dispatched(self):
+        self.waiting()
+        self.store.cancel(self.dependent, "superseded")
+        self.assertEqual(self.store.claim(self.producer, "codex")["requests"], [])
+
+    def test_duplicate_request_from_two_dependents_is_independent(self):
+        _, first = self.waiting()
+        other = self.store.enqueue(snapshot(780, "FACTORY-021", "docs/factory"))
+        receipt = self.store.claim(other, "gemini")
+        second = self.store.request(receipt, [self.spec()])["requests"][0]
+        self.assertNotEqual(first, second)
+        producer = self.checkpointed_producer()
+        self.store.deliver(producer, first, result(self.store, self.producer))
+        self.assertEqual((self.store.get(self.dependent)["state"], self.store.get(other)["state"]), ("ready", "waiting"))
+
+
 if __name__ == "__main__":
     unittest.main()
