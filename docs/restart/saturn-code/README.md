@@ -396,3 +396,8 @@ embedded default `0x0600083C`; nonzero R5 is stored directly. These runs include
 the RTS delay slot and stop after one exact vector-slot write. The captured
 caller and full BIOS contract remain open; see the
 [Japan BIOS SYS_SETUINT result](../research/2026-11-04-japan-bios-setuint-execution.md).
+The adjacent captured `SYS_CHGSCUIM` target at `0x060007C0` has now also been
+executed in four bounded constructed cases, covering both its signed and
+nonnegative low-word paths and its guarded SCU IMS writes. This remains an
+isolated helper result without a natural startup caller or device-timing proof;
+see the [Japan BIOS SYS_CHGSCUIM result](../research/2026-11-04-japan-bios-chgscuim-execution.md).
