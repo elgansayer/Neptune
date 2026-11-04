@@ -340,10 +340,13 @@ remain intents. See the [A546 loop-prefix result](../research/2026-11-04-japan-a
 The Japan scheduler work now has paired original-byte evidence from AD60 through
 ACE8/A164/A186 to the captured AB94 resume target, plus a separate AE98
 VBR-selected row-store contract. The A208 caller and AE3A task-row loop have
-also been executed from the captured task cursor through the first ACE8 transfer
-edge for both VBR slots; this stops before ACE8 executes and does not establish a
-complete natural task cycle. Continue nested ACE8/A164/A186 composition, the
-A208 caller's F040 continuation, and remaining modules. See the [AD60/ACE8
+been executed through the first ACE8 edge for both VBR slots, then slot 0 has
+been composed in one CPU/memory run through ACE8/A164/A186 to the captured AB94
+resume target. The latter uses captured task cursor/table/context state and
+seeded remaining registers; AB94 itself is not executed and this does not
+establish a complete natural scheduler cycle. Continue AB94's live state path,
+the A208 caller's F040 continuation, and remaining modules. See the [AD60/ACE8
 composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98
-store](../research/2026-11-04-japan-ae98-vbr-record-store.md), and [A208/AE3A
-edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md) results.
+store](../research/2026-11-04-japan-ae98-vbr-record-store.md), [A208/AE3A
+edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md), and [same-instance
+AB94 resume](../research/2026-11-04-japan-a208-ae3a-ab94-resume.md) results.
