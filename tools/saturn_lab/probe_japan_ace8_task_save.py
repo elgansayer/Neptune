@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Execute ACE8 through its original A164 save and stop at the A186 edge."""
 from __future__ import annotations
-import argparse, hashlib, json
+import argparse, hashlib, json, os
 from pathlib import Path
 import probe_kernel as pinned
 import state_graphics as sg
@@ -13,6 +13,7 @@ ENTRY, END = 0x0600ACE8, 0x0600AD60
 SAVE, SAVE_END = 0x0600A164, 0x0600A186
 RESTORE_EDGE = 0x0600A186
 RESTORE_END = 0x0600A1AA
+POLL, POLL_END = 0x0600AD60, 0x0600AD7A
 RESUME_PC = 0x0600AB94
 RESTORE_CONTEXT = 0x060BDD7C
 RESTORE_CONTEXT_BYTES = 48
@@ -46,13 +47,16 @@ def expected_frame(registers, mach, macl, pr):
 
 
 def execute(kernel, ram, emu, slot, row, seed, mutate=False,
-            continue_restore=False, mutate_restore=False):
+            continue_restore=False, mutate_restore=False, from_ad60=False):
     if (len(kernel) != SIZE or sha(kernel) != a80e.KERNEL_SHA or
             len(ram) != WRAM_SIZE or sha(ram) != a80e.RAM_SHA):
         raise ValueError("original Japan kernel or captured frame-1200 WorkRAM-H differs")
     if slot not in (0, 1) or not 0 <= row < ROWS or seed not in (0, 1):
         raise ValueError("slot, row, or seed outside declared corpus")
-    for start, end in ((ENTRY, END), (SAVE, SAVE_END)):
+    ranges = [(ENTRY, END), (SAVE, SAVE_END)]
+    if from_ad60:
+        ranges.append((POLL, POLL_END))
+    for start, end in ranges:
         if ram[start-WRAM:end-WRAM] != kernel[start-BASE:end-BASE]:
             raise ValueError(f"captured code differs from original at {start:08x}")
 
@@ -138,7 +142,7 @@ def execute(kernel, ram, emu, slot, row, seed, mutate=False,
     mapped = memory.add(WRAM, WRAM_SIZE, work)
     code_before = {a: bytes(mapped[a-WRAM:b-WRAM]) for a, b in ((ENTRY, END), (SAVE, SAVE_END))}
     restore_code = tuple(range(RESTORE_EDGE, RESTORE_END, 2)) if continue_restore else ()
-    allowed_code = CODE + restore_code
+    allowed_code = CODE + restore_code + (tuple(range(POLL, POLL_END, 2)) if from_ad60 else ())
     captured_restore_context = bytes(mapped[RESTORE_CONTEXT-WRAM:RESTORE_CONTEXT-WRAM+RESTORE_CONTEXT_BYTES])
     captured_resume = int.from_bytes(captured_restore_context[36:40], "big")
     class CPU(emu.CPU):
@@ -162,12 +166,12 @@ def execute(kernel, ram, emu, slot, row, seed, mutate=False,
 
     cpu = CPU(memory)
     cpu.r = [(0x41000000 + n * 0x0103070B + seed * 0x11111111) & 0xFFFFFFFF for n in range(16)]
-    cpu.r[4] = 1                 # A8E8 success path sets R4 to one before ACE8.
+    cpu.r[4] = (0xD00D0000 | seed) if from_ad60 else 1
     cpu.r[15] = SP
     cpu.sr = 0xF0
     cpu.vbr = 0x06000400 if slot else 0x06000000
     cpu.mach, cpu.macl = 0x10203040 ^ seed, 0xA1B2C3D4 ^ seed
-    cpu.pr, cpu.pc = emu.RETURN_SENTINEL, ENTRY
+    cpu.pr, cpu.pc = emu.RETURN_SENTINEL, POLL if from_ad60 else ENTRY
     while cpu.pc in allowed_code:
         cpu.step()
         if cpu.steps > LIMIT:
@@ -229,7 +233,9 @@ def execute(kernel, ram, emu, slot, row, seed, mutate=False,
             "captured_restore_context_sha256": sha(captured_restore_context),
             "captured_restore_context_pr": hex(captured_resume),
             "original_bytes_execution": not mutate and not mutate_restore,
-            "reads": reads, "writes": writes, "pc_visits": len(pcs), "mutation": mutate}
+            "reads": reads, "writes": writes, "pc_visits": len(pcs), "mutation": mutate,
+            "from_ad60": from_ad60, "ad60_executed": from_ad60 and POLL in pcs,
+            "ad60_to_ace8": from_ad60 and POLL in pcs and ENTRY in pcs}
 
 
 CODE = tuple(range(ENTRY, END, 2)) + tuple(range(SAVE, SAVE_END, 2))
@@ -246,7 +252,8 @@ def main(argv=None):
                          "Executes ACE8 and A164 through the A186 entry boundary; A186 restore body is not executed",
                          "No natural task scheduling, device effects, timing, gameplay or full-game claim"]}
     try:
-        with args.report.open("x", encoding="utf-8") as out:
+        fd = os.open(args.report, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as out:
             try:
                 meta = json.loads(args.checkpoint.read_text())
                 state = pinned.read_bounded(args.state, 16 * 1024 * 1024)
@@ -269,6 +276,16 @@ def main(argv=None):
                     if any(run["pc_stop"] != hex(RESUME_PC) or not run["a186_executed"] for run in pair):
                         raise ValueError("ACE8/A186 composition did not reach captured AB94 PR")
                     handoffs.append({"slot": slot, "row": row, "runs": pair})
+                composed = []
+                for slot, row in CASES:
+                    pair = [execute(kernel, ram, emu, slot, row, seed,
+                                    continue_restore=True, from_ad60=True)
+                            for seed in (0, 1)]
+                    if any(run["pc_stop"] != hex(RESUME_PC) or
+                           not run["ad60_to_ace8"] or not run["a186_executed"]
+                           for run in pair):
+                        raise ValueError("AD60→ACE8→A164→A186 composition failed")
+                    composed.append({"slot": slot, "row": row, "runs": pair})
                 control = execute(kernel, ram, emu, 0, 3, 0, continue_restore=True, mutate_restore=True)
                 if control["pc_stop"] == hex(RESUME_PC):
                     raise ValueError("mutated A186 PR load survived resume-target control")
@@ -278,9 +295,11 @@ def main(argv=None):
                 report.update(status="success", cases=len(results), executions_per_case=2,
                               prefix_original_executions=sum(len(row["runs"]) for row in results),
                               restore_handoff_original_executions=sum(len(row["runs"]) for row in handoffs),
-                              total_original_executions=sum(len(row["runs"]) for row in results + handoffs),
+                              ad60_composed_original_executions=sum(len(row["runs"]) for row in composed),
+                              total_original_executions=sum(len(row["runs"]) for row in results + handoffs + composed),
                               original_game_bytes_executed=True, results=results,
                               composed_restore_handoffs=handoffs,
+                              composed_ad60_ace8_restore_handoffs=composed,
                               mutation_control={"pc": hex(SAVE), "original": "0x1480", "replacement": "0x1490",
                                                 "pre_call_frame_rejected": True},
                               restore_mutation_control={"pc": "0x0600A19E", "original": "0x5049",
@@ -290,7 +309,7 @@ def main(argv=None):
                               probe_sha256=sha(Path(__file__).read_bytes()),
                               interpreter_revision=pinned.INTERPRETER_REVISION,
                               interpreter_sources=pinned.SOURCE_HASHES,
-                              contract="ACE8 stores R4 into the VBR-selected task row, saves the caller context through A164, follows the zero-return delay slot into A186, restores the captured frame at BDD7C and transfers to its PR AB94. The probe stops before executing AB94.")
+                              contract="AD60 reads a constructed nonzero VBR-selected ready word, sets R4=1 in its branch delay slot, and transfers to ACE8 in the same CPU/memory instance. ACE8 stores R4 in the selected task row, A164 saves its caller frame, and A186 restores the captured frame at BDD7C before transferring to PR AB94. The probe stops before executing AB94; ready-word provenance and natural scheduling remain unresolved.")
             except Exception as error:
                 report["error"] = {"type": type(error).__name__, "reason": str(error)}
             out.write(json.dumps(report, sort_keys=True, separators=(",", ":")) + "\n")
