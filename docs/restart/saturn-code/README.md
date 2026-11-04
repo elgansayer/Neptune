@@ -317,3 +317,9 @@ modes and two register seeds. It covers SMPC commands 7 and 6, the mode-1 SCSP
 1 KiB fill and DSP setup stores, and the no-device-store default. Device
 operations remain write intents, with no protocol or audio claim. See the
 [A694 SMPC/SCSP result](../research/2026-11-04-japan-a694-smpc-scsp.md).
+
+The A680/A5B8 path executes 256 zero halfword stores to the captured
+0x25F00800 destination and updates the source pointer to 0x25F00A00. A Sega
+VDP2 manual address-map cross-check places that range in the Color RAM window;
+stores remain write intents, not device effects. Pointer and size mutations
+are rejected. See the [A680 VDP2 clear result](../research/2026-11-04-japan-a680-vdp2-clear.md).
