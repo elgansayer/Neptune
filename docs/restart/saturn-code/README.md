@@ -419,4 +419,7 @@ See the [F040 diagnostic](../research/2026-11-04-japan-f040-entry-diagnostic.md)
 The follow-up captures register state through four calls to the original
 `0x06095C24` helper, but stops before the caller resumes past `0x0609DC7C` and
 does not assign a helper name. See the [F040 loop snapshots](../research/2026-11-04-japan-f040-loop-register-snapshots.md).
+The selectable 8,192-instruction continuation completes 35 helper calls and
+stops during the 36th at `0x06095C6A`; the full return remains unresolved. See
+the [F040 extended continuation](../research/2026-11-04-japan-f040-8192-continuation.md).
 Full code and asset recovery remains open.
