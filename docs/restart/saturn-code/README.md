@@ -305,3 +305,9 @@ signed halfword boundary. It reads the initial word once, spins until a
 different halfword appears, and performs no writes. Poll timing is an explicit
 input stream, not a natural trace; the composed A546 loop and its device helpers
 remain open. See the [A610 poll result](../research/2026-11-04-japan-a610-change-poll.md).
+
+The A78C tail-call path also executes the original A58E helper to clear 0x400
+bytes of SCSP RAM, producing 512 sequential halfword write intents in paired
+reports. Destination and size mutations are rejected. The stores are not SCSP
+device effects, and A546 reachability and audio output remain unverified. See
+the [A78C SCSP clear result](../research/2026-11-04-japan-a78c-scsp-clear.md).
