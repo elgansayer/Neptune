@@ -9,6 +9,10 @@ class ACE8TaskSaveTests(unittest.TestCase):
                          (0x0600A164, 0x0600A186, 0x0600A186))
         self.assertNotIn(probe.RESTORE_EDGE, probe.CODE)
 
+    def test_ad60_composition_is_bounded_and_starts_at_ready_poll(self):
+        self.assertEqual((probe.POLL, probe.POLL_END), (0x0600AD60, 0x0600AD7A))
+        self.assertNotIn(probe.POLL, probe.CODE)
+
     def test_captured_restore_target_is_outside_executed_range(self):
         self.assertEqual(probe.RESTORE_CONTEXT, 0x060BDD7C)
         self.assertEqual(probe.RESTORE_CONTEXT_BYTES, 48)
