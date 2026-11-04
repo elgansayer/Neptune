@@ -4,8 +4,9 @@
 
 This bounded probe resumes at the captured A717C boundary `0x060A7244`, after
 the separately probed A5F98 call. It executes original Japanese kernel bytes
-through the RTS delay instruction at `0x060A727C`. The staged return target is
-`0x060A71A8`. It does not claim natural caller reachability or complete A717C
+through the RTS delay instruction at `0x060A727C`. The saved PR restores the
+known A72D8 caller return target `0x060A72FE` (the instruction after its BSR).
+It does not claim natural caller reachability or complete A717C
 control-flow coverage.
 
 The private frame-1200 state is
@@ -32,14 +33,16 @@ constructed stack/register boundary, not hardware timing or a naturally
 observed task return.
 
 Paired reports are retained privately under
-`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-168/`.
+`/home/dev/neptune-evidence/code712-20261103/japan-kernel-study-20261103/execution-170/`.
 The paired report SHA-256 is
-`0efe283114ba9e9d82b32394d2c86f995b63fa8723e0f1ac7b64ce560d988efc`; the
-result digest is `9bcf83ec9878513d588e41dc84e31eec32e017919d99df66330578f2c62a3123`,
+`a06bc5acd8b16f96f6e4735f63449c18ded67c7f733b5cef53c7a3eeaa5c7b3a`; the
+result digest is `9c32034e6182375a6b4ef65e7bbdac2d2c3e94564aaf30701e60f8d377a06195`,
 and the executed source-window digest is
 `fa433d47f9a7cbf062506d1def2cf18ce3d2566487576499d5f6474038836ab0`. Failed
-earlier probe attempts are also retained under executions 163–165 and are not
-counted as successful evidence.
+earlier probe attempts are retained under executions 163–169 and are not
+counted as successful evidence. Final verification: focused tests passed, the
+complete research suite passed (632 tests), Python compilation passed, and
+`git diff --check` passed.
 
 ## Continuation
 

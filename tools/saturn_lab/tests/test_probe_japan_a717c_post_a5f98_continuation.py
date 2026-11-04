@@ -10,7 +10,7 @@ class A717CPostA5F98ContinuationTests(unittest.TestCase):
     def test_fences_original_instruction_body_and_return_boundary(self):
         self.assertEqual(probe.ENTRY, 0x060A7244)
         self.assertEqual(probe.CODE_END, 0x060A727E)
-        self.assertEqual(probe.STOP, 0x060A71A8)
+        self.assertEqual(probe.STOP, 0x060A72FE)
         self.assertEqual(probe.PCS[-2:], (0x060A727A, 0x060A727C))
 
     def test_declared_inputs_cover_global_arithmetic_and_saved_words(self):
