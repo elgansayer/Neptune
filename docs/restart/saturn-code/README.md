@@ -343,10 +343,13 @@ VBR-selected row-store contract. The A208 caller and AE3A task-row loop have
 been executed through the first ACE8 edge for both VBR slots, then slot 0 has
 been composed in one CPU/memory run through ACE8/A164/A186 to the captured AB94
 resume target. The latter uses captured task cursor/table/context state and
-seeded remaining registers; AB94 itself is not executed and this does not
-establish a complete natural scheduler cycle. Continue AB94's live state path,
-the A208 caller's F040 continuation, and remaining modules. See the [AD60/ACE8
+seeded remaining registers; AB94 itself is not executed in that prefix and this does not
+establish a complete natural scheduler cycle. A separate captured AB94-entry
+continuation executes AB30/A186, resumes at AD38, and reaches captured dynamic target address
+BCC80 after 461 instructions in each of four seeded/slot runs. The target
+body remains unexecuted and the prefix remains a separate instance. Continue from
+BCC80, then compose with the A208 caller's F040 continuation and remaining modules. See the [AD60/ACE8
 composition](../research/2026-11-04-japan-ad60-ace8-composition.md), [AE98
 store](../research/2026-11-04-japan-ae98-vbr-record-store.md), [A208/AE3A
-edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md), and [same-instance
-AB94 resume](../research/2026-11-04-japan-a208-ae3a-ab94-resume.md) results.
+edge](../research/2026-11-04-japan-a208-ae3a-scheduler-edge.md), [same-instance AB94 resume](../research/2026-11-04-japan-a208-ae3a-ab94-resume.md), and
+[AB94/AD38 dynamic target](../research/2026-11-04-japan-ab94-ad38-return.md) results.
