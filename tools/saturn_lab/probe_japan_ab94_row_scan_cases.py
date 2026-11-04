@@ -224,7 +224,9 @@ def execute(kernel, ram, emu, slot, seed, mutate=False, caller=None, candidate=N
             "pc_tail": [hex(pc) for pc in pcs[-16:]],
             "reads": reads, "writes": writes,
             "registers_at_handoff": [hex(v) for v in cpu.r],
-            "pr_at_handoff": hex(cpu.pr), "sp_at_handoff": hex(cpu.r[15]),
+            "pr_at_handoff": hex(cpu.pr), "mach_at_handoff": hex(cpu.mach),
+            "macl_at_handoff": hex(cpu.macl), "sr_at_handoff": hex(cpu.sr),
+            "sp_at_handoff": hex(cpu.r[15]),
             "original_bytes_executed": not mutate, "mutated": mutate,
             "caller_derived_registers": True, "prefix_writes_replayed": len(caller["writes"]),
             "candidate_row_state": list(candidate) if candidate is not None else None}
