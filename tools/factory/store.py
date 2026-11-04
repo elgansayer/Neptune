@@ -2,6 +2,10 @@
 
 Workers receive lease receipts; they must not have database or merge credentials.
 This module launches no provider, shell command, GitHub operation or host service.
+
+A lease holder may request a bounded experiment from another job's owner.
+The dependent job then waits; only a verified result bound to the same producer
+task, checkpointed head and source identity returns it to ready, exactly once.
 """
 from __future__ import annotations
 
@@ -12,12 +16,29 @@ import sqlite3
 import time
 import uuid
 
-from readiness import ContractError, canonical, digest, evaluate, nonempty, overlaps, require, sha, validate_task
+from readiness import ContractError, canonical, digest, evaluate, nonempty, overlaps, require, sha, strings, validate_task
+
+BINDING = {"release", "module_sha256", "cpu", "address_space", "load_lifetime"}
+VERIFICATION = {"original-bytes", "natural-runtime"}
+RESULT = {"task_digest", "base_sha", "head_sha", "report_sha256", "evidence_ref", "status", "binding", "verified", "hypotheses"}
+
+
+def binding(value):
+    require(isinstance(value, dict) and set(value) == BINDING and all(nonempty(value[k]) for k in BINDING) and sha(value["module_sha256"], 64),
+            "source binding needs release, module_sha256, cpu, address_space and load_lifetime")
+    return value
+
+
+def verified(value, label):
+    strings(value, label)
+    require(set(value) <= VERIFICATION, label + " must name original-bytes and/or natural-runtime")
+    return sorted(value)
 
 
 class JobStore:
-    def __init__(self, path, clock=time.time):
-        self.clock = clock
+    def __init__(self, path, clock=time.time, max_running=None):
+        require(max_running is None or (type(max_running) is int and max_running >= 1), "running cap must be a positive integer")
+        self.clock, self.max_running = clock, max_running
         self.db = sqlite3.connect(Path(path), timeout=10, isolation_level=None)
         self.db.row_factory = sqlite3.Row
         self.db.execute("PRAGMA journal_mode=WAL")
@@ -35,6 +56,9 @@ class JobStore:
           CREATE TABLE IF NOT EXISTS events (
             sequence INTEGER PRIMARY KEY AUTOINCREMENT, job TEXT NOT NULL,
             at REAL NOT NULL, event TEXT NOT NULL, epoch INTEGER NOT NULL, detail TEXT NOT NULL);
+          CREATE TABLE IF NOT EXISTS requests (
+            id TEXT PRIMARY KEY, dependent TEXT NOT NULL, producer TEXT NOT NULL,
+            spec TEXT NOT NULL, state TEXT NOT NULL, result TEXT);
         """)
         require(self.db.execute("SELECT value FROM meta WHERE key='version'").fetchone()[0] == 1, "unsupported store version")
 
@@ -99,19 +123,42 @@ class JobStore:
         with self.transaction() as now:
             self._recover(now)
             row = self.get(job)
-            require(row["state"] == "ready", "job is not ready")
+            require(row["state"] == "ready", "job is not ready" + (": " + row["reason"] if row["reason"] else ""))
             snapshot = json.loads(row["snapshot"])
-            result = evaluate(snapshot, now)
-            require(result["ready"], "; ".join(result["reasons"]))
-            for other in self.db.execute("SELECT * FROM jobs WHERE repository=? AND id!=?", (row["repository"], job)):
-                # Unknown publication outcomes remain reserved even after expiry/cancellation.
-                if other["state"] in {"running", "publishing", "submitted"} or other["publication"]:
-                    if overlaps(snapshot["task"]["scope"]["paths"], json.loads(other["snapshot"])["task"]["scope"]["paths"]):
-                        raise ContractError("scope already reserved by " + other["id"])
+            reasons = self._admission(row, snapshot, now)
+            require(not reasons, "; ".join(reasons))
             token, epoch = uuid.uuid4().hex, row["epoch"] + 1
             self.db.execute("UPDATE jobs SET state='running',owner=?,token=?,epoch=?,expires=?,reason=NULL WHERE id=?", (owner, token, epoch, now + ttl, job))
             self.record(job, now, "claimed", epoch, {"owner": owner})
-            return {"job": job, "owner": owner, "token": token, "epoch": epoch, "expires": now + ttl, "task_digest": row["task_digest"], "base_sha": snapshot["base_sha"], "checkpoint": json.loads(row["checkpoint"]) if row["checkpoint"] else None}
+            return {"job": job, "owner": owner, "token": token, "epoch": epoch, "expires": now + ttl, "task_digest": row["task_digest"], "base_sha": snapshot["base_sha"], "checkpoint": json.loads(row["checkpoint"]) if row["checkpoint"] else None,
+                    "results": self._results(job), "requests": self._open_requests(job)}
+
+    def _admission(self, row, snapshot, now):
+        """Reasons a ready job cannot be claimed now."""
+        reasons = list(evaluate(snapshot, now)["reasons"])
+        for other in self.db.execute("SELECT * FROM jobs WHERE repository=? AND id!=?", (row["repository"], row["id"])):
+            # Unknown publication outcomes remain reserved even after expiry/cancellation.
+            if other["state"] in {"running", "publishing", "submitted"} or other["publication"]:
+                if overlaps(snapshot["task"]["scope"]["paths"], json.loads(other["snapshot"])["task"]["scope"]["paths"]):
+                    reasons.append("scope already reserved by " + other["id"])
+        if self.max_running is not None:
+            running = self.db.execute("SELECT count(*) FROM jobs WHERE state IN ('running','publishing')").fetchone()[0]
+            if running >= self.max_running:
+                reasons.append("running cap reached: %d of %d" % (running, self.max_running))
+        return reasons
+
+    def _requests(self, column, job, state):
+        return [dict(r) for r in self.db.execute("SELECT * FROM requests WHERE " + column + "=? AND state=? ORDER BY id", (job, state))]
+
+    def _results(self, job):
+        """Selected source-bound metadata for the dependent worker; never tokens or the database."""
+        return [{"request": r["id"], "producer": r["producer"], **{k: v for k, v in json.loads(r["spec"]).items() if k != "producer_task_digest"}, "result": json.loads(r["result"])}
+                for r in self._requests("dependent", job, "fulfilled")]
+
+    def _open_requests(self, job):
+        # Fulfilled experiments are never handed to a resumed producer again.
+        return [{"request": r["id"], "dependent": r["dependent"], **{k: v for k, v in json.loads(r["spec"]).items() if k != "producer_task_digest"}}
+                for r in self._requests("producer", job, "open") if self.get(r["dependent"])["state"] != "cancelled"]
 
     def _owned(self, receipt, now):
         row = self.get(receipt["job"])
@@ -175,3 +222,89 @@ class JobStore:
             state = "ready" if outcome == "clear" else "accepted"
             self.db.execute("UPDATE jobs SET state=?,publication=NULL,epoch=epoch+1,reason=? WHERE id=?", (state, evidence_ref, job))
             self.record(job, now, "reconciled", row["epoch"] + 1, {"outcome": outcome, "evidence_ref": evidence_ref})
+
+    def request(self, receipt, specs):
+        """Dependent lease holder asks other jobs' owners for bounded experiments.
+
+        Each spec: producer job ID, one question, exact source binding and the
+        required verification kinds. Repeats are idempotent; already fulfilled
+        experiments are returned instead of dispatched again.
+        """
+        require(isinstance(specs, list) and 1 <= len(specs) <= 8, "request 1..8 bounded experiments")
+        with self.transaction() as now:
+            row = self._owned(receipt, now)
+            require(row["state"] == "running", "cannot request during publication")
+            ids = []
+            for spec in specs:
+                require(isinstance(spec, dict) and set(spec) == {"producer", "question", "binding", "verified"}, "request needs producer, question, binding and verified")
+                require(nonempty(spec["question"]) and len(spec["question"]) <= 2000, "request needs one bounded question")
+                producer = self.get(spec["producer"])
+                require(producer["id"] != row["id"] and producer["repository"] == row["repository"], "producer must be another job in the same repository")
+                require(producer["state"] not in {"cancelled", "accepted"}, "producer job cannot run experiments")
+                body = {"question": spec["question"], "binding": binding(spec["binding"]), "verified": verified(spec["verified"], "required verification"), "producer_task_digest": producer["task_digest"]}
+                key = digest({"dependent": row["id"], "producer": producer["id"], **body})
+                if self.db.execute("INSERT OR IGNORE INTO requests VALUES (?,?,?,?,'open',NULL)", (key, row["id"], producer["id"], canonical(body))).rowcount:
+                    self.record(row["id"], now, "requested", receipt["epoch"], {"request": key, "producer": producer["id"]})
+                ids.append(key)
+            waiting = [i for i in ids if self.db.execute("SELECT state FROM requests WHERE id=?", (i,)).fetchone()[0] == "open"]
+            if waiting:
+                reason = "awaiting experiments: " + ", ".join(sorted(waiting))
+                self.db.execute("UPDATE jobs SET state='waiting',owner=NULL,token=NULL,expires=NULL,epoch=epoch+1,reason=? WHERE id=?", (reason, row["id"]))
+                self.record(row["id"], now, "waiting", receipt["epoch"] + 1, {"requests": sorted(waiting)})
+            return {"requests": ids, "waiting": sorted(waiting), "results": [r for r in self._results(row["id"]) if r["request"] in ids]}
+
+    def deliver(self, receipt, request, result):
+        """Producer lease holder returns one result; only a matching verified one unblocks."""
+        with self.transaction() as now:
+            row = self._owned(receipt, now)
+            found = self.db.execute("SELECT * FROM requests WHERE id=?", (request,)).fetchone()
+            require(found is not None and found["producer"] == row["id"], "unknown request for this producer")
+            spec = json.loads(found["spec"])
+            require(isinstance(result, dict) and set(result) == RESULT, "result fields are missing or unknown")
+            if found["state"] == "fulfilled":
+                require(json.loads(found["result"]) == result, "request already fulfilled by a different result")
+                return {"request": request, "satisfied": True, "duplicate": True}
+            require(result["task_digest"] == row["task_digest"] == spec["producer_task_digest"], "result is for a different producer task revision")
+            require(result["binding"] == spec["binding"], "result source binding does not match the request")
+            checkpoint = json.loads(row["checkpoint"]) if row["checkpoint"] else {}
+            require(sha(result["head_sha"]) and sha(result["base_sha"]) and result["head_sha"] == checkpoint.get("head_sha") and result["base_sha"] == checkpoint.get("base_sha"), "result head/base must match the producer's current checkpoint")
+            require(sha(result["report_sha256"], 64) and nonempty(result["evidence_ref"]), "result lacks report hash or evidence reference")
+            require(result["status"] in {"verified", "failed", "truncated"}, "invalid result status")
+            strings(result["hypotheses"], "hypotheses", True)
+            strings(result["verified"], "verified", True)
+            require(set(result["verified"]) <= VERIFICATION, "unknown verification kind")
+            missing = sorted(set(spec["verified"]) - set(result["verified"]))
+            if result["status"] != "verified" or missing:
+                reason = "result " + result["status"] + ("; missing verification: " + ", ".join(missing) if missing else "")
+                self.record(row["id"], now, "result_rejected", receipt["epoch"], {"request": request, "reason": reason, "report_sha256": result["report_sha256"]})
+                return {"request": request, "satisfied": False, "reason": reason}
+            self.db.execute("UPDATE requests SET state='fulfilled',result=? WHERE id=?", (canonical(result), request))
+            self.record(row["id"], now, "result_delivered", receipt["epoch"], {"request": request, "report_sha256": result["report_sha256"]})
+            dependent = self.get(found["dependent"])
+            if dependent["state"] == "waiting" and not self._requests("dependent", dependent["id"], "open"):
+                self.db.execute("UPDATE jobs SET state='ready',epoch=epoch+1,reason=NULL WHERE id=?", (dependent["id"],))
+                self.record(dependent["id"], now, "unblocked", dependent["epoch"] + 1, {"request": request})
+            return {"request": request, "satisfied": True, "duplicate": False}
+
+    def status(self):
+        """Inspectable ownership without tokens. Leases are records, not process liveness."""
+        now = self.clock()
+        self.db.execute("BEGIN")
+        try:
+            jobs = []
+            for row in self.db.execute("SELECT * FROM jobs ORDER BY id").fetchall():
+                snapshot, checkpoint = json.loads(row["snapshot"]), json.loads(row["checkpoint"]) if row["checkpoint"] else None
+                leased = row["state"] in {"running", "publishing"}
+                jobs.append({
+                    "job": row["id"], "state": row["state"], "owner": row["owner"], "epoch": row["epoch"], "reason": row["reason"],
+                    "lease": {"recorded": leased, "expires": row["expires"], "expired": leased and row["expires"] <= now},
+                    "process_liveness": "unknown: the store records leases, not processes",
+                    "scope": snapshot["task"]["scope"],
+                    "checkpoint": {"present": checkpoint is not None, "head_sha": checkpoint and checkpoint["head_sha"], "next_step": checkpoint and checkpoint["next_step"]},
+                    "admission": self._admission(row, snapshot, now) if row["state"] == "ready" else [],
+                    "waiting_on": [r["id"] for r in self._requests("dependent", row["id"], "open")],
+                    "requested_of": [r["id"] for r in self._requests("producer", row["id"], "open")],
+                })
+            return {"schema": "neptune.factory-status.v1", "at": now, "jobs": jobs}
+        finally:
+            self.db.execute("COMMIT")
