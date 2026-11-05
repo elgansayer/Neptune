@@ -18,32 +18,49 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
-## Status (run 20261105T1622Z)
+## Status (run 20261105T2122Z)
 
-Private repo commit: `d7c5b11`. This run's commits:
+Private repo commit: `8892d90` (this run's commits: `c44d497` to `8892d90`).
 
-| Commit | Content |
-| --- | --- |
-| `6a37a0f` | libgcc units compiled from source (70) |
-| `5a1180f` | libgcc2.c 64-bit helpers |
-| `8f1b0de` | newlib 1.6.1 units, BOOT's Dec-1995 cc1 variant (136) |
-| `978a858` | progress, compiler build scripts |
-| `fe239a6` | Jan-1996 cc1 variant: BOOT dp `__fpmul_parts` (137) |
-| `a4927da` | BOOT `___udivmoddi4`: all of BOOT's libgcc (138) |
-| `56aea50`, `3ab68a3` | register-allocation lead, newlib headers |
-| `735c941` | FSF trunk (14 Feb 1996) cc1 tested and rejected |
-| `50bb5fd` | clean rebuild at 138 |
-| `d7c5b11` | resolver rules, XBAND/XS flags (145) |
+**418 MATCHING** (145 at the start of the run): the NetLink application layer that BOOT,
+XS and XBAND share is now being compiled from C. 89 shared functions are built from one
+C source each into all three modules (+267), and 3 XS/XBAND-only loader functions into
+both (+6). Every batch was verified by a re-split and `make check` (19/19 identical).
+At the end of the run, under the heavy lock:
 
-A clean `make clean && make split && make check && make audit` passed under
-the heavy lock at 138 MATCHING (19/19 identical, audit OK). The final 145 state
-passed `make check` 19/19.
+- a clean `make clean && make split && make check && make audit` passed (19/19 identical,
+  audit OK);
+- negative control: changing one constant in a shared C source makes `make check` fail in
+  BOOT, XS and XBAND, each at that function.
 
-The 20261105T1122Z run's commits (splitter, build, 25 C functions, module map,
-runtime screen) end at `2538cfd`; see the run log below.
+New tooling (private): `tools/toolchain/ctry.py` compiles a candidate C file with a chosen
+`cc1`, compares each function with the original bytes in every module holding the same
+body (relocated literal words masked), prints a side-by-side diff, and records a match in
+per-module lists (`config/usa/<module>.{c_functions,c_globals,status}.txt`) that the
+splitter merges into the build. Callee and data addresses per module come from the
+original literal words.
 
-PR #867 published the SH-2 formatter. The follow-up PR publishes the generic
-splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
+**Compiler finding: this layer's compiler left word stores of constants and memory values
+to reload.**
+
+- FSF GCC 2.6.3, 2.7.2.3 and the Feb 1996 trunk copy a non-register source into a pseudo
+  at expand time when the destination is memory (`prepare_move_operands` in the SH
+  backend). Local allocation then gives it `r1`.
+- The originals hold such values in the register reload would choose: the first register
+  in allocation order (`r1 r2 r3 r7 r6 r5 r4 r0 r8`) that no pseudo uses. Examples: a 0
+  stored through `r3` (r1, r2 taken), through `r7` (r1-r3 taken), a -1 through `r5`, and
+  one function saves `r8` in its prologue only to store a constant. A cache-purge loop
+  re-loads its 0 inside the loop, as a reload does.
+- `jan96` plus that two-line change (`nocopy2`: no copy for SImode constant and memory
+  sources with a memory destination; `movsi_i` accepts them until reload) reproduces 7
+  earlier "register choice" near misses and 50 further functions. It changes no C function
+  matched before.
+- The prebuilt libraries were not built with it: 14 matched libgcc/newlib units change
+  under `nocopy2`. So the application code and the vendor libraries come from different
+  compilers.
+- Next compiler leads in this layer: `clear_by_pieces` (FSF trunk, 24 Dec 1995; small
+  structs are cleared with two word stores), `mov #imm8; extu.b` synthesis of constants
+  128-255, the delay-slot choice of `reorg`, and the order of callee-saved registers.
 
 | Measure | Value |
 | --- | --- |
@@ -51,7 +68,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **145** / 0 / 18,878 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **120 are library routines compiled from their original free-software sources**: GCC's libgcc (BOOT 55, that is all of BOOT's libgcc; XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **418** / see usa-code / 18,605 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 298 are C functions compiled by GCC 2.7.2.3 variants (BOOT 100, XS 99, XBAND 99): the NetLink application layer, built from one source per function into every module that holds it. 120 are library routines compiled from their original free-software sources: GCC's libgcc (BOOT 55, XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -325,7 +342,7 @@ Next frontier:
 5. The census tool is restored (`tools/saturn_lab/disc_code_census.py`). Use
    its `verify` on future census updates.
 
-### 20261105T1622Z (this run)
+### 20261105T1622Z
 
 Moved: **GCC's runtime library (libgcc) is now compiled from its original
 sources inside the byte-identical build: 70 routines MATCHING** (95 MATCHING in
@@ -453,3 +470,37 @@ Next frontier (from this run):
 5. Still open from the previous run: the CPK work-area writer, classification
    of unclassified bytes, SBL symbol names, census verification. Owner decision:
    Hitachi SHC for KRNL.
+
+### 20261105T1852Z (no result)
+
+Exited at once on the account usage limit.
+
+### 20261105T2122Z (this run)
+
+Moved: **418 MATCHING** (from 145). See the status section for the compiler finding.
+
+- Target: the code BOOT, XS and XBAND share (function-match report: about 210 bodies), the
+  NetLink application layer above the libraries. One C source per function goes into all
+  three modules, so each function adds three MATCHING.
+- Batches of 3-14 functions; each batch was rebuilt (re-split of boot/xs/xband, then
+  `make check` 19/19 identical) and committed.
+- Rules that turned near misses into matches (recorded in the private progress file):
+  - callee return types decide the call register (`r0` for value-returning callees);
+  - struct member access instead of `char *` arithmetic;
+  - `return f(x)` per switch case keeps the original's separate calls;
+  - branch order of `if (...) return A(); return B();`.
+- An `r1`/`r2` register swap in many functions was traced to the compiler, not the source
+  (status section). Two experimental `cc1` builds (constants only; constants and memory
+  sources) took about 3 s each, because only `sh.o` is rebuilt.
+- About 25 near misses remain, listed in the private `docs/TOOLCHAIN.md` with their cause
+  where known.
+
+Next frontier:
+
+1. Continue the shared layer (about 120 larger bodies left), then BOOT-only and
+   XBAND-only code of the same layer.
+2. Build the next compiler variants one change at a time (`clear_by_pieces`, constant
+   synthesis, delay slots, callee-saved order) and keep only changes that lose nothing.
+3. Still open from earlier runs: XBAND's soft-float core and newlib, BOOT's remaining C
+   library, the CPK work-area code origin, unclassified bytes, SBL symbol names.
+   Owner decision: a licensed Hitachi SHC for KRNL.
