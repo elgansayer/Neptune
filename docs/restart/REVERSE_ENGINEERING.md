@@ -1,5 +1,9 @@
 # Automated Saturn research lab
 
+> **Goal (owner, 5 November 2026):** the full source code and all assets of
+> Saturn Bomberman. See [FULL_SOURCE_AND_ASSETS.md](FULL_SOURCE_AND_ASSETS.md).
+> Experiments below verify that reconstruction.
+
 This is now a primary delivery track under the owner's 2 November
 [factory/Saturn-first goal](FACTORY_FIRST_GOAL.md). Build the shared factory and
 necessary tool adapters to run these experiments, then implement and compare

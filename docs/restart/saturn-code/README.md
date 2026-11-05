@@ -1,5 +1,9 @@
 # Original-code module leads and remaining coverage
 
+> The target is the complete, matching source and all assets
+> ([FULL_SOURCE_AND_ASSETS.md](../FULL_SOURCE_AND_ASSETS.md)), built in the private
+> `elgansayer/saturn-bomberman-decomp` repository. Lane ledgers: [re-lanes/](re-lanes/).
+
 The owner's 2 November clarification makes **all original game code** the primary
 reverse-engineering target. This census supports #480/#481/#482/#483/#488/#492/
 #496/#497/#515. It is a reproducible join of pinned disc-file identities and
