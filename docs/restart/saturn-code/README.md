@@ -1,5 +1,9 @@
 # Original-code module leads and remaining coverage
 
+> The target is the complete, matching source and all assets
+> ([FULL_SOURCE_AND_ASSETS.md](../FULL_SOURCE_AND_ASSETS.md)), built in the private
+> `elgansayer/saturn-bomberman-decomp` repository. Lane ledgers: [re-lanes/](re-lanes/).
+
 The owner's 2 November clarification makes **all original game code** the primary
 reverse-engineering target. This census supports #480/#481/#482/#483/#488/#492/
 #496/#497/#515. It is a reproducible join of pinned disc-file identities and
@@ -68,6 +72,13 @@ These are static entries, not recovered semantics. Unclassified bytes, unresolve
 indirect sites, later overlays and slave entries keep the whole-program
 denominator open. The [usa-code lane ledger](re-lanes/usa-code.md) tracks
 the frontier.
+
+A follow-up [lineage sample](../research/2026-11-05-usa-vblank-counter-lineage.md)
+reads three captured states from one verified restore lineage. The VBlank-OUT
+handler's counter at `0x06006038` advances exactly once per emulated frame (+7,200,
+then +600). The kernel's pad-port counters advance on only 60–71% of those frames,
+which separates the VBlank and pad-read tick domains for #492. These are passive
+state samples, not handler execution.
 
 ## Reproduce the metadata join
 
@@ -450,6 +461,30 @@ registers/stack. The F040 path remains a direct-entry diagnostic, and this
 does not establish a natural gameplay caller or exhaustive input behavior.
 See the [caller-derived helper probe](../research/2026-11-04-japan-095c24-caller-derived.md).
 Full code and asset recovery remains open.
+
+The sound-68k lane's [SND natural function inventory](../research/2026-11-05-snd-natural-function-inventory.md)
+adds the first natural observation of the main USA sound driver executing. A
+separate 68000 coverage copy of the reference core ran three identical
+7,200-frame cold-boot windows, joined with the pinned static descent. The SND
+denominator is 146 function entries (141 in the runtime-patched resident
+image, plus 5 routines whose only callers are patched out); 58 executed
+naturally. All 2,576 observed edges are explained statically, and four
+altered-copy controls are rejected. The embedded text identifies Sega's Saturn
+sound driver Ver2.04 (NLSND: Ver1.31). The 68000 command dispatcher is mapped
+with natural per-command counts. Handler semantics, the SH-2 patch writer,
+NLSND/XBSND lifetimes and DSP microcode remain open; see the
+[lane ledger](re-lanes/sound-68k.md).
+
+The lane's [SND command-mailbox slice](../research/2026-11-05-snd-command-mailbox.md)
+resolves the resident patches. Boot routine `0x1768` writes all seven NOP
+sites itself from host byte `0x4E1` (`0x00` in the image). The eighth change is
+a self-modifying tick counter. Isolated original-byte execution covers every
+configuration value and all 256 executor (`0x1A60`) command bytes, with
+mutation controls. The driver's own 128-entry history ring yields the
+complete natural command stream for the accepted route: 89 records whose
+per-command counts and tick stamps match the coverage observer exactly
+(49,526 timer interrupts). 20 of the 146 SND entries now have complete
+isolated contracts; handler bodies remain open.
 
 The accepted caller-derived helper measurement of "one longword updated with
 bit 31 set" was taken at a single F040 caller state whose R4 held `0x1F`, so it
