@@ -20,7 +20,7 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1622Z)
 
-Private repo commit: `978a858`. This run's commits:
+Private repo commit: `3ab68a3`. This run's commits:
 
 | Commit | Content |
 | --- | --- |
@@ -28,6 +28,12 @@ Private repo commit: `978a858`. This run's commits:
 | `5a1180f` | libgcc2.c 64-bit helpers |
 | `8f1b0de` | newlib 1.6.1 units, BOOT's Dec-1995 cc1 variant (136) |
 | `978a858` | progress, compiler build scripts |
+| `fe239a6` | Jan-1996 cc1 variant: BOOT dp `__fpmul_parts` (137) |
+| `a4927da` | BOOT `___udivmoddi4`: all of BOOT's libgcc (138) |
+| `56aea50`, `3ab68a3` | register-allocation lead, newlib headers |
+
+A clean `make clean && make split && make check && make audit` passed under
+the heavy lock at 136 MATCHING; each later change passed `make check` 19/19.
 
 The 20261105T1122Z run's commits (splitter, build, 25 C functions, module map,
 runtime screen) end at `2538cfd`; see the run log below.
@@ -41,7 +47,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **136** / 0 / 18,887 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **111 are library routines compiled from their original free-software sources**: GCC's libgcc (BOOT 53, XBAND 21, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 16, XBAND 14, XS 3). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **138** / 0 / 18,885 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **113 are library routines compiled from their original free-software sources**: GCC's libgcc (BOOT 55, that is all of BOOT's libgcc; XBAND 21, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 16, XBAND 14, XS 3). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -389,21 +395,37 @@ Later in the run (private `5a1180f`, `8f1b0de`, `978a858`): **136 MATCHING**.
     regenerated with Debian bison 3.8.2 after two grammar fixes;
   - 2.7.1 from 2.7.0 plus the 2.7.0-2.7.1 diff.
 
+Final part of the run (private `fe239a6`-`3ab68a3`): **138 MATCHING**.
+
+- A second backend change is confirmed: Jim Wilson's **2 Jan 1996**
+  `gen_shifty_op` change (a `nop` for a shift by 0).
+  - Added to the Dec-1995 cc1, it gives `jan96`. That matches BOOT's
+    double-precision `__fpmul_parts` (876 bytes) and loses nothing.
+  - BOOT's compiler therefore has the FSF trunk SH work through at least
+    2 Jan 1996.
+- `___udivmoddi4` matched once `longlong.h` was vendored; the matcher had been
+  skipping it as a compile failure. BOOT's whole libgcc is now compiled from
+  source.
+- Shared lead: XBAND's unmatched soft-float core and BOOT's corrected near miss
+  `0606F4E4` differ from our output **only in register choice**.
+  - `REG_ALLOC_ORDER` is the same, and FSF 2.7.0/2.7.1 do not help.
+  - Suspect a generic register-allocation change from late 1995 or 1996.
+
 Next frontier (from this run):
 
-1. Compiler variant for BOOT. The open differences are:
-   - dp `__fpmul_parts`: one extra `nop` in a 64-bit stack copy, probably a
-     later DImode-move change;
-   - `___udivmoddi4`;
-   - the two near misses.
-
-   Apply further 1996 ChangeLog.10 SH changes one at a time; keep a change only
-   if no existing match is lost.
-2. XBAND's toolchain: its `sh1` soft-float core and most of its newlib
-   (`_malloc_r`, `__swbuf`, `fflush`, `vfprintf`) do not match yet.
-3. BOOT's remaining C library (`vfprintf`, `malloc`).
+1. Register allocation: find the generic 1995-96 change behind the
+   register-choice differences:
+   - XBAND's `sh1` soft-float core;
+   - BOOT's near misses;
+   - probably many more GCC-module functions.
+2. XBAND's toolchain:
+   - `-O2 -fno-schedule-insns2` also matches its `___negdf2`;
+   - most of its newlib (`_malloc_r`, `__swbuf`, `fflush`, `vfprintf`) does not
+     match yet.
+3. BOOT's remaining C library (`vfprintf`, `sprintf`, `strtol`, ...). These now
+   compile but do not match.
 4. Decompile BOOT/XBAND/XS/H2H game and NetLink code with
-   `[[module.c_function]]`. BOOT should use the `dec95` cc1.
+   `[[module.c_function]]`. BOOT should use the `jan96` cc1.
 5. Still open from the previous run: the CPK work-area writer, classification
    of unclassified bytes, SBL symbol names, census verification. Owner decision:
    Hitachi SHC for KRNL.
