@@ -457,3 +457,16 @@ registers/stack. The F040 path remains a direct-entry diagnostic, and this
 does not establish a natural gameplay caller or exhaustive input behavior.
 See the [caller-derived helper probe](../research/2026-11-04-japan-095c24-caller-derived.md).
 Full code and asset recovery remains open.
+
+The sound-68k lane's [SND natural function inventory](../research/2026-11-05-snd-natural-function-inventory.md)
+adds the first natural observation of the main USA sound driver executing. A
+separate 68000 coverage copy of the reference core ran three identical
+7,200-frame cold-boot windows, joined with the pinned static descent. The SND
+denominator is 146 function entries (141 in the runtime-patched resident
+image, plus 5 routines whose only callers are patched out); 58 executed
+naturally. All 2,576 observed edges are explained statically, and four
+altered-copy controls are rejected. The embedded text identifies Sega's Saturn
+sound driver Ver2.04 (NLSND: Ver1.31). The 68000 command dispatcher is mapped
+with natural per-command counts. Handler semantics, the SH-2 patch writer,
+NLSND/XBSND lifetimes and DSP microcode remain open; see the
+[lane ledger](re-lanes/sound-68k.md).

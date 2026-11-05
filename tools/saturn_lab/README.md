@@ -313,6 +313,25 @@ limits each call to 512 SH-2 instructions, and includes a changed-shift control.
 It does not establish the natural caller, RNG seed/recurrence, wrap branch or
 gameplay call ordering. See [the bounded RNG result](../../docs/restart/research/2026-11-03-rng-bounded-draw.md).
 
+## Natural 68000 coverage and function inventory
+
+`m68k_coverage_core.py` prepares a separate copy of the accepted reference
+Beetle checkout. It applies four exact-anchor observer insertions from
+`m68k_coverage.h` (reset, exception, post-fetch step and include) and exports
+`neptune_m68kcov_*`. Only `m68k.c` is rebuilt. The observer records per-reset
+epoch instruction starts, the fetched opcode words and every distinct
+flow/exception edge. It never calls a bus accessor, and capacity exhaustion
+fails. `run_m68k_coverage.py run` executes cold-boot reference or enabled
+windows through the pinned lock/frontend loader. `compare` requires identical
+per-frame observations and final state, plus identical coverage across
+enabled runs. `m68k_function_inventory.py` joins one natural epoch with the
+pinned static descent: it builds entries and bodies, classifies resident
+patches and checks every executed word and edge. It also runs four altered-copy
+controls that must be rejected. See the
+[SND result](../../docs/restart/research/2026-11-05-snd-natural-function-inventory.md).
+Coverage is emulator observation, not hardware timing or recovered semantics.
+Raw coverage, states and the built core stay private.
+
 ## Static SH-2 function inventory
 
 `sh2_discover.py` is an independent standard-library SH-2 decoder and
