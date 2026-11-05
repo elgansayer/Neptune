@@ -183,20 +183,29 @@ def _scope(u: Unit, name: str, globals_: set[str]) -> str:
 
 def resolve(units: list[Unit]) -> list[tuple[Unit, int, dict]]:
     """Choose one hit per unit: its address and its references must agree with every
-    unit placed so far; among several, the first after the previous unit of the same
-    object (the linker keeps an object's functions in order).  Ambiguous units stay out."""
+    unit placed so far, and an address may carry only one name; among several hits,
+    the first after the previous unit of the same object (the linker keeps an
+    object's functions in order).  Larger units are resolved first, so a small
+    look-alike wrapper cannot claim an address before the function that lives
+    there.  Ambiguous units stay out."""
     globals_ = {u.symbol for u in units if u.is_global}
     known: dict[str, int] = {}
+    owner: dict[int, str] = {}
     chosen: dict[int, tuple[int, dict]] = {}
+    order = sorted(range(len(units)), key=lambda i: -units[i].size)
     changed = True
     while changed:
         changed = False
-        for idx, u in enumerate(units):
+        for idx in order:
+            u = units[idx]
             if idx in chosen:
                 continue
+            me = _scope(u, u.symbol, globals_)
             ok = [(a, r) for a, r in u.hits
-                  if known.get(_scope(u, u.symbol, globals_), a) == a
-                  and all(known.get(_scope(u, n, globals_), v) == v for n, v in r.items())
+                  if known.get(me, a) == a and owner.get(a, me) == me
+                  and all(known.get(_scope(u, n, globals_), v) == v
+                          and owner.get(v, _scope(u, n, globals_)) == _scope(u, n, globals_)
+                          for n, v in r.items())
                   and all(a != a2 for a2, _ in chosen.values())]
             prev = [chosen[j][0] for j in range(idx) if j in chosen and units[j].obj == u.obj]
             if prev and len(ok) > 1:
@@ -204,9 +213,11 @@ def resolve(units: list[Unit]) -> list[tuple[Unit, int, dict]]:
             if len(ok) == 1:
                 a, r = ok[0]
                 chosen[idx] = (a, r)
-                known[_scope(u, u.symbol, globals_)] = a
+                known[me] = a
+                owner[a] = me
                 for n, v in r.items():
                     known[_scope(u, n, globals_)] = v
+                    owner.setdefault(v, _scope(u, n, globals_))
                 changed = True
     return [(units[i], a, r) for i, (a, r) in sorted(chosen.items())]
 
