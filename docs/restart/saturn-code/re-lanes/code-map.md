@@ -20,14 +20,15 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T2122Z)
 
-Private repo commit: `b10db34` (this run's commits: `c44d497` to `b10db34`).
+Private repo commit: `119f126` (this run's commits: `c44d497` to `119f126`).
 
-**436 MATCHING** (145 at the start of the run): the NetLink application layer that BOOT,
-XS and XBAND share is now being compiled from C. 95 shared functions are built from one
-C source each into all three modules (+285), and 3 XS/XBAND-only loader functions into
-both (+6). Every batch was verified by a re-split and `make check` (19/19 identical).
-The 418 state was verified as below; the last 6 functions (436) by a re-split and
-`make check` (19/19).
+**442 MATCHING** (145 at the start of the run): the NetLink application layer that BOOT,
+XS and XBAND share is now being compiled from C. 97 shared functions are built from one
+C source each into all three modules (+291), and 3 XS/XBAND-only loader functions into
+both (+6). Among them are the SBL CD block command executor and the transfer service
+routine. Every batch was verified by a re-split and `make check` (19/19 identical).
+The 418 state was verified as below. The final 442 state was verified by a re-split of
+boot/xs/xband and `make check` (19/19) at 22:42Z.
 At the end of the run, under the heavy lock:
 
 - a clean `make clean && make split && make check && make audit` passed (19/19 identical,
@@ -490,7 +491,7 @@ Exited at once on the account usage limit.
 
 ### 20261105T2122Z (this run)
 
-Moved: **436 MATCHING** (from 145). See the status section for the two compiler findings.
+Moved: **442 MATCHING** (from 145). See the status section for the two compiler findings.
 
 - Target: the code BOOT, XS and XBAND share (function-match report: about 210 bodies), the
   NetLink application layer above the libraries. One C source per function goes into all
@@ -507,6 +508,8 @@ Moved: **436 MATCHING** (from 145). See the status section for the two compiler 
   sources) took about 3 s each, because only `sh.o` is rebuilt.
 - About 25 near misses remain, listed in the private `docs/TOOLCHAIN.md` with their cause
   where known.
+- Rejected experiment: leaving every large `add` constant to reload (`nocopy4`) improves
+  some near misses and breaks others, so it was not adopted.
 
 Next frontier:
 
