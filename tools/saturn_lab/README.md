@@ -331,3 +331,23 @@ controls that must be rejected. See the
 [SND result](../../docs/restart/research/2026-11-05-snd-natural-function-inventory.md).
 Coverage is emulator observation, not hardware timing or recovered semantics.
 Raw coverage, states and the built core stay private.
+
+## Static SH-2 function inventory
+
+`sh2_discover.py` is an independent standard-library SH-2 decoder and
+fixed-point recursive descent for one declared module mapping:
+
+- `inventory` writes a new private report of tiered entries with provenance and
+  byte classes.
+- `base-check` compares the declared base with wrong bases and byte-swapped data,
+  using `bsr`/literal agreement.
+- `reconcile` classifies reference address sets.
+- `residency` cross-tabulates byte classes with a `compare_resident_module.py`
+  report made at `--minimum-range 2`.
+
+`compare_discovery.py` runs the hash-pinned `saturn-recomp` discovery on the same
+bytes and classifies disagreements. Neither tool executes game code, and both
+are static evidence only. Synthetic tests in `tests/test_sh2_discover.py`
+validate the tooling, not original-game claims. See the
+[USA inventory result](../../docs/restart/research/2026-11-05-usa-function-inventory.md)
+for commands, measured values and limits.

@@ -50,6 +50,25 @@ address zero belongs to several driver lifetimes. Derived outputs have no invent
 output hash or length. Whole files include data, literals, padding and possibly
 several executable ranges; source sizes are not code coverage.
 
+## Measured USA function inventory
+
+The [5 November USA function inventory](../research/2026-11-05-usa-function-inventory.md)
+gives the first measured USA static denominator. A Neptune decoder and recursive
+descent, cross-checked against the pinned upstream discovery on identical bytes,
+finds **4,868 KRNL entries** (37 call-reached / 4,663 pointer-reached / 168
+prologue-only) and **1,751 BOOT entries** (959 / 767 / 25). Neither module has a
+code/data contradiction with upstream.
+
+Natural residency places BOOT exactly at `0x06010000` at frame 600. KRNL is at
+`0x06006000` at frames 10,200/10,800, where no instruction or literal halfword
+has been mutated. All 199 upstream runtime-learned KRNL targets fall inside
+discovered functions.
+
+These are static entries, not recovered semantics. Unclassified bytes, unresolved
+indirect sites, later overlays and slave entries keep the whole-program
+denominator open. The [usa-code lane ledger](re-lanes/usa-code.md) tracks
+the frontier.
+
 ## Reproduce the metadata join
 
 ```sh
