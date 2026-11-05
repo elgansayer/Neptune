@@ -431,3 +431,18 @@ registers/stack. The F040 path remains a direct-entry diagnostic, and this
 does not establish a natural gameplay caller or exhaustive input behavior.
 See the [caller-derived helper probe](../research/2026-11-04-japan-095c24-caller-derived.md).
 Full code and asset recovery remains open.
+
+The accepted caller-derived helper measurement of "one longword updated with
+bit 31 set" was taken at a single F040 caller state whose R4 held `0x1F`, so it
+does not separate a constant bit from a register-derived bit index. A bounded
+set-bit contract probe is now implemented for the original F040 path: it
+observes every call to `0x06095C24`, separates the helper's stack
+spill/restore traffic from the single data word it stores, repeats the run
+with a constructed pre-word so an idempotent store stays observable, and
+discriminates candidate bit-index rules mechanically. It anchors itself to the
+accepted caller data slice hash and helper-entry stack pointer, and its
+harness was exercised against the real pinned SH-2 interpreter with an owned
+synthetic program. The original-byte run has not been executed in this
+session, so no new original claim is made; the exact command, the expected
+readings and the reproducibility gap in the accepted caller report are
+recorded in the [F040 set-bit contract note](../research/2026-11-05-japan-f040-setbit-contract.md).
