@@ -51,14 +51,14 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| Sprite palettes bound from captures | 860 blocks, 872 sequences (3,061 frames) |
+| Sprite palettes bound from captures | 930 blocks, 962 sequences (3,526 frames) |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps |
 | Colour-cycle scripts | 124 / 124 |
 | VDP2 cell animations | 36 records, 232 frames (stage banks) |
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
-| VDP2 menu/UI maps | 65 / 65 decoded and rendered; 2 confirmed by capture |
+| VDP2 menu/UI maps | 65 / 65 decoded and rendered; 6 confirmed by capture on every cell, rendered in capture colours |
 | **Normal Game stage descriptors** | **50 / 50** |
 | **Normal Game enemy placement lists** | **50 / 50** |
 | **Battle stage descriptors (with item lists)** | **36 / 36** |
@@ -114,7 +114,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
     real play).
 - **Sprites.** A frame is a list of 20-byte part records; a sequence is a
   list of (frame, duration) pairs. All 34,681 parts are VDP1 4-bit
-  colour-bank sprites. Over 86 capture states, 3,190 of 3,195 draws match
+  colour-bank sprites. Over 142 capture states, 4,937 of 4,942 draws match
   a decoded pixel block byte-exactly; the rest are the RGB movie frame and
   4 draws in stage 2-2. Each match binds the object's runtime colour base.
 - **Stage backgrounds.** A 64×64 grid of metatile indices expands through a
@@ -141,7 +141,9 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Solid bit, table-derived map vs live cell map | 4,092–4,096 / 4,096 for normal 1-1, 2-1, 3-1, 4-1, battle 10-0, master 9 and 13 (the rest are standing enemies) |
 | 1-1 at stage start: enemies, player starts, soft-block count | 7/7 cells, 2/2 cells, 56 = 56 |
 | Hidden item kinds vs live item slots | equal for 1-1, 2-1, 3-1, 4-1 and battle 17-0 (75/75, two runs); battle 10-0 32/33 (one slot already used) |
-| Master item cells | 5/5 and 12/12 |
+| Master item cells | 5/5 and 12/12 in demos |
+| All 36 battle arenas, selected through world/variant in the battle demo's pre-build state | solid bit 4,090–4,096/4,096 on 36; item lists 36/36; soft-block count exact on 35/36 (one arena runs out of free cells); descriptor grids equal the live planes on 32/36 (arena 17's large field is on a plane layout the checker doesn't read), cell block and palette confirmed on 36/36 |
+| All 20 Master Game stages, selected through the stage byte in a demo's pre-build state | solid bit 4,092–4,096/4,096 on 20; field grid s+1 and background grid s+21 equal the live planes on every cell on 20; item kinds 19/20 and item cells 98/100 (stage 14 skips one item and shifts the rest) |
 | Battle arena 17 | 4,096/4,096 solid bits in two captures (once the lookup reads past the table) |
 | Japan | same tables and maps byte for byte |
 | All 50 Normal Game stages, selected through the game's stage variables in a cold-boot menu state | 47 build (1-8–1-10 are identical placeholder records); timer = descriptor minutes × 3,600 frames 47/47; hidden item kinds 47/47; soft-block count exact 43/47; solid bit ≥ 4,083/4,096; the single bomber on its entry cell (31) or player-1 cell (16); every listed enemy cell occupied on 17 stages |
@@ -156,7 +158,10 @@ paired from the stage tables, starting-field generator · `2d55396` emulator
 wrapper after the host kernel update · `7946a43` stage-select checks of all
 50 stages · `8e22b08`, `7a71f0e` generator fit · `bce4e78` demo-input
 records · `69902d2` capture checks and sprite bindings over 86 states ·
-`be65314` progress. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
+`be65314` progress · `1bbdf46` format document
+(`docs/assets/STAGE_DATA.md`) · `54a85be`, `771f5a1` Master Game checks and
+106-state capture run · `d04c8dd`, `3ad230c` battle arena checks and
+142-state capture run · `7d07e38` menu maps from the cold-boot states. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
 `0eb90a8`, `f6f075b`, `21e5e2e`, `df30aee`, `4d94bee`.
 
 ## Frontier
