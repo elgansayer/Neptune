@@ -470,3 +470,14 @@ sound driver Ver2.04 (NLSND: Ver1.31). The 68000 command dispatcher is mapped
 with natural per-command counts. Handler semantics, the SH-2 patch writer,
 NLSND/XBSND lifetimes and DSP microcode remain open; see the
 [lane ledger](re-lanes/sound-68k.md).
+
+The lane's [SND command-mailbox slice](../research/2026-11-05-snd-command-mailbox.md)
+resolves the resident patches. Boot routine `0x1768` writes all seven NOP
+sites itself from host byte `0x4E1` (`0x00` in the image). The eighth change is
+a self-modifying tick counter. Isolated original-byte execution covers every
+configuration value and all 256 executor (`0x1A60`) command bytes, with
+mutation controls. The driver's own 128-entry history ring yields the
+complete natural command stream for the accepted route: 89 records whose
+per-command counts and tick stamps match the coverage observer exactly
+(49,526 timer interrupts). 20 of the 146 SND entries now have complete
+isolated contracts; handler bodies remain open.

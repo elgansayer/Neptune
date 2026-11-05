@@ -1,0 +1,2206 @@
+{
+  "date": "2026-11-05",
+  "evidence_classes": {
+    "command_names": "source hypothesis (Sega sound-driver interface) with static first-instruction readings; handler semantics not executed",
+    "counter_0x141E": "static disassembly + natural emulator observation (store count predicts resident phase)",
+    "executor_0x1A60": "isolated original-byte execution (9,216 cases, 7 controls) + natural emulator observation (89 entries, dispatch edges) + natural replay",
+    "natural_command_stream": "natural emulator observation, cross-checked against an independent observer channel (coverage edges and interrupt counts)",
+    "runtime_table_0x53E0": "static disassembly (lea witness, zero run) + natural emulator observation (bytes change, never executed)",
+    "self_patch_0x1768": "static disassembly + isolated original-byte execution (512 cases, 4 controls) + natural emulator observation (coverage path, resident image derivation)"
+  },
+  "experiment": "SND host-command mailbox: natural history ring, boot self-patch 0x1768 and executor 0x1A60",
+  "issues": [
+    488,
+    665,
+    707
+  ],
+  "lane": "sound-68k",
+  "model_calls_in_experiment": 0,
+  "repeatability": {
+    "natural_runs_per_report": 2,
+    "report_sha256_run1": "2376d1f78d0bba3b1726e2276bb755b7221089db5145e4345136c42c81e24af0",
+    "report_sha256_run2": "2376d1f78d0bba3b1726e2276bb755b7221089db5145e4345136c42c81e24af0",
+    "reports_identical": true
+  },
+  "report": {
+    "counter": {
+      "disc_value": "0x300",
+      "immediate": "0x141e",
+      "rule": "value := (value + 0x100) & 0x300 on every store",
+      "store": "0x1428"
+    },
+    "cpu": "m68000",
+    "driver_bytes_sha256": "c8842cc957bf82693ddd72d996353c9cb92feb34fe5f2834c0651aebacb4bd04",
+    "driver_sha256": "f5154d4aabdf9f3434b966a0d09fe5d08aa1ddabfa8848b836be630f506596d5",
+    "executor": {
+      "caller": "0x10fe",
+      "cases": 9216,
+      "controls": {
+        "end_marker_zero": {
+          "address": "0x1aa4",
+          "mutated_driver_sha256": "1815712bb9f6990b2ab1f8e6e3adc0373afec7f7ad0968aa593098ed28c12b11",
+          "reasons": [
+            "Executor ordered accesses differ from contract"
+          ],
+          "rejected": 1844,
+          "replacement": "7000",
+          "tested": 1844
+        },
+        "high_bound_92": {
+          "address": "0x1ac4",
+          "mutated_driver_sha256": "e165d1f80c51d39dda025f8cecd3661be4c627eb23ecd7b9617e9634f23809fc",
+          "reasons": [
+            "Executor outcome differs from contract: instruction-access"
+          ],
+          "rejected": 8,
+          "replacement": "0092",
+          "tested": 1844
+        },
+        "host_offset_41C": {
+          "address": "0x1a8e",
+          "mutated_driver_sha256": "12c8412502b19550c93ebe0ad2f961491e2244cc235542271ad50144e2f722d1",
+          "reasons": [
+            "Executor ordered accesses differ from contract"
+          ],
+          "rejected": 1844,
+          "replacement": "041c",
+          "tested": 1844
+        },
+        "low_bound_21": {
+          "address": "0x1b50",
+          "mutated_driver_sha256": "4654e164d81a4b81d4fcf92c6317841b1da962f8e694583fb3090007c54c6adc",
+          "reasons": [
+            "Executor outcome differs from contract: instruction-access"
+          ],
+          "rejected": 7,
+          "replacement": "0021",
+          "tested": 1844
+        },
+        "low_table_shift": {
+          "address": "0x1b62",
+          "mutated_driver_sha256": "2f73a0c7afe83c3a3a38c999476b61a79253d6cea20418f1f86f300858be286e",
+          "reasons": [
+            "Executor instruction path differs from contract",
+            "Executor outcome differs from contract: instruction-access"
+          ],
+          "rejected": 231,
+          "replacement": "7010",
+          "tested": 1844
+        },
+        "ring_mask_03F0": {
+          "address": "0x1a70",
+          "mutated_driver_sha256": "c05fc7303a8d9f190cb642fd14415da37823ba458d70a1ae8214b80fdde14b2b",
+          "reasons": [
+            "Executor ordered accesses differ from contract"
+          ],
+          "rejected": 1229,
+          "replacement": "03f0",
+          "tested": 1844
+        },
+        "stamp_not_cleared": {
+          "address": "0x1a96",
+          "mutated_driver_sha256": "b4f08148aba2d2f7b4c341c00dee09289698c013fa292023238ac9888a996386",
+          "reasons": [
+            "Executor ordered accesses differ from contract"
+          ],
+          "rejected": 1844,
+          "replacement": "0001",
+          "tested": 1844
+        }
+      },
+      "entry": "0x1a60",
+      "image": "disc + isolated 0x1768 writes for natural 0x4E1",
+      "kind_counts": {
+        "high-device": 72,
+        "high-handler": 396,
+        "high-ignored": 72,
+        "high-ori": 36,
+        "high-rts": 36,
+        "ignored": 7452,
+        "low-handler": 648,
+        "low-ignored": 468,
+        "low-noop": 36
+      },
+      "outcome_by_command": {
+        "0x00": [
+          "low-noop",
+          null
+        ],
+        "0x01": [
+          "low-handler",
+          "0x2364"
+        ],
+        "0x02": [
+          "low-handler",
+          "0x2396"
+        ],
+        "0x03": [
+          "low-handler",
+          "0x23fe"
+        ],
+        "0x04": [
+          "low-handler",
+          "0x242e"
+        ],
+        "0x05": [
+          "low-handler",
+          "0x2466"
+        ],
+        "0x06": [
+          "low-handler",
+          "0x1bee"
+        ],
+        "0x07": [
+          "low-handler",
+          "0x1bf6"
+        ],
+        "0x08": [
+          "low-handler",
+          "0x18fe"
+        ],
+        "0x09": [
+          "low-handler",
+          "0x1c04"
+        ],
+        "0x0A": [
+          "low-handler",
+          "0x1c2a"
+        ],
+        "0x0B": [
+          "low-handler",
+          "0x1c32"
+        ],
+        "0x0C": [
+          "low-handler",
+          "0x1c3a"
+        ],
+        "0x0D": [
+          "low-handler",
+          "0x1c4c"
+        ],
+        "0x0E": [
+          "low-handler",
+          "0x1c88"
+        ],
+        "0x0F": [
+          "low-ignored",
+          null
+        ],
+        "0x10": [
+          "low-handler",
+          "0x20dc"
+        ],
+        "0x11": [
+          "low-handler",
+          "0x20ca"
+        ],
+        "0x12": [
+          "low-handler",
+          "0x20c0"
+        ],
+        "0x13": [
+          "low-handler",
+          "0x20d6"
+        ],
+        "0x14": [
+          "low-ignored",
+          null
+        ],
+        "0x15": [
+          "low-ignored",
+          null
+        ],
+        "0x16": [
+          "low-ignored",
+          null
+        ],
+        "0x17": [
+          "low-ignored",
+          null
+        ],
+        "0x18": [
+          "low-ignored",
+          null
+        ],
+        "0x19": [
+          "low-ignored",
+          null
+        ],
+        "0x1A": [
+          "low-ignored",
+          null
+        ],
+        "0x1B": [
+          "low-ignored",
+          null
+        ],
+        "0x1C": [
+          "low-ignored",
+          null
+        ],
+        "0x1D": [
+          "low-ignored",
+          null
+        ],
+        "0x1E": [
+          "low-ignored",
+          null
+        ],
+        "0x1F": [
+          "low-ignored",
+          null
+        ],
+        "0x20": [
+          "ignored",
+          null
+        ],
+        "0x21": [
+          "ignored",
+          null
+        ],
+        "0x22": [
+          "ignored",
+          null
+        ],
+        "0x23": [
+          "ignored",
+          null
+        ],
+        "0x24": [
+          "ignored",
+          null
+        ],
+        "0x25": [
+          "ignored",
+          null
+        ],
+        "0x26": [
+          "ignored",
+          null
+        ],
+        "0x27": [
+          "ignored",
+          null
+        ],
+        "0x28": [
+          "ignored",
+          null
+        ],
+        "0x29": [
+          "ignored",
+          null
+        ],
+        "0x2A": [
+          "ignored",
+          null
+        ],
+        "0x2B": [
+          "ignored",
+          null
+        ],
+        "0x2C": [
+          "ignored",
+          null
+        ],
+        "0x2D": [
+          "ignored",
+          null
+        ],
+        "0x2E": [
+          "ignored",
+          null
+        ],
+        "0x2F": [
+          "ignored",
+          null
+        ],
+        "0x30": [
+          "ignored",
+          null
+        ],
+        "0x31": [
+          "ignored",
+          null
+        ],
+        "0x32": [
+          "ignored",
+          null
+        ],
+        "0x33": [
+          "ignored",
+          null
+        ],
+        "0x34": [
+          "ignored",
+          null
+        ],
+        "0x35": [
+          "ignored",
+          null
+        ],
+        "0x36": [
+          "ignored",
+          null
+        ],
+        "0x37": [
+          "ignored",
+          null
+        ],
+        "0x38": [
+          "ignored",
+          null
+        ],
+        "0x39": [
+          "ignored",
+          null
+        ],
+        "0x3A": [
+          "ignored",
+          null
+        ],
+        "0x3B": [
+          "ignored",
+          null
+        ],
+        "0x3C": [
+          "ignored",
+          null
+        ],
+        "0x3D": [
+          "ignored",
+          null
+        ],
+        "0x3E": [
+          "ignored",
+          null
+        ],
+        "0x3F": [
+          "ignored",
+          null
+        ],
+        "0x40": [
+          "ignored",
+          null
+        ],
+        "0x41": [
+          "ignored",
+          null
+        ],
+        "0x42": [
+          "ignored",
+          null
+        ],
+        "0x43": [
+          "ignored",
+          null
+        ],
+        "0x44": [
+          "ignored",
+          null
+        ],
+        "0x45": [
+          "ignored",
+          null
+        ],
+        "0x46": [
+          "ignored",
+          null
+        ],
+        "0x47": [
+          "ignored",
+          null
+        ],
+        "0x48": [
+          "ignored",
+          null
+        ],
+        "0x49": [
+          "ignored",
+          null
+        ],
+        "0x4A": [
+          "ignored",
+          null
+        ],
+        "0x4B": [
+          "ignored",
+          null
+        ],
+        "0x4C": [
+          "ignored",
+          null
+        ],
+        "0x4D": [
+          "ignored",
+          null
+        ],
+        "0x4E": [
+          "ignored",
+          null
+        ],
+        "0x4F": [
+          "ignored",
+          null
+        ],
+        "0x50": [
+          "ignored",
+          null
+        ],
+        "0x51": [
+          "ignored",
+          null
+        ],
+        "0x52": [
+          "ignored",
+          null
+        ],
+        "0x53": [
+          "ignored",
+          null
+        ],
+        "0x54": [
+          "ignored",
+          null
+        ],
+        "0x55": [
+          "ignored",
+          null
+        ],
+        "0x56": [
+          "ignored",
+          null
+        ],
+        "0x57": [
+          "ignored",
+          null
+        ],
+        "0x58": [
+          "ignored",
+          null
+        ],
+        "0x59": [
+          "ignored",
+          null
+        ],
+        "0x5A": [
+          "ignored",
+          null
+        ],
+        "0x5B": [
+          "ignored",
+          null
+        ],
+        "0x5C": [
+          "ignored",
+          null
+        ],
+        "0x5D": [
+          "ignored",
+          null
+        ],
+        "0x5E": [
+          "ignored",
+          null
+        ],
+        "0x5F": [
+          "ignored",
+          null
+        ],
+        "0x60": [
+          "ignored",
+          null
+        ],
+        "0x61": [
+          "ignored",
+          null
+        ],
+        "0x62": [
+          "ignored",
+          null
+        ],
+        "0x63": [
+          "ignored",
+          null
+        ],
+        "0x64": [
+          "ignored",
+          null
+        ],
+        "0x65": [
+          "ignored",
+          null
+        ],
+        "0x66": [
+          "ignored",
+          null
+        ],
+        "0x67": [
+          "ignored",
+          null
+        ],
+        "0x68": [
+          "ignored",
+          null
+        ],
+        "0x69": [
+          "ignored",
+          null
+        ],
+        "0x6A": [
+          "ignored",
+          null
+        ],
+        "0x6B": [
+          "ignored",
+          null
+        ],
+        "0x6C": [
+          "ignored",
+          null
+        ],
+        "0x6D": [
+          "ignored",
+          null
+        ],
+        "0x6E": [
+          "ignored",
+          null
+        ],
+        "0x6F": [
+          "ignored",
+          null
+        ],
+        "0x70": [
+          "ignored",
+          null
+        ],
+        "0x71": [
+          "ignored",
+          null
+        ],
+        "0x72": [
+          "ignored",
+          null
+        ],
+        "0x73": [
+          "ignored",
+          null
+        ],
+        "0x74": [
+          "ignored",
+          null
+        ],
+        "0x75": [
+          "ignored",
+          null
+        ],
+        "0x76": [
+          "ignored",
+          null
+        ],
+        "0x77": [
+          "ignored",
+          null
+        ],
+        "0x78": [
+          "ignored",
+          null
+        ],
+        "0x79": [
+          "ignored",
+          null
+        ],
+        "0x7A": [
+          "ignored",
+          null
+        ],
+        "0x7B": [
+          "ignored",
+          null
+        ],
+        "0x7C": [
+          "ignored",
+          null
+        ],
+        "0x7D": [
+          "ignored",
+          null
+        ],
+        "0x7E": [
+          "ignored",
+          null
+        ],
+        "0x7F": [
+          "ignored",
+          null
+        ],
+        "0x80": [
+          "high-handler",
+          "0x1d10"
+        ],
+        "0x81": [
+          "high-handler",
+          "0x1d54"
+        ],
+        "0x82": [
+          "high-handler",
+          "0x1d98"
+        ],
+        "0x83": [
+          "high-handler",
+          "0x1da4"
+        ],
+        "0x84": [
+          "high-rts",
+          null
+        ],
+        "0x85": [
+          "high-handler",
+          "0x1dae"
+        ],
+        "0x86": [
+          "high-handler",
+          "0x2056"
+        ],
+        "0x87": [
+          "high-handler",
+          "0x17fc"
+        ],
+        "0x88": [
+          "high-handler",
+          "0x20a2"
+        ],
+        "0x89": [
+          "high-handler",
+          "0x2162"
+        ],
+        "0x8A": [
+          "high-handler",
+          "0x1fa0"
+        ],
+        "0x8B": [
+          "high-ignored",
+          null
+        ],
+        "0x8C": [
+          "high-device",
+          null
+        ],
+        "0x8D": [
+          "high-ori",
+          null
+        ],
+        "0x8E": [
+          "high-ignored",
+          null
+        ],
+        "0x8F": [
+          "high-device",
+          null
+        ],
+        "0x90": [
+          "high-handler",
+          "0x1d10"
+        ],
+        "0x91": [
+          "ignored",
+          null
+        ],
+        "0x92": [
+          "ignored",
+          null
+        ],
+        "0x93": [
+          "ignored",
+          null
+        ],
+        "0x94": [
+          "ignored",
+          null
+        ],
+        "0x95": [
+          "ignored",
+          null
+        ],
+        "0x96": [
+          "ignored",
+          null
+        ],
+        "0x97": [
+          "ignored",
+          null
+        ],
+        "0x98": [
+          "ignored",
+          null
+        ],
+        "0x99": [
+          "ignored",
+          null
+        ],
+        "0x9A": [
+          "ignored",
+          null
+        ],
+        "0x9B": [
+          "ignored",
+          null
+        ],
+        "0x9C": [
+          "ignored",
+          null
+        ],
+        "0x9D": [
+          "ignored",
+          null
+        ],
+        "0x9E": [
+          "ignored",
+          null
+        ],
+        "0x9F": [
+          "ignored",
+          null
+        ],
+        "0xA0": [
+          "ignored",
+          null
+        ],
+        "0xA1": [
+          "ignored",
+          null
+        ],
+        "0xA2": [
+          "ignored",
+          null
+        ],
+        "0xA3": [
+          "ignored",
+          null
+        ],
+        "0xA4": [
+          "ignored",
+          null
+        ],
+        "0xA5": [
+          "ignored",
+          null
+        ],
+        "0xA6": [
+          "ignored",
+          null
+        ],
+        "0xA7": [
+          "ignored",
+          null
+        ],
+        "0xA8": [
+          "ignored",
+          null
+        ],
+        "0xA9": [
+          "ignored",
+          null
+        ],
+        "0xAA": [
+          "ignored",
+          null
+        ],
+        "0xAB": [
+          "ignored",
+          null
+        ],
+        "0xAC": [
+          "ignored",
+          null
+        ],
+        "0xAD": [
+          "ignored",
+          null
+        ],
+        "0xAE": [
+          "ignored",
+          null
+        ],
+        "0xAF": [
+          "ignored",
+          null
+        ],
+        "0xB0": [
+          "ignored",
+          null
+        ],
+        "0xB1": [
+          "ignored",
+          null
+        ],
+        "0xB2": [
+          "ignored",
+          null
+        ],
+        "0xB3": [
+          "ignored",
+          null
+        ],
+        "0xB4": [
+          "ignored",
+          null
+        ],
+        "0xB5": [
+          "ignored",
+          null
+        ],
+        "0xB6": [
+          "ignored",
+          null
+        ],
+        "0xB7": [
+          "ignored",
+          null
+        ],
+        "0xB8": [
+          "ignored",
+          null
+        ],
+        "0xB9": [
+          "ignored",
+          null
+        ],
+        "0xBA": [
+          "ignored",
+          null
+        ],
+        "0xBB": [
+          "ignored",
+          null
+        ],
+        "0xBC": [
+          "ignored",
+          null
+        ],
+        "0xBD": [
+          "ignored",
+          null
+        ],
+        "0xBE": [
+          "ignored",
+          null
+        ],
+        "0xBF": [
+          "ignored",
+          null
+        ],
+        "0xC0": [
+          "ignored",
+          null
+        ],
+        "0xC1": [
+          "ignored",
+          null
+        ],
+        "0xC2": [
+          "ignored",
+          null
+        ],
+        "0xC3": [
+          "ignored",
+          null
+        ],
+        "0xC4": [
+          "ignored",
+          null
+        ],
+        "0xC5": [
+          "ignored",
+          null
+        ],
+        "0xC6": [
+          "ignored",
+          null
+        ],
+        "0xC7": [
+          "ignored",
+          null
+        ],
+        "0xC8": [
+          "ignored",
+          null
+        ],
+        "0xC9": [
+          "ignored",
+          null
+        ],
+        "0xCA": [
+          "ignored",
+          null
+        ],
+        "0xCB": [
+          "ignored",
+          null
+        ],
+        "0xCC": [
+          "ignored",
+          null
+        ],
+        "0xCD": [
+          "ignored",
+          null
+        ],
+        "0xCE": [
+          "ignored",
+          null
+        ],
+        "0xCF": [
+          "ignored",
+          null
+        ],
+        "0xD0": [
+          "ignored",
+          null
+        ],
+        "0xD1": [
+          "ignored",
+          null
+        ],
+        "0xD2": [
+          "ignored",
+          null
+        ],
+        "0xD3": [
+          "ignored",
+          null
+        ],
+        "0xD4": [
+          "ignored",
+          null
+        ],
+        "0xD5": [
+          "ignored",
+          null
+        ],
+        "0xD6": [
+          "ignored",
+          null
+        ],
+        "0xD7": [
+          "ignored",
+          null
+        ],
+        "0xD8": [
+          "ignored",
+          null
+        ],
+        "0xD9": [
+          "ignored",
+          null
+        ],
+        "0xDA": [
+          "ignored",
+          null
+        ],
+        "0xDB": [
+          "ignored",
+          null
+        ],
+        "0xDC": [
+          "ignored",
+          null
+        ],
+        "0xDD": [
+          "ignored",
+          null
+        ],
+        "0xDE": [
+          "ignored",
+          null
+        ],
+        "0xDF": [
+          "ignored",
+          null
+        ],
+        "0xE0": [
+          "ignored",
+          null
+        ],
+        "0xE1": [
+          "ignored",
+          null
+        ],
+        "0xE2": [
+          "ignored",
+          null
+        ],
+        "0xE3": [
+          "ignored",
+          null
+        ],
+        "0xE4": [
+          "ignored",
+          null
+        ],
+        "0xE5": [
+          "ignored",
+          null
+        ],
+        "0xE6": [
+          "ignored",
+          null
+        ],
+        "0xE7": [
+          "ignored",
+          null
+        ],
+        "0xE8": [
+          "ignored",
+          null
+        ],
+        "0xE9": [
+          "ignored",
+          null
+        ],
+        "0xEA": [
+          "ignored",
+          null
+        ],
+        "0xEB": [
+          "ignored",
+          null
+        ],
+        "0xEC": [
+          "ignored",
+          null
+        ],
+        "0xED": [
+          "ignored",
+          null
+        ],
+        "0xEE": [
+          "ignored",
+          null
+        ],
+        "0xEF": [
+          "ignored",
+          null
+        ],
+        "0xF0": [
+          "ignored",
+          null
+        ],
+        "0xF1": [
+          "ignored",
+          null
+        ],
+        "0xF2": [
+          "ignored",
+          null
+        ],
+        "0xF3": [
+          "ignored",
+          null
+        ],
+        "0xF4": [
+          "ignored",
+          null
+        ],
+        "0xF5": [
+          "ignored",
+          null
+        ],
+        "0xF6": [
+          "ignored",
+          null
+        ],
+        "0xF7": [
+          "ignored",
+          null
+        ],
+        "0xF8": [
+          "ignored",
+          null
+        ],
+        "0xF9": [
+          "ignored",
+          null
+        ],
+        "0xFA": [
+          "ignored",
+          null
+        ],
+        "0xFB": [
+          "ignored",
+          null
+        ],
+        "0xFC": [
+          "ignored",
+          null
+        ],
+        "0xFD": [
+          "ignored",
+          null
+        ],
+        "0xFE": [
+          "ignored",
+          null
+        ],
+        "0xFF": [
+          "ignored",
+          null
+        ]
+      },
+      "results_sha256": "0b4d767657cb424930c311d9924d537049175a27357a7ad9e8fab156202e4b33"
+    },
+    "lifetime": "SND game sound driver (natural 68000 epoch after the second reset)",
+    "limitations": [
+      "Isolated CPU interpreter for 0x1768/0x1A60; no SCSP model, interrupts or bus timing",
+      "Executor contract stops at handler entry; handler semantics are not recovered here",
+      "Natural evidence is one Beetle lineage, one route and one release",
+      "Command-name meanings from Sega driver documentation remain source hypotheses"
+    ],
+    "load_address": 0,
+    "module": "SND",
+    "native_identity": {
+      "backend_sha256": "1ae72479a22f91955343cb9fe157f261218e9c3a9ee8b8e7a6d519cda766cceb",
+      "flags": [
+        "-std=c11",
+        "-O2",
+        "-shared",
+        "-fPIC",
+        "-DM68K_INSTRUCTION_HOOK=1",
+        "-DM68K_SEPARATE_READS=1",
+        "-Wl,-z,defs"
+      ],
+      "source_lock_sha256": "641b45f169a41f75c612754da80ad6ed1b07893e7ecf684b00cc354156281a1c"
+    },
+    "natural": {
+      "commands": [
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 1657,
+          "index": 0,
+          "stamp_ticks": 1657
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 13,
+          "cumulative_ticks": 1657,
+          "index": 1,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 12,
+          "cumulative_ticks": 1658,
+          "index": 2,
+          "stamp_ticks": 1
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 8,
+          "cumulative_ticks": 1658,
+          "index": 3,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 8,
+          "cumulative_ticks": 1661,
+          "index": 4,
+          "stamp_ticks": 3
+        },
+        {
+          "bytes_1_13": "00050000000000000000000000",
+          "command": 135,
+          "cumulative_ticks": 1821,
+          "index": 5,
+          "stamp_ticks": 160
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 131,
+          "cumulative_ticks": 1821,
+          "index": 6,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 135,
+          "cumulative_ticks": 1821,
+          "index": 7,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 1821,
+          "index": 8,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00e0e000000000000000000000",
+          "command": 128,
+          "cumulative_ticks": 1842,
+          "index": 9,
+          "stamp_ticks": 21
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 1842,
+          "index": 10,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 1842,
+          "index": 11,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00e0e000000000000000000000",
+          "command": 128,
+          "cumulative_ticks": 2018,
+          "index": 12,
+          "stamp_ticks": 176
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 2018,
+          "index": 13,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 2018,
+          "index": 14,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00e0e000000000000000000000",
+          "command": 128,
+          "cumulative_ticks": 2160,
+          "index": 15,
+          "stamp_ticks": 142
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 2160,
+          "index": 16,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 2160,
+          "index": 17,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "0090e020000000780000000000",
+          "command": 133,
+          "cumulative_ticks": 2485,
+          "index": 18,
+          "stamp_ticks": 325
+        },
+        {
+          "bytes_1_13": "0000e020000000780000000000",
+          "command": 134,
+          "cumulative_ticks": 5152,
+          "index": 19,
+          "stamp_ticks": 2667
+        },
+        {
+          "bytes_1_13": "0000e020000000780000000000",
+          "command": 130,
+          "cumulative_ticks": 5158,
+          "index": 20,
+          "stamp_ticks": 6
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 13,
+          "cumulative_ticks": 5158,
+          "index": 21,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 12,
+          "cumulative_ticks": 5159,
+          "index": 22,
+          "stamp_ticks": 1
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 8,
+          "cumulative_ticks": 5159,
+          "index": 23,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "0000e020000000780000000000",
+          "command": 8,
+          "cumulative_ticks": 5162,
+          "index": 24,
+          "stamp_ticks": 3
+        },
+        {
+          "bytes_1_13": "00050020000000780000000000",
+          "command": 135,
+          "cumulative_ticks": 5322,
+          "index": 25,
+          "stamp_ticks": 160
+        },
+        {
+          "bytes_1_13": "00000f00000000000000000000",
+          "command": 131,
+          "cumulative_ticks": 5322,
+          "index": 26,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 135,
+          "cumulative_ticks": 5323,
+          "index": 27,
+          "stamp_ticks": 1
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 5323,
+          "index": 28,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00e0e020000000780000000000",
+          "command": 128,
+          "cumulative_ticks": 5363,
+          "index": 29,
+          "stamp_ticks": 40
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 5363,
+          "index": 30,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 5363,
+          "index": 31,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000de020000000780000000000",
+          "command": 130,
+          "cumulative_ticks": 5487,
+          "index": 32,
+          "stamp_ticks": 124
+        },
+        {
+          "bytes_1_13": "00e0e000000000000000000000",
+          "command": 128,
+          "cumulative_ticks": 5487,
+          "index": 33,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 5487,
+          "index": 34,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00010005030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 7566,
+          "index": 35,
+          "stamp_ticks": 2079
+        },
+        {
+          "bytes_1_13": "00060003030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 10171,
+          "index": 36,
+          "stamp_ticks": 2605
+        },
+        {
+          "bytes_1_13": "00060003030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 12684,
+          "index": 37,
+          "stamp_ticks": 2513
+        },
+        {
+          "bytes_1_13": "00060003030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 15197,
+          "index": 38,
+          "stamp_ticks": 2513
+        },
+        {
+          "bytes_1_13": "00060003030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 17710,
+          "index": 39,
+          "stamp_ticks": 2513
+        },
+        {
+          "bytes_1_13": "00e0e003030000780000000000",
+          "command": 128,
+          "cumulative_ticks": 18020,
+          "index": 40,
+          "stamp_ticks": 310
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 18020,
+          "index": 41,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0f00000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 18020,
+          "index": 42,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "0090e020000000780000000000",
+          "command": 133,
+          "cumulative_ticks": 18402,
+          "index": 43,
+          "stamp_ticks": 382
+        },
+        {
+          "bytes_1_13": "0000e020000000780000000000",
+          "command": 134,
+          "cumulative_ticks": 20232,
+          "index": 44,
+          "stamp_ticks": 1830
+        },
+        {
+          "bytes_1_13": "0000e020000000780000000000",
+          "command": 130,
+          "cumulative_ticks": 21073,
+          "index": 45,
+          "stamp_ticks": 841
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 13,
+          "cumulative_ticks": 21073,
+          "index": 46,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0f00000000000000000000",
+          "command": 12,
+          "cumulative_ticks": 21074,
+          "index": 47,
+          "stamp_ticks": 1
+        },
+        {
+          "bytes_1_13": "00020000000000000000000000",
+          "command": 8,
+          "cumulative_ticks": 21074,
+          "index": 48,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "0002e020000000780000000000",
+          "command": 8,
+          "cumulative_ticks": 21077,
+          "index": 49,
+          "stamp_ticks": 3
+        },
+        {
+          "bytes_1_13": "00050020000000780000000000",
+          "command": 135,
+          "cumulative_ticks": 21212,
+          "index": 50,
+          "stamp_ticks": 135
+        },
+        {
+          "bytes_1_13": "00000f00000000000000000000",
+          "command": 131,
+          "cumulative_ticks": 21212,
+          "index": 51,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00000000000000000000000000",
+          "command": 135,
+          "cumulative_ticks": 21212,
+          "index": 52,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 21212,
+          "index": 53,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00e0e020000000780000000000",
+          "command": 128,
+          "cumulative_ticks": 22236,
+          "index": 54,
+          "stamp_ticks": 1024
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 22236,
+          "index": 55,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0000000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 22236,
+          "index": 56,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 23467,
+          "index": 57,
+          "stamp_ticks": 1231
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 23601,
+          "index": 58,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 23735,
+          "index": 59,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 23869,
+          "index": 60,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 24003,
+          "index": 61,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 24137,
+          "index": 62,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 24271,
+          "index": 63,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 24405,
+          "index": 64,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 24539,
+          "index": 65,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00060016030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 24673,
+          "index": 66,
+          "stamp_ticks": 134
+        },
+        {
+          "bytes_1_13": "00000104030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 25344,
+          "index": 67,
+          "stamp_ticks": 671
+        },
+        {
+          "bytes_1_13": "0091e07c002000780000000000",
+          "command": 133,
+          "cumulative_ticks": 25462,
+          "index": 68,
+          "stamp_ticks": 118
+        },
+        {
+          "bytes_1_13": "00070028030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 26927,
+          "index": 69,
+          "stamp_ticks": 1465
+        },
+        {
+          "bytes_1_13": "00010000000000000000000000",
+          "command": 134,
+          "cumulative_ticks": 27363,
+          "index": 70,
+          "stamp_ticks": 436
+        },
+        {
+          "bytes_1_13": "000d0028030000780000000000",
+          "command": 130,
+          "cumulative_ticks": 27363,
+          "index": 71,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00e0e000000000000000000000",
+          "command": 128,
+          "cumulative_ticks": 27363,
+          "index": 72,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 27363,
+          "index": 73,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00050103060000780000000000",
+          "command": 1,
+          "cumulative_ticks": 27740,
+          "index": 74,
+          "stamp_ticks": 377
+        },
+        {
+          "bytes_1_13": "0003000c040000780000000000",
+          "command": 1,
+          "cumulative_ticks": 28594,
+          "index": 75,
+          "stamp_ticks": 854
+        },
+        {
+          "bytes_1_13": "0001000d030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 29842,
+          "index": 76,
+          "stamp_ticks": 1248
+        },
+        {
+          "bytes_1_13": "0007000b030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 29850,
+          "index": 77,
+          "stamp_ticks": 8
+        },
+        {
+          "bytes_1_13": "0005000b030000780000000000",
+          "command": 2,
+          "cumulative_ticks": 31509,
+          "index": 78,
+          "stamp_ticks": 1659
+        },
+        {
+          "bytes_1_13": "00e0e00b030000780000000000",
+          "command": 128,
+          "cumulative_ticks": 31542,
+          "index": 79,
+          "stamp_ticks": 33
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 31542,
+          "index": 80,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "000d0f00000000000000000000",
+          "command": 130,
+          "cumulative_ticks": 31542,
+          "index": 81,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "0091e07c002000780000000000",
+          "command": 133,
+          "cumulative_ticks": 32549,
+          "index": 82,
+          "stamp_ticks": 1007
+        },
+        {
+          "bytes_1_13": "00070028030000780000000000",
+          "command": 1,
+          "cumulative_ticks": 33956,
+          "index": 83,
+          "stamp_ticks": 1407
+        },
+        {
+          "bytes_1_13": "00010000000000000000000000",
+          "command": 134,
+          "cumulative_ticks": 34474,
+          "index": 84,
+          "stamp_ticks": 518
+        },
+        {
+          "bytes_1_13": "000d0028030000780000000000",
+          "command": 130,
+          "cumulative_ticks": 34475,
+          "index": 85,
+          "stamp_ticks": 1
+        },
+        {
+          "bytes_1_13": "00e0e000000000000000000000",
+          "command": 128,
+          "cumulative_ticks": 34475,
+          "index": 86,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "001f0f00000000000000000000",
+          "command": 129,
+          "cumulative_ticks": 34475,
+          "index": 87,
+          "stamp_ticks": 0
+        },
+        {
+          "bytes_1_13": "00050103060000780000000000",
+          "command": 1,
+          "cumulative_ticks": 34851,
+          "index": 88,
+          "stamp_ticks": 376
+        }
+      ],
+      "commands_sha256": "2275be7fdb851425c6df7099f46ca17cdfee982c921651f5f4ef733f2e84c44d",
+      "runs": [
+        {
+          "checks": {
+            "by_command": {
+              "0x01": 23,
+              "0x02": 1,
+              "0x08": 6,
+              "0x0C": 3,
+              "0x0D": 3,
+              "0x80": 10,
+              "0x81": 10,
+              "0x82": 16,
+              "0x83": 3,
+              "0x85": 4,
+              "0x86": 4,
+              "0x87": 6
+            },
+            "counter_phases": {
+              "1800": "0x100",
+              "4300": "0x300",
+              "7200": "0x200"
+            },
+            "counter_stores": 18127,
+            "executor_entries": 89,
+            "high_path": 53,
+            "live_stamp": 14675,
+            "live_stamp_by_snapshot": {
+              "1800": 1819,
+              "4300": 561,
+              "7200": 14675
+            },
+            "low_path": 36,
+            "records": 89,
+            "records_by_snapshot": {
+              "1800": 19,
+              "4300": 67,
+              "7200": 89
+            },
+            "snapshot_frames": [
+              1800,
+              4300,
+              7200
+            ],
+            "stamp_sum": 34851,
+            "thunk_dispatch_edges": {
+              "0x1ADA": 10,
+              "0x1ADE": 10,
+              "0x1AE2": 16,
+              "0x1AE6": 3,
+              "0x1AEE": 4,
+              "0x1AF2": 4,
+              "0x1AF6": 6,
+              "0x1B72": 23,
+              "0x1B76": 1,
+              "0x1B8E": 6,
+              "0x1B9E": 3,
+              "0x1BA2": 3
+            },
+            "vector26_interrupts": 49526
+          },
+          "identity": {
+            "actions_sha256": "3431452612185e51deb21772c457dfb8ef520c6e4ad0d94cb221dc16dee0554a",
+            "coverage_sha256": "012dd3800388d0e1250872b7cf2347348b4cb810d5a9b378d9f2f56e802bd3d3",
+            "epoch": {
+              "first_frame": 1284,
+              "last_frame": 7199,
+              "opcode_changes": 0,
+              "outside_steps": 0,
+              "steps": 75260476
+            },
+            "final_state_sha256": "b4b25540fc7bfb9861221da9d4d2a1dccb4b6ef8f98b5d35da14530c4208a635",
+            "frame_observations_sha256": "f4b86ac9875c72f9bc663794b4eb753d45780f57c135e3160dbeff92bef90cf3",
+            "output_timing": {
+              "basis": "emulator output-rate samples per video frame; not hardware timing",
+              "counter_stores": 18127,
+              "output_samples_after_reset_frame": 4360162,
+              "output_samples_frames_first_to_last": 4360899,
+              "samples_per_counter_store_bounds": [
+                240.534,
+                240.575
+              ],
+              "samples_per_interrupt_bounds": [
+                88.0378,
+                88.0527
+              ],
+              "vector26_interrupts": 49526
+            },
+            "selected_core_sha256": "fa0f92ec051dea0df13ea0de435eb4cf9203363f6ca4892b27a0763fbb24787a",
+            "snapshot_states": {
+              "1800": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+              "4300": "9bce1f3546ffdac363e64196c50a6287a7c2fa06ec554ef20a41f4b83a4c709c",
+              "7200": "b4b25540fc7bfb9861221da9d4d2a1dccb4b6ef8f98b5d35da14530c4208a635"
+            }
+          },
+          "natural_controls": {
+            "config_0x80": {
+              "reason": "Natural resident code differs from derived self-patched image",
+              "rejected": true
+            },
+            "counter_plus_one": {
+              "reason": "Counter phase differs from natural store count",
+              "rejected": true
+            },
+            "drop_entry": {
+              "reason": "Ring command counts differ from natural table dispatch edges",
+              "rejected": true
+            },
+            "prefix_swap": {
+              "reason": "Earlier snapshot ring is not a prefix of a later one",
+              "rejected": true
+            },
+            "stamp_plus_one": {
+              "reason": "Ring stamps plus live counter differ from natural vector-26 interrupts",
+              "rejected": true
+            }
+          },
+          "replay_dispatch": {
+            "0x01": "0x2364",
+            "0x02": "0x2396",
+            "0x08": "0x18fe",
+            "0x0C": "0x1c3a",
+            "0x0D": "0x1c4c",
+            "0x80": "0x1d10",
+            "0x81": "0x1d54",
+            "0x82": "0x1d98",
+            "0x83": "0x1da4",
+            "0x85": "0x1dae",
+            "0x86": "0x2056",
+            "0x87": "0x17fc"
+          },
+          "self_patch": {
+            "config_value": 0,
+            "derived_code_bytes_changed": 28,
+            "natural_path_instructions": 30,
+            "runtime_table": [
+              "0x53e0",
+              "0x54e0"
+            ],
+            "runtime_table_nonzero_bytes": {
+              "1800": 0,
+              "4300": 24,
+              "7200": 75
+            },
+            "snapshots_equal": [
+              1800,
+              4300,
+              7200
+            ]
+          }
+        },
+        {
+          "checks": {
+            "by_command": {
+              "0x01": 23,
+              "0x02": 1,
+              "0x08": 6,
+              "0x0C": 3,
+              "0x0D": 3,
+              "0x80": 10,
+              "0x81": 10,
+              "0x82": 16,
+              "0x83": 3,
+              "0x85": 4,
+              "0x86": 4,
+              "0x87": 6
+            },
+            "counter_phases": {
+              "1800": "0x100",
+              "4300": "0x300",
+              "7200": "0x200"
+            },
+            "counter_stores": 18127,
+            "executor_entries": 89,
+            "high_path": 53,
+            "live_stamp": 14675,
+            "live_stamp_by_snapshot": {
+              "1800": 1819,
+              "4300": 561,
+              "7200": 14675
+            },
+            "low_path": 36,
+            "records": 89,
+            "records_by_snapshot": {
+              "1800": 19,
+              "4300": 67,
+              "7200": 89
+            },
+            "snapshot_frames": [
+              1800,
+              4300,
+              7200
+            ],
+            "stamp_sum": 34851,
+            "thunk_dispatch_edges": {
+              "0x1ADA": 10,
+              "0x1ADE": 10,
+              "0x1AE2": 16,
+              "0x1AE6": 3,
+              "0x1AEE": 4,
+              "0x1AF2": 4,
+              "0x1AF6": 6,
+              "0x1B72": 23,
+              "0x1B76": 1,
+              "0x1B8E": 6,
+              "0x1B9E": 3,
+              "0x1BA2": 3
+            },
+            "vector26_interrupts": 49526
+          },
+          "identity": {
+            "actions_sha256": "3431452612185e51deb21772c457dfb8ef520c6e4ad0d94cb221dc16dee0554a",
+            "coverage_sha256": "012dd3800388d0e1250872b7cf2347348b4cb810d5a9b378d9f2f56e802bd3d3",
+            "epoch": {
+              "first_frame": 1284,
+              "last_frame": 7199,
+              "opcode_changes": 0,
+              "outside_steps": 0,
+              "steps": 75260476
+            },
+            "final_state_sha256": "b4b25540fc7bfb9861221da9d4d2a1dccb4b6ef8f98b5d35da14530c4208a635",
+            "frame_observations_sha256": "f4b86ac9875c72f9bc663794b4eb753d45780f57c135e3160dbeff92bef90cf3",
+            "output_timing": {
+              "basis": "emulator output-rate samples per video frame; not hardware timing",
+              "counter_stores": 18127,
+              "output_samples_after_reset_frame": 4360162,
+              "output_samples_frames_first_to_last": 4360899,
+              "samples_per_counter_store_bounds": [
+                240.534,
+                240.575
+              ],
+              "samples_per_interrupt_bounds": [
+                88.0378,
+                88.0527
+              ],
+              "vector26_interrupts": 49526
+            },
+            "selected_core_sha256": "fa0f92ec051dea0df13ea0de435eb4cf9203363f6ca4892b27a0763fbb24787a",
+            "snapshot_states": {
+              "1800": "54af2c95d530b7d34349406da8a37806d6472ac6caf27ac78b1b0ebc9fc4c799",
+              "4300": "9bce1f3546ffdac363e64196c50a6287a7c2fa06ec554ef20a41f4b83a4c709c",
+              "7200": "b4b25540fc7bfb9861221da9d4d2a1dccb4b6ef8f98b5d35da14530c4208a635"
+            }
+          },
+          "natural_controls": {
+            "config_0x80": {
+              "reason": "Natural resident code differs from derived self-patched image",
+              "rejected": true
+            },
+            "counter_plus_one": {
+              "reason": "Counter phase differs from natural store count",
+              "rejected": true
+            },
+            "drop_entry": {
+              "reason": "Ring command counts differ from natural table dispatch edges",
+              "rejected": true
+            },
+            "prefix_swap": {
+              "reason": "Earlier snapshot ring is not a prefix of a later one",
+              "rejected": true
+            },
+            "stamp_plus_one": {
+              "reason": "Ring stamps plus live counter differ from natural vector-26 interrupts",
+              "rejected": true
+            }
+          },
+          "replay_dispatch": {
+            "0x01": "0x2364",
+            "0x02": "0x2396",
+            "0x08": "0x18fe",
+            "0x0C": "0x1c3a",
+            "0x0D": "0x1c4c",
+            "0x80": "0x1d10",
+            "0x81": "0x1d54",
+            "0x82": "0x1d98",
+            "0x83": "0x1da4",
+            "0x85": "0x1dae",
+            "0x86": "0x2056",
+            "0x87": "0x17fc"
+          },
+          "self_patch": {
+            "config_value": 0,
+            "derived_code_bytes_changed": 28,
+            "natural_path_instructions": 30,
+            "runtime_table": [
+              "0x53e0",
+              "0x54e0"
+            ],
+            "runtime_table_nonzero_bytes": {
+              "1800": 0,
+              "4300": 24,
+              "7200": 75
+            },
+            "snapshots_equal": [
+              1800,
+              4300,
+              7200
+            ]
+          }
+        }
+      ]
+    },
+    "owned_smoke": {
+      "failure_controls": {
+        "execution_escape": "instruction-access",
+        "forbidden_write": "forbidden-write",
+        "nonreturning": "instruction-budget",
+        "unmapped_read": "unmapped-data-read"
+      },
+      "fresh_after_failure": true,
+      "original_game_bytes_executed": false,
+      "positive_steps": 2
+    },
+    "prepared_binary_sha256": "cc059d3a7f443cf2869496c245f9acae357b1f773e054e2ac009e5632df2c83c",
+    "probe_sha256": "67642fe7747a194e5b1c76c7e8d31273594b8279c8edeb92d39c869fdfb83939",
+    "release": "usa-mk81070-v1003",
+    "schema": "neptune.snd-command-mailbox.v1",
+    "self_patch": {
+      "caller": "0x10ba",
+      "cases": 512,
+      "controls": {
+        "bit_order": {
+          "address": "0x17a6",
+          "mutated_driver_sha256": "81b78ab6d6dde958b2c330dcd504d8c3d29bc796509d2cfb2e954e27bdb46b28",
+          "reasons": [
+            "Self-patch instruction path differs from contract",
+            "Self-patch register/CCR result differs from contract"
+          ],
+          "rejected": 23,
+          "replacement": "4e71",
+          "tested": 31
+        },
+        "branch_sense": {
+          "address": "0x1772",
+          "mutated_driver_sha256": "0b3a55fc01c3e50d517efc3f706fd72e05af91134b174660d0f741a85e869479",
+          "reasons": [
+            "Self-patch instruction path differs from contract"
+          ],
+          "rejected": 31,
+          "replacement": "6a08",
+          "tested": 31
+        },
+        "nop_constant": {
+          "address": "0x176c",
+          "mutated_driver_sha256": "5491b4a2b5d43855d9a974d46b4fed2e3bc7e65a56b0d8c195fb5795129bf1fe",
+          "reasons": [
+            "Self-patch register/CCR result differs from contract"
+          ],
+          "rejected": 31,
+          "replacement": "4e70",
+          "tested": 31
+        },
+        "site_shift": {
+          "address": "0x1782",
+          "mutated_driver_sha256": "a812f7bf1d204a4645a342c1ce84fc10b1cb8c409bd33a49465b5dd0f7cc0047",
+          "reasons": [
+            "Native guard: forbidden-write"
+          ],
+          "rejected": 15,
+          "replacement": "1468",
+          "tested": 31
+        }
+      },
+      "entry": "0x1768",
+      "results_sha256": "2e363e5ec3513228cbbdc7b67f3cc964c3b4f247676b70aa22e055c08e6cb02b",
+      "site_by_clear_bit": {
+        "1": [
+          "0x1170",
+          4
+        ],
+        "3": [
+          "0x1168",
+          4
+        ],
+        "4": [
+          "0x116c",
+          4
+        ],
+        "5": [
+          "0x1aae",
+          4
+        ],
+        "6": [
+          "0x2be6",
+          4
+        ],
+        "7": [
+          "0x10e4",
+          8
+        ]
+      },
+      "unused_bits": [
+        2,
+        0
+      ]
+    },
+    "source_path": "BOMSS/PROGRAM.BIN[0x44:0x6418]",
+    "status": "success"
+  },
+  "run": "20261105T0750Z",
+  "schema": "neptune.snd-command-mailbox-evidence.v1",
+  "tools": {
+    "native": "tools/saturn_lab/m68k_probe.py (unchanged ABI1)",
+    "probe": "tools/saturn_lab/probe_snd_mailbox.py",
+    "tests": "tools/saturn_lab/tests/test_probe_snd_mailbox.py"
+  }
+}
