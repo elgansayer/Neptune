@@ -20,10 +20,16 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1122Z)
 
-Private repo commit: `2e11d23`. Earlier commits from this run:
+Private repo commit: `2e2abd3`. Earlier commits from this run:
 
 | Commit | Content |
 | --- | --- |
+| `9631d2b` | runtime CPU roles |
+| `a5d583a` | SINIT/MINIT leads |
+| `81b6e5a` | cross-module function matching |
+| `c440853` | classification frontier |
+| `182954f` | workflow docs for other lanes |
+| `2e11d23` | Cinepak work-area correction |
 | `6d76714` | non-zero-only residency |
 | `6c190e9` | whole container files |
 | `6a4a418` | toolchain and runtime screen |
@@ -127,6 +133,32 @@ Toolchain (static idiom evidence; no matching build yet):
   - libgcc `___sdivsi3`/`___udivsi3`/`___movstrSI`;
   - frame-pointer prologues and epilogues.
 
+Cross-module function matching (`tools/split/function_match.py`, private):
+functions of at least 12 instructions are hashed with PC-relative
+displacements masked and literal pools ignored.
+
+| Module pair | Shared bodies | Reading |
+| --- | ---: | --- |
+| USA KRNL + Japan KRNL | **3,844** of about 4,200 | one C source per function can serve both releases |
+| XBAND + XS | 229 | GCC-built NetLink/XBAND modules share a library layer |
+| BOOT + XBAND | 216 | same |
+| BOOT + XS | 210 | same |
+| KRNL + BOOT | 3 | SBL was shipped as source, so each studio compiled it with its own compiler |
+| FLD + KRNL | 29 | FLD_KNL.BIN came from the KRNL team and toolchain |
+| USA IP + Japan IP + SAMPLEIP | 14 (all) | Sega's security/area code |
+
+CPU roles:
+
+- KRNL kicks the slave SH-2 via SINIT from `06067608`, and 8+ functions signal
+  the master via MINIT. Japan KRNL is the same.
+- In all 12 captured states (f900-f7200 and the f10800 menu), **the slave
+  SH-2's PC is 0**: it is not running on this route.
+- The master executes:
+  - BOOT at f900;
+  - **FLD in WorkRAM-L at f1200** (`0x002007C6`), so the field loader runs;
+  - the Cinepak player path at f2400-f3600;
+  - KRNL's main loop in game.
+
 Libraries (version strings):
 
 - SBL `GFS 2.10` (1996-02-01) in both KRNLs, BOOT, XS and XBAND.
@@ -206,6 +238,26 @@ Facts learned about GNU as (they bound the C path):
 - It shortens `(0,An)` to `(An)` unless written `(0:w)`.
 - It leaves branches to global symbols as relocations, on both CPUs.
 
+Later in the run:
+
+- `tools/check.py` now locates the first differing byte. Negative control: a
+  flipped FLD byte is reported at `0x00200064`.
+- Toolchain preparation for the GCC-built modules:
+  - Debian i386 multilib debs unpacked without root (`$RE_TOOLS_DIR/i386-multilib`,
+    with a `cc32` wrapper; a 32-bit test program links and runs).
+  - GCC 2.7.2.3 source downloaded (SHA-256
+    `16166e0f0f2064bb3114716650569065ef3855ae2331d7a29b85d4b9aa73773c`).
+  - A bounded `cc1` build for `sh-hms` is queued under the heavy lock
+    (`$RE_TOOLS_DIR/build-gcc-2.7.2.3-sh/build.sh`). Its result goes to the
+    next run.
+  - Hitachi SHC for KRNL is proprietary and was not fetched. The owner needs
+    to supply a licensed copy.
+- Incident: replaying the 0801Z run's edit commands to recover the census tool
+  also ran one recorded cleanup command. That command deleted the superseded
+  private `census-run1.json` from this lane's evidence directory.
+  `census-run2.json`, the one in use, is intact. The reconstructed tool is
+  being validated by regenerating the census under the heavy lock.
+
 Also moved later in the run:
 
 - Container files are in the build.
@@ -214,10 +266,13 @@ Also moved later in the run:
 
 Next frontier:
 
-1. Obtain the compilers:
-   - a period Hitachi SHC plus its optimizing linker for KRNL (proprietary;
-     absent on this host);
-   - a Cygnus-era GCC for SH for NetLink/XBAND.
+1. Compilers:
+   - Finish the GCC 2.7.2.3 `cc1` build for SH (queued, see above). Then
+     compare its output on small functions with BOOT/XBAND bodies, trying
+     `-O0`/`-O2` with a frame pointer. Try `cygnus-2.7-96q3`/2.8 if 2.7.2.3
+     does not match.
+   - **Blocked on the owner:** a licensed period Hitachi SHC (and its
+     optimizing linker) for KRNL.
 2. Trace the writer of the SH-2 code in the CPK work area
    (`0x002F0000`-`0x002F33FF`) with a write-watch (heavy). Extend the
    residency screen to battle mode, stage changes and the NetLink/XBAND paths.
