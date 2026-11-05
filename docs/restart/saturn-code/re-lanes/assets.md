@@ -51,14 +51,14 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| **Sprite palettes bound from captures** (470 states; 22,001 of 22,008 draws match a decoded block) | **1,735 blocks, 1,582 sequences (4,657 frames)**; was 930 / 962 |
+| **Sprite palettes bound from captures** (864 states; 34,660 of 34,704 draws match a decoded block, the rest are 40 RGB movie frames and 4 off-screen draws with no graphics assigned, so every on-screen draw matches) | **2,223 blocks, 1,848 sequences (5,836 frames)**; was 930 / 962 before run 2123Z; staff bank 152 / 185 blocks, all 50 sequences |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps |
 | Colour-cycle scripts | 124 / 124 |
 | VDP2 cell animations | 36 records, 232 frames (stage banks) |
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
-| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **18 confirmed by capture on every cell** (was 6), rendered in capture colours |
+| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **19 confirmed by capture on every cell** (was 6), rendered in capture colours |
 | Normal Game stage descriptors | 50 / 50 |
 | Normal Game enemy placement lists (kernel table) | 50 / 50 |
 | Master Game enemy placement lists | 20 / 20 |
@@ -71,9 +71,10 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink/XBAND images | 174 / 174 |
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
-| **Sprite text frames** (story, save-system messages, Master Game intro, staff credits, animated words) | **54 / 54 found; 30 checked glyph by glyph against the bank data, 0 conflicts** |
-| **Sprite word blocks** (menu labels, 9 battle arena names, 12 battle character names, awards) | **133 read** (partial inventory) |
-| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **326 new** (470 in all) |
+| **Sprite text frames** (story, save-system messages, Master Game intro, staff credits, animated words) | **54 / 54 found; 39 machine-checked against the bank data (30 glyph by glyph, 9 save messages word by word), 0 conflicts**; Japan story screens 8 transcribed |
+| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **293 blocks read** (every text-bearing banner-shaped block of four banks; 477 entries with pixel-identical copies; partial inventory) |
+| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **338 new** (incl. 8 battle arena previews) |
+| **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (864 states in all) |
 
 ### Formats confirmed (own words)
 
@@ -158,6 +159,16 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
   menus use one-page planes (each of the four planes is a single 64×64-cell
   page). The capture checker now reads that layout, which confirmed four
   battle maps.
+- **Scenes, modes and the ending (new this run).** The kernel runs one
+  scene at a time. Each scene stores the next scene's entry point and a mode
+  number, and the mode picks the banks loaded for the next scene: title,
+  Normal Game (bank by world), Battle (or the XBAND bank), Master Game, and
+  the ending (staff bank). A Normal Game stage ends when its 16-bit flag word
+  gets the stage-over bit. A cleared stage runs the stage's clear hook; a
+  game over sets another bit. With that bit set and the world number one
+  past the last world, the game starts the ending scene: the ending movie,
+  then the staff roll. Setting those two values in a running stage reaches
+  the staff roll and then the title screen.
 - **Sprite text (new this run).** The English story screens, save-system
   messages, the Master Game intro and the staff credits are each one sprite
   frame. Its parts are glyph blocks shared across frames, one character per
@@ -191,7 +202,10 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z and 2123Z)
 
-Run 2123Z: `47e1792` capture pass over 470 states (sprite bindings, map
+Run 2123Z: `d5ca419` (head) word-level check of the save messages, Japan story text, stage 2-2 draws explained · `6b795ae` word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
+blocks · `35176ac` 200 word blocks · `1f46dfd` ending, staff roll and boss
+captures (722-state capture pass) · `080174c` ending trigger and capture-pass update · `47e1792`
+capture pass over 470 states (sprite bindings, map
 checks, one-page planes, deduplicated draw PNGs, Counts section) ·
 `6265cec` 133 word blocks · `d400937` sprite text recipe and output, menu and
 play walk recipe, multi-checkpoint emulator wrapper, draw lister. Run 1833Z:
@@ -211,14 +225,14 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
 
 ## Frontier
 
-1. Sprite palettes: 1,735 of 10,659 blocks are bound.
-   - Next captures: a battle with the two characters no capture has picked;
-     Normal Game deaths, Louie rides and bosses; the ending and staff roll
-     (the staff bank has none bound).
+1. Sprite palettes: 2,223 of 10,659 blocks are bound.
+   - Next captures: Normal Game Louie rides, items and world-transition
+     story screens; more Master Game floors; the two base2 character groups
+     whose characters character select doesn't offer.
    - Or bind from the draw code (each object's colour base).
    - The per-character groups could bind the rest of base2 by inference,
      reported separately from capture bindings.
-2. VDP2 map colours: 47 of 65 maps still need a capture of their screen or a
+2. VDP2 map colours: 46 of 65 maps still need a capture of their screen or a
    reader for their plane layout.
 3. Text: the word-block inventory across all banks, then the Japanese
    banks. XBAND/NetLink data layouts.
@@ -226,8 +240,8 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
    code-spawned objects derivable from code instead of fitted (usa-code
    scope). Also the open descriptor parameters, the two unpaired
    background grids and the open slot-6 attribute bits.
-5. Neptune implementation issues: #877 (soft blocks and items) and #887
-   (enemy placement) are filed. Battle arena set-up is next.
+5. Neptune implementation issues: #877 (soft blocks and items), #887
+   (enemy placement) and #890 (battle arena set-up) are filed.
 
 ## Run log
 
@@ -269,4 +283,16 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
       learned the battle menus' one-page planes.
   - Found that the English text is glyph-built sprite frames. Transcribed all
     54, with 30 checked glyph by glyph (0 conflicts). Read 133 word blocks.
-  - Filed Neptune #887 (enemy placement).
+  - Filed Neptune #887 (enemy placement) and #890 (battle arena set-up).
+  - Read the kernel's scene and mode logic. Started the ending through the
+    game's own end-of-game path, which bound the staff bank: 152 of 185
+    blocks and all 50 sequences.
+  - Continued the seven Normal Game boss stages and the five Master Game
+    boss floors from stage select.
+  - Read 293 word blocks: every text-bearing banner-shaped block in four banks.
+  - Checked the 9 save messages word by word: 39 of 54 text frames are
+    machine-checked.
+  - Transcribed the Japan story screens.
+  - Explained the 4 unmatched draws in stage 2-2: they are off-screen
+    objects with no graphics assigned.
+  - Total: 2,223 blocks bound over 864 states, 19 maps confirmed.
