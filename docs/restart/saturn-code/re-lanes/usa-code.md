@@ -67,8 +67,17 @@ All 4 natural roots and 12 of 13 probe entries reconcile as inventory entries.
 - Private inputs:
   - `/home/dev/neptune-research-private/483/0KRNL.BIN`.
   - `$RE_EVIDENCE_DIR/inputs/BOOT-0.bin` (EDC-checked extraction receipt beside it).
-  - Checkpoints: f600 `a40ddab1…`, f1200 `5caef9e1…`, f10200 `7049c389…`,
-    f10800 `e5bd5164…`.
+  - Checkpoints: f600 `a40ddab1…`, f1200 `5caef9e1…`, f3000 `a6f7f4ad…`,
+    f10200 `7049c389…`, f10800 `e5bd5164…`.
+  - The f3000 → f10200 → f10800 chain is one verified restore lineage:
+    `continuation-release` → `navigation-release-late` → `menu-release` under
+    `/home/dev/neptune-research-private/27/`.
+- `tools/saturn_lab/sample_workram.py` (passive lineage sampler): SHA-256
+  `79ff1ccc14b2772c443797eefd856a9fee11aa9b3b343fb11fd386ce3c7de10c` at this run.
+  The private recipe is `$RE_EVIDENCE_DIR/scripts/vblank-runs.sh`: three
+  `--checkpoint` directories in lineage order, `--value
+  frame_counter=06006038:4` and five more values, six `--witness` ranges, and
+  `--expect-rate frame_counter=1/1`.
 - No Ghidra/JDK was installed. The stdlib tool plus the pinned upstream
   implementation is the current "equivalent" project. Ghidra 12.2/JDK 25 has a
   factory recipe (`tools/factory/provision_ghidra.py`) that is not installed on
@@ -76,7 +85,7 @@ All 4 natural roots and 12 of 13 probe entries reconcile as inventory entries.
 
 ## Run log
 
-### 20261105T0632Z (merged via this run's PR)
+### 20261105T0632Z, slice 1 (PR #838, merged 07:20:28Z by native auto-merge)
 
 Moved:
 
@@ -101,28 +110,53 @@ Retained failures and refinements:
 - The BOOT `bsr`/literal test fails because BOOT has no `bsr` call signal. The
   rule was not changed.
 
+### 20261105T0632Z, slice 2 (#492 natural counter lineage)
+
+Moved:
+
+- Passive samples from one verified restore lineage (f3000 → f10200 → f10800).
+  - The VBlank-OUT counter `0x06006038` (handler `06006368`) advances exactly
+    once per emulated frame: +7,200 and +600.
+  - Pad-port counters `0x06006100`+ advance +4,347 and +428 (60.4% and 71.3% of
+    frames), a separate tick domain.
+  - The VBlank-IN word `0x060B2D20` stays at 5.
+- Code witnesses held throughout; four negative controls fail as required; the
+  repeat report is byte-identical.
+- Note: [VBlank counter lineage](../../research/2026-11-05-usa-vblank-counter-lineage.md).
+- Receipt: [evidence JSON](../../evidence/2026-11-05-usa-vblank-counter-lineage.json).
+
+Correction: the slice-1 note and #492 comment gave the handler registration order
+backwards. `060064E0` (`0x40` → `06006652`, `0x41` → `0600665C`) runs first, then
+startup re-registers `0x41` → `06006368`. The inventory note is corrected.
+
 ## Frontier (ranked)
 
-1. **#492 VBlank/timing handlers.** Execute original `06006652`
-   (word++ at `0x060B2D20`) and `06006368` (long++ at `0x26006038`) in the pinned
-   interpreter with mutation controls. Then observe natural calls with the
-   existing call-trace tooling and relate `0x060B2D20` to `tick` `0x06006108` and
-   game-task cadence. After that: `0600665C` (VDP1 `0x25D00000` stores) and the
-   764-instruction SMPC handler `060990AA`.
-2. **Scheduler and tasks (#492).** Use the inventory to bound `krnl_setjmp`
+1. **#492 per-frame ordering.** The VBlank-OUT counter is now measured at one per
+   emulated frame, and pad-read counting runs on a separate tick domain. Next,
+   observe which frames skip pad reads and why, then order pad read, game task
+   and presentation within a frame.
+   - Natural call observation of `06006368` and the pad routines
+     `06006FC6`/`07014`/`07326` with the existing call-trace tooling.
+   - Or denser same-lineage checkpoints, for example every 60 frames across a
+     load boundary.
+   - Then execute `06006368`/`06006652` from original bytes with mutation controls.
+2. **Dynamic interrupt handlers.** Four `SYS_SETUINT` calls (slot `0x06000300`)
+   take non-constant handlers, and the VBlank-IN word is frozen at 5. Resolve
+   which handler replaces `0x40` and when, through callers' arguments or natural
+   observation.
+3. **Scheduler and tasks (#492).** Use the inventory to bound `krnl_setjmp`
    `060061C4`, `krnl_longjmp` `060061E6`, yield `06006D36` and the startup
    scheduler region `06006BE4`–`06006D36`. Enumerate task entry pointers (tier-B
    `argument-pointer` provenance) and the 199 resume points as yield/resume edges.
-3. **Overlay loader / later modules (#480, code-map).** Find the KRNL file-load
+4. **Overlay loader / later modules (#480, code-map).** Find the KRNL file-load
    calls (CD/BIOS slots in `unresolved_pointer_slots_top`). Determine which
-   files load where and when, then inventory each overlay with this tool at its
-   observed mapping, with residency.
-4. **Shrink the unknowns.** Classify KRNL's 54,169 unclassified halfwords,
-   especially the 102 upstream-dead entries and the largest runs, and the 485
-   unresolved indirect sites (object update pointers at `+0x30`, RAM function
-   pointers `0x060C0FE8`–`0x060C1650`). Resolve BOOT's `0x0604B4B0` /
-   `0x00200000` lifetime.
-5. **Gameplay core (#493).** Start from upstream symbols that reconcile as tier-B
+   files load where and when, then inventory each overlay with `sh2_discover.py`
+   at its observed mapping, with residency.
+5. **Shrink the unknowns.** Classify KRNL's 54,169 unclassified halfwords
+   (including the 102 upstream-dead entries) and the 485 unresolved sites (object
+   update pointers at `+0x30`, RAM function pointers `0x060C0FE8`–`0x060C1650`).
+   Resolve BOOT's `0x0604B4B0` / `0x00200000` lifetime.
+6. **Gameplay core (#493).** Start from upstream symbols that reconcile as tier-B
    entries: `idle_object` `060143D8`, `dino` `0601B5CC`, `core_mechanism`
    `0607466C`, and the hook sites inside `060154A4`, `0605E504` and `0606CF28`.
    Recover bomb/fire/movement functions with isolated original-byte tests.
