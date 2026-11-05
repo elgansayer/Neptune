@@ -72,7 +72,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
 | **Sprite text frames** (story, save-system messages, Master Game intro, staff credits, animated words) | **54 / 54 found; 30 checked glyph by glyph against the bank data, 0 conflicts** |
-| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels) | **241 entries read** (212 distinct blocks; partial inventory) |
+| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **293 blocks read** (every text-bearing banner-shaped block of four banks; 477 entries with pixel-identical copies; partial inventory) |
 | **Menu, screen and play capture states** (scripted pad input, no memory writes) | **338 new** (incl. 8 battle arena previews) |
 | **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (864 states in all) |
 
@@ -202,7 +202,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z and 2123Z)
 
-Run 2123Z: `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
+Run 2123Z: `6b795ae` (head) word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
 blocks · `35176ac` 200 word blocks · `1f46dfd` ending, staff roll and boss
 captures (722-state capture pass) · `080174c` ending trigger and capture-pass update · `47e1792`
 capture pass over 470 states (sprite bindings, map
@@ -289,5 +289,5 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     blocks and all 50 sequences.
   - Continued the seven Normal Game boss stages and the five Master Game
     boss floors from stage select.
-  - Read 241 word blocks.
+  - Read 293 word blocks: every text-bearing banner-shaped block in four banks.
   - Total: 2,223 blocks bound over 864 states, 19 maps confirmed.
