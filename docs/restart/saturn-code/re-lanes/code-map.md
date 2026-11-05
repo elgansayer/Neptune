@@ -20,9 +20,17 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1622Z)
 
-Private repo commit: `6a37a0f` (70 libgcc routines compiled from source into the
-build). The 20261105T1122Z run's commits (splitter, build, 25 C functions, module
-map, runtime screen) end at `2538cfd`; its details are in the run log below.
+Private repo commit: `978a858`. This run's commits:
+
+| Commit | Content |
+| --- | --- |
+| `6a37a0f` | libgcc units compiled from source (70) |
+| `5a1180f` | libgcc2.c 64-bit helpers |
+| `8f1b0de` | newlib 1.6.1 units, BOOT's Dec-1995 cc1 variant (136) |
+| `978a858` | progress, compiler build scripts |
+
+The 20261105T1122Z run's commits (splitter, build, 25 C functions, module map,
+runtime screen) end at `2538cfd`; see the run log below.
 
 PR #867 published the SH-2 formatter. The follow-up PR publishes the generic
 splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
@@ -33,7 +41,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **95** / 0 / 18,928 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **70 are GCC runtime-library (libgcc) routines compiled from the original library sources** (BOOT 45, XBAND 21, XS 3, H2H 1). 20 more inventory entries are extra entry points inside those routines and are no longer counted as functions |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **136** / 0 / 18,887 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **111 are library routines compiled from their original free-software sources**: GCC's libgcc (BOOT 53, XBAND 21, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 16, XBAND 14, XS 3). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -350,14 +358,52 @@ total). Private commit `6a37a0f`.
   `lib1funcs.asm` routine (`___ashiftrt_r4_N`). They are recorded as `covered`
   and no longer counted as functions, so the MATCHING count is not inflated.
 
+Later in the run (private `5a1180f`, `8f1b0de`, `978a858`): **136 MATCHING**.
+
+- `libgcc2.c` of GCC 2.7.0 adds BOOT's `___divdi3`/`___moddi3`/`___udivdi3`/
+  `___umoddi3` and XBAND's `___lshrdi3`.
+- **Compiler variant found.** The 4 soft-float misses need Jim Wilson's FSF
+  trunk SH change of **9 Dec 1995** (`subsi3` expander, `ADDRESS_COST`; GCC
+  2.8.0 ChangeLog.10).
+  - GCC 2.7.2.3 with only that change (`cc1 = "dec95"`) matches all four, plus
+    BOOT's `___lshrdi3`, and keeps every other BOOT/XS/H2H unit and C function
+    identical.
+  - XBAND's libgcc does not have the change, so XBAND was built with a
+    different toolchain.
+  - BOOT's toolchain therefore had a 1996 backend with mid-1995 library
+    sources: a Cygnus-style release branch.
+- **C library identified: Cygnus newlib.** newlib 1.6.1's sources compile to
+  BOOT's string functions and `mktime` (16), XBAND's string and stdio pieces
+  (14) and XS's (3). BOOT's `vfprintf` tables are the BSD 4.4 ones that newlib
+  carries.
+- Matching discipline:
+  - A one-call wrapper under 64 bytes counts only if one of its references
+    points at another accepted unit. This rejected look-alike
+    `___builtin_vec_new`/`___builtin_vec_delete` hits.
+  - Data tables are not units.
+  - The matcher reads the original files, never build outputs.
+- Public: `tools/saturn_lab/lib_unit.py` (this PR) is the generic,
+  content-free core, with synthetic tests.
+- Two older GCCs were rebuilt for the comparison:
+  - FSF 2.7.0 from gcc-2.6.3 plus the official diff; its parser was
+    regenerated with Debian bison 3.8.2 after two grammar fixes;
+  - 2.7.1 from 2.7.0 plus the 2.7.0-2.7.1 diff.
+
 Next frontier (from this run):
 
-1. Compiler variant: a GCC with a later SH backend (Cygnus 2.7 snapshot, or
-   GCC 2.8's `subsi3` expansion) for the 4 soft-float misses and the BOOT near
-   misses recorded in private `docs/TOOLCHAIN.md`.
-2. XBAND's libgcc: its `sh1` soft-float core (`_pack_d`, `__fpadd_parts`, ...)
-   matches neither revision. Find which revision or compiler built it.
-3. `libgcc2.c` (64-bit helpers, `___lshrdi3` referenced by BOOT), plus any C
-   library linked into the GCC modules, with the same matcher.
-4. Items 2-5 of the previous frontier (CPK work-area writer, classification,
-   SBL symbol names, census verification) are still open.
+1. Compiler variant for BOOT. The open differences are:
+   - dp `__fpmul_parts`: one extra `nop` in a 64-bit stack copy, probably a
+     later DImode-move change;
+   - `___udivmoddi4`;
+   - the two near misses.
+
+   Apply further 1996 ChangeLog.10 SH changes one at a time; keep a change only
+   if no existing match is lost.
+2. XBAND's toolchain: its `sh1` soft-float core and most of its newlib
+   (`_malloc_r`, `__swbuf`, `fflush`, `vfprintf`) do not match yet.
+3. BOOT's remaining C library (`vfprintf`, `malloc`).
+4. Decompile BOOT/XBAND/XS/H2H game and NetLink code with
+   `[[module.c_function]]`. BOOT should use the `dec95` cc1.
+5. Still open from the previous run: the CPK work-area writer, classification
+   of unclassified bytes, SBL symbol names, census verification. Owner decision:
+   Hitachi SHC for KRNL.
