@@ -60,11 +60,12 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
 | VDP2 menu/UI maps | 65 / 65 decoded and rendered; 6 confirmed by capture on every cell, rendered in capture colours |
 | **Normal Game stage descriptors** | **50 / 50** |
-| **Normal Game enemy placement lists** | **50 / 50** |
+| **Normal Game enemy placement lists** (kernel table, corrected this run) | **50 / 50** |
+| **Master Game enemy placement lists** (new) | **20 / 20** |
 | **Battle stage descriptors (with item lists)** | **36 / 36** |
 | **Master Game stages and item placement** | **20 / 20** |
 | **Gameplay maps (64×64 cell attributes)** | **106 / 106** |
-| Base1 slot-4 records | 12 / 13 decoded (stage descriptors, enemy placement, 10 attract-demo pad recordings); record 18 open |
+| Base1 slot-4 records | 13 / 13 classified (stage descriptors, 10 attract-demo pad recordings, and two older copies of the kernel's enemy tables that no code reads) |
 | Slot-9 records outside the base banks | 24 / 24 (battle1 and xband1 list the same battle table twice; master1 20 item lists) |
 | FILM movies | USA 3 / 3 (10,421 frames, 320×160, 30 fps, stereo 22,050 Hz); Japan `BOMSS2` 1 / 1 |
 | NetLink/XBAND images | 174 / 174 |
@@ -92,7 +93,24 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
   battle bank, each with its own soft-block count and item list. Master Game stages are set up
   by code: field grid n, background grid n + 20. Each also has a list of
   fixed item cells.
-- **Enemy placement (new).** Up to 16 (type, x, y) entries per normal stage.
+- **Enemy placement (corrected this run).** The game reads it from two
+  tables inside the kernel executable, not from the base bank:
+  - The Normal Game table has one 64-byte row per (world, stage), with up to
+    16 (kind, x, y) entries ending at kind 0.
+  - The Master Game table has one row per Master stage.
+  - A short (world, stage) list names the seven boss stages that spawn
+    nothing from the table. Their objects come from stage code.
+
+  The spawner creates each entry at its cell and stores the kind in the
+  object. Some kinds bring extra objects with them that code spawns, such as
+  a companion on the same cell or a three-part body. The base bank holds two
+  older copies that nothing reads:
+  - The Normal copy differs on 27 of 60 rows. Every World 5 row in it lists
+    only the exit mechanism; earlier outputs used it.
+  - The Master copy has 25 rows in five groups of four stages and a boss,
+    against the shipped five groups of three stages and a boss.
+
+  Japan's kernel holds the same table bytes.
 - **Gameplay map (new).** The kernel builds the 64×64 cell map by looking
   each field-grid metatile up in its set's attribute table. The upper bits
   go into the cell map (solid and floor-class flags), and the low nibble
@@ -140,19 +158,22 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | --- | --- |
 | Solid bit, table-derived map vs live cell map | 4,092–4,096 / 4,096 for normal 1-1, 2-1, 3-1, 4-1, battle 10-0, master 9 and 13 (the rest are standing enemies) |
 | 1-1 at stage start: enemies, player starts, soft-block count | 7/7 cells, 2/2 cells, 56 = 56 |
+| Kernel enemy tables vs all stage-select captures (this run) | Normal Game: every listed (kind, cell) present at build on 50/50 stages (405/405 entries); Master Game: live kinds equal the row and every (kind, cell) present on 20/20 (166/166) |
 | Hidden item kinds vs live item slots | equal for 1-1, 2-1, 3-1, 4-1 and battle 17-0 (75/75, two runs); battle 10-0 32/33 (one slot already used) |
 | Master item cells | 5/5 and 12/12 in demos |
 | All 36 battle arenas, selected through world/variant in the battle demo's pre-build state | solid bit 4,090–4,096/4,096 on 36; item lists 36/36; soft-block count exact on 35/36 (one arena runs out of free cells); descriptor grids equal the live planes on 32/36 (arena 17's large field is on a plane layout the checker doesn't read), cell block and palette confirmed on 36/36 |
 | All 20 Master Game stages, selected through the stage byte in a demo's pre-build state | solid bit 4,092–4,096/4,096 on 20; field grid s+1 and background grid s+21 equal the live planes on every cell on 20; item kinds 19/20 and item cells 98/100 (stage 14 skips one item and shifts the rest) |
 | Battle arena 17 | 4,096/4,096 solid bits in two captures (once the lookup reads past the table) |
 | Japan | same tables and maps byte for byte |
-| All 50 Normal Game stages, selected through the game's stage variables in a cold-boot menu state | 47 build (1-8–1-10 are identical placeholder records); timer = descriptor minutes × 3,600 frames 47/47; hidden item kinds 47/47; soft-block count exact 43/47; solid bit ≥ 4,083/4,096; the single bomber on its entry cell (31) or player-1 cell (16); every listed enemy cell occupied on 17 stages |
+| All 50 Normal Game stages, selected through the game's stage variables in a cold-boot menu state | 47 build (1-8–1-10 are identical placeholder records); timer = descriptor minutes × 3,600 frames 47/47; hidden item kinds 47/47; soft-block count exact 43/47; solid bit ≥ 4,083/4,096; the single bomber on its entry cell (31) or player-1 cell (16); enemies: see the kernel-table row above (the old base-bank source matched 17 stages) |
 | Backgrounds of all 47 built stages (display-on stage-select captures) | every descriptor grid equals a live plane on all 16,384 cells on 44 stages; descriptor cell block in VRAM on 47 (byte-exact on 20, ≥ 98% where tiles animate); descriptor palette the best CRAM match on 47 |
-| Soft-block generator from the captured generator state | exact on 28 of 35 stage-select captures with a soft-block count, when every object present at build time reserves its cell and each stage gets its set-up offset (the other 7 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
+| Soft-block generator from the captured generator state | with a per-stage set-up offset: exact on 24 of the 39 built stages with soft blocks when the bomber area and the kernel table's enemy cells are reserved, 28 of 39 when the objects code spawns are reserved too (the other 11 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
-## Private repository state (run 20261105T1623Z)
+## Private repository state (runs 20261105T1623Z and 1833Z)
 
-`38952ec` master1 pairing confirmed by capture and the second attract walk's
+`d9862b4` enemy placement from the kernel tables (Normal, Master, boss skip
+list) with stage-select checks · `e398b07` soft-block fit with the kernel
+table, format document and progress. Run 1623Z: `38952ec` master1 pairing confirmed by capture and the second attract walk's
 checks · `0f256a2` stage data recipe and outputs · `ef1b663` backgrounds
 paired from the stage tables, starting-field generator · `2d55396` emulator
 wrapper after the host kernel update · `7946a43` stage-select checks of all
@@ -166,18 +187,16 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
 
 ## Frontier
 
-1. Enemy placement still to locate: World 5 (its stages use a separate
-   set-up path) and Master Game (not in its item lists). Then the 1–2 extra
-   soft blocks on four stages, and enemy set-up's random draws (usa-code
-   scope) to make every demo layout exact.
-2. Base1 slot 4 record 18: matches neither normal enemies nor Master spawn
-   cells. The open descriptor parameters.
-3. The two background grids no table or capture pairs.
-4. Sprite palettes for the objects no capture has drawn yet; menu/title
+1. Soft-block layouts: make the per-stage set-up offset and the
+   code-spawned objects (companions, multi-part bodies, stage objects)
+   derivable from code instead of fitted (usa-code scope), then the 1–2
+   extra soft blocks on four stages. The open descriptor parameters.
+2. The two background grids no table or capture pairs.
+3. Sprite palettes for the objects no capture has drawn yet; menu/title
    map colours; open slot-6 attribute bits.
-5. Text transcription of the sprite text; XBAND/NetLink data layouts.
-6. Neptune implementation issues: #877 (soft-block and item placement) is
-   filed; stage layouts and enemies next.
+4. Text transcription of the sprite text; XBAND/NetLink data layouts.
+5. Neptune implementation issues: #877 (soft-block and item placement) is
+   filed; enemy placement next.
 
 ## Run log
 
@@ -196,4 +215,9 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
   - Re-implemented the soft-block and item placement.
   - Filed Neptune #877.
   - Blocker found and fixed: the host's kernel update made the pinned emulator frontend refuse to run, because its platform-string pin no longer matched. A wrapper maps only that string. Checked byte-identical against a pre-update checkpoint.
-  - Then checked all 50 Normal Game stages in the running game: stage data, background pairing and sprite palettes (860 blocks) (this update).
+  - Then checked all 50 Normal Game stages in the running game: stage data, background pairing and sprite palettes (860 blocks).
+- 20261105T1833Z:
+  - Found the enemy spawner in the kernel. It reads two kernel tables (Normal Game and Master Game) and a boss-stage skip list. This closes World 5 and Master Game enemy placement.
+  - Classified base1 records 17 and 18 as unread older copies; record 18 was the last open base-bank record.
+  - Checked both tables against every stage-select capture: 405/405 and 166/166 entries.
+  - Re-fitted the soft-block generator with the correct enemy cells.
