@@ -58,7 +58,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Colour-cycle scripts | 124 / 124 |
 | VDP2 cell animations | 36 records, 232 frames (stage banks) |
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
-| VDP2 menu/UI maps | 65 / 65 decoded and rendered; 2 confirmed by capture |
+| VDP2 menu/UI maps | 65 / 65 decoded and rendered; 6 confirmed by capture on every cell, rendered in capture colours |
 | **Normal Game stage descriptors** | **50 / 50** |
 | **Normal Game enemy placement lists** | **50 / 50** |
 | **Battle stage descriptors (with item lists)** | **36 / 36** |
@@ -161,7 +161,7 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
 `be65314` progress · `1bbdf46` format document
 (`docs/assets/STAGE_DATA.md`) · `54a85be`, `771f5a1` Master Game checks and
 106-state capture run · `d04c8dd`, `3ad230c` battle arena checks and
-142-state capture run. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
+142-state capture run · `7d07e38` menu maps from the cold-boot states. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
 `0eb90a8`, `f6f075b`, `21e5e2e`, `df30aee`, `4d94bee`.
 
 ## Frontier
