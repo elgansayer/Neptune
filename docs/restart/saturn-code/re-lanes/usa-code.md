@@ -51,6 +51,37 @@ limited to the earlier isolated results:
 
 All 4 natural roots and 12 of 13 probe entries reconcile as inventory entries.
 
+## Decompilation counts
+
+Source of truth: the private `saturn-bomberman-decomp` repo,
+`docs/progress/usa-code.md` and `config/usa/krnl.status.txt`.
+
+KRNL was compiled by Hitachi SHC (code-map lane, private `docs/TOOLCHAIN.md`).
+SHC is not available, so no KRNL C can be MATCHING yet. KRNL C counts as
+NONMATCHING-verified only through the private differential test
+(`tools/difftest/difftest.py`). It runs the original bytes and the C (built by
+GCC 2.7.2.3 `-m2 -O2 -mhitachi`) in the pinned SH-2 interpreter
+(saturn-recomp `f20de94` `sh2emu.py`, loaded by SHA-256). Every run starts from
+in-game Work RAM (three Beetle checkpoints: Normal 1-1, battle, Master) with
+fuzzed arguments and memory. The test requires identical registers, RAM, MMIO
+order and stub calls on every vector, and at least one detected source mutant
+(negative control).
+
+| Module | Static entries | MATCHING | NONMATCHING-verified | Asm-only |
+| --- | ---: | ---: | ---: | ---: |
+| USA KRNL | 4,869 | 0 | 8 | 4,861 |
+| USA BOOT | 1,760 | 84 (code-map lane) | 0 | 1,676 |
+
+The USA modules still rebuild byte-identically: `make check` gives 19/19 in
+run 20261105T1835Z. KRNL has one more static entry than before (4,868 + 1)
+because the RNG seed routine `0600A018` was added. It is reached only by a
+tail branch.
+
+The 8 KRNL functions are the random number generator (`06009FA8`,
+`0600A018`, `0600A08C`, `0600A0B4`, `0600A0B8`, `0600A0EC`, `0600A10E`; a
+Knuth subtractive generator with 55 entries, modulus 0x8000 and seed 1234) and
+the pad-direction decoder `0600A4B0`.
+
 ## Tools and identities
 
 - `tools/saturn_lab/sh2_discover.py`: inventory, base-check, reconcile and
@@ -129,34 +160,39 @@ Correction: the slice-1 note and #492 comment gave the handler registration orde
 backwards. `060064E0` (`0x40` → `06006652`, `0x41` → `0600665C`) runs first, then
 startup re-registers `0x41` → `06006368`. The inventory note is corrected.
 
+### 20261105T1310Z (stopped at the usage limit; work recovered in 20261105T1835Z)
+
+- Built the private differential-test harness and decompiled the 8 functions
+  above. All vectors were identical and the mutants were detected.
+- Started the pinned Ghidra 12.2 / JDK 25 download (hash-checked).
+- Nothing was committed before the limit hit.
+
+### 20261105T1835Z
+
+- Re-ran the recovered harness and committed it (private `6539e50`), with the
+  progress file (`f97b25b`).
+- `make split && make check`: 19/19 byte-identical with the renamed KRNL
+  symbols.
+- Unpacked Ghidra 12.2 and JDK 25 under `$RE_TOOLS_DIR/ghidra-12.2/`.
+- Runs 0801Z to 1400Z ended at the usage limit. Run 1125Z was killed
+  (rc 143). None of them added results beyond the above.
+
 ## Frontier (ranked)
 
-1. **#492 per-frame ordering.** The VBlank-OUT counter is now measured at one per
-   emulated frame, and pad-read counting runs on a separate tick domain. Next,
-   observe which frames skip pad reads and why, then order pad read, game task
+1. **Stage system in C** (formats mapped by the assets lane): soft-block
+   placement `06022C9C`, hidden items `06021888`, cell index `0600C950`,
+   descriptor lookups `0600B934`/`0600BDAC`, stage set-up `0600BAC4` and
+   `0600B98C`, Master set-up `0600C0DC`.
+2. **Bomber, bomb, fire and item update code.** The object table is at
+   `0x060D5F00` (`0x7C` bytes per object, update pointer at `+0x30`).
+3. **Scheduler and per-frame order (#492).** `060061C4`/`060061E6`/`06006D36`
+   and the VBlank handler `06006368`. Ordering still open: pad read, game task
    and presentation within a frame.
-   - Natural call observation of `06006368` and the pad routines
-     `06006FC6`/`07014`/`07326` with the existing call-trace tooling.
-   - Or denser same-lineage checkpoints, for example every 60 frames across a
-     load boundary.
-   - Then execute `06006368`/`06006652` from original bytes with mutation controls.
-2. **Dynamic interrupt handlers.** Four `SYS_SETUINT` calls (slot `0x06000300`)
-   take non-constant handlers, and the VBlank-IN word is frozen at 5. Resolve
-   which handler replaces `0x40` and when, through callers' arguments or natural
-   observation.
-3. **Scheduler and tasks (#492).** Use the inventory to bound `krnl_setjmp`
-   `060061C4`, `krnl_longjmp` `060061E6`, yield `06006D36` and the startup
-   scheduler region `06006BE4`–`06006D36`. Enumerate task entry pointers (tier-B
-   `argument-pointer` provenance) and the 199 resume points as yield/resume edges.
-4. **Overlay loader / later modules (#480, code-map).** Find the KRNL file-load
-   calls (CD/BIOS slots in `unresolved_pointer_slots_top`). Determine which
-   files load where and when, then inventory each overlay with `sh2_discover.py`
-   at its observed mapping, with residency.
-5. **Shrink the unknowns.** Classify KRNL's 54,169 unclassified halfwords
-   (including the 102 upstream-dead entries) and the 485 unresolved sites (object
-   update pointers at `+0x30`, RAM function pointers `0x060C0FE8`–`0x060C1650`).
-   Resolve BOOT's `0x0604B4B0` / `0x00200000` lifetime.
-6. **Gameplay core (#493).** Start from upstream symbols that reconcile as tier-B
-   entries: `idle_object` `060143D8`, `dino` `0601B5CC`, `core_mechanism`
-   `0607466C`, and the hook sites inside `060154A4`, `0605E504` and `0606CF28`.
-   Recover bomb/fire/movement functions with isolated original-byte tests.
+4. **Ghidra decompiler drafts** for all KRNL functions, from the unpacked
+   pinned Ghidra, run under the heavy lock in chunks.
+5. **BOOT game-side functions.** BOOT is GCC output, so they can be MATCHING.
+   Coordinate with code-map, which owns BOOT's library units.
+6. **Blocker for KRNL MATCHING:** the owner must supply Hitachi SHC (the
+   1995-96 SH C compiler).
+7. Earlier measurement items stay open: dynamic interrupt handlers, overlay
+   loader, unclassified KRNL halfwords and BOOT's `0x0604B4B0` lifetime.
