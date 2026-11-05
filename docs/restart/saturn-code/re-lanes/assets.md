@@ -51,7 +51,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| **Sprite palettes bound from captures** (864 states; 34,660 of 34,704 draws match a decoded block, the rest are 40 RGB movie frames and 4 off-screen draws with no graphics assigned, so every on-screen draw matches) | **2,223 blocks, 1,848 sequences (5,836 frames)**; was 930 / 962 before run 2123Z; staff bank 152 / 185 blocks, all 50 sequences |
+| **Sprite palettes bound from captures** (907 states; 37,021 of 37,065 draws match a decoded block, the rest are 40 RGB movie frames and 4 off-screen draws with no graphics assigned, so every on-screen draw matches) | **2,285 blocks, 1,908 sequences (5,941 frames)**; was 930 / 962 before run 2123Z; staff bank 152 / 185 blocks, all 50 sequences |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps |
@@ -72,9 +72,9 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
 | **Sprite text frames** (story, save-system messages, Master Game intro, staff credits, animated words) | **54 / 54 found; 39 machine-checked against the bank data (30 glyph by glyph, 9 save messages word by word), 0 conflicts**; Japan story screens 8 transcribed |
-| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **293 blocks read** (every text-bearing banner-shaped block of four banks; 477 entries with pixel-identical copies; partial inventory) |
-| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **338 new** (incl. 8 battle arena previews) |
-| **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (864 states in all) |
+| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **351 blocks read** (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; 535 entries with pixel-identical copies; other narrow blocks partial) |
+| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **381 new** (incl. 8 battle arena previews and a match with Devil, Mad Bomber and Bonus Game on) |
+| **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (907 states in all) |
 
 ### Formats confirmed (own words)
 
@@ -202,7 +202,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z and 2123Z)
 
-Run 2123Z: `d5ca419` (head) word-level check of the save messages, Japan story text, stage 2-2 draws explained · `6b795ae` word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
+Run 2123Z: `57ea324` (head) word blocks of all 12 banks · `fae4c79` special-rules battle, 907-state pass · `d5ca419` word-level check of the save messages, Japan story text, stage 2-2 draws explained · `6b795ae` word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
 blocks · `35176ac` 200 word blocks · `1f46dfd` ending, staff roll and boss
 captures (722-state capture pass) · `080174c` ending trigger and capture-pass update · `47e1792`
 capture pass over 470 states (sprite bindings, map
@@ -225,7 +225,7 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
 
 ## Frontier
 
-1. Sprite palettes: 2,223 of 10,659 blocks are bound.
+1. Sprite palettes: 2,285 of 10,659 blocks are bound.
    - Next captures: Normal Game Louie rides, items and world-transition
      story screens; more Master Game floors; the two base2 character groups
      whose characters character select doesn't offer.
@@ -289,10 +289,11 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     blocks and all 50 sequences.
   - Continued the seven Normal Game boss stages and the five Master Game
     boss floors from stage select.
-  - Read 293 word blocks: every text-bearing banner-shaped block in four banks.
+  - Read 351 word blocks: every text-bearing banner-shaped block in all 12 banks, and the whole save-message font.
   - Checked the 9 save messages word by word: 39 of 54 text frames are
     machine-checked.
   - Transcribed the Japan story screens.
   - Explained the 4 unmatched draws in stage 2-2: they are off-screen
     objects with no graphics assigned.
-  - Total: 2,223 blocks bound over 864 states, 19 maps confirmed.
+  - Played a battle with the Devil, Mad Bomber and Bonus Game rules on.
+  - Total: 2,285 blocks bound over 907 states, 19 maps confirmed.
