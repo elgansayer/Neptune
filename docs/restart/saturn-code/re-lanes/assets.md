@@ -145,7 +145,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Battle arena 17 | 4,096/4,096 solid bits in two captures (once the lookup reads past the table) |
 | Japan | same tables and maps byte for byte |
 | All 50 Normal Game stages, selected through the game's stage variables in a cold-boot menu state | 47 build (1-8–1-10 are identical placeholder records); timer = descriptor minutes × 3,600 frames 47/47; hidden item kinds 47/47; soft-block count exact 43/47; solid bit ≥ 4,083/4,096; the single bomber on its entry cell (31) or player-1 cell (16); every listed enemy cell occupied on 17 stages |
-| Soft-block generator from the captured generator state | exact on 11 of 35 stage-select captures with a soft-block count (one stage-dependent offset each; the rest within 1–11 blocks); 1-1 exact in two demo captures including hidden items |
+| Soft-block generator from the captured generator state | exact on 28 of 35 stage-select captures with a soft-block count, when every object present at build time reserves its cell and each stage gets its set-up offset (the other 7 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
 ## Private repository state (run 20261105T1623Z)
 
@@ -153,7 +153,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 checks · `0f256a2` stage data recipe and outputs · `ef1b663` backgrounds
 paired from the stage tables, starting-field generator · `2d55396` emulator
 wrapper after the host kernel update · `7946a43` stage-select checks of all
-50 stages · `8e22b08` generator fit and progress. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
+50 stages · `8e22b08`, `7a71f0e` generator fit and progress. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
 `0eb90a8`, `f6f075b`, `21e5e2e`, `df30aee`, `4d94bee`.
 
 ## Frontier
