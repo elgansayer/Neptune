@@ -21,6 +21,15 @@ The moddable native/browser game, multiplayer, strong bots, community packs,
 profiles, stats and workshop remain the end product. They consume the pipeline's
 outputs and are not removed from the backlog or marked complete.
 
+## 5 November: full source code and all assets
+
+The owner's 5 November direction extends the goal below. The deliverable is the
+**full source code and all assets**, as defined in
+[FULL_SOURCE_AND_ASSETS.md](FULL_SOURCE_AND_ASSETS.md): a byte-identical, matching
+decompilation of every executable plus every asset extracted by recipe, kept in
+the private `elgansayer/saturn-bomberman-decomp` repository. Function-level
+measurements and runtime probes remain verification methods.
+
 ## Further owner clarification: reverse engineer all game code
 
 The owner's subsequent 2 November direction is explicit: **reverse engineer all

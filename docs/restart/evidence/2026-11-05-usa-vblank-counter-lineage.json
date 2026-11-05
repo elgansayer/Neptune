@@ -1,0 +1,197 @@
+{
+ "evidence_kind": "natural emulator observation: passive WorkRAM-H samples of existing captured states in one verified restore lineage; static disassembly supplies address roles",
+ "expectations": {
+  "frame_counter": "1"
+ },
+ "kernel_sha256": "20109f506afd076af8a8583121dbb5a4880e0a764ee8e004c17b0cb055c798a7",
+ "lane": "usa-code",
+ "limitations": [
+  "Net deltas between samples; individual increments and their interrupt source are not observed",
+  "Frames are frontend emulated frames of the pinned Beetle core, not hardware-measured VBlanks",
+  "One lineage, one scenario; loading and pause behaviour elsewhere is unmeasured",
+  "Static roles are disassembly readings; no handler was executed"
+ ],
+ "lineage": "cold boot -> frame 3000 checkpoint (continuation-release) -> restored +7200 frames (navigation-release-late) -> restored +600 frames with menu inputs (menu-release)",
+ "negative_controls": [
+  {
+   "control": "frame_counter expected at 2 per frame",
+   "failures": [
+    "frame_counter changed by 7200 over 7200 frames, expected 2 per frame",
+    "frame_counter changed by 600 over 600 frames, expected 2 per frame"
+   ],
+   "passed": false,
+   "report_sha256": "9c00910ab161f4e5cfe67f09dcb042dd07db23957dcb2a037cd88bcf93a19115",
+   "verified_pairs": 2
+  },
+  {
+   "control": "pad_port1 expected at 1 per frame",
+   "failures": [
+    "pad_port1 changed by 4347 over 7200 frames, expected 1 per frame",
+    "pad_port1 changed by 428 over 600 frames, expected 1 per frame"
+   ],
+   "passed": false,
+   "report_sha256": "94b244b7f3013db5acb4b60357960d90a0114c0bec12367dc3ccd356f0a307a5",
+   "verified_pairs": 2
+  },
+  {
+   "control": "f600 cold boot (other run) paired with f10800",
+   "failures": [
+    "expectation frame_counter has no verified pair"
+   ],
+   "passed": false,
+   "report_sha256": "4bee7084eb6f8ad27993698ebd18b0c5ae4094cf5094d6fcd78537fa82ac6fc7",
+   "verified_pairs": 0
+  },
+  {
+   "control": "kernel witness over runtime-mutated port counters 06006100+16",
+   "failures": [
+    "witness not resident at frame 3000",
+    "witness not resident at frame 10200",
+    "witness not resident at frame 10800"
+   ],
+   "passed": false,
+   "report_sha256": "880ea3f05fd779f0213086ba4b1328e0627783b927486a02264d07b268ad8025",
+   "verified_pairs": 2
+  }
+ ],
+ "pairs": [
+  {
+   "deltas": {
+    "frame_counter": 7200,
+    "pad_port0": 4347,
+    "pad_port1": 4347,
+    "pad_port2": 4347,
+    "pad_port3": 4347,
+    "vblank_in_word": 0
+   },
+   "from_frame": 3000,
+   "lineage": {
+    "frames": 7200,
+    "restored_state_sha256": "a6f7f4adb7709b6f16584a54c2f87a3ce32d9f4cf170ed0bf1a5c88e23d5e2a9",
+    "verified": true
+   },
+   "to_frame": 10200
+  },
+  {
+   "deltas": {
+    "frame_counter": 600,
+    "pad_port0": 4294962483,
+    "pad_port1": 428,
+    "pad_port2": 428,
+    "pad_port3": 428,
+    "vblank_in_word": 0
+   },
+   "from_frame": 10200,
+   "lineage": {
+    "frames": 600,
+    "restored_state_sha256": "7049c38909dcd57a1aa84248cf3a531fdefef9f6d1150fff3f2822d4f70cef10",
+    "verified": true
+   },
+   "to_frame": 10800
+  }
+ ],
+ "passed": true,
+ "repeat_report_sha256": "075e06da9b82cdb9bcb7289677d9ca9dd2f8c63705bb5d10c662816c2b8aac00",
+ "report_sha256": "075e06da9b82cdb9bcb7289677d9ca9dd2f8c63705bb5d10c662816c2b8aac00",
+ "run": "20261105T0632Z",
+ "samples": [
+  {
+   "frame": 3000,
+   "state_sha256": "a6f7f4adb7709b6f16584a54c2f87a3ce32d9f4cf170ed0bf1a5c88e23d5e2a9",
+   "values": {
+    "frame_counter": 1752,
+    "pad_port0": 692,
+    "pad_port1": 692,
+    "pad_port2": 692,
+    "pad_port3": 692,
+    "vblank_in_word": 5
+   },
+   "witnesses_resident": {
+    "06006368+10": true,
+    "060063C4+10": true,
+    "0600641C+4": true,
+    "06006652+10": true,
+    "0600667E+14": true,
+    "06006698+4": true
+   },
+   "workram_h_sha256": "f404680e0e702069624dcec8d8aca1370d29d43ef724f5678de7b871ab9c236e"
+  },
+  {
+   "frame": 10200,
+   "state_sha256": "7049c38909dcd57a1aa84248cf3a531fdefef9f6d1150fff3f2822d4f70cef10",
+   "values": {
+    "frame_counter": 8952,
+    "pad_port0": 5039,
+    "pad_port1": 5039,
+    "pad_port2": 5039,
+    "pad_port3": 5039,
+    "vblank_in_word": 5
+   },
+   "witnesses_resident": {
+    "06006368+10": true,
+    "060063C4+10": true,
+    "0600641C+4": true,
+    "06006652+10": true,
+    "0600667E+14": true,
+    "06006698+4": true
+   },
+   "workram_h_sha256": "bed7a372f30327ec2ada4e64feda80882b1c563eae8397ea55750a599f1c88d3"
+  },
+  {
+   "frame": 10800,
+   "state_sha256": "e5bd5164193db6b7af59ecd1b1705b4a794debd8e8b1496c8406c47d21f33506",
+   "values": {
+    "frame_counter": 9552,
+    "pad_port0": 226,
+    "pad_port1": 5467,
+    "pad_port2": 5467,
+    "pad_port3": 5467,
+    "vblank_in_word": 5
+   },
+   "witnesses_resident": {
+    "06006368+10": true,
+    "060063C4+10": true,
+    "0600641C+4": true,
+    "06006652+10": true,
+    "0600667E+14": true,
+    "06006698+4": true
+   },
+   "workram_h_sha256": "a7e6e7cf0f0f91d67c7d64986a91355ba42fa87a2579124c54103a3703345c27"
+  }
+ ],
+ "schema": "neptune.usa-vblank-lineage-receipt.v1",
+ "static_roles": {
+  "frame_counter": "u32 at 0x06006038, accessed through cache-through literal 0x26006038; incremented by VBlank-OUT (SCU vector 0x41) handler 06006368; zeroed and awaited by startup 06006372 at 060063C4-060063CC",
+  "pad_port0..3": "u32 x4 at 0x06006100, loaded through 0x26006100 by 06006FC6/06007014/06007326; upstream lead: VBlanks since each port's pad last changed, counted only while pads are read",
+  "vblank_in_word": "u16 at 0x060B2D20; incremented by VBlank-IN (vector 0x40) handler 06006652 registered by 060064E0; awaited by 0600667E during startup"
+ },
+ "tool": {
+  "tools/saturn_lab/sample_workram.py": "79ff1ccc14b2772c443797eefd856a9fee11aa9b3b343fb11fd386ce3c7de10c"
+ },
+ "values": {
+  "frame_counter": {
+   "address": "06006038",
+   "bytes": 4
+  },
+  "pad_port0": {
+   "address": "06006100",
+   "bytes": 4
+  },
+  "pad_port1": {
+   "address": "06006104",
+   "bytes": 4
+  },
+  "pad_port2": {
+   "address": "06006108",
+   "bytes": 4
+  },
+  "pad_port3": {
+   "address": "0600610C",
+   "bytes": 4
+  },
+  "vblank_in_word": {
+   "address": "060B2D20",
+   "bytes": 2
+  }
+ }
+}

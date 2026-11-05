@@ -129,13 +129,20 @@ byte-swap margin is narrow (5.2×) because its denominator is tiny.
 | Upstream coverage classes online/cut/dead | 67/67 and 3/3 entries; dead: 179 entries, 6 inside functions, **102 unclassified** |
 
 **Interrupt handlers (static disassembly only).** Five `SYS_SETUINT` registrations
-name tier-A handlers. Startup registers vector `0x41` → `06006368`, which increments
-a longword through cache-through `0x26006038`. `060064E0` then registers `0x40` →
-`06006652` (increments the word at `0x060B2D20`) and `0x41` → `0600665C` (stores to
-the VDP1 registers at `0x25D00000`). `06098C6C` registers `0x47` → `060990AA`, a
-764-instruction body. The SCU vector names (V-Blank-IN/OUT, System Manager) are
-labels to verify. These are #492 timing leads, not executed or natural-caller
-evidence.
+name tier-A handlers. Startup `06006372` first calls `060064E0`, which registers:
+
+- `0x40` → `06006652`, which increments the word at `0x060B2D20`;
+- `0x41` → `0600665C`, which stores to the VDP1 registers at `0x25D00000`.
+
+Startup then re-registers `0x41` → `06006368`, which increments a longword through
+cache-through `0x26006038`. Separately, `06098C6C` registers `0x47` → `060990AA`, a
+764-instruction body.
+
+This order was corrected after the first publication; the
+[lineage samples](2026-11-05-usa-vblank-counter-lineage.md) confirm `06006368`'s
+counter advancing once per frame. The SCU vector names (V-Blank-IN/OUT, System
+Manager) are labels to verify. These are #492 timing leads, not executed or
+natural-caller evidence.
 
 ## BOOT results
 

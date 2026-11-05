@@ -313,6 +313,37 @@ limits each call to 512 SH-2 instructions, and includes a changed-shift control.
 It does not establish the natural caller, RNG seed/recurrence, wrap branch or
 gameplay call ordering. See [the bounded RNG result](../../docs/restart/research/2026-11-03-rng-bounded-draw.md).
 
+## Natural 68000 coverage and function inventory
+
+`m68k_coverage_core.py` prepares a separate copy of the accepted reference
+Beetle checkout. It applies four exact-anchor observer insertions from
+`m68k_coverage.h` (reset, exception, post-fetch step and include) and exports
+`neptune_m68kcov_*`. Only `m68k.c` is rebuilt. The observer records per-reset
+epoch instruction starts, the fetched opcode words and every distinct
+flow/exception edge. It never calls a bus accessor, and capacity exhaustion
+fails. `run_m68k_coverage.py run` executes cold-boot reference or enabled
+windows through the pinned lock/frontend loader. `compare` requires identical
+per-frame observations and final state, plus identical coverage across
+enabled runs. `m68k_function_inventory.py` joins one natural epoch with the
+pinned static descent: it builds entries and bodies, classifies resident
+patches and checks every executed word and edge. It also runs four altered-copy
+controls that must be rejected. See the
+[SND result](../../docs/restart/research/2026-11-05-snd-natural-function-inventory.md).
+Coverage is emulator observation, not hardware timing or recovered semantics.
+Raw coverage, states and the built core stay private.
+
+`probe_snd_mailbox.py` reuses unchanged ABI1 (`m68k_probe.py`) and the
+accepted natural coverage runs. It decodes SND's own command-history ring at
+`0x800` and cross-checks it against coverage dispatch edges, vector-26
+interrupt counts and snapshot prefixes. It executes the original boot
+self-patch `0x1768` for all 256 values of host byte `0x4E1`, and derives the
+resident image from the disc bytes. It also executes the original executor
+`0x1A60` for all 256 command bytes against independent path, access,
+register and memory contracts, then replays every natural record. Original
+mutations and natural-data mutations must each be rejected. See the
+[SND mailbox result](../../docs/restart/research/2026-11-05-snd-command-mailbox.md).
+Contracts stop at handler entry and model no SCSP device or timing.
+
 ## Static SH-2 function inventory
 
 `sh2_discover.py` is an independent standard-library SH-2 decoder and
@@ -332,3 +363,10 @@ are static evidence only. Synthetic tests in `tests/test_sh2_discover.py`
 validate the tooling, not original-game claims. See the
 [USA inventory result](../../docs/restart/research/2026-11-05-usa-function-inventory.md)
 for commands, measured values and limits.
+
+`sample_workram.py` reads declared WorkRAM-H values from existing checkpoint
+states. It reports deltas only for consecutive checkpoints whose later run
+restored the earlier exact state with matching frame arithmetic. Optional kernel
+witnesses and `--expect-rate` assertions fail closed. It is passive natural
+observation: nothing is executed. See the
+[lineage result](../../docs/restart/research/2026-11-05-usa-vblank-counter-lineage.md).

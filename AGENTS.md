@@ -15,6 +15,20 @@ These define the current restart scope, including the 1 November fidelity clarif
 Earlier root plans and completion reports are historical
 claims to verify against code and actual execution, not evidence of correctness.
 
+## Primary goal: full Saturn source code and all assets (owner, 5 November)
+
+**Binding, and superseding narrower wording below:** read
+`docs/restart/FULL_SOURCE_AND_ASSETS.md`. The reverse-engineering deliverable is
+the **complete source code** of Sega Saturn Bomberman (byte-identical,
+matching rebuild of every executable) and **every asset** (graphics,
+animation, stage data, text, fonts, movies, samples, sequences, CD audio),
+each extracted by a deterministic recipe. Timings and gameplay rules are then
+read from that source. Measurements verify the reconstruction; they are not the
+goal. Decompiled code, disassembly and extracted assets live only in the
+**private** repository `elgansayer/saturn-bomberman-decomp`. Never put them in
+this public repository. Progress = matching / nonmatching-verified / asm-only
+functions per module, and extracted / total assets per category.
+
 ## Current work priority: Saturn research
 
 The owner's 2 November direction is binding. Read
@@ -31,9 +45,10 @@ The owner's further 2 November clarification makes **all original Saturn game
 code** the primary research deliverable. Follow the code-first continuation in
 `docs/restart/FACTORY_FIRST_GOAL.md`: boot/kernel, both SH-2 CPUs, overlays and
 dynamic targets, libraries, 68000 sound code, observed DSP programs and regional
-network/menu/save paths. Select code analysis and original-byte/runtime validation;
-asset/tool work should unblock a named code question. Preserve active extraction
-owners. A module census, translated instructions or extracted audio is not
+network/menu/save paths. Select code analysis and original-byte/runtime validation.
+The 5 November goal above adds **all assets** as a co-equal deliverable. Asset
+extraction no longer needs to justify itself by a code question. Preserve active
+extraction owners. A module census, translated instructions or extracted audio is not
 complete code recovery. Keep unknown executable/function denominators explicit.
 
 ## Product
