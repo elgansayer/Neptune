@@ -20,10 +20,13 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1122Z)
 
-Private repo commit: `2e2abd3`. Earlier commits from this run:
+Private repo commit: `ee907bd`. Earlier commits from this run:
 
 | Commit | Content |
 | --- | --- |
+| `e719fdc` | SHC division helper names |
+| `b4a1b04` | census JSON in the repo |
+| `2e2abd3` | `check.py` first-difference report |
 | `9631d2b` | runtime CPU roles |
 | `a5d583a` | SINIT/MINIT leads |
 | `81b6e5a` | cross-module function matching |
@@ -48,7 +51,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | 0 / 0 / 19,022 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996) |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **3** / 0 / 19,019 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996). The 3 MATCHING are BOOT functions compiled from C by GCC 2.7.2.3 inside the build |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -238,6 +241,25 @@ Facts learned about GNU as (they bound the C path):
 - It shortens `(0,An)` to `(An)` unless written `(0:w)`.
 - It leaves branches to global symbols as relocations, on both CPUs.
 
+**First MATCHING functions (end of run 20261105T1122Z):**
+
+- GCC 2.7.2.3 for SH was built here without root:
+  - 32-bit i386 host from Debian multilib debs;
+  - `--host=i386-linux --target=sh-hms`;
+  - an `obstack.h` cast-lvalue patch for modern host compilers;
+  - `cc1` SHA-256 `63fb80a61c9517e23bcbe833c08fd307db4bf591baab084261a5a5ccb8264bd4`.
+- It reproduces three small BOOT functions byte for byte:
+  - `06041DAC` with `-m2 -O2 -fomit-frame-pointer`;
+  - `0606E2C8` and `0606E2E0` with `-m2 -O2`, frame pointer kept.
+- They are now compiled from C into the build (`[[module.c_function]]`:
+  `.include` of the cc1 output), and `make check` stays 19/19 identical.
+- Negative control: changing one constant in a C source makes `make check`
+  fail at `0x0606E2ED`.
+- So NetLink's BOOT is GCC 2.7-era code with per-file flags. KRNL (Hitachi SHC)
+  remains blocked on a licensed compiler.
+- The whole-disc census tool is restored (this PR). Regenerating the census
+  reproduces the 0801Z census byte for byte (SHA-256 `65d9aba7…d5e2`).
+
 Later in the run:
 
 - `tools/check.py` now locates the first differing byte. Negative control: a
@@ -247,16 +269,17 @@ Later in the run:
     with a `cc32` wrapper; a 32-bit test program links and runs).
   - GCC 2.7.2.3 source downloaded (SHA-256
     `16166e0f0f2064bb3114716650569065ef3855ae2331d7a29b85d4b9aa73773c`).
-  - A bounded `cc1` build for `sh-hms` is queued under the heavy lock
-    (`$RE_TOOLS_DIR/build-gcc-2.7.2.3-sh/build.sh`). Its result goes to the
-    next run.
+  - A bounded `cc1` build for `sh-hms`
+    (`$RE_TOOLS_DIR/build-gcc-2.7.2.3-sh/build.sh`) succeeded on the third
+    attempt. The first failed on `obstack.h`; the second on read-only tarball
+    files.
   - Hitachi SHC for KRNL is proprietary and was not fetched. The owner needs
     to supply a licensed copy.
 - Incident: replaying the 0801Z run's edit commands to recover the census tool
   also ran one recorded cleanup command. That command deleted the superseded
   private `census-run1.json` from this lane's evidence directory.
   `census-run2.json`, the one in use, is intact. The reconstructed tool is
-  being validated by regenerating the census under the heavy lock.
+  validated: regenerating the census gives byte-identical output.
 
 Also moved later in the run:
 
@@ -267,10 +290,8 @@ Also moved later in the run:
 Next frontier:
 
 1. Compilers:
-   - Finish the GCC 2.7.2.3 `cc1` build for SH (queued, see above). Then
-     compare its output on small functions with BOOT/XBAND bodies, trying
-     `-O0`/`-O2` with a frame pointer. Try `cygnus-2.7-96q3`/2.8 if 2.7.2.3
-     does not match.
+   - GCC 2.7.2.3 is live for the GCC-built modules (BOOT, XBAND, XS, H2H).
+     Decompile them function by function; BOOT semantics belong to usa-code.
    - **Blocked on the owner:** a licensed period Hitachi SHC (and its
      optimizing linker) for KRNL.
 2. Trace the writer of the SH-2 code in the CPK work area
@@ -280,5 +301,5 @@ Next frontier:
    and re-import updated usa-code inventories.
 4. Separate SBL library functions from game code (anchors above) in the
    symbol files.
-5. Recreate the census tool in `tools/saturn_lab` (lost with the 0801Z
-   worktree) so the module map's census is reproducible from the public repo.
+5. The census tool is restored (`tools/saturn_lab/disc_code_census.py`). Use
+   its `verify` on future census updates.
