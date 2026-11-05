@@ -69,18 +69,24 @@ order and stub calls on every vector, and at least one detected source mutant
 
 | Module | Static entries | MATCHING | NONMATCHING-verified | Asm-only |
 | --- | ---: | ---: | ---: | ---: |
-| USA KRNL | 4,869 | 0 | 8 | 4,861 |
-| USA BOOT | 1,760 | 84 (code-map lane) | 0 | 1,676 |
+| USA KRNL | 4,869 | 0 | 11 | 4,858 |
+| USA BOOT | 1,760 | 181 (code-map lane) | 0 | 1,579 |
 
 The USA modules still rebuild byte-identically: `make check` gives 19/19 in
-run 20261105T1835Z. KRNL has one more static entry than before (4,868 + 1)
+run 20261105T1835Z. BOOT's MATCHING count is the code-map lane's (private
+`docs/PROGRESS.md`, 181 at its run 20261105T2122Z). KRNL has one more static entry than before (4,868 + 1)
 because the RNG seed routine `0600A018` was added. It is reached only by a
 tail branch.
 
-The 8 KRNL functions are the random number generator (`06009FA8`,
-`0600A018`, `0600A08C`, `0600A0B4`, `0600A0B8`, `0600A0EC`, `0600A10E`; a
-Knuth subtractive generator with 55 entries, modulus 0x8000 and seed 1234) and
-the pad-direction decoder `0600A4B0`.
+The 11 KRNL functions are:
+
+- the random number generator (`06009FA8`, `0600A018`, `0600A08C`,
+  `0600A0B4`, `0600A0B8`, `0600A0EC`, `0600A10E`): a Knuth subtractive
+  generator with 55 entries, modulus 0x8000 and seed 1234;
+- the pad-direction decoder `0600A4B0`;
+- the playing-field set-up: the cell index `0600C950`, soft-block placement
+  `06022C9C` and hidden-item placement `06021888` (private commit `f9a8578`,
+  run 20261105T1835Z, recorded here in run 20261105T2255Z).
 
 ## Tools and identities
 
@@ -177,12 +183,25 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
 - Runs 0801Z to 1400Z ended at the usage limit. Run 1125Z was killed
   (rc 143). None of them added results beyond the above.
 
+### 20261105T2255Z (start of run)
+
+- The 1835Z run had also committed three playing-field functions in C
+  (`f9a8578`), each passing the difftest with every original instruction
+  covered and all effective mutants killed. The progress file and this
+  ledger still said 8. Private `34b1ea8` corrects the counts to 11 and adds
+  `tools/difftest/probe.py`, which lists the memory an original function
+  reads and writes, to help draft difftest specs.
+- The 1835Z run also produced Ghidra 12.2 headless decompiler drafts for all
+  4,869 KRNL functions in 90 s under the heavy lock (private
+  `tools/ghidra/drafts.sh`). The drafts stay in lane evidence and are not
+  committed.
+
 ## Frontier (ranked)
 
-1. **Stage system in C** (formats mapped by the assets lane): soft-block
-   placement `06022C9C`, hidden items `06021888`, cell index `0600C950`,
-   descriptor lookups `0600B934`/`0600BDAC`, stage set-up `0600BAC4` and
-   `0600B98C`, Master set-up `0600C0DC`.
+1. **Stage system in C** (formats mapped by the assets lane). Done: soft-block
+   placement `06022C9C`, hidden items `06021888`, cell index `0600C950`.
+   Next: descriptor lookups `0600B934`/`0600BDAC`, stage set-up `0600BAC4`
+   and `0600B98C`, Master set-up `0600C0DC`.
 2. **Bomber, bomb, fire and item update code.** The object table is at
    `0x060D5F00` (`0x7C` bytes per object, update pointer at `+0x30`).
 3. **Scheduler and per-frame order (#492).** `060061C4`/`060061E6`/`06006D36`
