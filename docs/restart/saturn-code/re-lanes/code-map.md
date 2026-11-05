@@ -20,7 +20,7 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1622Z)
 
-Private repo commit: `3ab68a3`. This run's commits:
+Private repo commit: `d7c5b11`. This run's commits:
 
 | Commit | Content |
 | --- | --- |
@@ -31,9 +31,13 @@ Private repo commit: `3ab68a3`. This run's commits:
 | `fe239a6` | Jan-1996 cc1 variant: BOOT dp `__fpmul_parts` (137) |
 | `a4927da` | BOOT `___udivmoddi4`: all of BOOT's libgcc (138) |
 | `56aea50`, `3ab68a3` | register-allocation lead, newlib headers |
+| `735c941` | FSF trunk (14 Feb 1996) cc1 tested and rejected |
+| `50bb5fd` | clean rebuild at 138 |
+| `d7c5b11` | resolver rules, XBAND/XS flags (145) |
 
 A clean `make clean && make split && make check && make audit` passed under
-the heavy lock at 136 MATCHING; each later change passed `make check` 19/19.
+the heavy lock at 138 MATCHING (19/19 identical, audit OK). The final 145 state
+passed `make check` 19/19.
 
 The 20261105T1122Z run's commits (splitter, build, 25 C functions, module map,
 runtime screen) end at `2538cfd`; see the run log below.
@@ -47,7 +51,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **138** / 0 / 18,885 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **113 are library routines compiled from their original free-software sources**: GCC's libgcc (BOOT 55, that is all of BOOT's libgcc; XBAND 21, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 16, XBAND 14, XS 3). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **145** / 0 / 18,878 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **120 are library routines compiled from their original free-software sources**: GCC's libgcc (BOOT 55, that is all of BOOT's libgcc; XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -410,6 +414,26 @@ Final part of the run (private `fe239a6`-`3ab68a3`): **138 MATCHING**.
   `0606F4E4` differ from our output **only in register choice**.
   - `REG_ALLOC_ORDER` is the same, and FSF 2.7.0/2.7.1 do not help.
   - Suspect a generic register-allocation change from late 1995 or 1996.
+
+Rejected at the end of the run: a cc1 built from the FSF trunk of 14 Feb 1996
+(GCC git mirror, overlaid on 2.7.2.3; two build fixes).
+- It gives fewer BOOT matches than `jan96` (libgcc 41 vs 55, newlib 14 vs 16)
+  and leaves the near misses unchanged.
+- So BOOT's compiler is a 2.7.2 branch with selected SH backports, not the
+  trunk.
+- The GCC git mirror does serve 1996 commits (`gh api
+  repos/gcc-mirror/gcc/commits?path=...`), so single commits can be tested on
+  top of `jan96`.
+
+Last change of the run (private `d7c5b11`, public `lib_unit.py` in this PR):
+**145 MATCHING**.
+
+- The resolver resolves larger units first and allows one name per address.
+  - It rejected a `_localeconv` look-alike whose callee address belongs to
+    XBAND's `_rand_r`.
+  - It added BOOT's `index`/`bcmp`, which wrap the placed `strchr`/`memcmp`.
+- XBAND/XS library units match best with `-O2 -fno-force-mem` (+5, one unit
+  keeps plain `-O2`), a proxy for their compiler variant.
 
 Next frontier (from this run):
 
