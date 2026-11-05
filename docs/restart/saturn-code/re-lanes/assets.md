@@ -72,7 +72,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
 | **Sprite text frames** (story, save-system messages, Master Game intro, staff credits, animated words) | **54 / 54 found; 39 machine-checked against the bank data (30 glyph by glyph, 9 save messages word by word), 0 conflicts**; Japan story screens 8 transcribed |
-| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **293 blocks read** (every text-bearing banner-shaped block of four banks; 477 entries with pixel-identical copies; partial inventory) |
+| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **351 blocks read** (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; 535 entries with pixel-identical copies; other narrow blocks partial) |
 | **Menu, screen and play capture states** (scripted pad input, no memory writes) | **381 new** (incl. 8 battle arena previews and a match with Devil, Mad Bomber and Bonus Game on) |
 | **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (907 states in all) |
 
@@ -202,7 +202,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z and 2123Z)
 
-Run 2123Z: `fae4c79` (head) special-rules battle, 907-state pass · `d5ca419` word-level check of the save messages, Japan story text, stage 2-2 draws explained · `6b795ae` word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
+Run 2123Z: `57ea324` (head) word blocks of all 12 banks · `fae4c79` special-rules battle, 907-state pass · `d5ca419` word-level check of the save messages, Japan story text, stage 2-2 draws explained · `6b795ae` word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
 blocks · `35176ac` 200 word blocks · `1f46dfd` ending, staff roll and boss
 captures (722-state capture pass) · `080174c` ending trigger and capture-pass update · `47e1792`
 capture pass over 470 states (sprite bindings, map
@@ -289,7 +289,7 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     blocks and all 50 sequences.
   - Continued the seven Normal Game boss stages and the five Master Game
     boss floors from stage select.
-  - Read 293 word blocks: every text-bearing banner-shaped block in four banks.
+  - Read 351 word blocks: every text-bearing banner-shaped block in all 12 banks, and the whole save-message font.
   - Checked the 9 save messages word by word: 39 of 54 text frames are
     machine-checked.
   - Transcribed the Japan story screens.
