@@ -20,12 +20,14 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T2122Z)
 
-Private repo commit: `8892d90` (this run's commits: `c44d497` to `8892d90`).
+Private repo commit: `b10db34` (this run's commits: `c44d497` to `b10db34`).
 
-**418 MATCHING** (145 at the start of the run): the NetLink application layer that BOOT,
-XS and XBAND share is now being compiled from C. 89 shared functions are built from one
-C source each into all three modules (+267), and 3 XS/XBAND-only loader functions into
+**436 MATCHING** (145 at the start of the run): the NetLink application layer that BOOT,
+XS and XBAND share is now being compiled from C. 95 shared functions are built from one
+C source each into all three modules (+285), and 3 XS/XBAND-only loader functions into
 both (+6). Every batch was verified by a re-split and `make check` (19/19 identical).
+The 418 state was verified as below; the last 6 functions (436) by a re-split and
+`make check` (19/19).
 At the end of the run, under the heavy lock:
 
 - a clean `make clean && make split && make check && make audit` passed (19/19 identical,
@@ -58,9 +60,20 @@ to reload.**
 - The prebuilt libraries were not built with it: 14 matched libgcc/newlib units change
   under `nocopy2`. So the application code and the vendor libraries come from different
   compilers.
-- Next compiler leads in this layer: `clear_by_pieces` (FSF trunk, 24 Dec 1995; small
-  structs are cleared with two word stores), `mov #imm8; extu.b` synthesis of constants
-  128-255, the delay-slot choice of `reorg`, and the order of callee-saved registers.
+- **Second finding: branch delay slots as in GCC 2.6.3.** GCC 2.7.x declares annul-true
+  slots for SH conditional branches, so `reorg` puts a fall-through insn after a plain
+  `bt`/`bf`. The originals instead steal the next test from the branch target into a
+  `bt/s` slot, as GCC 2.6.3's definition (no annul-true slot) allows. `nocopy3` (`nocopy2`
+  plus the 2.6.3 `define_delay`) matches 5 more functions and keeps all 104 earlier C
+  matches. The team's compiler thus mixes Dec 1995/Jan 1996 FSF SH changes with an older
+  backend part: a vendor branch rather than an FSF release.
+- Next compiler leads in this layer:
+  - `clear_by_pieces` (FSF trunk, 24 Dec 1995; small structs are cleared with two word
+    stores);
+  - `mov #imm8; extu.b` synthesis of constants 128-255;
+  - large address displacements whose constant is loaded late (base in `r1`, constant in
+    `r2`), the same "left to reload" pattern;
+  - the order of callee-saved registers.
 
 | Measure | Value |
 | --- | --- |
@@ -477,7 +490,7 @@ Exited at once on the account usage limit.
 
 ### 20261105T2122Z (this run)
 
-Moved: **418 MATCHING** (from 145). See the status section for the compiler finding.
+Moved: **436 MATCHING** (from 145). See the status section for the two compiler findings.
 
 - Target: the code BOOT, XS and XBAND share (function-match report: about 210 bodies), the
   NetLink application layer above the libraries. One C source per function goes into all
