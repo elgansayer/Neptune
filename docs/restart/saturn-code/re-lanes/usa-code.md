@@ -69,7 +69,7 @@ order and stub calls on every vector, and at least one detected source mutant
 
 | Module | Static entries | MATCHING | NONMATCHING-verified | Asm-only |
 | --- | ---: | ---: | ---: | ---: |
-| USA KRNL | 4,869 | 0 | 11 | 4,858 |
+| USA KRNL | 4,874 | 0 | 115 | 4,759 |
 | USA BOOT | 1,760 | 181 (code-map lane) | 0 | 1,579 |
 
 The USA modules still rebuild byte-identically: `make check` gives 19/19 in
@@ -78,15 +78,23 @@ run 20261105T1835Z. BOOT's MATCHING count is the code-map lane's (private
 because the RNG seed routine `0600A018` was added. It is reached only by a
 tail branch.
 
-The 11 KRNL functions are:
+The 115 KRNL functions, by private source file (`src/usa/krnl/`):
 
-- the random number generator (`06009FA8`, `0600A018`, `0600A08C`,
-  `0600A0B4`, `0600A0B8`, `0600A0EC`, `0600A10E`): a Knuth subtractive
-  generator with 55 entries, modulus 0x8000 and seed 1234;
-- the pad-direction decoder `0600A4B0`;
-- the playing-field set-up: the cell index `0600C950`, soft-block placement
-  `06022C9C` and hidden-item placement `06021888` (private commit `f9a8578`,
-  run 20261105T1835Z, recorded here in run 20261105T2255Z).
+| File | Functions | System |
+| --- | ---: | --- |
+| `rng.c` | 7 | random numbers (Knuth subtractive, 55 entries, modulus 0x8000, seed 1234) |
+| `pad.c` | 1 | pad direction decoder |
+| `field.c` | 3 | cell index, soft-block layout, hidden-item placement |
+| `stage.c` | 33 | descriptor lookups, the four map layers (grid decode, metatile drawing), gameplay-map attributes, field wrap |
+| `stage_setup.c` | 9 | Normal, battle and Master stage set-up, battle start-position shuffle |
+| `view.c` | 23 | pixel/cell conversion, free-direction masks, field rectangle and scroll limits, actor placement |
+| `scroll.c`, `view_scroll.c` | 11 | scroll register image, plane scroll steps, per-layer fixed-point scroll |
+| `items.c` | 25 | item slots, hiding and revealing items, item spawn, per-frame item animation states, burning soft blocks |
+| `item_pickup.c` | 1 | the effect of each of the 28 item kinds on the bomber who picks it up |
+| `effects.c` | 2 | effect-list reset |
+
+KRNL now has 4,874 static entries: the inventory's 4,868 plus 6 functions
+that are reached only by a tail branch (`bra`/`jmp`) and that the C work found.
 
 ## Tools and identities
 
@@ -196,19 +204,45 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
   `tools/ghidra/drafts.sh`). The drafts stay in lane evidence and are not
   committed.
 
+### 20261105T2255Z (main work)
+
+- 104 more KRNL functions in C, each NONMATCHING-verified by the private
+  difftest: every vector identical, at least one mutant killed. Six new files
+  cover the stage system, view/scroll and items (table above). Private head
+  `66f6f03`.
+- `make split && make check` gives 19/19 byte-identical with the renamed
+  symbols and the 6 new entries.
+- Harness additions (private `tools/difftest/`):
+  - per-stub argument counts;
+  - a `bit` stub return;
+  - libgcc1 helper symbols accepted.
+- Compiler finding: GCC 2.7.2.3 with `-mhitachi` miscompiles multiplies when
+  many values live across calls. The option makes MACH/MACL call-saved but
+  leaves them fixed. The allocator then hands them to pseudos that cross
+  calls, and the next `mul.l`/`mulu.w` overwrites MACL. The difftest caught
+  this twice. `tools/difftest/build-cc1-macfix.sh` builds a cc1 that also
+  excludes the fixed registers there (3 lines in `global.c`/`local-alloc.c`);
+  new receipts use it.
+- Rules found while writing the C:
+  - SHC passes 16-bit values sign-extended through a stack round trip, so C
+    parameters are `int` with explicit casts.
+  - Orchestrators go in their own files, so their callees run as original
+    code and can be stubbed.
+
 ## Frontier (ranked)
 
-1. **Stage system in C** (formats mapped by the assets lane). Done: soft-block
-   placement `06022C9C`, hidden items `06021888`, cell index `0600C950`.
-   Next: descriptor lookups `0600B934`/`0600BDAC`, stage set-up `0600BAC4`
-   and `0600B98C`, Master set-up `0600C0DC`.
-2. **Bomber, bomb, fire and item update code.** The object table is at
-   `0x060D5F00` (`0x7C` bytes per object, update pointer at `+0x30`).
+1. **Bomber, bomb and explosion code.** Object records are at `0x060D5F30`
+   (124 bytes; `0x060D7768` points at the current one). Bomb count is at +76
+   and fire range at +78, as `item_pickup` shows. Also: the item special
+   actor `0602277C` (uses SHC runtime helpers).
+2. Stage system leftovers: the per-stage hooks (`0x060B30C4`), the view task
+   `0600D6B2`, the timer `0602ED18`/`0602ED56`.
 3. **Scheduler and per-frame order (#492).** `060061C4`/`060061E6`/`06006D36`
    and the VBlank handler `06006368`. Ordering still open: pad read, game task
    and presentation within a frame.
-4. **Ghidra decompiler drafts** for all KRNL functions, from the unpacked
-   pinned Ghidra, run under the heavy lock in chunks.
+4. Ghidra drafts of all 4,869 inventory functions exist in lane evidence
+   (`tools/ghidra/drafts.sh`). They are a starting point for the C, not
+   evidence.
 5. **BOOT game-side functions.** BOOT is GCC output, so they can be MATCHING.
    Coordinate with code-map, which owns BOOT's library units.
 6. **Blocker for KRNL MATCHING:** the owner must supply Hitachi SHC (the
