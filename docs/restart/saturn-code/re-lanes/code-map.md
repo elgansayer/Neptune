@@ -20,14 +20,26 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1122Z)
 
-Private repo commit: `3bc8b5a` (all modules disassembled), on top of
-`7765c40` (verified 68000 path), `8827e3b` (Japan, docs, progress) and
-`211da81` (splitter). This PR adds a public copy of the generic SH-2 formatter.
+Private repo commit: `6d76714`. Earlier commits from this run:
+
+| Commit | Content |
+| --- | --- |
+| `6c190e9` | whole container files |
+| `6a4a418` | toolchain and runtime screen |
+| `f8b7c10` | library anchors |
+| `3bc8b5a` | all modules disassembled |
+| `7765c40` | verified 68000 path |
+| `8827e3b` | Japan, docs, progress |
+| `211da81` | splitter |
+
+PR #867 published the SH-2 formatter. The follow-up PR publishes the generic
+splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 
 | Measure | Value |
 | --- | --- |
 | Modules in the build | 14 (USA 11, Japan 3) |
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
+| Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
 | Functions MATCHING / NONMATCHING-verified / asm-only | 0 / 0 / 19,022 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996) |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
@@ -62,6 +74,57 @@ build now includes that copy from the rebuilt NLSND module.
 
 Japan: KRNL `0x0600A000` (IP first read; 4,835 static entries), IP (`0x1800`
 bytes, 15 entries), SND (byte-identical to USA SND).
+
+Runtime residency comes from captured Beetle states on sound-68k's cold-boot
+route. It counts matched non-zero bytes at the load address (runs of at least
+16 bytes).
+
+| Module | f900 | f1200 | f1800 | f7200 (stage 1-1) |
+| --- | ---: | ---: | ---: | ---: |
+| BOOT | 399,184/399,184 | 0 | 0 | 0 |
+| KRNL | 0 | 580,550 (loading) | 688,475/693,936 | 688,483 |
+| **H2H `0x06002F00`** | 0 | 7,240/7,334 | 7,239 | 7,239 |
+| **XS `0x00280000`** | 0 | 34,409/34,409 | 0 | 0 |
+| **FLD `0x00200000`** | 0 | 4,378/4,378 | 0 | 0 |
+| XBAND | 0 | 0 | 0 | 0 |
+
+So XS, FLD and H2H run on the normal USA path, and H2H stays resident in game.
+
+Uncovered WorkRAM bytes were screened for SH-2 code and chunk-matched
+against every disc file and the BIOS images.
+
+- No unknown disc-derived code overlay was found in these frames.
+- The only code-like region not from a disc file is WorkRAM-L
+  `0x002F0000`-`0x002F33FF`. It matches no disc file, and BIOS chunks match it
+  10x more often than they match game code.
+- KRNL calls `BUP_Init` (`0x06000358`) and the BUP vector table
+  (`0x06000354`), and loads the literal `0x002F0000`.
+- That region is therefore probably the BIOS backup-RAM library installed at
+  runtime. It is console code, outside the disc denominator.
+- Other code-signal regions were raw PROGRAM.BIN banks staged in WorkRAM-L
+  (data), or BOOT/XS bytes in transit.
+
+Toolchain (static idiom evidence; no matching build yet):
+
+- **KRNL (USA and Japan) is Hitachi SHC output**:
+  - no GCC libgcc helpers and no frame pointer;
+  - SHC-style register-preserving division helpers (dividend r1, divisor r0,
+    r2-r4 saved);
+  - 3,519 direct `bsr` near calls.
+- **BOOT/XBAND/XS/H2H are GNU GCC (SH) output**:
+  - libgcc `___sdivsi3`/`___udivsi3`/`___movstrSI`;
+  - frame-pointer prologues and epilogues.
+
+Libraries (version strings):
+
+- SBL `GFS 2.10` (1996-02-01) in both KRNLs, BOOT, XS and XBAND.
+- SBL `STM 2.10` and `PCM 1.15`, plus a Cinepak player, in both KRNLs.
+- `SYS 2.21` (1996-10-01) in USA KRNL only.
+- `FLD 1.21` in FLD/XS/XBAND.
+- The PlanetWeb browser in BOOT.
+- Sega's 1994 security code in the IPs.
+- No SGL.
+- USA KRNL's CD-block code clusters in `060958EA`-`06095ACE`.
 
 Census basis (run 20261105T0801Z, private evidence): 457 sources and 138
 PROGRAM.BIN entries screened for SH-2/68000 signals. Only bank 0 (`s_init`,
@@ -131,15 +194,24 @@ Facts learned about GNU as (they bound the C path):
 - It shortens `(0,An)` to `(An)` unless written `(0:w)`.
 - It leaves branches to global symbols as relocations, on both CPUs.
 
+Also moved later in the run:
+
+- Container files are in the build.
+- Library and toolchain identification.
+- Runtime residency and overlay screen from captured states.
+
 Next frontier:
 
-1. Classify the remaining unclassified bytes (switch tables, unreached code)
+1. Obtain the compilers:
+   - a period Hitachi SHC plus its optimizing linker for KRNL (proprietary;
+     absent on this host);
+   - a Cygnus-era GCC for SH for NetLink/XBAND.
+2. Confirm the BUP identity of WorkRAM-L `0x002F0000` with a write-watch trace.
+   Extend the residency screen to battle mode, stage changes and the
+   NetLink/XBAND paths.
+3. Classify the remaining unclassified bytes (switch tables, unreached code)
    and re-import updated usa-code inventories.
-2. Library identification (Sega security/area code in IP; SBL/SGL/GFS/CD).
-3. Compiler identification. KRNL has 3,383 `bsr` targets and literal-pool words
-   equal to many of them, which is consistent with linker relaxation. Then the
-   C path.
-4. SBL/SGL/BIOS library signatures.
-5. Runtime overlay load map (heavy lock).
-6. Recreate the census tool in `tools/saturn_lab` (lost with the 0801Z
+4. Separate SBL library functions from game code (anchors above) in the
+   symbol files.
+5. Recreate the census tool in `tools/saturn_lab` (lost with the 0801Z
    worktree) so the module map's census is reproducible from the public repo.
