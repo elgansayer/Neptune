@@ -51,7 +51,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| **Sprite palettes bound from captures** (852 states; 33,362 of 33,406 draws match a decoded block, the rest are 40 RGB movie frames and 4 draws in one stage) | **2,195 blocks, 1,848 sequences (5,836 frames)**; was 930 / 962 before run 2123Z; staff bank 152 / 185 blocks, all 50 sequences |
+| **Sprite palettes bound from captures** (864 states; 34,660 of 34,704 draws match a decoded block, the rest are 40 RGB movie frames and 4 draws in one stage) | **2,223 blocks, 1,848 sequences (5,836 frames)**; was 930 / 962 before run 2123Z; staff bank 152 / 185 blocks, all 50 sequences |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps |
@@ -73,8 +73,8 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | HTML/TXT text | 42 / 42 |
 | **Sprite text frames** (story, save-system messages, Master Game intro, staff credits, animated words) | **54 / 54 found; 30 checked glyph by glyph against the bank data, 0 conflicts** |
 | **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels) | **241 entries read** (212 distinct blocks; partial inventory) |
-| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **326 new** |
-| **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (852 states in all) |
+| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **338 new** (incl. 8 battle arena previews) |
+| **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (864 states in all) |
 
 ### Formats confirmed (own words)
 
@@ -202,7 +202,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z and 2123Z)
 
-Run 2123Z: `5f69132` Master boss floors, 852-state capture pass, 241 word
+Run 2123Z: `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
 blocks · `35176ac` 200 word blocks · `1f46dfd` ending, staff roll and boss
 captures (722-state capture pass) · `080174c` ending trigger and capture-pass update · `47e1792`
 capture pass over 470 states (sprite bindings, map
@@ -225,7 +225,7 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
 
 ## Frontier
 
-1. Sprite palettes: 2,195 of 10,659 blocks are bound.
+1. Sprite palettes: 2,223 of 10,659 blocks are bound.
    - Next captures: Normal Game Louie rides, items and world-transition
      story screens; more Master Game floors; the two base2 character groups
      whose characters character select doesn't offer.
@@ -290,4 +290,4 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
   - Continued the seven Normal Game boss stages and the five Master Game
     boss floors from stage select.
   - Read 241 word blocks.
-  - Total: 2,195 blocks bound over 852 states, 19 maps confirmed.
+  - Total: 2,223 blocks bound over 864 states, 19 maps confirmed.
