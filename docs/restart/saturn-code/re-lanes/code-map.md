@@ -20,7 +20,7 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1622Z)
 
-Private repo commit: `3ab68a3`. This run's commits:
+Private repo commit: `50bb5fd`. This run's commits:
 
 | Commit | Content |
 | --- | --- |
@@ -31,9 +31,11 @@ Private repo commit: `3ab68a3`. This run's commits:
 | `fe239a6` | Jan-1996 cc1 variant: BOOT dp `__fpmul_parts` (137) |
 | `a4927da` | BOOT `___udivmoddi4`: all of BOOT's libgcc (138) |
 | `56aea50`, `3ab68a3` | register-allocation lead, newlib headers |
+| `735c941` | FSF trunk (14 Feb 1996) cc1 tested and rejected |
+| `50bb5fd` | clean rebuild at the final state |
 
 A clean `make clean && make split && make check && make audit` passed under
-the heavy lock at 136 MATCHING; each later change passed `make check` 19/19.
+the heavy lock at the final state: 19/19 identical, audit OK, 138 MATCHING.
 
 The 20261105T1122Z run's commits (splitter, build, 25 C functions, module map,
 runtime screen) end at `2538cfd`; see the run log below.
@@ -410,6 +412,16 @@ Final part of the run (private `fe239a6`-`3ab68a3`): **138 MATCHING**.
   `0606F4E4` differ from our output **only in register choice**.
   - `REG_ALLOC_ORDER` is the same, and FSF 2.7.0/2.7.1 do not help.
   - Suspect a generic register-allocation change from late 1995 or 1996.
+
+Rejected at the end of the run: a cc1 built from the FSF trunk of 14 Feb 1996
+(GCC git mirror, overlaid on 2.7.2.3; two build fixes).
+- It gives fewer BOOT matches than `jan96` (libgcc 41 vs 55, newlib 14 vs 16)
+  and leaves the near misses unchanged.
+- So BOOT's compiler is a 2.7.2 branch with selected SH backports, not the
+  trunk.
+- The GCC git mirror does serve 1996 commits (`gh api
+  repos/gcc-mirror/gcc/commits?path=...`), so single commits can be tested on
+  top of `jan96`.
 
 Next frontier (from this run):
 
