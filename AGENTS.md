@@ -2,32 +2,30 @@
 
 Read `docs/restart/README.md`, `docs/restart/REQUIREMENTS.md`, and
 `docs/restart/REVERSE_ENGINEERING.md` before working on the restart. Also read
-`docs/restart/POWER_BOMBERMAN.md` and `docs/restart/FACTORY_PLAYBOOK.md`.
+`docs/restart/POWER_BOMBERMAN.md`.
 Read `docs/restart/SATURN_FIDELITY.md` for the owner's 1 November exact timing,
 mechanics, native-pixel and sample-timed audio acceptance contract.
 Read `docs/restart/BOTS.md` for all AI/gameplay work and
 `docs/restart/COMMUNITY_CONTENT.md` for the multiplayer-first product contract.
 Read `docs/restart/RESEARCH_EXECUTION.md` and issue #477 for the current research
-expansion, accepted inputs and authorised existing Elgl factory integration.
+expansion and accepted inputs.
 Read `docs/restart/MERGE_POLICY.md`: Elgan authorised tests-gated auto-merge without
 a mandatory AI/human approving review; this supersedes older review requirements.
 These define the current restart scope, including the 1 November fidelity clarification.
 Earlier root plans and completion reports are historical
 claims to verify against code and actual execution, not evidence of correctness.
 
-## Current work priority: factory and Saturn research
+## Current work priority: Saturn research
 
 The owner's 2 November direction is binding. Read
 `docs/restart/FACTORY_FIRST_GOAL.md` before choosing new work. Prioritise the
-existing shared AI factory and its Saturn reverse-engineering pipeline: usable
-supervision/accounting/recovery, trusted tool preparation, real original-game
+Saturn reverse-engineering pipeline: trusted tool preparation, real original-game
 experiments, extraction and measured implementation/comparison. Add needed free
 tools/packages through #508/#518 and the existing provisioning boundary.
 Ordinary game/UI/workshop and Power expansion follow this critical path unless
 they remove a demonstrated blocker or test a named recovered scenario. Preserve
 active owners, finish bounded work in progress and retain the full moddable
-native/browser/community game scope. No competing scheduler, provider allowance
-or mandatory approving review is introduced.
+native/browser/community game scope.
 
 The owner's further 2 November clarification makes **all original Saturn game
 code** the primary research deliverable. Follow the code-first continuation in
@@ -57,7 +55,7 @@ complete code recovery. Keep unknown executable/function denominators explicit.
   Treat comparison with Power Bomberman as our product goal, not an unverified
   claim that its current build has no custom-content support.
 - Multiplayer and strong bots remain central product requirements; current work
-  follows the factory/Saturn priority above. Support creator-authored
+  follows the Saturn priority above. Support creator-authored
   power-ups, complete solo stories and explicitly authored co-op campaigns.
 - Separate bot role (opponent/companion/enemy) from policy (Saturn/Neptune/authored).
 - Full reference extraction is not a prerequisite for original community fixtures.
@@ -175,5 +173,5 @@ python3 tools/research_catalog/check.py
 python3 tools/research_catalog/cli.py report
 ```
 
-These validate input tooling and catalogue metadata only. The game, emulator bridge, pack
-registry and continuous factory are separate implementation milestones.
+These validate input tooling and catalogue metadata only. The game, emulator bridge and pack
+registry are separate implementation milestones.
