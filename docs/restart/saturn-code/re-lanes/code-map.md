@@ -20,10 +20,11 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1122Z)
 
-Private repo commit: `6d76714`. Earlier commits from this run:
+Private repo commit: `2e11d23`. Earlier commits from this run:
 
 | Commit | Content |
 | --- | --- |
+| `6d76714` | non-zero-only residency |
 | `6c190e9` | whole container files |
 | `6a4a418` | toolchain and runtime screen |
 | `f8b7c10` | library anchors |
@@ -91,18 +92,29 @@ route. It counts matched non-zero bytes at the load address (runs of at least
 So XS, FLD and H2H run on the normal USA path, and H2H stays resident in game.
 
 Uncovered WorkRAM bytes were screened for SH-2 code and chunk-matched
-against every disc file and the BIOS images.
+against every disc file and the BIOS images. No unknown disc-derived code
+overlay was found in these frames.
 
-- No unknown disc-derived code overlay was found in these frames.
-- The only code-like region not from a disc file is WorkRAM-L
-  `0x002F0000`-`0x002F33FF`. It matches no disc file, and BIOS chunks match it
-  10x more often than they match game code.
-- KRNL calls `BUP_Init` (`0x06000358`) and the BUP vector table
-  (`0x06000354`), and loads the literal `0x002F0000`.
-- That region is therefore probably the BIOS backup-RAM library installed at
-  runtime. It is console code, outside the disc denominator.
-- Other code-signal regions were raw PROGRAM.BIN banks staged in WorkRAM-L
-  (data), or BOOT/XS bytes in transit.
+The one code region that is not from a disc file is WorkRAM-L
+`0x002F0000`-`0x002F33FF`:
+
+- **What the address is.** KRNL `0x0600B494` builds an SBL Cinepak (CPK)
+  player parameter block:
+  - work area `0x002F0000`, size `0x3190`;
+  - ring buffer `0x060C341C`, size `0x2D000`;
+  - PCM buffer in sound RAM `0x25A20000`, size `0x10000`;
+  - decoding goes to VDP1 VRAM `0x25C08000`.
+
+  So the region is the player's work area. KRNL also passes `0x002F31A0` as a
+  code or callback address (`0x0600B730`).
+- **Its SH-2 code has an open origin.** It is not raw on the disc or in the
+  BIOS. BIOS images match it 10x more often than they match game code, so it
+  may be Sega library code that is unpacked or generated at runtime.
+- **Rejected: "BIOS backup-RAM library".** KRNL's `BUP_Init` call installs BUP
+  in WorkRAM-H at `0x060EC8B0` or `0x060770A4`.
+
+The other code-signal regions were raw PROGRAM.BIN banks staged in WorkRAM-L
+(data), and BOOT/XS bytes in transit.
 
 Toolchain (static idiom evidence; no matching build yet):
 
@@ -206,9 +218,9 @@ Next frontier:
    - a period Hitachi SHC plus its optimizing linker for KRNL (proprietary;
      absent on this host);
    - a Cygnus-era GCC for SH for NetLink/XBAND.
-2. Confirm the BUP identity of WorkRAM-L `0x002F0000` with a write-watch trace.
-   Extend the residency screen to battle mode, stage changes and the
-   NetLink/XBAND paths.
+2. Trace the writer of the SH-2 code in the CPK work area
+   (`0x002F0000`-`0x002F33FF`) with a write-watch (heavy). Extend the
+   residency screen to battle mode, stage changes and the NetLink/XBAND paths.
 3. Classify the remaining unclassified bytes (switch tables, unreached code)
    and re-import updated usa-code inventories.
 4. Separate SBL library functions from game code (anchors above) in the
