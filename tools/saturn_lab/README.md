@@ -332,6 +332,18 @@ controls that must be rejected. See the
 Coverage is emulator observation, not hardware timing or recovered semantics.
 Raw coverage, states and the built core stay private.
 
+`probe_snd_mailbox.py` reuses unchanged ABI1 (`m68k_probe.py`) and the
+accepted natural coverage runs. It decodes SND's own command-history ring at
+`0x800` and cross-checks it against coverage dispatch edges, vector-26
+interrupt counts and snapshot prefixes. It executes the original boot
+self-patch `0x1768` for all 256 values of host byte `0x4E1`, and derives the
+resident image from the disc bytes. It also executes the original executor
+`0x1A60` for all 256 command bytes against independent path, access,
+register and memory contracts, then replays every natural record. Original
+mutations and natural-data mutations must each be rejected. See the
+[SND mailbox result](../../docs/restart/research/2026-11-05-snd-command-mailbox.md).
+Contracts stop at handler entry and model no SCSP device or timing.
+
 ## Static SH-2 function inventory
 
 `sh2_discover.py` is an independent standard-library SH-2 decoder and
