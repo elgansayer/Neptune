@@ -20,10 +20,11 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1122Z)
 
-Private repo commit: `c5c39d8`. Earlier commits from this run:
+Private repo commit: `2538cfd`. Earlier commits from this run:
 
 | Commit | Content |
 | --- | --- |
+| `c5c39d8` | C globals and zero-filled `.align` (16 MATCHING) |
 | `2548c2f`/`17afd8a` | busy-wait loop in three modules |
 | `29182ea` | 6 BOOT functions |
 | `14a8436` | shared C sources across modules |
@@ -54,7 +55,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **16** / 0 / 19,006 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996). All 16 MATCHING are compiled from C by GCC 2.7.2.3 inside the build: BOOT 8, XS 4, XBAND 4 |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **25** / 0 / 18,997 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996). All 25 MATCHING are compiled from C by GCC 2.7.2.3 inside the build: BOOT 11, XS 7, XBAND 7 |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -244,11 +245,16 @@ Facts learned about GNU as (they bound the C path):
 - It shortens `(0,An)` to `(An)` unless written `(0:w)`.
 - It leaves branches to global symbols as relocations, on both CPUs.
 
-**MATCHING count at the end of the run: 16.**
+**MATCHING count at the end of the run: 25.**
 
-- 8 BOOT functions are compiled from `src/usa/boot/*.c` by GCC 2.7.2.3.
-- 4 of them are shared library functions that also sit byte-identical in XS
-  and XBAND, so the same sources build them there: 4 + 4.
+- 11 BOOT functions are compiled from `src/usa/boot/*.c` by GCC 2.7.2.3.
+- 7 of them are shared library functions that also sit byte-identical in XS
+  and XBAND, so the same sources build them there: 7 + 7. Among them:
+  - the SBL CD-block command-register write (CR1-CR4);
+  - three accessors of a global record.
+- A clean `make clean && make split && make check && make audit` under the
+  heavy lock passed (19/19, audit OK) at the 16-function state. The last 9
+  functions were verified by rebuilding BOOT, XS and XBAND.
 - All 8 BOOT fingerprint targets match at `-m2 -O2`, with or without
   `-fomit-frame-pointer` per source file, once the C is phrased like the
   original (statement order and temporaries matter).

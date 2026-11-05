@@ -84,6 +84,41 @@ class SplitterTests(unittest.TestCase):
             self.assertLess(ld.index("seg_06004000.o"), ld.index("seg_06004020.o"))
             self.assertIn(".text 0x06004000", ld)
 
+    def test_c_function_ranges_become_includes_with_globals_in_the_linker_script(self):
+        extra = ('c_globals = { "_g_data" = 0x06004014 }\n'
+                 '[[module.c_function]]\naddress = 0x06004020\nsize = 8\n'
+                 'source = "src/mod/func_06004020.c"\ncflags = "-m2 -O2"\n')
+        with tempfile.TemporaryDirectory() as name:
+            out = self.split(Path(name), extra)
+            second = (out / "seg_06004020.s").read_text()
+            self.assertIn('.include "build/csrc/mod/func_06004020.s"', second)
+            self.assertNotIn("mov #1,r0", second)  # the C range is not disassembled
+            self.assertIn("_g_data = 0x06004014;", (out / "module.ld").read_text())
+            mk = (out / "module.mk").read_text()
+            self.assertIn("build/csrc/mod/func_06004020.s: src/mod/func_06004020.c", mk)
+            self.assertIn("CFLAGS_C := -m2 -O2", mk)
+
+    def test_c_function_containing_another_entry_is_refused(self):
+        extra = ('[[module.c_function]]\naddress = 0x06004000\nsize = 16\n'
+                 'source = "src/mod/f.c"\n')
+        with tempfile.TemporaryDirectory() as name:
+            tmp = Path(name)
+            (tmp / "files").mkdir()
+            # a second function entry inside the C range: other code may call it, so refuse
+            with self.assertRaises(SystemExit):
+                self.split_with_symbols(tmp, extra, "06004000 func_06004000 func\n06004008 inner func\n")
+
+    def split_with_symbols(self, tmp: Path, extra: str, symbols: str):
+        (tmp / "files" / "MOD.BIN").write_bytes(SYNTHETIC)
+        (tmp / "mod.code.txt").write_text("06004000 0600400E\n06004020 06004028\n")
+        (tmp / "mod.symbols.txt").write_text(symbols)
+        (tmp / "cfg.toml").write_text(
+            'release = "synthetic"\n[[module]]\nname = "mod"\npath = "MOD.BIN"\nsha256 = "%s"\n'
+            'vram = 0x06004000\ncpu = "sh2"\ncode = "%s"\nsymbols = "%s"\nsplit = "functions"\n%s' % (
+                hashlib.sha256(SYNTHETIC).hexdigest(), tmp / "mod.code.txt", tmp / "mod.symbols.txt", extra))
+        with contextlib.redirect_stdout(io.StringIO()):
+            saturn_split.main([str(tmp / "cfg.toml"), "--files", str(tmp / "files"), "--out", str(tmp / "out")])
+
     def test_wrong_input_identity_is_rejected(self):
         with tempfile.TemporaryDirectory() as name:
             tmp = Path(name)
