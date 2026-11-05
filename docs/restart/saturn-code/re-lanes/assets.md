@@ -142,6 +142,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | 1-1 at stage start: enemies, player starts, soft-block count | 7/7 cells, 2/2 cells, 56 = 56 |
 | Hidden item kinds vs live item slots | equal for 1-1, 2-1, 3-1, 4-1 and battle 17-0 (75/75, two runs); battle 10-0 32/33 (one slot already used) |
 | Master item cells | 5/5 and 12/12 in demos |
+| All 36 battle arenas, selected through world/variant in the battle demo's pre-build state | solid bit 4,090–4,096/4,096 on 36; item lists 36/36; soft-block count exact on 35/36 (one arena runs out of free cells) |
 | All 20 Master Game stages, selected through the stage byte in a demo's pre-build state | solid bit 4,092–4,096/4,096 on 20; field grid s+1 and background grid s+21 equal the live planes on every cell on 20; item kinds 19/20 and item cells 98/100 (stage 14 skips one item and shifts the rest) |
 | Battle arena 17 | 4,096/4,096 solid bits in two captures (once the lookup reads past the table) |
 | Japan | same tables and maps byte for byte |
@@ -159,7 +160,7 @@ wrapper after the host kernel update · `7946a43` stage-select checks of all
 records · `69902d2` capture checks and sprite bindings over 86 states ·
 `be65314` progress · `1bbdf46` format document
 (`docs/assets/STAGE_DATA.md`) · `54a85be`, `771f5a1` Master Game checks and
-106-state capture run. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
+106-state capture run · `d04c8dd` battle arena checks. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
 `0eb90a8`, `f6f075b`, `21e5e2e`, `df30aee`, `4d94bee`.
 
 ## Frontier
