@@ -115,6 +115,14 @@ class MatchTests(unittest.TestCase):
         placed = [(u.symbol, a) for u, a, _ in lib_unit.resolve(units)]
         self.assertEqual(placed, [("_first", 0x0C0), ("_eq", 0x100), ("_ne", 0x140)])
 
+    def test_an_address_has_one_name_and_larger_units_go_first(self):
+        # a 24-byte wrapper says its callee at 0x500 is _locale_r; the 52-byte unit really
+        # at 0x500 is _rand_r.  Resolved larger-first, the look-alike is refused.
+        rand_r = lib_unit.Unit("rand_r.o", "_rand_r", 52, [(0x500, {})])
+        wrapper = lib_unit.Unit("locale.o", "_localeconv", 24, [(0x540, {"_locale_r": 0x500})])
+        placed = [u.symbol for u, _, _ in lib_unit.resolve([wrapper, rand_r])]
+        self.assertEqual(placed, ["_rand_r"])
+
     def test_small_wrappers_need_a_confirmed_reference(self):
         big = lib_unit.Unit("o", "_big", 200, [])
         ok = lib_unit.Unit("o", "_w1", 24, [])
