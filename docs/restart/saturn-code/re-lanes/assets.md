@@ -51,7 +51,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| Sprite palettes bound from captures | 355 blocks, 315 sequences (873 frames) |
+| Sprite palettes bound from captures | 860 blocks, 872 sequences (3,061 frames) |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps |
@@ -64,8 +64,8 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | **Battle stage descriptors (with item lists)** | **36 / 36** |
 | **Master Game stages and item placement** | **20 / 20** |
 | **Gameplay maps (64×64 cell attributes)** | **106 / 106** |
-| Base1 slot-4 records | 3 / 13 decoded (descriptors, enemies, one open list); 10 probable demo-input lists raw |
-| Slot-9 records outside the base banks | 21 / 24 (battle1 1, master1 20; xband1 3 open) |
+| Base1 slot-4 records | 12 / 13 decoded (stage descriptors, enemy placement, 10 attract-demo pad recordings); record 18 open |
+| Slot-9 records outside the base banks | 24 / 24 (battle1 and xband1 list the same battle table twice; master1 20 item lists) |
 | FILM movies | USA 3 / 3 (10,421 frames, 320×160, 30 fps, stereo 22,050 Hz); Japan `BOMSS2` 1 / 1 |
 | NetLink/XBAND images | 174 / 174 |
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
@@ -114,9 +114,9 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
     real play).
 - **Sprites.** A frame is a list of 20-byte part records; a sequence is a
   list of (frame, duration) pairs. All 34,681 parts are VDP1 4-bit
-  colour-bank sprites. Over 36 natural capture states, 910 of 911 draws
-  match a decoded pixel block byte-exactly; the remaining draw is the RGB
-  movie frame. Each match binds the object's runtime colour base.
+  colour-bank sprites. Over 86 capture states, 3,190 of 3,195 draws match
+  a decoded pixel block byte-exactly; the rest are the RGB movie frame and
+  4 draws in stage 2-2. Each match binds the object's runtime colour base.
 - **Stage backgrounds.** A 64×64 grid of metatile indices expands through a
   metatile set (four 2-word VDP2 pattern names per 16×16 block) into the
   game's NBG plane. Nine live planes equal the disc-derived planes on all
@@ -145,6 +145,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Battle arena 17 | 4,096/4,096 solid bits in two captures (once the lookup reads past the table) |
 | Japan | same tables and maps byte for byte |
 | All 50 Normal Game stages, selected through the game's stage variables in a cold-boot menu state | 47 build (1-8–1-10 are identical placeholder records); timer = descriptor minutes × 3,600 frames 47/47; hidden item kinds 47/47; soft-block count exact 43/47; solid bit ≥ 4,083/4,096; the single bomber on its entry cell (31) or player-1 cell (16); every listed enemy cell occupied on 17 stages |
+| Backgrounds of all 47 built stages (display-on stage-select captures) | every descriptor grid equals a live plane on all 16,384 cells on 44 stages; descriptor cell block in VRAM on 47 (byte-exact on 20, ≥ 98% where tiles animate); descriptor palette the best CRAM match on 47 |
 | Soft-block generator from the captured generator state | exact on 28 of 35 stage-select captures with a soft-block count, when every object present at build time reserves its cell and each stage gets its set-up offset (the other 7 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
 ## Private repository state (run 20261105T1623Z)
@@ -153,16 +154,19 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 checks · `0f256a2` stage data recipe and outputs · `ef1b663` backgrounds
 paired from the stage tables, starting-field generator · `2d55396` emulator
 wrapper after the host kernel update · `7946a43` stage-select checks of all
-50 stages · `8e22b08`, `7a71f0e` generator fit and progress. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
+50 stages · `8e22b08`, `7a71f0e` generator fit · `bce4e78` demo-input
+records · `69902d2` capture checks and sprite bindings over 86 states ·
+`be65314` progress. Earlier: `8c81955`, `6f02041`, `7925bb6`, `058e59d`, `43239a1`,
 `0eb90a8`, `f6f075b`, `21e5e2e`, `df30aee`, `4d94bee`.
 
 ## Frontier
 
-1. Where World 5's enemy placement lives (not in the enemy table), the
-   1–2 extra soft blocks on four stages, and the random draws of enemy
-   set-up (code in usa-code's scope) to make every demo layout exact.
-2. Remaining records: base1 slot 4 record 18 (no live match) and the
-   probable demo-input lists; the open descriptor parameters; xband1 slot 9.
+1. Enemy placement still to locate: World 5 (its stages use a separate
+   set-up path) and Master Game (not in its item lists). Then the 1–2 extra
+   soft blocks on four stages, and enemy set-up's random draws (usa-code
+   scope) to make every demo layout exact.
+2. Base1 slot 4 record 18: matches neither normal enemies nor Master spawn
+   cells. The open descriptor parameters.
 3. The two background grids no table or capture pairs.
 4. Sprite palettes for the objects no capture has drawn yet; menu/title
    map colours; open slot-6 attribute bits.
@@ -187,4 +191,4 @@ wrapper after the host kernel update · `7946a43` stage-select checks of all
   - Re-implemented the soft-block and item placement.
   - Filed Neptune #877.
   - Blocker found and fixed: the host's kernel update made the pinned emulator frontend refuse to run, because its platform-string pin no longer matched. A wrapper maps only that string. Checked byte-identical against a pre-update checkpoint.
-  - Then checked all 50 Normal Game stages in the running game (this update).
+  - Then checked all 50 Normal Game stages in the running game: stage data, background pairing and sprite palettes (860 blocks) (this update).
