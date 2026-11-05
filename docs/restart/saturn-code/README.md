@@ -69,6 +69,13 @@ indirect sites, later overlays and slave entries keep the whole-program
 denominator open. The [usa-code lane ledger](re-lanes/usa-code.md) tracks
 the frontier.
 
+A follow-up [lineage sample](../research/2026-11-05-usa-vblank-counter-lineage.md)
+reads three captured states from one verified restore lineage. The VBlank-OUT
+handler's counter at `0x06006038` advances exactly once per emulated frame (+7,200,
+then +600). The kernel's pad-port counters advance on only 60–71% of those frames,
+which separates the VBlank and pad-read tick domains for #492. These are passive
+state samples, not handler execution.
+
 ## Reproduce the metadata join
 
 ```sh

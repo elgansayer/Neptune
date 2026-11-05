@@ -332,3 +332,10 @@ are static evidence only. Synthetic tests in `tests/test_sh2_discover.py`
 validate the tooling, not original-game claims. See the
 [USA inventory result](../../docs/restart/research/2026-11-05-usa-function-inventory.md)
 for commands, measured values and limits.
+
+`sample_workram.py` reads declared WorkRAM-H values from existing checkpoint
+states. It reports deltas only for consecutive checkpoints whose later run
+restored the earlier exact state with matching frame arithmetic. Optional kernel
+witnesses and `--expect-rate` assertions fail closed. It is passive natural
+observation: nothing is executed. See the
+[lineage result](../../docs/restart/research/2026-11-05-usa-vblank-counter-lineage.md).
