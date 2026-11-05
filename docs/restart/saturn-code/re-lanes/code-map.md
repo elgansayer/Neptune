@@ -20,10 +20,13 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261105T1122Z)
 
-Private repo commit: `ee907bd`. Earlier commits from this run:
+Private repo commit: `c5c39d8`. Earlier commits from this run:
 
 | Commit | Content |
 | --- | --- |
+| `2548c2f`/`17afd8a` | busy-wait loop in three modules |
+| `29182ea` | 6 BOOT functions |
+| `14a8436` | shared C sources across modules |
 | `e719fdc` | SHC division helper names |
 | `b4a1b04` | census JSON in the repo |
 | `2e2abd3` | `check.py` first-difference report |
@@ -51,7 +54,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **3** / 0 / 19,019 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996). The 3 MATCHING are BOOT functions compiled from C by GCC 2.7.2.3 inside the build |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **16** / 0 / 19,006 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996). All 16 MATCHING are compiled from C by GCC 2.7.2.3 inside the build: BOOT 8, XS 4, XBAND 4 |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -240,6 +243,22 @@ Facts learned about GNU as (they bound the C path):
   where the original has `00xx`.
 - It shortens `(0,An)` to `(An)` unless written `(0:w)`.
 - It leaves branches to global symbols as relocations, on both CPUs.
+
+**MATCHING count at the end of the run: 16.**
+
+- 8 BOOT functions are compiled from `src/usa/boot/*.c` by GCC 2.7.2.3.
+- 4 of them are shared library functions that also sit byte-identical in XS
+  and XBAND, so the same sources build them there: 4 + 4.
+- All 8 BOOT fingerprint targets match at `-m2 -O2`, with or without
+  `-fomit-frame-pointer` per source file, once the C is phrased like the
+  original (statement order and temporaries matter).
+- New build features:
+  - Globals referenced from C are mapped to their original per-module
+    addresses (`c_globals` → linker script).
+  - cc1's `.align` is zero-filled, because the original assembler padded
+    with `0000` and GNU as 2.44 pads code with `nop`.
+- Every addition was verified by a rebuild of the affected modules with
+  identical SHA-256.
 
 **First MATCHING functions (end of run 20261105T1122Z):**
 
