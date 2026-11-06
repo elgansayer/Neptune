@@ -18,6 +18,31 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
+## Status (run 20261106T1222Z)
+
+Private repo commit: `bac6a6e` (verified build state `e252f5e`).
+
+**885 MATCHING** (794 at the start of run 20261106T0917Z; +91). C functions: BOOT 327, XS 219, XBAND 219;
+library routines unchanged (120).
+
+**BOOT's main body is GCC output with its own compiler configuration.**
+- The main body (`0x06010000`-`0x06067000`, below the NetLink layer) was compiled with
+  `-m2 -O2 -fomit-frame-pointer`.
+- Its compiler, `la3`, is `jan96` (FSF 2.7.2 with the SH changes of 9 Dec 1995 and 2 Jan 1996) plus an SH
+  `LEGITIMIZE_ADDRESS`. For a 4-byte access whose displacement does not fit `add #imm8`, the displacement goes
+  into a register and the access is indexed (`@(r0,Rn)`). FSF 2.7.2's macro is empty, so it adds the
+  constant to the base first. Displacements 64..127 still use `add`, as in the original.
+- Over the 91 recorded main-body functions: `la3` matches 91, `jan96` 87, plain 2.7.2.3 86, and the NetLink
+  layer's `nocopy17` 78. `la3` leaves the 25 `jan96` library units identical. So the layer and the main body
+  were built separately.
+- Rejected: indexing every access size (`la1`, loses 7) and every 4-byte displacement (`la2`).
+
+Verification: every function was compared byte for byte by the private `ctry.py` before it was recorded.
+- Run 20261106T0917Z recorded 91. It committed 46 after `make check` 19/19 (09:33Z), then hit the account
+  usage limit before committing the other 45.
+- This run checked those 45 first: a clean rebuild (`rm -rf build/csrc`, BOOT re-split, `make check`) passed
+  19/19 byte-identical at 12:24Z.
+
 ## Status (run 20261106T0722Z)
 
 Private repo commit: `450d254` (this run's commits: `99268e1` to `450d254`; the last verified build state is `dded95e`,
@@ -664,7 +689,7 @@ Next frontier:
 3. Still open: XBAND's soft-float core and newlib, BOOT's remaining C library, the CPK work-area code
    origin, unclassified bytes, SBL symbol names. Owner decision: a licensed Hitachi SHC for KRNL.
 
-### 20261106T0722Z (this run)
+### 20261106T0722Z
 
 Moved: **794 MATCHING** (from 712). See the status section for the four compiler findings.
 
@@ -690,3 +715,18 @@ Next frontier:
    - the stack-pop order after a call with a pushed argument (`0606B0A4`).
 3. Still open: XBAND's soft-float core and newlib, BOOT's remaining C library, the CPK work-area code
    origin, unclassified bytes, SBL symbol names. Owner decision: a licensed Hitachi SHC for KRNL.
+
+### 20261106T0917Z (cut by the usage limit after 21 minutes; no result line)
+
+- Found that BOOT's main body is GCC output built with `-fomit-frame-pointer`, and built the `la3` cc1
+  (status section). Wrote C for 91 small main-body functions.
+- Committed 46 at private `a504f2f` after `make check` 19/19 (840 MATCHING). The other 45 were checked with
+  `ctry.py` but not committed, and there is no ledger entry for the run.
+
+### 20261106T1222Z (this run)
+
+- Verified the previous run's 45 uncommitted functions with a clean rebuild (19/19), then committed them
+  (private `e252f5e`, 885 MATCHING), plus docs (`bac6a6e`).
+- Next: more of BOOT's main body with `la3`, smallest functions first (1,360 BOOT entries are still
+  asm-only, most of them in the main body).
+
