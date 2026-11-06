@@ -51,7 +51,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| **Sprite palettes bound from captures** (3,681 states, was 1,535; 184,545 of 184,651 sprite draws match a decoded block, the rest are RGB movie frames and off-screen draws with no graphics assigned) | **3,787 blocks drawn directly, 2,720 sequences** (was 2,846 / 2,133); **6,295 of 10,659 blocks** have their exact colours once the frames of bound sequences are included (was 5,340; the kernel's draw rule, checked on 103,167 of 103,168 drawn actors); 15 more sequences (31 blocks) only from per-frame actor samples, counted apart; staff bank 185 / 185, all 50 sequences |
+| **Sprite palettes bound from captures** (5,958 states, was 3,681; 290,751 of 290,857 sprite draws match a decoded block, the rest are RGB movie frames and off-screen draws with no graphics assigned) | **4,432 blocks drawn directly, 3,053 sequences** (was 3,787 / 2,720); **6,882 of 10,659 blocks** have their exact colours once the frames of bound sequences are included (was 6,295; the kernel's draw rule, checked on 172,440 of 172,462 drawn actors); 16 more sequences (33 blocks) only from per-frame actor samples, counted apart; staff bank 185 / 185, all 50 sequences. Run 20261106T1223Z: battles with computer players and with battle characters 8-11 (never picked by the earlier walks), the first captures with the XBAND bank resident, and boss stages played with every button |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps |
@@ -72,9 +72,9 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink/XBAND images | 174 / 174 |
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
-| **Sprite text frames** (story, save-system messages, Master Game intro and results, staff credits, animated words) | **96 frames, all machine-checked against the bank data, 0 conflicts** (was 39 of 54). The 54 glyph-built frames: 30 glyph by glyph, 20 word by word (9 save messages, 11 animated-word frames), 4 mixed glyph and word blocks (3 staff cards, "Fin"). Plus 42 Master Game result frames (score labels, 19 ranks from Baby to Master, rank letters). **Japan: 74 frames transcribed** (was 43): 8 story screens, 9 save messages, the Master Game intro (vertical text), 25 staff cards, and (run 20261106T1223Z) the animated HURRY!/MONO/STEREO frames, the 16 Master Game gong-sign frames and 4 result-label frames; **32 machine-checked** (was 1): 1 glyph by glyph, 31 word by word. The animated words are part-for-part pixel-identical to the USA frames, so their readings carry over by block hash. Each gong sign is one brush kanji (start, end, next, celebrate, complete, stop, hurry, special); the USA release draws the same kanji blocks with an English word block beside each. The Japan release has no Master Game rank frames: its result screen is a score table |
+| **Sprite text frames** (story, save-system messages, Master Game intro and results, staff credits, animated words) | **96 frames, all machine-checked against the bank data, 0 conflicts** (was 39 of 54). The 54 glyph-built frames: 30 glyph by glyph, 20 word by word (9 save messages, 11 animated-word frames), 4 mixed glyph and word blocks (3 staff cards, "Fin"). Plus 42 Master Game result frames (score labels, 19 ranks from Baby to Master, rank letters). **Japan: 74 frames transcribed** (was 43): 8 story screens, 9 save messages, the Master Game intro (vertical text), 25 staff cards, and (run 20261106T1223Z) the animated HURRY!/MONO/STEREO frames, the 16 Master Game gong-sign frames and 4 result-label frames; **70 machine-checked** (was 1): 1 glyph by glyph, 31 word by word, 1 mixed, and 37 story, save-message and staff frames on the 16-pixel character pitch (each multi-character block must read the same in every frame and agree with its word-block reading); 4 still visual. The animated words are part-for-part pixel-identical to the USA frames, so their readings carry over by block hash. Each gong sign is one brush kanji (start, end, next, celebrate, complete, stop, hurry, special); the USA release draws the same kanji blocks with an English word block beside each. The Japan release has no Master Game rank frames: its result screen is a score table |
 | **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **446 blocks read, 630 entries** (was 438 / 622; run 20261106T1223Z read the 8 brush-kanji blocks of the Master Game gong signs) (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; entries include pixel-identical base2/xband1 copies; run 20261106T0223Z added staff initials, animated-word letters and the Master Game result labels, ranks and rank letters; other narrow blocks partial). **Japan: 290 entries** (was 261; run 20261106T1223Z added the animated-word letters, the 8 gong kanji and one result-label block) over openning, base1, base2, battle1, master1, normal5 and staff (menus, control set-up, world, boss and arena names, the guest characters' name plates, award titles, save messages in katakana, credit headings); Japan normal5's only differing block is the localised version of a one-word USA banner |
-| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **381 new** (incl. 8 battle arena previews and a match with Devil, Mad Bomber and Bonus Game on) |
+| **Menu, screen and play capture states** (scripted pad input, no memory writes) | **381 new** (incl. 8 battle arena previews and a match with Devil, Mad Bomber and Bonus Game on); run 20261106T1223Z added 2,197 sampler states: 1,248 from stage-select play with every button, 494 from battles with characters 8-11, 392 from computer-player battles and 63 from the XBAND bank (memory writes at the select or title screen, labelled `patched-`) |
 | **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (907 states in all) |
 
 ### Formats confirmed (own words)
@@ -229,9 +229,11 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Backgrounds of all 47 built stages (display-on stage-select captures) | every descriptor grid equals a live plane on all 16,384 cells on 44 stages; descriptor cell block in VRAM on 47 (byte-exact on 20, ≥ 98% where tiles animate); descriptor palette the best CRAM match on 47 |
 | Soft-block generator from the captured generator state | with a per-stage set-up offset: exact on 24 of the 39 built stages with soft blocks when the bomber area and the kernel table's enemy cells are reserved, 28 of 39 when the objects code spawns are reserved too (the other 11 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
-## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z and 1223Z)
+## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z, 1223Z and 1723Z)
 
-Run 20261106T1223Z (in progress at this PR): `c571a48` (head) all-button play generator and this run's states in the capture list · `f2e726d` Japan animated words, gong signs and result labels (74 frames, 32 machine-checked), USA gong kanji.
+Run 20261106T1723Z (in progress at this PR): `1a6e88d` (head) run 1223Z's closing pass integrated (bindings, capture checks, map search, unbound inventory, progress).
+
+Run 20261106T1223Z: `e3d107b` (head) player-slot colours, computer players, XBAND word, unbound inventory · `1651bf9` docs, sampler KNOWN filter · `1c5ca72` Japan pitch check (70 of 74 frames) · `c571a48` all-button generator · `f2e726d` Japan animated words and gong signs.
 
 Run 20261106T0723Z: `864abd6` (head) Japan staff word blocks · `4ca664a` all-button egg battle (4 more base2 sequences sampled, verified at the next capture pass) · `c2890eb` progress and sprite document · `60f5477` closing pass over 3,681 states · `e4a1109`, `348fc8b`, `9eaa2ce`, `54dccec`, `6dc822d`, `8fd1c26` Japan word blocks · `8f44a0f`, `2733124` walk actions, scripts and recipes · `42b435e`, `80e5698` draw-checked actor colour words, merge rules · `862ee62` item patch tool · `834c1af` per-frame actor sampler, BOMBER CATCHER input · `eb63f21` capture pass over 1,935 states.
 
@@ -262,8 +264,12 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
 
 ## Frontier
 
-1. Sprite palettes: 6,295 of 10,659 blocks have exact colours from draws
-   (3,787 drawn directly), and 2,720 of 4,915 sequences are bound.
+1. Sprite palettes: 6,882 of 10,659 blocks have exact colours from draws
+   (4,432 drawn directly), and 3,053 of 4,915 sequences are bound. The
+   private `sprite_unbound.json` lists every unbound sequence and block.
+   - Computer-player battles (a type byte per player at character select)
+     play whole rounds with Louies and items by themselves; next, Team
+     mode, Wide stages with 10 players and the computer level.
    - A per-frame actor sampler and an item patch tool exist. The tool puts
      chosen items, eggs included, in a built field's own tables.
    - Still unbound:
@@ -272,9 +278,9 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
      - Master Game boss attacks and the ending portraits; next, longer boss
        fights;
      - Series screens not yet reached;
-     - the two base2 character groups that no select screen offers.
-   - Inferences, not counted: xband1 is never resident and takes its
-     bindings from pixel-identical battle1 blocks. Japan normal1-normal5
+     - the rest of base2 characters 8-11 (the earlier walks only played 0-7).
+   - xband1 is now resident in an XBAND-word battle (run 20261106T1223Z);
+     most of its bindings still come from pixel-identical battle1 blocks. Japan normal1-normal5
      match the USA banks except one block.
 2. VDP2 map colours: 41 of 65 confirmed. The 24 still open:
    - battle1 7-9, 13, 14 and 16-18 (other stadium and Series screens);
@@ -430,4 +436,40 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     new (the bomber dies to its own bombs within seconds); a second player
     in World 3 and the World 2 boss with every button gave 17 new
     sequences. A wider sweep is running.
-
+- 20261106T1223Z (final; the closing pass finished at 14:12Z, but the run
+  ended before committing it, and run 1428Z produced nothing; run 1723Z
+  integrated it):
+  - Japan text: 74 frames, 70 machine-checked, 0 conflicts (1 before the
+    run). The animated words, gong signs and result labels pass the
+    word-level check; the story, save-message and staff frames pass a new
+    pitch check (their blocks hold several characters on a 16-pixel pitch;
+    every block must read the same in all frames and agree with its
+    word-block reading).
+  - Battle player bytes found at character select: a type byte per player
+    (2 = computer) and a character byte per player. The lane's walks had
+    only ever played characters 0-7 (default cursors). Battles with
+    characters 8-11 and with computer players (who ride Louies, use items
+    and play whole rounds by themselves) are memory writes like stage
+    select; the game's own code does the rest.
+  - Colours follow the player slot (0x60 + 0x10·k), not the character; an
+    earlier ledger line read the slots as characters, and the PR #908 run
+    log's "two characters no select screen offers" is not established.
+  - The XBAND word makes the kernel load xband1 for Battle: first captures
+    with xband1 resident (a two-player XBAND match).
+  - Random play with every button: nothing new in item-patched 1-1 (the
+    bomber dies to its own bombs), but boss stages with every button and a
+    second player bound boss sequences in every world.
+  - The sampler can now save states only for sequences no capture has
+    bound (deterministic replays of runs whose new sequences vanished
+    before a state was saved).
+  - Closing pass over 5,958 states: 6,882 of 10,659 blocks with exact
+    colours (was 6,295), 3,053 of 4,915 sequences bound (was 2,720),
+    4,432 blocks drawn directly (was 3,787); 16 sequences bound
+    only by samples. Draw rule 172,440 of 172,462. VDP2 maps 41/65.
+- 20261106T1723Z (first PR, run in progress):
+  - Integrated run 1223Z's closing pass (private `1a6e88d`).
+  - The 22 draw-rule exceptions are in 4 captures. In each, the actor's
+    colour word is one palette step (0x10, once 0x20) above the drawn
+    colour; 20 are the parts of the World 5 boss in two states, consistent
+    with a flash that changed the word after the frame's draw list was
+    built. Conflicting words are never draw-checked, so they bind nothing.
