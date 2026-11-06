@@ -20,10 +20,10 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261106T1222Z)
 
-Private repo commit: `bcca979` (last build check `4c850d1`, 19/19; clean rebuild 19/19 at `dd0068b`, 13:34Z).
+Private repo commit: `0f83d82` (last build check at that commit, 19/19; clean rebuild 19/19 at `dd0068b`, 13:34Z).
 
-**1,148 MATCHING** (794 at the start of run 20261106T0917Z, 885 at the start of this run; +263 this run). C
-functions: BOOT 590, XS 219, XBAND 219; library routines unchanged (120). BOOT: 663 of 1,760 entries MATCHING.
+**1,149 MATCHING** (794 at the start of run 20261106T0917Z, 885 at the start of this run; +264 this run). C
+functions: BOOT 591, XS 219, XBAND 219; library routines unchanged (120). BOOT: 664 of 1,760 entries MATCHING.
 
 **BOOT's main body is GCC output with its own compiler configuration.**
 - The main body (`0x06010000`-`0x06067000`, below the NetLink layer) was compiled with
@@ -51,7 +51,7 @@ functions: BOOT 590, XS 219, XBAND 219; library routines unchanged (120). BOOT: 
 - Negative control: changing one character of a literal fails `make check` at that byte.
 - Literals that GCC merged within one original source file stay external references.
 
-What the 263 functions are:
+What the 264 functions are:
 - PPP/LCP/IPCP trace wrappers, modem command senders, and the modem state-machine event handlers (switch tables);
 - SMPC and SCU register access, an interrupt handler, BIOS calls (including the backup-library table);
 - the `sprintf` wrapper (varargs), memory-region lookups, ring-buffer and byte readers;
@@ -70,7 +70,7 @@ member of a group. It found a group of six object-step handlers and three pairs.
 Verification:
 - every function was compared byte for byte by the private `ctry.py` before it was recorded;
 - each batch of 2-25 was then checked by a BOOT re-split and `make check` (19/19 byte-identical) before its
-  commit, 33 times this run (the last 32 functions after the clean rebuild);
+  commit, 34 times this run (the last 33 functions after the clean rebuild);
 - clean rebuilds with every C object recompiled passed 19/19 at 12:24Z and at the end (13:34Z, 561 C sources);
 - negative control after the final check: one changed constant in a main-body source fails `make check` at that
   byte; restored, 19/19.
@@ -766,13 +766,13 @@ Next frontier:
 - Verified the previous run's 45 uncommitted functions with a clean rebuild (19/19), then committed them
   (private `e252f5e`, 885 MATCHING).
 - Added the `lead=N` build feature and 231 more main-body functions in 18 verified batches. Adopted the `la4`
-  compiler (0 regressions). Final state: 1,148 MATCHING at private `4c850d1`, docs `bcca979`.
+  compiler (0 regressions). Final state: 1,149 MATCHING at private `0f83d82`.
 - Another lane held the heavy lock for most of the run. Incremental BOOT checks were measured at about 14
   CPU-seconds and ran niced without the lock.
 - Deviation: the final clean rebuild of all three modules also ran without the lock and cost 82 CPU-seconds, over
   the 1-minute guideline. Future clean rebuilds go under the lock.
 - Next:
-  - the main body's remaining 1,097 BOOT entries (the 61-200 byte buckets first);
+  - the main body's remaining 1,096 BOOT entries (the 61-200 byte buckets first);
   - `nocopy17h` (constant sources allowed for halfword/byte memory destinations) for the layer's frame-pointer
     code at `0x06062000`-`0x06067000` (the build waited for the heavy lock all through this run's last hour and
     was withdrawn unbuilt);
