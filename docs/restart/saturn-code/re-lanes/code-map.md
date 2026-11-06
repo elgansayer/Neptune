@@ -18,33 +18,11 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
-## Status (run 20261105T1122Z)
+## Status (run 20261105T1622Z)
 
-Private repo commit: `2538cfd`. Earlier commits from this run:
-
-| Commit | Content |
-| --- | --- |
-| `c5c39d8` | C globals and zero-filled `.align` (16 MATCHING) |
-| `2548c2f`/`17afd8a` | busy-wait loop in three modules |
-| `29182ea` | 6 BOOT functions |
-| `14a8436` | shared C sources across modules |
-| `e719fdc` | SHC division helper names |
-| `b4a1b04` | census JSON in the repo |
-| `2e2abd3` | `check.py` first-difference report |
-| `9631d2b` | runtime CPU roles |
-| `a5d583a` | SINIT/MINIT leads |
-| `81b6e5a` | cross-module function matching |
-| `c440853` | classification frontier |
-| `182954f` | workflow docs for other lanes |
-| `2e11d23` | Cinepak work-area correction |
-| `6d76714` | non-zero-only residency |
-| `6c190e9` | whole container files |
-| `6a4a418` | toolchain and runtime screen |
-| `f8b7c10` | library anchors |
-| `3bc8b5a` | all modules disassembled |
-| `7765c40` | verified 68000 path |
-| `8827e3b` | Japan, docs, progress |
-| `211da81` | splitter |
+Private repo commit: `6a37a0f` (70 libgcc routines compiled from source into the
+build). The 20261105T1122Z run's commits (splitter, build, 25 C functions, module
+map, runtime screen) end at `2538cfd`; its details are in the run log below.
 
 PR #867 published the SH-2 formatter. The follow-up PR publishes the generic
 splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
@@ -55,7 +33,7 @@ splitter (`saturn_split.py`) and the 68000 emitter (`m68k_gas.py`).
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **25** / 0 / 18,997 static entries (USA 14,026 incl. the duplicate XBSND; Japan 4,996). All 25 MATCHING are compiled from C by GCC 2.7.2.3 inside the build: BOOT 11, XS 7, XBAND 7 |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **95** / 0 / 18,928 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 25 are C functions compiled by GCC 2.7.2.3 (BOOT 11, XS 7, XBAND 7). **70 are GCC runtime-library (libgcc) routines compiled from the original library sources** (BOOT 45, XBAND 21, XS 3, H2H 1). 20 more inventory entries are extra entry points inside those routines and are no longer counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -215,17 +193,28 @@ So the splitter:
 
 ## Run log
 
-### 20261105T0801Z, 0847Z, 0922Z, 1027Z (no result)
+### 20261105T0801Z, 0847Z, 0922Z, 1027Z, 1327Z (no result)
 
 - 0801Z built the whole-disc census (`disc_code_census.py` in its worktree;
   2 private census reports kept in evidence).
 - 0801Z then hit the account usage limit before committing. The worktree, and
   with it the census tool, was cleaned up.
-- 0847Z, 0922Z and 1027Z exited immediately on the same limit.
+- 0847Z, 0922Z, 1027Z and 1327Z exited immediately on the same limit.
 - The census JSON survives in private evidence and is used by this run's
   module map.
 
-### 20261105T1122Z (this run)
+Commits of the 1122Z run (private repo): `c5c39d8` C globals and zero-filled
+`.align` (16 MATCHING); `2548c2f`/`17afd8a` busy-wait loop in three modules;
+`29182ea` 6 BOOT functions; `14a8436` shared C sources; `e719fdc` SHC division
+helper names; `b4a1b04` census JSON; `2e2abd3` `check.py` first-difference report;
+`9631d2b` runtime CPU roles; `a5d583a` SINIT/MINIT leads; `81b6e5a` cross-module
+function matching; `c440853` classification frontier; `182954f` workflow docs;
+`2e11d23` Cinepak work-area correction; `6d76714` non-zero-only residency;
+`6c190e9` whole container files; `6a4a418` toolchain and runtime screen;
+`f8b7c10` library anchors; `3bc8b5a` all modules disassembled; `7765c40` verified
+68000 path; `8827e3b` Japan, docs, progress; `211da81` splitter.
+
+### 20261105T1122Z
 
 Moved:
 
@@ -328,3 +317,58 @@ Next frontier:
    symbol files.
 5. The census tool is restored (`tools/saturn_lab/disc_code_census.py`). Use
    its `verify` on future census updates.
+
+### 20261105T1622Z (this run)
+
+Moved: **GCC's runtime library (libgcc) is now compiled from its original
+sources inside the byte-identical build: 70 routines MATCHING** (95 MATCHING in
+total). Private commit `6a37a0f`.
+
+- Method: compile every libgcc unit for SH (`lib1funcs.asm` members; every
+  function of `fp-bit.c`/`dp-bit.c`) for both multilibs (`-m2`, default `sh1`).
+  Search each module for the bytes, with the literal-pool words that hold
+  external addresses masked. The original words in those slots then give the
+  addresses of the callees and data. Identical wrappers (for example
+  `___eqsf2`/`___nesf2`/`___ltsf2`) are placed by their references and by object
+  order.
+- Found:
+  - BOOT links the `-m2` libgcc: 6 `lib1funcs.asm` routines and 38 of the 42
+    soft-float functions of `fp-bit.c`/`dp-bit.c`.
+  - XBAND links the default (`sh1`) multilib (21 units).
+  - XS has 3 `lib1funcs.asm` routines and H2H has 1.
+- Source revision: the soft-float functions match **GCC 2.7.0's**
+  `config/fp-bit.c`, which packs IEEE fields with bitfields; 2.7.1 and later use
+  shifts.
+  - GCC 2.7.0 is not on the GNU mirrors as a tarball. It was rebuilt from
+    `gcc-2.6.3` plus the official `gcc-2.6.3-2.7.0` diff.
+  - Check: applying the `2.7.0-2.7.1` diff gives GCC 2.7.2's file.
+- Compiler: a GCC 2.7.0 `cc1` was rebuilt the same way (bison 3 needed two
+  grammar fixes). Its soft-float output matches nothing, while 2.7.1 and
+  2.7.2.3 both give the 38 matches. So the original `cc1` is 2.7.1-like.
+- The 4 BOOT misses (`_pack_d`/float, `___fixsfsi`, `__fpmul_parts`/double,
+  `___fixdfsi`) differ in how `constant - register` is compiled:
+  - the original emits `neg` + `add #imm`;
+  - FSF 2.7.x's `subsi3` has no constant-operand expansion.
+
+  This points to a later (Cygnus-era) SH backend: the next compiler lead.
+- Build: new `[[module.lib_function]]` entries, plus `tools/split/libfunc.py`
+  (compile one library source, extract one unit, make its labels unique, resolve
+  its references per module).
+  - `make check` stays 19/19 identical.
+  - Negative control: mutating one statement of `fp-bit.c` breaks `usa/boot`
+    and `usa/xband`.
+- Counting rule: 20 inventory entries are extra entry points inside one
+  `lib1funcs.asm` routine (`___ashiftrt_r4_N`). They are recorded as `covered`
+  and no longer counted as functions, so the MATCHING count is not inflated.
+
+Next frontier (from this run):
+
+1. Compiler variant: a GCC with a later SH backend (Cygnus 2.7 snapshot, or
+   GCC 2.8's `subsi3` expansion) for the 4 soft-float misses and the BOOT near
+   misses recorded in private `docs/TOOLCHAIN.md`.
+2. XBAND's libgcc: its `sh1` soft-float core (`_pack_d`, `__fpadd_parts`, ...)
+   matches neither revision. Find which revision or compiler built it.
+3. `libgcc2.c` (64-bit helpers, `___lshrdi3` referenced by BOOT), plus any C
+   library linked into the GCC modules, with the same matcher.
+4. Items 2-5 of the previous frontier (CPK work-area writer, classification,
+   SBL symbol names, census verification) are still open.
