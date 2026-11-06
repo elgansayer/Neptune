@@ -25,7 +25,7 @@ file/offset/hash → output hash).
 
 | Release | ISO files | Unknown | Notes |
 | --- | ---: | ---: | --- |
-| USA | 430 | 0 | 1 archive, 3 movies, 174 images, 66 font files, 42 text, 5 data (2 XBAND files partly decoded, 3 layouts open), 8 code, 131 audio |
+| USA | 430 | 0 | 1 archive, 3 movies, 174 images, 66 font files, 42 text, 5 data (3 XBAND files partly decoded, incl. the client database split into its items; 2 layouts open), 8 code, 131 audio |
 | Japan | 25 | 0 | `BOMSS1.CPK`, `BOMSS3.CPK` and 9 AIFs are byte-identical to USA |
 
 ### `PROGRAM.BIN` banks
@@ -58,7 +58,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Colour-cycle scripts | 124 / 124 |
 | VDP2 cell animations | 36 records, 232 frames (stage banks) |
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
-| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **19 confirmed by capture on every cell** (was 6), rendered in capture colours |
+| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **24 confirmed by capture on every cell** (was 19: the 5 XBAND-bank maps whose bytes equal confirmed battle maps; a search of all captured VDP2 VRAM at any position found no other placement), rendered in capture colours |
 | Normal Game stage descriptors | 50 / 50 |
 | Normal Game enemy placement lists (kernel table) | 50 / 50 |
 | Master Game enemy placement lists | 20 / 20 |
@@ -67,6 +67,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Gameplay maps (64×64 cell attributes) | 106 / 106 |
 | Base1 slot-4 records | 13 / 13 classified (stage descriptors, 10 attract-demo pad recordings, and two older copies of the kernel's enemy tables that no code reads) |
 | Slot-9 records outside the base banks | 24 / 24 (battle1 and xband1 list the same battle table twice; master1 20 item lists) |
+| **XBAND client database** (`XBAND/DRAMDB.BIN`, new this run) | 110 type rows, 948 items: 921 in the file's data area (all but 288 alignment bytes), 27 left open (22 past the file's end, 5 references); 5,163 strings with their item and offset; item formats open |
 | FILM movies | USA 3 / 3 (10,421 frames, 320×160, 30 fps, stereo 22,050 Hz); Japan `BOMSS2` 1 / 1 |
 | NetLink/XBAND images | 174 / 174 |
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
@@ -178,6 +179,29 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
   characters. The save-system font packs several characters into a block,
   so those frames are visual transcriptions only. Menu labels, arena names
   and character names are single "word blocks".
+- **Sprite actors and the draw rule (new this run).** The kernel draws
+  every sprite object through an actor record (400 records of 84 bytes).
+  Each record holds:
+  - the current frame;
+  - a bank class (base bank or overlay);
+  - a 16-bit colour word;
+  - the sequence id;
+  - pointers to the sequence and the current step.
+
+  The part drawers add each part's colour field to the actor's colour word
+  to get the VDP1 colour (CMDCOLR). So one capture of an actor playing a
+  sequence gives the colour base of every frame of that sequence. In 4 test
+  captures, all 106 drawn actors obey the rule; the full check over every
+  state follows in the closing pass. A static pairing of constant sequence
+  ids with constant colour stores in the same kernel function matched only
+  40 of 69 checkable cases, so it is not used for bindings.
+- **XBAND client database (new this run).** A typed item store:
+  - a header;
+  - 110 type rows (type, item count, list offset);
+  - per type, 12-byte item entries (id, size, data offset).
+
+  The data is packed on 4-byte boundaries after the tables. Strings include
+  the XBAND service's UI text, help text and modem strings.
 - **Palette and tile animation, fonts, movies.** As in the previous update:
   (CRAM index, count, (delay, colours) frames) cycles; tile animations as
   4-bit cell frames; a FONTX2 Shift-JIS font in the base banks; Japan
@@ -200,7 +224,9 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Backgrounds of all 47 built stages (display-on stage-select captures) | every descriptor grid equals a live plane on all 16,384 cells on 44 stages; descriptor cell block in VRAM on 47 (byte-exact on 20, ≥ 98% where tiles animate); descriptor palette the best CRAM match on 47 |
 | Soft-block generator from the captured generator state | with a per-stage set-up offset: exact on 24 of the 39 built stages with soft blocks when the bomber area and the kernel table's enemy cells are reserved, 28 of 39 when the objects code spawns are reserved too (the other 11 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
-## Private repository state (runs 20261105T1623Z, 1833Z and 2123Z)
+## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z and 20261106T0223Z)
+
+Run 20261106T0223Z: `cc23b45` (head) sprite runtime document and walk recipes · `ccc03d5` state list shared by the capture pass · `002325a` XBAND client database split, static colour-pairing tool · `2a3dcb4` map search at any position, actor-record colour reader.
 
 Run 2123Z: `57ea324` (head) word blocks of all 12 banks · `fae4c79` special-rules battle, 907-state pass · `d5ca419` word-level check of the save messages, Japan story text, stage 2-2 draws explained · `6b795ae` word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
 blocks · `35176ac` 200 word blocks · `1f46dfd` ending, staff roll and boss
@@ -297,3 +323,19 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     objects with no graphics assigned.
   - Played a battle with the Devil, Mad Bomber and Bonus Game rules on.
   - Total: 2,285 blocks bound over 907 states, 19 maps confirmed.
+- 20261106T0223Z:
+  - Found the kernel's sprite actor records and the draw rule. The actor's
+    colour word plus each part's colour field gives the VDP1 colour, so a
+    captured actor binds the colours of its whole sequence.
+  - Searched every VDP2 map in all captured VRAM at any position. The 5 XBAND
+    copies of confirmed battle maps are confirmed (24 of 65). No other map
+    appears in the 907 states; the rest need their screens captured.
+  - Split the XBAND client database into its 948 items and extracted its
+    5,163 strings.
+  - Started new captures:
+    - the Master Game area-clear path (temple gate, dragon door, RESULT
+      ranking), via a flag-word write that mirrors the game's own clear;
+    - a Battle set continued to its winner and the Bonus Game (BOMBER
+      CATCHER);
+    - random play on all 47 built Normal Game stages.
+
