@@ -18,9 +18,47 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
-## Status (run 20261105T2122Z)
+## Status (run 20261106T0222Z)
 
-Private repo commit: `119f126` (this run's commits: `c44d497` to `119f126`).
+Private repo commit: `0f9dd61` (this run's commits: `a45c101` to `0f9dd61`).
+
+Verified at `d4e7f79`/`0f9dd61` under the heavy lock: a re-split of BOOT/XS/XBAND and `make check` passed
+19/19 byte-identical; then every C object was recompiled with the unified flags (192 sources) and
+`make check` passed 19/19 again. Negative control: one changed constant in a shared C source makes
+`make check` fail in BOOT, XS and XBAND, each at that instruction.
+
+**685 MATCHING** (442 at the start of the run): 81 more functions of the NetLink application layer that
+BOOT, XS and XBAND share are compiled from C, one source per function built into all three modules
+(+243). C functions: BOOT 189, XS 188, XBAND 188; library routines unchanged (120).
+
+**The whole layer now builds with one compiler configuration: `nocopy6`, `-m2 -O2 -fno-force-mem`.**
+
+- `nocopy6` = `nocopy3` plus GCC 2.6.3's merge-point search in `reorg.c`
+  (`fill_simple_delay_slots`): after a forward conditional branch, the search for a delay-slot insn
+  continues past the branch's own target label once all uses of the label have been seen. GCC 2.7 deleted
+  that code ("redundant with fill_eager_delay_slots"). The originals show it as the epilogue's frame-pointer
+  restore placed in a conditional branch's delay slot. All 322 C targets matched before stay identical.
+- `-fno-force-mem` turns 5 near misses into matches (a large constant is loaded before the memory operand
+  it is added to) and changes none of the 159 earlier C functions of the layer.
+- Together with the two findings of run 20261105T2122Z (stores of constants left to reload; GCC 2.6.3
+  branch delay slots), the layer's compiler looks like FSF GCC 2.7.2 with the late-1995 SH backend changes
+  and several GCC 2.6.3-era parts: a vendor branch, not an FSF release.
+- With these, the two oldest near misses (run 20261105T1122Z, "register choice only") also match.
+- Rejected this run (evidence only): GCC 2.6.3's SH function units on top of `nocopy6` (breaks 11
+  matches, fixes none), and the register allocators compiled for strict IEEE double instead of x87
+  (no change).
+- Open compiler leads, in order of the near misses they block: the order of callee-saved `r8`/`r9`;
+  reload's spill-register choice for stored constants; QImode/HImode displacement addresses formed by
+  reload rather than at expand time (GCC 2.6.3 had `-mtry-r0`); constant synthesis (`mov #64; shll2` for
+  256, `mov #imm8; extu.b`).
+- Source idioms that mattered (no code): clearing an 8-byte message through its address so it takes the
+  first stack slot; a mask constant kept in a variable; a `MIN` macro that evaluates its argument twice; a
+  switch case that only leaves the switch; `void` prototypes deciding the call register.
+- Remaining in the layer: 65 shared bodies (mostly 160-516 bytes) and 35 BOOT-only functions.
+
+### Compiler findings of run 20261105T2122Z
+
+Private repo commit then: `119f126`.
 
 **442 MATCHING** (145 at the start of the run): the NetLink application layer that BOOT,
 XS and XBAND share is now being compiled from C. 97 shared functions are built from one
@@ -76,13 +114,15 @@ to reload.**
     `r2`), the same "left to reload" pattern;
   - the order of callee-saved registers.
 
+### Measures (current)
+
 | Measure | Value |
 | --- | --- |
 | Modules in the build | 14 (USA 11, Japan 3) |
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **418** / see usa-code / 18,605 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 298 are C functions compiled by GCC 2.7.2.3 variants (BOOT 100, XS 99, XBAND 99): the NetLink application layer, built from one source per function into every module that holds it. 120 are library routines compiled from their original free-software sources: GCC's libgcc (BOOT 55, XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **685** / see usa-code / 18,338 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 565 are C functions compiled by GCC 2.7.2.3 variants (BOOT 189, XS 188, XBAND 188): the NetLink application layer, built from one source per function into every module that holds it. 120 are library routines compiled from their original free-software sources: GCC's libgcc (BOOT 55, XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -489,7 +529,7 @@ Next frontier (from this run):
 
 Exited at once on the account usage limit.
 
-### 20261105T2122Z (this run)
+### 20261105T2122Z
 
 Moved: **442 MATCHING** (from 145). See the status section for the two compiler findings.
 
@@ -520,3 +560,39 @@ Next frontier:
 3. Still open from earlier runs: XBAND's soft-float core and newlib, BOOT's remaining C
    library, the CPK work-area code origin, unclassified bytes, SBL symbol names.
    Owner decision: a licensed Hitachi SHC for KRNL.
+
+### 20261105T2357Z (no result)
+
+Exited without a result (rc=1); no commits.
+
+### 20261106T0222Z (this run)
+
+Moved: **685 MATCHING** (from 442). See the status section for the compiler findings.
+
+- Re-tested the previous run's near misses and scratch C with the newer compiler variants first; then
+  wrote C for the remaining shared bodies, smallest first, 1-3 attempts each.
+- Found 35 small shared functions that the cross-module function matcher skips (under 12 instructions);
+  their XS/XBAND copies were located from the layer's address offsets and checked byte for byte.
+- Two experimental cc1 builds were rejected (status section). Each takes about 3-10 CPU-seconds,
+  because only the changed objects are rebuilt.
+- Verification:
+  - every function was compared with the original bytes by the private `ctry.py` (relocated literal
+    words masked) before it was recorded;
+  - `make check` (re-split of BOOT/XS/XBAND under the heavy lock) passed 19/19 byte-identical at the
+    607-MATCHING state (private `62c16b1`, 03:09Z);
+  - at the 685-MATCHING state (private `d4e7f79`, 03:35Z) the re-split and `make check` passed 19/19;
+    a rebuild with every C object recompiled under the unified flags passed 19/19 (03:36Z);
+  - negative control: `return 6` -> `return 5` in the state machine's C source fails `make check` in
+    BOOT, XS and XBAND at that instruction; restored, 19/19.
+- Near misses with their causes are in the private `docs/TOOLCHAIN.md` (run 20261106T0222Z section).
+
+Next frontier:
+
+1. The open compiler leads in the status section, starting with the callee-saved register order and
+   reload's spill-register choice; build each as one small change on `nocopy6` and keep it only if it
+   loses no match.
+2. The 65 remaining shared bodies and 35 BOOT-only functions of the layer; then BOOT-only and XBAND-only
+   code outside it.
+3. Still open: XBAND's soft-float core and newlib, BOOT's remaining C library, the CPK work-area code
+   origin, unclassified bytes, SBL symbol names. Owner decision: a licensed Hitachi SHC for KRNL.
+
