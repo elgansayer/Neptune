@@ -72,8 +72,8 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink/XBAND images | 174 / 174 |
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
-| **Sprite text frames** (story, save-system messages, Master Game intro and results, staff credits, animated words) | **96 frames, all machine-checked against the bank data, 0 conflicts** (was 39 of 54). The 54 glyph-built frames: 30 glyph by glyph, 20 word by word (9 save messages, 11 animated-word frames), 4 mixed glyph and word blocks (3 staff cards, "Fin"). Plus 42 Master Game result frames (score labels, 19 ranks from Baby to Master, rank letters). **Japan: 43 frames transcribed** (was 8): 8 story screens, 9 save messages, the Master Game intro (vertical text) and 25 staff cards; visual, 1 glyph-checked |
-| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **438 blocks read, 622 entries** (was 427 / 611 at PR #900; the battle Series screen's digits and STAGE banner added) (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; entries include pixel-identical base2/xband1 copies; run 20261106T0223Z added staff initials, animated-word letters and the Master Game result labels, ranks and rank letters; other narrow blocks partial). **Japan (new): 261 entries** over openning, base1, base2, battle1, master1, normal5 and staff (menus, control set-up, world, boss and arena names, the guest characters' name plates, award titles, save messages in katakana, credit headings); Japan normal5's only differing block is the localised version of a one-word USA banner |
+| **Sprite text frames** (story, save-system messages, Master Game intro and results, staff credits, animated words) | **96 frames, all machine-checked against the bank data, 0 conflicts** (was 39 of 54). The 54 glyph-built frames: 30 glyph by glyph, 20 word by word (9 save messages, 11 animated-word frames), 4 mixed glyph and word blocks (3 staff cards, "Fin"). Plus 42 Master Game result frames (score labels, 19 ranks from Baby to Master, rank letters). **Japan: 74 frames transcribed** (was 43): 8 story screens, 9 save messages, the Master Game intro (vertical text), 25 staff cards, and (run 20261106T1223Z) the animated HURRY!/MONO/STEREO frames, the 16 Master Game gong-sign frames and 4 result-label frames; **32 machine-checked** (was 1): 1 glyph by glyph, 31 word by word. The animated words are part-for-part pixel-identical to the USA frames, so their readings carry over by block hash. Each gong sign is one brush kanji (start, end, next, celebrate, complete, stop, hurry, special); the USA release draws the same kanji blocks with an English word block beside each. The Japan release has no Master Game rank frames: its result screen is a score table |
+| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **446 blocks read, 630 entries** (was 438 / 622; run 20261106T1223Z read the 8 brush-kanji blocks of the Master Game gong signs) (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; entries include pixel-identical base2/xband1 copies; run 20261106T0223Z added staff initials, animated-word letters and the Master Game result labels, ranks and rank letters; other narrow blocks partial). **Japan: 290 entries** (was 261; run 20261106T1223Z added the animated-word letters, the 8 gong kanji and one result-label block) over openning, base1, base2, battle1, master1, normal5 and staff (menus, control set-up, world, boss and arena names, the guest characters' name plates, award titles, save messages in katakana, credit headings); Japan normal5's only differing block is the localised version of a one-word USA banner |
 | **Menu, screen and play capture states** (scripted pad input, no memory writes) | **381 new** (incl. 8 battle arena previews and a match with Devil, Mad Bomber and Bonus Game on) |
 | **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (907 states in all) |
 
@@ -229,7 +229,9 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Backgrounds of all 47 built stages (display-on stage-select captures) | every descriptor grid equals a live plane on all 16,384 cells on 44 stages; descriptor cell block in VRAM on 47 (byte-exact on 20, ≥ 98% where tiles animate); descriptor palette the best CRAM match on 47 |
 | Soft-block generator from the captured generator state | with a per-stage set-up offset: exact on 24 of the 39 built stages with soft blocks when the bomber area and the kernel table's enemy cells are reserved, 28 of 39 when the objects code spawns are reserved too (the other 11 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
-## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z and 0723Z)
+## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z and 1223Z)
+
+Run 20261106T1223Z (in progress at this PR): `c571a48` (head) all-button play generator and this run's states in the capture list · `f2e726d` Japan animated words, gong signs and result labels (74 frames, 32 machine-checked), USA gong kanji.
 
 Run 20261106T0723Z: `864abd6` (head) Japan staff word blocks · `4ca664a` all-button egg battle (4 more base2 sequences sampled, verified at the next capture pass) · `c2890eb` progress and sprite document · `60f5477` closing pass over 3,681 states · `e4a1109`, `348fc8b`, `9eaa2ce`, `54dccec`, `6dc822d`, `8fd1c26` Japan word blocks · `8f44a0f`, `2733124` walk actions, scripts and recipes · `42b435e`, `80e5698` draw-checked actor colour words, merge rules · `862ee62` item patch tool · `834c1af` per-frame actor sampler, BOMBER CATCHER input · `eb63f21` capture pass over 1,935 states.
 
@@ -282,10 +284,12 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
    The BOMBER CATCHER is solved: Saturn B starts the crane, and after the
    prize the game returns to the battle menu.
 3. Text: Japan word blocks are read for the banner-shaped blocks of seven
-   banks (261 entries). Next:
+   banks and the animated words (290 entries); Japan's animated words,
+   gong signs and result labels are word-checked. Next:
    - the narrower word blocks;
-   - Japan's animated words, Master Game result frames and staff word
-     blocks;
+   - machine checks for the other 42 Japan frames (story, save messages,
+     staff cards): their blocks hold several characters each, so they need
+     per-block readings;
    - XBAND item formats and NetLink data.
 4. Soft-block layouts: make the per-stage set-up offset and the
    code-spawned objects derivable from code instead of fitted (usa-code
@@ -413,4 +417,17 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     world, boss and arena names, the guest characters' name plates, award
     titles, save messages, credit headings). Japan normal5's only differing block is the
     localised version of a one-word USA banner.
+- 20261106T1223Z (first PR, run in progress):
+  - Japan text: the animated HURRY!/MONO/STEREO frames (pixel-identical to
+    USA), the Master Game gong signs (one brush kanji each) and the result
+    labels; 31 frames word-checked, Japan 74 frames with 32 machine-checked.
+  - Battle character select stores one byte per player with the chosen
+    character. Writing the two characters that no select screen offers into
+    it gives a normal battle with them (the game's own code loads and draws
+    them): 15 new base2 sequences in the first run, verified at the closing
+    pass. Character colours follow the player slot, not the character.
+  - Random play that presses every button: item-patched 1-1 gave nothing
+    new (the bomber dies to its own bombs within seconds); a second player
+    in World 3 and the World 2 boss with every button gave 17 new
+    sequences. A wider sweep is running.
 
