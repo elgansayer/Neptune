@@ -18,6 +18,31 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
+## Status (run 20261106T1722Z, in progress)
+
+Private repo commit: `8fb8764` (last build check 19/19 byte-identical at `ce79712`; one documentation commit after it).
+
+**1,186 MATCHING** (1,149 at the start of the run; +37 so far). BOOT: 701 of 1,760 entries MATCHING.
+
+**The NetLink layer's compiler now lets halfword stores take a constant source (`nocopy17w`).**
+- `nocopy17w` is `nocopy17` with one change to the halfword move pattern: like the word pattern, it accepts a
+  constant source when the destination is memory. Combine then folds the constant into the store and reload
+  picks its register. In BOOT `0x06062000`-`0x06067000` the original stores such constants from `r3`/`r7`.
+- It leaves all 700 recorded `nocopy17` functions (BOOT, XS, XBAND and H2H) byte-identical and matches 4 more.
+- Rejected: relaxing the byte move pattern as well (`nocopy17h`): 126 of 655 layer functions change, because
+  the original stores byte constants from `r1`.
+- The regression check (`cregress.py`) now covers H2H too.
+
+What the 33 main-body functions are (cc1 `la4`): hook wrappers and hook tables, record scans and resets, a list
+unlink, a tag skipper, an `alloca` string copy, the backup-library status call and its error-code map.
+
+Source idiom found this run: a chain of equality tests on one character matches only as one `if` per test. GCC 2.7.2
+folds an `||` chain of adjacent constants into range tests, and the original has none.
+
+Compiler leads recorded in the private `docs/TOOLCHAIN.md`:
+- the prologue push placed in a branch delay slot past a load from a structure (`060608E4`, `06060710`);
+- an indexed store for `a[i]` (experiment `la5b`: identical on all 377 `la4` functions, but no near miss matched yet).
+
 ## Status (run 20261106T1222Z)
 
 Private repo commit: `0f83d82` (last build check at that commit, 19/19; clean rebuild 19/19 at `dd0068b`, 13:34Z).
