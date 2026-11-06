@@ -20,28 +20,50 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261106T1222Z)
 
-Private repo commit: `bac6a6e` (verified build state `e252f5e`).
+Private repo commit: `7785772` (last verified build state `e2c19bd`, 13:12Z).
 
-**885 MATCHING** (794 at the start of run 20261106T0917Z; +91). C functions: BOOT 327, XS 219, XBAND 219;
-library routines unchanged (120).
+**1,079 MATCHING** (794 at the start of run 20261106T0917Z, 885 at the start of this run; +194 this run). C
+functions: BOOT 521, XS 219, XBAND 219; library routines unchanged (120). BOOT: 594 of 1,760 entries MATCHING.
 
 **BOOT's main body is GCC output with its own compiler configuration.**
 - The main body (`0x06010000`-`0x06067000`, below the NetLink layer) was compiled with
-  `-m2 -O2 -fomit-frame-pointer`.
+  `-m2 -O2 -fomit-frame-pointer`. A few regions keep the frame pointer (`-m2 -O2`).
 - Its compiler, `la3`, is `jan96` (FSF 2.7.2 with the SH changes of 9 Dec 1995 and 2 Jan 1996) plus an SH
   `LEGITIMIZE_ADDRESS`. For a 4-byte access whose displacement does not fit `add #imm8`, the displacement goes
   into a register and the access is indexed (`@(r0,Rn)`). FSF 2.7.2's macro is empty, so it adds the
   constant to the base first. Displacements 64..127 still use `add`, as in the original.
-- Over the 91 recorded main-body functions: `la3` matches 91, `jan96` 87, plain 2.7.2.3 86, and the NetLink
+- Over the first 91 main-body functions: `la3` matches 91, `jan96` 87, plain 2.7.2.3 86, and the NetLink
   layer's `nocopy17` 78. `la3` leaves the 25 `jan96` library units identical. So the layer and the main body
   were built separately.
 - Rejected: indexing every access size (`la1`, loses 7) and every 4-byte displacement (`la2`).
 
-Verification: every function was compared byte for byte by the private `ctry.py` before it was recorded.
-- Run 20261106T0917Z recorded 91. It committed 46 after `make check` 19/19 (09:33Z), then hit the account
-  usage limit before committing the other 45.
-- This run checked those 45 first: a clean rebuild (`rm -rf build/csrc`, BOOT re-split, `make check`) passed
-  19/19 byte-identical at 12:24Z.
+**New build feature: C units that start with constants (`lead=N`).**
+- GCC 2.7.2 writes a function's string literals into `.text` just before the function. So do constants it
+  forces into memory, such as the multiplier of a division by a constant. The originals have them in the same
+  place.
+- A C function entry can now say that its compiled unit starts N bytes before the function address. The
+  splitter cuts there and places the function symbol inside the unit. The C comparison tool measures N from
+  the object.
+- Negative control: changing one character of a literal fails `make check` at that byte.
+- Literals that GCC merged within one original source file stay external references.
+
+What the 194 functions are:
+- PPP/LCP/IPCP trace wrappers, modem command senders, and the modem state-machine event handlers (switch tables);
+- SMPC and SCU register access, an interrupt handler, BIOS calls (including the backup-library table);
+- the `sprintf` wrapper (varargs), memory-region lookups, ring-buffer and byte readers;
+- list walks and frees, record initialisers, and accessors of large records.
+
+Verification:
+- every function was compared byte for byte by the private `ctry.py` before it was recorded;
+- each batch of 10-25 was then checked by a BOOT re-split and `make check` (19/19 byte-identical) before its
+  commit, 12 times this run;
+- the first check (12:24Z) was a clean rebuild with every C object recompiled.
+
+Compiler leads from the near misses are listed in the private `docs/TOOLCHAIN.md`:
+- loop-counter elimination in favour of the reduced induction variable;
+- `x == 0 || x == 1` kept as two tests;
+- an unfilled `bra` delay slot;
+- the register of a stored constant in frame-pointer code.
 
 ## Status (run 20261106T0722Z)
 
@@ -726,7 +748,9 @@ Next frontier:
 ### 20261106T1222Z (this run)
 
 - Verified the previous run's 45 uncommitted functions with a clean rebuild (19/19), then committed them
-  (private `e252f5e`, 885 MATCHING), plus docs (`bac6a6e`).
-- Next: more of BOOT's main body with `la3`, smallest functions first (1,360 BOOT entries are still
-  asm-only, most of them in the main body).
-
+  (private `e252f5e`, 885 MATCHING).
+- Added the `lead=N` build feature and 194 more main-body functions in 12 verified batches (1,079 MATCHING at
+  private `e2c19bd`; docs `7785772`).
+- Another lane held the heavy lock for over 10 minutes. Incremental BOOT checks were measured at about 14
+  CPU-seconds, so they ran without the lock (niced); clean rebuilds stay under it.
+- Next: the main body's 61-100 and 101-200 byte buckets (about 590 entries), then the compiler leads above.
