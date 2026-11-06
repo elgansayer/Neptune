@@ -58,7 +58,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Colour-cycle scripts | 124 / 124 |
 | VDP2 cell animations | 36 records, 232 frames (stage banks) |
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
-| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **32 confirmed by capture on every cell** (was 19), rendered in capture colours. Every map is searched anywhere in the captured VDP2 VRAM of all 1,535 states: 29 lie exactly on a displayed page, 3 more under one palette offset (the title's logo wallpaper and the battle scoreboard's crosshair). New this run: the Master Game temple gate and dragon door, the BOMBER CATCHER screen (3 maps), the logo wallpaper, the crosshair, and the XBAND copies of confirmed battle maps |
+| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **36 confirmed by capture on every cell** (was 32 at PR #900, 19 before run 20261106T0223Z), rendered in capture colours. Every map is searched anywhere in the captured VDP2 VRAM of all 1,535 states: 29 lie exactly on a displayed page, 3 more under one palette offset (the title's logo wallpaper and the battle scoreboard's crosshair). Run 20261106T0223Z added the Master Game temple gate and dragon door, the BOMBER CATCHER screen (3 maps), the logo wallpaper, the crosshair, the XBAND copies of confirmed battle maps, and, after reading the Master Game hub code, the 4 hub flame maps (master1 12-15) from a natural idle run on the hub screen: the hub draws them once its progress byte reaches 4 |
 | Normal Game stage descriptors | 50 / 50 |
 | Normal Game enemy placement lists (kernel table) | 50 / 50 |
 | Master Game enemy placement lists | 20 / 20 |
@@ -73,7 +73,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
 | **Sprite text frames** (story, save-system messages, Master Game intro and results, staff credits, animated words) | **96 frames, all machine-checked against the bank data, 0 conflicts** (was 39 of 54). The 54 glyph-built frames: 30 glyph by glyph, 20 word by word (9 save messages, 11 animated-word frames), 4 mixed glyph and word blocks (3 staff cards, "Fin"). Plus 42 Master Game result frames (score labels, 19 ranks from Baby to Master, rank letters). **Japan: 43 frames transcribed** (was 8): 8 story screens, 9 save messages, the Master Game intro (vertical text) and 25 staff cards; visual, 1 glyph-checked |
-| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **427 blocks read, 611 entries** (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; entries include pixel-identical base2/xband1 copies; run 20261106T0223Z added staff initials, animated-word letters and the Master Game result labels, ranks and rank letters; other narrow blocks partial) |
+| **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **438 blocks read, 622 entries** (was 427 / 611 at PR #900; the battle Series screen's digits and STAGE banner added) (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; entries include pixel-identical base2/xband1 copies; run 20261106T0223Z added staff initials, animated-word letters and the Master Game result labels, ranks and rank letters; other narrow blocks partial) |
 | **Menu, screen and play capture states** (scripted pad input, no memory writes) | **381 new** (incl. 8 battle arena previews and a match with Devil, Mad Bomber and Bonus Game on) |
 | **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (907 states in all) |
 
@@ -231,6 +231,8 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z and 20261106T0223Z)
 
+Run 20261106T0223Z after PR #900: `c466f69` (head) Master hub flame maps (master1 12-15) confirmed, maps 36/65 · `8c99cc3` draw rule on 36,768 of 36,769 drawn actors · `750c873`, `123bee5` state list adds the Series walk, the second Normal Game play pass and the hub idle run · `054005f`, `5923972` Series-screen word blocks (622 entries) · `d54fd5e` hub flame lead.
+
 Run 20261106T0223Z: `b005bde` (head) closing pass over 1,535 states · `17ebcac`, `a8969aa` Master Game result text · `de638e6`, `3d9e0fd`, `859b593` Japan staff credits, Master intro and save messages · `62d75c3`, `35173fa` all text frames machine-checked · `05967b4` map search under a name offset · `dc68656` XBAND database across files · `cc23b45` sprite runtime document and walk recipes · `ccc03d5` state list shared by the capture pass · `002325a` XBAND client database split, static colour-pairing tool · `2a3dcb4` map search at any position, actor-record colour reader.
 
 Run 2123Z: `57ea324` (head) word blocks of all 12 banks · `fae4c79` special-rules battle, 907-state pass · `d5ca419` word-level check of the save messages, Japan story text, stage 2-2 draws explained · `6b795ae` word blocks of four banks · `ba74aa2` battle arena previews (864-state pass) · `5f69132` Master boss floors, 852-state capture pass, 241 word
@@ -367,4 +369,8 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
   - Open: the BOMBER CATCHER waits for an input the walks have not found.
     The Master RESULT waits for a button. A Battle Series walk was queued
     at the end of the run.
+  - After PR #900: the Master Game hub flames (4 maps) were confirmed from a
+    natural idle capture, which makes 36 of 65 maps. The Series walk (50
+    states) found no new map.
+- 20261106T0418Z: no work recorded (the run ended without output).
 
