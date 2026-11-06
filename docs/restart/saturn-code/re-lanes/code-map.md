@@ -20,10 +20,10 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261106T0722Z)
 
-Private repo commit: `548bdd7` (this run's commits: `99268e1` to `548bdd7`).
+Private repo commit: `dded95e` (this run's commits: `99268e1` to `dded95e`).
 
-**791 MATCHING** (712 at the start of the run; +79). The previous run's last 27 were verified and committed
-first. C functions: BOOT 233, XS 219, XBAND 219; library routines unchanged (120).
+**794 MATCHING** (712 at the start of the run; +82). The previous run's last 27 were verified and committed
+first. C functions: BOOT 236, XS 219, XBAND 219; library routines unchanged (120).
 
 Verification under the heavy lock:
 - clean rebuilds (`rm -rf build/csrc`, re-split of BOOT/XS/XBAND, `make check`) passed 19/19 byte-identical at
@@ -31,7 +31,8 @@ Verification under the heavy lock:
 - the final 790 state passed 19/19 at 08:57Z (`nocopy17`, 235 C sources, 12 of them built without `-O`);
   negative control after it: one changed constant in a shared source fails `make check` in BOOT, XS and XBAND,
   each inside that function; restored, 19/19;
-- the last function (791) was checked by one more clean rebuild and `make check` at 09:05Z, 19/19 (236 C sources);
+- the last functions were checked by more clean rebuilds and `make check`: 791 at 09:05Z and 794 at 09:08Z, 19/19
+  (239 C sources);
 - every function was compared byte for byte with BOOT, XS and XBAND (`ctry.py`) before it was recorded;
 - every compiler change was decided by a regression check over all recorded C functions (0 regressions).
 
@@ -56,7 +57,7 @@ Verification under the heavy lock:
 4. **`nocopy17`: the rest of the FSF SH change of 2 Jan 1996.**
    - The earlier `jan96` cc1 had only one part of that change. The rest stops the SH backend forcing
      optimisation and delayed branches when no `-O` is given.
-   - Some BOOT code was built without `-O` (every delay slot a `nop`). All 13 BOOT functions that look like
+   - Some BOOT code was built without `-O` (every delay slot a `nop`). All 16 BOOT functions that look like
      that now match, most on the first try (XBAND, XS and H2H have none). Code built with `-O2` is unchanged.
 
 So the vendor compiler is FSF 2.7.2 with the late-1995/January-1996 SH changes and at least three GCC 2.6.3-era
@@ -188,7 +189,7 @@ to reload.**
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **791** / see usa-code / 18,232 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 671 are C functions compiled by GCC 2.7.2.3 variants (BOOT 233, XS 219, XBAND 219): the NetLink application layer, built from one source per function into every module that holds it, and 13 BOOT helpers built without `-O`. 120 are library routines compiled from their original free-software sources: GCC's libgcc (BOOT 55, XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **794** / see usa-code / 18,229 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 674 are C functions compiled by GCC 2.7.2.3 variants (BOOT 236, XS 219, XBAND 219): the NetLink application layer, built from one source per function into every module that holds it, and 16 BOOT helpers built without `-O`. 120 are library routines compiled from their original free-software sources: GCC's libgcc (BOOT 55, XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -664,13 +665,13 @@ Next frontier:
 
 ### 20261106T0722Z (this run)
 
-Moved: **791 MATCHING** (from 712). See the status section for the four compiler findings.
+Moved: **794 MATCHING** (from 712). See the status section for the four compiler findings.
 
 - Verified and committed the previous run's uncommitted last batch first.
 - Wrote a regression check for compiler variants over all recorded C functions (private `cregress.py`).
   Tested nine variants against it: four adopted (`nocopy10a`, `nocopy13`, `nocopy15`, `nocopy17`), five rejected.
 - Wrote C for 22 more shared functions (+66), smallest-first among the bodies not tried before, plus former
-  near misses that the new compilers made reachable; and 13 BOOT functions built without `-O` (+13).
+  near misses that the new compilers made reachable; and 16 BOOT functions built without `-O` (+16).
 - Verification: see the status section. Another lane held the heavy lock for long stretches, so batches
   were verified by `ctry.py` first and by a clean `make check` whenever the lock was free.
 
@@ -678,7 +679,7 @@ Next frontier:
 
 1. The 34 shared bodies left (among them `0606E740`, 888 bytes, and `0606FC70`, which fills delay slots with
    `or r0,r0`) and the BOOT-only functions of the layer, with `nocopy17`. (BOOT code built without `-O` is
-   done: all 13 such entries match.)
+   done: all 16 such entries match.)
 2. Compiler leads:
    - global-alloc priority between equal-looking pseudos (`0606E384`, `0606DCEC`, `0606E408`);
    - scheduling of a constant load next to an independent copy (`06070CBC`, 4 bytes);
