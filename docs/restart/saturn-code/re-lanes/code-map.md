@@ -20,7 +20,8 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261106T0722Z)
 
-Private repo commit: `dded95e` (this run's commits: `99268e1` to `dded95e`).
+Private repo commit: `450d254` (this run's commits: `99268e1` to `450d254`; the last verified build state is `dded95e`,
+followed by one documentation commit).
 
 **794 MATCHING** (712 at the start of the run; +82). The previous run's last 27 were verified and committed
 first. C functions: BOOT 236, XS 219, XBAND 219; library routines unchanged (120).
@@ -681,6 +682,8 @@ Next frontier:
    `or r0,r0`) and the BOOT-only functions of the layer, with `nocopy17`. (BOOT code built without `-O` is
    done: all 16 such entries match.)
 2. Compiler leads:
+   - GCC 2.6.3's long-branch filler `or r0,r0` (`0606FC70`; the -O0 BOOT helpers use `nop`, so possibly two
+     compiler builds);
    - global-alloc priority between equal-looking pseudos (`0606E384`, `0606DCEC`, `0606E408`);
    - scheduling of a constant load next to an independent copy (`06070CBC`, 4 bytes);
    - the base/constant order for large offsets used twice (`0606C028`);
