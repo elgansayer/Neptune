@@ -25,7 +25,7 @@ file/offset/hash → output hash).
 
 | Release | ISO files | Unknown | Notes |
 | --- | ---: | ---: | --- |
-| USA | 430 | 0 | 1 archive, 3 movies, 174 images, 66 font files, 42 text, 5 data (3 XBAND files partly decoded, incl. the client database split into its items; 2 layouts open), 8 code, 131 audio |
+| USA | 430 | 0 | 1 archive, 3 movies, 174 images, 66 font files, 42 text, 5 data (XBAND/NetLink, run 20261106T1723Z: the client database split into its items; the XBAND file map and the game-info record decoded field by field from the XBAND code that reads them; the XBAND data file mapped end to end, 6 bytes open; the NetLink data file identified as a byte-exact copy of the boot program's initialised data), 8 code, 131 audio |
 | Japan | 25 | 0 | `BOMSS1.CPK`, `BOMSS3.CPK` and 9 AIFs are byte-identical to USA |
 
 ### `PROGRAM.BIN` banks
@@ -58,7 +58,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Colour-cycle scripts | 124 / 124 |
 | VDP2 cell animations | 36 records, 232 frames (stage banks) |
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
-| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **41 confirmed by capture on every cell** (was 36), rendered in capture colours. Every map is searched anywhere in the captured VDP2 VRAM: 29 lie exactly on a displayed page in run 0223Z's 1,535 states, 3 more under one palette offset (the title's logo wallpaper and the battle scoreboard's crosshair), 4 Master Game hub flame maps in a natural idle run. Run 20261106T0723Z added 5 from its 476 new screens: the battle set winner's VICTORY on the stadium screen (battle1 15), the Battle Series VICTORY parade (battle1 11) and its AWARDS screen's trophy wallpaper (battle1 5), and the xband1 copies of 5 and 15 |
+| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **45 confirmed by capture on every cell** (was 41; run 20261106T1723Z: the Battle Series AWARDS frame and a Series wallpaper under one palette offset each, found by an offset search of the newer battle, Series and Master states, and two Master Game result backgrounds reached by setting the rank inputs), rendered in capture colours. Every map is searched anywhere in the captured VDP2 VRAM: 29 lie exactly on a displayed page in run 0223Z's 1,535 states, 3 more under one palette offset (the title's logo wallpaper and the battle scoreboard's crosshair), 4 Master Game hub flame maps in a natural idle run. Run 20261106T0723Z added 5 from its 476 new screens: the battle set winner's VICTORY on the stadium screen (battle1 15), the Battle Series VICTORY parade (battle1 11) and its AWARDS screen's trophy wallpaper (battle1 5), and the xband1 copies of 5 and 15 |
 | Normal Game stage descriptors | 50 / 50 |
 | Normal Game enemy placement lists (kernel table) | 50 / 50 |
 | Master Game enemy placement lists | 20 / 20 |
@@ -72,7 +72,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | NetLink/XBAND images | 174 / 174 |
 | NetLink font strips and width tables | 58 / 58 and 8 / 8 |
 | HTML/TXT text | 42 / 42 |
-| **Sprite text frames** (story, save-system messages, Master Game intro and results, staff credits, animated words) | **96 frames, all machine-checked against the bank data, 0 conflicts** (was 39 of 54). The 54 glyph-built frames: 30 glyph by glyph, 20 word by word (9 save messages, 11 animated-word frames), 4 mixed glyph and word blocks (3 staff cards, "Fin"). Plus 42 Master Game result frames (score labels, 19 ranks from Baby to Master, rank letters). **Japan: 74 frames transcribed** (was 43): 8 story screens, 9 save messages, the Master Game intro (vertical text), 25 staff cards, and (run 20261106T1223Z) the animated HURRY!/MONO/STEREO frames, the 16 Master Game gong-sign frames and 4 result-label frames; **70 machine-checked** (was 1): 1 glyph by glyph, 31 word by word, 1 mixed, and 37 story, save-message and staff frames on the 16-pixel character pitch (each multi-character block must read the same in every frame and agree with its word-block reading); 4 still visual. The animated words are part-for-part pixel-identical to the USA frames, so their readings carry over by block hash. Each gong sign is one brush kanji (start, end, next, celebrate, complete, stop, hurry, special); the USA release draws the same kanji blocks with an English word block beside each. The Japan release has no Master Game rank frames: its result screen is a score table |
+| **Sprite text frames** (story, save-system messages, Master Game intro and results, staff credits, animated words) | **97 frames, all machine-checked against the bank data, 0 conflicts** (was 96; run 20261106T1723Z read a tenth save message, the in-game "not enough free memory" box, which no earlier list had). The 55 glyph-built frames: 30 glyph by glyph, 21 word by word (10 save messages, 11 animated-word frames), 4 mixed glyph and word blocks (3 staff cards, "Fin"). Plus 42 Master Game result frames (score labels, 19 ranks from Baby to Master, rank letters). **Japan: 75 frames transcribed** (was 74; the same tenth save message): 8 story screens, 9 save messages, the Master Game intro (vertical text), 25 staff cards, and (run 20261106T1223Z) the animated HURRY!/MONO/STEREO frames, the 16 Master Game gong-sign frames and 4 result-label frames; **71 machine-checked** (was 1): 1 glyph by glyph, 31 word by word, 1 mixed, and 38 story, save-message and staff frames on the 16-pixel character pitch (each multi-character block must read the same in every frame and agree with its word-block reading); 4 still visual. The animated words are part-for-part pixel-identical to the USA frames, so their readings carry over by block hash. Each gong sign is one brush kanji (start, end, next, celebrate, complete, stop, hurry, special); the USA release draws the same kanji blocks with an English word block beside each. The Japan release has no Master Game rank frames: its result screen is a score table |
 | **Sprite word blocks** (menu labels, arena, character, world and boss names, banners, Master Game labels, battle taunts) | **446 blocks read, 630 entries** (was 438 / 622; run 20261106T1223Z read the 8 brush-kanji blocks of the Master Game gong signs) (every text-bearing banner-shaped block of all 12 banks, the whole save-message font; entries include pixel-identical base2/xband1 copies; run 20261106T0223Z added staff initials, animated-word letters and the Master Game result labels, ranks and rank letters; other narrow blocks partial). **Japan: 290 entries** (was 261; run 20261106T1223Z added the animated-word letters, the 8 gong kanji and one result-label block) over openning, base1, base2, battle1, master1, normal5 and staff (menus, control set-up, world, boss and arena names, the guest characters' name plates, award titles, save messages in katakana, credit headings); Japan normal5's only differing block is the localised version of a one-word USA banner |
 | **Menu, screen and play capture states** (scripted pad input, no memory writes) | **381 new** (incl. 8 battle arena previews and a match with Devil, Mad Bomber and Bonus Game on); run 20261106T1223Z added 2,197 sampler states: 1,248 from stage-select play with every button, 494 from battles with characters 8-11, 392 from computer-player battles and 63 from the XBAND bank (memory writes at the select or title screen, labelled `patched-`) |
 | **Ending, staff roll and boss capture states** (the game's own end-of-game path, entered by a memory write; Normal and Master boss stages continued from stage select) | **382 new** (907 states in all) |
@@ -212,6 +212,28 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
   4-bit cell frames; a FONTX2 Shift-JIS font in the base banks; Japan
   `BOMSS2.CPK` is a separate dub.
 
+- **XBAND and NetLink files (new, run 20261106T1723Z).** Read from the code
+  that loads them:
+  - The NetLink data file is a byte-exact copy of the last 19,168 bytes of
+    the boot program, its initialised data; the boot program reads it back
+    by name over that range.
+  - The XBAND file map holds a word, the game directory, the XBAND
+    directory, the game-info file name and a flag byte; the XBAND module
+    changes into the XBAND directory and loads the game-info record into a
+    fixed buffer.
+  - The game-info record holds a game identifier (sent to the other player
+    when connecting), a second word, the title, a credit line, the
+    initial-program file and two head-to-head library files. One accessor
+    function reads each field.
+  - The XBAND data file starts with two blank 320 x 224 4-bit screens (one
+    colour index everywhere), then 8 zero bytes, the sound driver copy, 6
+    open bytes and the database's audio items.
+- **Master Game result (new, run 20261106T1723Z).** The rank comes from a
+  table indexed by the score band and the technique-points band, with two
+  top ranks reserved for full clears. The result screen's background
+  follows the rank: the dragon door below rank 9, a cave door from 9 to 17
+  and the summit at 18. Every earlier capture showed the dragon door.
+
 ### Live checks of the stage data
 
 | Check | Result |
@@ -231,7 +253,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z, 1223Z and 1723Z)
 
-Run 20261106T1723Z (in progress at this PR): `1a6e88d` (head) run 1223Z's closing pass integrated (bindings, capture checks, map search, unbound inventory, progress).
+Run 20261106T1723Z (in progress at this PR): `a099ca4` (head) master1 4 and 11 confirmed via the rank inputs, maps 45/65 · `a8d269f`, `178d918` battle1 16 and 17 under palette offsets (offset search over 2,175 states) · `7929435`, `a5d6313` the tenth save message, USA and Japan · `e60b164` map search bank filter · `452b702` XBAND/NetLink layouts from code · `1a6e88d` run 1223Z's closing pass integrated.
 
 Run 20261106T1223Z: `e3d107b` (head) player-slot colours, computer players, XBAND word, unbound inventory · `1651bf9` docs, sampler KNOWN filter · `1c5ca72` Japan pitch check (70 of 74 frames) · `c571a48` all-button generator · `f2e726d` Japan animated words and gong signs.
 
@@ -282,10 +304,13 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
    - xband1 is now resident in an XBAND-word battle (run 20261106T1223Z);
      most of its bindings still come from pixel-identical battle1 blocks. Japan normal1-normal5
      match the USA banks except one block.
-2. VDP2 map colours: 41 of 65 confirmed. The 24 still open:
-   - battle1 7-9, 13, 14 and 16-18 (other stadium and Series screens);
-   - master1 4, 6 and 11 (the Master Game ending or special floors);
-   - 13 xband1 maps (the XBAND menus).
+2. VDP2 map colours: 45 of 65 confirmed. The 20 still open:
+   - battle1 7-9, 13, 14 and 18 (stadium screens; the stadium overview is
+     loaded with the victory screen but no capture holds it, even in part;
+     two others reach 86% and 68% of their cells on the records pages);
+   - master1 6 (no fixed load in the kernel);
+   - 13 xband1 maps (the XBAND menus; three are byte-identical to battle
+     maps that are open too).
 
    The BOMBER CATCHER is solved: Saturn B starts the crane, and after the
    prize the game returns to the battle menu.
@@ -296,12 +321,19 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
    - machine checks for the other 42 Japan frames (story, save messages,
      staff cards): their blocks hold several characters each, so they need
      per-block readings;
-   - XBAND item formats and NetLink data.
+   - XBAND item formats and the 7 open database entries (the XBAND and
+     NetLink file layouts are closed, run 20261106T1723Z).
 4. Soft-block layouts: make the per-stage set-up offset and the
    code-spawned objects derivable from code instead of fitted (usa-code
    scope). Also the open descriptor parameters, the two unpaired
    background grids and the open slot-6 attribute bits.
-5. Neptune implementation issues: #877 (soft blocks and items), #887
+5. Master Game result rank (new lead, run 20261106T1723Z): the rank is a
+   16 x 17 table lookup of a score band (16 thresholds, 20,000 to 320,000)
+   and a technique-points band (16 thresholds, 1,000 to 30,000), with two
+   top ranks that also need every floor cleared and two per-floor
+   counters in range; the result background follows the rank (below 9,
+   9-17, 18). Name those two counters, then file the implementation issue.
+6. Neptune implementation issues: #877 (soft blocks and items), #887
    (enemy placement) and #890 (battle arena set-up) are filed. The BOMBER
    CATCHER crane's inputs, states and prize rule are posted on #425
    (bonus-game framework).
@@ -466,8 +498,23 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     colours (was 6,295), 3,053 of 4,915 sequences bound (was 2,720),
     4,432 blocks drawn directly (was 3,787); 16 sequences bound
     only by samples. Draw rule 172,440 of 172,462. VDP2 maps 41/65.
-- 20261106T1723Z (first PR, run in progress):
+- 20261106T1723Z (second PR, run in progress):
   - Integrated run 1223Z's closing pass (private `1a6e88d`).
+  - XBAND and NetLink data: the last open layouts closed from the code that
+    reads them (see Formats); 6 bytes of the XBAND data file stay open.
+  - VDP2 maps 45/65 (was 41): an offset search of the newer states found
+    the Series AWARDS frame and one wallpaper under a palette offset; the
+    Master Game result backgrounds for ranks 9-18 appeared once the rank
+    inputs were set in the area-clear trigger state (ranks 9, 15, 18).
+  - Text: a tenth save message (USA and Japan), 97 USA frames and 71 of 75
+    Japan frames machine-checked.
+  - Save-memory messages: a cold boot with the internal backup memory
+    filled by one file shows the "not enough free memory" screen; a zeroed
+    backup memory does not show the "not ready" one (the game goes on to
+    its intro).
+  - Negative result: computer-player battles with the XBAND bank resident
+    add almost nothing (one sequence); the XBAND bank's common battle
+    sequences were already bound through identical battle-bank blocks.
   - The 22 draw-rule exceptions are in 4 captures. In each, the actor's
     colour word is one palette step (0x10, once 0x20) above the drawn
     colour; 20 are the parts of the World 5 boss in two states, consistent
