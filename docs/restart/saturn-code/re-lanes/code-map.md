@@ -18,6 +18,43 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
+## Status (run 20261106T0722Z)
+
+Private repo commit: `c50e7cf` (this run's commits: `99268e1` to `c50e7cf`).
+
+**721 MATCHING** (712 at the start of the run; the previous run's last 27 were verified first: re-split and
+`make check` 19/19 byte-identical, private `99268e1`). C functions: BOOT 201, XS 200, XBAND 200; library
+routines unchanged (120). Verified at `c50e7cf` under the heavy lock: every C object recompiled
+(`rm -rf build/csrc`, 204 sources), re-split of BOOT/XS/XBAND, `make check` 19/19 byte-identical.
+
+**The NetLink layer's compiler is now `nocopy10a`** (`-m2 -O2 -fno-force-mem`):
+
+- `nocopy10a` = `nocopy6` with FSF GCC's move expander (`prepare_move_operands`) restored. Constants and
+  memory values are copied into pseudo registers at expand time again, as in FSF GCC 2.6.3/2.7.2.3. Only
+  the permissive condition of the SH `movsi_i` pattern stays (a constant or memory source may go straight
+  to a memory destination).
+- With that, two standard passes reproduce what run 20261105T2122Z saw as "stores left to reload":
+  - CSE replaces a register known to hold 0 by the constant in a store, because the SH cost of 0 (0) is
+    below a register's (1);
+  - combine folds a constant used by one store only into that store, and reload then loads it.
+  A non-zero constant stored twice keeps its register: in the record reset `060714AC` the original holds
+  -1 in `r2` for two stores and reloads every 0 into `r6`.
+- All 567 recorded layer functions keep matching (one source change), `060714AC` and `0606DD8C` match, and
+  no near miss gets worse.
+- The interrupt-mask helper (an inline `set_imask` like SBL's) now computes the new status-register value
+  as the operand of `ldc` rather than assigning it back. That one form matches every user, including
+  `06071700` (a masked double read with retry). There, a hoisted mask constant gets no callee-saved
+  register, so reload loads it into the result register. The second helper form of the previous run is gone.
+- Rejected (evidence only): zero-only stores (`nocopy9`, breaks 14), a forced constant as the first
+  operand of commutative operations (`nocopy11`, no effect: CSE moves it back), tying the constant operand
+  first in local allocation (`nocopy12`, breaks 21).
+- New private tool `tools/toolchain/cregress.py`: recompiles every recorded C function with a candidate
+  cc1 and scores the near misses, in about 4 CPU-seconds. Every compiler change of this run was decided
+  with it (0 regressions required).
+- Remaining in the layer: 53 shared bodies and 35 BOOT-only functions. Open compiler leads: the
+  base/constant register order for large field offsets used twice (`0606C028`), constant synthesis
+  (`mov #-128; extu.b` for 0x80 in `06071924`), loop-invariant hoisting of constants (`0606EBF8`).
+
 ## Status (run 20261106T0222Z)
 
 Private repo commit: `0f9dd61` (this run's commits: `a45c101` to `0f9dd61`).
@@ -122,7 +159,7 @@ to reload.**
 | Modules rebuilt byte-identically by `make check` | **14/14** (2,971,194 bytes) |
 | Whole code-bearing files rebuilt and verified | **all 14 census code-bearing sources** (USA 11, Japan 3). The 5 containers (USA/Japan system area, USA/Japan PROGRAM.BIN, XBAND.DAT) take their code from the disassembled modules via `.incbin`; their other bytes are data owned by the asset lanes |
 | Modules disassembled | **14/14**; 1,988,942 code bytes emitted as instructions, the rest as data |
-| Functions MATCHING / NONMATCHING-verified / asm-only | **685** / see usa-code / 18,338 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 565 are C functions compiled by GCC 2.7.2.3 variants (BOOT 189, XS 188, XBAND 188): the NetLink application layer, built from one source per function into every module that holds it. 120 are library routines compiled from their original free-software sources: GCC's libgcc (BOOT 55, XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
+| Functions MATCHING / NONMATCHING-verified / asm-only | **721** / see usa-code / 18,302 static entries (19,023 known; USA 14,027 incl. the duplicate XBSND; Japan 4,996). 601 are C functions compiled by GCC 2.7.2.3 variants (BOOT 201, XS 200, XBAND 200): the NetLink application layer, built from one source per function into every module that holds it. 120 are library routines compiled from their original free-software sources: GCC's libgcc (BOOT 55, XBAND 22, XS 3, H2H 1) and Cygnus newlib 1.6.1 (BOOT 18, XBAND 17, XS 4). 20 more inventory entries are extra entry points inside those routines and are not counted as functions |
 | SH-2 instructions as mnemonics | USA: KRNL 283,487, BOOT 150,786, XBAND 225,221, XS 13,224, H2H 3,009, FLD 1,652, IP 703, SAMPLEIP 719. Japan: KRNL 285,623, IP 719 |
 | Cross-file `bsr` kept as raw words | KRNL 1,461; Japan KRNL 1,468; IP/SAMPLEIP 12 each |
 | 68000 instructions as verified mnemonics | SND/XBSND/Japan SND 4,050 of 4,051; NLSND 3,746 of 3,747 |
@@ -565,7 +602,7 @@ Next frontier:
 
 Exited without a result (rc=1); no commits.
 
-### 20261106T0222Z (this run)
+### 20261106T0222Z
 
 Moved: **685 MATCHING** (from 442). See the status section for the compiler findings.
 
@@ -596,3 +633,20 @@ Next frontier:
 3. Still open: XBAND's soft-float core and newlib, BOOT's remaining C library, the CPK work-area code
    origin, unclassified bytes, SBL symbol names. Owner decision: a licensed Hitachi SHC for KRNL.
 
+### 20261106T0722Z (this run)
+
+Moved: **721 MATCHING** (from 712). See the status section for the compiler finding.
+
+- Verified the previous run's uncommitted last batch first (re-split, `make check` 19/19) and committed it.
+- Wrote a regression check for compiler variants over all recorded C functions (private `cregress.py`) and
+  tested four variants against it: one adopted (`nocopy10a`), three rejected.
+- Verification: clean rebuild of all C objects with `nocopy10a`, re-split of BOOT/XS/XBAND, `make check`
+  19/19 byte-identical (07:50Z).
+
+Next frontier:
+
+1. The 53 shared bodies and 35 BOOT-only functions left in the NetLink layer, with `nocopy10a`.
+2. Compiler leads: base/constant order for large field offsets used twice (`0606C028`, `0606AABC`), constant
+   synthesis for 128-255, loop-invariant hoisting of constants.
+3. Still open: XBAND's soft-float core and newlib, BOOT's remaining C library, the CPK work-area code
+   origin, unclassified bytes, SBL symbol names. Owner decision: a licensed Hitachi SHC for KRNL.
