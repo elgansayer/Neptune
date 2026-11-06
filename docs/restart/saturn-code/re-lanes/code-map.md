@@ -20,10 +20,10 @@ byte-identical build, and every module in the build.
 
 ## Status (run 20261106T1222Z)
 
-Private repo commit: `4d81bd4` (last build check `4e6b7d6`, 19/19; clean rebuild 19/19 at `dd0068b`, 13:34Z).
+Private repo commit: `8461605` (last build check `70ffb6d`, 19/19; clean rebuild 19/19 at `dd0068b`, 13:34Z).
 
-**1,122 MATCHING** (794 at the start of run 20261106T0917Z, 885 at the start of this run; +237 this run). C
-functions: BOOT 564, XS 219, XBAND 219; library routines unchanged (120). BOOT: 637 of 1,760 entries MATCHING.
+**1,139 MATCHING** (794 at the start of run 20261106T0917Z, 885 at the start of this run; +254 this run). C
+functions: BOOT 581, XS 219, XBAND 219; library routines unchanged (120). BOOT: 654 of 1,760 entries MATCHING.
 
 **BOOT's main body is GCC output with its own compiler configuration.**
 - The main body (`0x06010000`-`0x06067000`, below the NetLink layer) was compiled with
@@ -51,7 +51,7 @@ functions: BOOT 564, XS 219, XBAND 219; library routines unchanged (120). BOOT: 
 - Negative control: changing one character of a literal fails `make check` at that byte.
 - Literals that GCC merged within one original source file stay external references.
 
-What the 237 functions are:
+What the 254 functions are:
 - PPP/LCP/IPCP trace wrappers, modem command senders, and the modem state-machine event handlers (switch tables);
 - SMPC and SCU register access, an interrupt handler, BIOS calls (including the backup-library table);
 - the `sprintf` wrapper (varargs), memory-region lookups, ring-buffer and byte readers;
@@ -59,13 +59,18 @@ What the 237 functions are:
 - the launcher of the TRAMP copy routine. This resolves an open module-map item: TRAMP runs at `0x00200000`, or
   at `0x00300000` minus its 0x8C bytes, and the launcher jumps there without returning.
 
+**The NetLink layer starts lower than thought.** BOOT's code at `0x06062000`-`0x06067000` keeps the frame
+pointer, and it is built with the layer's compiler (`nocopy17 -m2 -O2 -fno-force-mem`): one function there matches
+only with a nocopy cc1, and three more give the same bytes with it. Its halfword stores of constants use `r3`/`r7`
+in the original and `r1` with every cc1, which is the next experiment.
+
 A twin scan groups BOOT functions by their instruction bytes (literal pools excluded), so one C source covers every
 member of a group. It found a group of six object-step handlers and three pairs.
 
 Verification:
 - every function was compared byte for byte by the private `ctry.py` before it was recorded;
 - each batch of 2-25 was then checked by a BOOT re-split and `make check` (19/19 byte-identical) before its
-  commit, 21 times this run (the last 6 functions after the clean rebuild);
+  commit, 28 times this run (the last 23 functions after the clean rebuild);
 - clean rebuilds with every C object recompiled passed 19/19 at 12:24Z and at the end (13:34Z, 561 C sources);
 - negative control after the final check: one changed constant in a main-body source fails `make check` at that
   byte; restored, 19/19.
@@ -761,12 +766,14 @@ Next frontier:
 - Verified the previous run's 45 uncommitted functions with a clean rebuild (19/19), then committed them
   (private `e252f5e`, 885 MATCHING).
 - Added the `lead=N` build feature and 231 more main-body functions in 18 verified batches. Adopted the `la4`
-  compiler (0 regressions). Final state: 1,122 MATCHING at private `4e6b7d6`, docs `4d81bd4`.
+  compiler (0 regressions). Final state: 1,139 MATCHING at private `70ffb6d`, docs `8461605`.
 - Another lane held the heavy lock for most of the run. Incremental BOOT checks were measured at about 14
   CPU-seconds and ran niced without the lock.
 - Deviation: the final clean rebuild of all three modules also ran without the lock and cost 82 CPU-seconds, over
   the 1-minute guideline. Future clean rebuilds go under the lock.
 - Next:
-  - the main body's remaining 1,123 BOOT entries (the 61-200 byte buckets first);
+  - the main body's remaining 1,106 BOOT entries (the 61-200 byte buckets first);
+  - `nocopy17h` (constant sources allowed for halfword/byte memory destinations) for the layer's frame-pointer
+    code at `0x06062000`-`0x06067000`;
   - the compiler leads in the private `docs/TOOLCHAIN.md`: loop-counter elimination, `x == 0 || x == 1` kept as
     two tests, an unfilled `bra` delay slot, and the stored-constant register in frame-pointer code.
