@@ -69,10 +69,10 @@ order and stub calls on every vector, and at least one detected source mutant
 
 | Module | Static entries | MATCHING | NONMATCHING-verified | Asm-only |
 | --- | ---: | ---: | ---: | ---: |
-| USA KRNL | 4,876 | 0 | 220 | 4,656 |
+| USA KRNL | 4,876 | 0 | 1,207 | 3,669 |
 | USA BOOT | 1,760 | 760 (code-map lane) | 0 | 1,000 |
 
-Counts at run 20261107T0450Z, private head `79ddb79`. KRNL still rebuilds
+Counts at run 20261107T1350Z, private head `854c827e`. KRNL still rebuilds
 byte-identically after every rename (`split.py --only krnl` + `make` +
 `check.py`: `usa/krnl` SHA-256 `20109f50…c798a7`, 14/14 USA modules).
 BOOT's MATCHING count is the code-map lane's (`config/usa/boot.status.txt`).
@@ -313,6 +313,29 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
   (private `5fb9c5a7`); the new receipt is current too.
 - KRNL: 4,876 entries, 1,077 NONMATCHING-verified, 0 MATCHING (SHC blocker);
   krnl split + `make check` byte-identical (19/19).
+
+### 20261107T1350Z
+
+- 130 more KRNL functions NONMATCHING-verified, all short wrappers that call
+  one or more functions and often end in a tail call:
+  - `small17.c` (45, private `5e8c808e`): task start-up, scene step chains,
+    menu entry checks, map flag updates, 16-bit result clamps;
+  - `small18.c` (85, private `854c827e`): menu entry checks (a test call
+    followed by the menu step), menu value hand-offs, scene start-up chains,
+    16-bit result retries, a clamped plane-colour set-up and record
+    state-pointer setters.
+- Difftest tool changes (private `tools/difftest/`):
+  - new stub return kind `mem:ADDR`: the stub returns a fuzzed RAM word, so
+    both sides of a branch on a callee's result run (a hash of constant
+    arguments is constant and left one side untested);
+  - pointer globals read through record macros are redirected to fuzzed
+    scratch blocks by the batch generator;
+  - `run_retry.sh`: six specs per heavy-lock process, re-running any spec
+    whose process was ended by a signal. An unrelated agent on this host was
+    running `pkill` during this run and ended several difftest processes
+    with SIGTERM before they printed results.
+- KRNL: 4,876 entries, 1,207 NONMATCHING-verified, 0 MATCHING (SHC blocker);
+  krnl split + `check.py` byte-identical (14/14 USA modules).
 
 ## Frontier (ranked)
 
