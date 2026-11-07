@@ -18,31 +18,39 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
-## Status (run 20261107T0822Z, in progress)
+## Status (run 20261107T0822Z)
 
-Private repo commit: `17c9e40` (`make check` 19/19 byte-identical at `bb30158`, XBAND re-split under the heavy lock).
+Private repo commit: `235efea` (clean C rebuild + XBAND/XS re-split + `make check` 19/19 under the heavy lock).
 
-**2,753 MATCHING** by the private progress generator (1,292 at the start of this run). Per module: BOOT 760,
-XS 228, XBAND 1,719, H2H 46. Run 20261106T1722Z's last figure, 1,245, was a running count that left out H2H.
+**4,702 MATCHING** by the private progress generator (1,292 at the start of this run). Per module: BOOT 760,
+XS 232, XBAND 3,664, H2H 46. Run 20261106T1722Z's last figure, 1,245, was a running count that left out H2H.
 
-**XBAND's own code is compiled C, and 1,461 of its functions now match.**
+**XBAND's own code is compiled C, and 3,406 of its functions now match.**
 - XBAND.BIN `0x06006000`-`0x060A0000` is the XBAND client itself (Catapult), not the shared NetLink layer.
-  It was built by GCC 2.7.2.3 with `-m2 -O1` (no scheduling after reload) and a frame pointer.
-- Most of its small entries are dispatcher stubs. Each passes a selector and its own parameters to one
-  dispatcher, which looks the routine up in RAM tables, so routines can be replaced at run time. A generator
-  writes C for each stub from the disassembly, and one compile per batch checks them.
-- The compiler variant (`xb3`) is plain 2.7.2.3 with one change in parameter set-up: the copy of a short/char
-  parameter is deferred along with its conversion. Over 1,817 generated stubs, plain 2.7.2.3 matches 1,344;
-  `xb3` matches the same 1,344 plus 117, and loses none.
-- Negative control: one changed selector fails the XBAND check at the selector's address.
-- Rejected this run: no SH `PUSH_ROUNDING` (argument order), no SH `PROMOTE_MODE`, stupid register
-  allocation kept at `-O0`, and FSF GCC 2.6.3 (built for the comparison).
+- **How it was built:** without `-O`. The SH port forces optimization on anyway, so the code is optimized and
+  keeps its frame pointer, with no scheduling after reload. But only variables declared `register` get
+  registers; anything else lives in a stack slot. The compiler is a GCC 2.7 without SH `PROMOTE_MODE`
+  (FSF added it on 4 May 1995), so short/char variables are widened where they are used. The build's
+  variant is `xb2`.
+- Most of the matches are dispatcher stubs. Each passes a selector and its parameters to one dispatcher,
+  which looks the routine up in RAM tables. A `void` stub keeps its `register` parameters live to the end of
+  its scope, so they land in callee-saved registers. A value-returning stub looks ordinary; both are now
+  reproduced. Generators write C for the stubs and for common small shapes (constants, getters/setters,
+  call wrappers, field reads, min/max, byte-order helpers, class dispatch).
+- Trap: without `-O`, only the first function of a source file is expanded that way. Candidates must be
+  tested one function per file, as the build compiles them.
+- 13 stubs that push a 4th argument need GCC 2.6.3's delay-slot memory rule as well (`xb6` = `xb2` + that
+  rule; the full regression leaves all 3,120 other entries unchanged).
+- Rejected this run: no SH `PUSH_ROUNDING` (argument order), stupid register allocation kept, FSF GCC 2.6.3
+  as a whole (it fails an ordinary switch function), and a deferred-parameter-copy variant (`xb3`, which
+  the `register` model made unnecessary except for 2 pass-through stubs).
 
 Next:
-- About 1,050 more stubs keep every parameter in its own callee-saved register (an `-O0`-like allocation
-  with optimized calls). The compiler or idiom is not found yet.
-- 356 generated stubs still differ.
-- About 2,500 ordinary XBAND functions remain.
+- About 2,846 XBAND functions remain asm-only, mostly unique. Write C by hand: `register` on every variable the
+  original keeps in a register, `xb2 -m2`, one function per file.
+- Move XBAND to `xb6`: the full regression is clean (3,120/3,120). Then retry XBAND's soft-float and newlib
+  routines (`xb6` with `-O2 -fno-force-mem` finds 3 more libgcc units).
+- BOOT's main body (1,000 asm-only) as before.
 
 ## Status (run 20261106T1722Z)
 
@@ -839,9 +847,18 @@ Next frontier:
 ### 20261107T0822Z (this run)
 
 - Baseline at private `c0851bc`: full split + `make check` 19/19 under the heavy lock (98 CPU-s).
-- Found that XBAND's own code is GCC output and that most of its small entries are dispatcher stubs. Built
-  six compiler variants and FSF GCC 2.6.3, and adopted one (`xb3`). Recorded 1,461 stubs (private
-  `bb30158`), verified by `make check` 19/19 with a negative control.
-- The heavy lock was busy with other lanes' emulator batches. The queued XBAND check was withdrawn once
-  while still waiting, before a config edit, and then re-queued.
+- Found that XBAND's own code is GCC output and that most of its small entries are dispatcher stubs.
+  First model: `-O1` with a deferred-parameter-copy compiler (`xb3`); 1,461 stubs at private `bb30158`, `make check`
+  19/19, with a negative control.
+- Then found the real model: built without `-O`, with `register` parameters, by a GCC 2.7 without SH `PROMOTE_MODE`
+  (`xb2`). It also explains the stubs that keep parameters in callee-saved registers. Converted the 1,461 stubs,
+  added 1,945 more XBAND functions (stubs, templates for small shapes, some written by hand) and 4 XS loader
+  functions.
+- Final state: private `235efea`, 4,702 MATCHING; clean C rebuild + XBAND/XS re-split + `make check` 19/19
+  under the heavy lock. A full `xb6` regression (3,120/3,120) ran under the lock as well.
+- Built and tested 8 compiler variants (`xb1`-`xb6`, FSF 2.6.3, reconstructed 2.7.0/2.7.1); kept `xb2`, `xb6` and,
+  for 2 entries, `xb3`.
+- The heavy lock was busy with other lanes' emulator batches for most of the run. My queued checks were
+  withdrawn only while still waiting (no child process), to add more work, and then re-queued.
+- Left for the next run: 13 functions matched and staged in private evidence (`next-run/`), not applied.
 
