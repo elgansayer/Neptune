@@ -24,7 +24,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-WINDOW = 40  # instructions searched back from a call for the argument write
+WINDOW = 64  # instructions searched back from a call for the argument write
 
 
 def writes(w: int, n: int) -> bool:
