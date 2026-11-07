@@ -24,7 +24,7 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
-## Status (run 20261107T0451Z, private head d88907a2)
+## Status (run 20261107T0451Z, private head 45b25d86)
 
 Counts are reported separately and are not rounded up. SND is hand-written
 68000 assembly, so its source is annotated symbolic assembly. A function is
@@ -35,14 +35,14 @@ mutated-source controls are rejected.
 
 | Driver | Functions | MATCHING (annotated asm, byte-identical) | NONMATCHING-verified | generated asm only |
 | --- | --- | --- | --- | --- |
-| SND | 146 | 144 (56 of them 4-byte dispatch/table entries) | 0 | 2 |
-| XBSND (same bytes as SND, same source) | 146 | 144 | 0 | 2 |
+| SND | 146 | 145 (56 of them 4-byte dispatch/table entries) | 0 | 1 |
+| XBSND (same bytes as SND, same source) | 146 | 145 | 0 | 1 |
 | NLSND | 132 | 0 | 0 | 132 |
 
-Still generated: `0x2534` and `0x59C2`. `0x2534` is the sequence-volume code
-followed by 1.6 KB that the static descent never reaches: a self-contained
-effect-ramp subsystem with jump tables, which needs its own descent. `0x59C2`
-is the stream ramp step plus tables. 51 of NLSND's 132 functions (6,008 bytes)
+Still generated: `0x2534`. It is the sequence-volume code followed by 1.6 KB
+that the static descent never reaches: a self-contained effect-ramp subsystem
+with jump tables, which needs its own descent. The stream ramp step `0x59C2`
+(3D stream DSP coefficients from 9 tables) was annotated last. 51 of NLSND's 132 functions (6,008 bytes)
 occur verbatim in SND, though none at the same address.
 
 Timing facts read from the source (tick-rate frontier closed):
@@ -156,13 +156,12 @@ verified dispatch but open bodies. See
 | 20261105T0750Z | PR [#863](https://github.com/elgansayer/Neptune-Bomberman/pull/863) | Added `probe_snd_mailbox.py` with 18 owned tests and no new emulator run. Self-patch `0x1768`: 512 isolated cases, 4 controls; the resident image is derived exactly from disc + isolated writes (`0x4E1 = 0`). Executor `0x1A60`: 9,216 cases over all 256 command bytes, 7 controls, and a natural replay of 89 records. The natural command stream (89 records) matches coverage dispatch counts and the 49,526 vector-26 interrupts exactly; 5 natural-data controls are rejected. Two fresh reports are byte-identical (`2376d1f7…af0`). The first executor contract draft was wrong (offset masked after the add) and was rejected by execution, then corrected from the listing. |
 | 20261106T0931Z–20261106T1826Z | none | Usage-limit stops. The 0931Z result line cited assets-lane PRs by mistake. The private sound tools were committed (`8631c44`); the sequence model was left uncommitted. |
 | 20261107T0451Z | this PR | Committed and verified the sequence model: `verify_seq_fetch.py` runs the original `0x537E` in the isolated probe on all songs in both releases plus synthetic streams, with 6 controls (above). Added the tempo-map loop, which the earlier draft ignored. Committed all audio assets for both releases, including per-song events and MIDI. Japan PROGRAM.BIN now extracts. Harness lessons: data regions may not overlap executable ranges, so the routine runs with per-request range sets (request 1 runs as 2 exact segments). Range ends must include the last instruction's extension words (the first try stopped at `0x5770`). |
-| 20261107T0451Z (cont.) | this PR | Wrote the SND source as annotated 68000 assembly: 144/146 functions, byte-identical (above). The source check (private `snd_source.py check` plus tests) counts a function only when its whole range is annotated, and rejects duplicate labels. Lessons: GNU as cannot resolve a short branch to a global symbol (it becomes an 8-bit relocation), so short-branch targets stay local. Hand-written branches must keep the original `.s`/`.w` sizes. Two label names collided, and 9-character names starting with "M" collided with the splitter's marker parsing, so the check now assembles by itself. |
+| 20261107T0451Z (cont.) | this PR | Wrote the SND source as annotated 68000 assembly: 145/146 functions, byte-identical (above). The source check (private `snd_source.py check` plus tests) counts a function only when its whole range is annotated, and rejects duplicate labels. Lessons: GNU as cannot resolve a short branch to a global symbol (it becomes an 8-bit relocation), so short-branch targets stay local. Hand-written branches must keep the original `.s`/`.w` sizes. Two label names collided, and 9-character names starting with "M" collided with the splitter's marker parsing, so the check now assembles by itself. |
 
 ## Frontier (ranked)
 
-1. **Last 2 SND functions.** Trace the unreached effect-ramp block in
-   `0x2534` with its jump tables before writing it as code. Then do
-   `0x59C2` (stream ramp step and tables).
+1. **Last SND function.** Trace the unreached effect-ramp block in `0x2534`
+   with its jump tables before writing it as code.
 2. **NLSND.** Reuse the annotated SND units for the 51 verbatim functions,
    then annotate what differs (Ver1.31).
 3. **Shared build.** Have code-map's `make check` assemble the hand-written
