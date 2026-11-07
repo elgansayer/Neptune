@@ -306,9 +306,12 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
   - `bomb_table_reset` (`0601DB4C`, private `d486d720`): clear the 50 bomb
     and 2000 fire-effect records, re-link the heads and reset the serials;
     the two hardware init callees are stubs in the difftest.
-- Receipt audit: all 1,076 receipts match their current source files
-  (private `5fb9c5a7`).
-- KRNL: 4,876 entries, 1,076 NONMATCHING-verified, 0 MATCHING (SHC blocker);
+  - `bomb_record_insert` (`0601DE4E`, private `6831c764`): link a placed bomb
+    between the record-1 predecessor and the head, copy fuse/owner/cell and
+    mark the cell.
+- Receipt audit: all receipts match their current source files
+  (private `5fb9c5a7`); the new receipt is current too.
+- KRNL: 4,876 entries, 1,077 NONMATCHING-verified, 0 MATCHING (SHC blocker);
   krnl split + `make check` byte-identical (19/19).
 
 ## Frontier (ranked)
