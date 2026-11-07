@@ -24,7 +24,7 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
-## Status (run 20261107T1351Z, private head e082c1d8)
+## Status (run 20261107T1351Z, private head 41164621)
 
 This run added two asset categories that earlier counts missed; the driver
 counts below are unchanged.
@@ -42,7 +42,15 @@ counts below are unchanged.
   byte-identical). Finding: the map reserves 321,538 bytes for the first tone
   bank, but the bank as stored is 352,586 bytes and one voice's sample runs
   31,046 bytes past the reservation. NetLink and the XBAND/field executables
-  hold no further sound-bank records.
+  hold no further sound-bank records. XBAND's own loader (`0x060A2AC4` in
+  `XBAND.BIN`) was read later in the run. It initialises the driver from two
+  database items, then walks the area map in order and asks an XBAND OS
+  service to copy a fixed run of items to each entry's address. It requests
+  all 15 tone-bank items, so the next two banks, loaded after it, overwrite
+  the tail of that voice's sample. That one-shot is played whole by one of
+  the 18 one-note songs, so in XBAND mode about the last 0.7 s of it would
+  come from other data, unless the OS service (not on the disc) truncates
+  the copy.
 - **Sound-ID table (SH-2 side).** KRNL contains Sega's host-side SND library
   for this driver; its sequence-start routine (`0x0609E78C`, command 0x01:
   slot, bank, song, priority) has exactly one caller, the game's play-sound
@@ -70,8 +78,11 @@ counts below are unchanged.
   address from the code, so it runs unchanged on the Japan kernel (base
   `0x0600A000`). Japan has the same 322 records and clip names. One
   item-pickup entry differs between the releases. After the scan learned to
-  follow callee-saved register copies: USA has 384 sites (368 constant, 16
-  computed) and Japan 375 (359, 16). No ID is used by only one release.
+  follow callee-saved register copies and constants spilled to the stack:
+  USA has 384 sites (373 constant, 11 computed) and Japan 375 (364, 11). No
+  ID is used by only one release. The computed sites read from the code are
+  per-player offsets (a base plus the actor's player field), a 4-entry
+  table, the item table, two argument wrappers and one return value.
 - **Voice clips.** The clip-name table's only reader is dead code, and it
   would step 16 bytes per entry over 15-byte names. The game instead streams
   clips by name through one routine, found from the data: every clip-name
@@ -83,7 +94,9 @@ counts below are unchanged.
   stream routines are mostly generated assembly, with 3 NONMATCHING-verified
   by usa-code. Their differential harness stops when fuzzed pointers reach
   sound RAM, so they need a sound-RAM memory mode first. usa-code was working
-  on the kernel at the same time, so this lane added no kernel C.
+  on the kernel at the same time, so this lane added no kernel C. The bounded
+  fix (recorded privately) is a flat, checkpoint-seeded sound-RAM region in
+  the harness memory, compared after each run like Work RAM.
 
 ## Status (run 20261107T1311Z, private head fb272a2c)
 
@@ -246,15 +259,15 @@ verified dispatch but open bodies. See
 | 20261107T0451Z (cont.) | this PR | Wrote the SND source as annotated 68000 assembly: 145/146 functions, byte-identical (above). The source check (private `snd_source.py check` plus tests) counts a function only when its whole range is annotated, and rejects duplicate labels. Lessons: GNU as cannot resolve a short branch to a global symbol (it becomes an 8-bit relocation), so short-branch targets stay local. Hand-written branches must keep the original `.s`/`.w` sizes. Two label names collided, and 9-character names starting with "M" collided with the splitter's marker parsing, so the check now assembles by itself. |
 | 20261107T1311Z | PR #930 | Closed the remaining NLSND units: `0x40C8-0x4BE0` stream engine (five command tables, indirect dispatcher, the `0x4442-0x4764` handler block the splitter had emitted as words, StreamTick/VoiceTick/SCSP pollers), `0x18F2-0x1EEE` sequence command handlers, `0x2072-0x3504` voice layer (SeqTrackStep jump tables, SeqEventDrain, the `0x27BE` release routine reclaimed as code, SineTable), `0x35DE` VoiceInit with PitchOctTable/PitchFnsTable, and `0x0000-0x17C4` boot/vectors/reset (256-entry vector table with symbolic targets, version string, main loop). SND `0x2534` had been closed before this run. Both sources: 100% annotated, byte-identical, 0 raw lines. Also decoded the one EXB DSP program (`src/usa/snd/snd.s` EffectTick loads 0x500 bytes to 0x100700; 0x100 COEF/MADRS + 128 x 8-byte steps): 84/128 non-zero, identical USA/Japan, synthetic-tested decoder and full listing in the private repo. Harness lesson: GNU ld pads a `.text` at an odd 4-byte boundary, so generate dead-code fragments at origin 0 and shift labels rather than linking at the real address. |
 | 20261107T1351Z | PR #934 | Found two uncovered asset categories. XBAND: the 24 database items in `XBAND.DAT` start 2 bytes before their listed offsets; regrouped by their own area map into 2 tone, 2 sequence, 1 DSP program records (new `xband` recipe subcommand, 60 outputs), 19/19 songs verified against the original fetch routine with 6 controls. Sound IDs: KRNL's SND library command map, the single play-sound entry, the 322-record table in PROGRAM.BIN banks 1/2, voice-clip names (one missing on the USA disc), item-pickup table, 384 static call sites cross-checked with usa-code's C (new `sound_ids.py`, 7 synthetic tests). The recipe refactor reproduces both releases' program-bin outputs byte for byte. Harness lesson: tail calls (`jmp @Rm`) carried 57 of the call sites; a `jsr`-only scan missed the explosion sound. |
-| 20261107T1351Z (cont.) | this PR | Tone-bank decode verified through the original voice start for all 124 unique banks (648 runs, 4 controls). DSP listing proven lossless by re-encoding. The sound-ID recipe derives addresses from code and covers Japan, and follows callee-saved copies (16 computed sites left per release). Voice-clip streaming map, with two listed clips named nowhere in kernel code. Implementation issue #935 (sound triggers by ID) filed for the factory. Harness lesson: the isolated probe maps sound RAM only (regions must lie below `0x80000`), so slot writes need an a5-relative stand-in slot. |
+| 20261107T1351Z (cont.) | PR #936 | Tone-bank decode verified through the original voice start for all 124 unique banks (648 runs, 4 controls). DSP listing proven lossless by re-encoding. The sound-ID recipe derives addresses from code and covers Japan, and follows callee-saved copies (16 computed sites left per release). Voice-clip streaming map, with two listed clips named nowhere in kernel code. Implementation issue #935 (sound triggers by ID) filed for the factory. Harness lesson: the isolated probe maps sound RAM only (regions must lie below `0x80000`), so slot writes need an a5-relative stand-in slot. |
+| 20261107T1351Z (cont. 2) | this PR | Read XBAND's SH-2 sound loader: area-map order, fixed item runs through an OS copy service, so the first tone bank overruns its area and one voice's tail is overwritten. The sound-ID scan now follows constants spilled to the stack slot (11 computed sites per release), and the computed ones are described. Added a Counts section to the private progress page (it had none), with the SH-2 library listed as 39 functions, 3 NONMATCHING-verified by usa-code, plus the bounded harness fix. |
 
 ## Frontier (ranked)
 
 0. **SH-2 library source and open IDs.** Verify the kernel's SND/PCM library
-   with usa-code, after adding a sound-RAM memory mode to their differential
-   harness. Then decode the 16 computed IDs and the third kind-10 table, and
-   read XBAND's SH-2 bank loader to settle the tone-bank overlap. (Japan IDs
-   were done in run 20261107T1351Z.)
+   with usa-code, after adding a flat sound-RAM region to their differential
+   harness. Then decode the 11 computed IDs per release and the third kind-10
+   table. (Japan IDs and XBAND's loader were done in run 20261107T1351Z.)
 1. **Shared build.** Have code-map's `make check` assemble the hand-written
    SND and NLSND sources instead of the generated segments (private
    `src/usa/snd/snd.s`, `src/usa/nlsnd/nlsnd.s`).
