@@ -24,6 +24,39 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
+## Status (run 20261107T1351Z, private head 01c37961)
+
+This run added two asset categories that earlier counts missed; the driver
+counts below are unchanged.
+
+- **XBAND sound banks.** XBAND mode keeps its own audio as 24 items of the
+  XBAND client database, stored after the XBSND driver copy in
+  `XBAND/XBAND.DAT`. Each item's data starts 2 bytes before its listed offset
+  (five independent header witnesses, and the corrected items tile the file
+  with 10 leftover bytes). In id order the items form six driver records,
+  named by their own area map: 2 tone banks (27 voices, 28 samples), 2
+  sequence banks (19 songs, 1,988 events, one MIDI file each), 1 DSP program
+  (24/128 non-zero steps, a different program from the game's) and a DSP work
+  area. All 19 songs agree with the original `0x537E` fetch routine in the
+  isolated 68000 probe (16,631 calls, 6/6 negative controls rejected, two runs
+  byte-identical). Finding: the map reserves 321,538 bytes for the first tone
+  bank, but the bank as stored is 352,586 bytes and one voice's sample runs
+  31,046 bytes past the reservation. NetLink and the XBAND/field executables
+  hold no further sound-bank records.
+- **Sound-ID table (SH-2 side).** KRNL contains Sega's host-side SND library
+  for this driver; its sequence-start routine (`0x0609E78C`, command 0x01:
+  slot, bank, song, priority) has exactly one caller, the game's play-sound
+  routine `0x0600996A`. That routine reads a 4-byte record per sound ID from
+  resource kind 10 of PROGRAM.BIN banks 1/2 and skips an ID already started
+  in the same sound-task pass. The table has 322 records (identical in both
+  banks); a second table lists 20 streamed voice-clip AIFF names, one of which
+  (`M_087.AIF`) is not on the USA disc but is on the Japan disc. A static scan
+  finds 384 call sites (57 of them tail calls): 361 pass a constant ID (244
+  distinct, with the item-pickup table), 23 compute it. The scan agrees with
+  every play-sound call in usa-code's verified C (8 sites). Each record is
+  resolved to a song file in every sound context where it exists (all 322
+  resolve somewhere).
+
 ## Status (run 20261107T1311Z, private head fb272a2c)
 
 Counts are reported separately and are not rounded up. SND is hand-written
@@ -112,15 +145,17 @@ elsewhere and returns. Runs that need more than the probe's 256-instruction
 cap resume exactly from the reported registers and memory (15 calls in total).
 
 Audio assets (private repo, `assets/<release>/sound/`, every output hashed in a
-manifest; offline check: 1,587 outputs, 0 problems):
+manifest; offline check: 1,648 outputs, 0 problems):
 
 | Category | USA | Japan |
 | --- | --- | --- |
 | Tone banks (WAV with loop/envelope metadata) | 115 banks (83 unique), 220 samples | 93 banks (59 unique), 195 samples |
 | Sequence banks | 33 (17 unique), 240 songs, events + one MIDI file per song | 33 (17 unique), 240 songs |
-| DSP programs | 10 (1 unique), raw, microcode not decoded | 10 (1 unique) |
+| DSP programs | 10 (1 unique), raw + decoded microcode listing | 10 (1 unique) |
 | ISO audio files | 131 | 20 |
 | CD-DA tracks | 29/29 FLAC, decode-verified to the source PCM | 29/29 |
+| XBAND sound banks (run 1351Z) | 2 tone banks (28 samples), 2 sequence banks (19 songs, MIDI), 1 DSP program, 1 area map | none on the disc |
+| Sound-ID table (run 1351Z) | 322 records, 20 clip names, 28-entry item table, 384 call sites | open |
 
 FLAC files (247 MB per release) stay in `$RE_ASSETS_OUT` with committed
 manifests (FLAC and PCM hashes).
@@ -181,10 +216,14 @@ verified dispatch but open bodies. See
 | 20261106T0931Z–20261106T1826Z | none | Usage-limit stops. The 0931Z result line cited assets-lane PRs by mistake. The private sound tools were committed (`8631c44`); the sequence model was left uncommitted. |
 | 20261107T0451Z | this PR | Committed and verified the sequence model: `verify_seq_fetch.py` runs the original `0x537E` in the isolated probe on all songs in both releases plus synthetic streams, with 6 controls (above). Added the tempo-map loop, which the earlier draft ignored. Committed all audio assets for both releases, including per-song events and MIDI. Japan PROGRAM.BIN now extracts. Harness lessons: data regions may not overlap executable ranges, so the routine runs with per-request range sets (request 1 runs as 2 exact segments). Range ends must include the last instruction's extension words (the first try stopped at `0x5770`). |
 | 20261107T0451Z (cont.) | this PR | Wrote the SND source as annotated 68000 assembly: 145/146 functions, byte-identical (above). The source check (private `snd_source.py check` plus tests) counts a function only when its whole range is annotated, and rejects duplicate labels. Lessons: GNU as cannot resolve a short branch to a global symbol (it becomes an 8-bit relocation), so short-branch targets stay local. Hand-written branches must keep the original `.s`/`.w` sizes. Two label names collided, and 9-character names starting with "M" collided with the splitter's marker parsing, so the check now assembles by itself. |
-| 20261107T1311Z | this PR | Closed the remaining NLSND units: `0x40C8-0x4BE0` stream engine (five command tables, indirect dispatcher, the `0x4442-0x4764` handler block the splitter had emitted as words, StreamTick/VoiceTick/SCSP pollers), `0x18F2-0x1EEE` sequence command handlers, `0x2072-0x3504` voice layer (SeqTrackStep jump tables, SeqEventDrain, the `0x27BE` release routine reclaimed as code, SineTable), `0x35DE` VoiceInit with PitchOctTable/PitchFnsTable, and `0x0000-0x17C4` boot/vectors/reset (256-entry vector table with symbolic targets, version string, main loop). SND `0x2534` had been closed before this run. Both sources: 100% annotated, byte-identical, 0 raw lines. Also decoded the one EXB DSP program (`src/usa/snd/snd.s` EffectTick loads 0x500 bytes to 0x100700; 0x100 COEF/MADRS + 128 x 8-byte steps): 84/128 non-zero, identical USA/Japan, synthetic-tested decoder and full listing in the private repo. Harness lesson: GNU ld pads a `.text` at an odd 4-byte boundary, so generate dead-code fragments at origin 0 and shift labels rather than linking at the real address. |
+| 20261107T1311Z | PR #930 | Closed the remaining NLSND units: `0x40C8-0x4BE0` stream engine (five command tables, indirect dispatcher, the `0x4442-0x4764` handler block the splitter had emitted as words, StreamTick/VoiceTick/SCSP pollers), `0x18F2-0x1EEE` sequence command handlers, `0x2072-0x3504` voice layer (SeqTrackStep jump tables, SeqEventDrain, the `0x27BE` release routine reclaimed as code, SineTable), `0x35DE` VoiceInit with PitchOctTable/PitchFnsTable, and `0x0000-0x17C4` boot/vectors/reset (256-entry vector table with symbolic targets, version string, main loop). SND `0x2534` had been closed before this run. Both sources: 100% annotated, byte-identical, 0 raw lines. Also decoded the one EXB DSP program (`src/usa/snd/snd.s` EffectTick loads 0x500 bytes to 0x100700; 0x100 COEF/MADRS + 128 x 8-byte steps): 84/128 non-zero, identical USA/Japan, synthetic-tested decoder and full listing in the private repo. Harness lesson: GNU ld pads a `.text` at an odd 4-byte boundary, so generate dead-code fragments at origin 0 and shift labels rather than linking at the real address. |
+| 20261107T1351Z | this PR | Found two uncovered asset categories. XBAND: the 24 database items in `XBAND.DAT` start 2 bytes before their listed offsets; regrouped by their own area map into 2 tone, 2 sequence, 1 DSP program records (new `xband` recipe subcommand, 60 outputs), 19/19 songs verified against the original fetch routine with 6 controls. Sound IDs: KRNL's SND library command map, the single play-sound entry, the 322-record table in PROGRAM.BIN banks 1/2, voice-clip names (one missing on the USA disc), item-pickup table, 384 static call sites cross-checked with usa-code's C (new `sound_ids.py`, 7 synthetic tests). The recipe refactor reproduces both releases' program-bin outputs byte for byte. Harness lesson: tail calls (`jmp @Rm`) carried 57 of the call sites; a `jsr`-only scan missed the explosion sound. |
 
 ## Frontier (ranked)
 
+0. **Japan sound IDs and open IDs.** Run the sound-ID recipe on the Japan
+   KRNL; decode the 23 computed IDs and the third kind-10 table; read XBAND's
+   SH-2 bank loader to settle the tone-bank overlap.
 1. **Shared build.** Have code-map's `make check` assemble the hand-written
    SND and NLSND sources instead of the generated segments (private
    `src/usa/snd/snd.s`, `src/usa/nlsnd/nlsnd.s`).
@@ -192,9 +231,8 @@ verified dispatch but open bodies. See
    behavioural test against the original core, then the sound-ID producer map (#707).
 4. **Render through the original driver** (88-sample ticks) and compare with
    the decoded sequences and tone banks.
-5. **Sound IDs.** Map the SH-2 producer of the command slots (#707) to songs.
-   Then decode the DSP microcode of the one EXB program, whose record layout
-   is now known from the load routine.
+5. **Sound IDs.** USA producer map done (run 20261107T1351Z, above); the
+   remaining items are in 0.
 
 ## Private evidence (never commit)
 
