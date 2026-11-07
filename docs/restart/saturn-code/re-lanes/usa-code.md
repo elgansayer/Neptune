@@ -275,15 +275,38 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
     and receipts;
   - `mkspec.py` writes difftest specs from a compact table.
 
+### 20261107T1225Z
+
+- Finished the interrupted run's two batches: `small15.c` (22) and
+  `small16.c` (32) KRNL functions NONMATCHING-verified (private `d6514326`).
+- Decompiled and verified the core bomb/fire chain:
+  - `fire_spread` (`0601EA10`, private `9643d9b7`): recursive four-side walk;
+    joins bombs, burns items and soft blocks, stops at hard blocks and
+    recurses around corners.
+  - `fire_cell.c` (private `9398c83b`): `0601E300` makes the effect layer
+    current, draws the cell metatile and marks the hidden bomb; `0601E336`
+    picks the fire record fields, sets the cell bits and draws.
+  - `fire_mark_cell` (`0601ED54`, private `910c7527`): battle hidden-map mark
+    and the hand-off to the effect update.
+  - `bomb_update_all` (`0601EDD2`, private `b6e44f7d`): per-frame bomb list
+    walk, held/ticking fuse, explosion start, fire-pass hand-off.
+  - `effect_update_all` (`0601E3F0`, private `fea07d4e`): per-frame fire
+    effect records, cell draw/clear, exploding-bomb follow, phase transfer.
+  - `bomb_try_hold` (`0601FA22`, private `937a1ca5`): start carrying the lit
+    bomb on a cell (held flag, direction, mode 4).
+- KRNL: 4,876 entries, 1,065 NONMATCHING-verified, 0 MATCHING (SHC blocker);
+  krnl split + `make check` byte-identical (19/19).
+
 ## Frontier (ranked)
 
 1. **Bomber, bomb and explosion code.** Object records are at `0x060D5F30`
    (124 bytes; `0x060D7768` points at the current one). Bomb count is at +76
    and fire range at +78, as `item_pickup` shows. Bomb records and bomb
-   movement are in C (`bomb.c`, `bomb_move.c`). Next: `0601D070`-`0601F38C`,
-   the bomb-object state handlers that set off, kick and throw bombs
-   (`0601E766` sets a bomb off), and `0601F830`-`06020D1C`. Also: the item
-   special actor `0602277C` (uses SHC runtime helpers).
+   movement are in C (`bomb.c`, `bomb_move.c`). The fire chain
+   (`0601EA10`, `0601E300`, `0601E336`, `0601ED54`, `0601EDD2`, `0601E3F0`)
+   and the hold start (`0601FA22`) are now in C. Next: the throw/carry state
+   machines `0601F830`, `06020560`, `0601FB04`, and the item special actor
+   `0602277C` (uses SHC runtime helpers).
 2. Stage system leftovers: the per-stage hooks (`0x060B30C4`), the view task
    `0600D6B2`, the timer `0602ED18`/`0602ED56`.
 3. **Scheduler and per-frame order (#492).** `060061C4`/`060061E6`/`06006D36`
