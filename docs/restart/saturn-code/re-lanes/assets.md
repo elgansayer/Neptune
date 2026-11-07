@@ -314,8 +314,9 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
      set), screens 6-11 map 8 (a different menu handler). No capture ever has
      a screen id above 4 or that flag bit set. Map 7's earlier "86% of its
      cells" is only the frame it shares with map 6. Maps 13 and 14 are loaded
-     together by one records function; map 18 is tiled four times into a
-     128 x 128 cell plane by another;
+     together by one records function. No loader of map 18 is known (an
+     earlier reading of this run took a task priority for its index; that
+     function tiles map 1);
    - master1 6 (no fixed load in the kernel);
    - 12 xband1 maps: 1 and 8 (64 x 64, XBAND-only), 13 and 14 (copies of
      battle1's), 11 (2 x 2 cells) and eight one-cell records (4 bytes each,
