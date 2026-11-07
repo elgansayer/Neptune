@@ -24,7 +24,7 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
-## Status (run 20261107T1351Z, private head d39a96d0)
+## Status (run 20261107T1351Z, private head 8fdd3131)
 
 This run added two asset categories that earlier counts missed; the driver
 counts below are unchanged.
@@ -83,6 +83,11 @@ counts below are unchanged.
   ID is used by only one release. The computed sites read from the code are
   per-player offsets (a base plus the actor's player field), a 4-entry
   table, the item table, two argument wrappers and one return value.
+- **Which banks load when.** The scene loader picks the sound bank by game
+  mode and world: normal worlds 1-5 each have their own bank, and battle and
+  Master one each. Voice banks come from constants or from two per-player
+  tables. None of these paths reaches the three headerless voice-bank slots,
+  which agrees with their being leftover sectors.
 - **Voice clips.** The clip-name table's only reader is dead code, and it
   would step 16 bytes per entry over 15-byte names. The game instead streams
   clips by name through one routine, found from the data: every clip-name
@@ -261,7 +266,8 @@ verified dispatch but open bodies. See
 | 20261107T1351Z | PR #934 | Found two uncovered asset categories. XBAND: the 24 database items in `XBAND.DAT` start 2 bytes before their listed offsets; regrouped by their own area map into 2 tone, 2 sequence, 1 DSP program records (new `xband` recipe subcommand, 60 outputs), 19/19 songs verified against the original fetch routine with 6 controls. Sound IDs: KRNL's SND library command map, the single play-sound entry, the 322-record table in PROGRAM.BIN banks 1/2, voice-clip names (one missing on the USA disc), item-pickup table, 384 static call sites cross-checked with usa-code's C (new `sound_ids.py`, 7 synthetic tests). The recipe refactor reproduces both releases' program-bin outputs byte for byte. Harness lesson: tail calls (`jmp @Rm`) carried 57 of the call sites; a `jsr`-only scan missed the explosion sound. |
 | 20261107T1351Z (cont.) | PR #936 | Tone-bank decode verified through the original voice start for all 124 unique banks (648 runs, 4 controls). DSP listing proven lossless by re-encoding. The sound-ID recipe derives addresses from code and covers Japan, and follows callee-saved copies (16 computed sites left per release). Voice-clip streaming map, with two listed clips named nowhere in kernel code. Implementation issue #935 (sound triggers by ID) filed for the factory. Harness lesson: the isolated probe maps sound RAM only (regions must lie below `0x80000`), so slot writes need an a5-relative stand-in slot. |
 | 20261107T1351Z (cont. 2) | PR #937 | Read XBAND's SH-2 sound loader: area-map order, fixed item runs through an OS copy service, so the first tone bank overruns its area and one voice's tail is overwritten. The sound-ID scan now follows constants spilled to the stack slot (11 computed sites per release), and the computed ones are described. Added a Counts section to the private progress page (it had none), with the SH-2 library listed as 39 functions, 3 NONMATCHING-verified by usa-code, plus the bounded harness fix. |
-| 20261107T1351Z (cont. 3) | this PR | Generic public tool `tools/saturn_lab/sh2_call_args.py` (call sites of an address and constant argument registers, by the same rules as the private sound-ID scan), with 11 owned synthetic tests; run locally on the USA kernel it reproduces the private counts (384 sites, 375 constant). Private follow-ups: NetLink WAV names are built in the boot program from 14 event names and a numbered `%d.WAV` variant (all 112 reachable); resource kind 10 entry 3 is a 1-bit glyph font, not sound. |
+| 20261107T1351Z (cont. 3) | PR #938 | Generic public tool `tools/saturn_lab/sh2_call_args.py` (call sites of an address and constant argument registers, by the same rules as the private sound-ID scan), with 11 owned synthetic tests; run locally on the USA kernel it reproduces the private counts (384 sites, 375 constant). Private follow-ups: NetLink WAV names are built in the boot program from 14 event names and a numbered `%d.WAV` variant (all 112 reachable); resource kind 10 entry 3 is a 1-bit glyph font, not sound. |
+| 20261107T1351Z (cont. 4) | this PR | Scene → sound-bank and voice-bank selection read from the kernel with the new scanner (private `docs/sound/SOUND_IDS.md`); the headerless voice-bank slots are unreachable. Context rule added to issue #935. Private head `8fdd3131`. |
 
 ## Frontier (ranked)
 
