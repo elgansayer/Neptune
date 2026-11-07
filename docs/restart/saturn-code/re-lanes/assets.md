@@ -51,7 +51,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| **Sprite palettes bound from captures** (6,365 states, was 5,958; 311,948 of 312,079 sprite draws match a decoded block, the rest are RGB movie frames and off-screen draws with no graphics assigned) | **4,614 blocks drawn directly, 3,086 sequences** (was 4,432 / 3,053); **7,064 of 10,659 blocks** have their exact colours once the frames of bound sequences are included (was 6,882; the kernel's draw rule, checked on 177,956 of 177,978 drawn actors); 16 more sequences (33 blocks) only from per-frame actor samples, counted apart; staff bank 185 / 185, all 50 sequences. Run 20261106T1223Z: battles with computer players and with battle characters 8-11 (never picked by the earlier walks), the first captures with the XBAND bank resident, and boss stages played with every button. Run 20261106T1723Z's closing pass (finished after that run ended; integrated by run 20261107T0823Z) added its XBAND-bank battles, Master Game rank states and backup-memory boots |
+| **Sprite palettes bound from captures** (7,215 states, was 6,365; 364,636 of 364,767 sprite draws match a decoded block, the rest are RGB movie frames and off-screen draws with no graphics assigned) | **4,932 blocks drawn directly, 3,285 sequences** (was 4,614 / 3,086); **7,484 of 10,659 blocks** have their exact colours once the frames of bound sequences are included (was 7,064; the kernel's draw rule, checked on 204,620 of 204,648 drawn actors); 19 more sequences (39 blocks) only from per-frame actor samples, counted apart; staff bank 185 / 185, all 50 sequences. Run 20261106T1223Z: battles with computer players and with battle characters 8-11 (never picked by the earlier walks), the first captures with the XBAND bank resident, and boss stages played with every button. Run 20261106T1723Z's closing pass (finished after that run ended; integrated by run 20261107T0823Z) added its XBAND-bank battles, Master Game rank states and backup-memory boots |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps; attribute bits named from the kernel's readers (run 20261107T0823Z: solid, soft, no-soft-block, fire-and-bomb stop, bomb stop, overhang sprite priority, and a 4-bit cell code kept in a second map; four rare bits and one counter open) |
@@ -251,7 +251,9 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Backgrounds of all 47 built stages (display-on stage-select captures) | every descriptor grid equals a live plane on all 16,384 cells on 44 stages; descriptor cell block in VRAM on 47 (byte-exact on 20, ≥ 98% where tiles animate); descriptor palette the best CRAM match on 47 |
 | Soft-block generator from the captured generator state | with a per-stage set-up offset: exact on 24 of the 39 built stages with soft blocks when the bomber area and the kernel table's enemy cells are reserved, 28 of 39 when the objects code spawns are reserved too (the other 11 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
-## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z, 1223Z, 1723Z and 20261107T0823Z)
+## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z, 1223Z, 1723Z, 20261107T0823Z and 1543Z)
+
+Run 20261107T1543Z: `d0241525` run 0823Z's closing pass integrated (7,215 states).
 
 Run 20261107T0823Z (in progress at this PR): `6a0ff05` (head) mount growth rule, loader census, state lists · earlier state list, recipe README · `a5c0eec` frontier details · `aa21d70` cell-animation word closed · `ebdf9c3` attribute bits · `a9a6fd5` VDP2 map 9 with the code's palette rectangle, maps 47/65 · `538fb67` run 1723Z's closing pass integrated.
 
@@ -288,8 +290,9 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
 
 ## Frontier
 
-1. Sprite palettes: 6,882 of 10,659 blocks have exact colours from draws
-   (4,432 drawn directly), and 3,053 of 4,915 sequences are bound. The
+1. Sprite palettes: 7,484 of 10,659 blocks have exact colours from draws
+   (4,932 drawn directly), and 3,285 of 4,915 sequences are bound (19 more
+   only from per-frame samples). The
    private `sprite_unbound.json` lists every unbound sequence and block.
    - Computer-player battles (a type byte per player at character select)
      play whole rounds with Louies and items by themselves; next, Team
@@ -599,3 +602,11 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     - The Master Game boss floors with the protected bomber gave nothing
       new; eggs (level 0) in two more stages and the World 2 level runs
       gave 10-19 new sequences each.
+- 20261107T1543Z:
+  - Integrated run 20261107T0823Z's closing pass, which finished as that
+    run hit the usage limit (private `d0241525`): 7,215 states (was 6,365),
+    4,932 blocks drawn directly (was 4,614), 3,285 of 4,915 sequences bound
+    (was 3,086), 7,484 of 10,659 blocks with exact colours (was 7,064); 19
+    sequences (39 blocks) only from per-frame samples. The draw rule holds
+    on 204,620 of 204,648 drawn actors. The egg-level, boss and game-over
+    runs of that run gave the gain.
