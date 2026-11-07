@@ -24,7 +24,7 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
-## Status (run 20261107T1351Z, private head c1368968)
+## Status (run 20261107T1351Z, private head ddb42f87)
 
 This run added two asset categories that earlier counts missed; the driver
 counts below are unchanged.
@@ -80,12 +80,15 @@ counts below are unchanged.
   7,200-frame run (the hashes already published in the 2026-11-05 evidence),
   under the SCSP register mapping. This checks the loaded state, not
   execution of the microcode.
-- **Banks found in the reference core's sound RAM.** In two saved
-  reference-core states (title menu, and later stage navigation), every
-  extracted tone, sequence and DSP payload was searched for in sound RAM.
-  8 and 12 unique payloads are present byte for byte, 19 of the 20 at the
-  address their own area map gives, and every one-byte-flipped control is
-  absent.
+- **Banks found in the reference core's sound RAM.** In 12 saved
+  reference-core states (menu, navigation, and the assets lane's captures of
+  the opening, normal stages, battle, Master and five bosses), every extracted
+  tone, sequence and DSP payload was searched for in sound RAM. 30 of the 101
+  unique payloads, from 8 sound banks, are present byte for byte. Per state,
+  all but at most one sit at the address their own area map gives; the
+  exception is tone data reused under another id. Every one-byte-flipped
+  control is absent. Not yet covered by a state: one normal-world bank,
+  one world-5 variant and the voice banks.
 - **Japan sound IDs.** The recipe now derives every routine and table
   address from the code, so it runs unchanged on the Japan kernel (base
   `0x0600A000`). Japan has the same 322 records and clip names. One
@@ -280,7 +283,7 @@ verified dispatch but open bodies. See
 | 20261107T1351Z (cont. 2) | PR #937 | Read XBAND's SH-2 sound loader: area-map order, fixed item runs through an OS copy service, so the first tone bank overruns its area and one voice's tail is overwritten. The sound-ID scan now follows constants spilled to the stack slot (11 computed sites per release), and the computed ones are described. Added a Counts section to the private progress page (it had none), with the SH-2 library listed as 39 functions, 3 NONMATCHING-verified by usa-code, plus the bounded harness fix. |
 | 20261107T1351Z (cont. 3) | PR #938 | Generic public tool `tools/saturn_lab/sh2_call_args.py` (call sites of an address and constant argument registers, by the same rules as the private sound-ID scan), with 11 owned synthetic tests; run locally on the USA kernel it reproduces the private counts (384 sites, 375 constant). Private follow-ups: NetLink WAV names are built in the boot program from 14 event names and a numbered `%d.WAV` variant (all 112 reachable); resource kind 10 entry 3 is a 1-bit glyph font, not sound. |
 | 20261107T1351Z (cont. 4) | PR #939 | Scene → sound-bank and voice-bank selection read from the kernel with the new scanner (private `docs/sound/SOUND_IDS.md`); the headerless voice-bank slots are unreachable. Context rule added to issue #935. Private head `8fdd3131`. |
-| 20261107T1351Z (cont. 5) | this PR | The game DSP program was matched to the reference core state already recorded in the 2026-11-05 evidence (pinned private test). The XBAND driver item was found in the client database: its list starts one entry before the recorded offset, a note for the assets lane. Residency check: extracted banks are byte-exact in reference-core sound RAM (two states, 20 payloads). Private head `c1368968`. |
+| 20261107T1351Z (cont. 5) | this PR | The game DSP program was matched to the reference core state already recorded in the 2026-11-05 evidence (pinned private test). The XBAND driver item was found in the client database: its list starts one entry before the recorded offset, a note for the assets lane. Residency check: extracted banks are byte-exact in reference-core sound RAM (12 states, 30 of 101 unique payloads). Private head `ddb42f87`. |
 
 ## Frontier (ranked)
 
