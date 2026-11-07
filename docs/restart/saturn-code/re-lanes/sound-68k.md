@@ -24,6 +24,83 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
+## Status (run 20261107T0451Z, private head 45b25d86)
+
+Counts are reported separately and are not rounded up. SND is hand-written
+68000 assembly, so its source is annotated symbolic assembly. A function is
+MATCHING when its whole inventory range lies in annotated, reviewed units:
+named labels and fields, tables as label expressions, no raw splitter words,
+and the whole file rebuilds byte-identical with the pinned binutils. Eight
+mutated-source controls are rejected.
+
+| Driver | Functions | MATCHING (annotated asm, byte-identical) | NONMATCHING-verified | generated asm only |
+| --- | --- | --- | --- | --- |
+| SND | 146 | 145 (56 of them 4-byte dispatch/table entries) | 0 | 1 |
+| XBSND (same bytes as SND, same source) | 146 | 145 | 0 | 1 |
+| NLSND | 132 | 0 | 0 | 132 |
+
+Still generated: `0x2534`. It is the sequence-volume code followed by 1.6 KB
+that the static descent never reaches: a self-contained effect-ramp subsystem
+with jump tables, which needs its own descent. The stream ramp step `0x59C2`
+(3D stream DSP coefficients from 9 tables) was annotated last. 51 of NLSND's 132 functions (6,008 bytes)
+occur verbatim in SND, though none at the same address.
+
+Timing facts read from the source (tick-rate frontier closed):
+
+- The driver's time base is the SCSP Timer B interrupt. It is reloaded every
+  88 samples, so it runs at 44100/88 = 501.14 Hz. The three natural snapshots
+  give 88.00–88.05 samples per interrupt at Beetle's NTSC 59.826 fps.
+- The tempo code assumes 500 calls per second: ticks per call
+  = 2000 × resolution / µs-per-beat, counted in 1/256 ticks. Sequenced music
+  therefore runs 0.23% fast, plus integer-division rounding. Event times are
+  exact running sums of the steps, because each overshoot carries over.
+- Timer A (178 samples) is polled by the main loop. It drives fades, pitch
+  updates (8 voices per tick, so each voice every 4th tick) and the effect
+  load. The Timer B handler clears Timer A's pending bit too, so polled
+  Timer A events are lost. That explains the earlier natural rate of
+  ~240 samples per tick.
+
+Driver behaviour found "as written" (kept byte-exact, documented privately):
+
+- The high-command table's last entries are 6-byte jumps in a 4-byte-stride
+  table, so commands 0x8C, 0x8D and 0x8F enter mid-instruction.
+- Controllers 120/123 branch two bytes short of their all-notes-off routine,
+  so they do nothing.
+- The voice layer ignores channels 16–31. No song in either release uses
+  them.
+- A queued note off stores its port shifted.
+- One routine saves SR after masking interrupts.
+- Pitch-bend range 14 enters mid-block.
+
+Driver-verified asset model (this is not a source reconstruction and is not
+counted above): the private Python model of SND's sequence fetch routine
+`0x537E` (event fetch, sequence start, tempo start, tempo next) agrees with
+the original 68000 routine on every compared call in the isolated Musashi
+probe (ABI1). USA: 36,343 calls; Japan: 36,350. Each covers 240/240 songs
+(17 unique banks, two loop passes where a song loops), all 256 first bytes
+four times, and 600 seeded random streams. Six negative controls are rejected:
+three model mutations, two driver byte patches and a wrong record number. Two
+runs of each report are byte-identical. Format findings, in our own words:
+`step` is the delay before an event and `gate` the note length; the tempo
+map loops (all 240 songs carry a tempo loop offset; 226 have one tempo);
+extension bytes add fixed step/gate amounts; a reference plays n events
+elsewhere and returns. Runs that need more than the probe's 256-instruction
+cap resume exactly from the reported registers and memory (15 calls in total).
+
+Audio assets (private repo, `assets/<release>/sound/`, every output hashed in a
+manifest; offline check: 1,587 outputs, 0 problems):
+
+| Category | USA | Japan |
+| --- | --- | --- |
+| Tone banks (WAV with loop/envelope metadata) | 115 banks (83 unique), 220 samples | 93 banks (59 unique), 195 samples |
+| Sequence banks | 33 (17 unique), 240 songs, events + one MIDI file per song | 33 (17 unique), 240 songs |
+| DSP programs | 10 (1 unique), raw, microcode not decoded | 10 (1 unique) |
+| ISO audio files | 131 | 20 |
+| CD-DA tracks | 29/29 FLAC, decode-verified to the source PCM | 29/29 |
+
+FLAC files (247 MB per release) stay in `$RE_ASSETS_OUT` with committed
+manifests (FLAC and PCM hashes).
+
 ## Measured denominator (2026-11-05, updated run 20261105T0750Z)
 
 | Driver | Identity | Function entries | Executed naturally | Status |
@@ -77,35 +154,23 @@ verified dispatch but open bodies. See
 | --- | --- | --- |
 | 20261105T0635Z | PR [#840](https://github.com/elgansayer/Neptune-Bomberman/pull/840) | Added the coverage observer, runner and inventory join, with 14 owned tests. Natural cold-boot windows: reference + 2 enabled, 7,200 frames, identical. SND inventory 146 entries; dispatcher map; 8 runtime patches; DSP identities. The first core preparation failed its own smoke (re-armable `begin()`), was fixed before evidence and retained privately as `failed-prepare-001-rearmable-begin`. |
 | 20261105T0750Z | PR [#863](https://github.com/elgansayer/Neptune-Bomberman/pull/863) | Added `probe_snd_mailbox.py` with 18 owned tests and no new emulator run. Self-patch `0x1768`: 512 isolated cases, 4 controls; the resident image is derived exactly from disc + isolated writes (`0x4E1 = 0`). Executor `0x1A60`: 9,216 cases over all 256 command bytes, 7 controls, and a natural replay of 89 records. The natural command stream (89 records) matches coverage dispatch counts and the 49,526 vector-26 interrupts exactly; 5 natural-data controls are rejected. Two fresh reports are byte-identical (`2376d1f7…af0`). The first executor contract draft was wrong (offset masked after the add) and was rejected by execution, then corrected from the listing. |
+| 20261106T0931Z–20261106T1826Z | none | Usage-limit stops. The 0931Z result line cited assets-lane PRs by mistake. The private sound tools were committed (`8631c44`); the sequence model was left uncommitted. |
+| 20261107T0451Z | this PR | Committed and verified the sequence model: `verify_seq_fetch.py` runs the original `0x537E` in the isolated probe on all songs in both releases plus synthetic streams, with 6 controls (above). Added the tempo-map loop, which the earlier draft ignored. Committed all audio assets for both releases, including per-song events and MIDI. Japan PROGRAM.BIN now extracts. Harness lessons: data regions may not overlap executable ranges, so the routine runs with per-request range sets (request 1 runs as 2 exact segments). Range ends must include the last instruction's extension words (the first try stopped at `0x5770`). |
+| 20261107T0451Z (cont.) | this PR | Wrote the SND source as annotated 68000 assembly: 145/146 functions, byte-identical (above). The source check (private `snd_source.py check` plus tests) counts a function only when its whole range is annotated, and rejects duplicate labels. Lessons: GNU as cannot resolve a short branch to a global symbol (it becomes an 8-bit relocation), so short-branch targets stay local. Hand-written branches must keep the original `.s`/`.w` sizes. Two label names collided, and 9-character names starting with "M" collided with the splitter's marker parsing, so the check now assembles by itself. |
 
 ## Frontier (ranked)
 
-1. **SND control handlers with device effects.** Use the natural records as
-   inputs. Start with the SCSP-register handlers. `0x80`/`0x81` write
-   slot 16/17 byte `0x17`, which ABI7 already admits. `0x82` writes MVOL
-   `0x100401`; that needs a common-register extension, not RAM mapping.
-   `0x0C` clears DSP MPROG `0x100800–0x100BFF` (ABI8 DSP words). `0x0D` is
-   all-off. Then do `0x08` map change and `0x01`/`0x02` sequence start/stop. Each
-   needs a full register/memory/device contract and mutation controls.
-2. **Sequencer tick timing (prerequisite for sample-timed audio).** The
-   tick routine `0x141C` ran 18,127 times, about 240.5 output samples per tick,
-   against a nominal 178 samples for the main loop's Timer-A reload of `0x4E`
-   (documented SCSP timer layout, a source hypothesis). The
-   vector-26 handler `0x1734` writes `0xC0` to SCIRE `0x100422`, clearing both
-   Timer-A and Timer-B pending bits; this may drop Timer-A polls. Measure
-   per-tick natural timing and decide the tempo base before any PCM comparison.
-3. **SH-2 producer of the command slots (#707, SH-2 side).** Find the SH-2
-   writer of `0x25A00700` slots (USA kernel/PROGRAM static search, or a bounded
-   SH-2 write observer). Tie each of the 89 natural records to its game
-   event. The ring already gives the 68000-side timing.
-4. **Broaden natural command traces.** Battle mode, items, music changes and
-   game over. The history ring holds up to 127 records per snapshot interval,
-   so take snapshots often enough; the probe then gives a checked command trace
-   with no new observer.
-5. **NLSND inventory and DSP decode.** Run `m68k_function_inventory.py` on
-   NLSND (Ver1.31) and align it with SND by signature. Decode the 84-step
-   SND-lifetime MPROG and its loader (`0x83` effect change → `0x3140` is a
-   candidate path).
+1. **Last SND function.** Trace the unreached effect-ramp block in `0x2534`
+   with its jump tables before writing it as code.
+2. **NLSND.** Reuse the annotated SND units for the 51 verbatim functions,
+   then annotate what differs (Ver1.31).
+3. **Shared build.** Have code-map's `make check` assemble the hand-written
+   SND source instead of the generated segment.
+4. **Render through the original driver** (88-sample ticks) and compare with
+   the decoded sequences and tone banks.
+5. **Sound IDs.** Map the SH-2 producer of the command slots (#707) to songs.
+   Then decode the DSP microcode of the one EXB program, whose record layout
+   is now known from the load routine.
 
 ## Private evidence (never commit)
 

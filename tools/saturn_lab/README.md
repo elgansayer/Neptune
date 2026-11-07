@@ -370,3 +370,22 @@ restored the earlier exact state with matching frame arithmetic. Optional kernel
 witnesses and `--expect-rate` assertions fail closed. It is passive natural
 observation: nothing is executed. See the
 [lineage result](../../docs/restart/research/2026-11-05-usa-vblank-counter-lineage.md).
+
+## Library units for byte-identical builds
+
+`lib_unit.py` helps a byte-identical rebuild compile library routines (a C
+runtime, compiler support code) from their original multi-function sources:
+
+- It splits GCC 2.x `cc1` or preprocessed GNU as output into one unit per
+  top-level symbol.
+- It rewrites a unit so it can be included at any address: labels become unique
+  locals, external symbols become supplied addresses, and `.align` pads with
+  zero bytes.
+- It finds a unit in a binary with the external-address words masked, and reads
+  those addresses back.
+- It places identical bodies by reference consistency and object order.
+- It drops small wrappers whose references nothing confirms.
+
+The private decomp build uses the same method (`tools/split/libfunc.py`,
+`tools/toolchain/libgcc_match.py` there). Synthetic tests in
+`tests/test_lib_unit.py` validate the tool only, not original-game claims.
