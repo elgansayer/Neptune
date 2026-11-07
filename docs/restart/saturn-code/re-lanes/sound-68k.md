@@ -24,7 +24,7 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
-## Status (run 20261107T1311Z, private head 23e2db82)
+## Status (run 20261107T1311Z, private head 43d1c52b)
 
 Counts are reported separately and are not rounded up. SND is hand-written
 68000 assembly, so its source is annotated symbolic assembly. A function is
@@ -63,7 +63,9 @@ Regional target check: the USA and Japan `PROGRAM.BIN` containers differ
 (`c8842cc9…bd04`). The Japan disc contains no `NETLINK/SNDDRV.BIN` and no
 `XBAND.DAT`, so NLSND and XBSND are USA-only; SND's source applies to both
 releases. Read directly from both cue sheets with `tools/saturn_disc`
-(USA `785e6f9f…`, Japan `ac6c34bb…`).
+(USA `785e6f9f…`, Japan `ac6c34bb…`). The private regression test now builds
+both sources byte-identically and rejects three mutations for each (SND and
+NLSND, via `SND_DRIVER`/`NLSND_DRIVER`).
 
 Timing facts read from the source (tick-rate frontier closed):
 
