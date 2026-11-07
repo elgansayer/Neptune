@@ -18,7 +18,33 @@ build on the splitter and build.
 Denominator: every byte of every code-bearing file classified and covered by the
 byte-identical build, and every module in the build.
 
-## Status (run 20261106T1722Z, in progress)
+## Status (run 20261107T0822Z, in progress)
+
+Private repo commit: `17c9e40` (`make check` 19/19 byte-identical at `bb30158`, XBAND re-split under the heavy lock).
+
+**2,753 MATCHING** by the private progress generator (1,292 at the start of this run). Per module: BOOT 760,
+XS 228, XBAND 1,719, H2H 46. Run 20261106T1722Z's last figure, 1,245, was a running count that left out H2H.
+
+**XBAND's own code is compiled C, and 1,461 of its functions now match.**
+- XBAND.BIN `0x06006000`-`0x060A0000` is the XBAND client itself (Catapult), not the shared NetLink layer.
+  It was built by GCC 2.7.2.3 with `-m2 -O1` (no scheduling after reload) and a frame pointer.
+- Most of its small entries are dispatcher stubs. Each passes a selector and its own parameters to one
+  dispatcher, which looks the routine up in RAM tables, so routines can be replaced at run time. A generator
+  writes C for each stub from the disassembly, and one compile per batch checks them.
+- The compiler variant (`xb3`) is plain 2.7.2.3 with one change in parameter set-up: the copy of a short/char
+  parameter is deferred along with its conversion. Over 1,817 generated stubs, plain 2.7.2.3 matches 1,344;
+  `xb3` matches the same 1,344 plus 117, and loses none.
+- Negative control: one changed selector fails the XBAND check at the selector's address.
+- Rejected this run: no SH `PUSH_ROUNDING` (argument order), no SH `PROMOTE_MODE`, stupid register
+  allocation kept at `-O0`, and FSF GCC 2.6.3 (built for the comparison).
+
+Next:
+- About 1,050 more stubs keep every parameter in its own callee-saved register (an `-O0`-like allocation
+  with optimized calls). The compiler or idiom is not found yet.
+- 356 generated stubs still differ.
+- About 2,500 ordinary XBAND functions remain.
+
+## Status (run 20261106T1722Z)
 
 Private repo commit: `8fb8764` (last build check 19/19 byte-identical at `ce79712`; one documentation commit after it).
 
@@ -786,7 +812,7 @@ Next frontier:
 - Committed 46 at private `a504f2f` after `make check` 19/19 (840 MATCHING). The other 45 were checked with
   `ctry.py` but not committed, and there is no ledger entry for the run.
 
-### 20261106T1222Z (this run)
+### 20261106T1222Z
 
 - Verified the previous run's 45 uncommitted functions with a clean rebuild (19/19), then committed them
   (private `e252f5e`, 885 MATCHING).
@@ -803,3 +829,19 @@ Next frontier:
     was withdrawn unbuilt);
   - the compiler leads in the private `docs/TOOLCHAIN.md`: loop-counter elimination, `x == 0 || x == 1` kept as
     two tests, an unfilled `bra` delay slot, and the stored-constant register in frame-pointer code.
+
+### 20261106T1722Z, 20261106T1842Z, 20261107T0612Z
+
+- 1722Z: BOOT main-body batches and the layer compiler `nocopy17w`. Its last private commit (`a5632d7`) is
+  in this run's baseline; the status section above has its findings.
+- 1842Z and 0612Z exited without a result and left no evidence or commits.
+
+### 20261107T0822Z (this run)
+
+- Baseline at private `c0851bc`: full split + `make check` 19/19 under the heavy lock (98 CPU-s).
+- Found that XBAND's own code is GCC output and that most of its small entries are dispatcher stubs. Built
+  six compiler variants and FSF GCC 2.6.3, and adopted one (`xb3`). Recorded 1,461 stubs (private
+  `bb30158`), verified by `make check` 19/19 with a negative control.
+- The heavy lock was busy with other lanes' emulator batches. The queued XBAND check was withdrawn once
+  while still waiting, before a config edit, and then re-queued.
+
