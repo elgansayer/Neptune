@@ -294,7 +294,16 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
     effect records, cell draw/clear, exploding-bomb follow, phase transfer.
   - `bomb_try_hold` (`0601FA22`, private `937a1ca5`): start carrying the lit
     bomb on a cell (held flag, direction, mode 4).
-- KRNL: 4,876 entries, 1,065 NONMATCHING-verified, 0 MATCHING (SHC blocker);
+  - `bomb_throw` (`0601FB04`, private `944b858c`): throw/carry step off the
+    cell in front; the same commit fixed the hold/throw predecessor-next
+    return, and the hold spec now covers 99/99 PCs.
+  - `fire_record_alloc` (`0601E13C`, private `0c82771a`): fire-effect record
+    allocator (free-slot search, chain insert, phase/owner fields).
+  - `bomb_scene.c` (private `4ac435fd`, `6ea66919`): seven bomb/scene task
+    helpers (`0601D7A8`, `0601D7E4`, `0601D812`, `0601D84A`, `0601D9F0`,
+    `0601D734`, `0601D962`): place-animation finish, task end, timer
+    subtract, script start.
+- KRNL: 4,876 entries, 1,075 NONMATCHING-verified, 0 MATCHING (SHC blocker);
   krnl split + `make check` byte-identical (19/19).
 
 ## Frontier (ranked)
@@ -304,9 +313,10 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
    and fire range at +78, as `item_pickup` shows. Bomb records and bomb
    movement are in C (`bomb.c`, `bomb_move.c`). The fire chain
    (`0601EA10`, `0601E300`, `0601E336`, `0601ED54`, `0601EDD2`, `0601E3F0`)
-   and the hold start (`0601FA22`) are now in C. Next: the throw/carry state
-   machines `0601F830`, `06020560`, `0601FB04`, and the item special actor
-   `0602277C` (uses SHC runtime helpers).
+   and the hold/throw helpers (`0601FA22`, `0601FB04`) plus the record
+   allocator (`0601E13C`) are now in C. Next: the throw/carry state machines
+   `0601F830` and `06020560`, and the item special actor `0602277C` (uses SHC
+   runtime helpers).
 2. Stage system leftovers: the per-stage hooks (`0x060B30C4`), the view task
    `0600D6B2`, the timer `0602ED18`/`0602ED56`.
 3. **Scheduler and per-frame order (#492).** `060061C4`/`060061E6`/`06006D36`
