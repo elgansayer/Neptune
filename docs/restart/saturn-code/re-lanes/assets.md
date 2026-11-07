@@ -253,7 +253,7 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 
 ## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z, 1223Z, 1723Z and 20261107T0823Z)
 
-Run 20261107T0823Z (in progress at this PR): `48413ff` (head) state list, recipe README · `a5c0eec` frontier details · `aa21d70` cell-animation word closed · `ebdf9c3` attribute bits · `a9a6fd5` VDP2 map 9 with the code's palette rectangle, maps 47/65 · `538fb67` run 1723Z's closing pass integrated.
+Run 20261107T0823Z (in progress at this PR): `6a0ff05` (head) mount growth rule, loader census, state lists · earlier state list, recipe README · `a5c0eec` frontier details · `aa21d70` cell-animation word closed · `ebdf9c3` attribute bits · `a9a6fd5` VDP2 map 9 with the code's palette rectangle, maps 47/65 · `538fb67` run 1723Z's closing pass integrated.
 
 Run 20261106T1723Z: `2c804cc` (head) XBAND image items · `a099ca4` master1 4 and 11 confirmed via the rank inputs, maps 45/65 · `a8d269f`, `178d918` battle1 16 and 17 under palette offsets (offset search over 2,175 states) · `7929435`, `a5d6313` the tenth save message, USA and Japan · `e60b164` map search bank filter · `452b702` XBAND/NetLink layouts from code · `1a6e88d` run 1223Z's closing pass integrated.
 
@@ -581,3 +581,21 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
       and a bomber in every direction) in the World 1 and World 3 banks,
       in no other bank and never drawn. The opening bank's save-menu items
       need a real save; stage and boss clears do not write one.
+  - Third PR (static findings, closing pass still running):
+    - Mount growth, from the code: a hatched mount's colour is random; in
+      the Normal Game it starts at the level the player has earned for that
+      colour. Points scored while riding go into a per-player, per-colour
+      counter; level 1 at 5,000 points, level 2 at 15,000. Each level has
+      its own sprite set (levels 1 and 2 drew mount sequences level 0
+      never draws). Posted on Neptune #296.
+    - Loader census: only the kernel writes VDP2 maps, through two
+      routines; no call passes the battle bank's map 18, and the Master
+      bank's map 6 is reachable only through the battle menu's screen
+      table, so both are most likely unused data (still counted as open).
+    - Game over: with the lives counter and the timer set low, the Normal
+      Game's GAME OVER menu appears (CONTINUE / SAVE GAME / QUIT); its SAVE
+      GAME is the route to a real save and so to the opening bank's
+      NEW GAME / LOAD GAME and save-slot items (walk queued).
+    - The Master Game boss floors with the protected bomber gave nothing
+      new; eggs (level 0) in two more stages and the World 2 level runs
+      gave 10-19 new sequences each.
