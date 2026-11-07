@@ -69,14 +69,14 @@ order and stub calls on every vector, and at least one detected source mutant
 
 | Module | Static entries | MATCHING | NONMATCHING-verified | Asm-only |
 | --- | ---: | ---: | ---: | ---: |
-| USA KRNL | 4,876 | 0 | 1,207 | 3,669 |
+| USA KRNL | 4,879 | 0 | 1,638 | 3,241 |
 | USA BOOT | 1,760 | 760 (code-map lane) | 0 | 1,000 |
 
-Counts at run 20261107T1350Z, private head `854c827e`. KRNL still rebuilds
+Counts at run 20261107T1350Z, private head `90cb5f02`. KRNL still rebuilds
 byte-identically after every rename (`split.py --only krnl` + `make` +
 `check.py`: `usa/krnl` SHA-256 `20109f50…c798a7`, 14/14 USA modules).
 BOOT's MATCHING count is the code-map lane's (`config/usa/boot.status.txt`).
-KRNL has 8 static entries more than the inventory (4,868 + 8). They are
+KRNL has 11 static entries more than the inventory (4,868 + 11). They are
 functions reached only by a tail branch (`bra`/`jmp`) or only through a pointer
 literal, found while writing C.
 
@@ -334,8 +334,20 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
     whose process was ended by a signal. An unrelated agent on this host was
     running `pkill` during this run and ended several difftest processes
     with SIGTERM before they printed results.
-- KRNL: 4,876 entries, 1,207 NONMATCHING-verified, 0 MATCHING (SHC blocker);
-  krnl split + `check.py` byte-identical (14/14 USA modules).
+- Later in the run (private `5e8c808e`..`90cb5f02`), 431 more:
+  `small19.c`..`small32.c`. Most are object (enemy and boss) state handlers:
+  each runs the shared state test, sets the next handler and ends the step,
+  or arms a timer field of the current object record. The rest are scene
+  start-up chains, menu entry checks, CD-block command entry checks, stream
+  record counters, 16.16 sine/cosine quadrant folds, string helpers and
+  record-table clears.
+- Three entries the inventory missed (`060266E6` pointer entry, `06059A2A` and
+  `0606AA06` after another function's `rts`); KRNL static entries are 4,879.
+- Generator directives `@memstub` and `@range` (fuzzed callee results and
+  bounded global values), and argument kinds for self-pointing records.
+- KRNL: 4,879 entries, 1,638 NONMATCHING-verified (561 this run), 0 MATCHING
+  (SHC blocker); krnl split + `check.py` byte-identical (14/14 USA modules),
+  `make audit` clean.
 
 ## Frontier (ranked)
 
