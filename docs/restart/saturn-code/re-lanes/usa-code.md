@@ -69,10 +69,10 @@ order and stub calls on every vector, and at least one detected source mutant
 
 | Module | Static entries | MATCHING | NONMATCHING-verified | Asm-only |
 | --- | ---: | ---: | ---: | ---: |
-| USA KRNL | 4,879 | 0 | 1,738 | 3,141 |
+| USA KRNL | 4,879 | 0 | 1,753 | 3,126 |
 | USA BOOT | 1,760 | 760 (code-map lane) | 0 | 1,000 |
 
-Counts at run 20261107T1350Z, private head `834d6a2c`. KRNL still rebuilds
+Counts at run 20261107T1350Z, private head `fe4955c8`. KRNL still rebuilds
 byte-identically after every rename (`split.py --only krnl` + `make` +
 `check.py`: `usa/krnl` SHA-256 `20109f50…c798a7`, 14/14 USA modules).
 BOOT's MATCHING count is the code-map lane's (`config/usa/boot.status.txt`).
@@ -345,8 +345,9 @@ startup re-registers `0x41` → `06006368`. The inventory note is corrected.
   `0606AA06` after another function's `rts`); KRNL static entries are 4,879.
 - Generator directives `@memstub` and `@range` (fuzzed callee results and
   bounded global values), and argument kinds for self-pointing records.
-- End of run (private `834d6a2c`, `small33.c`..`small37.c` added after
-  `90cb5f02`): KRNL 4,879 entries, 1,738 NONMATCHING-verified (661 this run),
+- End of run (private `fe4955c8`, `small33.c`..`small39.c` added after
+  `90cb5f02`, the last two are bomber helpers): KRNL 4,879 entries, 1,753
+  NONMATCHING-verified (676 this run),
   0 MATCHING (SHC blocker); krnl split + `check.py` byte-identical (14/14 USA
   modules), `make audit` clean. About 320 of the run's functions are object
   (enemy/boss) state handlers.
