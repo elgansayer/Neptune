@@ -51,14 +51,14 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | VDP1 sprite frames | 11,695 / 11,695 (34,681 parts) |
 | VDP1 unique pixel blocks | 10,659 / 10,659 |
 | Sprite animation sequences | 4,915 / 4,915 |
-| **Sprite palettes bound from captures** (5,958 states, was 3,681; 290,751 of 290,857 sprite draws match a decoded block, the rest are RGB movie frames and off-screen draws with no graphics assigned) | **4,432 blocks drawn directly, 3,053 sequences** (was 3,787 / 2,720); **6,882 of 10,659 blocks** have their exact colours once the frames of bound sequences are included (was 6,295; the kernel's draw rule, checked on 172,440 of 172,462 drawn actors); 16 more sequences (33 blocks) only from per-frame actor samples, counted apart; staff bank 185 / 185, all 50 sequences. Run 20261106T1223Z: battles with computer players and with battle characters 8-11 (never picked by the earlier walks), the first captures with the XBAND bank resident, and boss stages played with every button |
+| **Sprite palettes bound from captures** (6,365 states, was 5,958; 311,948 of 312,079 sprite draws match a decoded block, the rest are RGB movie frames and off-screen draws with no graphics assigned) | **4,614 blocks drawn directly, 3,086 sequences** (was 4,432 / 3,053); **7,064 of 10,659 blocks** have their exact colours once the frames of bound sequences are included (was 6,882; the kernel's draw rule, checked on 177,956 of 177,978 drawn actors); 16 more sequences (33 blocks) only from per-frame actor samples, counted apart; staff bank 185 / 185, all 50 sequences. Run 20261106T1223Z: battles with computer players and with battle characters 8-11 (never picked by the earlier walks), the first captures with the XBAND bank resident, and boss stages played with every button. Run 20261106T1723Z's closing pass (finished after that run ended; integrated by run 20261107T0823Z) added its XBAND-bank battles, Master Game rank states and backup-memory boots |
 | VDP2 cell blocks | 84 / 84 |
 | Stage grids and background planes | 115 / 115 (exact pattern-name planes + renders) |
 | Metatile sets and per-metatile attributes | 39 / 39 sets; 115 attribute maps |
 | Colour-cycle scripts | 124 / 124 |
 | VDP2 cell animations | 36 records, 232 frames (stage banks) |
 | FONTX2 Shift-JIS fonts (16×16) | 2 / 2 (316 glyphs each) |
-| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **45 confirmed by capture on every cell** (was 41; run 20261106T1723Z: the Battle Series AWARDS frame and a Series wallpaper under one palette offset each, found by an offset search of the newer battle, Series and Master states, and two Master Game result backgrounds reached by setting the rank inputs), rendered in capture colours. Every map is searched anywhere in the captured VDP2 VRAM: 29 lie exactly on a displayed page in run 0223Z's 1,535 states, 3 more under one palette offset (the title's logo wallpaper and the battle scoreboard's crosshair), 4 Master Game hub flame maps in a natural idle run. Run 20261106T0723Z added 5 from its 476 new screens: the battle set winner's VICTORY on the stadium screen (battle1 15), the Battle Series VICTORY parade (battle1 11) and its AWARDS screen's trophy wallpaper (battle1 5), and the xband1 copies of 5 and 15 |
+| VDP2 menu/UI maps | 65 / 65 decoded and rendered; **47 confirmed by capture on every cell** (was 45; run 20261107T0823Z: the BOMBER CATCHER background and its byte-identical XBAND-bank copy, whose palette field the screen's set-up code rewrites over a 63 x 63 cell rectangle right after loading it; with that call applied, the map equals VRAM on a displayed page in 75 captures; earlier: was 41; run 20261106T1723Z: the Battle Series AWARDS frame and a Series wallpaper under one palette offset each, found by an offset search of the newer battle, Series and Master states, and two Master Game result backgrounds reached by setting the rank inputs), rendered in capture colours. Every map is searched anywhere in the captured VDP2 VRAM: 29 lie exactly on a displayed page in run 0223Z's 1,535 states, 3 more under one palette offset (the title's logo wallpaper and the battle scoreboard's crosshair), 4 Master Game hub flame maps in a natural idle run. Run 20261106T0723Z added 5 from its 476 new screens: the battle set winner's VICTORY on the stadium screen (battle1 15), the Battle Series VICTORY parade (battle1 11) and its AWARDS screen's trophy wallpaper (battle1 5), and the xband1 copies of 5 and 15 |
 | Normal Game stage descriptors | 50 / 50 |
 | Normal Game enemy placement lists (kernel table) | 50 / 50 |
 | Master Game enemy placement lists | 20 / 20 |
@@ -251,9 +251,11 @@ differs only in bank bytes, and `normal2`–`normal4` are identical.
 | Backgrounds of all 47 built stages (display-on stage-select captures) | every descriptor grid equals a live plane on all 16,384 cells on 44 stages; descriptor cell block in VRAM on 47 (byte-exact on 20, ≥ 98% where tiles animate); descriptor palette the best CRAM match on 47 |
 | Soft-block generator from the captured generator state | with a per-stage set-up offset: exact on 24 of the 39 built stages with soft blocks when the bomber area and the kernel table's enemy cells are reserved, 28 of 39 when the objects code spawns are reserved too (the other 11 within 1–5 blocks); 1-1 exact in two demo captures including hidden items |
 
-## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z, 1223Z and 1723Z)
+## Private repository state (runs 20261105T1623Z, 1833Z, 2123Z, 20261106T0223Z, 0723Z, 1223Z, 1723Z and 20261107T0823Z)
 
-Run 20261106T1723Z (in progress at this PR): `a099ca4` (head) master1 4 and 11 confirmed via the rank inputs, maps 45/65 · `a8d269f`, `178d918` battle1 16 and 17 under palette offsets (offset search over 2,175 states) · `7929435`, `a5d6313` the tenth save message, USA and Japan · `e60b164` map search bank filter · `452b702` XBAND/NetLink layouts from code · `1a6e88d` run 1223Z's closing pass integrated.
+Run 20261107T0823Z (in progress at this PR): `a9a6fd5` (head) VDP2 map 9 with the code's palette rectangle, maps 47/65 · `538fb67` run 1723Z's closing pass integrated (6,365 states, 7,064 blocks with exact colours).
+
+Run 20261106T1723Z: `2c804cc` (head) XBAND image items · `a099ca4` master1 4 and 11 confirmed via the rank inputs, maps 45/65 · `a8d269f`, `178d918` battle1 16 and 17 under palette offsets (offset search over 2,175 states) · `7929435`, `a5d6313` the tenth save message, USA and Japan · `e60b164` map search bank filter · `452b702` XBAND/NetLink layouts from code · `1a6e88d` run 1223Z's closing pass integrated.
 
 Run 20261106T1223Z: `e3d107b` (head) player-slot colours, computer players, XBAND word, unbound inventory · `1651bf9` docs, sampler KNOWN filter · `1c5ca72` Japan pitch check (70 of 74 frames) · `c571a48` all-button generator · `f2e726d` Japan animated words and gong signs.
 
@@ -304,13 +306,21 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
    - xband1 is now resident in an XBAND-word battle (run 20261106T1223Z);
      most of its bindings still come from pixel-identical battle1 blocks. Japan normal1-normal5
      match the USA banks except one block.
-2. VDP2 map colours: 45 of 65 confirmed. The 20 still open:
-   - battle1 7-9, 13, 14 and 18 (stadium screens; the stadium overview is
-     loaded with the victory screen but no capture holds it, even in part;
-     two others reach 86% and 68% of their cells on the records pages);
+2. VDP2 map colours: 47 of 65 confirmed. The 18 still open:
+   - battle1 7, 8, 13, 14 and 18. Maps 6-8 are one battle-menu panel in
+     three versions chosen through a 13-entry screen table in the kernel
+     (screen id -> cell block, map): screen 4 shows map 6 (captured),
+     screen 5 map 7 (taken instead of 4 when bit 2 of a battle flag word is
+     set), screens 6-11 map 8 (a different menu handler). No capture ever has
+     a screen id above 4 or that flag bit set. Map 7's earlier "86% of its
+     cells" is only the frame it shares with map 6. Maps 13 and 14 are loaded
+     together by one records function; map 18 is tiled four times into a
+     128 x 128 cell plane by another;
    - master1 6 (no fixed load in the kernel);
-   - 13 xband1 maps (the XBAND menus; three are byte-identical to battle
-     maps that are open too).
+   - 12 xband1 maps: 1 and 8 (64 x 64, XBAND-only), 13 and 14 (copies of
+     battle1's), 11 (2 x 2 cells) and eight one-cell records (4 bytes each,
+     at the indices of battle1's menu panels 6-7 and screens 16-21; probably
+     placeholders).
 
    The BOMBER CATCHER is solved: Saturn B starts the crane, and after the
    prize the game returns to the battle menu.
@@ -520,3 +530,27 @@ records · `69902d2` capture checks and sprite bindings over 86 states ·
     colour; 20 are the parts of the World 5 boss in two states, consistent
     with a flash that changed the word after the frame's draw list was
     built. Conflicting words are never draw-checked, so they bind nothing.
+- 20261107T0823Z (first PR, run in progress):
+  - Integrated run 20261106T1723Z's closing pass, which finished after that
+    run ended: 6,365 states, 4,614 blocks drawn directly, 3,086 sequences,
+    7,064 of 10,659 blocks with exact colours (was 6,882); the draw rule
+    holds on 177,956 of 177,978 drawn actors.
+  - VDP2 maps 47/65: the BOMBER CATCHER background (battle bank map 9 and its
+    XBAND-bank copy). Its set-up code loads the map and then rewrites the
+    palette field of a 63 x 63 cell rectangle; the palette-free search had
+    matched the page's characters, and applying that call gives a byte-exact
+    match on a displayed page. A new private checker applies such calls.
+  - Battle menu panels: maps 6, 7 and 8 come from a 13-entry kernel screen
+    table; map 7 needs a battle flag bit and map 8 another menu handler,
+    and no capture has reached either.
+  - Tests with memory-write set-ups (the game's own code does the rest):
+    letting the match timer run out kills the bomber and restarts the stage
+    (two new base-bank sequences in World 2); the stage-over flag word ends
+    a Normal Game stage and shows the next stage's banner; the item-7 effect
+    (a state bit and its timer) keeps the bomber alive through 9,000-frame
+    boss fights, but random play does not damage the World 5 boss (the World
+    1 boss gave two new sequences).
+  - Open question: two 88-sequence groups (a creature and a bomber with 64
+    poses) in the World 1 and World 3 banks were never drawn in any capture;
+    they are not table enemies, the time-up path, the stage-clear path or the
+    boss phases tried so far.
