@@ -24,7 +24,7 @@ programs. Ownership: do not edit Codex's Japan kernel chain, Gemini's #464
 scope, the Factory, or other lanes' ledgers. Earlier NLSND work (#600–#703
 probes, `probe_netlink_*`) stays accepted and is reused, not repeated.
 
-## Status (run 20261107T1311Z, private head b5f72f67)
+## Status (run 20261107T1311Z, private head 8ef4fec5)
 
 Counts are reported separately and are not rounded up. SND is hand-written
 68000 assembly, so its source is annotated symbolic assembly. A function is
@@ -50,6 +50,13 @@ PitchFnsTable). The stream dispatcher masks its sub-command with 7 but each
 branch table has five entries, and `VoiceRegTable` has 31 records, so those
 out-of-range indexes read neighbouring data; kept as written and documented in
 the source. No raw splitter lines remain in either file.
+
+The one EXB DSP program is now decoded as raw microcode: 84 non-zero steps out
+of 128, identical in both releases (`730cff6f…f194`). Private
+`tools/sound/scsp_dsp.py` parses the record (0x40 header, 0x100 COEF/MADRS,
+128 x 8-byte steps) and prints every field, with synthetic tests in
+`test_scsp_dsp.py`; the listing and field map are in `docs/sound/EXB_DSP.md`.
+This is a decode, not a high-level algorithm reconstruction.
 
 Timing facts read from the source (tick-rate frontier closed):
 
@@ -163,15 +170,15 @@ verified dispatch but open bodies. See
 | 20261106T0931Z–20261106T1826Z | none | Usage-limit stops. The 0931Z result line cited assets-lane PRs by mistake. The private sound tools were committed (`8631c44`); the sequence model was left uncommitted. |
 | 20261107T0451Z | this PR | Committed and verified the sequence model: `verify_seq_fetch.py` runs the original `0x537E` in the isolated probe on all songs in both releases plus synthetic streams, with 6 controls (above). Added the tempo-map loop, which the earlier draft ignored. Committed all audio assets for both releases, including per-song events and MIDI. Japan PROGRAM.BIN now extracts. Harness lessons: data regions may not overlap executable ranges, so the routine runs with per-request range sets (request 1 runs as 2 exact segments). Range ends must include the last instruction's extension words (the first try stopped at `0x5770`). |
 | 20261107T0451Z (cont.) | this PR | Wrote the SND source as annotated 68000 assembly: 145/146 functions, byte-identical (above). The source check (private `snd_source.py check` plus tests) counts a function only when its whole range is annotated, and rejects duplicate labels. Lessons: GNU as cannot resolve a short branch to a global symbol (it becomes an 8-bit relocation), so short-branch targets stay local. Hand-written branches must keep the original `.s`/`.w` sizes. Two label names collided, and 9-character names starting with "M" collided with the splitter's marker parsing, so the check now assembles by itself. |
-| 20261107T1311Z | this PR | Closed the remaining NLSND units: `0x40C8-0x4BE0` stream engine (five command tables, indirect dispatcher, the `0x4442-0x4764` handler block the splitter had emitted as words, StreamTick/VoiceTick/SCSP pollers), `0x18F2-0x1EEE` sequence command handlers, `0x2072-0x3504` voice layer (SeqTrackStep jump tables, SeqEventDrain, the `0x27BE` release routine reclaimed as code, SineTable), `0x35DE` VoiceInit with PitchOctTable/PitchFnsTable, and `0x0000-0x17C4` boot/vectors/reset (256-entry vector table with symbolic targets, version string, main loop). SND `0x2534` had been closed before this run. Both sources: 100% annotated, byte-identical, 0 raw lines. Harness lesson: GNU ld pads a `.text` at an odd 4-byte boundary, so generate dead-code fragments at origin 0 and shift labels rather than linking at the real address. |
+| 20261107T1311Z | this PR | Closed the remaining NLSND units: `0x40C8-0x4BE0` stream engine (five command tables, indirect dispatcher, the `0x4442-0x4764` handler block the splitter had emitted as words, StreamTick/VoiceTick/SCSP pollers), `0x18F2-0x1EEE` sequence command handlers, `0x2072-0x3504` voice layer (SeqTrackStep jump tables, SeqEventDrain, the `0x27BE` release routine reclaimed as code, SineTable), `0x35DE` VoiceInit with PitchOctTable/PitchFnsTable, and `0x0000-0x17C4` boot/vectors/reset (256-entry vector table with symbolic targets, version string, main loop). SND `0x2534` had been closed before this run. Both sources: 100% annotated, byte-identical, 0 raw lines. Also decoded the one EXB DSP program (`src/usa/snd/snd.s` EffectTick loads 0x500 bytes to 0x100700; 0x100 COEF/MADRS + 128 x 8-byte steps): 84/128 non-zero, identical USA/Japan, synthetic-tested decoder and full listing in the private repo. Harness lesson: GNU ld pads a `.text` at an odd 4-byte boundary, so generate dead-code fragments at origin 0 and shift labels rather than linking at the real address. |
 
 ## Frontier (ranked)
 
 1. **Shared build.** Have code-map's `make check` assemble the hand-written
    SND and NLSND sources instead of the generated segments (private
    `src/usa/snd/snd.s`, `src/usa/nlsnd/nlsnd.s`).
-2. **DSP microcode.** Decode the one EXB program now that the load routine's
-   record layout is known; then the sound-ID producer map (#707).
+2. **DSP behaviour.** The one EXB program is decoded (84/128 steps); next is a
+   behavioural test against the original core, then the sound-ID producer map (#707).
 4. **Render through the original driver** (88-sample ticks) and compare with
    the decoded sequences and tone banks.
 5. **Sound IDs.** Map the SH-2 producer of the command slots (#707) to songs.
